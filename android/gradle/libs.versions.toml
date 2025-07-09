@@ -1,0 +1,56 @@
+[versions]
+minSdk = "28"
+targetSdk = "36"
+versionCode = "1"
+versionName = "1.0.0"
+agp = "8.5.2"
+kotlin = "2.1.0"
+coreKtx = "1.15.0"
+appcompat = "1.7.1"
+material = "1.12.0"
+activity = "1.10.1"
+constraintlayout = "2.2.1"
+okhttp = "5.1.0"
+retrofit = "2.9.0"
+kotlinx-serialization-json = "1.8.1"
+retrofit2-kotlinx-serialization-converter = "1.0.0"
+kotlinx-coroutines-android = "1.3.9"
+kotlinx-coroutines-test = "1.7.3"
+espressoCore = "3.6.1"
+androidx-test-ext-junit = "1.2.1"
+junit-jupiter = "5.12.0"
+kotest-runner-junit5 = "5.9.1"
+mannodermaus-junit5 = "1.7.0"
+android-junit5 = "1.12.0.0"
+
+[libraries]
+# AndroidX 및 UI
+androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
+androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
+
+# 네트워크 및 직렬화
+okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
+okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
+retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization-json" }
+retrofit2-kotlinx-serialization-converter = { module = "com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter", version.ref = "retrofit2-kotlinx-serialization-converter" }
+
+# 코루틴
+kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinx-coroutines-android" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
+
+# 테스트
+androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
+kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest-runner-junit5" }
+mannodermaus-junit5-core = { group = "de.mannodermaus.junit5", name = "android-test-core", version.ref = "mannodermaus-junit5" }
+mannodermaus-junit5-runner = { group = "de.mannodermaus.junit5", name = "android-test-runner", version.ref = "mannodermaus-junit5" }
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "agp" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }
