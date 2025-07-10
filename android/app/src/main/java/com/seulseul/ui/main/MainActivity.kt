@@ -97,7 +97,11 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CODE_LOCATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, R.string.main_permission_location_granted, Toast.LENGTH_SHORT)
+                    Toast.makeText(
+                        this,
+                        R.string.main_permission_location_granted,
+                        Toast.LENGTH_SHORT
+                    )
                         .show()
                 } else {
                     Toast.makeText(
