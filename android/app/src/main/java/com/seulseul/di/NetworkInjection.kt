@@ -6,6 +6,7 @@ import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
+import com.seulseul.BuildConfig
 
 object NetworkInjection {
     private val contentType = "application/json".toMediaType()
@@ -19,7 +20,7 @@ object NetworkInjection {
     private val retrofit: Retrofit by lazy {
         Retrofit
             .Builder()
-            .baseUrl("baseUrl")
+            .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
@@ -29,4 +30,3 @@ object NetworkInjection {
         retrofit.create(RouteService::class.java)
     }
 }
-
