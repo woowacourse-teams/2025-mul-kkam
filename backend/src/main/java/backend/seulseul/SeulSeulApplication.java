@@ -1,4 +1,4 @@
-package backend.seul_seul;
+package backend.seulseul;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
