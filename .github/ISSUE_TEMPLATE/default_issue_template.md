@@ -1,7 +1,7 @@
 ---
 name: 이슈 템플릿
 about: 이슈 생성 시에 사용하시오
-title: [{BE/AN}][{이슈타입}]: {이슈제목}
+title: '[{BE/AN}][{이슈타입}]: {이슈제목}'
 labels: ''
 assignees: ''
 ---
