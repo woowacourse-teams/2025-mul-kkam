@@ -63,12 +63,12 @@ class MainActivity : AppCompatActivity() {
 
     private fun showNotificationPermissionDialog() {
         AlertDialog.Builder(this)
-            .setTitle(getString(R.string.permission_dialog_location_title))
-            .setMessage(getString(R.string.permission_dialog_location_message))
-            .setPositiveButton(getString(R.string.permission_dialog_location_positive_button)) { _, _ ->
+            .setTitle(getString(R.string.main_permission_dialog_location_title))
+            .setMessage(getString(R.string.main_permission_dialog_location_message))
+            .setPositiveButton(getString(R.string.main_permission_dialog_location_positive_button)) { _, _ ->
                 navigateToAppSettings()
             }
-            .setNegativeButton(getString(R.string.permission_dialog_location_negative_button)) { dialog, _ ->
+            .setNegativeButton(getString(R.string.main_permission_dialog_location_negative_button)) { dialog, _ ->
                 dialog.dismiss()
                 onRequestPermissionsResult(
                     REQUEST_CODE_LOCATION_PERMISSION,
@@ -97,12 +97,12 @@ class MainActivity : AppCompatActivity() {
         when (requestCode) {
             REQUEST_CODE_LOCATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, R.string.permission_location_granted, Toast.LENGTH_SHORT)
+                    Toast.makeText(this, R.string.main_permission_location_granted, Toast.LENGTH_SHORT)
                         .show()
                 } else {
                     Toast.makeText(
                         this,
-                        R.string.permission_location_denied,
+                        R.string.main_permission_location_denied,
                         Toast.LENGTH_SHORT
                     ).show()
                 }
