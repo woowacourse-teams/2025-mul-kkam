@@ -9,7 +9,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.viewbinding.ViewBinding
 
 open class BindingActivity<BINDING : ViewBinding>(
-    val bindingInflater: (LayoutInflater) -> BINDING,
+    private val bindingInflater: (LayoutInflater) -> BINDING,
 ) : AppCompatActivity() {
     private var _binding: BINDING? = null
     val binding get() = _binding!!
