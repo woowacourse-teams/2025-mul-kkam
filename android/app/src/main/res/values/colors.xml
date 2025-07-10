@@ -1,5 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
+    <!--    primary-->
+    <color name="primary_20">#FFE6EDF8</color>
+    <color name="primary_50">#FFB3C6E6</color>
+    <color name="primary_100">#FF4A75C2</color>
+    <color name="primary_200">#FF094AB2</color>
+
+    <!--    secondary-->
+    <color name="secondary_100">#FFFFA84C</color>
+
+    <!--    grayscale-->
+    <color name="gray_20">#FFF7F8FA</color>
+    <color name="gray_50">#FFE1E4E8</color>
+    <color name="gray_70">#FFC2C6CC</color>
+    <color name="gray_100">#FF9CA3AF</color>
+    <color name="gray_200">#FF6B7280</color>
+    <color name="gray_300">#FF374151</color>
+
     <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF111827</color>
 </resources>
