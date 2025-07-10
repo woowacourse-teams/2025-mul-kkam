@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">SeulSeul</string>
+
+    <string name="permission_dialog_location_title">위치 권한 필요</string>
+    <string name="permission_dialog_location_message">앱의 위치 기반 기능을 사용하려면 위치 권한이 필요합니다. 설정에서 권한을 허용해 주세요.</string>
+    <string name="permission_dialog_location_positive_button">설정으로 이동</string>
+    <string name="permission_dialog_location_negative_button">취소</string>
+
+    <string name="permission_location_granted">위치 권한이 허용되었습니다.</string>
+    <string name="permission_location_denied">앱의 위치 기반 기능을 사용하려면 위치 권한이 필요합니다.</string>
 </resources>
