@@ -18,6 +18,9 @@
         android:theme="@style/Theme.SeulSeul"
         tools:targetApi="31">
         <activity
+            android:name=".AddScheduleActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
