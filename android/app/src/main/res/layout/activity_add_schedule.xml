@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_add_schedule_rectangle_bottom_12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tv_header_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="18dp"
+            android:text="@string/add_schedule_title"
+            android:textAppearance="@style/headline1"
+            android:textColor="@color/white"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_header_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:text="@string/add_schedule_description"
+            android:textAppearance="@style/label2"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/tv_header_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_header_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_arrival_time_card"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_header_layout">
+
+        <ImageView
+            android:id="@+id/iv_arrival_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="19dp"
+            android:src="@drawable/ic_add_schedule_calendar"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_arrival_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_schedule_arrival_time_title"
+            android:textAppearance="@style/title3"
+            android:textColor="@color/primary_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_arrival_time_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="2025년 7월 10일 오후 6:00"
+            android:textAppearance="@style/body5"
+            android:textColor="@color/gray_300"
+            app:layout_constraintStart_toStartOf="@id/tv_arrival_time_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_arrival_time_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_departure_card"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_arrival_time_card">
+
+        <ImageView
+            android:id="@+id/ic_departure"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="22dp"
+            android:src="@drawable/ic_add_schedule_departure"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_departure_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_schedule_departure_title"
+            android:textAppearance="@style/title3"
+            android:textColor="@color/primary_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_departure_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="선릉역 2호선"
+            android:textAppearance="@style/body5"
+            android:textColor="@color/gray_300"
+            app:layout_constraintStart_toStartOf="@id/tv_departure_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_departure_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_arrival"
+        android:layout_width="match_parent"
+        android:layout_height="74dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_departure_card">
+
+        <ImageView
+            android:id="@+id/ic_arrival"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="22dp"
+            android:src="@drawable/ic_add_schedule_arrival"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tv_arrival_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_schedule_arrival_title"
+            android:textAppearance="@style/title3"
+            android:textColor="@color/primary_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_arrival_description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="잠실역 2호선"
+            android:textAppearance="@style/body5"
+            android:textColor="@color/gray_100"
+            app:layout_constraintStart_toStartOf="@id/tv_arrival_title"
+            app:layout_constraintTop_toBottomOf="@id/tv_arrival_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_preparation_time"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/cl_margin_time"
+        app:layout_constraintTop_toBottomOf="@id/cl_arrival">
+
+        <ImageView
+            android:id="@+id/ic_preparation_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_add_schedule_preparation_time"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_preparation_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="33dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_schedule_preparation_time_title"
+            android:textAppearance="@style/title3"
+            android:textColor="@color/primary_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_preparation_time_minus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="13dp"
+            android:src="@drawable/btn_add_schedule_minus"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_preparation_time_title" />
+
+        <TextView
+            android:id="@+id/tv_preparation_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15분"
+            android:textAppearance="@style/body5"
+            android:textColor="@color/gray_300"
+            app:layout_constraintBottom_toBottomOf="@id/iv_preparation_time_minus"
+            app:layout_constraintEnd_toStartOf="@id/iv_preparation_time_plus"
+            app:layout_constraintStart_toEndOf="@id/iv_preparation_time_minus"
+            app:layout_constraintTop_toTopOf="@id/iv_preparation_time_minus" />
+
+        <ImageView
+            android:id="@+id/iv_preparation_time_plus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/btn_add_schedule_plus"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_preparation_time_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_margin_time"
+        android:layout_width="0dp"
+        android:layout_height="90dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        app:layout_constraintStart_toEndOf="@id/cl_preparation_time"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cl_arrival">
+
+        <ImageView
+            android:id="@+id/ic_margin_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/ic_add_schedule_timer"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_margin_time_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="33dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/add_schedule_margin_time_title"
+            android:textAppearance="@style/title3"
+            android:textColor="@color/primary_200"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_margin_time_minus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="13dp"
+            android:src="@drawable/btn_add_schedule_minus"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_margin_time_title" />
+
+        <TextView
+            android:id="@+id/tv_margin_time"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15분"
+            android:textAppearance="@style/body5"
+            android:textColor="@color/gray_300"
+            app:layout_constraintBottom_toBottomOf="@id/iv_margin_time_minus"
+            app:layout_constraintEnd_toStartOf="@id/iv_margin_time_plus"
+            app:layout_constraintStart_toEndOf="@id/iv_margin_time_minus"
+            app:layout_constraintTop_toTopOf="@id/iv_margin_time_minus" />
+
+        <ImageView
+            android:id="@+id/iv_margin_time_plus"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="13dp"
+            android:layout_marginEnd="24dp"
+            android:src="@drawable/btn_add_schedule_plus"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_margin_time_title" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="20dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/bg_add_schedule_rectangle_8dp"
+        android:backgroundTint="@color/primary_200"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add_schedule_find_route"
+            android:textAppearance="@style/title2"
+            android:textColor="@color/white"/>
+        
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:src="@drawable/ic_add_schedule_paper_plane"/>
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

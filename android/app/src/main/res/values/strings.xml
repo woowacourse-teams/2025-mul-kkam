@@ -8,4 +8,13 @@
 
     <string name="main_permission_location_granted">위치 권한이 허용되었습니다.</string>
     <string name="main_permission_location_denied">앱의 위치 기반 기능을 사용하려면 위치 권한이 필요합니다.</string>
+
+    <string name="add_schedule_title">일정 추가</string>
+    <string name="add_schedule_description">일정에 따라 최적의 경로와 출발 시간을 찾아드려요</string>
+    <string name="add_schedule_arrival_time_title">도착일시</string>
+    <string name="add_schedule_departure_title">출발지</string>
+    <string name="add_schedule_arrival_title">도착지</string>
+    <string name="add_schedule_preparation_time_title">준비시간</string>
+    <string name="add_schedule_margin_time_title">여유시간</string>
+    <string name="add_schedule_find_route">최적 경로 찾기</string>
 </resources>
