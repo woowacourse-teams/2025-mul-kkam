@@ -12,11 +12,13 @@ import okhttp3.logging.HttpLoggingInterceptor
 object NetworkInjection {
     private val contentType = "application/json".toMediaType()
 
-    private val okHttpClient: OkHttpClient by lazy {
-        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+    private val httpLoggingInterceptor: HttpLoggingInterceptor by lazy {
+        HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+    }
 
+    private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient
             .Builder()
             .addInterceptor(httpLoggingInterceptor)
