@@ -6,18 +6,33 @@ plugins {
 
 android {
     namespace = "com.seulseul"
-    compileSdk = libs.versions.targetSdk.get().toInt()
+    compileSdk =
+        libs.versions.targetSdk
+            .get()
+            .toInt()
 
     defaultConfig {
         applicationId = "com.seulseul"
-        minSdk = libs.versions.minSdk.get().toInt()
-        targetSdk = libs.versions.targetSdk.get().toInt()
-        versionCode = libs.versions.versionCode.get().toInt()
+        minSdk =
+            libs.versions.minSdk
+                .get()
+                .toInt()
+        targetSdk =
+            libs.versions.targetSdk
+                .get()
+                .toInt()
+        versionCode =
+            libs.versions.versionCode
+                .get()
+                .toInt()
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
+
+        // TODO: 네트워크 세팅 시 여기에 실제 BASE_URL을 반드시 입력해야 합니다
+        buildConfigField("String", "BASE_URL", "base url")
     }
 
     buildTypes {
@@ -25,9 +40,13 @@ android {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
+    }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -71,4 +90,3 @@ dependencies {
     // Instrumented 테스트 런타임 전용 의존성
     androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
 }
-
