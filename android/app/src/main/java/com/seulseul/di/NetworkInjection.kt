@@ -7,13 +7,19 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import com.seulseul.BuildConfig
+import okhttp3.logging.HttpLoggingInterceptor
 
 object NetworkInjection {
     private val contentType = "application/json".toMediaType()
 
     private val okHttpClient: OkHttpClient by lazy {
+        val httpLoggingInterceptor = HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        }
+
         OkHttpClient
             .Builder()
+            .addInterceptor(httpLoggingInterceptor)
             .build()
     }
 
