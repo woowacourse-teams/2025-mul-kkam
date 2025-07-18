@@ -29,10 +29,8 @@ public class Member {
     private MemberNickname memberNickname;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = true)
     private Gender gender;
 
-    @Column(nullable = true)
     private Integer weight;
 
     @Column(nullable = false)

@@ -24,8 +24,8 @@ public class Cup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
     @Embedded
