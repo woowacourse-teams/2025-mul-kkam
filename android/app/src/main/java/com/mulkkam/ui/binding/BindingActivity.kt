@@ -17,6 +17,7 @@ open class BindingActivity<BINDING : ViewBinding>(
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingInflater(layoutInflater)
+        setContentView(binding.root)
         enableEdgeToEdge()
         initViewPadding()
     }
