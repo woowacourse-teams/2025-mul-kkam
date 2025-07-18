@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.android.junit5)
@@ -32,8 +34,7 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
-        // TODO: 네트워크 세팅 시 여기에 실제 BASE_URL을 반드시 입력해야 합니다
-        buildConfigField("String", "BASE_URL", "base url")
+        buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir, providers).getProperty("base.url"))
     }
 
     buildTypes {
