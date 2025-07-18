@@ -1,4 +1,4 @@
-package com.seulseul
+package com.mulkkam
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate

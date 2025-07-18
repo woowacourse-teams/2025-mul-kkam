@@ -8,14 +8,14 @@ plugins {
 }
 
 android {
-    namespace = "com.seulseul"
+    namespace = "com.mulkkam"
     compileSdk =
         libs.versions.targetSdk
             .get()
             .toInt()
 
     defaultConfig {
-        applicationId = "com.seulseul"
+        applicationId = "com.mulkkam"
         minSdk =
             libs.versions.minSdk
                 .get()
