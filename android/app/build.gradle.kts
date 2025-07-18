@@ -90,4 +90,7 @@ dependencies {
 
     // Instrumented 테스트 런타임 전용 의존성
     androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
+
+    // 이미지 로딩 및 캐싱 라이브러리
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
