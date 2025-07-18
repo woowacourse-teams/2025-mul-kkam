@@ -19,7 +19,7 @@ jobs:
     
     - name: Add Local Properties
       env:
-        BASE_URl: ${{secrets.BASE_URL}}
+        BASE_URL: ${{secrets.BASE_URL}}
       run:
         echo base.url=\"$_BASE_URL\" >> ./local.properties
     
