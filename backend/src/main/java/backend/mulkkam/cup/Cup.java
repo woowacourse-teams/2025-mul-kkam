@@ -30,8 +30,8 @@ public class Cup {
 
     @Embedded
     @AttributeOverride(
-            name = "content",
-            column = @Column(nullable = false, length = 5)
+            name = "value",
+            column = @Column(name = "nickname", nullable = false, length = 5)
     )
     private CupNickname nickname;
 

@@ -23,8 +23,8 @@ public class Member {
 
     @Embedded
     @AttributeOverride(
-            name = "content",
-            column = @Column(nullable = false, unique = true, length = 10)
+            name = "value",
+            column = @Column(name = "nickname", nullable = false, unique = true, length = 10)
     )
     private MemberNickname memberNickname;
 
