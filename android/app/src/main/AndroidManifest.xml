@@ -5,12 +5,8 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
     <application
-        android:name=".SeulSeulApp"
+        android:name=".MulKkamApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -19,7 +15,7 @@
         android:networkSecurityConfig="@xml/network_security_config"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SeulSeul"
+        android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
         <activity
             android:name=".ui.main.MainActivity"

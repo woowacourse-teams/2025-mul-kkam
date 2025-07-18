@@ -21,5 +21,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SeulSeul"
+rootProject.name = "MulKkam"
 include(":app")

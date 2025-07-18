@@ -1,8 +1,7 @@
-package com.seulseul.di
+package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.seulseul.BuildConfig
-import com.seulseul.data.remote.service.RouteService
+import com.mulkkam.BuildConfig
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -32,9 +31,5 @@ object NetworkInjection {
             .client(okHttpClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
-    }
-
-    val routeService: RouteService by lazy {
-        retrofit.create(RouteService::class.java)
     }
 }
