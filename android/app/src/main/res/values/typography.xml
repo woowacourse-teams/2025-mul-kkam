@@ -2,8 +2,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools" tools:ignore="SpUsage">
     <style name="headline1">
         <item name="fontFamily">@font/pretendard_bold</item>
-        <item name="android:textSize">20dp</item>
-        <item name="lineHeight">28dp</item>
+        <item name="android:textSize">22dp</item>
+        <item name="lineHeight">30dp</item>
     </style>
 
     <style name="title1">
@@ -62,7 +62,7 @@
 
     <style name="label2">
         <item name="fontFamily">@font/pretendard_medium</item>
-        <item name="android:textSize">10dp</item>
-        <item name="lineHeight">10dp</item>
+        <item name="android:textSize">11dp</item>
+        <item name="lineHeight">11dp</item>
     </style>
 </resources>
