@@ -1,10 +1,10 @@
 name: Android CI
 
 on:
-  push:
-    branches: [ "develop" ]
   pull_request:
     branches: [ "develop" ]
+    paths:
+      - 'android/**'
 
 jobs:
   build:
@@ -16,6 +16,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    
     - name: set up JDK 21
       uses: actions/setup-java@v4
       with:
@@ -25,9 +26,12 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+      
     - name: Build with Gradle
       run: ./gradlew build
+      
     - name: Check ktlint format
       run: ./gradlew ktlintCheck
+      
     - name: Perform Gradle Test
       run: ./gradlew clean test
