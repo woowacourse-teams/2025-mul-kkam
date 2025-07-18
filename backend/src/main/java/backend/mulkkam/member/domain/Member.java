@@ -1,5 +1,6 @@
 package backend.mulkkam.member.domain;
 
+import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import jakarta.persistence.AttributeOverride;
@@ -35,6 +36,7 @@ public class Member {
 
     private Integer weight;
 
-    @Column(nullable = false)
-    private Integer targetAmount;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
+    private Amount targetAmount;
 }
