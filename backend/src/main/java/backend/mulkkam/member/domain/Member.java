@@ -1,6 +1,7 @@
 package backend.mulkkam.member.domain;
 
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -25,7 +26,7 @@ public class Member {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", nullable = false, unique = true, length = 10)
+            column = @Column(name = "nickname", nullable = false, unique = true, length = MemberNickname.MAX_LENGTH)
     )
     private MemberNickname memberNickname;
 

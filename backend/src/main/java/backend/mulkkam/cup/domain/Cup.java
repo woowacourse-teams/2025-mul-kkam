@@ -32,7 +32,7 @@ public class Cup {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", nullable = false, length = 5)
+            column = @Column(name = "nickname", nullable = false, length = CupNickname.MAX_LENGTH)
     )
     private CupNickname nickname;
 
