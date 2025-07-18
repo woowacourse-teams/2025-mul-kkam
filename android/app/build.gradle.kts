@@ -92,5 +92,8 @@ dependencies {
     androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
 
     // 이미지 로딩 및 캐싱 라이브러리
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.glide)
+
+    // 차트 라이브러리
+    implementation(libs.mpandroidchart)
 }
