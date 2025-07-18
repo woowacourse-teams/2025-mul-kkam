@@ -1,4 +1,5 @@
 [versions]
+glide = "4.16.0"
 minSdk = "28"
 targetSdk = "36"
 versionCode = "1"
@@ -22,6 +23,7 @@ junit-jupiter = "5.12.0"
 kotest-runner-junit5 = "5.9.1"
 mannodermaus-junit5 = "1.7.0"
 android-junit5 = "1.12.0.0"
+mpandroidchart = "v3.1.0"
 
 [libraries]
 # AndroidX 및 UI
@@ -50,7 +52,14 @@ kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", ver
 mannodermaus-junit5-core = { group = "de.mannodermaus.junit5", name = "android-test-core", version.ref = "mannodermaus-junit5" }
 mannodermaus-junit5-runner = { group = "de.mannodermaus.junit5", name = "android-test-runner", version.ref = "mannodermaus-junit5" }
 
+# 이미지 로딩
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+
+# 차트
+mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchart" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
