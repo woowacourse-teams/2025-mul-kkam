@@ -1,4 +1,4 @@
-package backend.mulkkam.member;
+package backend.mulkkam.member.domain;
 
 import jakarta.persistence.Embeddable;
 

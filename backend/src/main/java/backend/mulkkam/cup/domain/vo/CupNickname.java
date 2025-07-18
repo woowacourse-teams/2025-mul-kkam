@@ -1,4 +1,4 @@
-package backend.mulkkam.cup;
+package backend.mulkkam.cup.domain.vo;
 
 import jakarta.persistence.Embeddable;
 

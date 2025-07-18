@@ -1,40 +1,39 @@
-package backend.mulkkam.cup;
+package backend.mulkkam.member.domain;
 
-
-import backend.mulkkam.member.Member;
+import backend.mulkkam.member.domain.vo.Gender;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @Getter
 @Entity
-public class Cup {
+public class Member {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(nullable = false)
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Member member;
-
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", nullable = false, length = 5)
+            column = @Column(name = "nickname", nullable = false, unique = true, length = 10)
     )
-    private CupNickname nickname;
+    private MemberNickname memberNickname;
+
+    @Enumerated(value = EnumType.STRING)
+    private Gender gender;
+
+    private Integer weight;
 
     @Column(nullable = false)
-    private Integer amount;
+    private Integer targetAmount;
 }
