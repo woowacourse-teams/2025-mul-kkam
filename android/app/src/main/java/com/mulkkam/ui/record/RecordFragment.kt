@@ -70,7 +70,7 @@ class RecordFragment :
         val entries =
             listOf(
                 PieEntry(goalRate),
-                PieEntry(100f - goalRate),
+                PieEntry(MAX_PERCENTAGE - goalRate),
             )
 
         val colors =
@@ -106,6 +106,8 @@ class RecordFragment :
     }
 
     companion object {
+        private const val MAX_PERCENTAGE: Float = 100f
+
         val WEEKLY_WATER_INTAKE: List<DailyWaterIntake> =
             listOf(
                 DailyWaterIntake(
