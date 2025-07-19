@@ -6,11 +6,11 @@ import jakarta.persistence.Embeddable;
 public record CupNickname(
         String value
 ) {
+
     public static final int MAX_LENGTH = 5;
-    public static final int MIN_LENGTH = 1;
 
     public CupNickname {
-        if (value.length() < MIN_LENGTH || value.length() > MAX_LENGTH) {
+        if (value.isEmpty() || value.length() > MAX_LENGTH) {
             throw new IllegalArgumentException("컵 이름 형식이 올바르지 않습니다.");
         }
     }
