@@ -9,10 +9,10 @@ import com.mulkkam.domain.WaterRecord
 class WaterRecordViewHolder(
     private val binding: ItemWaterRecordBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(waterLog: WaterRecord) {
+    fun bind(waterRecord: WaterRecord) {
         with(binding) {
-            tvDrinkTime.text = waterLog.time.toString()
-            tvDrinkAmount.text = waterLog.intakeAmount.toString()
+            tvDrinkTime.text = waterRecord.time.toString()
+            tvDrinkAmount.text = waterRecord.intakeAmount.toString()
         }
     }
 

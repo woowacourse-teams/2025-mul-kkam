@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MulKkam</string>
 
-    <string name="record_water_log_label">최근 기록</string>
+    <string name="record_water_record_label">최근 기록</string>
 </resources>
