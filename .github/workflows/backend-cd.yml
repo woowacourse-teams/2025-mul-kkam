@@ -1,4 +1,5 @@
 name: backend-cd.yml
+
 on:
   push:
     branches: [ "feat/40" ]
@@ -7,36 +8,37 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
 
     steps:
-      - name: SSH into EC2 and Deploy
-        uses: appleboy/ssh-action@v1.0.0
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
         with:
-          host: ${{ secrets.EC2_HOST }}
-          username: ${{ secrets.EC2_USER }}
-          key: ${{ secrets.EC2_SSH_KEY }}
-          script: |
-            cd ~/2025-seul-seul/backend
+          distribution: 'temurin'
+          java-version: '21'
 
-            echo "Pulling latest changes..."
-            git checkout feat/40
-            git pull origin feat/40
+      - name: Grant execute permission to gradlew
+        run: chmod +x ./backend/gradlew
 
-            echo "Building project..."
-            chmod +x ./backend/gradlew
-            ./backend/gradlew clean build -x test
+      - name: Build project
+        run: ./backend/gradlew clean build -x test
 
-            echo "Killing existing app if running..."
-            PID=$(pgrep -f 'backend.*\.jar')
-            if [ -n "$PID" ]; then
-              kill -9 $PID
-            fi
+      - name: Kill existing app (if running)
+        run: |
+          PID=$(pgrep -f 'backend.*\.jar')
+          if [ -n "$PID" ]; then
+            echo "Killing PID $PID"
+            kill -9 $PID
+          fi
 
-            echo "Starting new app"
-            JAR_FILE=$(ls ./backend/build/libs/*.jar | grep -v 'plain' | head -n 1)
-            nohup java -Dspring.profiles.active=dev -jar "$JAR_FILE" \
-              --spring.datasource.url=${{ secrets.DATASOURCE_URL }} \
-              --spring.datasource.username=${{ secrets.DATASOURCE_USERNAME }} \
-              --spring.datasource.password=${{ secrets.DATASOURCE_PASSWORD }} \
-              > app.log 2>&1 &
+      - name: Run new app in background
+        run: |
+          JAR_FILE=$(ls ./backend/build/libs/*.jar | grep -v 'plain' | head -n 1)
+          nohup java -Dspring.profiles.active=dev -jar "$JAR_FILE" \
+            --spring.datasource.url=${{ secrets.DATASOURCE_URL }} \
+            --spring.datasource.username=${{ secrets.DATASOURCE_USERNAME }} \
+            --spring.datasource.password=${{ secrets.DATASOURCE_PASSWORD }} \
+            > app.log 2>&1 &
