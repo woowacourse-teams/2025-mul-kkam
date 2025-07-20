@@ -18,8 +18,6 @@ class CupNicknameTest {
         @ParameterizedTest
         @ValueSource(strings = {"1", "22", "333", "4444", "55555"})
         void success_nameLengthLessThan5(String input) {
-            // given
-
             // when & then
             assertThatCode(() -> {
                 new CupNickname(input);
@@ -30,8 +28,6 @@ class CupNicknameTest {
         @ParameterizedTest
         @ValueSource(strings = {"", "666666"})
         void error_nameLengthOutOfRange(String input) {
-            // given
-
             // when & then
             assertThatThrownBy(() -> {
                 new CupNickname(input);
