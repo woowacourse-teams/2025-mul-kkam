@@ -36,9 +36,9 @@ class RecordFragment :
 
     private fun initRecordAdapter(waterRecords: List<WaterRecord>) {
         recordAdapter = RecordAdapter(waterRecords)
-        with(binding) {
-            rvWaterRecord.adapter = recordAdapter
-            rvWaterRecord.layoutManager = LinearLayoutManager(requireContext())
+        with(binding.rvWaterRecord) {
+            adapter = recordAdapter
+            layoutManager = LinearLayoutManager(requireContext())
         }
     }
 
