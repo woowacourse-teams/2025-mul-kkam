@@ -22,20 +22,21 @@ class RecordFragment :
     BindingFragment<FragmentRecordBinding>(
         FragmentRecordBinding::inflate,
     ) {
-    private lateinit var recordAdapter: RecordAdapter
+    private val recordAdapter: RecordAdapter by lazy {
+        RecordAdapter(WATER_RECORD)
+    }
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initRecordAdapter(WATER_RECORD)
+        initRecordAdapter()
         initWeeklyWaterChart(WEEKLY_WATER_INTAKE)
         updateDailyWaterChart(DAILY_WATER_INTAKE)
     }
 
-    private fun initRecordAdapter(waterRecords: List<WaterRecord>) {
-        recordAdapter = RecordAdapter(waterRecords)
+    private fun initRecordAdapter() {
         with(binding.rvWaterRecord) {
             adapter = recordAdapter
             layoutManager = LinearLayoutManager(requireContext())
