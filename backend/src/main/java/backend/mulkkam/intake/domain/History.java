@@ -17,8 +17,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
 @Entity
 public class History {
 
