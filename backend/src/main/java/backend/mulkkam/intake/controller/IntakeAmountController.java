@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 
 @RestController
-@RequestMapping("/intake-amount")
+@RequestMapping("/intake")
 public class IntakeAmountController {
 
-    @GetMapping
+    @GetMapping("/history")
     public void get(
             @RequestParam("from") LocalDate from,
             @RequestParam("to") LocalDate to
@@ -21,17 +21,17 @@ public class IntakeAmountController {
 
     }
 
-    @GetMapping("/recommended")
+    @GetMapping("/amount/recommended")
     public void getRecommended() {
 
     }
 
-    @PutMapping("/target")
+    @PutMapping("/amount/target")
     public void updateTarget() {
 
     }
 
-    @PostMapping
+    @PostMapping("/history")
     public void create() {
 
     }
