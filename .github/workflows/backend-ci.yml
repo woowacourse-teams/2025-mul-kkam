@@ -59,5 +59,5 @@ jobs:
       - name: Run tests
         run: |
           echo "running test"
-          ./gradlew test -Dspring.profiles.active=test
+          ./gradlew test
         working-directory: ./backend
