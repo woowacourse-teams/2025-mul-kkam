@@ -12,7 +12,7 @@ class AmountTest {
     
     @Nested
     @DisplayName("생성자 검증")
-    class newAmount {
+    class NewAmount {
         
         @DisplayName("올바른 음수량을 입력할 수 있다.")
         @ParameterizedTest
