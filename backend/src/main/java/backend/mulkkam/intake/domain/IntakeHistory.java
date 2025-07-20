@@ -20,7 +20,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor
 @Entity
-public class History {
+public class IntakeHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
