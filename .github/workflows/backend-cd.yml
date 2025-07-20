@@ -21,10 +21,12 @@ jobs:
           java-version: '21'
 
       - name: Grant execute permission to gradlew
-        run: chmod +x ./backend/gradlew
+        run: chmod +x gradlew
+        working-directory: ./backend
 
       - name: Build project
-        run: ./backend/gradlew clean build -x test
+        run: ./gradlew clean build -x test
+        working-directory: ./backend
 
       - name: Kill existing app (if running)
         run: |
