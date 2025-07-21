@@ -13,6 +13,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentRecordBinding
 import com.mulkkam.domain.DailyWaterIntake
 import com.mulkkam.domain.WaterRecord
+import com.mulkkam.domain.WaterRecords
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.record.adapter.RecordAdapter
 import java.time.LocalDate
@@ -33,7 +34,7 @@ class RecordFragment :
         super.onViewCreated(view, savedInstanceState)
         initRecordAdapter()
         initWeeklyWaterChart(WEEKLY_WATER_INTAKE)
-        updateDailyWaterChart(DAILY_WATER_INTAKE)
+        initDailyWaterChart(WEEKLY_WATER_INTAKE.get(index = 1))
     }
 
     private fun initRecordAdapter() {
@@ -62,9 +63,16 @@ class RecordFragment :
                 return@forEachIndexed
             }
 
-            chart.data = createPieData(intake.goalRate)
-            updateChart(chart)
+            updateWeeklyChart(chart, intake)
+            initChartOptions(chart)
         }
+    }
+
+    private fun updateWeeklyChart(
+        chart: PieChart,
+        intake: DailyWaterIntake,
+    ) {
+        chart.data = createPieData(intake.goalRate)
     }
 
     private fun createPieData(goalRate: Float): PieData {
@@ -89,7 +97,7 @@ class RecordFragment :
         return PieData(dataSet)
     }
 
-    private fun updateChart(chart: PieChart) {
+    private fun initChartOptions(chart: PieChart) {
         chart.apply {
             description.isEnabled = false
             legend.isEnabled = false
@@ -100,10 +108,15 @@ class RecordFragment :
         }
     }
 
+    private fun initDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
+        val pieChart = binding.pcDailyWaterChart
+        initChartOptions(pieChart)
+        updateDailyWaterChart(dailyWaterIntake)
+    }
+
     private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
         val pieChart = binding.pcDailyWaterChart
         pieChart.data = createPieData(dailyWaterIntake.goalRate)
-        updateChart(pieChart)
     }
 
     companion object {
