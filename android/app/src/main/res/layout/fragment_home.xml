@@ -60,7 +60,7 @@
         android:src="@drawable/ic_home_drink"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.FloatingActionButton"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Fab.Rounded"
         app:tint="@null" />
 
     <TextView
