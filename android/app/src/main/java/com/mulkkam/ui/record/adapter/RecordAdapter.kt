@@ -5,8 +5,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.WaterRecord
 
 class RecordAdapter(
-    private val waterRecords: List<WaterRecord>,
+    waterRecords: List<WaterRecord>,
 ) : RecyclerView.Adapter<WaterRecordViewHolder>() {
+    private val waterRecords: MutableList<WaterRecord> = waterRecords.toMutableList()
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
