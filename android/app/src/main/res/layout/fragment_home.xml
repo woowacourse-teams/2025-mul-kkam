@@ -22,13 +22,12 @@
         android:layout_height="wrap_content"
         android:paddingHorizontal="48dp"
         android:max="100"
-        android:progress="50"
+        tools:progress="50"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/iv_home_character"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.5"
-        />
+        app:layout_constraintVertical_bias="0.5" />
 
     <ImageView
         android:id="@+id/iv_home_character"
