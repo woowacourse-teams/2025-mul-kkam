@@ -4,11 +4,14 @@ server:
 
 spring:
   datasource:
-    url: ${{ secrets.DATASOURCE_URL }}
-    username: ${{ secrets.DATASOURCE_USERNAME }}
-    password: ${{ secrets.DATASOURCE_PASSWORD }}
+    url: ${secrets.DATASOURCE_URL}
+    username: ${secrets.DATASOURCE_USERNAME}
+    password: ${secrets.DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: update
+  data:
+    jdbc:
+      dialect: mysql
