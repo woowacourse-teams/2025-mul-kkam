@@ -91,11 +91,9 @@ class RecordFragment :
             )
 
         pieCharts.forEachIndexed { index, chart ->
-            val intake = weeklyWaterIntake.getOrNull(index)
-            if (intake == null) {
-                chart.clear()
-                return@forEachIndexed
-            }
+            val intake =
+                weeklyWaterIntake.getOrNull(index)
+                    ?: DailyWaterIntake.getEmptyIntake(weeklyWaterIntake.first().date.plusDays(index.toLong()))
 
             chart.setOnClickListener {
                 viewModel.updateDailyWaterIntake(intake)
