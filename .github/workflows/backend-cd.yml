@@ -55,7 +55,7 @@ jobs:
         run: |
           if [ "$(docker ps -q -f name=backend-app)" ]; then
             docker stop backend-app
-            docker rm backend-app
+            docker rm -f backend-app
           fi
 
       - name: Pull latest image
