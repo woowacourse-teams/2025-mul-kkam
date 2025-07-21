@@ -7,6 +7,7 @@
     tools:context=".ui.home.HomeFragment">
 
     <ImageView
+        android:id="@+id/iv_home_notification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
@@ -15,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/pb_home_water_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,6 +63,7 @@
         app:tint="@null" />
 
     <TextView
+        android:id="@+id/tv_home_drink_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
