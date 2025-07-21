@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AmountTest {
     
     @Nested
-    @DisplayName("생성자 검증")
+    @DisplayName("생성자 검증 시에")
     class NewAmount {
         
         @DisplayName("올바른 음수량을 입력할 수 있다.")
