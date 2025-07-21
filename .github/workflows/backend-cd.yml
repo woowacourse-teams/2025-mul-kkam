@@ -65,7 +65,7 @@ jobs:
         run: |
           docker run -d \
             --name backend-app \
-            -p 80:8080 \
+            -p 80:80 \
             -e SPRING_DATASOURCE_URL="${{ secrets.DATASOURCE_URL }}" \
             -e SPRING_DATASOURCE_USERNAME="${{ secrets.DATASOURCE_USERNAME }}" \
             -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DATASOURCE_PASSWORD }}" \
