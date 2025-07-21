@@ -26,6 +26,7 @@ class RecordFragment :
     private val recordAdapter: RecordAdapter by lazy {
         RecordAdapter(WATER_RECORD[1].waterRecords)
     }
+    private val viewModel by lazy { RecordViewModel() }
 
     override fun onViewCreated(
         view: View,
