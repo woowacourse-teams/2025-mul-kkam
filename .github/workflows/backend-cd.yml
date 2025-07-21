@@ -61,19 +61,19 @@ jobs:
       - name: Pull latest image
         run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:latest
 
-      - name: Run new container
+      - name: Create .env file
         run: |
-          docker run -d \
-            --name backend-app \
-            --network mulkkam-net \
-            -p 80:80 \
-            -e SPRING_PROFILES_ACTIVE=dev \
-            -e SPRING_DATASOURCE_URL="${{ secrets.DATASOURCE_URL }}" \
-            -e SPRING_DATASOURCE_USERNAME="${{ secrets.DATASOURCE_USERNAME }}" \
-            -e SPRING_DATASOURCE_PASSWORD="${{ secrets.DATASOURCE_PASSWORD }}" \
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:latest
+          echo "MYSQL_ROOT_PASSWORD=root" > ./backend/.env
+          echo "SPRING_PROFILES_ACTIVE=dev" >> ./backend/.env
+          echo "SPRING_DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ./backend/.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ./backend/.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ./backend/.env
 
-      - name: Clean up old Docker images
-        run: |
-          docker image prune -f
-          docker system prune -f
+
+      - name: Stop existing services
+        run: docker compose down
+        working-directory: ./backend
+
+      - name: Start new services
+        run: docker compose up -d
+        working-directory: ./backend
