@@ -18,14 +18,17 @@
     <ProgressBar
         android:id="@+id/pb_home_water_progress"
         style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:max="100"
         android:paddingHorizontal="48dp"
+        android:max="100"
         android:progress="50"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@id/iv_home_character"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.5"
+        />
 
     <ImageView
         android:id="@+id/iv_home_character"
