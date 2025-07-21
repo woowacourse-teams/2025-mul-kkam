@@ -4,15 +4,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController("/cups")
 public class CupController {
 
-    @GetMapping("/cups")
+    @GetMapping
     public void read() {
 
     }
 
-    @PostMapping("/cup")
+    @PostMapping
     public void create() {
 
     }
