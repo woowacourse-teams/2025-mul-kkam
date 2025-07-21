@@ -63,11 +63,11 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "MYSQL_ROOT_PASSWORD=root" > ./backend/.env
-          echo "SPRING_PROFILES_ACTIVE=dev" >> ./backend/.env
-          echo "SPRING_DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ./backend/.env
-          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ./backend/.env
-          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ./backend/.env
+          echo "MYSQL_ROOT_PASSWORD=root" > ~/mulkkam/.env
+          echo "SPRING_PROFILES_ACTIVE=dev" >> ~/mulkkam/.env
+          echo "SPRING_DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
 
 
       - name: Stop existing services
