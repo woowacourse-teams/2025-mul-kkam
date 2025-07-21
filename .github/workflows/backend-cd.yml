@@ -72,8 +72,8 @@ jobs:
 
       - name: Stop existing services
         run: docker compose down
-        working-directory: ./backend
+        working-directory: ~/mulkkam
 
       - name: Start new services
         run: docker compose up -d
-        working-directory: ./backend
+        working-directory: ~/mulkkam
