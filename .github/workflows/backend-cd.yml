@@ -53,7 +53,7 @@ jobs:
     steps:
       - name: Stop and remove existing container
         run: |
-          if [ "$(docker ps -q -f name=backend-app)" ]; then
+          if [ "$(docker ps -a -q -f name=backend-app)" ]; then
             docker stop backend-app
             docker rm -f backend-app
           fi
