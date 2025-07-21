@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SeulSeulApplication {
+public class MulKkamApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(SeulSeulApplication.class, args);
-        
-    }
+	public static void main(String[] args) {
+		SpringApplication.run(MulKkamApplication.class, args);
+	}
+
 }
