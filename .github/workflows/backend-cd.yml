@@ -65,6 +65,7 @@ jobs:
         run: |
           docker run -d \
             --name backend-app \
+            --network mulkkam-net \
             -p 80:80 \
             -e SPRING_PROFILES_ACTIVE=dev \
             -e SPRING_DATASOURCE_URL="${{ secrets.DATASOURCE_URL }}" \
