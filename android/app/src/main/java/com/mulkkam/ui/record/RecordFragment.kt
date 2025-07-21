@@ -72,6 +72,11 @@ class RecordFragment :
         chart: PieChart,
         intake: DailyWaterIntake,
     ) {
+        chart.setOnClickListener {
+            updateDailyWaterChart(intake)
+            recordAdapter.changeItems(WATER_RECORD.find { it.date == intake.date }?.waterRecords ?: listOf())
+        }
+
         chart.data = createPieData(intake.goalRate)
     }
 
