@@ -58,7 +58,6 @@
         android:layout_marginBottom="48dp"
         android:backgroundTint="@color/white"
         android:src="@drawable/ic_home_drink"
-        app:fabSize="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.FloatingActionButton"
