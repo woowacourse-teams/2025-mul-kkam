@@ -23,7 +23,7 @@ class RecordFragment :
         FragmentRecordBinding::inflate,
     ) {
     private val recordAdapter: RecordAdapter by lazy {
-        RecordAdapter(WATER_RECORD)
+        RecordAdapter(WATER_RECORD[1].waterRecords)
     }
 
     override fun onViewCreated(
@@ -113,85 +113,116 @@ class RecordFragment :
             listOf(
                 DailyWaterIntake(
                     1,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 21),
                     1200,
                     500,
                     10f,
                 ),
                 DailyWaterIntake(
                     2,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 22),
                     1200,
                     500,
                     20f,
                 ),
                 DailyWaterIntake(
                     3,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 23),
                     1200,
                     500,
                     30f,
                 ),
                 DailyWaterIntake(
                     4,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 24),
                     1200,
                     500,
                     40f,
                 ),
                 DailyWaterIntake(
                     5,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 25),
                     1200,
                     500,
                     50f,
                 ),
                 DailyWaterIntake(
                     6,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 26),
                     1200,
                     500,
                     60f,
                 ),
                 DailyWaterIntake(
                     7,
-                    LocalDate.now(),
+                    LocalDate.of(2025, 7, 27),
                     1200,
                     500,
                     70f,
                 ),
             )
 
-        val DAILY_WATER_INTAKE: DailyWaterIntake =
-            DailyWaterIntake(
-                1,
-                LocalDate.now(),
-                1200,
-                500,
-                50f,
-            )
-
-        val WATER_RECORD: List<WaterRecord> =
+        val WATER_RECORD: List<WaterRecords> =
             listOf(
-                WaterRecord(
-                    1,
-                    LocalTime.now(),
-                    100,
+                WaterRecords(
+                    LocalDate.of(2025, 7, 21),
+                    listOf(
+                        WaterRecord(
+                            1,
+                            LocalTime.now(),
+                            100,
+                        ),
+                        WaterRecord(
+                            1,
+                            LocalTime.now(),
+                            200,
+                        ),
+                    ),
                 ),
-                WaterRecord(
-                    2,
-                    LocalTime.now(),
-                    100,
+                WaterRecords(
+                    LocalDate.of(2025, 7, 22),
+                    listOf(
+                        WaterRecord(
+                            2,
+                            LocalTime.now(),
+                            100,
+                        ),
+                        WaterRecord(
+                            2,
+                            LocalTime.now(),
+                            100,
+                        ),
+                        WaterRecord(
+                            2,
+                            LocalTime.now(),
+                            100,
+                        ),
+                    ),
                 ),
-                WaterRecord(
-                    3,
-                    LocalTime.now(),
-                    100,
+                WaterRecords(
+                    LocalDate.of(2025, 7, 23),
+                    listOf(
+                        WaterRecord(
+                            3,
+                            LocalTime.now(),
+                            300,
+                        ),
+                    ),
                 ),
-                WaterRecord(
-                    4,
-                    LocalTime.now(),
-                    100,
+                WaterRecords(
+                    LocalDate.of(2025, 7, 24),
+                    listOf(
+                        WaterRecord(
+                            4,
+                            LocalTime.now(),
+                            400,
+                        ),
+                        WaterRecord(
+                            4,
+                            LocalTime.now(),
+                            400,
+                        ),
+                    ),
                 ),
             )
     }
