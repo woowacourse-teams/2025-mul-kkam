@@ -20,4 +20,18 @@ class RecordAdapter(
     }
 
     override fun getItemCount(): Int = waterRecords.size
+
+    fun changeItems(newWaterRecords: List<WaterRecord>) {
+        val oldSize = waterRecords.size
+        val newSize = newWaterRecords.size
+        waterRecords.clear()
+        waterRecords.addAll(newWaterRecords)
+
+        notifyItemRangeChanged(0, oldSize)
+        if (oldSize > newSize) {
+            notifyItemRangeRemoved(newSize, oldSize - newSize)
+        } else {
+            notifyItemRangeInserted(oldSize, newSize - oldSize)
+        }
+    }
 }
