@@ -1,7 +1,7 @@
 name: backend-ci.yml
 on:
-  push:
-    branches: [ "feat/40" ]
+  pull_request:
+    branches: [ "develop" ]
     paths:
       - 'backend/**'
 
