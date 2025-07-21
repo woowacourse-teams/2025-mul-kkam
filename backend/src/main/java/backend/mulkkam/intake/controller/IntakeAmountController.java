@@ -1,38 +1,21 @@
 package backend.mulkkam.intake.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
-
 @RestController
-@RequestMapping("/intake")
+@RequestMapping("/intake/amount")
 public class IntakeAmountController {
 
-    @GetMapping("/history")
-    public void get(
-            @RequestParam("from") LocalDate from,
-            @RequestParam("to") LocalDate to
-    ) {
-
-    }
-
-    @GetMapping("/amount/recommended")
+    @GetMapping("/recommended")
     public void getRecommended() {
 
     }
 
-    @PutMapping("/amount/target")
+    @PutMapping("/target")
     public void updateTarget() {
-
-    }
-
-    @PostMapping("/history")
-    public void create() {
 
     }
 }
