@@ -40,4 +40,18 @@ public class Cup {
 
     @Column(nullable = false)
     private Integer amount;
+
+    private Integer rank;
+
+    public Cup(
+            Member member,
+            CupNickname nickname,
+            Integer amount,
+            Integer rank
+    ) {
+        this.member = member;
+        this.nickname = nickname;
+        this.amount = amount;
+        this.rank = rank;
+    }
 }

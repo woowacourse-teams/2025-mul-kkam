@@ -4,20 +4,18 @@ import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.service.CupService;
 import java.net.URI;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+@RequiredArgsConstructor
 @RestController("/cups")
 public class CupController {
 
     private final CupService cupService;
-
-    public CupController(CupService cupService) {
-        this.cupService = cupService;
-    }
 
     @GetMapping()
     public void read() {
@@ -26,7 +24,8 @@ public class CupController {
 
     @PostMapping()
     public ResponseEntity<CupResponse> create(CupRegisterRequest cupRegisterRequest) {
-        CupResponse cupResponse = cupService.create(cupRegisterRequest);
+        CupResponse cupResponse = cupService.create(cupRegisterRequest, 1L);
+        
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
