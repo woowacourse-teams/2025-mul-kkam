@@ -9,6 +9,7 @@ import backend.mulkkam.support.MemberFixture;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -106,7 +107,7 @@ class IntakeHistoryServiceUnitTest {
 
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.create(request, memberId))
-                    .isInstanceOf(IllegalArgumentException.class)
+                    .isInstanceOf(NoSuchElementException.class)
                     .hasMessage("해당 회원을 찾을 수 없습니다.");
 
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
