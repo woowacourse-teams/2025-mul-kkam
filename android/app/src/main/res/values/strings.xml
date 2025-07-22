@@ -1,5 +1,9 @@
 <resources>
     <string name="app_name">MulKkam</string>
 
+    <string name="main_home">홈</string>
+    <string name="main_record">기록</string>
+    <string name="main_setting">설정</string>
+
     <string name="record_water_record_label">최근 기록</string>
 </resources>
