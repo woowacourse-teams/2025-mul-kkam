@@ -28,10 +28,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun initBottomNavListener() {
         binding.bnvMain.setOnItemSelectedListener { item ->
-            MainTab.from(item.itemId)?.let { menu ->
-                switchFragment(menu)
-                true
-            } ?: false
+            val menu = MainTab.from(item.itemId) ?: return@setOnItemSelectedListener false
+            switchFragment(menu)
+            true
         }
     }
 
