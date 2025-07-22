@@ -34,7 +34,7 @@ class RecordViewModel : ViewModel() {
     }
 
     fun initWaterRecords() {
-        waterRecords.addAll(WATER_RECORD)
+        waterRecords.addAll(WEEKLY_WATER_RECORDS)
     }
 
     fun updateDailyWaterIntake(dailyWaterIntake: DailyWaterIntake) {
@@ -95,7 +95,7 @@ class RecordViewModel : ViewModel() {
                 ),
             )
 
-        val WATER_RECORD: List<WaterRecords> =
+        val WEEKLY_WATER_RECORDS: List<WaterRecords> =
             listOf(
                 WaterRecords(
                     LocalDate.of(2025, 7, 21),
