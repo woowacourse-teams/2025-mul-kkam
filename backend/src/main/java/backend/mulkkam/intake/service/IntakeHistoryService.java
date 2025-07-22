@@ -5,12 +5,13 @@ import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import jakarta.transaction.Transactional;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class IntakeHistoryService {
 
@@ -32,4 +33,6 @@ public class IntakeHistoryService {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
     }
+
+
 }
