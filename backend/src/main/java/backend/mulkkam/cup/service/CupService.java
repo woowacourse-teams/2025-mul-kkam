@@ -11,8 +11,10 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
 public class CupService {
 
@@ -24,6 +26,7 @@ public class CupService {
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public CupResponse create(CupRegisterRequest cupRegisterRequest, Long memberId) {
         Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberId(memberId);
