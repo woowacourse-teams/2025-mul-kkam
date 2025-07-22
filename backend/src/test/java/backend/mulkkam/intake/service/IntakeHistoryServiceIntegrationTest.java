@@ -7,23 +7,20 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-@SpringBootTest(webEnvironment = WebEnvironment.NONE)
-class IntakeHistoryServiceIntegrationTest {
+class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private IntakeHistoryService intakeHistoryService;
@@ -33,12 +30,6 @@ class IntakeHistoryServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @BeforeEach
-    void setUp() {
-        intakeHistoryRepository.deleteAllInBatch();
-        memberRepository.deleteAllInBatch();
-    }
 
     @DisplayName("물의 섭취량을 저장할 때에")
     @Nested
