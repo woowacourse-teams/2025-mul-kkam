@@ -3,7 +3,6 @@ package com.mulkkam.ui
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.RectF
 import android.graphics.SweepGradient
@@ -24,7 +23,7 @@ class GradientDonutView(
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = Color.LTGRAY
+            color = "#FFFAFAFA".toColorInt()
             style = Paint.Style.STROKE
             strokeWidth = STROKE_WIDTH
         }
