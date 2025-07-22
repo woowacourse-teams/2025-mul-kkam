@@ -37,11 +37,11 @@ class CupRepositoryTest {
 
         Cup cup1 = new CupFixture()
                 .member(member)
-                .rank(1)
+                .cupRank(1)
                 .build();
         Cup cup2 = new CupFixture()
                 .member(member)
-                .rank(2)
+                .cupRank(2)
                 .build();
 
         cupRepository.saveAll(List.of(cup1, cup2));
@@ -62,11 +62,11 @@ class CupRepositoryTest {
 
         Cup cup1 = new CupFixture()
                 .member(member)
-                .rank(1)
+                .cupRank(1)
                 .build();
         Cup cup2 = new CupFixture()
                 .member(member)
-                .rank(3)
+                .cupRank(3)
                 .build();
 
         cupRepository.saveAll(List.of(cup1, cup2));

@@ -43,17 +43,17 @@ public class Cup {
     @AttributeOverride(name = "value", column = @Column(name = "amount", nullable = false))
     private Amount amount;
 
-    private Integer rank;
+    private Integer cupRank;
 
     public Cup(
             Member member,
             CupNickname nickname,
             Amount amount,
-            Integer rank
+            Integer cupRank
     ) {
         this.member = member;
         this.nickname = nickname;
         this.amount = amount;
-        this.rank = rank;
+        this.cupRank = cupRank;
     }
 }

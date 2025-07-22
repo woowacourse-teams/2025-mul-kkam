@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 public interface CupRepository extends JpaRepository<Cup, Long> {
     List<Cup> findAllByMemberId(Long memberId);
 
-    @Query("SELECT MAX(c.rank) FROM Cup c WHERE c.member.id = :memberId")
+    @Query("SELECT MAX(c.cupRank) FROM Cup c WHERE c.member.id = :memberId")
     Optional<Integer> findMaxRankByMemberId(Long memberId);
 }

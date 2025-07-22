@@ -53,7 +53,7 @@ class CupServiceUnitTest {
 
             Cup savedCup = new CupFixture()
                     .member(member)
-                    .rank(1)
+                    .cupRank(1)
                     .build();
 
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
@@ -107,15 +107,15 @@ class CupServiceUnitTest {
 
             Cup cup1 = new CupFixture()
                     .member(member)
-                    .rank(1)
+                    .cupRank(1)
                     .build();
             Cup cup2 = new CupFixture()
                     .member(member)
-                    .rank(2)
+                    .cupRank(2)
                     .build();
             Cup cup3 = new CupFixture()
                     .member(member)
-                    .rank(3)
+                    .cupRank(3)
                     .build();
 
             List<Cup> cups = List.of(cup1, cup2, cup3);
