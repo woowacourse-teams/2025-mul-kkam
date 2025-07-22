@@ -1,9 +1,9 @@
 package backend.mulkkam.support;
 
 import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
 import java.util.List;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 public class DatabaseCleaner {
