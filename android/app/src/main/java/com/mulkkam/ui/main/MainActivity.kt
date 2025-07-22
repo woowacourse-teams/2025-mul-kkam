@@ -69,8 +69,4 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 hide(fragment)
             }
     }
-
-    interface Refreshable {
-        fun onSelected()
-    }
 }
