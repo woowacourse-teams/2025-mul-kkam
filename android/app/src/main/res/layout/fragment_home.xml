@@ -20,14 +20,13 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="48dp"
         android:max="100"
-        tools:progress="50"
-        app:layout_constraintTop_toTopOf="parent"
+        android:paddingHorizontal="48dp"
         app:layout_constraintBottom_toTopOf="@id/iv_home_character"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_bias="0.5" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:progress="50" />
 
     <ImageView
         android:id="@+id/iv_home_character"
