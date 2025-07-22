@@ -13,6 +13,6 @@ public class ServiceIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleaner.truncateAllTables();
+        databaseCleaner.clean();
     }
 }
