@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-class IntakeHistoryServiceTest {
+class IntakeHistoryServiceIntegrationTest {
 
     @Autowired
     private IntakeHistoryService intakeHistoryService;
