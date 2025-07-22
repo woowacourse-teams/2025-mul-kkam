@@ -3,7 +3,6 @@ package com.mulkkam.ui.main
 import android.os.Bundle
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
@@ -13,9 +12,6 @@ import com.mulkkam.ui.model.MainTab
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
-
-    private val tabs: MutableMap<MainTab, Fragment> = mutableMapOf()
-    private var currentTab: MainTab? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,39 +30,37 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
     }
 
-    private fun switchFragment(target: MainTab) {
-        if (currentTab == target) return
+    private fun switchFragment(targetTab: MainTab) {
+        val targetFragment = prepareFragment(targetTab)
 
-        val fragment = prepareFragment(target)
+        showOnlyFragment(targetFragment)
 
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            hideOtherFragments(except = target)
-            show(fragment)
+        if (targetFragment is Refreshable) {
+            targetFragment.onSelected()
         }
-
-        if (fragment is Refreshable) {
-            fragment.onSelected()
-        }
-
-        currentTab = target
     }
 
-    private fun prepareFragment(tab: MainTab): Fragment =
-        tabs.getOrPut(tab) {
-            tab.create().also { fragment ->
+    private fun prepareFragment(targetTab: MainTab): Fragment {
+        val tag = targetTab.name
+        return supportFragmentManager.findFragmentByTag(tag)
+            ?: targetTab.create().also { fragment ->
                 supportFragmentManager.commit {
                     setReorderingAllowed(true)
-                    add(R.id.fcv_main, fragment, tab.name)
+                    add(R.id.fcv_main, fragment, tag)
+                }
+            }
+    }
+
+    private fun showOnlyFragment(targetFragment: Fragment) {
+        supportFragmentManager.commit {
+            setReorderingAllowed(true)
+            supportFragmentManager.fragments.forEach { fragment ->
+                if (fragment == targetFragment) {
+                    show(fragment)
+                } else {
+                    hide(fragment)
                 }
             }
         }
-
-    private fun FragmentTransaction.hideOtherFragments(except: MainTab) {
-        tabs
-            .filterKeys { it != except }
-            .forEach { (_, fragment) ->
-                hide(fragment)
-            }
     }
 }
