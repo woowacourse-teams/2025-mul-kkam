@@ -35,6 +35,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class Create {
 
+        public static final LocalDateTime DATE_TIME = LocalDateTime.of(
+                LocalDate.of(2025, 3, 19),
+                LocalTime.of(15, 30, 30)
+        );
+
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
         void success_amountMoreThen0() {
@@ -42,13 +47,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = new MemberFixture().build();
             memberRepository.save(member);
 
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = 500;
             IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 
@@ -60,7 +61,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories).hasSize(1);
                 softly.assertThat(intakeHistories.getFirst().getIntakeAmount()).isEqualTo(new Amount(intakeAmount));
-                softly.assertThat(intakeHistories.getFirst().getDateTime()).isEqualTo(dateTime);
+                softly.assertThat(intakeHistories.getFirst().getDateTime()).isEqualTo(DATE_TIME);
             });
         }
 
@@ -71,13 +72,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = new MemberFixture().build();
             memberRepository.save(member);
 
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = -1;
             IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 
@@ -96,7 +93,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
             int intakeAmount = 500;
             IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 
