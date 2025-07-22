@@ -26,6 +26,9 @@ class RecordViewModel : ViewModel() {
         _dailyWaterRecords.addSource(_dailyWaterIntake) { intake ->
             _dailyWaterRecords.value = waterRecords.find { it.date == intake.date }?.waterRecords ?: emptyList()
         }
+
+        initWaterIntake()
+        initWaterRecords()
     }
 
     fun initWaterIntake() {

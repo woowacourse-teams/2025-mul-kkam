@@ -31,8 +31,6 @@ class RecordFragment :
         initRecordAdapter()
         initChartOptions()
         initObservers()
-        viewModel.initWaterIntake()
-        viewModel.initWaterRecords()
     }
 
     private fun initRecordAdapter() {
