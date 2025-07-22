@@ -24,7 +24,7 @@ public class CupController {
 
     }
 
-    @PostMapping("/cup")
+    @PostMapping("/cups")
     public ResponseEntity<CupResponse> create(CupRegisterRequest cupRegisterRequest) {
         CupResponse cupResponse = cupService.create(cupRegisterRequest);
         URI location = ServletUriComponentsBuilder
