@@ -22,10 +22,6 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=5
-    env:
-      SPRING_DATASOURCE_URL: jdbc:mysql://localhost:3306/test_db
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: password
     steps:
       - uses: actions/checkout@v4
 
