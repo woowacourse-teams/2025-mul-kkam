@@ -24,7 +24,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     MemberRepository memberRepository;
 
-    @DisplayName("하루 섭취 목표 수분량을 수정할 때에")
+    @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
     class UpdateTarget {
 
@@ -52,7 +52,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("용량이 음수인 경우 에외가 발생한다")
+        @DisplayName("음용량이 음수인 경우 에외가 발생한다")
         @Test
         void error_amountIsLessThen0() {
             // given

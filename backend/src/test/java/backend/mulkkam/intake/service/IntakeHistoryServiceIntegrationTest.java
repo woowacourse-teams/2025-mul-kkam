@@ -32,7 +32,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @DisplayName("물의 섭취량을 저장할 때에")
+    @DisplayName("음용량을 저장할 때에")
     @Nested
     class Create {
 

@@ -37,7 +37,7 @@ class IntakeHistoryServiceUnitTest {
     @Mock
     private MemberRepository memberRepository;
 
-    @DisplayName("물의 섭취량을 저장할 때에")
+    @DisplayName("물의 음용량을 저장할 때에")
     @Nested
     class Create {
 
