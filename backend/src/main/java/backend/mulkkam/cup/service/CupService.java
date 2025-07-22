@@ -20,8 +20,7 @@ public class CupService {
     private final MemberRepository memberRepository;
 
     public CupResponse create(CupRegisterRequest cupRegisterRequest, Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 멤버입니다."));
+        Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberId(memberId);
 
         validPossibleCreateNewCup(cupRegisterRequest.amount(), cups);
@@ -29,13 +28,16 @@ public class CupService {
         Integer rank = cupRepository.findMaxRankByMemberId(memberId)
                 .orElse(0);
 
-        Cup cup = new Cup(
-                member,
-                new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(),
+        Cup cup = new Cup(member, new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(),
                 rank + 1);
 
         Cup createdCup = cupRepository.save(cup);
         return new CupResponse(createdCup.getId(), createdCup.getNickname().value(), createdCup.getAmount());
+    }
+
+    private Member getMember(final Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 멤버입니다."));
     }
 
     private void validPossibleCreateNewCup(Integer amount, List<Cup> cups) {
