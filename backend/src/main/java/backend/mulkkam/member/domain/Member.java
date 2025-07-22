@@ -40,6 +40,10 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
 
+    public void updateTargetAmount(Amount newTargetAmount) {
+        this.targetAmount = newTargetAmount;
+    }
+
     public Member(
             MemberNickname memberNickname,
             Gender gender,
