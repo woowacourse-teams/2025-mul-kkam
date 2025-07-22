@@ -10,10 +10,10 @@ data class DailyWaterIntake(
     val goalRate: Float,
 ) {
     companion object {
-        fun getEmptyIntake(date: LocalDate) =
+        val EMPTY_DAILY_WATER_INTAKE: DailyWaterIntake =
             DailyWaterIntake(
                 id = 0,
-                date = date,
+                date = LocalDate.now(),
                 targetAmount = 0,
                 intakeAmount = 0,
                 goalRate = 0f,
