@@ -23,7 +23,7 @@ class RecordViewModel : ViewModel() {
     val dailyWaterRecords: LiveData<List<WaterRecord>> get() = _dailyWaterRecords
 
     init {
-        _dailyWaterRecords.addSource(_dailyWaterIntake) { intake ->
+        _dailyWaterRecords.addSource(dailyWaterIntake) { intake ->
             _dailyWaterRecords.value = waterRecords.find { it.date == intake.date }?.waterRecords ?: emptyList()
         }
 
