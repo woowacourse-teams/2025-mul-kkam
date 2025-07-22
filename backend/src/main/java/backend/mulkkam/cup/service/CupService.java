@@ -26,8 +26,14 @@ public class CupService {
 
         validPossibleCreateNewCup(cupRegisterRequest.amount(), cups);
 
-        Integer rank = cupRepository.findMaxRankByMemberId(memberId);
-        Cup cup = new Cup(member, new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(), rank);
+        Integer rank = cupRepository.findMaxRankByMemberId(memberId)
+                .orElse(0);
+
+        Cup cup = new Cup(
+                member,
+                new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(),
+                rank + 1);
+
         Cup createdCup = cupRepository.save(cup);
         return new CupResponse(createdCup.getId(), createdCup.getNickname().value(), createdCup.getAmount());
     }
