@@ -54,7 +54,7 @@ class CupRepositoryTest {
     }
 
     @Test
-    @DisplayName("사용자 ID로 사용자 전체 컵을 조회한다")
+    @DisplayName("사용자 ID로 최대 랭크를 조회한다")
     void findMaxRankByMemberId() {
         // given
         Member member = new MemberFixture().build();

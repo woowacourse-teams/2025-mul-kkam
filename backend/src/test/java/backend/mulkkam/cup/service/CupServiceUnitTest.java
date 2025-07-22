@@ -84,7 +84,7 @@ class CupServiceUnitTest {
 
         @DisplayName("용량이 음수면 예외가 발생한다")
         @Test
-        void error_amountLessThen0() {
+        void error_amountLessThan0() {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", -100);
             Member member = new MemberFixture().build();
