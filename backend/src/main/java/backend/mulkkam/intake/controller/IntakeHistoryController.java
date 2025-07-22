@@ -5,7 +5,7 @@ import backend.mulkkam.intake.service.IntakeHistoryService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,7 +26,7 @@ public class IntakeHistoryController {
 
     }
 
-    @PostMapping
+    @PatchMapping
     public void create(@RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest) {
         intakeHistoryService.create(intakeHistoryCreateRequest, 1L);
     }
