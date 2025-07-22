@@ -14,6 +14,7 @@
     <string name="record_water_record_label">상세 내역</string>
     <string name="record_daily_water_summary"><font color="#FF76D7E2">%,dml</font> / %,dml</string>
     <string name="record_drink_amount">+%,dml</string>
+    <string name="record_no_water_record">해당 날짜는 기록된 일지가 없어요 🥲</string>
 
     <string name="water_chart_date">%d/%d</string>
 </resources>
