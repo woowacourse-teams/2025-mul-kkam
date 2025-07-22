@@ -31,7 +31,6 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            // 사용할 것
              Member member = new MemberFixture()
                      .weight(null)
                      .gender(null)
