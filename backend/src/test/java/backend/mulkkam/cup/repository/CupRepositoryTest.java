@@ -4,9 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
 import jakarta.persistence.EntityManager;
 import java.util.List;
@@ -35,8 +35,15 @@ class CupRepositoryTest {
         Member member = new MemberFixture().build();
         memberRepository.save(member);
 
-        Cup cup1 = new Cup(member, new CupNickname("컵1"), 300, 1);
-        Cup cup2 = new Cup(member, new CupNickname("컵2"), 500, 2);
+        Cup cup1 = new CupFixture()
+                .member(member)
+                .rank(1)
+                .build();
+        Cup cup2 = new CupFixture()
+                .member(member)
+                .rank(2)
+                .build();
+
         cupRepository.saveAll(List.of(cup1, cup2));
 
         // when
@@ -53,8 +60,16 @@ class CupRepositoryTest {
         Member member = new MemberFixture().build();
         memberRepository.save(member);
 
-        cupRepository.save(new Cup(member, new CupNickname("컵1"), 400, 1));
-        cupRepository.save(new Cup(member, new CupNickname("컵3"), 400, 3));
+        Cup cup1 = new CupFixture()
+                .member(member)
+                .rank(1)
+                .build();
+        Cup cup2 = new CupFixture()
+                .member(member)
+                .rank(3)
+                .build();
+
+        cupRepository.saveAll(List.of(cup1, cup2));
 
         // when
         Optional<Integer> maxRank = cupRepository.findMaxRankByMemberId(member.getId());

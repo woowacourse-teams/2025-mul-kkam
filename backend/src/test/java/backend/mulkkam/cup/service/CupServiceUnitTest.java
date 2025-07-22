@@ -7,12 +7,12 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
 import java.util.List;
 import java.util.Optional;
@@ -51,13 +51,11 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            Cup savedCup = new Cup(
-                    1L,
-                    member,
-                    new CupNickname("스타벅스"),
-                    500,
-                    1
-            );
+            Cup savedCup = new CupFixture()
+                    .member(member)
+                    .rank(1)
+                    .build();
+
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
 
             // when
@@ -107,10 +105,20 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            List<Cup> cups = List.of(
-                    new Cup(member, new CupNickname("스타벅스"), 500, 1),
-                    new Cup(member, new CupNickname("스타벅스"), 500, 1),
-                    new Cup(member, new CupNickname("스타벅스"), 500, 1));
+            Cup cup1 = new CupFixture()
+                    .member(member)
+                    .rank(1)
+                    .build();
+            Cup cup2 = new CupFixture()
+                    .member(member)
+                    .rank(2)
+                    .build();
+            Cup cup3 = new CupFixture()
+                    .member(member)
+                    .rank(3)
+                    .build();
+
+            List<Cup> cups = List.of(cup1, cup2, cup3);
 
             // when
             when(cupRepository.findAllByMemberId(member.getId())).thenReturn(cups);
