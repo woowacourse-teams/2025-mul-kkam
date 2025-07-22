@@ -14,9 +14,12 @@ open class BindingActivity<BINDING : ViewBinding>(
     private var _binding: BINDING? = null
     val binding get() = _binding!!
 
+    open val needBottomPadding: Boolean = true
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = bindingInflater(layoutInflater)
+        setContentView(binding.root)
         enableEdgeToEdge()
         initViewPadding()
     }
@@ -24,7 +27,8 @@ open class BindingActivity<BINDING : ViewBinding>(
     private fun initViewPadding() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            view.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            val bottomPadding = if (needBottomPadding) systemBars.bottom else 0
+            view.setPadding(systemBars.left, systemBars.top, systemBars.right, bottomPadding)
             insets
         }
     }
