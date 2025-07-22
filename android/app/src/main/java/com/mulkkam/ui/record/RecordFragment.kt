@@ -12,15 +12,18 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentRecordBinding
+import com.mulkkam.databinding.RecordWaterIntakeChartBinding
 import com.mulkkam.domain.DailyWaterIntake
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.record.adapter.RecordAdapter
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class RecordFragment :
     BindingFragment<FragmentRecordBinding>(
         FragmentRecordBinding::inflate,
-    ) ,
+    ),
     Refreshable {
     private val viewModel: RecordViewModel by viewModels()
     private val recordAdapter: RecordAdapter by lazy { RecordAdapter() }
@@ -49,14 +52,13 @@ class RecordFragment :
     private fun initChartOptions() {
         val pieCharts =
             listOf(
-                binding.pcWeeklySun,
-                binding.pcWeeklyMon,
-                binding.pcWeeklyTue,
-                binding.pcWeeklyWed,
-                binding.pcWeeklyThu,
-                binding.pcWeeklyFri,
-                binding.pcWeeklySat,
-                binding.pcDailyWaterChart,
+                binding.includeChartMon.pcWaterIntake,
+                binding.includeChartTue.pcWaterIntake,
+                binding.includeChartWed.pcWaterIntake,
+                binding.includeChartThu.pcWaterIntake,
+                binding.includeChartFri.pcWaterIntake,
+                binding.includeChartSat.pcWaterIntake,
+                binding.includeChartSun.pcWaterIntake,
             )
 
         pieCharts.forEach { chart ->
@@ -71,7 +73,7 @@ class RecordFragment :
 
     private fun initObservers() {
         viewModel.weeklyWaterIntake.observe(viewLifecycleOwner) { weeklyWaterIntake ->
-            updateWeeklyChart(weeklyWaterIntake)
+            bindWeeklyChartData(weeklyWaterIntake)
         }
 
         viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyWaterIntake ->
@@ -83,34 +85,52 @@ class RecordFragment :
         }
     }
 
-    private fun updateWeeklyChart(weeklyWaterIntake: List<DailyWaterIntake>) {
+    private fun bindWeeklyChartData(weeklyWaterIntake: List<DailyWaterIntake>) {
         val pieCharts =
             listOf(
-                binding.pcWeeklySun,
-                binding.pcWeeklyMon,
-                binding.pcWeeklyTue,
-                binding.pcWeeklyWed,
-                binding.pcWeeklyThu,
-                binding.pcWeeklyFri,
-                binding.pcWeeklySat,
+                binding.includeChartMon,
+                binding.includeChartTue,
+                binding.includeChartWed,
+                binding.includeChartThu,
+                binding.includeChartFri,
+                binding.includeChartSat,
+                binding.includeChartSun,
             )
 
         pieCharts.forEachIndexed { index, chart ->
             val intake =
                 weeklyWaterIntake.getOrNull(index)
-                    ?: DailyWaterIntake.EMPTY_DAILY_WATER_INTAKE.copy(date = weeklyWaterIntake.first().date.plusDays(index.toLong()))
-
-            chart.setOnClickListener {
-                viewModel.updateDailyWaterIntake(intake)
-            }
-
-            updateChartData(chart, intake)
+                    ?: DailyWaterIntake.EMPTY_DAILY_WATER_INTAKE.copy(
+                        date =
+                            weeklyWaterIntake.first().date.plusDays(
+                                index.toLong(),
+                            ),
+                    )
+            updateWeeklyChart(chart, intake)
         }
     }
 
-    private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
-        val pieChart = binding.pcDailyWaterChart
-        updateChartData(pieChart, dailyWaterIntake)
+    private fun updateWeeklyChart(
+        chart: RecordWaterIntakeChartBinding,
+        intake: DailyWaterIntake,
+    ) {
+        chart.apply {
+            tvWaterGoalRate.text = intake.goalRate.toInt().toString()
+            tvDayOfWeek.text =
+                intake.date.dayOfWeek
+                    .toString()
+                    .substring(0..2)
+            tvMonthDay.text =
+                getString(
+                    R.string.water_chart_date,
+                    intake.date.monthValue,
+                    intake.date.dayOfMonth,
+                )
+            pcWaterIntake.setOnClickListener {
+                viewModel.updateDailyWaterIntake(intake)
+            }
+            updateChartData(pcWaterIntake, intake)
+        }
     }
 
     private fun updateChartData(
@@ -124,6 +144,21 @@ class RecordFragment :
         }
     }
 
+    private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
+        binding.viewDailyChart.setProgress(dailyWaterIntake.goalRate)
+        binding.tvDailyWaterSummary.text =
+            getString(
+                R.string.record_daily_water_summary,
+                dailyWaterIntake.intakeAmount,
+                dailyWaterIntake.targetAmount,
+            )
+        binding.tvDailyChartLabel.text =
+            getString(
+                R.string.record_daily_chart_label,
+                dailyWaterIntake.date.format(DATE_FORMATTER_KR),
+            )
+    }
+
     private fun createPieData(goalRate: Float): PieData {
         val entries =
             listOf(
@@ -133,8 +168,8 @@ class RecordFragment :
 
         val colors =
             listOf(
-                ContextCompat.getColor(requireContext(), R.color.primary_300),
-                ContextCompat.getColor(requireContext(), R.color.gray_200),
+                ContextCompat.getColor(requireContext(), R.color.primary_200),
+                ContextCompat.getColor(requireContext(), R.color.primary_50),
             )
 
         val dataSet =
@@ -147,6 +182,9 @@ class RecordFragment :
     }
 
     companion object {
+        val DATE_FORMATTER_KR: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("M월 dd일 (E)", Locale.KOREAN)
+
         private const val MAX_PERCENTAGE: Float = 100f
         private const val ANIMATION_DURATION_MS: Int = 1000
         private const val HOLE_RADIUS: Float = 60f
