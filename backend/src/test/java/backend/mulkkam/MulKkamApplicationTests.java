@@ -1,10 +1,10 @@
-package backend.seulseul;
+package backend.mulkkam;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class SeulSeulApplicationTests {
+class MulKkamApplicationTests {
 
 	@Test
 	void contextLoads() {
