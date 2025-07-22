@@ -5,6 +5,7 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.List;
@@ -36,11 +37,12 @@ public class CupService {
         Integer rank = cupRepository.findMaxRankByMemberId(memberId)
                 .orElse(DEFAULT_RANK);
 
-        Cup cup = new Cup(member, new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(),
+        Cup cup = new Cup(member, new CupNickname(cupRegisterRequest.nickname()),
+                new Amount(cupRegisterRequest.amount()),
                 rank + CUP_RANK_OFFSET);
 
         Cup createdCup = cupRepository.save(cup);
-        return new CupResponse(createdCup.getId(), createdCup.getNickname().value(), createdCup.getAmount());
+        return new CupResponse(createdCup.getId(), createdCup.getNickname().value(), createdCup.getAmount().value());
     }
 
     private Member getMember(Long memberId) {
