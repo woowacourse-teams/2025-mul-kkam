@@ -87,7 +87,6 @@ class IntakeHistoryServiceUnitTest {
             assertThatThrownBy(() -> intakeHistoryService.create(request, memberId))
                     .isInstanceOf(IllegalArgumentException.class);
 
-            // 저장이 호출되지 않았는지 검증
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
 
