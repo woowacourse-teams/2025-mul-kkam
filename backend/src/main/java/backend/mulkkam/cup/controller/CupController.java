@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-@RestController
+@RestController("/cups")
 public class CupController {
 
     private final CupService cupService;
@@ -19,12 +19,12 @@ public class CupController {
         this.cupService = cupService;
     }
 
-    @GetMapping("/cups")
+    @GetMapping()
     public void read() {
 
     }
 
-    @PostMapping("/cups")
+    @PostMapping()
     public ResponseEntity<CupResponse> create(CupRegisterRequest cupRegisterRequest) {
         CupResponse cupResponse = cupService.create(cupRegisterRequest);
         URI location = ServletUriComponentsBuilder

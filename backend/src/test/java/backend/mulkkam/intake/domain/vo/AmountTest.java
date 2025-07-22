@@ -11,13 +11,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class AmountTest {
     
     @Nested
-    @DisplayName("생성자 검증")
-    class newAmount {
+    @DisplayName("생성자 검증 시에")
+    class NewAmount {
         
         @DisplayName("올바른 음수량을 입력할 수 있다.")
         @ParameterizedTest
         @ValueSource(ints = {1, 10, 50, 100, 1000})
-        void success_validateValue(int input) {
+        void success_validValue(int input) {
             // given
 
             // when & then

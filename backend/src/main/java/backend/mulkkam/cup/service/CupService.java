@@ -10,18 +10,16 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+@RequiredArgsConstructor
 @Service
 public class CupService {
 
     private final CupRepository cupRepository;
     private final MemberService memberService;
 
-    public CupService(CupRepository cupRepository, MemberService memberService) {
-        this.cupRepository = cupRepository;
-        this.memberService = memberService;
-    }
 
     public CupResponse create(CupRegisterRequest cupRegisterRequest) {
         Member member = new Member(1L, new MemberNickname("Member"), Gender.MALE, 50, new Amount(1200));

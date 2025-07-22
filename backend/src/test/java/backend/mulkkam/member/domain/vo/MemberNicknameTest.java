@@ -11,7 +11,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class MemberNicknameTest {
 
     @Nested
-    @DisplayName("생성자 검증")
+    @DisplayName("생성자 검증 시에")
     class NewMemberNickname {
 
         @DisplayName("2 ~ 10글자의 닉네임을 설정할 수 있다.")

@@ -11,15 +11,13 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class CupNicknameTest {
 
     @Nested
-    @DisplayName("생성자 검증")
+    @DisplayName("생성자 검증 시에")
     class NewCupNickname {
 
         @DisplayName("1 ~ 5글자의 닉네임을 설정할 수 있다.")
         @ParameterizedTest
         @ValueSource(strings = {"1", "22", "333", "4444", "55555"})
         void success_nameLengthLessThan5(String input) {
-            // given
-
             // when & then
             assertThatCode(() -> {
                 new CupNickname(input);
@@ -30,8 +28,6 @@ class CupNicknameTest {
         @ParameterizedTest
         @ValueSource(strings = {"", "666666"})
         void error_nameLengthOutOfRange(String input) {
-            // given
-
             // when & then
             assertThatThrownBy(() -> {
                 new CupNickname(input);

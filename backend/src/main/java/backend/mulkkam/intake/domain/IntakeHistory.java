@@ -12,15 +12,14 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
-@NoArgsConstructor
 @Getter
+@NoArgsConstructor
 @Entity
-public class History {
+public class IntakeHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +39,16 @@ public class History {
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
+
+    public IntakeHistory(
+            Member member,
+            LocalDateTime dateTime,
+            Amount intakeAmount,
+            Amount targetAmount
+    ) {
+        this.member = member;
+        this.dateTime = dateTime;
+        this.intakeAmount = intakeAmount;
+        this.targetAmount = targetAmount;
+    }
 }

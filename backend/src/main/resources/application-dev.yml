@@ -1,0 +1,17 @@
+server:
+  port: 80
+
+
+spring:
+  datasource:
+    url: ${secrets.DATASOURCE_URL}
+    username: ${secrets.DATASOURCE_USERNAME}
+    password: ${secrets.DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
