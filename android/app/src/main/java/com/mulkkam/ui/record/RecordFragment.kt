@@ -3,6 +3,7 @@ package com.mulkkam.ui.record
 import android.os.Bundle
 import android.view.View
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.github.mikephil.charting.animation.Easing
 import com.github.mikephil.charting.charts.PieChart
@@ -19,7 +20,7 @@ class RecordFragment :
     BindingFragment<FragmentRecordBinding>(
         FragmentRecordBinding::inflate,
     ) {
-    private val viewModel by lazy { RecordViewModel() }
+    private val viewModel: RecordViewModel by viewModels()
     private val recordAdapter: RecordAdapter by lazy { RecordAdapter() }
 
     override fun onViewCreated(
