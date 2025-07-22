@@ -3,6 +3,7 @@ package backend.mulkkam.member.domain;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.dto.MemberPhysicalAttributesModifyRequest;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -50,5 +51,14 @@ public class Member {
         this.gender = gender;
         this.weight = weight;
         this.targetAmount = targetAmount;
+    }
+
+    public void setPhysicalAttributes(MemberPhysicalAttributesModifyRequest request) {
+        if (request.gender() != null) {
+            this.gender = request.gender();
+        }
+        if (request.weight() != null) {
+            this.weight = request.weight();
+        }
     }
 }
