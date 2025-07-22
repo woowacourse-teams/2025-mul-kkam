@@ -182,8 +182,8 @@ class RecordFragment :
     }
 
     companion object {
-        val DATE_FORMATTER_KR: DateTimeFormatter =
-            DateTimeFormatter.ofPattern("M월 dd일 (E)", Locale.KOREAN)
+        private val DATE_FORMATTER_KR: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
 
         private const val MAX_PERCENTAGE: Float = 100f
         private const val ANIMATION_DURATION_MS: Int = 1000
