@@ -56,8 +56,6 @@ jobs:
           chmod +x ./gradlew
         working-directory: ./backend
 
-      - name: Run tests
-        run: |
-          echo "running test"
-          ./gradlew test
+      - name: Run tests with profile
+        run: ./gradlew test -Dspring.profiles.active=test
         working-directory: ./backend
