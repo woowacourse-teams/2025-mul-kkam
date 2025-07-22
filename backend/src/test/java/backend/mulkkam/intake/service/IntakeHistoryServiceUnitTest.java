@@ -40,6 +40,11 @@ class IntakeHistoryServiceUnitTest {
     @Nested
     class Create {
 
+        public static final LocalDateTime DATE_TIME = LocalDateTime.of(
+                LocalDate.of(2025, 3, 19),
+                LocalTime.of(15, 30, 30)
+        );
+
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
         void success_amountMoreThen0() {
@@ -49,13 +54,9 @@ class IntakeHistoryServiceUnitTest {
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = 500;
             IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 
@@ -76,13 +77,9 @@ class IntakeHistoryServiceUnitTest {
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = -1;
             IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 
@@ -102,13 +99,9 @@ class IntakeHistoryServiceUnitTest {
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.empty());
 
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = 500;
             IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
-                    dateTime,
+                    DATE_TIME,
                     intakeAmount
             );
 

@@ -45,7 +45,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         void success_amountMoreThen0() {
             // given
             Member member = new MemberFixture().build();
-            memberRepository.save(member);
+            Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
             IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
@@ -57,7 +57,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
 
             // then
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAll();
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories).hasSize(1);
                 softly.assertThat(intakeHistories.getFirst().getIntakeAmount()).isEqualTo(new Amount(intakeAmount));
@@ -87,10 +87,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberIsNotExisted() {
             // given
-            LocalDateTime dateTime = LocalDateTime.of(
-                    LocalDate.of(2025, 3, 19),
-                    LocalTime.of(15, 30, 30)
-            );
             int intakeAmount = 500;
             IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
                     DATE_TIME,
