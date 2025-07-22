@@ -21,13 +21,13 @@ public class IntakeHistoryService {
             IntakeHistoryCreateRequest intakeHistoryCreateRequest,
             Long memberId
     ) {
-        Member member = findMember(memberId);
+        Member member = getMember(memberId);
 
         IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
         intakeHistoryRepository.save(intakeHistory);
     }
 
-    private Member findMember(Long id) {
+    private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
     }
