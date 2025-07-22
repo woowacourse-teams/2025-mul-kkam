@@ -58,7 +58,7 @@ class RecordFragment :
                 description.isEnabled = false
                 legend.isEnabled = false
                 setTouchEnabled(false)
-                holeRadius = 60f
+                holeRadius = HOLE_RADIUS
             }
         }
     }
@@ -113,7 +113,7 @@ class RecordFragment :
     ) {
         pieChart.apply {
             data = createPieData(waterIntake.goalRate)
-            animateY(1000, Easing.EaseInOutQuad)
+            animateY(ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
             invalidate()
         }
     }
@@ -142,5 +142,7 @@ class RecordFragment :
 
     companion object {
         private const val MAX_PERCENTAGE: Float = 100f
+        private const val ANIMATION_DURATION_MS: Int = 1000
+        private const val HOLE_RADIUS: Float = 60f
     }
 }
