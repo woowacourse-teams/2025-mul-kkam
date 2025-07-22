@@ -40,7 +40,12 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
 
-    public Member(MemberNickname memberNickname, Gender gender, Integer weight, Amount targetAmount) {
+    public Member(
+            MemberNickname memberNickname,
+            Gender gender,
+            Integer weight,
+            Amount targetAmount
+    ) {
         this.memberNickname = memberNickname;
         this.gender = gender;
         this.weight = weight;

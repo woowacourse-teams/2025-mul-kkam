@@ -40,7 +40,12 @@ public class IntakeHistory {
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
 
-    public IntakeHistory(Member member, LocalDateTime dateTime, Amount intakeAmount, Amount targetAmount) {
+    public IntakeHistory(
+            Member member,
+            LocalDateTime dateTime,
+            Amount intakeAmount,
+            Amount targetAmount
+    ) {
         this.member = member;
         this.dateTime = dateTime;
         this.intakeAmount = intakeAmount;

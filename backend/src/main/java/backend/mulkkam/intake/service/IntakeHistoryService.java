@@ -17,7 +17,10 @@ public class IntakeHistoryService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void create(IntakeHistoryCreateRequest intakeHistoryCreateRequest, Long memberId) {
+    public void create(
+            IntakeHistoryCreateRequest intakeHistoryCreateRequest,
+            Long memberId
+    ) {
         Member member = findMember(memberId);
 
         IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
