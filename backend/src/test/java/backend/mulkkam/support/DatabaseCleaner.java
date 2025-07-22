@@ -12,7 +12,7 @@ public class DatabaseCleaner {
 
     private final EntityManager entityManager;
 
-    public DatabaseCleaner(final EntityManager entityManager) {
+    public DatabaseCleaner(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
 
