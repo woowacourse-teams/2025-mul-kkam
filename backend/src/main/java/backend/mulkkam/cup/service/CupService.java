@@ -16,6 +16,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class CupService {
 
+    private static final int DEFAULT_RANK = 0;
+    private static final int MAX_CUP_COUNT = 3;
+    private static final int MIN_CUP_SIZE = 0;
+    private static final int CUP_RANK_OFFSET = 1;
+
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
@@ -26,25 +31,25 @@ public class CupService {
         validPossibleCreateNewCup(cupRegisterRequest.amount(), cups);
 
         Integer rank = cupRepository.findMaxRankByMemberId(memberId)
-                .orElse(0);
+                .orElse(DEFAULT_RANK);
 
         Cup cup = new Cup(member, new CupNickname(cupRegisterRequest.nickname()), cupRegisterRequest.amount(),
-                rank + 1);
+                rank + CUP_RANK_OFFSET);
 
         Cup createdCup = cupRepository.save(cup);
         return new CupResponse(createdCup.getId(), createdCup.getNickname().value(), createdCup.getAmount());
     }
 
-    private Member getMember(final Long memberId) {
+    private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 멤버입니다."));
     }
 
     private void validPossibleCreateNewCup(Integer amount, List<Cup> cups) {
-        if (cups.size() >= 3) {
+        if (cups.size() >= MAX_CUP_COUNT) {
             throw new IllegalArgumentException("컵은 최대 3개까지 등록 가능합니다.");
         }
-        if (amount <= 0) {
+        if (amount <= MIN_CUP_SIZE) {
             throw new IllegalArgumentException("컵 용량이 올바르지 않은 값입니다.");
         }
     }
