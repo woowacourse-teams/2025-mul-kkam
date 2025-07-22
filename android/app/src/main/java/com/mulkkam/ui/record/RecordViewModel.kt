@@ -51,8 +51,8 @@ class RecordViewModel : ViewModel() {
                     1,
                     LocalDate.of(2025, 7, 21),
                     1200,
-                    500,
-                    10f,
+                    1200,
+                    100f,
                 ),
                 DailyWaterIntake(
                     2,
