@@ -4,10 +4,8 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.WaterRecord
 
-class RecordAdapter(
-    waterRecords: List<WaterRecord>,
-) : RecyclerView.Adapter<WaterRecordViewHolder>() {
-    private val waterRecords: MutableList<WaterRecord> = waterRecords.toMutableList()
+class RecordAdapter : RecyclerView.Adapter<WaterRecordViewHolder>() {
+    private val waterRecords: MutableList<WaterRecord> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
