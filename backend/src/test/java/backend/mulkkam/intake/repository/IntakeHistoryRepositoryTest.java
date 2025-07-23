@@ -110,5 +110,189 @@ class IntakeHistoryRepositoryTest {
             );
         }
 
+        @DisplayName("memberId와 날짜 범위에 해당하는 음용 기록을 조회할 때")
+        @Nested
+        class FindAllByMemberIdAndDateTimeBetween {
+
+            @DisplayName("날짜의 범위에 맞는 기록만 조회된다")
+            @Test
+            void success_containsOnlyInDateRange() {
+                // given
+                Member member = new MemberFixture().build();
+                Member savedMember = memberRepository.save(member);
+
+                LocalDate startDate = LocalDate.of(2025, 10, 20);
+                LocalDate endDate = LocalDate.of(2025, 10, 23);
+
+                IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 20),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 21),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory thirdHistoryInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 23),
+                                LocalTime.of(23, 59, 59)
+                        ))
+                        .build();
+
+                IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 24),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory secondHistoryNotInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 26),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                intakeHistoryRepository.save(firstHistoryInRange);
+                intakeHistoryRepository.save(secondHistoryInRange);
+                intakeHistoryRepository.save(thirdHistoryInRange);
+                intakeHistoryRepository.save(firstHistoryNotInRange);
+                intakeHistoryRepository.save(secondHistoryNotInRange);
+
+                // when
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                        savedMember.getId(),
+                        startDate.atStartOfDay(),
+                        endDate.atTime(LocalTime.MAX)
+                );
+
+                // then
+                assertSoftly(softly -> {
+                            assertThat(actual).contains(firstHistoryInRange);
+                            assertThat(actual).contains(secondHistoryInRange);
+                            assertThat(actual).contains(thirdHistoryInRange);
+                            assertThat(actual).doesNotContain(firstHistoryNotInRange);
+                            assertThat(actual).doesNotContain(secondHistoryNotInRange);
+                        }
+                );
+            }
+
+            @DisplayName("시작 날짜와 종료 날짜가 동일한 경우 해당 일자의 기록이 전부 반환된다")
+            @Test
+            void success_startDateAndEndDateIsSame() {
+                // given
+                Member member = new MemberFixture().build();
+                Member savedMember = memberRepository.save(member);
+
+                LocalDate startDate = LocalDate.of(2025, 10, 20);
+                LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+                IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 20),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 20),
+                                LocalTime.of(23, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
+                        .member(member)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 22),
+                                LocalTime.of(23, 50, 59)
+                        ))
+                        .build();
+
+                intakeHistoryRepository.save(firstHistoryInRange);
+                intakeHistoryRepository.save(secondHistoryInRange);
+                intakeHistoryRepository.save(firstHistoryNotInRange);
+
+                // when
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                        savedMember.getId(),
+                        startDate.atStartOfDay(),
+                        endDate.atTime(LocalTime.MAX)
+                );
+
+                // then
+                assertSoftly(softly -> {
+                            assertThat(actual).contains(firstHistoryInRange);
+                            assertThat(actual).contains(secondHistoryInRange);
+                            assertThat(actual).doesNotContain(firstHistoryNotInRange);
+                        }
+                );
+
+            }
+
+            @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
+            @Test
+            void success_containsOnlyHistoryOfMember() {
+
+                Member member = new MemberFixture().build();
+                Member savedMember = memberRepository.save(member);
+
+                Member anotherMember = new MemberFixture()
+                        .memberNickname(new MemberNickname("칼리"))
+                        .build();
+                Member savedAnotherMember = memberRepository.save(anotherMember);
+
+                LocalDate startDate = LocalDate.of(2025, 10, 20);
+                LocalDate endDate = LocalDate.of(2025, 10, 21);
+
+                IntakeHistory historyOfAnotherMember = new IntakeHistoryFixture()
+                        .member(savedAnotherMember)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 20),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                IntakeHistory historyOfMember = new IntakeHistoryFixture()
+                        .member(savedMember)
+                        .dateTime(LocalDateTime.of(
+                                LocalDate.of(2025, 10, 21),
+                                LocalTime.of(10, 30, 30)
+                        ))
+                        .build();
+
+                intakeHistoryRepository.save(historyOfAnotherMember);
+                intakeHistoryRepository.save(historyOfMember);
+
+                // when
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                        savedMember.getId(),
+                        startDate.atStartOfDay(),
+                        endDate.atTime(LocalTime.MAX)
+                );
+
+                // then
+                assertSoftly(softAssertions -> {
+                            assertThat(actual).hasSize(1);
+                            assertThat(actual).contains(historyOfMember);
+                            assertThat(actual).doesNotContain(historyOfAnotherMember);
+                        }
+                );
+
+            }
+        }
     }
 }
