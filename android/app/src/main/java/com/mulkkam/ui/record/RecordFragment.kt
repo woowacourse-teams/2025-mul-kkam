@@ -1,7 +1,11 @@
 package com.mulkkam.ui.record
 
 import android.os.Bundle
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.style.ForegroundColorSpan
 import android.view.View
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
@@ -147,18 +151,40 @@ class RecordFragment :
     }
 
     private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
-        binding.viewDailyChart.setProgress(dailyWaterIntake.goalRate)
-        binding.tvDailyWaterSummary.text =
-            getString(
-                R.string.record_daily_water_summary,
-                dailyWaterIntake.intakeAmount,
-                dailyWaterIntake.targetAmount,
+        with(binding) {
+            viewDailyChart.setProgress(dailyWaterIntake.goalRate)
+            val formattedIntake = String.format(Locale.US, "%,dml", dailyWaterIntake.intakeAmount)
+            tvDailyWaterSummary.text =
+                getColoredSpannable(
+                    R.color.primary_200,
+                    getString(R.string.record_daily_water_summary, dailyWaterIntake.intakeAmount, dailyWaterIntake.targetAmount),
+                    formattedIntake,
+                )
+            tvDailyChartLabel.text =
+                getColoredSpannable(
+                    R.color.primary_200,
+                    getString(R.string.record_daily_chart_label, dailyWaterIntake.date.format(DATE_FORMATTER_KR)),
+                    dailyWaterIntake.date.format(DATE_FORMATTER_KR),
+                )
+        }
+    }
+
+    private fun getColoredSpannable(
+        @ColorRes colorResId: Int,
+        fullText: String,
+        highlightedText: String,
+    ): SpannableString {
+        val color = requireContext().getColor(colorResId)
+        val startIndex = fullText.indexOf(highlightedText)
+
+        return SpannableString(fullText).apply {
+            setSpan(
+                ForegroundColorSpan(color),
+                startIndex,
+                startIndex + highlightedText.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
             )
-        binding.tvDailyChartLabel.text =
-            getString(
-                R.string.record_daily_chart_label,
-                dailyWaterIntake.date.format(DATE_FORMATTER_KR),
-            )
+        }
     }
 
     private fun createPieData(goalRate: Float): PieData {
