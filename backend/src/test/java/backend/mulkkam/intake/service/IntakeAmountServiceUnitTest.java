@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeAmountUpdateRequest;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.NoSuchElementException;
@@ -32,7 +32,7 @@ public class IntakeAmountServiceUnitTest {
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
-    class UpdateTarget {
+    class ModifyTarget {
 
         public static final long MEMBER_ID = 1L;
 
@@ -45,10 +45,10 @@ public class IntakeAmountServiceUnitTest {
                     .willReturn(Optional.of(mockMember));
 
             int newTargetAmount = 1_000;
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest = new IntakeAmountUpdateRequest(newTargetAmount);
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when
-            intakeAmountService.updateTarget(intakeAmountUpdateRequest, MEMBER_ID);
+            intakeAmountService.modifyTarget(intakeAmountModifyRequest, MEMBER_ID);
 
             // then
             verify(memberRepository).findById(MEMBER_ID);
@@ -64,10 +64,10 @@ public class IntakeAmountServiceUnitTest {
                     .willReturn(Optional.ofNullable(member));
 
             int newTargetAmount = -1;
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest = new IntakeAmountUpdateRequest(newTargetAmount);
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.updateTarget(intakeAmountUpdateRequest, MEMBER_ID))
+            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, MEMBER_ID))
                     .isInstanceOf(IllegalArgumentException.class);
             verify(memberRepository).findById(MEMBER_ID);
             verify(member, never()).updateTargetAmount(any(Amount.class));
@@ -82,7 +82,7 @@ public class IntakeAmountServiceUnitTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeAmountService.updateTarget(any(IntakeAmountUpdateRequest.class), MEMBER_ID))
+                    () -> intakeAmountService.modifyTarget(any(IntakeAmountModifyRequest.class), MEMBER_ID))
                     .isInstanceOf(NoSuchElementException.class);
         }
     }

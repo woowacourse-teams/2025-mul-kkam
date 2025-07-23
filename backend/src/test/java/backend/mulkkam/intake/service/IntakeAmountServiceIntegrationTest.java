@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeAmountUpdateRequest;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
@@ -26,11 +26,11 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
-    class UpdateTarget {
+    class ModifyTarget {
 
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
-        void success_amountMoeThan0() {
+        void success_amountMoreThan0() {
             // given
             int originTargetAmount = 2_000;
             Member member = new MemberFixture()
@@ -39,10 +39,10 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             int newTargetAmount = 1_000;
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest = new IntakeAmountUpdateRequest(newTargetAmount);
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when
-            intakeAmountService.updateTarget(intakeAmountUpdateRequest, savedMember.getId());
+            intakeAmountService.modifyTarget(intakeAmountModifyRequest, savedMember.getId());
 
             // then
             Optional<Member> foundMember = memberRepository.findById(member.getId());
@@ -63,10 +63,10 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             int newTargetAmount = -1;
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest = new IntakeAmountUpdateRequest(newTargetAmount);
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.updateTarget(intakeAmountUpdateRequest, savedMember.getId()))
+            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, savedMember.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
         }
 
@@ -75,10 +75,10 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void error_memberIsNotExisted() {
             // given
             int newTargetAmount = 1_000;
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest = new IntakeAmountUpdateRequest(newTargetAmount);
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.updateTarget(intakeAmountUpdateRequest, Long.MAX_VALUE))
+            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, Long.MAX_VALUE))
                     .isInstanceOf(NoSuchElementException.class);
         }
     }

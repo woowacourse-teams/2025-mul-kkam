@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.intake.dto.IntakeAmountUpdateRequest;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.NoSuchElementException;
@@ -16,13 +16,13 @@ public class IntakeAmountService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void updateTarget(
-            IntakeAmountUpdateRequest intakeAmountUpdateRequest,
+    public void modifyTarget(
+            IntakeAmountModifyRequest intakeAmountModifyRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
 
-        member.updateTargetAmount(intakeAmountUpdateRequest.toAmount());
+        member.updateTargetAmount(intakeAmountModifyRequest.toAmount());
     }
 
     private Member getMember(Long id) {
