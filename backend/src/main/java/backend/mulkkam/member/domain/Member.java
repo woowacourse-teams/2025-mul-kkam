@@ -35,7 +35,7 @@ public class Member {
     @Enumerated(value = EnumType.STRING)
     private Gender gender;
 
-    private Integer weight;
+    private Double weight;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
@@ -44,7 +44,7 @@ public class Member {
     public Member(
             MemberNickname memberNickname,
             Gender gender,
-            Integer weight,
+            Double weight,
             Amount targetAmount
     ) {
         this.memberNickname = memberNickname;

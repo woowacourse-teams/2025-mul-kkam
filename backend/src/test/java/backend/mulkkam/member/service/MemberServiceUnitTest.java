@@ -42,7 +42,7 @@ public class MemberServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             Gender gender = Gender.FEMALE;
-            Integer weight = 50;
+            Double weight = 50.2;
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     gender,
                     weight
@@ -73,7 +73,7 @@ public class MemberServiceUnitTest {
             Long memberId = 1L;
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-            Integer weight = 50;
+            Double weight = 50.2;
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     null,
                     weight

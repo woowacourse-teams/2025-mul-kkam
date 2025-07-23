@@ -7,7 +7,7 @@ import lombok.Getter;
 public class PhysicalAttributes {
 
     private final Gender gender;
-    private final Integer weight;
+    private final Double weight;
 
     public PhysicalAttributes(PhysicalAttributesModifyRequest request) {
         this.gender = request.gender();

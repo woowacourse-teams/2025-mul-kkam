@@ -35,7 +35,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                      .build();
             memberRepository.save(member);
 
-            Integer weight = 50;
+            Double weight = 50.2;
             Gender gender = Gender.FEMALE;
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     gender,
@@ -66,7 +66,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = new MemberFixture().build();
             memberRepository.save(member);
 
-            Integer weight = 50;
+            Double weight = 50.2;
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     null,
                     weight

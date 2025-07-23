@@ -4,6 +4,6 @@ import backend.mulkkam.member.domain.vo.Gender;
 
 public record PhysicalAttributesModifyRequest(
         Gender gender,
-        Integer weight
+        Double weight
 ) {
 }
