@@ -16,7 +16,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/weight")
+    @PostMapping("/physical-attributes")
     public ResponseEntity<Void> modifyPhysicalAttributes(@RequestBody PhysicalAttributesModifyRequest physicalAttributesModifyRequest) {
         memberService.modifyPhysicalAttributes(
                 physicalAttributesModifyRequest,
