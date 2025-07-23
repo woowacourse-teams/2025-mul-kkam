@@ -6,6 +6,7 @@ import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,10 +22,12 @@ public class IntakeHistoryController {
     private final IntakeHistoryService intakeHistoryService;
 
     @GetMapping
-    public List<IntakeHistorySummaryResponse> getDailyResponses(
+    public ResponseEntity<List<IntakeHistorySummaryResponse>> getDailyResponses(
             @ModelAttribute DateRangeRequest dateRangeRequest
     ) {
-        return intakeHistoryService.getDailyResponses(dateRangeRequest, 1L);
+        List<IntakeHistorySummaryResponse> dailyResponses = intakeHistoryService.getDailyResponses(dateRangeRequest,
+                1L);
+        return ResponseEntity.ok().body(dailyResponses);
     }
 
     @PostMapping
