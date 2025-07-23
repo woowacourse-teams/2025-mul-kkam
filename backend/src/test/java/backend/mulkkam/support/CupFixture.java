@@ -2,6 +2,7 @@ package backend.mulkkam.support;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupNickname;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 
@@ -10,7 +11,7 @@ public class CupFixture {
     private Member member;
     private CupNickname cupNickname = new CupNickname("스타벅스");
     private Amount amount = new Amount(500);
-    private Integer cupRank = 1;
+    private CupRank cupRank = new CupRank(1);
 
     public CupFixture member(Member member) {
         this.member = member;
@@ -27,7 +28,7 @@ public class CupFixture {
         return this;
     }
 
-    public CupFixture cupRank(Integer cupRank) {
+    public CupFixture cupRank(CupRank cupRank) {
         this.cupRank = cupRank;
         return this;
     }

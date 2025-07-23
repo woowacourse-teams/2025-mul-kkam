@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -55,7 +56,7 @@ class CupServiceUnitTest {
 
             Cup savedCup = new CupFixture()
                     .member(member)
-                    .cupRank(1)
+                    .cupRank(new CupRank(1))
                     .build();
 
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
@@ -119,15 +120,15 @@ class CupServiceUnitTest {
 
             Cup cup1 = new CupFixture()
                     .member(member)
-                    .cupRank(1)
+                    .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = new CupFixture()
                     .member(member)
-                    .cupRank(2)
+                    .cupRank(new CupRank(2))
                     .build();
             Cup cup3 = new CupFixture()
                     .member(member)
-                    .cupRank(3)
+                    .cupRank(new CupRank(3))
                     .build();
 
             List<Cup> cups = List.of(

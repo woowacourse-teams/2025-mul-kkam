@@ -1,16 +1,15 @@
 package backend.mulkkam.cup.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
 import jakarta.persistence.EntityManager;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +36,11 @@ class CupRepositoryTest {
 
         Cup cup1 = new CupFixture()
                 .member(member)
-                .cupRank(1)
+                .cupRank(new CupRank(1))
                 .build();
         Cup cup2 = new CupFixture()
                 .member(member)
-                .cupRank(2)
+                .cupRank(new CupRank(1))
                 .build();
 
         cupRepository.saveAll(List.of(cup1, cup2));
@@ -51,33 +50,5 @@ class CupRepositoryTest {
 
         // then
         assertThat(cups).hasSize(2);
-    }
-
-    @Test
-    @DisplayName("사용자 ID로 최대 랭크를 조회한다")
-    void findMaxRankByMemberId() {
-        // given
-        Member member = new MemberFixture().build();
-        memberRepository.save(member);
-
-        Cup cup1 = new CupFixture()
-                .member(member)
-                .cupRank(1)
-                .build();
-        Cup cup2 = new CupFixture()
-                .member(member)
-                .cupRank(3)
-                .build();
-
-        cupRepository.saveAll(List.of(cup1, cup2));
-
-        // when
-        Optional<Integer> maxRank = cupRepository.findMaxRankByMemberId(member.getId());
-
-        // then
-        assertSoftly(softly -> {
-            softly.assertThat(maxRank).isPresent();
-            softly.assertThat(maxRank.get()).isEqualTo(3);
-        });
     }
 }

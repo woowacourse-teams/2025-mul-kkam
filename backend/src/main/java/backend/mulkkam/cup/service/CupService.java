@@ -2,6 +2,7 @@ package backend.mulkkam.cup.service;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupNickname;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -19,10 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CupService {
 
-    private static final int DEFAULT_RANK = 0;
-    private static final int MAX_CUP_COUNT = 3;
-    private static final int CUP_RANK_OFFSET = 1;
-
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
@@ -31,16 +28,13 @@ public class CupService {
         Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberId(memberId);
 
-        validPossibleCreateNewCup(cupRegisterRequest.amount(), cups);
-
-        Integer rank = cupRepository.findMaxRankByMemberId(memberId)
-                .orElse(DEFAULT_RANK);
+        CupRank currentCupRank = new CupRank(cups.size());
 
         Cup cup = new Cup(
                 member,
                 new CupNickname(cupRegisterRequest.nickname()),
                 new Amount(cupRegisterRequest.amount()),
-                rank + CUP_RANK_OFFSET
+                currentCupRank.nextRank()
         );
 
         Cup createdCup = cupRepository.save(cup);
@@ -54,11 +48,5 @@ public class CupService {
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new NoSuchElementException("존재하지 않는 멤버입니다."));
-    }
-
-    private void validPossibleCreateNewCup(Integer amount, List<Cup> cups) {
-        if (cups.size() >= MAX_CUP_COUNT) {
-            throw new IllegalArgumentException("컵은 최대 3개까지 등록 가능합니다.");
-        }
     }
 }
