@@ -44,41 +44,61 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-
         List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
+                // TODO: 날짜 처리 방식 재고려
                 dateRangeRequest.from().atStartOfDay(),
                 dateRangeRequest.to().atTime(LocalTime.MAX)
         );
 
-        Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate = intakeHistories.stream()
+        // TODO: 날짜의 from/to 순서에 대한 검증
+        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistories.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
-        List<IntakeHistorySummaryResponse> result = new ArrayList<>();
-        for (LocalDate date : intakeHistoriesOfDate.keySet()) {
-
-            List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
-                    intakeHistoriesOfDate.get(date));
-
-            int totalIntakeAmount = intakeHistoryResponses.stream()
-                    .mapToInt(response -> response.intakeAmount().value())
-                    .sum();
-
-            int targetAmount = member.getTargetAmount().value();
-
-            IntakeHistorySummaryResponse intakeHistorySummaryResponse = new IntakeHistorySummaryResponse(
-                    date,
-                    member.getTargetAmount().value(),
-                    totalIntakeAmount,
-                    ((double) totalIntakeAmount / targetAmount) * 100,
-                    intakeHistoryResponses
-            );
-            result.add(intakeHistorySummaryResponse);
-        }
+        List<IntakeHistorySummaryResponse> result = toIntakeHistorySummaryResponses(
+                historiesGroupedByDate,
+                member
+        );
 
         return result.stream()
                 .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
                 .toList();
+    }
+
+    private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
+            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
+            Member member
+    ) {
+        List<IntakeHistorySummaryResponse> result = new ArrayList<>();
+
+        for (LocalDate date : intakeHistoriesOfDate.keySet()) {
+            IntakeHistorySummaryResponse intakeHistorySummaryResponse = toIntakeHistorySummaryResponse(
+                    intakeHistoriesOfDate, member, date);
+            result.add(intakeHistorySummaryResponse);
+        }
+
+        return result;
+    }
+
+    private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
+            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate, Member member, LocalDate date) {
+
+        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
+                intakeHistoriesOfDate.get(date));
+
+        int totalIntakeAmount = intakeHistoryResponses.stream()
+                .mapToInt(response -> response.intakeAmount().value())
+                .sum();
+        int targetAmount = member.getTargetAmount().value();
+        double achievementRate = (double) (totalIntakeAmount / targetAmount) * 100;
+
+        return new IntakeHistorySummaryResponse(
+                date,
+                member.getTargetAmount().value(),
+                totalIntakeAmount,
+                achievementRate,
+                intakeHistoryResponses
+        );
     }
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
