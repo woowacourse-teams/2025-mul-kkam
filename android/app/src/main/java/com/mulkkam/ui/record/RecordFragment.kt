@@ -42,9 +42,19 @@ class RecordFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+        initHighlight()
         initRecordAdapter()
         initChartOptions()
         initObservers()
+    }
+
+    private fun initHighlight() {
+        binding.tvViewSubLabel.text =
+            getColoredSpannable(
+                R.color.primary_200,
+                getString(R.string.record_view_sub_label),
+                HIGHLIGHT_SUB_LABEL,
+            )
     }
 
     private fun initRecordAdapter() {
@@ -223,6 +233,7 @@ class RecordFragment :
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
 
+        private const val HIGHLIGHT_SUB_LABEL: String = "물 일지"
         private const val MAX_PERCENTAGE: Float = 100f
         private const val ANIMATION_DURATION_MS: Int = 1000
         private const val HOLE_RADIUS: Float = 80f
