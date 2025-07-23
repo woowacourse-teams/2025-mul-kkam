@@ -1,12 +1,12 @@
 package backend.mulkkam.cup.domain.vo;
 
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CupNicknameTest {
 
@@ -14,10 +14,10 @@ class CupNicknameTest {
     @DisplayName("생성자 검증 시에")
     class NewCupNickname {
 
-        @DisplayName("1 ~ 5글자의 닉네임을 설정할 수 있다.")
+        @DisplayName("2 ~ 10글자의 닉네임을 설정할 수 있다.")
         @ParameterizedTest
-        @ValueSource(strings = {"1", "22", "333", "4444", "55555"})
-        void success_nameLengthLessThan5(String input) {
+        @ValueSource(strings = {"22", "333", "4444", "55555", "666666", "7777777", "8888888", "999999999", "10101010"})
+        void success_nameLengthBetween2And10(String input) {
             // when & then
             assertThatCode(() -> {
                 new CupNickname(input);
@@ -26,7 +26,7 @@ class CupNicknameTest {
 
         @DisplayName("범위를 벗어난 닉네임은 설정할 수 없다.")
         @ParameterizedTest
-        @ValueSource(strings = {"", "666666"})
+        @ValueSource(strings = {"", "1", "66666666666"})
         void error_nameLengthOutOfRange(String input) {
             // when & then
             assertThatThrownBy(() -> {
