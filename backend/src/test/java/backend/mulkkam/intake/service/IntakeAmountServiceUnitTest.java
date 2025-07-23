@@ -73,7 +73,6 @@ public class IntakeAmountServiceUnitTest {
             verify(member, never()).updateTargetAmount(any(Amount.class));
         }
 
-        //
         @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
         @Test
         void error_memberIsNotExisted() {
