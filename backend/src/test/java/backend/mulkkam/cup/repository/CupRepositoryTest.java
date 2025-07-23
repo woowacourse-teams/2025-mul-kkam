@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -40,7 +40,7 @@ class CupRepositoryTest {
                 .build();
         Cup cup2 = new CupFixture()
                 .member(member)
-                .cupRank(new CupRank(1))
+                .cupRank(new CupRank(2))
                 .build();
 
         cupRepository.saveAll(List.of(cup1, cup2));
@@ -49,6 +49,11 @@ class CupRepositoryTest {
         List<Cup> cups = cupRepository.findAllByMemberId(member.getId());
 
         // then
-        assertThat(cups).hasSize(2);
+        assertSoftly(softly -> {
+            softly.assertThat(cups.getFirst().getMember()).isEqualTo(member);
+            softly.assertThat(cups.getFirst().getCupRank().value()).isEqualTo(1);
+            softly.assertThat(cups).hasSize(2);
+        });
+
     }
 }
