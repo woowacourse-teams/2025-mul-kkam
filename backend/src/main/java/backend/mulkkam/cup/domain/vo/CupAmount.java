@@ -8,7 +8,7 @@ public record CupAmount(
         Integer value
 ) {
 
-    private static final int MAX_AMOUNT = 10000;
+    private static final int MAX_AMOUNT = 10_000;
     private static final int MIN_AMOUNT = 1;
 
     public CupAmount {
