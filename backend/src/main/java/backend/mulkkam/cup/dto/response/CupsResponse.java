@@ -11,11 +11,6 @@ public record CupsResponse(
         this(
                 cupList.size(),
                 cupList.stream()
-                        .map(cup -> new CupResponse(
-                                cup.getId(),
-                                cup.getNickname().value(),
-                                cup.getCupAmount().value()))
-                        .toList()
-        );
+                        .map(CupResponse::new).toList());
     }
 }
