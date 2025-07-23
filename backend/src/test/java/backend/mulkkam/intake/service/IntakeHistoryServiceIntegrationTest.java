@@ -43,7 +43,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
-        void success_amountMoreThen0() {
+        void success_amountMoreThan0() {
             // given
             Member member = new MemberFixture().build();
             Member savedMember = memberRepository.save(member);
@@ -68,7 +68,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("용량이 음수인 경우 예외가 발생한다")
         @Test
-        void error_amountIsLessThen0() {
+        void error_amountIsLessThan0() {
             // given
             Member member = new MemberFixture().build();
             memberRepository.save(member);
