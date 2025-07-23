@@ -55,7 +55,7 @@ public class MemberServiceUnitTest {
             );
 
             // then
-            Member result = memberRepository.findById(memberId).get();
+            Member result = memberRepository.findById(memberId).orElseThrow();
 
             assertSoftly(softly -> {
                 softly.assertThat(result.getGender()).isEqualTo(gender);
@@ -84,7 +84,7 @@ public class MemberServiceUnitTest {
             );
 
             // then
-            Member result = memberRepository.findById(memberId).get();
+            Member result = memberRepository.findById(memberId).orElseThrow();
 
             assertSoftly(softly -> {
                 softly.assertThat(result.getGender()).isEqualTo(member.getGender());
