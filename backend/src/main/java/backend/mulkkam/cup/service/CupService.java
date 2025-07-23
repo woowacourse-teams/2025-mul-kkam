@@ -24,7 +24,10 @@ public class CupService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public CupResponse create(CupRegisterRequest cupRegisterRequest, Long memberId) {
+    public CupResponse create(
+            CupRegisterRequest cupRegisterRequest,
+            Long memberId
+    ) {
         Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberId(memberId);
 

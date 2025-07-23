@@ -41,11 +41,17 @@ public class Cup {
     private CupNickname nickname;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "cup_amount", nullable = false))
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "cup_amount", nullable = false)
+    )
     private CupAmount cupAmount;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "cup_rank", nullable = false))
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "cup_rank", nullable = false)
+    )
     private CupRank cupRank;
 
     public Cup(

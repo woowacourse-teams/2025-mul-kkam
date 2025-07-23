@@ -24,7 +24,7 @@ class CupRankTest {
             }).doesNotThrowAnyException();
         }
 
-        @DisplayName("범위를 벗어난 갯수는 설정할 수 없다.")
+        @DisplayName("범위를 벗어난 갯수는 설정할 수 없다")
         @ParameterizedTest
         @ValueSource(strings = {"4", "-1", "5"})
         void error_nameLengthOutOfRange(Integer input) {

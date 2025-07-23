@@ -8,7 +8,6 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
-import jakarta.persistence.EntityManager;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +22,6 @@ class CupRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private EntityManager em;
 
     @Test
     @DisplayName("사용자 ID로 사용자 전체 컵을 조회한다")
@@ -54,6 +50,5 @@ class CupRepositoryTest {
             softly.assertThat(cups.getFirst().getCupRank().value()).isEqualTo(1);
             softly.assertThat(cups).hasSize(2);
         });
-
     }
 }
