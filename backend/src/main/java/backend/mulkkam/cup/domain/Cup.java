@@ -1,9 +1,9 @@
 package backend.mulkkam.cup.domain;
 
 
+import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -41,8 +41,8 @@ public class Cup {
     private CupNickname nickname;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "amount", nullable = false))
-    private Amount amount;
+    @AttributeOverride(name = "value", column = @Column(name = "cup_amount", nullable = false))
+    private CupAmount cupAmount;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "cup_rank", nullable = false))
@@ -51,12 +51,12 @@ public class Cup {
     public Cup(
             Member member,
             CupNickname nickname,
-            Amount amount,
+            CupAmount cupAmount,
             CupRank cupRank
     ) {
         this.member = member;
         this.nickname = nickname;
-        this.amount = amount;
+        this.cupAmount = cupAmount;
         this.cupRank = cupRank;
     }
 }

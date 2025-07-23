@@ -1,12 +1,12 @@
 package backend.mulkkam.cup.service;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.List;
@@ -33,7 +33,7 @@ public class CupService {
         Cup cup = new Cup(
                 member,
                 new CupNickname(cupRegisterRequest.nickname()),
-                new Amount(cupRegisterRequest.amount()),
+                new CupAmount(cupRegisterRequest.amount()),
                 currentCupRank.nextRank()
         );
 
@@ -41,7 +41,7 @@ public class CupService {
         return new CupResponse(
                 createdCup.getId(),
                 createdCup.getNickname().value(),
-                createdCup.getAmount().value()
+                createdCup.getCupAmount().value()
         );
     }
 
