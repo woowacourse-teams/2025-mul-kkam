@@ -1,10 +1,11 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -14,7 +15,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
@@ -81,9 +84,9 @@ public class IntakeAmountServiceUnitTest {
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(
-                    () -> intakeAmountService.modifyTarget(any(IntakeAmountModifyRequest.class), MEMBER_ID))
-                    .isInstanceOf(NoSuchElementException.class);
+            CommonException exception = assertThrows(CommonException.class,
+                    () -> intakeAmountService.modifyTarget(any(IntakeAmountModifyRequest.class), MEMBER_ID));
+            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
         }
     }
 }

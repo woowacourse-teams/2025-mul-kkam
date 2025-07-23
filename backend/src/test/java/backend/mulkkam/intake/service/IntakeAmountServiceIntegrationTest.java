@@ -1,20 +1,23 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -78,8 +81,9 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, Long.MAX_VALUE))
-                    .isInstanceOf(NoSuchElementException.class);
+            CommonException exception = assertThrows(CommonException.class,
+                    () -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, Long.MAX_VALUE));
+            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
         }
     }
 }
