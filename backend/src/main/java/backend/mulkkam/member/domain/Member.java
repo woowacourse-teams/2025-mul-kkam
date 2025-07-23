@@ -2,7 +2,7 @@ package backend.mulkkam.member.domain;
 
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.vo.MemberNickname;
-import backend.mulkkam.member.dto.PhysicalAttributes;
+import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
