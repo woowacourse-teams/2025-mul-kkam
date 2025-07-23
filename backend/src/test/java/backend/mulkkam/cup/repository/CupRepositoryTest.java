@@ -76,7 +76,7 @@ class CupRepositoryTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(maxRank.isPresent()).isTrue();
+            softly.assertThat(maxRank).isPresent();
             softly.assertThat(maxRank.get()).isEqualTo(3);
         });
     }
