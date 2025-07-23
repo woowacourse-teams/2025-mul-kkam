@@ -1,8 +1,12 @@
 package backend.mulkkam.cup.service;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -64,8 +68,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(cupRegisterRequest, member.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> cupService.create(cupRegisterRequest, member.getId()));
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
         }
 
         @DisplayName("컵이 3개 저장되어 있을 때 예외가 발생한다")
@@ -106,8 +111,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // then
-            assertThatThrownBy(() -> cupService.create(cupRegisterRequest, member.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> cupService.create(cupRegisterRequest, member.getId()));
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
         }
     }
 }

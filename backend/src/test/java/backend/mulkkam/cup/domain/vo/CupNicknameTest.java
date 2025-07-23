@@ -1,8 +1,11 @@
 package backend.mulkkam.cup.domain.vo;
 
+import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_NICKNAME;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -29,9 +32,9 @@ class CupNicknameTest {
         @ValueSource(strings = {"", "1", "66666666666"})
         void error_nameLengthOutOfRange(String input) {
             // when & then
-            assertThatThrownBy(() -> {
-                new CupNickname(input);
-            }).isInstanceOf(IllegalArgumentException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> new CupNickname(input));
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_NICKNAME);
         }
     }
 }
