@@ -29,7 +29,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-             Member member = new MemberFixture()
+            Member member = new MemberFixture()
                      .weight(null)
                      .gender(null)
                      .build();
