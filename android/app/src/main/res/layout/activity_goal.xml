@@ -22,7 +22,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:backgroundTint="@color/white"
-            android:src="@drawable/img_setting_prev" />
+            android:src="@drawable/ic_setting_prev" />
 
         <TextView
             android:id="@+id/tv_toolbar_title"
