@@ -12,7 +12,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import kotlin.math.min
 
-class GradientDonutView(
+class GradientDonutChartView(
     context: Context,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {

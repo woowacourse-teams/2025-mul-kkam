@@ -166,7 +166,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/view_weekly_chart_divider" />
 
-        <com.mulkkam.ui.GradientDonutView
+        <com.mulkkam.ui.GradientDonutChartView
             android:id="@+id/view_daily_chart"
             android:layout_width="0dp"
             android:layout_height="0dp"
