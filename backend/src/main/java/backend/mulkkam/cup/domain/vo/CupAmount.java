@@ -4,9 +4,7 @@ import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_A
 
 import backend.mulkkam.common.exception.CommonException;
 
-public record CupAmount(
-        Integer value
-) {
+public record CupAmount(Integer value) {
 
     private static final int MAX_AMOUNT = 10_000;
     private static final int MIN_AMOUNT = 1;
