@@ -42,6 +42,7 @@ class CupServiceUnitTest {
     @Nested
     class Create {
 
+        @DisplayName("정상적으로 생성한다")
         @Test
         void success() {
             // given
@@ -60,7 +61,10 @@ class CupServiceUnitTest {
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
 
             // when
-            CupResponse cupResponse = cupService.create(cupRegisterRequest, member.getId());
+            CupResponse cupResponse = cupService.create(
+                    cupRegisterRequest,
+                    member.getId()
+            );
 
             // then
             assertSoftly(softly -> {
@@ -88,7 +92,10 @@ class CupServiceUnitTest {
         @Test
         void error_amountLessThan0() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", -100);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    "스타벅스",
+                    -100
+            );
             Member member = new MemberFixture().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
@@ -102,7 +109,10 @@ class CupServiceUnitTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", 500);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
             Member member = new MemberFixture().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
@@ -120,7 +130,11 @@ class CupServiceUnitTest {
                     .cupRank(3)
                     .build();
 
-            List<Cup> cups = List.of(cup1, cup2, cup3);
+            List<Cup> cups = List.of(
+                    cup1,
+                    cup2,
+                    cup3
+            );
 
             // when
             when(cupRepository.findAllByMemberId(member.getId())).thenReturn(cups);

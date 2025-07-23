@@ -35,12 +35,18 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", 500);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
             Member member = new MemberFixture().build();
             memberRepository.save(member);
 
             // when
-            CupResponse cupResponse = cupService.create(cupRegisterRequest, member.getId());
+            CupResponse cupResponse = cupService.create(
+                    cupRegisterRequest,
+                    member.getId()
+            );
 
             // then
             assertSoftly(softly -> {
@@ -81,17 +87,38 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", 500);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
             Member member = new MemberFixture().build();
             memberRepository.save(member);
-            CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest("스타벅스", 500);
-            CupRegisterRequest cupRegisterRequest2 = new CupRegisterRequest("스타벅스", 500);
-            CupRegisterRequest cupRegisterRequest3 = new CupRegisterRequest("스타벅스", 500);
+            CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
+            CupRegisterRequest cupRegisterRequest2 = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
+            CupRegisterRequest cupRegisterRequest3 = new CupRegisterRequest(
+                    "스타벅스",
+                    500
+            );
 
             // when
-            cupService.create(cupRegisterRequest1, member.getId());
-            cupService.create(cupRegisterRequest2, member.getId());
-            cupService.create(cupRegisterRequest3, member.getId());
+            cupService.create(
+                    cupRegisterRequest1,
+                    member.getId()
+            );
+            cupService.create(
+                    cupRegisterRequest2,
+                    member.getId()
+            );
+            cupService.create(
+                    cupRegisterRequest3,
+                    member.getId()
+            );
 
             // then
             assertThatThrownBy(() -> cupService.create(cupRegisterRequest, member.getId()))
