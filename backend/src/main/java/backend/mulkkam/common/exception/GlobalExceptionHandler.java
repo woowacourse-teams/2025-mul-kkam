@@ -11,4 +11,9 @@ public class GlobalExceptionHandler{
     public ErrorResponse<FailureBody> handleInvalidEnum(HttpMessageNotReadableException e) {
         return ErrorResponse.from(BadRequestErrorCode.INVALID_ENUM_VALUE);
     }
+
+    @ExceptionHandler(CommonException.class)
+    public ErrorResponse<FailureBody> handleInvalidEnum(CommonException e) {
+        return ErrorResponse.from(e.getErrorCode());
+    }
 }

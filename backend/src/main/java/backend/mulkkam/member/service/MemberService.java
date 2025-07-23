@@ -1,5 +1,7 @@
 package backend.mulkkam.member.service;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -26,6 +28,6 @@ public class MemberService {
 
     private Member getById(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }
