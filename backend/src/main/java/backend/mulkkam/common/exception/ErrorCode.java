@@ -1,6 +1,10 @@
 package backend.mulkkam.common.exception;
 
-public enum ErrorCode {
+import org.springframework.http.HttpStatus;
 
-    BRO1
+public interface ErrorCode {
+
+    String name();
+
+    HttpStatus getStatus();
 }
