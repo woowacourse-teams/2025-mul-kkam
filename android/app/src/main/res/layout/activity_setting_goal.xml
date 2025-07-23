@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.ProfileActivity">
+    tools:context=".ui.SettingGoalActivity">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_goal"
+        android:id="@+id/tb_setting_goal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/profile_toolbar_title"
+            android:text="@string/setting_goal_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -42,69 +42,64 @@
         android:background="@color/gray_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_goal" />
+        app:layout_constraintTop_toBottomOf="@id/tb_setting_goal" />
 
     <TextView
-        android:id="@+id/tv_edit_nickname_label"
+        android:id="@+id/tv_goal_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/profile_edit_nickname_label"
+        android:text="@string/goal_edit_goal_label"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_toolbar_divider" />
 
     <EditText
-        android:id="@+id/et_input_nickname"
+        android:id="@+id/et_input_goal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_common"
         android:backgroundTint="@color/gray_50"
-        android:hint="@string/profile_hint_input_nickname"
+        android:hint="@string/goal_hint_input_goal"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         android:textColorHint="@color/gray_300"
-        app:layout_constraintEnd_toStartOf="@id/btn_check_duplicate"
-        app:layout_constraintStart_toStartOf="@id/tv_edit_nickname_label"
-        app:layout_constraintTop_toBottomOf="@id/tv_edit_nickname_label" />
-
-    <TextView
-        android:id="@+id/btn_check_duplicate"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/bg_common"
-        android:backgroundTint="@color/gray_200"
-        android:gravity="center"
-        android:paddingHorizontal="12dp"
-        android:text="@string/profile_check_duplicate"
-        android:textAppearance="@style/title3"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/et_input_nickname"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/et_input_nickname"
-        app:layout_constraintTop_toTopOf="@id/et_input_nickname" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_goal_label" />
 
     <TextView
-        android:id="@+id/tv_nickname_validation_message"
+        android:id="@+id/tv_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:text="@string/goal_unit_ml"
+        android:textAppearance="@style/title2"
+        android:textColor="@color/gray_400"
+        app:layout_constraintBottom_toBottomOf="@id/et_input_goal"
+        app:layout_constraintEnd_toEndOf="@id/et_input_goal"
+        app:layout_constraintTop_toTopOf="@id/et_input_goal" />
+
+    <TextView
+        android:id="@+id/tv_goal_warning_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/profile_warning_duplicated_nickname"
+        android:layout_marginTop="7dp"
+        android:text="@string/goal_warning_too_much"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
-        app:layout_constraintStart_toStartOf="@id/et_input_nickname"
-        app:layout_constraintTop_toBottomOf="@id/et_input_nickname" />
+        app:layout_constraintStart_toStartOf="@id/et_input_goal"
+        app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
 
     <TextView
-        android:id="@+id/tv_save_profile"
+        android:id="@+id/tv_save_goal"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"

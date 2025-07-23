@@ -18,11 +18,15 @@
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
         <activity
-            android:name=".ui.GoalActivity"
+            android:name=".ui.SettingProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.ProfileActivity"
+            android:name=".ui.SettingWaterActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.SettingGoalActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
