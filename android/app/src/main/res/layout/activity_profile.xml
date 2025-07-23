@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
+        app:contentInsetStart="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -32,13 +33,12 @@
             android:text="@string/profile_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
-
     </androidx.appcompat.widget.Toolbar>
 
     <View
         android:id="@+id/view_toolbar_divider"
         android:layout_width="0dp"
-        android:layout_height="2dp"
+        android:layout_height="1dp"
         android:background="@color/gray_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -56,38 +56,40 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_toolbar_divider" />
 
-    <!--    텍스트 입력창의 크기를 고정시키고 싶지 않아서 0dp, 0dp로 처리해 놓았습니다-->
-    <!--    더 좋은 방법이 있지 않을까 고민되네요 🤔-->
     <EditText
         android:id="@+id/et_input_nickname"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="9dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_common"
         android:backgroundTint="@color/gray_50"
         android:hint="@string/profile_hint_input_nickname"
         android:paddingHorizontal="12dp"
         android:paddingVertical="8dp"
         android:textAppearance="@style/body3"
-        app:layout_constraintBottom_toBottomOf="@id/btn_check_duplicate"
+        android:textColor="@color/gray_400"
+        android:textColorHint="@color/gray_300"
         app:layout_constraintEnd_toStartOf="@id/btn_check_duplicate"
         app:layout_constraintStart_toStartOf="@id/tv_edit_nickname_label"
-        app:layout_constraintTop_toTopOf="@id/btn_check_duplicate" />
+        app:layout_constraintTop_toBottomOf="@id/tv_edit_nickname_label" />
 
     <TextView
         android:id="@+id/btn_check_duplicate"
-        android:layout_width="71dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="12dp"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
         android:layout_marginEnd="24dp"
         android:background="@drawable/bg_common"
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
+        android:paddingHorizontal="12dp"
         android:text="@string/profile_check_duplicate"
         android:textAppearance="@style/title3"
         android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="@id/et_input_nickname"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_edit_nickname_label" />
+        app:layout_constraintStart_toEndOf="@id/et_input_nickname"
+        app:layout_constraintTop_toTopOf="@id/et_input_nickname" />
 
     <TextView
         android:id="@+id/tv_nickname_validation_message"
@@ -102,14 +104,15 @@
         app:layout_constraintTop_toBottomOf="@id/et_input_nickname" />
 
     <TextView
-        android:id="@+id/btn_save_profile"
+        android:id="@+id/tv_save_profile"
         android:layout_width="0dp"
-        android:layout_height="38dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/bg_common"
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
+        android:paddingVertical="8dp"
         android:text="@string/setting_save"
         android:textAppearance="@style/title2"
         android:textColor="@color/white"
