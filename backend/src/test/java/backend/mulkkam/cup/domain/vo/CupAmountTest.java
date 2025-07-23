@@ -19,7 +19,7 @@ class CupAmountTest {
 
         @DisplayName("1부터 10000까지 설정할 수 있다")
         @ParameterizedTest
-        @ValueSource(strings = {"1", "500", "1000", "5000", "10000"})
+        @ValueSource(strings = {"1", "500", "1_000", "5_000", "10_000"})
         void success_amountBetween1And10000(Integer input) {
             // when & then
             assertThatCode(() -> {
@@ -29,7 +29,7 @@ class CupAmountTest {
 
         @DisplayName("범위를 벗어난 음용량을 설정할 수 없다")
         @ParameterizedTest
-        @ValueSource(strings = {"-1", "0", "10001", "150000"})
+        @ValueSource(strings = {"-1", "0", "10_001", "150_000"})
         void error_nameLengthOutOfRange(Integer input) {
             // when & then
             CommonException ex = assertThrows(CommonException.class,

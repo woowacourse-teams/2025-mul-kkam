@@ -19,7 +19,8 @@ class CupNicknameTest {
 
         @DisplayName("2 ~ 10글자의 닉네임을 설정할 수 있다.")
         @ParameterizedTest
-        @ValueSource(strings = {"22", "333", "4444", "55555", "666666", "7777777", "8888888", "999999999", "10101010"})
+        @ValueSource(strings = {"22", "333", "4444", "55555", "666666", "7777777", "88888888", "999999999",
+                "10101010"})
         void success_nameLengthBetween2And10(String input) {
             // when & then
             assertThatCode(() -> {
@@ -29,7 +30,7 @@ class CupNicknameTest {
 
         @DisplayName("범위를 벗어난 닉네임은 설정할 수 없다.")
         @ParameterizedTest
-        @ValueSource(strings = {"", "1", "66666666666"})
+        @ValueSource(strings = {"", "1", "66_666_666_666"})
         void error_nameLengthOutOfRange(String input) {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
