@@ -36,17 +36,13 @@ public class CupService {
 
         Cup cup = new Cup(
                 member,
-                new CupNickname(cupRegisterRequest.nickname()),
+                new CupNickname(cupRegisterRequest.cupNickname()),
                 new CupAmount(cupRegisterRequest.amount()),
                 currentCupRank.nextRank()
         );
 
         Cup createdCup = cupRepository.save(cup);
-        return new CupResponse(
-                createdCup.getId(),
-                createdCup.getNickname().value(),
-                createdCup.getCupAmount().value()
-        );
+        return new CupResponse(createdCup);
     }
 
     private Member getMember(Long memberId) {
