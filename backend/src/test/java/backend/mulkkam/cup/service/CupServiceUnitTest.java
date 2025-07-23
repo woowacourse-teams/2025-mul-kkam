@@ -50,9 +50,12 @@ class CupServiceUnitTest {
         @Test
         void success() {
             // given
+            String cupNickname = "스타벅스";
+            Integer cupAmount = 500;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
-                    "스타벅스",
-                    500);
+                    cupNickname,
+                    cupAmount
+            );
             Member member = new MemberFixture().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
@@ -72,8 +75,8 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupResponse.nickname()).isEqualTo("스타벅스");
-                softly.assertThat(cupResponse.amount()).isEqualTo(500);
+                softly.assertThat(cupResponse.nickname()).isEqualTo(cupNickname);
+                softly.assertThat(cupResponse.amount()).isEqualTo(cupAmount);
             });
         }
 
