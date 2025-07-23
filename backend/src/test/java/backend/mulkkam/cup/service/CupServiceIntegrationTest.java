@@ -149,7 +149,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class read {
 
-        @DisplayName("사용자의 컵을 모두 가져온다")
+        @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
         void success_readAllCupsFromMember() {
             // given
@@ -158,12 +158,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             Cup cup1 = new CupFixture()
                     .member(member)
-                    .cupRank(new CupRank(1))
+                    .cupRank(new CupRank(2))
                     .build();
 
             Cup cup2 = new CupFixture()
                     .member(member)
-                    .cupRank(new CupRank(2))
+                    .cupRank(new CupRank(1))
                     .build();
             List<Cup> cups = List.of(cup1, cup2);
             cupRepository.saveAll(cups);

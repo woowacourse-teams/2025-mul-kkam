@@ -162,7 +162,7 @@ class CupServiceUnitTest {
     @Nested
     class read {
 
-        @DisplayName("사용자의 컵을 모두 가져온다")
+        @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
         void success_readAllCupsFromMember() {
             // given
