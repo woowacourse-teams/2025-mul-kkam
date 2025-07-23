@@ -1,9 +1,20 @@
 package backend.mulkkam.intake.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.Optional;
@@ -14,15 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class IntakeAmountServiceUnitTest {
@@ -87,6 +89,47 @@ public class IntakeAmountServiceUnitTest {
             CommonException exception = assertThrows(CommonException.class,
                     () -> intakeAmountService.modifyTarget(any(IntakeAmountModifyRequest.class), MEMBER_ID));
             assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+        }
+    }
+
+    @DisplayName("하루 섭취 목표 응용량을 추천받을 때에")
+    @Nested
+    class GetRecommended {
+
+        public static final long MEMBER_ID = 1L;
+
+        @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
+        @Test
+        void success_physicalAttributes() {
+            // given
+            Member mockMember = mock(Member.class);
+            given(memberRepository.findById(MEMBER_ID))
+                    .willReturn(Optional.of(mockMember));
+
+            // when
+            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+            });
+        }
+
+        @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
+        @Test
+        void success_physicalAttributesIsNotExisted() {
+            // given
+            Member mockMember = mock(Member.class);
+            given(memberRepository.findById(MEMBER_ID))
+                    .willReturn(Optional.of(mockMember));
+
+            // when
+            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+            });
         }
     }
 }
