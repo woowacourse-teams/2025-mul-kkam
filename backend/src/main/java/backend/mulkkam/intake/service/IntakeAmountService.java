@@ -1,32 +1,32 @@
-package backend.mulkkam.member.service;
+package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.NotFoundErrorCode;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 @Service
-public class MemberService {
+public class IntakeAmountService {
 
     private final MemberRepository memberRepository;
 
-
     @Transactional
-    public void modifyPhysicalAttributes(
-            PhysicalAttributesModifyRequest physicalAttributesModifyRequest,
+    public void modifyTarget(
+            IntakeAmountModifyRequest intakeAmountModifyRequest,
             Long memberId
     ) {
-        Member member = getById(memberId);
-        member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
+        Member member = getMember(memberId);
+
+        member.updateTargetAmount(intakeAmountModifyRequest.toAmount());
     }
 
-    private Member getById(Long id) {
+    private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }

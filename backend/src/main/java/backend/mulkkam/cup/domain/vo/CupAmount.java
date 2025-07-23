@@ -1,15 +1,17 @@
 package backend.mulkkam.cup.domain.vo;
 
-public record CupAmount(
-        Integer value
-) {
+import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_AMOUNT;
 
-    private static final int MAX_AMOUNT = 10000;
-    private static final int MIN_AMOUNT = 0;
+import backend.mulkkam.common.exception.CommonException;
+
+public record CupAmount(Integer value) {
+
+    private static final int MAX_AMOUNT = 10_000;
+    private static final int MIN_AMOUNT = 1;
 
     public CupAmount {
         if (value > MAX_AMOUNT || value < MIN_AMOUNT) {
-            throw new IllegalArgumentException("컵 용량이 올바르지 않습니다.");
+            throw new CommonException(INVALID_CUP_AMOUNT);
         }
     }
 }

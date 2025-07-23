@@ -1,5 +1,9 @@
 package backend.mulkkam.cup.domain.vo;
 
+import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_SIZE;
+
+import backend.mulkkam.common.exception.CommonException;
+
 public record CupRank(
         Integer value
 ) {
@@ -10,7 +14,7 @@ public record CupRank(
 
     public CupRank {
         if (value > MAX_CUP_COUNT || value < MIN_CUP_COUNT) {
-            throw new IllegalArgumentException("컵은 최대 3개까지 등록 가능합니다.");
+            throw new CommonException(INVALID_CUP_SIZE);
         }
     }
 

@@ -1,5 +1,8 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -11,7 +14,6 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.List;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,32 +32,28 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
 
         CupRank currentCupRank = new CupRank(cups.size());
 
         Cup cup = new Cup(
                 member,
-                new CupNickname(cupRegisterRequest.nickname()),
-                new CupAmount(cupRegisterRequest.amount()),
+                new CupNickname(cupRegisterRequest.cupNickname()),
+                new CupAmount(cupRegisterRequest.cupAmount()),
                 currentCupRank.nextRank()
         );
 
         Cup createdCup = cupRepository.save(cup);
-        return new CupResponse(
-                createdCup.getId(),
-                createdCup.getNickname().value(),
-                createdCup.getCupAmount().value()
-        );
+        return new CupResponse(createdCup);
     }
 
     public CupsResponse readCupsByMemberId(Long memberId) {
-        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
         return new CupsResponse(cups);
     }
 
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new NoSuchElementException("존재하지 않는 멤버입니다."));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
