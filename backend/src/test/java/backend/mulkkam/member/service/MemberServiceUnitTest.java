@@ -59,8 +59,8 @@ public class MemberServiceUnitTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getGender()).isEqualTo(gender);
-                softly.assertThat(result.getWeight()).isEqualTo(weight);
+                softly.assertThat(result.getPhysicalAttributes().getGender()).isEqualTo(gender);
+                softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }
@@ -90,8 +90,8 @@ public class MemberServiceUnitTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getGender()).isEqualTo(member.getGender());
-                softly.assertThat(result.getWeight()).isEqualTo(weight);
+                softly.assertThat(result.getPhysicalAttributes().getGender()).isEqualTo(member.getPhysicalAttributes().getGender());
+                softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }

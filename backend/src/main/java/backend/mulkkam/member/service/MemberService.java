@@ -1,7 +1,6 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.PhysicalAttributes;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +21,7 @@ public class MemberService {
             Long memberId
     ) {
         Member member = getById(memberId);
-        member.setPhysicalAttributes(new PhysicalAttributes(physicalAttributesModifyRequest));
+        member.setPhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
     }
 
     private Member getById(Long id) {

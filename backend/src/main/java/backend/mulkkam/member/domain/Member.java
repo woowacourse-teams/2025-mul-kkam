@@ -1,20 +1,18 @@
 package backend.mulkkam.member.domain;
 
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributes;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -32,10 +30,9 @@ public class Member {
     )
     private MemberNickname memberNickname;
 
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
-
-    private Double weight;
+    @Setter
+    @Embedded
+    private PhysicalAttributes physicalAttributes;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
@@ -43,22 +40,11 @@ public class Member {
 
     public Member(
             MemberNickname memberNickname,
-            Gender gender,
-            Double weight,
+            PhysicalAttributes physicalAttributes,
             Amount targetAmount
     ) {
         this.memberNickname = memberNickname;
-        this.gender = gender;
-        this.weight = weight;
+        this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
-    }
-
-    public void setPhysicalAttributes(PhysicalAttributes physicalAttributes) {
-        if (physicalAttributes.getGender() != null) {
-            this.gender = physicalAttributes.getGender();
-        }
-        if (physicalAttributes.getWeight() != null) {
-            this.weight = physicalAttributes.getWeight();
-        }
     }
 }

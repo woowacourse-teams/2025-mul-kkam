@@ -1,16 +1,20 @@
 package backend.mulkkam.member.dto;
 
 import backend.mulkkam.member.domain.vo.Gender;
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
 @Getter
+@Embeddable
 public class PhysicalAttributes {
 
-    private final Gender gender;
-    private final Double weight;
+    private Gender gender;
+    private Double weight;
 
-    public PhysicalAttributes(PhysicalAttributesModifyRequest request) {
-        this.gender = request.gender();
-        this.weight = request.weight();
+    protected PhysicalAttributes() {}
+
+    public PhysicalAttributes(Gender gender, Double weight) {
+        this.gender = gender;
+        this.weight = weight;
     }
 }

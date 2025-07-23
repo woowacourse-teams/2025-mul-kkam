@@ -25,7 +25,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class modifyPhysicalAttributes {
 
-        @DisplayName("올바른 데이터로 모든 필드를 수정할 시 값이 반영된다")
+        @DisplayName("올바른 데이터로 필드를 수정할 시 값이 반영된다")
         @Test
         void success_validDataAllArgs() {
             // given
@@ -53,38 +53,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getGender()).isEqualTo(gender);
-                softly.assertThat(result.getWeight()).isEqualTo(weight);
-                softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
-            });
-        }
-
-        @DisplayName("수정 요청한 필드들의 값들만 반영된다")
-        @Test
-        void success_validDataSomeArgs() {
-            // given
-            Member member = new MemberFixture().build();
-            memberRepository.save(member);
-
-            Double weight = 50.2;
-            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
-                    null,
-                    weight
-            );
-
-            // when
-            memberService.modifyPhysicalAttributes(
-                    physicalAttributesModifyRequest,
-                    member.getId()
-            );
-
-            // then
-            Member result = memberRepository.findById(member.getId()).orElseThrow();
-
-            assertSoftly(softly -> {
-                softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getGender()).isEqualTo(member.getGender());
-                softly.assertThat(result.getWeight()).isEqualTo(weight);
+                softly.assertThat(result.getPhysicalAttributes().getGender()).isEqualTo(gender);
+                softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }

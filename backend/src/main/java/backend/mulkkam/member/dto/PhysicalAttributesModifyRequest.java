@@ -6,4 +6,11 @@ public record PhysicalAttributesModifyRequest(
         Gender gender,
         Double weight
 ) {
+
+    public PhysicalAttributes toPhysicalAttributes() {
+        return new PhysicalAttributes(
+                gender,
+                weight
+        );
+    }
 }
