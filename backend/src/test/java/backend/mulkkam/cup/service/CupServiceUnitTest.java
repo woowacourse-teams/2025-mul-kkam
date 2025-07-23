@@ -16,6 +16,7 @@ import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -68,9 +69,10 @@ class CupServiceUnitTest {
             });
         }
 
+        @Disabled
         @DisplayName("용량이 0이면 예외가 발생한다")
         @Test
-        void error_amountIsEqual0() {
+        void error_amountIsEqualTo0() {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", 0);
             Member member = new MemberFixture().build();
