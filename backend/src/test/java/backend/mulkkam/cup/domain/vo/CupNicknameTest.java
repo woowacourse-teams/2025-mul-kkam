@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class CupNicknameTest {
 
-    @Nested
     @DisplayName("생성자 검증 시에")
+    @Nested
     class NewCupNickname {
 
         @DisplayName("2 ~ 10글자의 닉네임을 설정할 수 있다.")

@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class CupAmountTest {
 
-    @Nested
     @DisplayName("생성자 검증 시에")
+    @Nested
     class NewCupAmount {
 
         @DisplayName("1부터 10000까지 설정할 수 있다")

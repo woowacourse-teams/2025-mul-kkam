@@ -13,8 +13,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class CupRankTest {
 
-    @Nested
     @DisplayName("생성자 검증 시에")
+    @Nested
     class NewCupNickname {
 
         @DisplayName("컵의 갯수는 3개 이하면 가능하다")

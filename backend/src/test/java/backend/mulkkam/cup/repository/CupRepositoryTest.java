@@ -23,8 +23,8 @@ class CupRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @Test
     @DisplayName("사용자 ID로 사용자 전체 컵을 조회한다")
+    @Test
     void findAllByMemberId() {
         // given
         Member member = new MemberFixture().build();
