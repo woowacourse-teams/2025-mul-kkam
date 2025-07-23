@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.SettingProfileActivity">
+    tools:context=".ui.settingprofile.SettingProfileActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_profile"

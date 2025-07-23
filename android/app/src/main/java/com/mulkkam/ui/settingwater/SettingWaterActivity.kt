@@ -1,4 +1,4 @@
-package com.mulkkam.ui
+package com.mulkkam.ui.settingwater
 
 import android.content.Context
 import android.content.Intent

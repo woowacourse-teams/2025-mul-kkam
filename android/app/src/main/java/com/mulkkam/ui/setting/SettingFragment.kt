@@ -3,13 +3,13 @@ package com.mulkkam.ui.setting
 import android.os.Bundle
 import android.view.View
 import com.mulkkam.databinding.FragmentSettingBinding
-import com.mulkkam.ui.SettingGoalActivity
-import com.mulkkam.ui.SettingProfileActivity
-import com.mulkkam.ui.SettingWaterActivity
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.model.SettingsMenu
+import com.mulkkam.ui.settinggoal.SettingGoalActivity
+import com.mulkkam.ui.settingprofile.SettingProfileActivity
+import com.mulkkam.ui.settingwater.SettingWaterActivity
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),

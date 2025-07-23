@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.SettingGoalActivity">
+    tools:context=".ui.settinggoal.SettingGoalActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_goal"
