@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
@@ -28,6 +29,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -316,6 +318,152 @@ class IntakeHistoryServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.getDailyResponses(any(DateRangeRequest.class), 1L))
                     .isInstanceOf(NoSuchElementException.class);
+        }
+
+        @DisplayName("달성률이 정상적으로 계산된다")
+        @Test
+        void success_calculateAchievementRate() {
+            // given
+            Long memberId = 1L;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(1_000))
+                    .build();
+            given(memberRepository.findById(memberId))
+                    .willReturn(Optional.of(member));
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 21);
+
+            IntakeHistory firstHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory secondHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            List<IntakeHistory> histories = new ArrayList<>(List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory,
+                    fourthHistory,
+                    fifthHistory
+            ));
+            Collections.shuffle(histories);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                    memberId,
+                    dateRangeRequest.startDateTime(),
+                    dateRangeRequest.endDateTime()
+            )).willReturn(histories);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    memberId
+            );
+
+            // then
+            assertThat(actual.getFirst().achievementRate())
+                    .isCloseTo(50.0, within(0.01));
+        }
+
+        @DisplayName("전체 음용량이 정상적으로 계산된다")
+        @Test
+        void success_calculateTotalIntakeAmount() {
+            // given
+            Long memberId = 1L;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(1_000))
+                    .build();
+            given(memberRepository.findById(memberId))
+                    .willReturn(Optional.of(member));
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 21);
+
+            IntakeHistory firstHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory secondHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            List<IntakeHistory> histories = new ArrayList<>(List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory,
+                    fourthHistory,
+                    fifthHistory
+            ));
+            Collections.shuffle(histories);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                    memberId,
+                    dateRangeRequest.startDateTime(),
+                    dateRangeRequest.endDateTime()
+            )).willReturn(histories);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    memberId
+            );
+
+            // then
+            assertThat(actual.getFirst().totalIntakeAmount())
+                    .isEqualTo(500);
         }
     }
 }
