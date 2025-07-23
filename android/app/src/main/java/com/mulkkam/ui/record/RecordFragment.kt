@@ -157,13 +157,20 @@ class RecordFragment :
             tvDailyWaterSummary.text =
                 getColoredSpannable(
                     R.color.primary_200,
-                    getString(R.string.record_daily_water_summary, dailyWaterIntake.intakeAmount, dailyWaterIntake.targetAmount),
+                    getString(
+                        R.string.record_daily_water_summary,
+                        dailyWaterIntake.intakeAmount,
+                        dailyWaterIntake.targetAmount,
+                    ),
                     formattedIntake,
                 )
             tvDailyChartLabel.text =
                 getColoredSpannable(
                     R.color.primary_200,
-                    getString(R.string.record_daily_chart_label, dailyWaterIntake.date.format(DATE_FORMATTER_KR)),
+                    getString(
+                        R.string.record_daily_chart_label,
+                        dailyWaterIntake.date.format(DATE_FORMATTER_KR),
+                    ),
                     dailyWaterIntake.date.format(DATE_FORMATTER_KR),
                 )
         }
@@ -172,19 +179,22 @@ class RecordFragment :
     private fun getColoredSpannable(
         @ColorRes colorResId: Int,
         fullText: String,
-        highlightedText: String,
+        vararg highlightedText: String,
     ): SpannableString {
         val color = requireContext().getColor(colorResId)
-        val startIndex = fullText.indexOf(highlightedText)
+        val spannable = SpannableString(fullText)
 
-        return SpannableString(fullText).apply {
-            setSpan(
+        highlightedText.forEach { target ->
+            var startIndex = fullText.indexOf(target)
+            spannable.setSpan(
                 ForegroundColorSpan(color),
                 startIndex,
-                startIndex + highlightedText.length,
+                startIndex + target.length,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
             )
         }
+
+        return spannable
     }
 
     private fun createPieData(goalRate: Float): PieData {
