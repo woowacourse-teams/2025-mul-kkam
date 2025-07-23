@@ -58,7 +58,7 @@
             android:id="@+id/tv_week_range"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="7월 21일 - 7월 27일"
+            android:text="@string/record_week_range"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400"
             app:layout_constraintEnd_toEndOf="parent"
