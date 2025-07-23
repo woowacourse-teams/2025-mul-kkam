@@ -18,13 +18,13 @@ class GradientDonutChartView(
     private val density = context.resources.displayMetrics.density
 
     private var progress: Float = PROGRESS_DEFAULT
-    private var strokeDp: Float = CHART_STROKE_DEFAULT
+    private var strokePx: Float = CHART_STROKE_DEFAULT_DP
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
-            strokeWidth = strokeDp
+            strokeWidth = strokePx
         }
 
     private var sweepGradient: SweepGradient? = null
@@ -34,7 +34,7 @@ class GradientDonutChartView(
         val size = min(width, height).toFloat()
 
         return RectF(CHART_RECT_START, CHART_RECT_START, size, size).apply {
-            inset(strokeDp, strokeDp)
+            inset(strokePx, strokePx)
         }
     }
 
@@ -58,7 +58,7 @@ class GradientDonutChartView(
     private fun settingPaint() {
         paint.shader = sweepGradient
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = strokeDp
+        paint.strokeWidth = strokePx
     }
 
     fun setProgress(targetProgress: Float) {
@@ -74,10 +74,10 @@ class GradientDonutChartView(
     }
 
     fun setStroke(newStrokeWidth: Float) {
-        strokeDp = newStrokeWidth * density
+        strokePx = newStrokeWidth * density
 
-        backgroundPaint.strokeWidth = strokeDp
-        paint.strokeWidth = strokeDp
+        backgroundPaint.strokeWidth = strokePx
+        paint.strokeWidth = strokePx
     }
 
     fun setPaintGradient(newGradient: SweepGradient) {
@@ -99,7 +99,7 @@ class GradientDonutChartView(
         private const val CHART_FULL_ANGLE: Float = 360f
         private const val CHART_ROTATION_OFFSET: Float = -90f
         private const val CHART_RECT_START: Float = 0f
-        private const val CHART_STROKE_DEFAULT: Float = 0f
+        private const val CHART_STROKE_DEFAULT_DP: Float = 0f
 
         private const val ANIMATION_DURATION_MS: Long = 600
     }
