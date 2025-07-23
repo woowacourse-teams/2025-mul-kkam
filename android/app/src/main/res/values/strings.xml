@@ -9,4 +9,5 @@
     <string name="main_setting">설정</string>
 
     <string name="record_water_record_label">최근 기록</string>
+    <string name="setting_view_label">설정</string>
 </resources>
