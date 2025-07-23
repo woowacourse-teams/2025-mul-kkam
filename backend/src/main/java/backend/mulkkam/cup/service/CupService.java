@@ -21,7 +21,6 @@ public class CupService {
 
     private static final int DEFAULT_RANK = 0;
     private static final int MAX_CUP_COUNT = 3;
-    private static final int MIN_CUP_SIZE = 0;
     private static final int CUP_RANK_OFFSET = 1;
 
     private final CupRepository cupRepository;
@@ -57,9 +56,6 @@ public class CupService {
     private void validPossibleCreateNewCup(Integer amount, List<Cup> cups) {
         if (cups.size() >= MAX_CUP_COUNT) {
             throw new IllegalArgumentException("컵은 최대 3개까지 등록 가능합니다.");
-        }
-        if (amount <= MIN_CUP_SIZE) {
-            throw new IllegalArgumentException("컵 용량이 올바르지 않은 값입니다.");
         }
     }
 }
