@@ -1,6 +1,6 @@
 package backend.mulkkam.member.controller;
 
-import backend.mulkkam.member.dto.MemberPhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,9 +17,9 @@ public class MemberController {
     private final MemberService memberService;
 
     @PostMapping("/weight")
-    public ResponseEntity<Void> createWeight(@RequestBody MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest) {
+    public ResponseEntity<Void> createWeight(@RequestBody PhysicalAttributesModifyRequest physicalAttributesModifyRequest) {
         memberService.modifyPhysicalAttributes(
-                memberPhysicalAttributesModifyRequest,
+                physicalAttributesModifyRequest,
                 1L
         );
         return ResponseEntity.noContent().build();

@@ -2,7 +2,7 @@ package backend.mulkkam.member.dto;
 
 import backend.mulkkam.member.domain.vo.Gender;
 
-public record MemberPhysicalAttributesModifyRequest(
+public record PhysicalAttributesModifyRequest(
         Gender gender,
         Integer weight
 ) {

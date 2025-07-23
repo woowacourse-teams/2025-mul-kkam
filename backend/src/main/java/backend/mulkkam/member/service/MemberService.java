@@ -1,7 +1,7 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.MemberPhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,11 +17,11 @@ public class MemberService {
 
     @Transactional
     public void modifyPhysicalAttributes(
-            MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest,
+            PhysicalAttributesModifyRequest physicalAttributesModifyRequest,
             Long memberId
     ) {
         Member member = getById(memberId);
-        member.setPhysicalAttributes(memberPhysicalAttributesModifyRequest);
+        member.setPhysicalAttributes(physicalAttributesModifyRequest);
     }
 
     private Member getById(Long id) {

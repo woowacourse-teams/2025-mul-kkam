@@ -4,7 +4,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
-import backend.mulkkam.member.dto.MemberPhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -36,14 +36,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             Integer weight = 50;
             Gender gender = Gender.FEMALE;
-            MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest = new MemberPhysicalAttributesModifyRequest(
+            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     gender,
                     weight
             );
 
             // when
             memberService.modifyPhysicalAttributes(
-                    memberPhysicalAttributesModifyRequest,
+                    physicalAttributesModifyRequest,
                     member.getId()
             );
 
@@ -64,14 +64,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             Integer weight = 50;
-            MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest = new MemberPhysicalAttributesModifyRequest(
+            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     null,
                     weight
             );
 
             // when
             memberService.modifyPhysicalAttributes(
-                    memberPhysicalAttributesModifyRequest,
+                    physicalAttributesModifyRequest,
                     member.getId()
             );
 

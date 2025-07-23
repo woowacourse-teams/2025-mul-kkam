@@ -5,7 +5,7 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
-import backend.mulkkam.member.dto.MemberPhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
 import java.util.Optional;
@@ -43,14 +43,14 @@ public class MemberServiceUnitTest {
 
             Gender gender = Gender.FEMALE;
             Integer weight = 50;
-            MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest = new MemberPhysicalAttributesModifyRequest(
+            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     gender,
                     weight
             );
 
             // when
             memberService.modifyPhysicalAttributes(
-                    memberPhysicalAttributesModifyRequest,
+                    physicalAttributesModifyRequest,
                     memberId
             );
 
@@ -72,14 +72,14 @@ public class MemberServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             Integer weight = 50;
-            MemberPhysicalAttributesModifyRequest memberPhysicalAttributesModifyRequest = new MemberPhysicalAttributesModifyRequest(
+            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
                     null,
                     weight
             );
 
             // when
             memberService.modifyPhysicalAttributes(
-                    memberPhysicalAttributesModifyRequest,
+                    physicalAttributesModifyRequest,
                     memberId
             );
 
