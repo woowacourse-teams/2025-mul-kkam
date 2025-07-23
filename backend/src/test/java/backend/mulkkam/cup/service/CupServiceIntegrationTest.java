@@ -174,8 +174,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cupsResponse.size()).isEqualTo(2);
-                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup1.getNickname().value());
-                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup1.getCupAmount().value());
+                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup2.getNickname().value());
+                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup2.getCupAmount().value());
             });
         }
     }

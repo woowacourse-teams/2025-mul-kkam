@@ -170,12 +170,12 @@ class CupServiceUnitTest {
 
             Cup cup1 = new CupFixture()
                     .member(member)
-                    .cupRank(new CupRank(1))
+                    .cupRank(new CupRank(2))
                     .build();
 
             Cup cup2 = new CupFixture()
                     .member(member)
-                    .cupRank(new CupRank(2))
+                    .cupRank(new CupRank(1))
                     .build();
             List<Cup> cups = List.of(cup1, cup2);
 
@@ -187,8 +187,8 @@ class CupServiceUnitTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cupsResponse.size()).isEqualTo(2);
-                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup1.getNickname().value());
-                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup1.getCupAmount().value());
+                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup2.getNickname().value());
+                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup2.getCupAmount().value());
             });
         }
     }
