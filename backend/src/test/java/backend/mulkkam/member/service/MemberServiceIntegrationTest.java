@@ -52,8 +52,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member result = memberRepository.findById(member.getId()).orElseThrow();
 
             assertSoftly(softly -> {
+                softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
                 softly.assertThat(result.getGender()).isEqualTo(gender);
                 softly.assertThat(result.getWeight()).isEqualTo(weight);
+                softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }
 
@@ -80,8 +82,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member result = memberRepository.findById(member.getId()).orElseThrow();
 
             assertSoftly(softly -> {
+                softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
                 softly.assertThat(result.getGender()).isEqualTo(member.getGender());
                 softly.assertThat(result.getWeight()).isEqualTo(weight);
+                softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }
     }
