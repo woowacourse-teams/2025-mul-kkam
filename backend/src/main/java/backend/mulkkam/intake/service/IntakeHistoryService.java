@@ -87,7 +87,7 @@ public class IntakeHistoryService {
                 .mapToInt(response -> response.intakeAmount().value())
                 .sum();
         int targetAmount = member.getTargetAmount().value();
-        double achievementRate = (double) (totalIntakeAmount / targetAmount) * 100;
+        double achievementRate = ((double) totalIntakeAmount / targetAmount) * 100;
 
         return new IntakeHistorySummaryResponse(
                 date,
