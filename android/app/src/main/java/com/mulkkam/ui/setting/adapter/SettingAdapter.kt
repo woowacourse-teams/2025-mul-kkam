@@ -1,5 +1,6 @@
 package com.mulkkam.ui.setting.adapter
 
+import android.annotation.SuppressLint
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.ui.setting.model.SettingsMenu
@@ -24,6 +25,7 @@ class SettingAdapter(
 
     override fun getItemCount(): Int = settingOptions.size
 
+    @SuppressLint("NotifyDataSetChanged")
     fun submitList(settings: List<SettingsMenu>) {
         settingOptions.clear()
         settingOptions.addAll(settings)
