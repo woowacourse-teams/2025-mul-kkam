@@ -145,7 +145,7 @@ class CupServiceUnitTest {
             );
 
             // when
-            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(cups);
+            when(cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId())).thenReturn(cups);
 
             // then
             CommonException ex = assertThrows(CommonException.class,

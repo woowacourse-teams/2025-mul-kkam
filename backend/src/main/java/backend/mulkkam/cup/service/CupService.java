@@ -30,7 +30,7 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
 
         CupRank currentCupRank = new CupRank(cups.size());
 

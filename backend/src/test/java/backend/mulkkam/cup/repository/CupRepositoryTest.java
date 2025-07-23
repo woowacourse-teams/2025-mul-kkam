@@ -32,17 +32,17 @@ class CupRepositoryTest {
 
         Cup cup1 = new CupFixture()
                 .member(member)
-                .cupRank(new CupRank(1))
+                .cupRank(new CupRank(2))
                 .build();
         Cup cup2 = new CupFixture()
                 .member(member)
-                .cupRank(new CupRank(2))
+                .cupRank(new CupRank(1))
                 .build();
 
         cupRepository.saveAll(List.of(cup1, cup2));
 
         // when
-        List<Cup> cups = cupRepository.findAllByMemberId(member.getId());
+        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId());
 
         // then
         assertSoftly(softly -> {
