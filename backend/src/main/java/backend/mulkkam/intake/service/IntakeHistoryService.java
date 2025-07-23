@@ -9,7 +9,6 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -46,12 +45,10 @@ public class IntakeHistoryService {
         Member member = getMember(memberId);
         List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
-                // TODO: 날짜 처리 방식 재고려
-                dateRangeRequest.from().atStartOfDay(),
-                dateRangeRequest.to().atTime(LocalTime.MAX)
+                dateRangeRequest.startDateTime(),
+                dateRangeRequest.endDateTime()
         );
 
-        // TODO: 날짜의 from/to 순서에 대한 검증
         Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistories.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
