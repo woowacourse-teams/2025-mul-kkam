@@ -17,6 +17,8 @@ class GradientDonutChartView(
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
     private var progress: Float = PROGRESS_DEFAULT
+    private val density = context.resources.displayMetrics.density
+
     private val sweepGradient: SweepGradient by lazy { createSweepGradient() }
     private val rect: RectF by lazy { createRect() }
 
@@ -25,7 +27,7 @@ class GradientDonutChartView(
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = "#FFFAFAFA".toColorInt()
             style = Paint.Style.STROKE
-            strokeWidth = CHART_STROKE_WIDTH
+            strokeWidth = CHART_STROKE_WIDTH * density
         }
 
     override fun onDraw(canvas: Canvas) {
@@ -35,7 +37,7 @@ class GradientDonutChartView(
 
         paint.shader = sweepGradient
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = CHART_STROKE_WIDTH
+        paint.strokeWidth = CHART_STROKE_WIDTH * density
 
         canvas.rotate(CHART_ROTATION_OFFSET, size / 2, size / 2)
         canvas.drawArc(rect, CHART_START_ANGLE, CHART_FULL_ANGLE * progress / PROGRESS_MAX_PERCENT, false, paint)
@@ -81,7 +83,7 @@ class GradientDonutChartView(
         val size = min(width, height).toFloat()
 
         return RectF(CHART_RECT_START, CHART_RECT_START, size, size).apply {
-            inset(CHART_STROKE_WIDTH, CHART_STROKE_WIDTH)
+            inset(CHART_STROKE_WIDTH * density, CHART_STROKE_WIDTH * density)
         }
     }
 
