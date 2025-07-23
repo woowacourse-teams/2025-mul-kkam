@@ -56,6 +56,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/view_toolbar_divider" />
 
+    <!--    텍스트 입력창의 크기를 고정시키고 싶지 않아서 0dp, 0dp로 처리해 놓았습니다-->
+    <!--    더 좋은 방법이 있지 않을까 고민되네요 🤔-->
     <EditText
         android:id="@+id/et_input_nickname"
         android:layout_width="0dp"
@@ -72,7 +74,7 @@
         app:layout_constraintStart_toStartOf="@id/tv_edit_nickname_label"
         app:layout_constraintTop_toTopOf="@id/btn_check_duplicate" />
 
-    <androidx.appcompat.widget.AppCompatButton
+    <TextView
         android:id="@+id/btn_check_duplicate"
         android:layout_width="71dp"
         android:layout_height="36dp"
@@ -80,6 +82,7 @@
         android:layout_marginEnd="24dp"
         android:background="@drawable/bg_common"
         android:backgroundTint="@color/gray_200"
+        android:gravity="center"
         android:text="@string/profile_check_duplicate"
         android:textAppearance="@style/title3"
         android:textColor="@color/white"
