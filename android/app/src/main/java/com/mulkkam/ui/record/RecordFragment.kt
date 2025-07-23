@@ -132,6 +132,7 @@ class RecordFragment :
     ) {
         chart.apply {
             tvWaterGoalRate.text = intake.goalRate.toInt().toString()
+            // TODO: 한국어로 매핑 & 토/일 색깔 변경 필요
             tvDayOfWeek.text =
                 intake.date.dayOfWeek
                     .toString()
@@ -142,6 +143,7 @@ class RecordFragment :
                     intake.date.monthValue,
                     intake.date.dayOfMonth,
                 )
+            // TODO: 클릭리스너 위치 변경 필요
             pcWaterIntake.setOnClickListener {
                 viewModel.updateDailyWaterIntake(intake)
             }
