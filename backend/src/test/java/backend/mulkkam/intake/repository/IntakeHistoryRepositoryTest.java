@@ -246,7 +246,6 @@ class IntakeHistoryRepositoryTest {
             @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
             @Test
             void success_containsOnlyHistoryOfMember() {
-
                 Member member = new MemberFixture().build();
                 Member savedMember = memberRepository.save(member);
 
@@ -291,7 +290,6 @@ class IntakeHistoryRepositoryTest {
                             assertThat(actual).doesNotContain(historyOfAnotherMember);
                         }
                 );
-
             }
         }
     }

@@ -2,10 +2,15 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
+import backend.mulkkam.intake.dto.IntakeHistoryResponse;
+import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.IntakeHistoryFixture;
 import backend.mulkkam.support.MemberFixture;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
@@ -18,6 +23,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -98,5 +104,345 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertThatThrownBy(() -> intakeHistoryService.create(intakeHistoryCreateRequest, Long.MAX_VALUE))
                     .isInstanceOf(NoSuchElementException.class);
         }
+    }
+
+    @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
+    @Nested
+    class GetDailyResponses {
+
+        @DisplayName("날짜의 범위에 해당하는 기록만 조회된다")
+        @Test
+        void success_containsOnlyInDateRange() {
+            // given
+            Member member = new MemberFixture().build();
+            Member savedMember = memberRepository.save(member);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 23);
+
+            IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 21),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory thirdHistoryInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 23),
+                            LocalTime.of(23, 59, 59)
+                    ))
+                    .build();
+
+            IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 24),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory secondHistoryNotInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 26),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            intakeHistoryRepository.save(firstHistoryInRange);
+            intakeHistoryRepository.save(secondHistoryInRange);
+            intakeHistoryRepository.save(thirdHistoryInRange);
+            intakeHistoryRepository.save(firstHistoryNotInRange);
+            intakeHistoryRepository.save(secondHistoryNotInRange);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    savedMember.getId()
+            );
+
+            // then
+            List<LocalDate> dates = actual.stream()
+                    .map(IntakeHistorySummaryResponse::date)
+                    .toList();
+
+            assertSoftly(softly -> {
+                softly.assertThat(dates)
+                        .allMatch(date -> !date.isBefore(startDate) && !date.isAfter(endDate));
+            });
+        }
+
+        @DisplayName("시작 날짜와 종료 날짜가 동일한 경우 해당 일자의 기록이 전부 반환된다")
+        @Test
+        void success_startDateAndEndDateIsSame() {
+            // given
+            Member member = new MemberFixture().build();
+            Member savedMember = memberRepository.save(member);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+            IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(23, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 22),
+                            LocalTime.of(23, 50, 59)
+                    ))
+                    .build();
+
+            intakeHistoryRepository.save(firstHistoryInRange);
+            intakeHistoryRepository.save(secondHistoryInRange);
+            intakeHistoryRepository.save(firstHistoryNotInRange);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    savedMember.getId()
+            );
+
+            // then
+            List<LocalDate> dates = actual.stream()
+                    .map(IntakeHistorySummaryResponse::date)
+                    .toList();
+            assertThat(dates).containsOnly(startDate);
+        }
+
+        @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
+        @Test
+        void success_containsOnlyHistoryOfMember() {
+            // given
+            Member member = new MemberFixture().build();
+            Member savedMember = memberRepository.save(member);
+
+            Member anotherMember = new MemberFixture()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            Member savedAnotherMember = memberRepository.save(anotherMember);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 21);
+
+            IntakeHistory historyOfAnotherMember = new IntakeHistoryFixture()
+                    .member(savedAnotherMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory historyOfMember = new IntakeHistoryFixture()
+                    .member(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 21),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            intakeHistoryRepository.save(historyOfAnotherMember);
+            IntakeHistory savedHistoryOfMember = intakeHistoryRepository.save(historyOfMember);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    savedMember.getId()
+            );
+
+            // then
+            List<Long> intakeHistoryIds = actual.stream()
+                    .flatMap(summary -> summary.intakeHistories().stream())
+                    .map(IntakeHistoryResponse::id)
+                    .toList();
+
+            assertThat(intakeHistoryIds).containsOnly(savedHistoryOfMember.getId());
+        }
+
+        @DisplayName("날짜별 음수량 요약 기록이 날짜 순으로 반환된다")
+        @Test
+        void success_orderByDateAscInSummaryResponses() {
+            // given
+            Member member = new MemberFixture().build();
+            Member savedMember = memberRepository.save(member);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 27);
+
+            IntakeHistory firstHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory secondHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 21),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 23),
+                            LocalTime.of(23, 59, 59)
+                    ))
+                    .build();
+
+            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 24),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 26),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
+
+            List<IntakeHistory> histories = List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory,
+                    fourthHistory,
+                    fifthHistory
+            );
+            intakeHistoryRepository.saveAll(histories);
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    savedMember.getId()
+            );
+
+            // then
+            List<LocalDate> dates = actual.stream()
+                    .map(IntakeHistorySummaryResponse::date)
+                    .toList();
+
+            assertThat(dates).isSorted();
+        }
+    }
+
+    @DisplayName("같은 날짜에 대한 음수량 기록이 날짜 순으로 반환된다")
+    @Test
+    void success_orderByDateAscInSummaryResponses() {
+        // given
+        Member member = new MemberFixture().build();
+        Member savedMember = memberRepository.save(member);
+
+        LocalDate startDate = LocalDate.of(2025, 10, 20);
+        LocalDate endDate = LocalDate.of(2025, 10, 21);
+
+        IntakeHistory firstHistory = new IntakeHistoryFixture()
+                .member(member)
+                .dateTime(LocalDateTime.of(
+                        LocalDate.of(2025, 10, 20),
+                        LocalTime.of(10, 30, 30)
+                ))
+                .build();
+
+        IntakeHistory secondHistory = new IntakeHistoryFixture()
+                .member(member)
+                .dateTime(LocalDateTime.of(
+                        LocalDate.of(2025, 10, 20),
+                        LocalTime.of(11, 31, 30)
+                ))
+                .build();
+
+        IntakeHistory thirdHistory = new IntakeHistoryFixture()
+                .member(member)
+                .dateTime(LocalDateTime.of(
+                        LocalDate.of(2025, 10, 20),
+                        LocalTime.of(12, 32, 59)
+                ))
+                .build();
+
+        IntakeHistory fourthHistory = new IntakeHistoryFixture()
+                .member(member)
+                .dateTime(LocalDateTime.of(
+                        LocalDate.of(2025, 10, 20),
+                        LocalTime.of(13, 30, 30)
+                ))
+                .build();
+
+        IntakeHistory fifthHistory = new IntakeHistoryFixture()
+                .member(member)
+                .dateTime(LocalDateTime.of(
+                        LocalDate.of(2025, 10, 20),
+                        LocalTime.of(16, 30, 30)
+                ))
+                .build();
+
+        List<IntakeHistory> histories = List.of(
+                firstHistory,
+                secondHistory,
+                thirdHistory,
+                fourthHistory,
+                fifthHistory
+        );
+        intakeHistoryRepository.saveAll(histories);
+
+        // when
+        List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                new DateRangeRequest(
+                        startDate,
+                        endDate
+                ),
+                savedMember.getId()
+        );
+
+        // then
+        List<LocalDateTime> dateTimes = actual.stream()
+                .flatMap(summary -> summary.intakeHistories().stream())
+                .map(IntakeHistoryResponse::dateTime)
+                .toList();
+
+        assertThat(dateTimes).isSorted();
     }
 }
