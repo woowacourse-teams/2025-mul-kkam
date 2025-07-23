@@ -1,7 +1,8 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -47,6 +48,6 @@ public class CupService {
 
     private Member getMember(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
