@@ -21,7 +21,7 @@ public class MemberService {
             Long memberId
     ) {
         Member member = getById(memberId);
-        member.setPhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
+        member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
     }
 
     private Member getById(Long id) {

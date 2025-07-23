@@ -12,7 +12,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @NoArgsConstructor
@@ -30,7 +29,6 @@ public class Member {
     )
     private MemberNickname memberNickname;
 
-    @Setter
     @Embedded
     private PhysicalAttributes physicalAttributes;
 
@@ -46,5 +44,9 @@ public class Member {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
+    }
+
+    public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
+        this.physicalAttributes = physicalAttributes;
     }
 }
