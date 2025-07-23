@@ -9,7 +9,7 @@ public record CupAmount(
 ) {
 
     private static final int MAX_AMOUNT = 10000;
-    private static final int MIN_AMOUNT = 0;
+    private static final int MIN_AMOUNT = 1;
 
     public CupAmount {
         if (value > MAX_AMOUNT || value < MIN_AMOUNT) {

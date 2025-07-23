@@ -73,6 +73,20 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
         }
 
+        @DisplayName("용량이 0이면 예외가 발생한다")
+        @Test
+        void error_amountIsEqualTo0() {
+            // given
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest("스타벅스", 0);
+            Member member = new MemberFixture().build();
+            memberRepository.save(member);
+
+            // when & then
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> cupService.create(cupRegisterRequest, member.getId()));
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+        }
+
         @DisplayName("컵이 3개 저장되어 있을 때 예외가 발생한다")
         @Test
         void error_memberAlreadyHasThreeCups() {
