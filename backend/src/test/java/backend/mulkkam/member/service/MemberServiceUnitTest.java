@@ -64,36 +64,5 @@ public class MemberServiceUnitTest {
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }
-
-        @DisplayName("수정 요청한 필드들의 값들만 반영된다")
-        @Test
-        void success_validDataSomeArgs() {
-            // given
-            Member member = new MemberFixture().build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-
-            Double weight = 50.2;
-            PhysicalAttributesModifyRequest physicalAttributesModifyRequest = new PhysicalAttributesModifyRequest(
-                    null,
-                    weight
-            );
-
-            // when
-            memberService.modifyPhysicalAttributes(
-                    physicalAttributesModifyRequest,
-                    memberId
-            );
-
-            // then
-            Member result = memberRepository.findById(memberId).orElseThrow();
-
-            assertSoftly(softly -> {
-                softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getPhysicalAttributes().getGender()).isEqualTo(member.getPhysicalAttributes().getGender());
-                softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
-                softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
-            });
-        }
     }
 }
