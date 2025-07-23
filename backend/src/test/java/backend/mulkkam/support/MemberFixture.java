@@ -9,7 +9,7 @@ public class MemberFixture {
 
     private MemberNickname memberNickname = new MemberNickname("히로");
     private Gender gender = Gender.FEMALE;
-    private Integer weight = 50;
+    private Double weight = 50.2;
     private Amount targetAmount = new Amount(1000);
 
     public MemberFixture memberNickname(MemberNickname memberNickname) {
@@ -22,7 +22,7 @@ public class MemberFixture {
         return this;
     }
 
-    public MemberFixture weight(Integer weight) {
+    public MemberFixture weight(Double weight) {
         this.weight = weight;
         return this;
     }
