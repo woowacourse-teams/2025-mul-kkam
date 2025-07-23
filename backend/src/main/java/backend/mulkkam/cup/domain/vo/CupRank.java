@@ -5,10 +5,11 @@ public record CupRank(
 ) {
 
     private static final int MAX_CUP_COUNT = 3;
+    private static final int MIN_CUP_COUNT = 0;
     private static final int CUP_RANK_OFFSET = 1;
 
     public CupRank {
-        if (value > MAX_CUP_COUNT) {
+        if (value > MAX_CUP_COUNT || value < MIN_CUP_COUNT) {
             throw new IllegalArgumentException("컵은 최대 3개까지 등록 가능합니다.");
         }
     }
