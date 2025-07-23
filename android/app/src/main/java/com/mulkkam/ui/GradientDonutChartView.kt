@@ -8,39 +8,57 @@ import android.graphics.RectF
 import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.View
-import androidx.core.graphics.ColorUtils
-import androidx.core.graphics.toColorInt
+import androidx.annotation.ColorRes
 import kotlin.math.min
 
 class GradientDonutChartView(
     context: Context,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
-    private var progress: Float = PROGRESS_DEFAULT
     private val density = context.resources.displayMetrics.density
 
-    private val sweepGradient: SweepGradient by lazy { createSweepGradient() }
-    private val rect: RectF by lazy { createRect() }
+    private var progress: Float = PROGRESS_DEFAULT
+    private var strokeDp: Float = CHART_STROKE_DEFAULT
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
-            color = "#FFFAFAFA".toColorInt()
             style = Paint.Style.STROKE
-            strokeWidth = CHART_STROKE_WIDTH * density
+            strokeWidth = strokeDp
         }
+
+    private var sweepGradient: SweepGradient? = null
+    private val rect: RectF by lazy { createRect() }
+
+    private fun createRect(): RectF {
+        val size = min(width, height).toFloat()
+
+        return RectF(CHART_RECT_START, CHART_RECT_START, size, size).apply {
+            inset(strokeDp, strokeDp)
+        }
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val size = min(width, height).toFloat()
         canvas.drawArc(rect, CHART_START_ANGLE, CHART_FULL_ANGLE, false, backgroundPaint)
 
-        paint.shader = sweepGradient
-        paint.style = Paint.Style.STROKE
-        paint.strokeWidth = CHART_STROKE_WIDTH * density
+        settingPaint()
 
         canvas.rotate(CHART_ROTATION_OFFSET, size / 2, size / 2)
-        canvas.drawArc(rect, CHART_START_ANGLE, CHART_FULL_ANGLE * progress / PROGRESS_MAX_PERCENT, false, paint)
+        canvas.drawArc(
+            rect,
+            CHART_START_ANGLE,
+            CHART_FULL_ANGLE * progress / PROGRESS_MAX_PERCENT,
+            false,
+            paint,
+        )
+    }
+
+    private fun settingPaint() {
+        paint.shader = sweepGradient
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = strokeDp
     }
 
     fun setProgress(targetProgress: Float) {
@@ -55,47 +73,33 @@ class GradientDonutChartView(
         animator.start()
     }
 
-    private fun createSweepGradient(): SweepGradient {
-        val size = min(width, height).toFloat()
+    fun setStroke(newStrokeWidth: Float) {
+        strokeDp = newStrokeWidth * density
 
-        return SweepGradient(
-            size / 2,
-            size / 2,
-            intArrayOf(
-                ColorUtils.setAlphaComponent("#FFB7A5".toColorInt(), (255 * 0.5f).toInt()),
-                ColorUtils.setAlphaComponent(
-                    "#FFEBDD".toColorInt(),
-                    (255 * 0.75f).toInt(),
-                ),
-                "#C9F0F8".toColorInt(),
-                ColorUtils.setAlphaComponent("#FFB7A5".toColorInt(), (255 * 0.5f).toInt()),
-            ),
-            floatArrayOf(
-                0.0f,
-                0.15f,
-                0.70f,
-                1.0f,
-            ),
-        )
+        backgroundPaint.strokeWidth = strokeDp
+        paint.strokeWidth = strokeDp
     }
 
-    private fun createRect(): RectF {
-        val size = min(width, height).toFloat()
+    fun setPaintGradient(newGradient: SweepGradient) {
+        sweepGradient = newGradient
+        paint.shader = sweepGradient
+    }
 
-        return RectF(CHART_RECT_START, CHART_RECT_START, size, size).apply {
-            inset(CHART_STROKE_WIDTH * density, CHART_STROKE_WIDTH * density)
-        }
+    fun setBackgroundPaintColor(
+        @ColorRes color: Int,
+    ) {
+        backgroundPaint.color = context.getColor(color)
     }
 
     companion object {
         private const val PROGRESS_DEFAULT: Float = 0f
         private const val PROGRESS_MAX_PERCENT: Float = 100f
 
-        private const val CHART_STROKE_WIDTH: Float = 20f
         private const val CHART_START_ANGLE: Float = 0f
         private const val CHART_FULL_ANGLE: Float = 360f
         private const val CHART_ROTATION_OFFSET: Float = -90f
         private const val CHART_RECT_START: Float = 0f
+        private const val CHART_STROKE_DEFAULT: Float = 0f
 
         private const val ANIMATION_DURATION_MS: Long = 600
     }

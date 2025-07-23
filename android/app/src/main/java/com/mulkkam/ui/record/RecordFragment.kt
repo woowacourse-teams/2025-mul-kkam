@@ -1,5 +1,6 @@
 package com.mulkkam.ui.record
 
+import android.graphics.SweepGradient
 import android.os.Bundle
 import android.text.SpannableString
 import android.text.Spanned
@@ -7,6 +8,8 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,6 +27,7 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.record.adapter.RecordAdapter
 import java.time.format.DateTimeFormatter
 import java.util.Locale
+import kotlin.math.min
 
 class RecordFragment :
     BindingFragment<FragmentRecordBinding>(
@@ -57,6 +61,27 @@ class RecordFragment :
             )
     }
 
+    private fun getColoredSpannable(
+        @ColorRes colorResId: Int,
+        fullText: String,
+        vararg highlightedText: String,
+    ): SpannableString {
+        val color = requireContext().getColor(colorResId)
+        val spannable = SpannableString(fullText)
+
+        highlightedText.forEach { target ->
+            var startIndex = fullText.indexOf(target)
+            spannable.setSpan(
+                ForegroundColorSpan(color),
+                startIndex,
+                startIndex + target.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+
+        return spannable
+    }
+
     private fun initRecordAdapter() {
         with(binding.rvWaterRecord) {
             adapter = recordAdapter
@@ -81,7 +106,7 @@ class RecordFragment :
                 description.isEnabled = false
                 legend.isEnabled = false
                 setTouchEnabled(false)
-                holeRadius = HOLE_RADIUS
+                holeRadius = CHART_HOLE_RADIUS
             }
         }
     }
@@ -92,7 +117,7 @@ class RecordFragment :
         }
 
         viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyWaterIntake ->
-            updateDailyWaterChart(dailyWaterIntake)
+            bindDailyWaterChart(dailyWaterIntake)
         }
 
         viewModel.dailyWaterRecords.observe(viewLifecycleOwner) { waterRecords ->
@@ -157,14 +182,36 @@ class RecordFragment :
     ) {
         pieChart.apply {
             data = createPieData(waterIntake.goalRate)
-            animateY(ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
+            animateY(CHART_ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
             invalidate()
         }
     }
 
-    private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
+    private fun createPieData(goalRate: Float): PieData {
+        val entries =
+            listOf(
+                PieEntry(goalRate),
+                PieEntry(CHART_MAX_PERCENTAGE - goalRate),
+            )
+
+        val colors =
+            listOf(
+                ContextCompat.getColor(requireContext(), R.color.primary_200),
+                ContextCompat.getColor(requireContext(), R.color.primary_50),
+            )
+
+        val dataSet =
+            PieDataSet(entries, "").apply {
+                this.colors = colors
+                setDrawValues(false)
+            }
+
+        return PieData(dataSet)
+    }
+
+    private fun bindDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
         with(binding) {
-            viewDailyChart.setProgress(dailyWaterIntake.goalRate)
+            updateDailyWaterChart(dailyWaterIntake)
             val formattedIntake = String.format(Locale.US, "%,dml", dailyWaterIntake.intakeAmount)
             tvDailyWaterSummary.text =
                 getColoredSpannable(
@@ -188,47 +235,47 @@ class RecordFragment :
         }
     }
 
-    private fun getColoredSpannable(
-        @ColorRes colorResId: Int,
-        fullText: String,
-        vararg highlightedText: String,
-    ): SpannableString {
-        val color = requireContext().getColor(colorResId)
-        val spannable = SpannableString(fullText)
-
-        highlightedText.forEach { target ->
-            var startIndex = fullText.indexOf(target)
-            spannable.setSpan(
-                ForegroundColorSpan(color),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
+    private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
+        with(binding.viewDailyChart) {
+            post {
+                setPaintGradient(
+                    createSweepGradient(
+                        width,
+                        height,
+                    ),
+                )
+            }
+            setProgress(dailyWaterIntake.goalRate)
+            setStroke(DONUT_CHART_STROKE_DEFAULT)
+            setBackgroundPaintColor(R.color.gray_10)
         }
-
-        return spannable
     }
 
-    private fun createPieData(goalRate: Float): PieData {
-        val entries =
-            listOf(
-                PieEntry(goalRate),
-                PieEntry(MAX_PERCENTAGE - goalRate),
-            )
+    private fun createSweepGradient(
+        width: Int,
+        height: Int,
+    ): SweepGradient {
+        val size = min(width, height).toFloat()
 
-        val colors =
-            listOf(
-                ContextCompat.getColor(requireContext(), R.color.primary_200),
-                ContextCompat.getColor(requireContext(), R.color.primary_50),
-            )
-
-        val dataSet =
-            PieDataSet(entries, "").apply {
-                this.colors = colors
-                setDrawValues(false)
-            }
-
-        return PieData(dataSet)
+        return SweepGradient(
+            size / 2,
+            size / 2,
+            intArrayOf(
+                ColorUtils.setAlphaComponent("#FFB7A5".toColorInt(), (255 * 0.5f).toInt()),
+                ColorUtils.setAlphaComponent(
+                    "#FFEBDD".toColorInt(),
+                    (255 * 0.75f).toInt(),
+                ),
+                "#C9F0F8".toColorInt(),
+                ColorUtils.setAlphaComponent("#FFB7A5".toColorInt(), (255 * 0.5f).toInt()),
+            ),
+            floatArrayOf(
+                0.0f,
+                0.15f,
+                0.70f,
+                1.0f,
+            ),
+        )
     }
 
     companion object {
@@ -236,8 +283,11 @@ class RecordFragment :
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
 
         private const val HIGHLIGHT_SUB_LABEL: String = "물 일지"
-        private const val MAX_PERCENTAGE: Float = 100f
-        private const val ANIMATION_DURATION_MS: Int = 1000
-        private const val HOLE_RADIUS: Float = 80f
+
+        private const val CHART_MAX_PERCENTAGE: Float = 100f
+        private const val CHART_ANIMATION_DURATION_MS: Int = 1000
+        private const val CHART_HOLE_RADIUS: Float = 80f
+
+        private const val DONUT_CHART_STROKE_DEFAULT: Float = 20f
     }
 }
