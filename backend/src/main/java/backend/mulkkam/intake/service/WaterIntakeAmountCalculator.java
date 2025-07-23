@@ -6,11 +6,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class WaterIntakeAmountCalculator {
 
-    private static final int CONVERT_VALUE = 30;
+    private static final int WEIGHT_CONVERSION_FACTOR = 30;
 
     private final IntakeCondition intakeCondition;
 
     public Amount calculate() {
-        return new Amount((int) (intakeCondition.getWeight() * CONVERT_VALUE));
+        return new Amount((int) (intakeCondition.getWeight() * WEIGHT_CONVERSION_FACTOR));
     }
 }
