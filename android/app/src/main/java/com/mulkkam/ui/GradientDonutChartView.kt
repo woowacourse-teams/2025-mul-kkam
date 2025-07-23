@@ -89,7 +89,7 @@ class GradientDonutChartView(
         private const val PROGRESS_DEFAULT: Float = 0f
         private const val PROGRESS_MAX_PERCENT: Float = 100f
 
-        private const val CHART_STROKE_WIDTH: Float = 100f
+        private const val CHART_STROKE_WIDTH: Float = 20f
         private const val CHART_START_ANGLE: Float = 0f
         private const val CHART_FULL_ANGLE: Float = 360f
         private const val CHART_ROTATION_OFFSET: Float = -90f

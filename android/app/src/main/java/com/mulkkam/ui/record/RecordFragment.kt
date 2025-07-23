@@ -215,6 +215,6 @@ class RecordFragment :
 
         private const val MAX_PERCENTAGE: Float = 100f
         private const val ANIMATION_DURATION_MS: Int = 1000
-        private const val HOLE_RADIUS: Float = 60f
+        private const val HOLE_RADIUS: Float = 80f
     }
 }
