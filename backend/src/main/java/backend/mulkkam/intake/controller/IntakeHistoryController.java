@@ -4,6 +4,7 @@ import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.service.IntakeHistoryService;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,7 +28,8 @@ public class IntakeHistoryController {
     }
 
     @PatchMapping
-    public void create(@RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest) {
+    public ResponseEntity<Void> create(@RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest) {
         intakeHistoryService.create(intakeHistoryCreateRequest, 1L);
+        return ResponseEntity.ok().build();
     }
 }

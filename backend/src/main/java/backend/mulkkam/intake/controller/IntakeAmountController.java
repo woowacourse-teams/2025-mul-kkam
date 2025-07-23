@@ -3,6 +3,7 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.intake.dto.IntakeAmountUpdateRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +22,8 @@ public class IntakeAmountController {
     }
 
     @PutMapping("/target")
-    public void updateTarget(IntakeAmountUpdateRequest intakeAmountUpdateRequest) {
+    public ResponseEntity<Void> updateTarget(IntakeAmountUpdateRequest intakeAmountUpdateRequest) {
         intakeAmountService.updateTarget(intakeAmountUpdateRequest, 1L);
+        return ResponseEntity.ok().build();
     }
 }
