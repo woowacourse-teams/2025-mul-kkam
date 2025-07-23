@@ -167,11 +167,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(secondHistoryNotInRange);
 
             // when
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
-                    new DateRangeRequest(
-                            startDate,
-                            endDate
-                    ),
+                    dateRangeRequest,
                     savedMember.getId()
             );
 

@@ -187,10 +187,15 @@ class IntakeHistoryServiceUnitTest {
             ));
             Collections.shuffle(histories);
 
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    startDate.atStartOfDay(),
-                    endDate.atTime(LocalTime.MAX)
+                    dateRangeRequest.startDateTime(),
+                    dateRangeRequest.endDateTime()
             )).willReturn(histories);
 
             // when
@@ -271,10 +276,15 @@ class IntakeHistoryServiceUnitTest {
             ));
             Collections.shuffle(histories);
 
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    startDate.atStartOfDay(),
-                    endDate.atTime(LocalTime.MAX)
+                    dateRangeRequest.startDateTime(),
+                    dateRangeRequest.endDateTime()
             )).willReturn(histories);
 
             // when

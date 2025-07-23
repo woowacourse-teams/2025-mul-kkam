@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -170,11 +171,16 @@ class IntakeHistoryRepositoryTest {
                 intakeHistoryRepository.save(firstHistoryNotInRange);
                 intakeHistoryRepository.save(secondHistoryNotInRange);
 
+                DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                        startDate,
+                        endDate
+                );
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        startDate.atStartOfDay(),
-                        endDate.atTime(LocalTime.MAX)
+                        dateRangeRequest.startDateTime(),
+                        dateRangeRequest.endDateTime()
                 );
 
                 // then
@@ -226,11 +232,16 @@ class IntakeHistoryRepositoryTest {
                 intakeHistoryRepository.save(secondHistoryInRange);
                 intakeHistoryRepository.save(firstHistoryNotInRange);
 
+                DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                        startDate,
+                        endDate
+                );
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        startDate.atStartOfDay(),
-                        endDate.atTime(LocalTime.MAX)
+                        dateRangeRequest.startDateTime(),
+                        dateRangeRequest.endDateTime()
                 );
 
                 // then
@@ -276,11 +287,16 @@ class IntakeHistoryRepositoryTest {
                 intakeHistoryRepository.save(historyOfAnotherMember);
                 intakeHistoryRepository.save(historyOfMember);
 
+                DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                        startDate,
+                        endDate
+                );
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        startDate.atStartOfDay(),
-                        endDate.atTime(LocalTime.MAX)
+                        dateRangeRequest.startDateTime(),
+                        dateRangeRequest.endDateTime()
                 );
 
                 // then
