@@ -1,9 +1,10 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.NotFoundErrorCode;
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import java.util.NoSuchElementException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,6 @@ public class IntakeAmountService {
 
     private Member getMember(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }
