@@ -38,7 +38,7 @@ public class CupService {
         Cup cup = new Cup(
                 member,
                 new CupNickname(cupRegisterRequest.cupNickname()),
-                new CupAmount(cupRegisterRequest.amount()),
+                new CupAmount(cupRegisterRequest.cupAmount()),
                 currentCupRank.nextRank()
         );
 
