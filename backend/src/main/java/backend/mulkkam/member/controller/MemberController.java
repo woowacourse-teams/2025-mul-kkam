@@ -22,6 +22,6 @@ public class MemberController {
                 physicalAttributesModifyRequest,
                 1L
         );
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }
