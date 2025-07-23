@@ -10,6 +10,7 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
+import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -127,6 +128,41 @@ class CupServiceUnitTest {
             // then
             assertThatThrownBy(() -> cupService.create(cupRegisterRequest, member.getId()))
                     .isInstanceOf(IllegalArgumentException.class);
+        }
+    }
+
+    @DisplayName("컵을 읽을 때에")
+    @Nested
+    class read {
+
+        @DisplayName("사용자의 컵을 모두 가져온다")
+        @Test
+        void success_readAllCupsFromMember() {
+            // given
+            Member member = new MemberFixture().build();
+
+            Cup cup1 = new CupFixture()
+                    .member(member)
+                    .cupRank(new CupRank(1))
+                    .build();
+
+            Cup cup2 = new CupFixture()
+                    .member(member)
+                    .cupRank(new CupRank(2))
+                    .build();
+            List<Cup> cups = List.of(cup1, cup2);
+
+            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(cups);
+
+            // when
+            CupsResponse cupsResponse = cupService.readCupsByMemberId(member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupsResponse.size()).isEqualTo(2);
+                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup1.getNickname().value());
+                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup1.getCupAmount().value());
+            });
         }
     }
 } 

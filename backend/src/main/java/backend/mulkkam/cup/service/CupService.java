@@ -6,6 +6,7 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
+import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -46,6 +47,11 @@ public class CupService {
                 createdCup.getNickname().value(),
                 createdCup.getCupAmount().value()
         );
+    }
+
+    public CupsResponse readCupsByMemberId(Long memberId) {
+        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+        return new CupsResponse(cups);
     }
 
     private Member getMember(Long memberId) {
