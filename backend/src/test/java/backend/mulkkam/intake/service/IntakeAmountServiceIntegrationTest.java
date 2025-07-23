@@ -1,0 +1,89 @@
+package backend.mulkkam.intake.service;
+
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.ServiceIntegrationTest;
+import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
+
+    @Autowired
+    IntakeAmountService intakeAmountService;
+
+    @Autowired
+    MemberRepository memberRepository;
+
+    @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
+    @Nested
+    class ModifyTarget {
+
+        @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
+        @Test
+        void success_amountMoreThan0() {
+            // given
+            int originTargetAmount = 2_000;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(originTargetAmount))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            int newTargetAmount = 1_000;
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
+
+            // when
+            intakeAmountService.modifyTarget(intakeAmountModifyRequest, savedMember.getId());
+
+            // then
+            Optional<Member> foundMember = memberRepository.findById(member.getId());
+            assertSoftly(softly -> {
+                softly.assertThat(foundMember).isPresent();
+                softly.assertThat(foundMember.get().getTargetAmount()).isEqualTo(new Amount(newTargetAmount));
+            });
+        }
+
+        @DisplayName("음용량이 음수인 경우 예외가 발생한다")
+        @Test
+        void error_amountIsLessThan0() {
+            // given
+            int originTargetAmount = 2_000;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(originTargetAmount))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            int newTargetAmount = -1;
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
+
+            // when & then
+            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, savedMember.getId()))
+                    .isInstanceOf(IllegalArgumentException.class);
+        }
+
+        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
+        @Test
+        void error_memberIsNotExisted() {
+            // given
+            int newTargetAmount = 1_000;
+            IntakeAmountModifyRequest intakeAmountModifyRequest = new IntakeAmountModifyRequest(newTargetAmount);
+
+            // when & then
+            CommonException exception = assertThrows(CommonException.class,
+                    () -> intakeAmountService.modifyTarget(intakeAmountModifyRequest, Long.MAX_VALUE));
+            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+        }
+    }
+}
