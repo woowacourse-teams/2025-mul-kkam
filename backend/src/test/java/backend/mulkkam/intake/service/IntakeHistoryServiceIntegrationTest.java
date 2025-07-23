@@ -370,80 +370,82 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("같은 날짜에 대한 음수량 기록이 날짜 순으로 반환된다")
-    @Test
-    void success_orderByDateAscInSummaryResponses() {
-        // given
-        Member member = new MemberFixture().build();
-        Member savedMember = memberRepository.save(member);
+    class GetDailyResponses {
+        @DisplayName("같은 날짜에 대한 음수량 기록이 날짜 순으로 반환된다")
+        @Test
+        void success_orderByDateAscInSummaryResponses() {
+            // given
+            Member member = new MemberFixture().build();
+            Member savedMember = memberRepository.save(member);
 
-        LocalDate startDate = LocalDate.of(2025, 10, 20);
-        LocalDate endDate = LocalDate.of(2025, 10, 21);
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-        IntakeHistory firstHistory = new IntakeHistoryFixture()
-                .member(member)
-                .dateTime(LocalDateTime.of(
-                        LocalDate.of(2025, 10, 20),
-                        LocalTime.of(10, 30, 30)
-                ))
-                .build();
+            IntakeHistory firstHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .build();
 
-        IntakeHistory secondHistory = new IntakeHistoryFixture()
-                .member(member)
-                .dateTime(LocalDateTime.of(
-                        LocalDate.of(2025, 10, 20),
-                        LocalTime.of(11, 31, 30)
-                ))
-                .build();
+            IntakeHistory secondHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(11, 31, 30)
+                    ))
+                    .build();
 
-        IntakeHistory thirdHistory = new IntakeHistoryFixture()
-                .member(member)
-                .dateTime(LocalDateTime.of(
-                        LocalDate.of(2025, 10, 20),
-                        LocalTime.of(12, 32, 59)
-                ))
-                .build();
+            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(12, 32, 59)
+                    ))
+                    .build();
 
-        IntakeHistory fourthHistory = new IntakeHistoryFixture()
-                .member(member)
-                .dateTime(LocalDateTime.of(
-                        LocalDate.of(2025, 10, 20),
-                        LocalTime.of(13, 30, 30)
-                ))
-                .build();
+            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(13, 30, 30)
+                    ))
+                    .build();
 
-        IntakeHistory fifthHistory = new IntakeHistoryFixture()
-                .member(member)
-                .dateTime(LocalDateTime.of(
-                        LocalDate.of(2025, 10, 20),
-                        LocalTime.of(16, 30, 30)
-                ))
-                .build();
+            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+                    .member(member)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(16, 30, 30)
+                    ))
+                    .build();
 
-        List<IntakeHistory> histories = List.of(
-                firstHistory,
-                secondHistory,
-                thirdHistory,
-                fourthHistory,
-                fifthHistory
-        );
-        intakeHistoryRepository.saveAll(histories);
+            List<IntakeHistory> histories = List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory,
+                    fourthHistory,
+                    fifthHistory
+            );
+            intakeHistoryRepository.saveAll(histories);
 
-        // when
-        List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
-                new DateRangeRequest(
-                        startDate,
-                        endDate
-                ),
-                savedMember.getId()
-        );
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    savedMember.getId()
+            );
 
-        // then
-        List<LocalDateTime> dateTimes = actual.stream()
-                .flatMap(summary -> summary.intakeHistories().stream())
-                .map(IntakeHistoryResponse::dateTime)
-                .toList();
+            // then
+            List<LocalDateTime> dateTimes = actual.stream()
+                    .flatMap(summary -> summary.intakeHistories().stream())
+                    .map(IntakeHistoryResponse::dateTime)
+                    .toList();
 
-        assertThat(dateTimes).isSorted();
+            assertThat(dateTimes).isSorted();
+        }
     }
 }
