@@ -1,7 +1,9 @@
 package backend.mulkkam.cup.domain;
 
 
+import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -13,11 +15,13 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Cup {
 
@@ -36,6 +40,29 @@ public class Cup {
     )
     private CupNickname nickname;
 
-    @Column(nullable = false)
-    private Integer amount;
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "cup_amount", nullable = false)
+    )
+    private CupAmount cupAmount;
+
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "cup_rank", nullable = false)
+    )
+    private CupRank cupRank;
+
+    public Cup(
+            Member member,
+            CupNickname nickname,
+            CupAmount cupAmount,
+            CupRank cupRank
+    ) {
+        this.member = member;
+        this.nickname = nickname;
+        this.cupAmount = cupAmount;
+        this.cupRank = cupRank;
+    }
 }
