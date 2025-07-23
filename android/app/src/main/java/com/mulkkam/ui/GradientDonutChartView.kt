@@ -16,7 +16,7 @@ class GradientDonutChartView(
     context: Context,
     attrs: AttributeSet? = null,
 ) : View(context, attrs) {
-    private var progress: Float = DEFAULT_PROGRESS
+    private var progress: Float = PROGRESS_DEFAULT
     private val sweepGradient: SweepGradient by lazy { createSweepGradient() }
     private val rect: RectF by lazy { createRect() }
 
@@ -25,26 +25,26 @@ class GradientDonutChartView(
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             color = "#FFFAFAFA".toColorInt()
             style = Paint.Style.STROKE
-            strokeWidth = STROKE_WIDTH
+            strokeWidth = CHART_STROKE_WIDTH
         }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         val size = min(width, height).toFloat()
-        canvas.drawArc(rect, ANGLE_START, ANGLE_FULL_CIRCLE, false, backgroundPaint)
+        canvas.drawArc(rect, CHART_START_ANGLE, CHART_FULL_ANGLE, false, backgroundPaint)
 
         paint.shader = sweepGradient
         paint.style = Paint.Style.STROKE
-        paint.strokeWidth = STROKE_WIDTH
+        paint.strokeWidth = CHART_STROKE_WIDTH
 
-        canvas.rotate(ROTATION_OFFSET, size / 2, size / 2)
-        canvas.drawArc(rect, ANGLE_START, ANGLE_FULL_CIRCLE * progress / MAX_PERCENTAGE, false, paint)
+        canvas.rotate(CHART_ROTATION_OFFSET, size / 2, size / 2)
+        canvas.drawArc(rect, CHART_START_ANGLE, CHART_FULL_ANGLE * progress / PROGRESS_MAX_PERCENT, false, paint)
     }
 
     fun setProgress(targetProgress: Float) {
         val animator =
             ValueAnimator.ofFloat(progress, targetProgress).apply {
-                this.duration = ANIMATION_DURATION
+                this.duration = ANIMATION_DURATION_MS
                 addUpdateListener {
                     progress = it.animatedValue as Float
                     invalidate()
@@ -80,21 +80,21 @@ class GradientDonutChartView(
     private fun createRect(): RectF {
         val size = min(width, height).toFloat()
 
-        return RectF(RECT_START, RECT_START, size, size).apply {
-            inset(STROKE_WIDTH, STROKE_WIDTH)
+        return RectF(CHART_RECT_START, CHART_RECT_START, size, size).apply {
+            inset(CHART_STROKE_WIDTH, CHART_STROKE_WIDTH)
         }
     }
 
     companion object {
-        private const val DEFAULT_PROGRESS: Float = 0f
+        private const val PROGRESS_DEFAULT: Float = 0f
+        private const val PROGRESS_MAX_PERCENT: Float = 100f
 
-        private const val STROKE_WIDTH: Float = 100f
-        private const val ANGLE_START: Float = 0f
-        private const val ANGLE_FULL_CIRCLE: Float = 360f
-        private const val ROTATION_OFFSET: Float = -90f
-        private const val MAX_PERCENTAGE: Float = 100f
-        private const val RECT_START: Float = 0f
+        private const val CHART_STROKE_WIDTH: Float = 100f
+        private const val CHART_START_ANGLE: Float = 0f
+        private const val CHART_FULL_ANGLE: Float = 360f
+        private const val CHART_ROTATION_OFFSET: Float = -90f
+        private const val CHART_RECT_START: Float = 0f
 
-        private const val ANIMATION_DURATION: Long = 600
+        private const val ANIMATION_DURATION_MS: Long = 600
     }
 }
