@@ -9,5 +9,12 @@
     <string name="main_setting">설정</string>
 
     <string name="record_water_record_label">최근 기록</string>
+
     <string name="setting_view_label">설정</string>
+
+    <string name="profile_toolbar_title">프로필 설정</string>
+    <string name="profile_edit_nickname_label">닉네임 변경</string>
+    <string name="profile_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="profile_check_duplicate">중복확인</string>
+    <string name="profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
 </resources>
