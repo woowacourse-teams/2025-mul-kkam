@@ -134,7 +134,7 @@ class RecordFragment :
         }
 
         viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyIntakeHistories ->
-            bindDailyWaterChart(dailyIntakeHistories)
+            updateDailyChart(dailyIntakeHistories)
             updateIntakeHistories(dailyIntakeHistories.intakeHistories)
         }
     }
@@ -215,21 +215,9 @@ class RecordFragment :
         return PieData(dataSet)
     }
 
-    private fun bindDailyWaterChart(intakeHistorySummary: IntakeHistorySummary) {
+    private fun updateDailyChart(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
             viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
-            val formattedIntake =
-                String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
-            tvDailyIntakeSummary.text =
-                getColoredSpannable(
-                    R.color.primary_200,
-                    getString(
-                        R.string.record_daily_intake_summary,
-                        intakeHistorySummary.totalIntakeAmount,
-                        intakeHistorySummary.targetAmount,
-                    ),
-                    formattedIntake,
-                )
             tvDailyChartLabel.text =
                 getColoredSpannable(
                     R.color.primary_200,
@@ -239,7 +227,35 @@ class RecordFragment :
                     ),
                     intakeHistorySummary.date.format(DATE_FORMATTER_KR),
                 )
+            updateDailyIntakeSummary(intakeHistorySummary)
         }
+    }
+
+    private fun updateDailyIntakeSummary(intakeHistorySummary: IntakeHistorySummary) {
+        val formattedIntake =
+            String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
+
+        @ColorRes val summaryColorResId =
+            if (intakeHistorySummary.targetAmount == 0) {
+                R.color.gray_200
+            } else {
+                R.color.primary_200
+            }
+        binding.tvDailyIntakeSummary.text =
+            getColoredSpannable(
+                summaryColorResId,
+                getString(
+                    R.string.record_daily_intake_summary,
+                    intakeHistorySummary.totalIntakeAmount,
+                    intakeHistorySummary.targetAmount,
+                ),
+                formattedIntake,
+            )
+    }
+
+    private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
+        recordAdapter.changeItems(intakeHistories)
+        binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
     }
 
     private fun createSweepGradient(
@@ -267,11 +283,6 @@ class RecordFragment :
                 1.0f,
             ),
         )
-    }
-
-    private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
-        recordAdapter.changeItems(intakeHistories)
-        binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
     }
 
     companion object {
