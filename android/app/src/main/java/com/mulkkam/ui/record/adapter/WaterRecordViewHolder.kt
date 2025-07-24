@@ -5,16 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemWaterRecordBinding
-import com.mulkkam.domain.WaterRecord
+import com.mulkkam.domain.IntakeHistory
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class WaterRecordViewHolder(
     private val binding: ItemWaterRecordBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(waterRecord: WaterRecord) {
+    fun bind(waterRecord: IntakeHistory) {
         with(binding) {
-            tvDrinkTime.text = waterRecord.time.format(timeFormatter)
+            tvDrinkTime.text = waterRecord.dateTime.format(timeFormatter)
             tvDrinkAmount.text =
                 binding.root.context.getString(
                     R.string.record_drink_amount,
