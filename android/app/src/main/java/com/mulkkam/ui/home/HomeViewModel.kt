@@ -15,13 +15,16 @@ class HomeViewModel : ViewModel() {
 
     init {
 
-    fun addWaterIntake(newWaterIntake: Int) {
-        val addedResult = (currentWaterIntake.value ?: 0) + newWaterIntake
-        _currentWaterIntake.value = newWaterIntake
         viewModelScope.launch {
             cups = RepositoryInjection.cupsRepository.getCups()
         }
     }
 
+    fun addWaterIntake() {
+        // TODO: 현재 cupRank가 2부터 들어가있음
+        val cup = cups?.cups?.find { it.cupRank == 2 }
+        val cupAmount = cup?.cupAmount
+        _currentWaterIntake.value =
+            (currentWaterIntake.value ?: 0) + (cupAmount ?: 0)
     }
 }
