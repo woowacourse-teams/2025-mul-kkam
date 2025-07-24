@@ -31,14 +31,7 @@ class RecordViewModel : ViewModel() {
                     to = weekDates.last(),
                 )
 
-            val completedWeekIntake =
-                weekDates.map { date ->
-                    summaries.find { it.date == date }
-                        ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = date)
-                }
-
-            _weeklyWaterIntake.value = completedWeekIntake
-            _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
+            updateIntakeSummary(weekDates, summaries)
         }
     }
 
@@ -46,6 +39,20 @@ class RecordViewModel : ViewModel() {
         val today = LocalDate.now()
         val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         return List(7) { monday.plusDays(it.toLong()) }
+    }
+
+    private fun updateIntakeSummary(
+        weekDates: List<LocalDate>,
+        summaries: List<IntakeHistorySummary>,
+    ) {
+        val completedWeekIntake =
+            weekDates.map { date ->
+                summaries.find { it.date == date }
+                    ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = date)
+            }
+
+        _weeklyWaterIntake.value = completedWeekIntake
+        _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
     }
 
     fun updateDailyWaterIntake(dailyWaterIntake: IntakeHistorySummary) {
