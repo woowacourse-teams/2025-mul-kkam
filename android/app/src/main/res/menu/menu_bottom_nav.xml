@@ -6,7 +6,7 @@
         android:title="@string/main_home" />
     <item
         android:id="@+id/item_history"
-        android:icon="@drawable/ic_launcher_foreground"
+        android:icon="@drawable/ic_record"
         android:title="@string/main_history" />
     <item
         android:id="@+id/item_setting"
