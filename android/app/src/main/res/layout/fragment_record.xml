@@ -39,7 +39,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:textColor="@color/gray_400"
-            android:text="@string/record_view_sub_label"
+            android:text="@string/record_view_sub_label_prefix"
             android:textAppearance="@style/title3"
             app:layout_constraintStart_toStartOf="@id/tv_view_label"
             app:layout_constraintTop_toBottomOf="@id/view_title_underline" />

@@ -57,8 +57,8 @@ class RecordFragment :
         binding.tvViewSubLabel.text =
             getColoredSpannable(
                 R.color.primary_200,
-                getString(R.string.record_view_sub_label),
-                HIGHLIGHT_SUB_LABEL,
+                getString(R.string.record_view_sub_label_prefix) + " " + getString(R.string.record_view_sub_label_suffix),
+                getString(R.string.record_view_sub_label_suffix),
             )
     }
 
@@ -275,8 +275,6 @@ class RecordFragment :
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-
-        private const val HIGHLIGHT_SUB_LABEL: String = "물 일지"
 
         private const val CHART_MAX_PERCENTAGE: Float = 100f
         private const val CHART_ANIMATION_DURATION_MS: Int = 1000
