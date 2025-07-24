@@ -33,6 +33,7 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                 }
 
                 override fun onAddClick() {
+                    // TODO: 컵 최대 개수 제한
                     showEditBottomSheetDialog(null)
                 }
             },
