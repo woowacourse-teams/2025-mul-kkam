@@ -23,7 +23,11 @@ class CupViewHolder(
     private fun showCupInfo(item: SettingWaterItem.CupItem) =
         with(binding) {
             tvSettingWaterCupName.text = item.value.nickname
-            tvSettingWaterCupIncrement.setText(R.string.setting_water_increment)
+            tvSettingWaterCupIncrement.text =
+                root.context.getString(
+                    R.string.setting_water_increment,
+                    item.value.amount,
+                )
         }
 
     private fun handleRepresentativeCup(item: SettingWaterItem.CupItem) =
