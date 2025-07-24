@@ -67,7 +67,7 @@
         android:backgroundTint="@color/gray_50"
         android:hint="@string/setting_profile_hint_input_nickname"
         android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
+        android:paddingVertical="10dp"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         android:textColorHint="@color/gray_300"
