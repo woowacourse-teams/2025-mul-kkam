@@ -34,6 +34,8 @@
     <string name="setting_water_increment">+ %dml</string>
     <string name="setting_water_edit">수정</string>
     <string name="setting_water_cup_title">나의 컵 목록</string>
+    <string name="setting_water_cup_edit_title">컵 수정</string>
+    <string name="setting_water_cup_add_title">컵 추가</string>
 
     <string name="setting_goal_toolbar_title">마시기 목표 설정</string>
     <string name="setting_goal_edit_goal_label">하루 목표량</string>

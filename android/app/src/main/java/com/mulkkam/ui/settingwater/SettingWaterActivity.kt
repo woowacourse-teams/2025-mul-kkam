@@ -7,6 +7,7 @@ import com.mulkkam.databinding.ActivitySettingWaterBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingwater.adapter.SettingWaterAdapter
 import com.mulkkam.ui.settingwater.adapter.SettingWaterItem
+import com.mulkkam.ui.settingwater.dialog.SettingWaterCupFragment
 import com.mulkkam.ui.settingwater.model.CupUiModel
 
 class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(ActivitySettingWaterBinding::inflate) {
@@ -23,8 +24,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
     private fun handleSettingWaterClick() =
         SettingWaterAdapter(
             object : SettingWaterAdapter.Handler {
-                override fun onEditClick(id: Int) {
-                    // TODO: 선택된 컵 객체의 바텀시트 생성
+                override fun onEditClick(cup: CupUiModel) {
+                    showEditBottomSheetDialog(cup)
                 }
 
                 override fun onDeleteClick(id: Int) {
@@ -32,10 +33,18 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                 }
 
                 override fun onAddClick() {
-                    // TODO: 빈 컵 객체의 바텀시트 생성
+                    showEditBottomSheetDialog(null)
                 }
             },
         )
+
+    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
+        if (supportFragmentManager.findFragmentByTag(SettingWaterCupFragment.TAG) != null) return
+
+        SettingWaterCupFragment
+            .newInstance(cup)
+            .show(supportFragmentManager, SettingWaterCupFragment.TAG)
+    }
 
     private fun initClickListener() {
         binding.ivBack.setOnClickListener {
