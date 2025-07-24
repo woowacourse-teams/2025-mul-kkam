@@ -34,10 +34,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         val targetFragment = prepareFragment(targetTab)
 
         showOnlyFragment(targetFragment)
-
-        if (targetFragment is Refreshable) {
-            targetFragment.onSelected()
-        }
     }
 
     private fun prepareFragment(targetTab: MainTab): Fragment {
@@ -57,10 +53,17 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             supportFragmentManager.fragments.forEach { fragment ->
                 if (fragment == targetFragment) {
                     show(fragment)
+                    notifyFragmentReselected(fragment)
                 } else {
                     hide(fragment)
                 }
             }
+        }
+    }
+
+    private fun notifyFragmentReselected(fragment: Fragment) {
+        if (fragment is Refreshable) {
+            fragment.onReselected()
         }
     }
 }
