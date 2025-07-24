@@ -7,8 +7,5 @@ import com.mulkkam.domain.Cups
 class CupsRepository(
     private val cupsService: CupsService,
 ) {
-    suspend fun getCups(): Cups {
-        val response = cupsService.getCups()
-        return response.toDomain()
-    }
+    suspend fun getCups(): Cups = cupsService.getCups().toDomain()
 }

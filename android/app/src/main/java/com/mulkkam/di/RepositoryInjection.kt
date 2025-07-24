@@ -9,6 +9,7 @@ object RepositoryInjection {
             intakeService = NetworkInjection.intakeService,
         )
     }
+
     val cupsRepository: CupsRepository by lazy {
         CupsRepository(
             cupsService = NetworkInjection.cupsService,

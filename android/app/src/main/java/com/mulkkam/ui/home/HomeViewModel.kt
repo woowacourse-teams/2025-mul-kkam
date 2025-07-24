@@ -14,7 +14,6 @@ class HomeViewModel : ViewModel() {
     var cups: Cups? = null
 
     init {
-
         viewModelScope.launch {
             cups = RepositoryInjection.cupsRepository.getCups()
         }

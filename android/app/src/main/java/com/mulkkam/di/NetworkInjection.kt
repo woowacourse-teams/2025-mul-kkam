@@ -36,5 +36,6 @@ object NetworkInjection {
     }
 
     val intakeService: IntakeService = retrofit.create(IntakeService::class.java)
+
     val cupsService: CupsService = retrofit.create(CupsService::class.java)
 }
