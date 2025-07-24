@@ -35,7 +35,7 @@ class IntakeHistoryRepositoryTest {
 
         @DisplayName("정상적으로 모든 기록들이 조회된다")
         @Test
-        void success() {
+        void success_withExistedMemberId() {
             // given
             Member member = new MemberFixture().build();
             Member savedMember = memberRepository.save(member);
