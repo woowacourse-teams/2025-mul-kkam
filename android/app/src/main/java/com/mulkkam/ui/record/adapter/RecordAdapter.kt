@@ -2,10 +2,10 @@ package com.mulkkam.ui.record.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mulkkam.domain.WaterRecord
+import com.mulkkam.domain.IntakeHistory
 
 class RecordAdapter : RecyclerView.Adapter<WaterRecordViewHolder>() {
-    private val waterRecords: MutableList<WaterRecord> = mutableListOf()
+    private val waterRecords: MutableList<IntakeHistory> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -21,7 +21,7 @@ class RecordAdapter : RecyclerView.Adapter<WaterRecordViewHolder>() {
 
     override fun getItemCount(): Int = waterRecords.size
 
-    fun changeItems(newWaterRecords: List<WaterRecord>) {
+    fun changeItems(newWaterRecords: List<IntakeHistory>) {
         val oldSize = waterRecords.size
         val newSize = newWaterRecords.size
         waterRecords.clear()
