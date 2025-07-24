@@ -1,14 +1,12 @@
 package backend.mulkkam.member.domain;
 
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,24 +29,35 @@ public class Member {
     )
     private MemberNickname memberNickname;
 
-    @Enumerated(value = EnumType.STRING)
-    private Gender gender;
-
-    private Integer weight;
+    @Embedded
+    private PhysicalAttributes physicalAttributes;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
 
+    public void updateTargetAmount(Amount newTargetAmount) {
+        this.targetAmount = newTargetAmount;
+    }
+
     public Member(
             MemberNickname memberNickname,
-            Gender gender,
-            Integer weight,
+            PhysicalAttributes physicalAttributes,
             Amount targetAmount
     ) {
         this.memberNickname = memberNickname;
-        this.gender = gender;
-        this.weight = weight;
+        this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
+    }
+
+    public PhysicalAttributes getPhysicalAttributes() {
+        if (physicalAttributes == null) {
+            return new PhysicalAttributes(null, null);
+        }
+        return physicalAttributes;
+    }
+
+    public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
+        this.physicalAttributes = physicalAttributes;
     }
 }

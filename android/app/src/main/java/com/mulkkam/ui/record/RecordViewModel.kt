@@ -31,12 +31,12 @@ class RecordViewModel : ViewModel() {
         initWaterRecords()
     }
 
-    fun initWaterIntake() {
+    private fun initWaterIntake() {
         _weeklyWaterIntake.value = WEEKLY_WATER_INTAKE
         _dailyWaterIntake.value = WEEKLY_WATER_INTAKE.first()
     }
 
-    fun initWaterRecords() {
+    private fun initWaterRecords() {
         waterRecords.addAll(WEEKLY_WATER_RECORDS)
     }
 
@@ -51,8 +51,8 @@ class RecordViewModel : ViewModel() {
                     1,
                     LocalDate.of(2025, 7, 21),
                     1200,
-                    500,
-                    10f,
+                    1200,
+                    100f,
                 ),
                 DailyWaterIntake(
                     2,
