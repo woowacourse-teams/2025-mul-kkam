@@ -41,7 +41,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("정상적으로 저장한다")
         @Test
-        void success() {
+        void success_validData() {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
@@ -151,7 +151,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
-        void success_readAllCupsFromMember() {
+        void success_withExistedMemberId() {
             // given
             Member member = new MemberFixture().build();
             memberRepository.save(member);
