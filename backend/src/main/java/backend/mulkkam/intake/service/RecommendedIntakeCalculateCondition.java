@@ -4,7 +4,7 @@ import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-public class RecommandedIntakeCalculateCondition {
+public class RecommendedIntakeCalculateCondition {
 
     private static final double DEFAULT_WEIGHT = 60.0;
 
