@@ -16,6 +16,7 @@ import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.MemberFixture;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -101,9 +102,12 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member mockMember = mock(Member.class);
+            Member member = new MemberFixture()
+                    .gender(null)
+                    .weight(null)
+                    .build();
             given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.of(mockMember));
+                    .willReturn(Optional.of(member));
 
             // when
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
@@ -116,9 +120,12 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member mockMember = mock(Member.class);
+            Member member = new MemberFixture()
+                    .gender(null)
+                    .weight(null)
+                    .build();
             given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.of(mockMember));
+                    .willReturn(Optional.of(member));
 
             // when
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);

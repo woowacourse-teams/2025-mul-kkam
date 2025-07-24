@@ -50,6 +50,13 @@ public class Member {
         this.targetAmount = targetAmount;
     }
 
+    public PhysicalAttributes getPhysicalAttributes() {
+        if (physicalAttributes == null) {
+            return new PhysicalAttributes(null, null);
+        }
+        return physicalAttributes;
+    }
+
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
         this.physicalAttributes = physicalAttributes;
     }

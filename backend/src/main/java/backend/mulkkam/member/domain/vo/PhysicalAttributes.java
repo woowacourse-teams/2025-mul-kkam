@@ -17,4 +17,18 @@ public class PhysicalAttributes {
     private Gender gender;
 
     private Double weight;
+
+    public Gender getGender() {
+        if (gender == null) {
+            return Gender.MALE;
+        }
+        return gender;
+    }
+
+    public Double getWeight() {
+        if (weight == null) {
+            return 60.0;
+        }
+        return weight;
+    }
 }
