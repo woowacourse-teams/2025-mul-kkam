@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class IntakeAmountRequest(
-    @SerialName("intakeAmount")
-    val intakeAmount: Int,
+    @SerialName("amount")
+    val amount: Int,
 )

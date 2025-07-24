@@ -20,8 +20,8 @@ class IntakeRepository(
 
     private fun dateToString(date: LocalDate?) = date?.format(formatter)
 
-    suspend fun patchIntakeTarget(intakeAmount: Int) {
-        intakeService.patchIntakeTarget(IntakeAmountRequest(intakeAmount))
+    suspend fun patchIntakeTarget(amount: Int) {
+        intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
     }
 
     companion object {
