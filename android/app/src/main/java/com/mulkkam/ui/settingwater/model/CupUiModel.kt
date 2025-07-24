@@ -7,8 +7,8 @@ import kotlinx.parcelize.Parcelize
 data class CupUiModel(
     val id: Int,
     val nickname: String,
-    val cupAmount: Int,
-    val cupRank: Int,
+    val amount: Int,
+    val rank: Int,
     val isRepresentative: Boolean = false,
 ) : Parcelable {
     companion object {
@@ -16,8 +16,8 @@ data class CupUiModel(
             CupUiModel(
                 id = 0,
                 nickname = "",
-                cupAmount = 0,
-                cupRank = 0,
+                amount = 0,
+                rank = 0,
                 isRepresentative = false,
             )
     }

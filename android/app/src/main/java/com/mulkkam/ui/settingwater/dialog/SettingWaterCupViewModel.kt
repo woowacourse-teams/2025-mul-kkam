@@ -3,9 +3,12 @@ package com.mulkkam.ui.settingwater.dialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.ui.settingwater.model.CupUiModel
 import com.mulkkam.ui.settingwater.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingwater.model.SettingWaterCupEditType
+import kotlinx.coroutines.launch
 
 class SettingWaterCupViewModel : ViewModel() {
     private var _cup: MutableLiveData<CupUiModel> = MutableLiveData(EMPTY_CUP_UI_MODEL)
@@ -14,6 +17,9 @@ class SettingWaterCupViewModel : ViewModel() {
     private var _editType: MutableLiveData<SettingWaterCupEditType> = MutableLiveData(SettingWaterCupEditType.ADD)
     val editType: LiveData<SettingWaterCupEditType> get() = _editType
 
+    private var _success: MutableLiveData<Boolean> = MutableLiveData(false)
+    val success: LiveData<Boolean> get() = _success
+
     fun initCup(cup: CupUiModel?) {
         if (cup == null) {
             _editType.value = SettingWaterCupEditType.ADD
@@ -21,6 +27,41 @@ class SettingWaterCupViewModel : ViewModel() {
         } else {
             _editType.value = SettingWaterCupEditType.EDIT
             cup.let { _cup.value = it }
+        }
+    }
+
+    fun updateNickname(nickname: String) {
+        _cup.value = _cup.value?.copy(nickname = nickname)
+    }
+
+    fun updateAmount(amount: Int) {
+        _cup.value = _cup.value?.copy(amount = amount)
+    }
+
+    fun saveCup() {
+        when (editType.value) {
+            SettingWaterCupEditType.ADD -> {
+                addCup()
+            }
+
+            SettingWaterCupEditType.EDIT -> {
+                // TODO: 수정 네트워크 추가
+            }
+
+            else -> Unit
+        }
+    }
+
+    private fun addCup() {
+        viewModelScope.launch {
+            runCatching {
+                cupsRepository.postCup(
+                    cupAmount = _cup.value?.amount ?: 0,
+                    cupNickname = _cup.value?.nickname ?: "",
+                )
+            }.onSuccess {
+                _success.value = true
+            }
         }
     }
 }
