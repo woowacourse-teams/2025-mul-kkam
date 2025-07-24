@@ -1,4 +1,4 @@
-package com.mulkkam.ui.record
+package com.mulkkam.ui.history
 
 import android.graphics.SweepGradient
 import android.os.Bundle
@@ -19,23 +19,24 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentRecordBinding
-import com.mulkkam.databinding.RecordWaterIntakeChartBinding
+import com.mulkkam.databinding.FragmentHistoryBinding
+import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
+import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.main.Refreshable
-import com.mulkkam.ui.record.adapter.RecordAdapter
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.min
 
-class RecordFragment :
-    BindingFragment<FragmentRecordBinding>(
-        FragmentRecordBinding::inflate,
+class HistoryFragment :
+    BindingFragment<FragmentHistoryBinding>(
+        FragmentHistoryBinding::inflate,
     ),
     Refreshable {
-    private val viewModel: RecordViewModel by viewModels()
-    private val recordAdapter: RecordAdapter by lazy { RecordAdapter() }
+    private val viewModel: HistoryViewModel by viewModels()
+    private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onSelected() {
         // TODO: 화면 전환 시 필요한 작업을 구현합니다.
@@ -47,7 +48,7 @@ class RecordFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
         initHighlight()
-        initRecordAdapter()
+        initHistoryAdapter()
         initChartOptions()
         initCustomChartOptions()
         initObservers()
@@ -57,8 +58,8 @@ class RecordFragment :
         binding.tvViewSubLabel.text =
             getColoredSpannable(
                 R.color.primary_200,
-                getString(R.string.record_view_sub_label),
-                HIGHLIGHT_SUB_LABEL,
+                getString(R.string.history_view_sub_label_prefix) + " " + getString(R.string.history_view_sub_label_suffix),
+                getString(R.string.history_view_sub_label_suffix),
             )
     }
 
@@ -83,9 +84,9 @@ class RecordFragment :
         return spannable
     }
 
-    private fun initRecordAdapter() {
-        with(binding.rvWaterRecord) {
-            adapter = recordAdapter
+    private fun initHistoryAdapter() {
+        with(binding.rvIntakeHistory) {
+            adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
@@ -128,21 +129,17 @@ class RecordFragment :
     }
 
     private fun initObservers() {
-        viewModel.weeklyWaterIntake.observe(viewLifecycleOwner) { weeklyWaterIntake ->
-            bindWeeklyChartData(weeklyWaterIntake)
+        viewModel.weeklyIntakeHistories.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
+            bindWeeklyChartData(weeklyIntakeHistories)
         }
 
-        viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyWaterIntake ->
-            bindDailyWaterChart(dailyWaterIntake)
-        }
-
-        viewModel.dailyWaterRecords.observe(viewLifecycleOwner) { waterRecords ->
-            recordAdapter.changeItems(waterRecords)
-            binding.tvNoWaterRecord.isVisible = waterRecords.isEmpty()
+        viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
+            updateDailyChart(dailyIntakeHistories)
+            updateIntakeHistories(dailyIntakeHistories.intakeHistories)
         }
     }
 
-    private fun bindWeeklyChartData(weeklyWaterIntake: List<IntakeHistorySummary>) {
+    private fun bindWeeklyChartData(weeklyIntakeHistories: List<IntakeHistorySummary>) {
         val pieCharts =
             listOf(
                 binding.includeChartMon,
@@ -155,42 +152,42 @@ class RecordFragment :
             )
 
         pieCharts.forEachIndexed { index, chart ->
-            val intake = weeklyWaterIntake[index]
+            val intake = weeklyIntakeHistories[index]
             updateWeeklyChart(chart, intake)
         }
     }
 
     private fun updateWeeklyChart(
-        chart: RecordWaterIntakeChartBinding,
-        intake: IntakeHistorySummary,
+        chart: HistoryWaterIntakeChartBinding,
+        intakeHistorySummary: IntakeHistorySummary,
     ) {
         chart.apply {
-            tvWaterGoalRate.text = intake.achievementRate.toInt().toString()
+            tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
             // TODO: 한국어로 매핑 & 토/일 색깔 변경 필요
             tvDayOfWeek.text =
-                intake.date.dayOfWeek
+                intakeHistorySummary.date.dayOfWeek
                     .toString()
                     .substring(0..2)
             tvMonthDay.text =
                 getString(
                     R.string.water_chart_date,
-                    intake.date.monthValue,
-                    intake.date.dayOfMonth,
+                    intakeHistorySummary.date.monthValue,
+                    intakeHistorySummary.date.dayOfMonth,
                 )
             // TODO: 클릭리스너 위치 변경 필요
             pcWaterIntake.setOnClickListener {
-                viewModel.updateDailyWaterIntake(intake)
+                viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
-            updateChartData(pcWaterIntake, intake)
+            updateChartData(pcWaterIntake, intakeHistorySummary)
         }
     }
 
     private fun updateChartData(
         pieChart: PieChart,
-        waterIntake: IntakeHistorySummary,
+        intakeHistorySummary: IntakeHistorySummary,
     ) {
         pieChart.apply {
-            data = createPieData(waterIntake.achievementRate)
+            data = createPieData(intakeHistorySummary.achievementRate)
             animateY(CHART_ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
             invalidate()
         }
@@ -218,31 +215,47 @@ class RecordFragment :
         return PieData(dataSet)
     }
 
-    private fun bindDailyWaterChart(dailyWaterIntake: IntakeHistorySummary) {
+    private fun updateDailyChart(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.setProgress(dailyWaterIntake.achievementRate)
-            val formattedIntake =
-                String.format(Locale.US, "%,dml", dailyWaterIntake.totalIntakeAmount)
-            tvDailyWaterSummary.text =
-                getColoredSpannable(
-                    R.color.primary_200,
-                    getString(
-                        R.string.record_daily_water_summary,
-                        dailyWaterIntake.totalIntakeAmount,
-                        dailyWaterIntake.targetAmount,
-                    ),
-                    formattedIntake,
-                )
+            viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
             tvDailyChartLabel.text =
                 getColoredSpannable(
                     R.color.primary_200,
                     getString(
-                        R.string.record_daily_chart_label,
-                        dailyWaterIntake.date.format(DATE_FORMATTER_KR),
+                        R.string.history_daily_chart_label,
+                        intakeHistorySummary.date.format(DATE_FORMATTER_KR),
                     ),
-                    dailyWaterIntake.date.format(DATE_FORMATTER_KR),
+                    intakeHistorySummary.date.format(DATE_FORMATTER_KR),
                 )
+            updateDailyIntakeSummary(intakeHistorySummary)
         }
+    }
+
+    private fun updateDailyIntakeSummary(intakeHistorySummary: IntakeHistorySummary) {
+        val formattedIntake =
+            String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
+
+        @ColorRes val summaryColorResId =
+            if (intakeHistorySummary.targetAmount == 0) {
+                R.color.gray_200
+            } else {
+                R.color.primary_200
+            }
+        binding.tvDailyIntakeSummary.text =
+            getColoredSpannable(
+                summaryColorResId,
+                getString(
+                    R.string.history_daily_intake_summary,
+                    intakeHistorySummary.totalIntakeAmount,
+                    intakeHistorySummary.targetAmount,
+                ),
+                formattedIntake,
+            )
+    }
+
+    private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
+        historyAdapter.changeItems(intakeHistories)
+        binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
     }
 
     private fun createSweepGradient(
@@ -275,8 +288,6 @@ class RecordFragment :
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-
-        private const val HIGHLIGHT_SUB_LABEL: String = "물 일지"
 
         private const val CHART_MAX_PERCENTAGE: Float = 100f
         private const val CHART_ANIMATION_DURATION_MS: Int = 1000
