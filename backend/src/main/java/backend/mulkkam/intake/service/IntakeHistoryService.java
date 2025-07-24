@@ -70,7 +70,10 @@ public class IntakeHistoryService {
 
         for (LocalDate date : intakeHistoriesOfDate.keySet()) {
             IntakeHistorySummaryResponse intakeHistorySummaryResponse = toIntakeHistorySummaryResponse(
-                    intakeHistoriesOfDate, member, date);
+                    intakeHistoriesOfDate,
+                    member,
+                    date
+            );
             result.add(intakeHistorySummaryResponse);
         }
 
@@ -78,7 +81,10 @@ public class IntakeHistoryService {
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate, Member member, LocalDate date) {
+            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
+            Member member,
+            LocalDate date
+    ) {
 
         List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
                 intakeHistoriesOfDate.get(date));
