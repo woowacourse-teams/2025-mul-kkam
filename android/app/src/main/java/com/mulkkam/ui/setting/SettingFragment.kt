@@ -8,7 +8,6 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.model.SettingsMenu
 import com.mulkkam.ui.settinggoal.SettingGoalActivity
-import com.mulkkam.ui.settingprofile.SettingProfileActivity
 import com.mulkkam.ui.settingwater.SettingWaterActivity
 
 class SettingFragment :
@@ -33,8 +32,11 @@ class SettingFragment :
     private fun handleSettingClick(menu: SettingsMenu) {
         when (menu) {
             SettingsMenu.SETTING_PROFILE -> {
+                /*
+                TODO: 프로필 설정 화면 네트워크 구현
                 val intent = SettingProfileActivity.newIntent(requireContext())
                 startActivity(intent)
+                 */
             }
 
             SettingsMenu.SETTING_WATER -> {
