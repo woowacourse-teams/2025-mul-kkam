@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
 
 import backend.mulkkam.common.exception.CommonException;
 

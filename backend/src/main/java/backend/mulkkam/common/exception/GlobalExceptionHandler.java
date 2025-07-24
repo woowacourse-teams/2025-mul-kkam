@@ -1,5 +1,6 @@
 package backend.mulkkam.common.exception;
 
+import backend.mulkkam.common.exception.errorCode.BadRequestErrorCode;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

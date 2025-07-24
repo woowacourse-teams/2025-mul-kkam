@@ -1,20 +1,5 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.NotFoundErrorCode;
-import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
-import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
-import java.util.Optional;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,6 +8,23 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeAmountResponse;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.MemberFixture;
+import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 public class IntakeAmountServiceUnitTest {
@@ -87,6 +89,49 @@ public class IntakeAmountServiceUnitTest {
             CommonException exception = assertThrows(CommonException.class,
                     () -> intakeAmountService.modifyTarget(any(IntakeAmountModifyRequest.class), MEMBER_ID));
             assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+        }
+    }
+
+    @DisplayName("하루 섭취 목표 응용량을 추천받을 때에")
+    @Nested
+    class GetRecommended {
+
+        public static final long MEMBER_ID = 1L;
+
+        @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
+        @Test
+        void success_physicalAttributes() {
+            // given
+            Member member = new MemberFixture()
+                    .gender(null)
+                    .weight(null)
+                    .build();
+            given(memberRepository.findById(MEMBER_ID))
+                    .willReturn(Optional.of(member));
+
+            // when
+            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
+
+            // then
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+        }
+
+        @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
+        @Test
+        void success_physicalAttributesIsNotExisted() {
+            // given
+            Member member = new MemberFixture()
+                    .gender(null)
+                    .weight(null)
+                    .build();
+            given(memberRepository.findById(MEMBER_ID))
+                    .willReturn(Optional.of(member));
+
+            // when
+            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
+
+            // then
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
         }
     }
 }

@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.BadRequestErrorCode.INVALID_CUP_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_NICKNAME;
 
 import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Embeddable;

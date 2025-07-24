@@ -1,7 +1,7 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.NotFoundErrorCode;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;

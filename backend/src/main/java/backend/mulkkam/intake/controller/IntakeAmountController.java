@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.controller;
 
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,9 @@ public class IntakeAmountController {
     private final IntakeAmountService intakeAmountService;
 
     @GetMapping("/recommended")
-    public void getRecommended() {
-
+    public ResponseEntity<IntakeAmountResponse> getRecommended() {
+        IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(1L);
+        return ResponseEntity.ok(intakeAmountResponse);
     }
 
     @PatchMapping("/target")
