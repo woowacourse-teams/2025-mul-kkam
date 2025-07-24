@@ -281,6 +281,10 @@ class HistoryFragment :
         )
     }
 
+    override fun onReselected() {
+        viewModel.loadIntakeHistories()
+    }
+
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
