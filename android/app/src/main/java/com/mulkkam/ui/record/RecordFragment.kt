@@ -21,7 +21,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentRecordBinding
 import com.mulkkam.databinding.RecordWaterIntakeChartBinding
-import com.mulkkam.domain.DailyWaterIntake
+import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.record.adapter.RecordAdapter
@@ -49,6 +49,7 @@ class RecordFragment :
         initHighlight()
         initRecordAdapter()
         initChartOptions()
+        initCustomChartOptions()
         initObservers()
     }
 
@@ -111,6 +112,21 @@ class RecordFragment :
         }
     }
 
+    private fun initCustomChartOptions() {
+        with(binding.viewDailyChart) {
+            post {
+                setPaintGradient(
+                    createSweepGradient(
+                        width,
+                        height,
+                    ),
+                )
+            }
+            setStroke(DONUT_CHART_STROKE_DEFAULT)
+            setBackgroundPaintColor(R.color.gray_10)
+        }
+    }
+
     private fun initObservers() {
         viewModel.weeklyWaterIntake.observe(viewLifecycleOwner) { weeklyWaterIntake ->
             bindWeeklyChartData(weeklyWaterIntake)
@@ -126,7 +142,7 @@ class RecordFragment :
         }
     }
 
-    private fun bindWeeklyChartData(weeklyWaterIntake: List<DailyWaterIntake>) {
+    private fun bindWeeklyChartData(weeklyWaterIntake: List<IntakeHistorySummary>) {
         val pieCharts =
             listOf(
                 binding.includeChartMon,
@@ -139,24 +155,17 @@ class RecordFragment :
             )
 
         pieCharts.forEachIndexed { index, chart ->
-            val intake =
-                weeklyWaterIntake.getOrNull(index)
-                    ?: DailyWaterIntake.EMPTY_DAILY_WATER_INTAKE.copy(
-                        date =
-                            weeklyWaterIntake.first().date.plusDays(
-                                index.toLong(),
-                            ),
-                    )
+            val intake = weeklyWaterIntake[index]
             updateWeeklyChart(chart, intake)
         }
     }
 
     private fun updateWeeklyChart(
         chart: RecordWaterIntakeChartBinding,
-        intake: DailyWaterIntake,
+        intake: IntakeHistorySummary,
     ) {
         chart.apply {
-            tvWaterGoalRate.text = intake.goalRate.toInt().toString()
+            tvWaterGoalRate.text = intake.achievementRate.toInt().toString()
             // TODO: 한국어로 매핑 & 토/일 색깔 변경 필요
             tvDayOfWeek.text =
                 intake.date.dayOfWeek
@@ -178,10 +187,10 @@ class RecordFragment :
 
     private fun updateChartData(
         pieChart: PieChart,
-        waterIntake: DailyWaterIntake,
+        waterIntake: IntakeHistorySummary,
     ) {
         pieChart.apply {
-            data = createPieData(waterIntake.goalRate)
+            data = createPieData(waterIntake.achievementRate)
             animateY(CHART_ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
             invalidate()
         }
@@ -209,16 +218,17 @@ class RecordFragment :
         return PieData(dataSet)
     }
 
-    private fun bindDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
+    private fun bindDailyWaterChart(dailyWaterIntake: IntakeHistorySummary) {
         with(binding) {
-            updateDailyWaterChart(dailyWaterIntake)
-            val formattedIntake = String.format(Locale.US, "%,dml", dailyWaterIntake.intakeAmount)
+            viewDailyChart.setProgress(dailyWaterIntake.achievementRate)
+            val formattedIntake =
+                String.format(Locale.US, "%,dml", dailyWaterIntake.totalIntakeAmount)
             tvDailyWaterSummary.text =
                 getColoredSpannable(
                     R.color.primary_200,
                     getString(
                         R.string.record_daily_water_summary,
-                        dailyWaterIntake.intakeAmount,
+                        dailyWaterIntake.totalIntakeAmount,
                         dailyWaterIntake.targetAmount,
                     ),
                     formattedIntake,
@@ -232,22 +242,6 @@ class RecordFragment :
                     ),
                     dailyWaterIntake.date.format(DATE_FORMATTER_KR),
                 )
-        }
-    }
-
-    private fun updateDailyWaterChart(dailyWaterIntake: DailyWaterIntake) {
-        with(binding.viewDailyChart) {
-            post {
-                setPaintGradient(
-                    createSweepGradient(
-                        width,
-                        height,
-                    ),
-                )
-            }
-            setProgress(dailyWaterIntake.goalRate)
-            setStroke(DONUT_CHART_STROKE_DEFAULT)
-            setBackgroundPaintColor(R.color.gray_10)
         }
     }
 
