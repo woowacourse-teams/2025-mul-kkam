@@ -24,6 +24,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class IntakeHistoryService {
 
+    public static final int INVALID_DIVISOR = 0;
+
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
 
@@ -92,7 +94,7 @@ public class IntakeHistoryService {
         int totalIntakeAmount = intakeHistoryResponses.stream()
                 .mapToInt(IntakeHistoryResponse::intakeAmount).sum();
         int targetAmount = member.getTargetAmount().value();
-        double achievementRate = ((double) totalIntakeAmount / targetAmount) * 100;
+        double achievementRate = calculateAchievementRate((double) totalIntakeAmount, targetAmount);
 
         return new IntakeHistorySummaryResponse(
                 date,
@@ -101,6 +103,13 @@ public class IntakeHistoryService {
                 achievementRate,
                 intakeHistoryResponses
         );
+    }
+
+    private static double calculateAchievementRate(double totalIntakeAmount, int targetAmount) {
+        if (targetAmount == INVALID_DIVISOR) {
+            return 0;
+        }
+        return (totalIntakeAmount / targetAmount) * 100;
     }
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
