@@ -6,7 +6,7 @@ import androidx.viewbinding.ViewBinding
 
 class SettingWaterAdapter(
     private val handler: Handler,
-) : ListAdapter<SettingWaterItem, SettingWaterViewHolder<out SettingWaterItem, out ViewBinding>>(WaterSettingDiffCallback) {
+) : ListAdapter<SettingWaterItem, SettingWaterViewHolder<out SettingWaterItem, out ViewBinding>>(SettingWaterDiffCallback) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,

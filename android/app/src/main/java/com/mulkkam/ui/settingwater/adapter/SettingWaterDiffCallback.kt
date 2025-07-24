@@ -2,7 +2,7 @@ package com.mulkkam.ui.settingwater.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 
-object WaterSettingDiffCallback : DiffUtil.ItemCallback<SettingWaterItem>() {
+object SettingWaterDiffCallback : DiffUtil.ItemCallback<SettingWaterItem>() {
     override fun areItemsTheSame(
         oldItem: SettingWaterItem,
         newItem: SettingWaterItem,
