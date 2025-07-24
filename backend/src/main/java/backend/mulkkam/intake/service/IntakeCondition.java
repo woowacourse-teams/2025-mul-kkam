@@ -6,11 +6,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class IntakeCondition {
 
+    private static final double DEFAULT_WEIGHT = 60.0;
+
     private final PhysicalAttributes physicalAttributes;
 
     public Double getWeight() {
         if (physicalAttributes == null || physicalAttributes.getWeight() == null) {
-            return 60.0;
+            return DEFAULT_WEIGHT;
         }
         return physicalAttributes.getWeight();
     }
