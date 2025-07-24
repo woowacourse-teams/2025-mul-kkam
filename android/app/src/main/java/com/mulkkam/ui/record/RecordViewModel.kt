@@ -52,7 +52,11 @@ class RecordViewModel : ViewModel() {
             }
 
         _weeklyWaterIntake.value = completedWeekIntake
-        _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
+        if (weekDates.contains(LocalDate.now())) {
+            _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
+        } else {
+            _dailyWaterIntake.value = completedWeekIntake.first()
+        }
     }
 
     fun updateDailyWaterIntake(dailyWaterIntake: IntakeHistorySummary) {
