@@ -4,8 +4,8 @@ public record Amount(
         int value
 ) {
     public Amount {
-        if (value < 0) {
-            throw new IllegalArgumentException("용량은 음수가 될 수 없습니다.");
+        if (value <= 0) {
+            throw new IllegalArgumentException("음수량은 0보다 커야합니다.");
         }
     }
 }

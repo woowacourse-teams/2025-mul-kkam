@@ -1,5 +1,6 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.model.request.IntakeAmountRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.IntakeHistorySummary
@@ -18,6 +19,10 @@ class IntakeRepository(
     }
 
     private fun dateToString(date: LocalDate?) = date?.format(formatter)
+
+    suspend fun patchIntakeTarget(amount: Int) {
+        intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
+    }
 
     companion object {
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
