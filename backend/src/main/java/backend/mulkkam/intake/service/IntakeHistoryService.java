@@ -1,6 +1,8 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.vo.AchievementRate;
+import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
@@ -89,18 +91,26 @@ public class IntakeHistoryService {
         List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
                 intakeHistoriesOfDate.get(date));
 
-        int totalIntakeAmount = intakeHistoryResponses.stream()
-                .mapToInt(IntakeHistoryResponse::intakeAmount).sum();
-        int targetAmount = member.getTargetAmount().value();
-        double achievementRate = ((double) totalIntakeAmount / targetAmount) * 100;
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
+
+        AchievementRate achievementRate = new AchievementRate(
+                totalIntakeAmount,
+                member.getTargetAmount()
+        );
 
         return new IntakeHistorySummaryResponse(
                 date,
                 member.getTargetAmount().value(),
-                totalIntakeAmount,
-                achievementRate,
+                totalIntakeAmount.value(),
+                achievementRate.value(),
                 intakeHistoryResponses
         );
+    }
+
+    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
+        return new Amount(intakeHistoryResponses.stream()
+                .mapToInt(IntakeHistoryResponse::intakeAmount)
+                .sum());
     }
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {

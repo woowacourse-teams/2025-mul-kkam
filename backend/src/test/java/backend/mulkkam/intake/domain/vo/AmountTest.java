@@ -1,12 +1,12 @@
 package backend.mulkkam.intake.domain.vo;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class AmountTest {
 
@@ -28,7 +28,7 @@ class AmountTest {
 
         @DisplayName("범위를 벗어난 음수량은 입력할 수 없다.")
         @ParameterizedTest
-        @ValueSource(ints = {-1})
+        @ValueSource(ints = {-1, 0})
         void error_invalidValue(int input) {
             // given
 
