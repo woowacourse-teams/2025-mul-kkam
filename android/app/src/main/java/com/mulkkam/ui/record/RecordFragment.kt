@@ -20,7 +20,7 @@ import com.mulkkam.ui.record.adapter.RecordAdapter
 class RecordFragment :
     BindingFragment<FragmentRecordBinding>(
         FragmentRecordBinding::inflate,
-    ) ,
+    ),
     Refreshable {
     private val viewModel: RecordViewModel by viewModels()
     private val recordAdapter: RecordAdapter by lazy { RecordAdapter() }
