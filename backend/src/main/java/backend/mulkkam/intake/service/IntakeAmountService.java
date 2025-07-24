@@ -31,8 +31,9 @@ public class IntakeAmountService {
     public IntakeAmountResponse getRecommended(Long memberId) {
         Member member = getMember(memberId);
 
-        IntakeCondition intakeCondition = new IntakeCondition(member.getPhysicalAttributes());
-        WaterIntakeAmountCalculator waterIntakeAmountCalculator = new WaterIntakeAmountCalculator(intakeCondition);
+        RecommandedIntakeCalculateCondition recommandedIntakeCalculateCondition = new RecommandedIntakeCalculateCondition(member.getPhysicalAttributes());
+        WaterIntakeAmountCalculator waterIntakeAmountCalculator = new WaterIntakeAmountCalculator(
+                recommandedIntakeCalculateCondition);
         Amount recommendedIntakeAmount = waterIntakeAmountCalculator.calculate();
 
         return new IntakeAmountResponse(recommendedIntakeAmount);

@@ -8,9 +8,9 @@ public class WaterIntakeAmountCalculator {
 
     private static final int WEIGHT_CONVERSION_FACTOR = 30;
 
-    private final IntakeCondition intakeCondition;
+    private final RecommandedIntakeCalculateCondition recommandedIntakeCalculateCondition;
 
     public Amount calculate() {
-        return new Amount((int) (intakeCondition.getWeight() * WEIGHT_CONVERSION_FACTOR));
+        return new Amount((int) (recommandedIntakeCalculateCondition.getWeight() * WEIGHT_CONVERSION_FACTOR));
     }
 }
