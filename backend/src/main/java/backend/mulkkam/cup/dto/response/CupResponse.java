@@ -4,8 +4,8 @@ import backend.mulkkam.cup.domain.Cup;
 
 public record CupResponse(
         Long id,
-        String nickname,
-        Integer amount,
+        String cupNickname,
+        Integer cupAmount,
         Integer rank
 ) {
 
