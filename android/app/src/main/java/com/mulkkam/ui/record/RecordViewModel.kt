@@ -38,7 +38,7 @@ class RecordViewModel : ViewModel() {
     private fun getCurrentWeekDates(): List<LocalDate> {
         val today = LocalDate.now()
         val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        return List(7) { monday.plusDays(it.toLong()) }
+        return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
     private fun updateIntakeSummary(
@@ -57,5 +57,9 @@ class RecordViewModel : ViewModel() {
 
     fun updateDailyWaterIntake(dailyWaterIntake: IntakeHistorySummary) {
         _dailyWaterIntake.value = dailyWaterIntake
+    }
+
+    companion object {
+        private const val WEEK_LENGTH: Int = 7
     }
 }
