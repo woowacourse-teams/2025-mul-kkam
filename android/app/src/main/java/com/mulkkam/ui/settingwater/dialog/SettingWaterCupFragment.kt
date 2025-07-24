@@ -9,15 +9,14 @@ import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.settingwater.model.CupUiModel
 import com.mulkkam.ui.settingwater.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingwater.model.SettingWaterCupEditType
+import com.mulkkam.util.getParcelableCompat
 
 class SettingWaterCupFragment :
     BindingBottomSheetDialogFragment<FragmentSettingWaterCupBinding>(
         FragmentSettingWaterCupBinding::inflate,
     ) {
     private val viewModel: SettingWaterCupViewModel by viewModels()
-    private val cup: CupUiModel? by lazy {
-        arguments?.getParcelable(ARG_CUP)
-    }
+    private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     override fun onViewCreated(
         view: View,
@@ -26,7 +25,12 @@ class SettingWaterCupFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.initCup(cup)
+        initClickListener()
         initObservers()
+    }
+
+    private fun initClickListener() {
+        binding.ivSettingWaterCupClose.setOnClickListener { dismiss() }
     }
 
     private fun initObservers() {
