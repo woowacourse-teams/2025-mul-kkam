@@ -6,7 +6,7 @@ public record CupResponse(
         Long id,
         String cupNickname,
         Integer cupAmount,
-        Integer rank
+        Integer cupRank
 ) {
 
     public CupResponse(Cup cup) {
