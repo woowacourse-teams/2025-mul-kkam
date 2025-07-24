@@ -63,8 +63,10 @@ class IntakeHistoryRepositoryTest {
                     ))
                     .build();
 
-            intakeHistoryRepository.save(firstIntakeHistory);
-            intakeHistoryRepository.save(secondIntakeHistory);
+            intakeHistoryRepository.saveAll(List.of(
+                    firstIntakeHistory,
+                    secondIntakeHistory
+            ));
 
             List<IntakeHistory> expected = List.of(firstIntakeHistory, secondIntakeHistory);
 
@@ -99,6 +101,11 @@ class IntakeHistoryRepositoryTest {
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    historyOfAnotherMember,
+                    historyOfMember
+            ));
 
             intakeHistoryRepository.save(historyOfAnotherMember);
             intakeHistoryRepository.save(historyOfMember);
@@ -166,11 +173,13 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                intakeHistoryRepository.save(firstHistoryInRange);
-                intakeHistoryRepository.save(secondHistoryInRange);
-                intakeHistoryRepository.save(thirdHistoryInRange);
-                intakeHistoryRepository.save(firstHistoryNotInRange);
-                intakeHistoryRepository.save(secondHistoryNotInRange);
+                intakeHistoryRepository.saveAll(List.of(
+                        firstHistoryInRange,
+                        secondHistoryInRange,
+                        thirdHistoryInRange,
+                        firstHistoryNotInRange,
+                        secondHistoryNotInRange
+                ));
 
                 DateRangeRequest dateRangeRequest = new DateRangeRequest(
                         startDate,
@@ -226,9 +235,10 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                intakeHistoryRepository.save(firstHistoryInRange);
-                intakeHistoryRepository.save(secondHistoryInRange);
-                intakeHistoryRepository.save(firstHistoryNotInRange);
+                intakeHistoryRepository.saveAll(List.of(
+                        firstHistoryInRange,
+                        secondHistoryInRange,
+                        firstHistoryNotInRange));
 
                 DateRangeRequest dateRangeRequest = new DateRangeRequest(
                         startDate,
@@ -278,9 +288,11 @@ class IntakeHistoryRepositoryTest {
                                 LocalTime.of(10, 30, 30)
                         ))
                         .build();
-
-                intakeHistoryRepository.save(historyOfAnotherMember);
-                intakeHistoryRepository.save(historyOfMember);
+                
+                intakeHistoryRepository.saveAll(List.of(
+                        historyOfAnotherMember,
+                        historyOfMember
+                ));
 
                 DateRangeRequest dateRangeRequest = new DateRangeRequest(
                         startDate,
