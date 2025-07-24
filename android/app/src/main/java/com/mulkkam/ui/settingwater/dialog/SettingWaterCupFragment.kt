@@ -7,6 +7,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingWaterCupBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.settingwater.model.CupUiModel
+import com.mulkkam.ui.settingwater.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingwater.model.SettingWaterCupEditType
 
 class SettingWaterCupFragment :
@@ -39,6 +40,8 @@ class SettingWaterCupFragment :
 
     private fun showCupInfo(cup: CupUiModel) {
         with(binding) {
+            if (cup == EMPTY_CUP_UI_MODEL) return
+
             etSettingWaterCupName.setText(cup.nickname)
             etSettingWaterCupAmount.setText(cup.cupAmount.toString())
         }
