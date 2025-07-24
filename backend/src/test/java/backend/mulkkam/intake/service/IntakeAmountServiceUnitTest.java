@@ -2,7 +2,6 @@ package backend.mulkkam.intake.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -110,9 +109,7 @@ public class IntakeAmountServiceUnitTest {
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
-            });
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -127,9 +124,7 @@ public class IntakeAmountServiceUnitTest {
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(MEMBER_ID);
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
-            });
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
         }
     }
 }

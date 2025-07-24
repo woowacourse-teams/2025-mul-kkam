@@ -105,9 +105,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(savedMember.getId());
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
-            });
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -123,9 +121,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(savedMember.getId());
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
-            });
+            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
         }
     }
 }
