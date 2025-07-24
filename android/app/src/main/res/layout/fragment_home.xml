@@ -7,6 +7,52 @@
     android:background="@color/white"
     tools:context=".ui.home.HomeFragment">
 
+    <TextView
+        android:id="@+id/tv_home_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:text="@string/home_label"
+        android:textAppearance="@style/headline1"
+        android:textColor="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/view_home_underline"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/black"
+        app:layout_constraintEnd_toEndOf="@id/tv_home_label"
+        app:layout_constraintStart_toStartOf="@id/tv_home_label"
+        app:layout_constraintTop_toBottomOf="@id/tv_home_label" />
+
+    <TextView
+        android:id="@+id/tv_home_sub_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/home_sub_label"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="@id/view_home_underline"
+        app:layout_constraintTop_toBottomOf="@id/view_home_underline" />
+
+    <ProgressBar
+        android:id="@+id/pb_home_water_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="40dp"
+        android:max="100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_home_sub_label"
+        tools:progress="50" />
+
     <ImageView
         android:id="@+id/iv_home_notification"
         android:layout_width="40dp"
@@ -17,19 +63,6 @@
         android:src="@drawable/ic_home_notification"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ProgressBar
-        android:id="@+id/pb_home_water_progress"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="48dp"
-        android:max="100"
-        app:layout_constraintBottom_toTopOf="@id/iv_home_character"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:progress="50" />
 
     <ImageView
         android:id="@+id/iv_home_character"
@@ -56,11 +89,11 @@
         android:id="@+id/fab_home_drink"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:elevation="2dp"
         android:layout_marginEnd="26dp"
         android:layout_marginBottom="32dp"
         android:backgroundTint="@color/white"
         android:src="@drawable/ic_home_drink"
+        app:elevation="2dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Fab.Rounded"
