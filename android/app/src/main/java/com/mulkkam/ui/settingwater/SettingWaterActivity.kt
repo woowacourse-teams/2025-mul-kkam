@@ -7,6 +7,7 @@ import com.mulkkam.databinding.ActivitySettingWaterBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingwater.adapter.SettingWaterAdapter
 import com.mulkkam.ui.settingwater.adapter.SettingWaterItem
+import com.mulkkam.ui.settingwater.dialog.SettingWaterCupFragment
 import com.mulkkam.ui.settingwater.model.CupUiModel
 
 class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(ActivitySettingWaterBinding::inflate) {
@@ -23,8 +24,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
     private fun handleSettingWaterClick() =
         SettingWaterAdapter(
             object : SettingWaterAdapter.Handler {
-                override fun onEditClick(id: Int) {
-                    // TODO: 선택된 컵 객체의 바텀시트 생성
+                override fun onEditClick(cup: CupUiModel) {
+                    showEditBottomSheetDialog(cup)
                 }
 
                 override fun onDeleteClick(id: Int) {
@@ -32,10 +33,19 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                 }
 
                 override fun onAddClick() {
-                    // TODO: 빈 컵 객체의 바텀시트 생성
+                    // TODO: 컵 최대 개수 제한
+                    showEditBottomSheetDialog(null)
                 }
             },
         )
+
+    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
+        if (supportFragmentManager.findFragmentByTag(SettingWaterCupFragment.TAG) != null) return
+
+        SettingWaterCupFragment
+            .newInstance(cup)
+            .show(supportFragmentManager, SettingWaterCupFragment.TAG)
+    }
 
     private fun initClickListener() {
         binding.ivBack.setOnClickListener {
@@ -58,8 +68,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 8965,
                             nickname = "스타벅스 텀블러",
-                            cupAmount = 355,
-                            cupRank = 1,
+                            amount = 355,
+                            rank = 1,
                             isRepresentative = true,
                         ),
                 ),
@@ -68,8 +78,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 1787,
                             nickname = "우리집 컵",
-                            cupAmount = 120,
-                            cupRank = 2,
+                            amount = 120,
+                            rank = 2,
                         ),
                 ),
                 SettingWaterItem.CupItem(
@@ -77,8 +87,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 1234,
                             nickname = "500ML 생맥주",
-                            cupAmount = 500,
-                            cupRank = 3,
+                            amount = 500,
+                            rank = 3,
                         ),
                 ),
                 SettingWaterItem.AddItem,

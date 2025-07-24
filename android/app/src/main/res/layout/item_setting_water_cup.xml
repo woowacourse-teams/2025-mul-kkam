@@ -53,7 +53,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginEnd="12dp"
         android:importantForAccessibility="no"
-        android:src="@drawable/ic_setting_water_delete"
+        android:src="@drawable/ic_setting_water_cross"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:tint="@color/gray_400" />

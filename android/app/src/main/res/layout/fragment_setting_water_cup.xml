@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_common_rectangle_top_12dp"
+    android:backgroundTint="@color/white">
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_setting_water_cup_handle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gray_400" />
+
+    <TextView
+        android:id="@+id/dialog_setting_water_cup_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="34dp"
+        android:text="@string/setting_water_cup_add_title"
+        android:textAppearance="@style/title1"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_setting_water_cup_close"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginEnd="24dp"
+        android:importantForAccessibility="no"
+        android:src="@drawable/ic_setting_water_cross"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/gray_400" />
+
+    <TextView
+        android:id="@+id/tv_setting_water_cup_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="24dp"
+        android:text="@string/setting_water_cup_nickname"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dialog_setting_water_cup_title" />
+
+    <EditText
+        android:id="@+id/et_setting_water_cup_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="6dp"
+        android:backgroundTint="@color/white"
+        android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textAppearance="@style/body3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_setting_water_cup_name" />
+
+    <TextView
+        android:id="@+id/tv_setting_water_cup_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:text="@string/setting_water_cup_amount"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_setting_water_cup_name" />
+
+    <EditText
+        android:id="@+id/et_setting_water_cup_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="6dp"
+        android:backgroundTint="@color/white"
+        android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:inputType="number"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="10dp"
+        android:textAppearance="@style/body3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_setting_water_cup_amount" />
+
+    <TextView
+        android:id="@+id/tv_unit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:text="@string/setting_goal_unit_ml"
+        android:textAppearance="@style/title2"
+        android:textColor="@color/gray_400"
+        app:layout_constraintBottom_toBottomOf="@id/et_setting_water_cup_amount"
+        app:layout_constraintEnd_toEndOf="@id/et_setting_water_cup_amount"
+        app:layout_constraintTop_toTopOf="@id/et_setting_water_cup_amount" />
+
+    <TextView
+        android:id="@+id/tv_setting_water_cup_save"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_common_rectangle_8dp"
+        android:backgroundTint="@color/primary_200"
+        android:gravity="center"
+        android:paddingVertical="8dp"
+        android:text="@string/setting_water_cup_save"
+        android:textAppearance="@style/title2"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_setting_water_cup_amount" />
+</androidx.constraintlayout.widget.ConstraintLayout>

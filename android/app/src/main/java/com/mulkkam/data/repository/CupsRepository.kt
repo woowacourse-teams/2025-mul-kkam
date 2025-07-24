@@ -1,5 +1,6 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.model.request.AddCupRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.Cups
@@ -8,4 +9,13 @@ class CupsRepository(
     private val cupsService: CupsService,
 ) {
     suspend fun getCups(): Cups = cupsService.getCups().toDomain()
+
+    suspend fun postCup(
+        cupAmount: Int,
+        cupNickname: String,
+    ) {
+        cupsService.postCups(
+            AddCupRequest(cupAmount, cupNickname),
+        )
+    }
 }

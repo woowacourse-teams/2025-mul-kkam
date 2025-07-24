@@ -5,6 +5,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingWaterCupBinding
+import com.mulkkam.ui.settingwater.model.CupUiModel
 
 class CupViewHolder(
     parent: ViewGroup,
@@ -22,7 +23,11 @@ class CupViewHolder(
     private fun showCupInfo(item: SettingWaterItem.CupItem) =
         with(binding) {
             tvSettingWaterCupName.text = item.value.nickname
-            tvSettingWaterCupIncrement.setText(R.string.setting_water_increment)
+            tvSettingWaterCupIncrement.text =
+                root.context.getString(
+                    R.string.setting_water_increment,
+                    item.value.amount,
+                )
         }
 
     private fun handleRepresentativeCup(item: SettingWaterItem.CupItem) =
@@ -36,7 +41,7 @@ class CupViewHolder(
     private fun initClickListeners(item: SettingWaterItem.CupItem) =
         with(binding) {
             tvSettingWaterCupEdit.setOnClickListener {
-                handler.onEditClick(item.id)
+                handler.onEditClick(item.value)
             }
             ivSettingWaterCupDelete.setOnClickListener {
                 handler.onDeleteClick(item.id)
@@ -44,7 +49,7 @@ class CupViewHolder(
         }
 
     interface Handler {
-        fun onEditClick(id: Int)
+        fun onEditClick(cup: CupUiModel)
 
         fun onDeleteClick(id: Int)
     }
