@@ -13,10 +13,10 @@
     <string name="record_view_sub_label_suffix">물 일지</string>
     <string name="record_daily_chart_label">%s의 깜지</string>
     <string name="record_week_range">7월 21일 - 7월 27일</string>
-    <string name="record_daily_water_summary">%,dml / %,dml</string>
+    <string name="record_daily_intake_summary">%,dml / %,dml</string>
     <string name="record_water_record_label">상세 내역</string>
-    <string name="record_drink_amount">+%,dml</string>
-    <string name="record_no_water_record">해당 날짜는 기록된 일지가 없어요 🥲</string>
+    <string name="record_intake_amount">+%,dml</string>
+    <string name="record_no_intake_histories">해당 날짜는 기록된 일지가 없어요 🥲</string>
 
     <string name="water_chart_date">%d/%d</string>
 

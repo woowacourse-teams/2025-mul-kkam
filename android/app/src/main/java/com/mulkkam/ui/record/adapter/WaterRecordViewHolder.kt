@@ -14,10 +14,10 @@ class WaterRecordViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(waterRecord: IntakeHistory) {
         with(binding) {
-            tvDrinkTime.text = waterRecord.dateTime.format(timeFormatter)
-            tvDrinkAmount.text =
+            tvIntakeTime.text = waterRecord.dateTime.format(timeFormatter)
+            tvIntakeAmount.text =
                 binding.root.context.getString(
-                    R.string.record_drink_amount,
+                    R.string.record_intake_amount,
                     waterRecord.intakeAmount,
                 )
         }

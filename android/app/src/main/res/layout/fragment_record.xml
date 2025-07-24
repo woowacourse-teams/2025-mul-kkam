@@ -189,10 +189,10 @@
             app:layout_constraintTop_toTopOf="@id/view_daily_chart" />
 
         <TextView
-            android:id="@+id/tv_daily_water_summary"
+            android:id="@+id/tv_daily_intake_summary"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/record_daily_water_summary"
+            android:text="@string/record_daily_intake_summary"
             android:textAppearance="@style/title2"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -200,7 +200,7 @@
             tools:text="1,200ml / 1,200ml" />
 
         <TextView
-            android:id="@+id/tv_water_record_label"
+            android:id="@+id/tv_intake_history_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="36dp"
@@ -208,10 +208,10 @@
             android:text="@string/record_water_record_label"
             android:textAppearance="@style/title2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_daily_water_summary" />
+            app:layout_constraintTop_toBottomOf="@id/tv_daily_intake_summary" />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_water_record"
+            android:id="@+id/rv_intake_history"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
@@ -219,18 +219,18 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_water_record_label" />
+            app:layout_constraintTop_toBottomOf="@id/tv_intake_history_label" />
 
         <TextView
-            android:id="@+id/tv_no_water_record"
+            android:id="@+id/tv_no_intake_history"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="18dp"
-            android:text="@string/record_no_water_record"
+            android:text="@string/record_no_intake_histories"
             android:textAppearance="@style/body4"
             android:textColor="@color/black"
             android:visibility="gone"
-            app:layout_constraintStart_toStartOf="@id/tv_water_record_label"
-            app:layout_constraintTop_toBottomOf="@id/tv_water_record_label" />
+            app:layout_constraintStart_toStartOf="@id/tv_intake_history_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_intake_history_label" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>
