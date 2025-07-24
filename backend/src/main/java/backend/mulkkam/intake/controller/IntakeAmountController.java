@@ -5,7 +5,7 @@ import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,7 +22,7 @@ public class IntakeAmountController {
 
     }
 
-    @PutMapping("/target")
+    @PatchMapping("/target")
     public ResponseEntity<Void> modifyTarget(@RequestBody IntakeAmountModifyRequest intakeAmountModifyRequest) {
         intakeAmountService.modifyTarget(intakeAmountModifyRequest, 1L);
         return ResponseEntity.ok().build();

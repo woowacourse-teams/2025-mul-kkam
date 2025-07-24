@@ -90,8 +90,7 @@ public class IntakeHistoryService {
                 intakeHistoriesOfDate.get(date));
 
         int totalIntakeAmount = intakeHistoryResponses.stream()
-                .mapToInt(response -> response.intakeAmount().value())
-                .sum();
+                .mapToInt(IntakeHistoryResponse::intakeAmount).sum();
         int targetAmount = member.getTargetAmount().value();
         double achievementRate = ((double) totalIntakeAmount / targetAmount) * 100;
 
@@ -114,7 +113,7 @@ public class IntakeHistoryService {
                         new IntakeHistoryResponse(
                                 intakeHistory.getId(),
                                 intakeHistory.getDateTime(),
-                                intakeHistory.getIntakeAmount()
+                                intakeHistory.getIntakeAmount().value()
                         )
                 ).toList();
     }
