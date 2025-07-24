@@ -1,12 +1,10 @@
 package com.mulkkam.ui.record
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
@@ -20,14 +18,7 @@ class RecordViewModel : ViewModel() {
     private val _dailyWaterIntake = MutableLiveData<IntakeHistorySummary>()
     val dailyWaterIntake: LiveData<IntakeHistorySummary> get() = _dailyWaterIntake
 
-    private val _dailyWaterRecords = MediatorLiveData<List<IntakeHistory>>()
-    val dailyWaterRecords: LiveData<List<IntakeHistory>> get() = _dailyWaterRecords
-
     init {
-        _dailyWaterRecords.addSource(dailyWaterIntake) { intake ->
-            _dailyWaterRecords.value = dailyWaterIntake.value?.intakeHistories
-        }
-
         initWaterIntake()
     }
 

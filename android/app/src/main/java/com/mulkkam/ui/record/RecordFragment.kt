@@ -21,6 +21,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentRecordBinding
 import com.mulkkam.databinding.RecordWaterIntakeChartBinding
+import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.main.Refreshable
@@ -134,11 +135,7 @@ class RecordFragment :
 
         viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyWaterIntake ->
             bindDailyWaterChart(dailyWaterIntake)
-        }
-
-        viewModel.dailyWaterRecords.observe(viewLifecycleOwner) { waterRecords ->
-            recordAdapter.changeItems(waterRecords)
-            binding.tvNoWaterRecord.isVisible = waterRecords.isEmpty()
+            updateIntakeHistories(dailyWaterIntake.intakeHistories)
         }
     }
 
@@ -270,6 +267,11 @@ class RecordFragment :
                 1.0f,
             ),
         )
+    }
+
+    private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
+        recordAdapter.changeItems(intakeHistories)
+        binding.tvNoWaterRecord.isVisible = intakeHistories.isEmpty()
     }
 
     companion object {
