@@ -91,6 +91,7 @@
         android:layout_marginTop="6dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:inputType="number"
         android:paddingHorizontal="12dp"
         android:paddingVertical="10dp"
         android:textAppearance="@style/body3"
