@@ -171,11 +171,20 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             CupsResponse cupsResponse = cupService.readCupsByMemberId(member.getId());
 
+            CupResponse firstCup = cupsResponse.cups().getFirst();
+            CupResponse secondCup = cupsResponse.cups().get(1);
+
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cupsResponse.size()).isEqualTo(2);
-                softly.assertThat(cupsResponse.cups().getFirst().nickname()).isEqualTo(cup2.getNickname().value());
-                softly.assertThat(cupsResponse.cups().getFirst().amount()).isEqualTo(cup2.getCupAmount().value());
+                softly.assertThat(firstCup.nickname()).isEqualTo(cup2.getNickname().value());
+                softly.assertThat(firstCup.amount()).isEqualTo(cup2.getCupAmount().value());
+                softly.assertThat(firstCup.rank()).isEqualTo(cup2.getCupRank().value());
+                softly.assertThat(secondCup.rank()).isEqualTo(cup1.getCupRank().value());
+                List<Integer> ranks = cupsResponse.cups().stream()
+                        .map(CupResponse::rank)
+                        .toList();
+                softly.assertThat(ranks).isSorted();
             });
         }
     }
