@@ -2,6 +2,7 @@ package com.mulkkam.ui.settingwater.dialog
 
 import android.os.Bundle
 import android.view.View
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingWaterCupBinding
@@ -25,12 +26,17 @@ class SettingWaterCupFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.initCup(cup)
-        initClickListener()
+        initClickListeners()
         initObservers()
+        initInputListeners()
     }
 
-    private fun initClickListener() {
+    private fun initClickListeners() {
         binding.ivSettingWaterCupClose.setOnClickListener { dismiss() }
+
+        binding.tvSettingWaterCupSave.setOnClickListener {
+            viewModel.saveCup()
+        }
     }
 
     private fun initObservers() {
@@ -40,14 +46,26 @@ class SettingWaterCupFragment :
         viewModel.editType.observe(this) { editType ->
             editType?.let { showTitle(it) }
         }
+        viewModel.success.observe(this) { success ->
+            if (success) dismiss()
+        }
     }
 
     private fun showCupInfo(cup: CupUiModel) {
         with(binding) {
-            if (cup == EMPTY_CUP_UI_MODEL) return
+            val isNicknameChanged = etSettingWaterCupName.text.toString() != cup.nickname
+            val isNicknameValid = cup.nickname != EMPTY_CUP_UI_MODEL.nickname
 
-            etSettingWaterCupName.setText(cup.nickname)
-            etSettingWaterCupAmount.setText(cup.cupAmount.toString())
+            val isAmountChanged = etSettingWaterCupAmount.text.toString() != cup.amount.toString()
+            val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
+
+            if (isNicknameChanged && isNicknameValid) {
+                etSettingWaterCupName.setText(cup.nickname)
+            }
+
+            if (isAmountChanged && isAmountValid) {
+                etSettingWaterCupAmount.setText(cup.amount.toString())
+            }
         }
     }
 
@@ -58,6 +76,19 @@ class SettingWaterCupFragment :
                 SettingWaterCupEditType.EDIT -> R.string.setting_water_cup_edit_title
             },
         )
+    }
+
+    private fun initInputListeners() {
+        binding.etSettingWaterCupName.addTextChangedListener {
+            viewModel.updateNickname(it?.toString().orEmpty())
+        }
+
+        binding.etSettingWaterCupAmount.addTextChangedListener {
+            val input = it?.toString().orEmpty()
+            val amount = input.toIntOrNull() ?: 0
+
+            viewModel.updateAmount(amount)
+        }
     }
 
     companion object {

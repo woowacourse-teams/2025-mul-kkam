@@ -67,8 +67,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 8965,
                             nickname = "스타벅스 텀블러",
-                            cupAmount = 355,
-                            cupRank = 1,
+                            amount = 355,
+                            rank = 1,
                             isRepresentative = true,
                         ),
                 ),
@@ -77,8 +77,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 1787,
                             nickname = "우리집 컵",
-                            cupAmount = 120,
-                            cupRank = 2,
+                            amount = 120,
+                            rank = 2,
                         ),
                 ),
                 SettingWaterItem.CupItem(
@@ -86,8 +86,8 @@ class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(Activi
                         CupUiModel(
                             id = 1234,
                             nickname = "500ML 생맥주",
-                            cupAmount = 500,
-                            cupRank = 3,
+                            amount = 500,
+                            rank = 3,
                         ),
                 ),
                 SettingWaterItem.AddItem,

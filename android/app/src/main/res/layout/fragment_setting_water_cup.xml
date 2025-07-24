@@ -64,7 +64,7 @@
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
         android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
+        android:paddingVertical="10dp"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
@@ -92,7 +92,7 @@
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
         android:paddingHorizontal="12dp"
-        android:paddingVertical="8dp"
+        android:paddingVertical="10dp"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
@@ -112,6 +112,7 @@
         app:layout_constraintTop_toTopOf="@id/et_setting_water_cup_amount" />
 
     <TextView
+        android:id="@+id/tv_setting_water_cup_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
