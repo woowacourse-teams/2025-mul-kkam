@@ -14,16 +14,21 @@
     <string name="setting_save">저장</string>
 
     <string name="setting_profile_toolbar_title">프로필 설정</string>
-    <string name="profile_edit_nickname_label">닉네임 변경</string>
-    <string name="profile_hint_input_nickname">닉네임을 입력해 주세요</string>
-    <string name="profile_check_duplicate">중복확인</string>
-    <string name="profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_profile_edit_nickname_label">닉네임 변경</string>
+    <string name="setting_profile_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="setting_profile_check_duplicate">중복확인</string>
+    <string name="setting_profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
 
     <string name="setting_water_toolbar_title">물 마시기 설정</string>
+    <string name="setting_water_default">기본</string>
+    <string name="setting_water_label_water">물</string>
+    <string name="setting_water_increment">+ %dml</string>
+    <string name="setting_water_edit">수정</string>
+    <string name="setting_water_cup_title">나의 컵 목록</string>
 
     <string name="setting_goal_toolbar_title">마시기 목표 설정</string>
-    <string name="goal_edit_goal_label">하루 목표량</string>
-    <string name="goal_hint_input_goal">목표량을 입력해주세요</string>
-    <string name="goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
-    <string name="goal_unit_ml">ml</string>
+    <string name="setting_goal_edit_goal_label">하루 목표량</string>
+    <string name="setting_goal_hint_input_goal">목표량을 입력해주세요</string>
+    <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_goal_unit_ml">ml</string>
 </resources>
