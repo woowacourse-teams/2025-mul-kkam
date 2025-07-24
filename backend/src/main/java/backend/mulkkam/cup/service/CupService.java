@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;

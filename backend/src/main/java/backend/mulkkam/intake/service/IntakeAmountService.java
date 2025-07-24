@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.NotFoundErrorCode;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;

@@ -1,5 +1,6 @@
 package backend.mulkkam.common.exception;
 
+import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 

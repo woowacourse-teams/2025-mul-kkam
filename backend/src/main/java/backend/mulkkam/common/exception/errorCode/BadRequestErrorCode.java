@@ -1,4 +1,4 @@
-package backend.mulkkam.common.exception;
+package backend.mulkkam.common.exception.errorCode;
 
 import org.springframework.http.HttpStatus;
 
