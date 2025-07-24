@@ -160,11 +160,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     ))
                     .build();
 
-            intakeHistoryRepository.save(firstHistoryInRange);
-            intakeHistoryRepository.save(secondHistoryInRange);
-            intakeHistoryRepository.save(thirdHistoryInRange);
-            intakeHistoryRepository.save(firstHistoryNotInRange);
-            intakeHistoryRepository.save(secondHistoryNotInRange);
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistoryInRange,
+                    secondHistoryInRange,
+                    thirdHistoryInRange,
+                    firstHistoryNotInRange,
+                    secondHistoryNotInRange
+            ));
 
             // when
             DateRangeRequest dateRangeRequest = new DateRangeRequest(
@@ -181,10 +183,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .map(IntakeHistorySummaryResponse::date)
                     .toList();
 
-            assertSoftly(softly -> {
-                softly.assertThat(dates)
-                        .allMatch(date -> !date.isBefore(startDate) && !date.isAfter(endDate));
-            });
+            assertThat(dates).allMatch(date -> !date.isBefore(startDate) && !date.isAfter(endDate));
         }
 
         @DisplayName("시작 날짜와 종료 날짜가 동일한 경우 해당 일자의 기록이 전부 반환된다")
@@ -221,9 +220,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     ))
                     .build();
 
-            intakeHistoryRepository.save(firstHistoryInRange);
-            intakeHistoryRepository.save(secondHistoryInRange);
-            intakeHistoryRepository.save(firstHistoryNotInRange);
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistoryInRange,
+                    secondHistoryInRange,
+                    firstHistoryNotInRange
+            ));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
