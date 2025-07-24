@@ -19,10 +19,10 @@ class HistoryViewModel : ViewModel() {
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
     init {
-        initIntakeHistories()
+        loadIntakeHistories()
     }
 
-    fun initIntakeHistories() {
+    fun loadIntakeHistories() {
         viewModelScope.launch {
             val weekDates = getCurrentWeekDates()
             val summaries =

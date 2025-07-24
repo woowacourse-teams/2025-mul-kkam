@@ -282,7 +282,7 @@ class HistoryFragment :
     }
 
     override fun onReselected() {
-        viewModel.initIntakeHistories()
+        viewModel.loadIntakeHistories()
     }
 
     companion object {
