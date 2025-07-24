@@ -7,10 +7,10 @@ public record CupsResponse(
         int size,
         List<CupResponse> cups
 ) {
-    public CupsResponse(List<Cup> cupList) {
+    public CupsResponse(List<Cup> cup) {
         this(
-                cupList.size(),
-                cupList.stream()
+                cup.size(),
+                cup.stream()
                         .map(CupResponse::new).toList());
     }
 }
