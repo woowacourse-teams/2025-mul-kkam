@@ -1,6 +1,7 @@
 package backend.mulkkam.cup.controller;
 
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +19,8 @@ public class CupController {
     private final CupService cupService;
 
     @GetMapping
-    public void read() {
-
+    public ResponseEntity<CupsResponse> read() {
+        return ResponseEntity.ok().body(cupService.readCupsByMemberId(1L));
     }
 
     @PostMapping

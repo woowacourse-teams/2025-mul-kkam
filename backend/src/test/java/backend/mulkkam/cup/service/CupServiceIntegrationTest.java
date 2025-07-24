@@ -7,13 +7,18 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
+import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -36,7 +41,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("정상적으로 저장한다")
         @Test
-        void success() {
+        void success_validData() {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
@@ -137,6 +142,50 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+        }
+    }
+
+    @DisplayName("컵을 읽을 때에")
+    @Nested
+    class Read {
+
+        @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
+        @Test
+        void success_withExistedMemberId() {
+            // given
+            Member member = new MemberFixture().build();
+            memberRepository.save(member);
+
+            Cup cup1 = new CupFixture()
+                    .member(member)
+                    .cupRank(new CupRank(2))
+                    .build();
+
+            Cup cup2 = new CupFixture()
+                    .member(member)
+                    .cupRank(new CupRank(1))
+                    .build();
+            List<Cup> cups = List.of(cup1, cup2);
+            cupRepository.saveAll(cups);
+
+            // when
+            CupsResponse cupsResponse = cupService.readCupsByMemberId(member.getId());
+
+            CupResponse firstCup = cupsResponse.cups().getFirst();
+            CupResponse secondCup = cupsResponse.cups().get(1);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupsResponse.size()).isEqualTo(2);
+                softly.assertThat(firstCup.nickname()).isEqualTo(cup2.getNickname().value());
+                softly.assertThat(firstCup.amount()).isEqualTo(cup2.getCupAmount().value());
+                softly.assertThat(firstCup.rank()).isEqualTo(cup2.getCupRank().value());
+                softly.assertThat(secondCup.rank()).isEqualTo(cup1.getCupRank().value());
+                List<Integer> ranks = cupsResponse.cups().stream()
+                        .map(CupResponse::rank)
+                        .toList();
+                softly.assertThat(ranks).isSorted();
+            });
         }
     }
 }
