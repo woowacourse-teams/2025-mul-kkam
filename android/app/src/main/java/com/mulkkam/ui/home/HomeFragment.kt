@@ -27,7 +27,7 @@ class HomeFragment :
         }
 
         binding.fabHomeDrink.setOnClickListener {
-            viewModel.addWaterIntake(200)
+            viewModel.addWaterIntake()
         }
     }
 }
