@@ -1,0 +1,87 @@
+package com.mulkkam.ui.settingwater
+
+import android.content.Context
+import android.content.Intent
+import android.os.Bundle
+import com.mulkkam.databinding.ActivitySettingWaterBinding
+import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.settingwater.adapter.SettingWaterAdapter
+import com.mulkkam.ui.settingwater.adapter.SettingWaterItem
+import com.mulkkam.ui.settingwater.model.CupUiModel
+
+class SettingWaterActivity : BindingActivity<ActivitySettingWaterBinding>(ActivitySettingWaterBinding::inflate) {
+    private val settingWaterAdapter: SettingWaterAdapter by lazy {
+        handleSettingWaterClick()
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        initClickListener()
+        initCupItemsContainer()
+    }
+
+    private fun handleSettingWaterClick() =
+        SettingWaterAdapter(
+            object : SettingWaterAdapter.Handler {
+                override fun onEditClick(id: Int) {
+                    // TODO: 선택된 컵 객체의 바텀시트 생성
+                }
+
+                override fun onDeleteClick(id: Int) {
+                    // TODO: 삭제 API 호출
+                }
+
+                override fun onAddClick() {
+                    // TODO: 빈 컵 객체의 바텀시트 생성
+                }
+            },
+        )
+
+    private fun initClickListener() {
+        binding.ivBack.setOnClickListener {
+            finish()
+        }
+    }
+
+    private fun initCupItemsContainer() {
+        binding.rvSettingWater.adapter = settingWaterAdapter
+        settingWaterAdapter.submitList(DUMMY_CUP_ITEMS)
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, SettingWaterActivity::class.java)
+
+        private val DUMMY_CUP_ITEMS =
+            listOf(
+                SettingWaterItem.CupItem(
+                    value =
+                        CupUiModel(
+                            id = 8965,
+                            nickname = "스타벅스 텀블러",
+                            cupAmount = 355,
+                            cupRank = 1,
+                            isRepresentative = true,
+                        ),
+                ),
+                SettingWaterItem.CupItem(
+                    value =
+                        CupUiModel(
+                            id = 1787,
+                            nickname = "우리집 컵",
+                            cupAmount = 120,
+                            cupRank = 2,
+                        ),
+                ),
+                SettingWaterItem.CupItem(
+                    value =
+                        CupUiModel(
+                            id = 1234,
+                            nickname = "500ML 생맥주",
+                            cupAmount = 500,
+                            cupRank = 3,
+                        ),
+                ),
+                SettingWaterItem.AddItem,
+            )
+    }
+}
