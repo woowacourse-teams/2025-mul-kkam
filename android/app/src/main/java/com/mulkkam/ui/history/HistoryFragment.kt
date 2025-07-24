@@ -1,4 +1,4 @@
-package com.mulkkam.ui.record
+package com.mulkkam.ui.history
 
 import android.graphics.SweepGradient
 import android.os.Bundle
@@ -19,24 +19,24 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentRecordBinding
-import com.mulkkam.databinding.RecordWaterIntakeChartBinding
+import com.mulkkam.databinding.FragmentHistoryBinding
+import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
 import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.main.Refreshable
-import com.mulkkam.ui.record.adapter.RecordAdapter
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import kotlin.math.min
 
-class RecordFragment :
-    BindingFragment<FragmentRecordBinding>(
-        FragmentRecordBinding::inflate,
+class HistoryFragment :
+    BindingFragment<FragmentHistoryBinding>(
+        FragmentHistoryBinding::inflate,
     ),
     Refreshable {
-    private val viewModel: RecordViewModel by viewModels()
-    private val recordAdapter: RecordAdapter by lazy { RecordAdapter() }
+    private val viewModel: HistoryViewModel by viewModels()
+    private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
 
     override fun onSelected() {
         // TODO: 화면 전환 시 필요한 작업을 구현합니다.
@@ -48,7 +48,7 @@ class RecordFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
         initHighlight()
-        initRecordAdapter()
+        initHistoryAdapter()
         initChartOptions()
         initCustomChartOptions()
         initObservers()
@@ -58,8 +58,8 @@ class RecordFragment :
         binding.tvViewSubLabel.text =
             getColoredSpannable(
                 R.color.primary_200,
-                getString(R.string.record_view_sub_label_prefix) + " " + getString(R.string.record_view_sub_label_suffix),
-                getString(R.string.record_view_sub_label_suffix),
+                getString(R.string.history_view_sub_label_prefix) + " " + getString(R.string.history_view_sub_label_suffix),
+                getString(R.string.history_view_sub_label_suffix),
             )
     }
 
@@ -84,9 +84,9 @@ class RecordFragment :
         return spannable
     }
 
-    private fun initRecordAdapter() {
+    private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
-            adapter = recordAdapter
+            adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
     }
@@ -129,11 +129,11 @@ class RecordFragment :
     }
 
     private fun initObservers() {
-        viewModel.weeklyWaterIntake.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
+        viewModel.weeklyIntakeHistories.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
             bindWeeklyChartData(weeklyIntakeHistories)
         }
 
-        viewModel.dailyWaterIntake.observe(viewLifecycleOwner) { dailyIntakeHistories ->
+        viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
             updateDailyChart(dailyIntakeHistories)
             updateIntakeHistories(dailyIntakeHistories.intakeHistories)
         }
@@ -158,7 +158,7 @@ class RecordFragment :
     }
 
     private fun updateWeeklyChart(
-        chart: RecordWaterIntakeChartBinding,
+        chart: HistoryWaterIntakeChartBinding,
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         chart.apply {
@@ -176,7 +176,7 @@ class RecordFragment :
                 )
             // TODO: 클릭리스너 위치 변경 필요
             pcWaterIntake.setOnClickListener {
-                viewModel.updateDailyWaterIntake(intakeHistorySummary)
+                viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
             updateChartData(pcWaterIntake, intakeHistorySummary)
         }
@@ -222,7 +222,7 @@ class RecordFragment :
                 getColoredSpannable(
                     R.color.primary_200,
                     getString(
-                        R.string.record_daily_chart_label,
+                        R.string.history_daily_chart_label,
                         intakeHistorySummary.date.format(DATE_FORMATTER_KR),
                     ),
                     intakeHistorySummary.date.format(DATE_FORMATTER_KR),
@@ -245,7 +245,7 @@ class RecordFragment :
             getColoredSpannable(
                 summaryColorResId,
                 getString(
-                    R.string.record_daily_intake_summary,
+                    R.string.history_daily_intake_summary,
                     intakeHistorySummary.totalIntakeAmount,
                     intakeHistorySummary.targetAmount,
                 ),
@@ -254,7 +254,7 @@ class RecordFragment :
     }
 
     private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
-        recordAdapter.changeItems(intakeHistories)
+        historyAdapter.changeItems(intakeHistories)
         binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
     }
 

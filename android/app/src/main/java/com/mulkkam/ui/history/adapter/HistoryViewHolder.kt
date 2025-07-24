@@ -1,23 +1,23 @@
-package com.mulkkam.ui.record.adapter
+package com.mulkkam.ui.history.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
-import com.mulkkam.databinding.ItemWaterRecordBinding
+import com.mulkkam.databinding.ItemIntakeHistoryBinding
 import com.mulkkam.domain.IntakeHistory
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class RecordViewHolder(
-    private val binding: ItemWaterRecordBinding,
+class HistoryViewHolder(
+    private val binding: ItemIntakeHistoryBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(intakeHistory: IntakeHistory) {
         with(binding) {
             tvIntakeTime.text = intakeHistory.dateTime.format(timeFormatter)
             tvIntakeAmount.text =
                 binding.root.context.getString(
-                    R.string.record_intake_amount,
+                    R.string.history_intake_amount,
                     intakeHistory.intakeAmount,
                 )
         }
@@ -26,10 +26,10 @@ class RecordViewHolder(
     companion object {
         private val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREA)
 
-        fun from(parent: ViewGroup): RecordViewHolder {
+        fun from(parent: ViewGroup): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
-            val binding = ItemWaterRecordBinding.inflate(inflater, parent, false)
-            return RecordViewHolder(binding)
+            val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)
+            return HistoryViewHolder(binding)
         }
     }
 }

@@ -1,19 +1,19 @@
-package com.mulkkam.ui.record.adapter
+package com.mulkkam.ui.history.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.IntakeHistory
 
-class RecordAdapter : RecyclerView.Adapter<RecordViewHolder>() {
+class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): RecordViewHolder = RecordViewHolder.from(parent)
+    ): HistoryViewHolder = HistoryViewHolder.from(parent)
 
     override fun onBindViewHolder(
-        holder: RecordViewHolder,
+        holder: HistoryViewHolder,
         position: Int,
     ) {
         holder.bind(intakeHistories[position])

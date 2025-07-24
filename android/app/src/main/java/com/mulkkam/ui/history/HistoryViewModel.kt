@@ -1,4 +1,4 @@
-package com.mulkkam.ui.record
+package com.mulkkam.ui.history
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -11,18 +11,18 @@ import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
-class RecordViewModel : ViewModel() {
-    private val _weeklyWaterIntake = MutableLiveData<List<IntakeHistorySummary>>()
-    val weeklyWaterIntake: LiveData<List<IntakeHistorySummary>> get() = _weeklyWaterIntake
+class HistoryViewModel : ViewModel() {
+    private val _weeklyIntakeHistories = MutableLiveData<List<IntakeHistorySummary>>()
+    val weeklyIntakeHistories: LiveData<List<IntakeHistorySummary>> get() = _weeklyIntakeHistories
 
-    private val _dailyWaterIntake = MutableLiveData<IntakeHistorySummary>()
-    val dailyWaterIntake: LiveData<IntakeHistorySummary> get() = _dailyWaterIntake
+    private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
+    val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
     init {
-        initWaterIntake()
+        initIntakeHistories()
     }
 
-    private fun initWaterIntake() {
+    private fun initIntakeHistories() {
         viewModelScope.launch {
             val weekDates = getCurrentWeekDates()
             val summaries =
@@ -51,16 +51,16 @@ class RecordViewModel : ViewModel() {
                     ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = date)
             }
 
-        _weeklyWaterIntake.value = completedWeekIntake
+        _weeklyIntakeHistories.value = completedWeekIntake
         if (weekDates.contains(LocalDate.now())) {
-            _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
+            _dailyIntakeHistories.value = completedWeekIntake.find { it.date == LocalDate.now() }
         } else {
-            _dailyWaterIntake.value = completedWeekIntake.first()
+            _dailyIntakeHistories.value = completedWeekIntake.first()
         }
     }
 
-    fun updateDailyWaterIntake(dailyWaterIntake: IntakeHistorySummary) {
-        _dailyWaterIntake.value = dailyWaterIntake
+    fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
+        _dailyIntakeHistories.value = dailyIntakeHistories
     }
 
     companion object {
