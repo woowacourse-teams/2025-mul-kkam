@@ -4,162 +4,60 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mulkkam.domain.DailyWaterIntake
-import com.mulkkam.domain.WaterRecord
-import com.mulkkam.domain.WaterRecords
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.IntakeHistory
+import com.mulkkam.domain.IntakeHistorySummary
+import kotlinx.coroutines.launch
+import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
 
 class RecordViewModel : ViewModel() {
-    private val _weeklyWaterIntake = MutableLiveData<List<DailyWaterIntake>>()
-    val weeklyWaterIntake: LiveData<List<DailyWaterIntake>> get() = _weeklyWaterIntake
+    private val _weeklyWaterIntake = MutableLiveData<List<IntakeHistorySummary>>()
+    val weeklyWaterIntake: LiveData<List<IntakeHistorySummary>> get() = _weeklyWaterIntake
 
-    private val _dailyWaterIntake = MutableLiveData<DailyWaterIntake>()
-    val dailyWaterIntake: LiveData<DailyWaterIntake> get() = _dailyWaterIntake
+    private val _dailyWaterIntake = MutableLiveData<IntakeHistorySummary>()
+    val dailyWaterIntake: LiveData<IntakeHistorySummary> get() = _dailyWaterIntake
 
-    private val waterRecords: MutableList<WaterRecords> = mutableListOf()
-
-    private val _dailyWaterRecords = MediatorLiveData<List<WaterRecord>>()
-    val dailyWaterRecords: LiveData<List<WaterRecord>> get() = _dailyWaterRecords
+    private val _dailyWaterRecords = MediatorLiveData<List<IntakeHistory>>()
+    val dailyWaterRecords: LiveData<List<IntakeHistory>> get() = _dailyWaterRecords
 
     init {
         _dailyWaterRecords.addSource(dailyWaterIntake) { intake ->
-            _dailyWaterRecords.value = waterRecords.find { it.date == intake.date }?.waterRecords ?: emptyList()
+            _dailyWaterRecords.value = dailyWaterIntake.value?.intakeHistories
         }
 
         initWaterIntake()
-        initWaterRecords()
     }
 
-    fun initWaterIntake() {
-        _weeklyWaterIntake.value = WEEKLY_WATER_INTAKE
-        _dailyWaterIntake.value = WEEKLY_WATER_INTAKE.first()
+    private fun initWaterIntake() {
+        viewModelScope.launch {
+            val weekDates = getCurrentWeekDates()
+            val summaries =
+                RepositoryInjection.intakeRepository.getIntakeHistory(
+                    from = weekDates.first(),
+                    to = weekDates.last(),
+                )
+
+            val completedWeekIntake =
+                weekDates.map { date ->
+                    summaries.find { it.date == date }
+                        ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = date)
+                }
+
+            _weeklyWaterIntake.value = completedWeekIntake
+            _dailyWaterIntake.value = completedWeekIntake.find { it.date == LocalDate.now() }
+        }
     }
 
-    fun initWaterRecords() {
-        waterRecords.addAll(WEEKLY_WATER_RECORDS)
+    private fun getCurrentWeekDates(): List<LocalDate> {
+        val today = LocalDate.now()
+        val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        return List(7) { monday.plusDays(it.toLong()) }
     }
 
-    fun updateDailyWaterIntake(dailyWaterIntake: DailyWaterIntake) {
+    fun updateDailyWaterIntake(dailyWaterIntake: IntakeHistorySummary) {
         _dailyWaterIntake.value = dailyWaterIntake
-    }
-
-    companion object {
-        val WEEKLY_WATER_INTAKE: List<DailyWaterIntake> =
-            listOf(
-                DailyWaterIntake(
-                    1,
-                    LocalDate.of(2025, 7, 21),
-                    1200,
-                    500,
-                    10f,
-                ),
-                DailyWaterIntake(
-                    2,
-                    LocalDate.of(2025, 7, 22),
-                    1200,
-                    500,
-                    20f,
-                ),
-                DailyWaterIntake(
-                    3,
-                    LocalDate.of(2025, 7, 23),
-                    1200,
-                    500,
-                    30f,
-                ),
-                DailyWaterIntake(
-                    4,
-                    LocalDate.of(2025, 7, 24),
-                    1200,
-                    500,
-                    40f,
-                ),
-                DailyWaterIntake(
-                    5,
-                    LocalDate.of(2025, 7, 25),
-                    1200,
-                    500,
-                    50f,
-                ),
-                DailyWaterIntake(
-                    6,
-                    LocalDate.of(2025, 7, 26),
-                    1200,
-                    500,
-                    60f,
-                ),
-                DailyWaterIntake(
-                    7,
-                    LocalDate.of(2025, 7, 27),
-                    1200,
-                    500,
-                    70f,
-                ),
-            )
-
-        val WEEKLY_WATER_RECORDS: List<WaterRecords> =
-            listOf(
-                WaterRecords(
-                    LocalDate.of(2025, 7, 21),
-                    listOf(
-                        WaterRecord(
-                            1,
-                            LocalTime.now(),
-                            100,
-                        ),
-                        WaterRecord(
-                            1,
-                            LocalTime.now(),
-                            200,
-                        ),
-                    ),
-                ),
-                WaterRecords(
-                    LocalDate.of(2025, 7, 22),
-                    listOf(
-                        WaterRecord(
-                            2,
-                            LocalTime.now(),
-                            100,
-                        ),
-                        WaterRecord(
-                            2,
-                            LocalTime.now(),
-                            100,
-                        ),
-                        WaterRecord(
-                            2,
-                            LocalTime.now(),
-                            100,
-                        ),
-                    ),
-                ),
-                WaterRecords(
-                    LocalDate.of(2025, 7, 23),
-                    listOf(
-                        WaterRecord(
-                            3,
-                            LocalTime.now(),
-                            300,
-                        ),
-                    ),
-                ),
-                WaterRecords(
-                    LocalDate.of(2025, 7, 24),
-                    listOf(
-                        WaterRecord(
-                            4,
-                            LocalTime.now(),
-                            400,
-                        ),
-                        WaterRecord(
-                            4,
-                            LocalTime.now(),
-                            400,
-                        ),
-                    ),
-                ),
-            )
     }
 }

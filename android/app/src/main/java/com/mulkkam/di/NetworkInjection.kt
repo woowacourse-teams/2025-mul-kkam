@@ -2,6 +2,7 @@ package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mulkkam.BuildConfig
+import com.mulkkam.data.remote.service.IntakeService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -32,4 +33,6 @@ object NetworkInjection {
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
     }
+
+    val intakeService: IntakeService = retrofit.create(IntakeService::class.java)
 }

@@ -12,69 +12,192 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/tv_view_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="28dp"
+            android:text="@string/record_view_label"
+            android:textAppearance="@style/headline1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/view_title_underline"
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="2dp"
+            android:background="@color/black"
+            app:layout_constraintEnd_toEndOf="@id/tv_view_label"
+            app:layout_constraintStart_toStartOf="@id/tv_view_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
+
+        <TextView
+            android:id="@+id/tv_view_sub_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/gray_400"
+            android:text="@string/record_view_sub_label"
+            android:textAppearance="@style/title3"
+            app:layout_constraintStart_toStartOf="@id/tv_view_label"
+            app:layout_constraintTop_toBottomOf="@id/view_title_underline" />
+
+        <ImageButton
+            android:id="@+id/ib_week_prev"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="27dp"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/btn_record_week_prev"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_view_sub_label" />
+
+        <TextView
+            android:id="@+id/tv_week_range"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/record_week_range"
+            android:textAppearance="@style/title2"
+            android:textColor="@color/gray_400"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
+
+        <ImageButton
+            android:id="@+id/ib_week_next"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginEnd="28dp"
+            android:backgroundTint="@color/white"
+            android:src="@drawable/btn_record_week_next"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
+
         <GridLayout
-            android:id="@+id/gl_weekly_water_chart"
+            android:id="@+id/gl_weekly_charts"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="28dp"
+            android:layout_marginTop="18dp"
             android:columnCount="7"
             android:rowCount="1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/ib_week_prev">
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_sun"
+            <include
+                android:id="@+id/include_chart_mon"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_mon"
+            <include
+                android:id="@+id/include_chart_tue"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_tue"
+            <include
+                android:id="@+id/include_chart_wed"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_wed"
+            <include
+                android:id="@+id/include_chart_thu"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_thu"
+            <include
+                android:id="@+id/include_chart_fri"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_fri"
+            <include
+                android:id="@+id/include_chart_sat"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_columnWeight="1" />
+                android:layout_columnWeight="1"
+                android:layout_marginEnd="4dp" />
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/pc_weekly_sat"
+            <include
+                android:id="@+id/include_chart_sun"
+                layout="@layout/record_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1" />
         </GridLayout>
 
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/pc_daily_water_chart"
+        <View
+            android:id="@+id/view_weekly_chart_divider"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/gray_100"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/gl_weekly_charts" />
+
+        <TextView
+            android:id="@+id/tv_daily_chart_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/record_daily_chart_label"
+            android:textAppearance="@style/title1"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_weekly_chart_divider" />
+
+        <com.mulkkam.ui.custom.GradientDonutChartView
+            android:id="@+id/view_daily_chart"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginHorizontal="36dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginHorizontal="64dp"
+            android:layout_marginTop="32dp"
             app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/gl_weekly_water_chart" />
+            app:layout_constraintTop_toBottomOf="@id/tv_daily_chart_label" />
+
+        <ImageView
+            android:id="@+id/iv_record_character"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/img_record_character"
+            app:layout_constraintBottom_toBottomOf="@id/view_daily_chart"
+            app:layout_constraintEnd_toEndOf="@id/view_daily_chart"
+            app:layout_constraintStart_toStartOf="@id/view_daily_chart"
+            app:layout_constraintTop_toTopOf="@id/view_daily_chart" />
+
+        <TextView
+            android:id="@+id/tv_daily_water_summary"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/record_daily_water_summary"
+            android:textAppearance="@style/title2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/view_daily_chart"
+            tools:text="1,200ml / 1,200ml" />
 
         <TextView
             android:id="@+id/tv_water_record_label"
@@ -85,16 +208,29 @@
             android:text="@string/record_water_record_label"
             android:textAppearance="@style/title2"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pc_daily_water_chart" />
+            app:layout_constraintTop_toBottomOf="@id/tv_daily_water_summary" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_water_record"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="40dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginBottom="12dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_water_record_label" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
+        <TextView
+            android:id="@+id/tv_no_water_record"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/record_no_water_record"
+            android:textAppearance="@style/body4"
+            android:textColor="@color/black"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@id/tv_water_record_label"
+            app:layout_constraintTop_toBottomOf="@id/tv_water_record_label" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

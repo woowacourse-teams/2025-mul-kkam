@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MulKkam</string>
+    <string name="app_name">물깜</string>
 
     <string name="home_drink_description">한 컵 마시기</string>
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
@@ -8,5 +8,36 @@
     <string name="main_record">기록</string>
     <string name="main_setting">설정</string>
 
-    <string name="record_water_record_label">최근 기록</string>
+    <string name="record_view_label">깜지</string>
+    <string name="record_view_sub_label">깜빡하지 않은 물 일지</string>
+    <string name="record_daily_chart_label">%s의 깜지</string>
+    <string name="record_week_range">7월 21일 - 7월 27일</string>
+    <string name="record_daily_water_summary">%,dml / %,dml</string>
+    <string name="record_water_record_label">상세 내역</string>
+    <string name="record_drink_amount">+%,dml</string>
+    <string name="record_no_water_record">해당 날짜는 기록된 일지가 없어요 🥲</string>
+
+    <string name="water_chart_date">%d/%d</string>
+
+    <string name="setting_title">설정</string>
+    <string name="setting_save">저장</string>
+
+    <string name="setting_profile_toolbar_title">프로필 설정</string>
+    <string name="setting_profile_edit_nickname_label">닉네임 변경</string>
+    <string name="setting_profile_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="setting_profile_check_duplicate">중복확인</string>
+    <string name="setting_profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+
+    <string name="setting_water_toolbar_title">물 마시기 설정</string>
+    <string name="setting_water_default">기본</string>
+    <string name="setting_water_label_water">물</string>
+    <string name="setting_water_increment">+ %dml</string>
+    <string name="setting_water_edit">수정</string>
+    <string name="setting_water_cup_title">나의 컵 목록</string>
+
+    <string name="setting_goal_toolbar_title">마시기 목표 설정</string>
+    <string name="setting_goal_edit_goal_label">하루 목표량</string>
+    <string name="setting_goal_hint_input_goal">목표량을 입력해주세요</string>
+    <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_goal_unit_ml">ml</string>
 </resources>
