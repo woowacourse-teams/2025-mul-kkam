@@ -195,10 +195,10 @@ class CupServiceUnitTest {
                 softly.assertThat(cupsResponse.size()).isEqualTo(2);
                 softly.assertThat(firstCup.cupNickname()).isEqualTo(cup2.getNickname().value());
                 softly.assertThat(firstCup.cupAmount()).isEqualTo(cup2.getCupAmount().value());
-                softly.assertThat(firstCup.rank()).isEqualTo(cup2.getCupRank().value());
-                softly.assertThat(secondCup.rank()).isEqualTo(cup1.getCupRank().value());
+                softly.assertThat(firstCup.cupRank()).isEqualTo(cup2.getCupRank().value());
+                softly.assertThat(secondCup.cupRank()).isEqualTo(cup1.getCupRank().value());
                 List<Integer> ranks = cupsResponse.cups().stream()
-                        .map(CupResponse::rank)
+                        .map(CupResponse::cupRank)
                         .toList();
                 softly.assertThat(ranks).isSorted();
             });
