@@ -22,7 +22,7 @@ class HistoryViewModel : ViewModel() {
         initIntakeHistories()
     }
 
-    private fun initIntakeHistories() {
+    fun initIntakeHistories() {
         viewModelScope.launch {
             val weekDates = getCurrentWeekDates()
             val summaries =
