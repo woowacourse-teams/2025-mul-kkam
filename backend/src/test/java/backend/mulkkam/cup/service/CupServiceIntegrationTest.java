@@ -147,7 +147,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("컵을 읽을 때에")
     @Nested
-    class read {
+    class Read {
 
         @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
