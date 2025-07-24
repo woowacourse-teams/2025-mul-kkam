@@ -77,8 +77,8 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupResponse.nickname()).isEqualTo(cupNickname);
-                softly.assertThat(cupResponse.amount()).isEqualTo(cupAmount);
+                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupNickname);
+                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupAmount);
             });
         }
 
@@ -193,8 +193,8 @@ class CupServiceUnitTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cupsResponse.size()).isEqualTo(2);
-                softly.assertThat(firstCup.nickname()).isEqualTo(cup2.getNickname().value());
-                softly.assertThat(firstCup.amount()).isEqualTo(cup2.getCupAmount().value());
+                softly.assertThat(firstCup.cupNickname()).isEqualTo(cup2.getNickname().value());
+                softly.assertThat(firstCup.cupAmount()).isEqualTo(cup2.getCupAmount().value());
                 softly.assertThat(firstCup.rank()).isEqualTo(cup2.getCupRank().value());
                 softly.assertThat(secondCup.rank()).isEqualTo(cup1.getCupRank().value());
                 List<Integer> ranks = cupsResponse.cups().stream()
