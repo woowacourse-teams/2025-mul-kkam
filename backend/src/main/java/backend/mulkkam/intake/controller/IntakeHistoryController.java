@@ -23,12 +23,13 @@ public class IntakeHistoryController {
     private final IntakeHistoryService intakeHistoryService;
 
     @GetMapping
-    public ResponseEntity<List<IntakeHistorySummaryResponse>> getDailyResponses(
+    public ResponseEntity<List<IntakeHistorySummaryResponse>> readSummaryOfIntakeHistories(
             @RequestParam LocalDate from,
             @RequestParam LocalDate to
     ) {
         DateRangeRequest dateRangeRequest = new DateRangeRequest(from, to);
-        List<IntakeHistorySummaryResponse> dailyResponses = intakeHistoryService.getDailyResponses(dateRangeRequest,
+        List<IntakeHistorySummaryResponse> dailyResponses = intakeHistoryService.readSummaryOfIntakeHistories(
+                dateRangeRequest,
                 1L);
         return ResponseEntity.ok().body(dailyResponses);
     }

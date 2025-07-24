@@ -108,7 +108,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
     @Nested
-    class GetDailyResponses {
+    class ReadSummaryOfIntakeHistories {
 
         @DisplayName("날짜의 범위에 해당하는 기록만 조회된다")
         @Test
@@ -171,7 +171,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     startDate,
                     endDate
             );
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest,
                     savedMember.getId()
             );
@@ -226,7 +226,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(firstHistoryNotInRange);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate
@@ -276,7 +276,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistory savedHistoryOfMember = intakeHistoryRepository.save(historyOfMember);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate

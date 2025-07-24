@@ -126,7 +126,7 @@ class IntakeHistoryServiceUnitTest {
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
     @Nested
-    class GetDailyResponses {
+    class ReadSummaryOfIntakeHistories {
 
         @DisplayName("날짜별 음수량 요약 기록이 날짜 순으로 반환된다")
         @Test
@@ -201,7 +201,7 @@ class IntakeHistoryServiceUnitTest {
             )).willReturn(histories);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate
@@ -290,7 +290,7 @@ class IntakeHistoryServiceUnitTest {
             )).willReturn(histories);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate
@@ -316,7 +316,7 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.getDailyResponses(any(DateRangeRequest.class), 1L))
+            assertThatThrownBy(() -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L))
                     .isInstanceOf(NoSuchElementException.class);
         }
 
@@ -380,7 +380,7 @@ class IntakeHistoryServiceUnitTest {
             )).willReturn(histories);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate
@@ -453,7 +453,7 @@ class IntakeHistoryServiceUnitTest {
             )).willReturn(histories);
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.getDailyResponses(
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate

@@ -38,7 +38,7 @@ public class IntakeHistoryService {
         intakeHistoryRepository.save(intakeHistory);
     }
 
-    public List<IntakeHistorySummaryResponse> getDailyResponses(
+    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
             Long memberId
     ) {
