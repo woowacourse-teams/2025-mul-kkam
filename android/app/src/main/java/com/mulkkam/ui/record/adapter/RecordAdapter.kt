@@ -4,16 +4,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.IntakeHistory
 
-class RecordAdapter : RecyclerView.Adapter<WaterRecordViewHolder>() {
+class RecordAdapter : RecyclerView.Adapter<RecordViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): WaterRecordViewHolder = WaterRecordViewHolder.from(parent)
+    ): RecordViewHolder = RecordViewHolder.from(parent)
 
     override fun onBindViewHolder(
-        holder: WaterRecordViewHolder,
+        holder: RecordViewHolder,
         position: Int,
     ) {
         holder.bind(intakeHistories[position])

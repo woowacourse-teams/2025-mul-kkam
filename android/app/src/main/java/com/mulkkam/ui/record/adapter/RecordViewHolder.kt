@@ -9,16 +9,16 @@ import com.mulkkam.domain.IntakeHistory
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-class WaterRecordViewHolder(
+class RecordViewHolder(
     private val binding: ItemWaterRecordBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun bind(waterRecord: IntakeHistory) {
+    fun bind(intakeHistory: IntakeHistory) {
         with(binding) {
-            tvIntakeTime.text = waterRecord.dateTime.format(timeFormatter)
+            tvIntakeTime.text = intakeHistory.dateTime.format(timeFormatter)
             tvIntakeAmount.text =
                 binding.root.context.getString(
                     R.string.record_intake_amount,
-                    waterRecord.intakeAmount,
+                    intakeHistory.intakeAmount,
                 )
         }
     }
@@ -26,10 +26,10 @@ class WaterRecordViewHolder(
     companion object {
         private val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREA)
 
-        fun from(parent: ViewGroup): WaterRecordViewHolder {
+        fun from(parent: ViewGroup): RecordViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemWaterRecordBinding.inflate(inflater, parent, false)
-            return WaterRecordViewHolder(binding)
+            return RecordViewHolder(binding)
         }
     }
 }
