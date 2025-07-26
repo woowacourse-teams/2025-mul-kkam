@@ -11,7 +11,10 @@ public record CupRegisterRequest(
         Integer cupAmount
 ) {
 
-    public Cup toCup(Member member, CupRank cupRank) {
+    public Cup toCup(
+            Member member,
+            CupRank cupRank
+    ) {
         return new Cup(
                 member,
                 new CupNickname(cupNickname),
