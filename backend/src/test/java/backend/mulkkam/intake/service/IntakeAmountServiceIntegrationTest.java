@@ -38,7 +38,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void success_amountMoreThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -63,7 +63,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void error_amountIsLessThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -101,7 +101,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .weight(60.0)
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -118,7 +118,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .weight(null)
                     .build();
             Member savedMember = memberRepository.save(member);

@@ -104,7 +104,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .gender(null)
                     .weight(null)
                     .build();
@@ -123,7 +123,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .gender(null)
                     .weight(null)
                     .build();

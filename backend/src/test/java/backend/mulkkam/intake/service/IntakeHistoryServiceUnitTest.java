@@ -61,7 +61,7 @@ class IntakeHistoryServiceUnitTest {
         void success_amountMoreThan0() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -84,7 +84,7 @@ class IntakeHistoryServiceUnitTest {
         void error_amountIsLessThan0() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -133,7 +133,7 @@ class IntakeHistoryServiceUnitTest {
         void success_containsOnlyInDateRange() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -222,7 +222,7 @@ class IntakeHistoryServiceUnitTest {
         void success_orderByDateAscInSummaryResponses() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -325,7 +325,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateAchievementRate() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
             given(memberRepository.findById(memberId))
@@ -398,7 +398,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateTotalIntakeAmount() {
             // given
             Long memberId = 1L;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
             given(memberRepository.findById(memberId))

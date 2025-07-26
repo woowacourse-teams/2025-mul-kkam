@@ -58,7 +58,7 @@ class CupServiceUnitTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
@@ -90,7 +90,7 @@ class CupServiceUnitTest {
                     "스타벅스",
                     -100
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
@@ -108,7 +108,7 @@ class CupServiceUnitTest {
                     "스타벅스",
                     0
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
@@ -126,7 +126,7 @@ class CupServiceUnitTest {
                     "스타벅스",
                     500
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
@@ -167,7 +167,7 @@ class CupServiceUnitTest {
         @Test
         void success_withExistedMemberId() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
 
             Cup cup1 = CupFixture.builder()
                     .member(member)

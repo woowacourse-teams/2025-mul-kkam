@@ -8,11 +8,23 @@ import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 
 public class MemberFixture {
 
-    private MemberNickname memberNickname = new MemberNickname("히로");
-    private Gender gender = Gender.FEMALE;
-    private Double weight = 50.2;
-    private PhysicalAttributes physicalAttributes = new PhysicalAttributes(gender, weight);
-    private Amount targetAmount = new Amount(1_000);
+    private MemberNickname memberNickname;
+    private Gender gender;
+    private Double weight;
+    private PhysicalAttributes physicalAttributes;
+    private Amount targetAmount;
+
+    private MemberFixture() {
+        this.memberNickname = new MemberNickname("히로");
+        this.gender = Gender.FEMALE;
+        this.weight = 50.2;
+        this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
+        this.targetAmount = new Amount(1_000);
+    }
+
+    public static MemberFixture builder() {
+        return new MemberFixture();
+    }
 
     public MemberFixture memberNickname(MemberNickname memberNickname) {
         this.memberNickname = memberNickname;
@@ -21,13 +33,13 @@ public class MemberFixture {
 
     public MemberFixture gender(Gender gender) {
         this.gender = gender;
-        this.physicalAttributes = physicalAttributes(this.gender, this.weight);
+        this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
         return this;
     }
 
     public MemberFixture weight(Double weight) {
         this.weight = weight;
-        this.physicalAttributes = physicalAttributes(this.gender, this.weight);
+        this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
         return this;
     }
 
@@ -42,9 +54,5 @@ public class MemberFixture {
                 this.physicalAttributes,
                 this.targetAmount
         );
-    }
-
-    private PhysicalAttributes physicalAttributes(Gender gender, Double weight) {
-        return new PhysicalAttributes(gender, weight);
     }
 }

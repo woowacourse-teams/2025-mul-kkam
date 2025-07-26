@@ -33,7 +33,7 @@ class CupRepositoryTest {
         @Test
         void success_isSorted() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             Cup cup1 = CupFixture.builder()
@@ -62,8 +62,8 @@ class CupRepositoryTest {
         @Test
         void success_onlyReadMyCups() {
             // given
-            Member member1 = new MemberFixture().build();
-            Member member2 = new MemberFixture()
+            Member member1 = MemberFixture.builder().build();
+            Member member2 = MemberFixture.builder()
                     .memberNickname(new MemberNickname("체체"))
                     .build();
             memberRepository.save(member1);
