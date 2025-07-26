@@ -12,6 +12,11 @@ public record CupRegisterRequest(
 ) {
 
     public Cup toCup(Member member, CupRank cupRank) {
-        return new Cup(member, new CupNickname(cupNickname), new CupAmount(cupAmount), cupRank);
+        return new Cup(
+                member,
+                new CupNickname(cupNickname),
+                new CupAmount(cupAmount),
+                cupRank
+        );
     }
 }
