@@ -12,7 +12,9 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
+import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
@@ -201,6 +203,87 @@ class CupServiceUnitTest {
                         .map(CupResponse::cupRank)
                         .toList();
                 softly.assertThat(ranks).isSorted();
+            });
+        }
+    }
+
+    @DisplayName("컵을 수정할 때에")
+    @Nested
+    class Modify {
+
+        @DisplayName("컵 이름 및 용량이 수정된다")
+        @Test
+        void success_withValidData() {
+            // given
+            Member member = new MemberFixture().build();
+            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+
+            Cup cup = new CupFixture()
+                    .member(member)
+                    .cupAmount(new CupAmount(500))
+                    .cupNickname(new CupNickname("변경 전"))
+                    .build();
+
+            given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
+
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    "변경 후",
+                    1000
+            );
+
+            // when
+            cupService.modifyNicknameAndAmount(
+                    cup.getId(),
+                    member.getId(),
+                    cupNicknameAndAmountModifyRequest
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cup.getCupAmount().value()).isEqualTo(1000);
+                softly.assertThat(cup.getNickname().value()).isEqualTo("변경 후");
+            });
+        }
+
+        @DisplayName("수정할 컵만 변경된다")
+        @Test
+        void success_onlyOneCupShouldBeModified() {
+            // given
+            Member member = new MemberFixture().build();
+
+            Cup cup1 = new CupFixture()
+                    .member(member)
+                    .cupNickname(new CupNickname("변경 전1"))
+                    .cupAmount(new CupAmount(500))
+                    .build();
+
+            Cup cup2 = new CupFixture()
+                    .member(member)
+                    .cupNickname(new CupNickname("변경 전2"))
+                    .cupAmount(new CupAmount(300))
+                    .build();
+
+            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+            given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
+
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    "변경 후",
+                    1000
+            );
+
+            // when
+            cupService.modifyNicknameAndAmount(
+                    cup1.getId(),
+                    member.getId(),
+                    cupNicknameAndAmountModifyRequest
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cup1.getNickname().value()).isEqualTo("변경 후");
+                softly.assertThat(cup1.getCupAmount().value()).isEqualTo(1000);
+                softly.assertThat(cup2.getNickname().value()).isEqualTo("변경 전2");
+                softly.assertThat(cup2.getCupAmount().value()).isEqualTo(300);
             });
         }
     }
