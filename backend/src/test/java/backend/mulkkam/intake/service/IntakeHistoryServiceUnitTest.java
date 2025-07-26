@@ -233,7 +233,7 @@ class IntakeHistoryServiceUnitTest {
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
-                            LocalTime.of(10, 30, 30)
+                            LocalTime.of(12, 30, 30)
                     ))
                     .build();
 
@@ -249,7 +249,7 @@ class IntakeHistoryServiceUnitTest {
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
-                            LocalTime.of(12, 32, 59)
+                            LocalTime.of(10, 32, 59)
                     ))
                     .build();
 
