@@ -3,8 +3,8 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
+import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +20,11 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyTarget(
-            IntakeAmountModifyRequest intakeAmountModifyRequest,
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
-
-        member.updateTargetAmount(intakeAmountModifyRequest.toAmount());
+        member.updateTargetAmount(intakeTargetAmountModifyRequest.toAmount());
     }
 
     public IntakeAmountResponse getRecommended(Long memberId) {
