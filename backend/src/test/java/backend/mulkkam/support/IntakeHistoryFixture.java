@@ -10,12 +10,22 @@ import java.time.LocalTime;
 public class IntakeHistoryFixture {
 
     private Member member;
-    private LocalDateTime dateTime = LocalDateTime.of(
-            LocalDate.of(2025, 3, 19),
-            LocalTime.of(15, 30, 30)
-    );
-    private Amount intakeAmount = new Amount(500);
-    private Amount targetIntakeAmount = new Amount(1_000);
+    private LocalDateTime dateTime;
+    private Amount intakeAmount;
+    private Amount targetIntakeAmount;
+
+    private IntakeHistoryFixture() {
+        this.dateTime = LocalDateTime.of(
+                LocalDate.of(2025, 3, 19),
+                LocalTime.of(15, 30, 30)
+        );
+        this.intakeAmount = new Amount(500);
+        this.targetIntakeAmount = new Amount(1_000);
+    }
+
+    public static IntakeHistoryFixture builder() {
+        return new IntakeHistoryFixture();
+    }
 
     public IntakeHistoryFixture member(Member member) {
         this.member = member;
