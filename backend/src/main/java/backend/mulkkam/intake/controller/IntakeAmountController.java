@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.controller;
 
-import backend.mulkkam.intake.dto.IntakeAmountResponse;
+import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
@@ -20,9 +20,9 @@ public class IntakeAmountController {
     private final IntakeAmountService intakeAmountService;
 
     @GetMapping("/recommended")
-    public ResponseEntity<IntakeAmountResponse> getRecommended() {
-        IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(1L);
-        return ResponseEntity.ok(intakeAmountResponse);
+    public ResponseEntity<IntakeRecommendedAmountResponse> getRecommended() {
+        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(1L);
+        return ResponseEntity.ok(intakeRecommendedAmountResponse);
     }
 
     @PatchMapping("/target")
