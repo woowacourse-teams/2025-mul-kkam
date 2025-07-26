@@ -1,14 +1,5 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -30,6 +21,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CupServiceUnitTest {
@@ -62,7 +62,7 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            Cup savedCup = new CupFixture()
+            Cup savedCup = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(1))
                     .build();
@@ -130,15 +130,15 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            Cup cup1 = new CupFixture()
+            Cup cup1 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(1))
                     .build();
-            Cup cup2 = new CupFixture()
+            Cup cup2 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(2))
                     .build();
-            Cup cup3 = new CupFixture()
+            Cup cup3 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(3))
                     .build();
@@ -169,13 +169,13 @@ class CupServiceUnitTest {
             // given
             Member member = new MemberFixture().build();
 
-            Cup cup1 = new CupFixture()
+            Cup cup1 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(2))
                     .cupAmount(new CupAmount(500))
                     .build();
 
-            Cup cup2 = new CupFixture()
+            Cup cup2 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(1))
                     .cupAmount(new CupAmount(1000))
