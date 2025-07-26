@@ -1,14 +1,5 @@
 package backend.mulkkam.intake.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
@@ -25,6 +16,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 public class IntakeAmountServiceUnitTest {
@@ -102,7 +102,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .gender(null)
                     .weight(null)
                     .build();
@@ -120,7 +120,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .gender(null)
                     .weight(null)
                     .build();

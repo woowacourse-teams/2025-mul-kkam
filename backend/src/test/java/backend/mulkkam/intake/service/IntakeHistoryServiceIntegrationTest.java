@@ -52,7 +52,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_amountMoreThan0() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
@@ -77,7 +77,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsLessThan0() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             int intakeAmount = -1;
@@ -115,7 +115,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyInDateRange() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -191,7 +191,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_startDateAndEndDateIsSame() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -247,10 +247,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             Member savedMember = memberRepository.save(member);
 
-            Member anotherMember = new MemberFixture()
+            Member anotherMember = MemberFixture.builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
@@ -300,7 +300,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
             // given
             int targetAmountOfMember = 1_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(targetAmountOfMember))
                     .build();
             Member savedMember = memberRepository.save(member);

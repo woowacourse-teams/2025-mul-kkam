@@ -38,7 +38,7 @@ class IntakeHistoryRepositoryTest {
 
         @BeforeEach
         void setUp() {
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             savedMember = memberRepository.save(member);
         }
 
@@ -81,7 +81,7 @@ class IntakeHistoryRepositoryTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member anotherMember = new MemberFixture()
+            Member anotherMember = MemberFixture.builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
@@ -265,7 +265,7 @@ class IntakeHistoryRepositoryTest {
             @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
             @Test
             void success_containsOnlyHistoryOfMember() {
-                Member anotherMember = new MemberFixture()
+                Member anotherMember = MemberFixture.builder()
                         .memberNickname(new MemberNickname("칼리"))
                         .build();
                 Member savedAnotherMember = memberRepository.save(anotherMember);

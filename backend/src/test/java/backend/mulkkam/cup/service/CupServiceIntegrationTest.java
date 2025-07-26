@@ -49,7 +49,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             // when
@@ -76,7 +76,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             // when & then
@@ -92,7 +92,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(cupNickname, cupAmount);
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             // when & then
@@ -109,7 +109,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     "스타벅스1",
                     500
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
             CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
                     "스타벅스2",
@@ -153,7 +153,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExistedMemberId() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixture.builder().build();
             memberRepository.save(member);
 
             Cup cup1 = CupFixture.builder()

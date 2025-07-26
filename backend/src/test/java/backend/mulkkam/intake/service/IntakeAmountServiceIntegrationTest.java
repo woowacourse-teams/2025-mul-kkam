@@ -1,10 +1,5 @@
 package backend.mulkkam.intake.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
@@ -19,6 +14,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -37,7 +37,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void success_amountMoreThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -61,7 +61,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void error_amountIsLessThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -96,7 +96,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .weight(60.0)
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -112,7 +112,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixture.builder()
                     .weight(null)
                     .build();
             Member savedMember = memberRepository.save(member);
