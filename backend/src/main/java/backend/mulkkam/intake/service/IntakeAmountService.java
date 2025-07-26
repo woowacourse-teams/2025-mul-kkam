@@ -5,6 +5,7 @@ import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +34,11 @@ public class IntakeAmountService {
         double weight = member.getPhysicalAttributes().getWeight();
 
         return new IntakeAmountResponse(new Amount((int) (weight * 30)));
+    }
+
+    public IntakeTargetAmountResponse getTarget(Long memberId) {
+        Member member = getMember(memberId);
+        return new IntakeTargetAmountResponse(member.getTargetAmount().value());
     }
 
     private Member getMember(Long id) {

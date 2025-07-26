@@ -2,6 +2,7 @@ package backend.mulkkam.intake.controller;
 
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,5 +30,11 @@ public class IntakeAmountController {
             @RequestBody IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest) {
         intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, 1L);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/target")
+    public ResponseEntity<IntakeTargetAmountResponse> getTarget() {
+        IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(1L);
+        return ResponseEntity.ok(intakeTargetAmountResponse);
     }
 }
