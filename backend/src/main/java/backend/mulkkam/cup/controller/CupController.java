@@ -28,7 +28,10 @@ public class CupController {
 
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CupRegisterRequest cupRegisterRequest) {
-        cupService.create(cupRegisterRequest, 1L);
+        cupService.create(
+                cupRegisterRequest,
+                1L
+        );
         return ResponseEntity.ok().build();
     }
 
@@ -37,7 +40,11 @@ public class CupController {
             @RequestBody CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest,
             @PathVariable Long cupId
     ) {
-        cupService.modifyNicknameAndAmount(cupId, 1L, cupNicknameAndAmountModifyRequest);
+        cupService.modifyNicknameAndAmount(
+                cupId,
+                1L,
+                cupNicknameAndAmountModifyRequest
+        );
         return ResponseEntity.ok().build();
     }
 }
