@@ -111,7 +111,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     savedMember.getId());
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -128,7 +128,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     savedMember.getId());
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
         }
     }
 
