@@ -112,13 +112,7 @@ public class IntakeHistoryService {
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
         return intakeHistories.stream()
-                .map(intakeHistory ->
-                        new IntakeHistoryResponse(
-                                intakeHistory.getId(),
-                                intakeHistory.getDateTime(),
-                                intakeHistory.getIntakeAmount().value()
-                        )
-                ).toList();
+                .map(IntakeHistoryResponse::new).toList();
     }
 
     private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
