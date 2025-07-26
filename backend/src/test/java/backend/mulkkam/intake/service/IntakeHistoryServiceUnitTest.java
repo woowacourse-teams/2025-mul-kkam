@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
@@ -17,7 +18,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,9 +27,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -116,9 +118,9 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(request, memberId))
-                    .isInstanceOf(NoSuchElementException.class)
-                    .hasMessage("해당 회원을 찾을 수 없습니다.");
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> intakeHistoryService.create(request, memberId));
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
 
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
@@ -316,8 +318,9 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.empty());
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L))
-                    .isInstanceOf(NoSuchElementException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L));
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
 
         @DisplayName("달성률이 정상적으로 계산된다")
