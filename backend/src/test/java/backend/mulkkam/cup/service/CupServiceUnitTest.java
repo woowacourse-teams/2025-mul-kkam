@@ -218,17 +218,22 @@ class CupServiceUnitTest {
             Member member = new MemberFixture().build();
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
+            String beforeCupNickName = "변경 전";
+            String afterCupNickName = "변경 전";
+            Integer beforeCupAmount = 500;
+            Integer afterCupAmount = 1000;
+
             Cup cup = new CupFixture()
                     .member(member)
-                    .cupAmount(new CupAmount(500))
-                    .cupNickname(new CupNickname("변경 전"))
+                    .cupAmount(new CupAmount(beforeCupAmount))
+                    .cupNickname(new CupNickname(beforeCupNickName))
                     .build();
 
             given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
-                    "변경 후",
-                    1000
+                    afterCupNickName,
+                    afterCupAmount
             );
 
             // when
@@ -240,8 +245,8 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cup.getCupAmount().value()).isEqualTo(1000);
-                softly.assertThat(cup.getNickname().value()).isEqualTo("변경 후");
+                softly.assertThat(cup.getCupAmount().value()).isEqualTo(afterCupAmount);
+                softly.assertThat(cup.getNickname().value()).isEqualTo(afterCupNickName);
             });
         }
 
@@ -251,24 +256,31 @@ class CupServiceUnitTest {
             // given
             Member member = new MemberFixture().build();
 
+            String beforeCupNickName1 = "변경 전1";
+            String beforeCupNickName2 = "변경 전2";
+            String afterCupNickName = "변경 전";
+            Integer beforeCupAmount1 = 300;
+            Integer beforeCupAmount2 = 500;
+            Integer afterCupAmount = 1000;
+
             Cup cup1 = new CupFixture()
                     .member(member)
-                    .cupNickname(new CupNickname("변경 전1"))
-                    .cupAmount(new CupAmount(500))
+                    .cupNickname(new CupNickname(beforeCupNickName1))
+                    .cupAmount(new CupAmount(beforeCupAmount1))
                     .build();
 
             Cup cup2 = new CupFixture()
                     .member(member)
-                    .cupNickname(new CupNickname("변경 전2"))
-                    .cupAmount(new CupAmount(300))
+                    .cupNickname(new CupNickname(beforeCupNickName2))
+                    .cupAmount(new CupAmount(beforeCupAmount2))
                     .build();
 
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
-                    "변경 후",
-                    1000
+                    afterCupNickName,
+                    afterCupAmount
             );
 
             // when
@@ -280,10 +292,10 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cup1.getNickname().value()).isEqualTo("변경 후");
-                softly.assertThat(cup1.getCupAmount().value()).isEqualTo(1000);
-                softly.assertThat(cup2.getNickname().value()).isEqualTo("변경 전2");
-                softly.assertThat(cup2.getCupAmount().value()).isEqualTo(300);
+                softly.assertThat(cup1.getNickname().value()).isEqualTo(afterCupNickName);
+                softly.assertThat(cup1.getCupAmount().value()).isEqualTo(afterCupAmount);
+                softly.assertThat(cup2.getNickname().value()).isEqualTo(beforeCupNickName2);
+                softly.assertThat(cup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
             });
         }
     }
