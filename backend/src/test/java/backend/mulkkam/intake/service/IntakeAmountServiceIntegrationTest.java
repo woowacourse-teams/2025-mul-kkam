@@ -5,6 +5,7 @@ import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
@@ -126,6 +127,27 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+        }
+    }
+
+    @DisplayName("하루 섭취 목표 음용량을 조회할 때에")
+    @Nested
+    class GetTarget {
+        @Test
+        @DisplayName("정상적으로 조회된다")
+        void success_withExistedMember() {
+            // given
+            int expected = 1_000;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(expected))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            // when
+            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(savedMember.getId());
+
+            // then
+            assertThat(actual.amount()).isEqualTo(expected);
         }
     }
 }
