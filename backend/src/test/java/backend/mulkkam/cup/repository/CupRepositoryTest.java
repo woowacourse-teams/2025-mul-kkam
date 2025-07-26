@@ -1,7 +1,5 @@
 package backend.mulkkam.cup.repository;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
@@ -15,6 +13,8 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DataJpaTest
 class CupRepositoryTest {
@@ -36,11 +36,11 @@ class CupRepositoryTest {
             Member member = new MemberFixture().build();
             memberRepository.save(member);
 
-            Cup cup1 = new CupFixture()
+            Cup cup1 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(2))
                     .build();
-            Cup cup2 = new CupFixture()
+            Cup cup2 = CupFixture.builder()
                     .member(member)
                     .cupRank(new CupRank(1))
                     .build();
@@ -69,11 +69,11 @@ class CupRepositoryTest {
             memberRepository.save(member1);
             memberRepository.save(member2);
 
-            Cup cup1 = new CupFixture()
+            Cup cup1 = CupFixture.builder()
                     .member(member1)
                     .cupRank(new CupRank(1))
                     .build();
-            Cup cup2 = new CupFixture()
+            Cup cup2 = CupFixture.builder()
                     .member(member2)
                     .cupRank(new CupRank(1))
                     .build();

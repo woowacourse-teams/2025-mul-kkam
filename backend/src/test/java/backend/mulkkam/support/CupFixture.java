@@ -9,9 +9,19 @@ import backend.mulkkam.member.domain.Member;
 public class CupFixture {
 
     private Member member;
-    private CupNickname cupNickname = new CupNickname("스타벅스");
-    private CupAmount cupAmount = new CupAmount(500);
-    private CupRank cupRank = new CupRank(1);
+    private CupNickname cupNickname;
+    private CupAmount cupAmount;
+    private CupRank cupRank;
+
+    private CupFixture() {
+        this.cupNickname = new CupNickname("스타벅스");
+        this.cupAmount = new CupAmount(500);
+        this.cupRank = new CupRank(1);
+    }
+
+    public static CupFixture builder() {
+        return new CupFixture();
+    }
 
     public CupFixture member(Member member) {
         this.member = member;
@@ -34,11 +44,6 @@ public class CupFixture {
     }
 
     public Cup build() {
-        return new Cup(
-                this.member,
-                this.cupNickname,
-                this.cupAmount,
-                cupRank
-        );
+        return new Cup(member, cupNickname, cupAmount, cupRank);
     }
 }
