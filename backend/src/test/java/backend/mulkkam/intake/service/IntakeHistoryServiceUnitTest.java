@@ -140,7 +140,7 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
 
-            IntakeHistory firstHistory = new IntakeHistoryFixture()
+            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -148,7 +148,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory secondHistory = new IntakeHistoryFixture()
+            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
@@ -156,7 +156,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 23),
@@ -164,7 +164,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 24),
@@ -172,7 +172,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 26),
@@ -229,7 +229,7 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = new IntakeHistoryFixture()
+            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -237,7 +237,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory secondHistory = new IntakeHistoryFixture()
+            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -245,7 +245,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -253,7 +253,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -261,7 +261,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -334,27 +334,27 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = new IntakeHistoryFixture()
+            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory secondHistory = new IntakeHistoryFixture()
+            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
@@ -407,27 +407,27 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = new IntakeHistoryFixture()
+            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory secondHistory = new IntakeHistoryFixture()
+            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory thirdHistory = new IntakeHistoryFixture()
+            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fourthHistory = new IntakeHistoryFixture()
+            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fifthHistory = new IntakeHistoryFixture()
+            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
