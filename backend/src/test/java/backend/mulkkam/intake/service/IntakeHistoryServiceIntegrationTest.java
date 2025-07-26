@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
@@ -292,6 +293,71 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .toList();
 
             assertThat(intakeHistoryIds).containsOnly(savedHistoryOfMember.getId());
+        }
+
+        @DisplayName("하루의 가장 최근 기록을 토대로 달성률을 계산한다")
+        @Test
+        void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
+            // given
+            int targetAmountOfMember = 1_000;
+            Member member = new MemberFixture()
+                    .targetAmount(new Amount(targetAmountOfMember))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+            IntakeHistory firstHistory = new IntakeHistoryFixture()
+                    .member(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfMember))
+                    .build();
+
+            int targetAmountOfThMostRecentHistory = 300;
+            IntakeHistory mostRecentHistory = new IntakeHistoryFixture()
+                    .member(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(13, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfThMostRecentHistory))
+                    .build();
+
+            IntakeHistory secondHistory = new IntakeHistoryFixture()
+                    .member(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(12, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfMember))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistory, mostRecentHistory, secondHistory
+            ));
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, savedMember.getId());
+
+            // then
+            IntakeHistorySummaryResponse responseOfTheDay = actual.getFirst();
+
+            assertThat(responseOfTheDay.achievementRate()).isCloseTo(
+                    100, within(0.01)
+            );
         }
     }
 }
