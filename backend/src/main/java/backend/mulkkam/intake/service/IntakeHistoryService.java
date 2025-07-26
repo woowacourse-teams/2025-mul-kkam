@@ -87,20 +87,20 @@ public class IntakeHistoryService {
             Member member,
             LocalDate date
     ) {
-
-        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
-                intakeHistoriesOfDate.get(date));
+        List<IntakeHistory> sortedIntakeHistories = getSortedIntakeHistories(intakeHistoriesOfDate.get(date));
+        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
 
         Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
 
+        Amount targetAmountOfTheDay = sortedIntakeHistories.getLast().getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
-                member.getTargetAmount()
+                targetAmountOfTheDay
         );
 
         return new IntakeHistorySummaryResponse(
                 date,
-                member.getTargetAmount().value(),
+                targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
                 intakeHistoryResponses
@@ -114,11 +114,7 @@ public class IntakeHistoryService {
     }
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
-        List<IntakeHistory> sortedIntakeHistory = intakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
-                .toList();
-
-        return sortedIntakeHistory.stream()
+        return intakeHistories.stream()
                 .map(intakeHistory ->
                         new IntakeHistoryResponse(
                                 intakeHistory.getId(),
@@ -126,6 +122,12 @@ public class IntakeHistoryService {
                                 intakeHistory.getIntakeAmount().value()
                         )
                 ).toList();
+    }
+
+    private List<IntakeHistory> getSortedIntakeHistories(List<IntakeHistory> intakeHistories) {
+        return intakeHistories.stream()
+                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
+                .toList();
     }
 
     private Member getMember(Long id) {
