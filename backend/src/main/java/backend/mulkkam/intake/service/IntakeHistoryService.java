@@ -45,49 +45,46 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
                 dateRangeRequest.startDateTime(),
                 dateRangeRequest.endDateTime()
         );
 
-        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistories.stream()
+        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
-        List<IntakeHistorySummaryResponse> result = toIntakeHistorySummaryResponses(
+        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
                 historiesGroupedByDate,
                 member
         );
 
-        return result.stream()
+        return summaryOfIntakeHistories.stream()
                 .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
                 .toList();
     }
 
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
+    }
+
     private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
-            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
+            Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate,
             Member member
     ) {
-        List<IntakeHistorySummaryResponse> result = new ArrayList<>();
-
-        for (LocalDate date : intakeHistoriesOfDate.keySet()) {
-            IntakeHistorySummaryResponse intakeHistorySummaryResponse = toIntakeHistorySummaryResponse(
-                    intakeHistoriesOfDate,
-                    member,
-                    date
-            );
-            result.add(intakeHistorySummaryResponse);
+        List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
+        for (Map.Entry<LocalDate, List<IntakeHistory>> entry : historiesGroupedByDate.entrySet()) {
+            intakeHistorySummaryResponses.add(toIntakeHistorySummaryResponse(entry.getValue(), entry.getKey()));
         }
-
-        return result;
+        return intakeHistorySummaryResponses;
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
-            Member member,
+            List<IntakeHistory> intakeHistoryOfDate,
             LocalDate date
     ) {
-        List<IntakeHistory> sortedIntakeHistories = getSortedIntakeHistories(intakeHistoriesOfDate.get(date));
+        List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
         List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
 
         Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
@@ -107,10 +104,10 @@ public class IntakeHistoryService {
         );
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
-        return new Amount(intakeHistoryResponses.stream()
-                .mapToInt(IntakeHistoryResponse::intakeAmount)
-                .sum());
+    private List<IntakeHistory> sortIntakeHistories(List<IntakeHistory> intakeHistories) {
+        return intakeHistories.stream()
+                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
+                .toList();
     }
 
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
@@ -124,14 +121,9 @@ public class IntakeHistoryService {
                 ).toList();
     }
 
-    private List<IntakeHistory> getSortedIntakeHistories(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
-                .toList();
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
+    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
+        return new Amount(intakeHistoryResponses.stream()
+                .mapToInt(IntakeHistoryResponse::intakeAmount)
+                .sum());
     }
 }
