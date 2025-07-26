@@ -3,7 +3,7 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeAmountResponse;
+import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
@@ -107,10 +107,11 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(savedMember.getId());
+            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+                    savedMember.getId());
 
             // then
-            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -123,10 +124,11 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeAmountResponse intakeAmountResponse = intakeAmountService.getRecommended(savedMember.getId());
+            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+                    savedMember.getId());
 
             // then
-            assertThat(intakeAmountResponse.amount()).isEqualTo(1800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1800);
         }
     }
 
