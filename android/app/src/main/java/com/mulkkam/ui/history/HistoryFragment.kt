@@ -7,17 +7,11 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
-import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.github.mikephil.charting.animation.Easing
-import com.github.mikephil.charting.charts.PieChart
-import com.github.mikephil.charting.data.PieData
-import com.github.mikephil.charting.data.PieDataSet
-import com.github.mikephil.charting.data.PieEntry
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
@@ -101,10 +95,11 @@ class HistoryFragment :
 
         pieCharts.forEach { chart ->
             chart.apply {
-                description.isEnabled = false
-                legend.isEnabled = false
-                setTouchEnabled(false)
-                holeRadius = CHART_HOLE_RADIUS
+                post {
+                    setPaintColor(R.color.primary_200)
+                }
+                setStroke(DONUT_CHART_SOLID_STROKE)
+                setBackgroundPaintColor(R.color.primary_50)
             }
         }
     }
@@ -119,7 +114,7 @@ class HistoryFragment :
                     ),
                 )
             }
-            setStroke(DONUT_CHART_STROKE_DEFAULT)
+            setStroke(DONUT_CHART_GRADIENT_STROKE)
             setBackgroundPaintColor(R.color.gray_10)
         }
     }
@@ -174,41 +169,8 @@ class HistoryFragment :
             pcWaterIntake.setOnClickListener {
                 viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
-            updateChartData(pcWaterIntake, intakeHistorySummary)
+            pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
         }
-    }
-
-    private fun updateChartData(
-        pieChart: PieChart,
-        intakeHistorySummary: IntakeHistorySummary,
-    ) {
-        pieChart.apply {
-            data = createPieData(intakeHistorySummary.achievementRate)
-            animateY(CHART_ANIMATION_DURATION_MS, Easing.EaseInOutQuad)
-            invalidate()
-        }
-    }
-
-    private fun createPieData(goalRate: Float): PieData {
-        val entries =
-            listOf(
-                PieEntry(goalRate),
-                PieEntry(CHART_MAX_PERCENTAGE - goalRate),
-            )
-
-        val colors =
-            listOf(
-                ContextCompat.getColor(requireContext(), R.color.primary_200),
-                ContextCompat.getColor(requireContext(), R.color.primary_50),
-            )
-
-        val dataSet =
-            PieDataSet(entries, "").apply {
-                this.colors = colors
-                setDrawValues(false)
-            }
-
-        return PieData(dataSet)
     }
 
     private fun updateDailyChart(intakeHistorySummary: IntakeHistorySummary) {
@@ -289,10 +251,7 @@ class HistoryFragment :
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
 
-        private const val CHART_MAX_PERCENTAGE: Float = 100f
-        private const val CHART_ANIMATION_DURATION_MS: Int = 1000
-        private const val CHART_HOLE_RADIUS: Float = 80f
-
-        private const val DONUT_CHART_STROKE_DEFAULT: Float = 20f
+        private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
+        private const val DONUT_CHART_SOLID_STROKE: Float = 4f
     }
 }
