@@ -219,7 +219,7 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
             String beforeCupNickName = "변경 전";
-            String afterCupNickName = "변경 전";
+            String afterCupNickName = "변경 후";
             Integer beforeCupAmount = 500;
             Integer afterCupAmount = 1000;
 
@@ -258,7 +258,7 @@ class CupServiceUnitTest {
 
             String beforeCupNickName1 = "변경 전1";
             String beforeCupNickName2 = "변경 전2";
-            String afterCupNickName = "변경 전";
+            String afterCupNickName = "변경 후";
             Integer beforeCupAmount1 = 300;
             Integer beforeCupAmount2 = 500;
             Integer afterCupAmount = 1000;
