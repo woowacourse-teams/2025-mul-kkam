@@ -1,7 +1,7 @@
 package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -141,7 +141,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
         }
     }
 

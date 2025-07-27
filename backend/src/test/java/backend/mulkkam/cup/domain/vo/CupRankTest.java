@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +34,7 @@ class CupRankTest {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
                     () -> new CupRank(input));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
         }
     }
 }
