@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NO_PERMISSION_CUP;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
@@ -65,7 +65,7 @@ public class CupService {
             );
             return;
         }
-        throw new CommonException(NO_PERMISSION_CUP);
+        throw new CommonException(NOT_PERMITTED_FOR_CUP);
     }
 
     private Cup getCup(final Long id) {
