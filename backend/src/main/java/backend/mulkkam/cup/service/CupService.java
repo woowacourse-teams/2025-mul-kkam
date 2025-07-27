@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
@@ -40,6 +41,19 @@ public class CupService {
         Cup createdCup = cupRepository.save(cup);
 
         return new CupResponse(createdCup);
+    }
+
+    @Transactional
+    public void delete(Long cupId, Long memberId) {
+        Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
+
+        cupRepository.delete(targetCup);
+
+        cupRepository.findAllByMemberId(memberId)
+                .stream()
+                .filter(cup -> cup.isLowerPriorityThan(targetCup))
+                .forEach(Cup::promoteRank);
     }
 
     public CupsResponse readCupsByMemberId(Long memberId) {
