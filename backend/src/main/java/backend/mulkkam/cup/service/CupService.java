@@ -30,11 +30,12 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
-        CupRank currentCupRank = new CupRank(cups.size());
+        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+
+        CupRank nextCupRank = new CupRank(cups.size() + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
-                currentCupRank.nextRank()
+                nextCupRank
         );
         Cup createdCup = cupRepository.save(cup);
 
