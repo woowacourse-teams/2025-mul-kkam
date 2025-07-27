@@ -53,5 +53,5 @@ jobs:
         working-directory: ./backend
 
       - name: Run tests with profile
-        run: ./gradlew test -Dspring.profiles.active=test
+        run: ./gradlew clean test -Dspring.profiles.active=test
         working-directory: ./backend
