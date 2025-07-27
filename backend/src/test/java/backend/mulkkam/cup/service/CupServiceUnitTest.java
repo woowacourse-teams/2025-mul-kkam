@@ -311,7 +311,7 @@ class CupServiceUnitTest {
             Member member2 = new MemberFixture()
                     .memberNickname(new MemberNickname("멤버2"))
                     .build();
-            
+
             String beforeCupNickName = "변경 전";
             String afterCupNickName = "변경 후";
             Integer beforeCupAmount = 500;
@@ -334,8 +334,11 @@ class CupServiceUnitTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.modifyNicknameAndAmount(cup.getId(), member2.getId(),
-                            cupNicknameAndAmountModifyRequest));
+                    () -> cupService.modifyNicknameAndAmount(
+                            cup.getId(),
+                            member2.getId(),
+                            cupNicknameAndAmountModifyRequest)
+            );
             assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
         }
     }

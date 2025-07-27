@@ -329,8 +329,11 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.modifyNicknameAndAmount(cup.getId(), member2.getId(),
-                            cupNicknameAndAmountModifyRequest));
+                    () -> cupService.modifyNicknameAndAmount(
+                            cup.getId(),
+                            member2.getId(),
+                            cupNicknameAndAmountModifyRequest)
+            );
             assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
         }
     }
