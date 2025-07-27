@@ -2,6 +2,7 @@ package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -17,6 +18,7 @@ import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixture;
 import backend.mulkkam.support.MemberFixture;
@@ -292,6 +294,44 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(changedCup2.getNickname().value()).isEqualTo(beforeCupNickName2);
                 softly.assertThat(changedCup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
             });
+        }
+
+        @DisplayName("멤버가 다를 경우 예외가 발생한다")
+        @Test
+        void error_ifTheMembersAreDifferent() {
+            // given
+            Member member1 = new MemberFixture()
+                    .memberNickname(new MemberNickname("멤버1"))
+                    .build();
+            Member member2 = new MemberFixture()
+                    .memberNickname(new MemberNickname("멤버2"))
+                    .build();
+
+            memberRepository.saveAll(List.of(member1, member2));
+
+            String beforeCupNickName = "변경 전";
+            String afterCupNickName = "변경 후";
+            Integer beforeCupAmount = 500;
+            Integer afterCupAmount = 1000;
+
+            Cup cup = new CupFixture()
+                    .member(member1)
+                    .cupNickname(new CupNickname(beforeCupNickName))
+                    .cupAmount(new CupAmount(beforeCupAmount))
+                    .build();
+
+            cupRepository.save(cup);
+
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    afterCupNickName,
+                    afterCupAmount
+            );
+
+            // when & then
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> cupService.modifyNicknameAndAmount(cup.getId(), member2.getId(),
+                            cupNicknameAndAmountModifyRequest));
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
         }
     }
 
