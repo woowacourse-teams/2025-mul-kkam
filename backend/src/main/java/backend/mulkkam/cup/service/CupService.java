@@ -4,8 +4,6 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.vo.CupAmount;
-import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
@@ -33,17 +31,13 @@ public class CupService {
     ) {
         Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
-
         CupRank currentCupRank = new CupRank(cups.size());
-
-        Cup cup = new Cup(
+        Cup cup = cupRegisterRequest.toCup(
                 member,
-                new CupNickname(cupRegisterRequest.cupNickname()),
-                new CupAmount(cupRegisterRequest.cupAmount()),
                 currentCupRank.nextRank()
         );
-
         Cup createdCup = cupRepository.save(cup);
+
         return new CupResponse(createdCup);
     }
 
