@@ -1,15 +1,18 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupRankTest {
 
@@ -35,6 +38,68 @@ class CupRankTest {
             CommonException ex = assertThrows(CommonException.class,
                     () -> new CupRank(input));
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
+        }
+    }
+
+    @DisplayName("우선순위를 높일 시에")
+    @Nested
+    class Promote {
+
+        @DisplayName("한 단계 높은 우선순위의 랭크를 반환한다.")
+        @ParameterizedTest
+        @CsvSource(value = {"2, 1", "3, 2"}, delimiter = ',')
+        void success_valueBetween2And3(int from, int expected) {
+            // given
+            CupRank originRank = new CupRank(from);
+
+            // when
+            CupRank resultRank = originRank.promote();
+
+            // then
+            assertThat(resultRank).isEqualTo(new CupRank(expected));
+        }
+
+        @DisplayName("이미 가장 높은 우선순위일 경우 예외가 발생한다.")
+        @Test
+        void error_valueIsHighestPriority() {
+            // given
+            CupRank originRank = new CupRank(1);
+
+            // when & then
+            assertThatThrownBy(originRank::promote)
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_CUP_COUNT.name());
+        }
+    }
+
+    @DisplayName("우선순위를 낮출 시에")
+    @Nested
+    class Demote {
+
+        @DisplayName("한 단계 낮은 우선순위의 랭크를 반환한다.")
+        @ParameterizedTest
+        @CsvSource(value = {"1, 2", "2, 3"}, delimiter = ',')
+        void success_valueBetween2And3(int from, int expected) {
+            // given
+            CupRank originRank = new CupRank(from);
+
+            // when
+            CupRank resultRank = originRank.demote();
+
+            // then
+            assertThat(resultRank).isEqualTo(new CupRank(expected));
+        }
+
+        @DisplayName("이미 가장 낮은 우선순위일 경우 예외가 발생한다.")
+        @Test
+        void error_valueIsHighestPriority() {
+            // given
+            CupRank originRank = new CupRank(3);
+
+            // when & then
+            assertThatThrownBy(originRank::demote)
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_CUP_COUNT.name());
         }
     }
 }
