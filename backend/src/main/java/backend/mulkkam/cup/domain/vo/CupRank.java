@@ -14,4 +14,12 @@ public record CupRank(Integer value) {
             throw new CommonException(INVALID_CUP_COUNT);
         }
     }
+
+    public CupRank promote() {
+        return new CupRank(value - 1);
+    }
+
+    public CupRank demote() {
+        return new CupRank(value + 1);
+    }
 }
