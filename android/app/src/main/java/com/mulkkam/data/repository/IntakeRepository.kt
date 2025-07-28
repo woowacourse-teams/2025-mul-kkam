@@ -24,6 +24,11 @@ class IntakeRepository(
         intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
     }
 
+    suspend fun getIntakeTarget(): Int {
+        val result = intakeService.getIntakeTarget()
+        return result.amount
+    }
+
     companion object {
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
