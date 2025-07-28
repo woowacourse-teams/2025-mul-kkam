@@ -23,7 +23,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("멤버의 신체적인 속성 값을 수정할 때")
     @Nested
-    class modifyPhysicalAttributes {
+    class ModifyPhysicalAttributes {
 
         @DisplayName("올바른 데이터로 필드를 수정할 시 값이 반영된다")
         @Test
