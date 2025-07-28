@@ -2,6 +2,7 @@ package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
 import com.mulkkam.data.remote.model.response.IntakeHistorySummaryResponse
+import com.mulkkam.data.remote.model.response.IntakeTargetAmountResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -18,4 +19,7 @@ interface IntakeService {
     suspend fun patchIntakeTarget(
         @Body intakeAmount: IntakeAmountRequest,
     )
+
+    @GET("/intake/amount/target")
+    suspend fun getIntakeTarget(): IntakeTargetAmountResponse
 }
