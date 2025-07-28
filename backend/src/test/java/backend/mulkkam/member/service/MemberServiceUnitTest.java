@@ -1,10 +1,15 @@
 package backend.mulkkam.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.Mockito.when;
+
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.util.Optional;
@@ -15,9 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
@@ -74,7 +76,8 @@ public class MemberServiceUnitTest {
         @Test
         void success_validNickname() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname("msv0b"))
                     .build();
             Long memberId = 1L;
@@ -96,6 +99,30 @@ public class MemberServiceUnitTest {
                 softly.assertThat(member.getPhysicalAttributes().getWeight()).isEqualTo(member.getPhysicalAttributes().getWeight());
                 softly.assertThat(member.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 조회하려고 할 때")
+    @Nested
+    class GetNickname {
+
+        @DisplayName("멤버의 닉네임이 올바르게 조회된다")
+        @Test
+        void success_validMemberId() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            Long memberId = 1L;
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+
+            String expected = member.getMemberNickname().value();
+
+            // when
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(memberId);
+
+            // then
+            assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
         }
     }
 }

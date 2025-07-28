@@ -1,10 +1,14 @@
 package backend.mulkkam.member.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -12,8 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -31,7 +33,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .weight(null)
                     .gender(null)
                     .build();
@@ -70,7 +73,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validNickname() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname("msv0b"))
                     .build();
             memberRepository.save(member);
@@ -90,6 +94,29 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(member.getPhysicalAttributes().getWeight());
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 조회하려고 할 때")
+    @Nested
+    class GetNickname {
+
+        @DisplayName("멤버의 닉네임이 올바르게 조회된다")
+        @Test
+        void success_validMemberId() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            String expected = member.getMemberNickname().value();
+
+            // when
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member.getId());
+
+            // then
+            assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
         }
     }
 }
