@@ -1,5 +1,10 @@
 package backend.mulkkam.intake.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
@@ -15,11 +20,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -140,7 +140,8 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void success_withExistedMember() {
             // given
             int expected = 1_000;
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .targetAmount(new Amount(expected))
                     .build();
             Member savedMember = memberRepository.save(member);
