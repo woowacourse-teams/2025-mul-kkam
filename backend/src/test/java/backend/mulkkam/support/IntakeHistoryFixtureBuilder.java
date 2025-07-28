@@ -9,27 +9,20 @@ import java.time.LocalTime;
 
 public class IntakeHistoryFixtureBuilder {
 
-    private Member member;
-    private LocalDateTime dateTime;
-    private Amount intakeAmount;
-    private Amount targetIntakeAmount;
+    private final Member member;
+    private LocalDateTime dateTime = LocalDateTime.of(
+            LocalDate.of(2025, 3, 19),
+            LocalTime.of(15, 30, 30)
+    );
+    private Amount intakeAmount = new Amount(500);
+    private Amount targetIntakeAmount = new Amount(1_000);
 
-    private IntakeHistoryFixtureBuilder() {
-        this.dateTime = LocalDateTime.of(
-                LocalDate.of(2025, 3, 19),
-                LocalTime.of(15, 30, 30)
-        );
-        this.intakeAmount = new Amount(500);
-        this.targetIntakeAmount = new Amount(1_000);
-    }
-
-    public static IntakeHistoryFixtureBuilder builder() {
-        return new IntakeHistoryFixtureBuilder();
-    }
-
-    public IntakeHistoryFixtureBuilder member(Member member) {
+    private IntakeHistoryFixtureBuilder(Member member) {
         this.member = member;
-        return this;
+    }
+
+    public static IntakeHistoryFixtureBuilder withMember(Member member) {
+        return new IntakeHistoryFixtureBuilder(member);
     }
 
     public IntakeHistoryFixtureBuilder intakeAmount(Amount intakeAmount) {

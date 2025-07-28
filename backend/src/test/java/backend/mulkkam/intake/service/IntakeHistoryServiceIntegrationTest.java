@@ -124,40 +124,40 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 23);
 
-            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 23),
                             LocalTime.of(23, 59, 59)
                     ))
                     .build();
 
-            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 24),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 26),
                             LocalTime.of(10, 30, 30)
@@ -200,24 +200,24 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
 
-            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(23, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
-                    .member(member)
+            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 22),
                             LocalTime.of(23, 50, 59)
@@ -261,16 +261,16 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder.builder()
-                    .member(savedAnotherMember)
+            IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder
+                    .withMember(savedAnotherMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder.builder()
-                    .member(savedMember)
+            IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
                             LocalTime.of(10, 30, 30)
@@ -311,8 +311,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
 
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder.builder()
-                    .member(savedMember)
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
@@ -322,8 +322,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             int targetAmountOfThMostRecentHistory = 300;
-            IntakeHistory mostRecentHistory = IntakeHistoryFixtureBuilder.builder()
-                    .member(savedMember)
+            IntakeHistory mostRecentHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(13, 30, 30)
@@ -332,8 +332,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .targetIntakeAmount(new Amount(targetAmountOfThMostRecentHistory))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder.builder()
-                    .member(savedMember)
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(12, 30, 30)
