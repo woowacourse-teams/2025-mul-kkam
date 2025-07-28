@@ -5,6 +5,8 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.dto.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
@@ -55,13 +57,42 @@ public class MemberServiceUnitTest {
             );
 
             // then
-            Member result = memberRepository.findById(memberId).orElseThrow();
+            assertSoftly(softly -> {
+                softly.assertThat(member.getMemberNickname()).isEqualTo(member.getMemberNickname());
+                softly.assertThat(member.getPhysicalAttributes().getGender()).isEqualTo(gender);
+                softly.assertThat(member.getPhysicalAttributes().getWeight()).isEqualTo(weight);
+                softly.assertThat(member.getTargetAmount()).isEqualTo(member.getTargetAmount());
+            });
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 수정하려고 할 때에")
+    @Nested
+    class ModifyNickname {
+
+        @DisplayName("올바른 닉네임으로 필드를 수정할 시 값이 변경된다")
+        @Test
+        void success_validNickname() {
+            // given
+            Member member = new MemberFixture()
+                    .memberNickname(new MemberNickname("msv0b"))
+                    .build();
+            Long memberId = 1L;
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+
+            String modifyNickname = "msv0b";
+            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
+
+            // when
+            memberService.modifyNickname(memberNicknameModifyRequest, memberId);
+
+            // then
 
             assertSoftly(softly -> {
-                softly.assertThat(result.getMemberNickname()).isEqualTo(member.getMemberNickname());
-                softly.assertThat(result.getPhysicalAttributes().getGender()).isEqualTo(gender);
-                softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
-                softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
+                softly.assertThat(member.getMemberNickname().value()).isEqualTo(modifyNickname);
+                softly.assertThat(member.getPhysicalAttributes().getGender()).isEqualTo(member.getPhysicalAttributes().getGender());
+                softly.assertThat(member.getPhysicalAttributes().getWeight()).isEqualTo(member.getPhysicalAttributes().getWeight());
+                softly.assertThat(member.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
         }
     }
