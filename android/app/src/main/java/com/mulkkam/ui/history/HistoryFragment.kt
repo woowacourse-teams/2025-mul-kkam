@@ -144,6 +144,13 @@ class HistoryFragment :
             val intake = weeklyIntakeHistories[index]
             updateWeeklyChart(chart, intake)
         }
+
+        binding.tvWeekRange.text =
+            getString(
+                R.string.history_week_range,
+                weeklyIntakeHistories.first().date.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.last().date.format(WEEK_RANGE_FORMATTER),
+            )
     }
 
     private fun updateWeeklyChart(
@@ -248,6 +255,8 @@ class HistoryFragment :
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        private val WEEK_RANGE_FORMATTER: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("M월 d일")
 
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
