@@ -62,7 +62,8 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            Cup savedCup = CupFixtureBuilder.withMember(member)
+            Cup savedCup = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -129,13 +130,16 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
-            Cup cup1 = CupFixtureBuilder.withMember(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
-            Cup cup2 = CupFixtureBuilder.withMember(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .build();
-            Cup cup3 = CupFixtureBuilder.withMember(member)
+            Cup cup3 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(3))
                     .build();
 
@@ -165,12 +169,14 @@ class CupServiceUnitTest {
             // given
             Member member = MemberFixtureBuilder.builder().build();
 
-            Cup cup1 = CupFixtureBuilder.withMember(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .cupAmount(new CupAmount(500))
                     .build();
 
-            Cup cup2 = CupFixtureBuilder.withMember(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .cupAmount(new CupAmount(1000))
                     .build();

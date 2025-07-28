@@ -36,10 +36,12 @@ class CupRepositoryTest {
             Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
-            Cup cup1 = CupFixtureBuilder.withMember(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .build();
-            Cup cup2 = CupFixtureBuilder.withMember(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -67,10 +69,12 @@ class CupRepositoryTest {
             memberRepository.save(member1);
             memberRepository.save(member2);
 
-            Cup cup1 = CupFixtureBuilder.withMember(member1)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member1)
                     .cupRank(new CupRank(1))
                     .build();
-            Cup cup2 = CupFixtureBuilder.withMember(member2)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member2)
                     .cupRank(new CupRank(1))
                     .build();
 
