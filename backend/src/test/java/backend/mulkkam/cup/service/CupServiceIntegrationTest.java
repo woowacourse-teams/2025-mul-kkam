@@ -15,8 +15,8 @@ import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixture;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.CupFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -49,7 +49,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
             // when
@@ -76,7 +76,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
             // when & then
@@ -92,7 +92,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(cupNickname, cupAmount);
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
             // when & then
@@ -109,7 +109,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     "스타벅스1",
                     500
             );
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
             CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
                     "스타벅스2",
@@ -153,16 +153,16 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExistedMemberId() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
-            Cup cup1 = new CupFixture()
-                    .member(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .build();
 
-            Cup cup2 = new CupFixture()
-                    .member(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
             List<Cup> cups = List.of(cup1, cup2);

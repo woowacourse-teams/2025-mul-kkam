@@ -91,6 +91,13 @@ class GradientDonutChartView(
         backgroundPaint.color = context.getColor(color)
     }
 
+    fun setPaintColor(
+        @ColorRes color: Int,
+    ) {
+        paint.shader = null
+        paint.color = context.getColor(color)
+    }
+
     companion object {
         private const val PROGRESS_DEFAULT: Float = 0f
         private const val PROGRESS_MAX_PERCENT: Float = 100f

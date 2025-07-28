@@ -17,10 +17,6 @@ public record AchievementRate(double value) {
         }
 
         double value = ((double) totalIntakeAmount.value() / target) * 100;
-        if (value >= MAX_VALUE) {
-            return 100;
-        }
-
-        return value;
+        return Math.min(MAX_VALUE, value);
     }
 }

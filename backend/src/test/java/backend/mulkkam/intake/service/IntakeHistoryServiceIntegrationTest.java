@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
@@ -10,22 +11,24 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryFixture;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -51,7 +54,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_amountMoreThan0() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
@@ -76,7 +79,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsLessThan0() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
             int intakeAmount = -1;
@@ -101,8 +104,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeHistoryCreateRequest, Long.MAX_VALUE))
-                    .isInstanceOf(NoSuchElementException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> intakeHistoryService.create(intakeHistoryCreateRequest, 1L));
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
     }
 
@@ -114,46 +118,46 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyInDateRange() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 23);
 
-            IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory thirdHistoryInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 23),
                             LocalTime.of(23, 59, 59)
                     ))
                     .build();
 
-            IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 24),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryNotInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 26),
                             LocalTime.of(10, 30, 30)
@@ -190,30 +194,30 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_startDateAndEndDateIsSame() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
 
-            IntakeHistory firstHistoryInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory secondHistoryInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(23, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory firstHistoryNotInRange = new IntakeHistoryFixture()
-                    .member(member)
+            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 22),
                             LocalTime.of(23, 50, 59)
@@ -246,10 +250,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             Member savedMember = memberRepository.save(member);
 
-            Member anotherMember = new MemberFixture()
+            Member anotherMember = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
@@ -257,16 +261,16 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory historyOfAnotherMember = new IntakeHistoryFixture()
-                    .member(savedAnotherMember)
+            IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder
+                    .withMember(savedAnotherMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
                             LocalTime.of(10, 30, 30)
                     ))
                     .build();
 
-            IntakeHistory historyOfMember = new IntakeHistoryFixture()
-                    .member(savedMember)
+            IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
                             LocalTime.of(10, 30, 30)
@@ -292,6 +296,71 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .toList();
 
             assertThat(intakeHistoryIds).containsOnly(savedHistoryOfMember.getId());
+        }
+
+        @DisplayName("하루의 가장 최근 기록을 토대로 달성률을 계산한다")
+        @Test
+        void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
+            // given
+            int targetAmountOfMember = 1_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(new Amount(targetAmountOfMember))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(10, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfMember))
+                    .build();
+
+            int targetAmountOfThMostRecentHistory = 300;
+            IntakeHistory mostRecentHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(13, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfThMostRecentHistory))
+                    .build();
+
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.of(2025, 10, 20),
+                            LocalTime.of(12, 30, 30)
+                    ))
+                    .intakeAmount(new Amount(100))
+                    .targetIntakeAmount(new Amount(targetAmountOfMember))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistory, mostRecentHistory, secondHistory
+            ));
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            // when
+            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, savedMember.getId());
+
+            // then
+            IntakeHistorySummaryResponse responseOfTheDay = actual.getFirst();
+
+            assertThat(responseOfTheDay.achievementRate()).isCloseTo(
+                    100, within(0.01)
+            );
         }
     }
 }
