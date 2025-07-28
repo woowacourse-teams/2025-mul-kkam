@@ -28,10 +28,10 @@ class HomeFragment :
         initObservers()
 
         binding.fabHomeDrink.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 2)
+            viewModel.addWaterIntake(cupRank = 1)
         }
         binding.btnHomeCupRankSecond.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 3)
+            viewModel.addWaterIntake(cupRank = 2)
         }
         binding.btnHomeCupRankThird.setOnClickListener {
             viewModel.addWaterIntake(cupRank = 3)
