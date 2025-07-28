@@ -1,9 +1,16 @@
 package backend.mulkkam.member.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
@@ -30,9 +37,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         void success_validDataAllArgs() {
             // given
             Member member = new MemberFixture()
-                     .weight(null)
-                     .gender(null)
-                     .build();
+                    .weight(null)
+                    .gender(null)
+                    .build();
             memberRepository.save(member);
 
             Double weight = 50.2;
@@ -57,6 +64,74 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(result.getPhysicalAttributes().getWeight()).isEqualTo(weight);
                 softly.assertThat(result.getTargetAmount()).isEqualTo(member.getTargetAmount());
             });
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 수정할 때")
+    @Nested
+    class modifyNickname {
+
+        @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
+        @Test
+        void success_validDataArg() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
+            Member member = new MemberFixture()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
+            memberRepository.save(member);
+
+            // when & then
+            assertDoesNotThrow(() -> memberService.checkForDuplicates(
+                    newNickname,
+                    member.getId()
+            ));
+        }
+
+        @DisplayName("이미 존재하는 닉네임이면 예외를 발생한다")
+        @Test
+        void error_duplicateNickname() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
+
+            Member member1 = new MemberFixture()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
+            memberRepository.save(member1);
+
+            Member member2 = new MemberFixture()
+                    .memberNickname(new MemberNickname(newNickname))
+                    .build();
+            memberRepository.save(member2);
+
+            // when & then
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.checkForDuplicates(
+                            newNickname,
+                            member1.getId()
+                    ));
+            assertThat(ex.getErrorCode()).isEqualTo(DUPLICATE_MEMBER_NICKNAME);
+        }
+
+        @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
+        @Test
+        void error_sameAsBeforeNickname() {
+            // given
+            String nickname = "체체";
+            Member member = new MemberFixture()
+                    .memberNickname(new MemberNickname(nickname))
+                    .build();
+            memberRepository.save(member);
+
+            // when & then
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.checkForDuplicates(
+                            nickname,
+                            member.getId()
+                    ));
+            assertThat(ex.getErrorCode()).isEqualTo(SAME_AS_BEFORE_NICKNAME);
         }
     }
 }
