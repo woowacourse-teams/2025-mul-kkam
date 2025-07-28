@@ -42,14 +42,17 @@ class HistoryViewModel : ViewModel() {
         return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
-    private fun updateIntakeSummary(
+    private suspend fun updateIntakeSummary(
         weekDates: List<LocalDate>,
         summaries: List<IntakeHistorySummary>,
     ) {
         val completedWeekIntake =
             weekDates.map { date ->
                 summaries.find { it.date == date }
-                    ?: EMPTY_DAILY_WATER_INTAKE.copy(date = date)
+                    ?: EMPTY_DAILY_WATER_INTAKE.copy(
+                        date = date,
+                        targetAmount = RepositoryInjection.intakeRepository.getIntakeTarget(),
+                    )
             }
 
         _weeklyIntakeHistories.value = completedWeekIntake
