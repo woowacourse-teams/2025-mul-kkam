@@ -21,8 +21,8 @@ class HomeViewModel : ViewModel() {
 
     fun addWaterIntake() {
         // TODO: 현재 cupRank가 2부터 들어가있음
-        val cup = cups?.cups?.find { it.cupRank == 2 }
-        val cupAmount = cup?.cupAmount
+        val cup = cups?.cups?.find { it.rank == 2 }
+        val cupAmount = cup?.amount
         _currentWaterIntake.value =
             (currentWaterIntake.value ?: 0) + (cupAmount ?: 0)
     }
