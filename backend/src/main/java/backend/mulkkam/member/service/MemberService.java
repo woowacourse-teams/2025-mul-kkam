@@ -27,8 +27,7 @@ public class MemberService {
         Member member = getById(memberId);
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
     }
-
-    @Transactional
+    
     public void checkForDuplicates(
             String nickname,
             Long id
