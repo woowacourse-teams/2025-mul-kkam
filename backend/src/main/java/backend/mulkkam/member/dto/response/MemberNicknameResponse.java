@@ -1,4 +1,4 @@
-package backend.mulkkam.member.dto;
+package backend.mulkkam.member.dto.response;
 
 import backend.mulkkam.member.domain.Member;
 
