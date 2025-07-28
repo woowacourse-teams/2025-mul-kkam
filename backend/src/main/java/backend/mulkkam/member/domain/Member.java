@@ -60,4 +60,8 @@ public class Member {
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
         this.physicalAttributes = physicalAttributes;
     }
+
+    public void updateNickname(MemberNickname memberNickname) {
+        this.memberNickname = memberNickname;
+    }
 }
