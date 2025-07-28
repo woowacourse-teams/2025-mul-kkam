@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.Cups
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -28,7 +29,7 @@ class HomeViewModel : ViewModel() {
                 RepositoryInjection.intakeRepository.getIntakeHistory(today, today).firstOrNull()
 
             _todayIntakeHistorySummary.value =
-                summary ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
+                summary ?: EMPTY_DAILY_WATER_INTAKE.copy(
                     targetAmount = RepositoryInjection.intakeRepository.getIntakeTarget(),
                 )
         }
