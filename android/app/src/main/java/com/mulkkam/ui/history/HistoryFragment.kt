@@ -192,7 +192,7 @@ class HistoryFragment :
             String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
 
         @ColorRes val summaryColorResId =
-            if (intakeHistorySummary.targetAmount == 0) {
+            if (intakeHistorySummary.totalIntakeAmount == 0) {
                 R.color.gray_200
             } else {
                 R.color.primary_200
