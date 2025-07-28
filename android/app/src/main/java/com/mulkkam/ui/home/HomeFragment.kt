@@ -18,12 +18,17 @@ class HomeFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.currentWaterIntake.observe(viewLifecycleOwner) { currentWaterIntake ->
-            binding.pbHomeWaterProgress.progress = currentWaterIntake
-        }
+        initObservers()
 
         binding.fabHomeDrink.setOnClickListener {
             viewModel.addWaterIntake()
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.todayIntakeHistorySummary.observe(viewLifecycleOwner) { summary ->
+            binding.pbHomeWaterProgress.max = summary.targetAmount
+            binding.pbHomeWaterProgress.progress = summary.totalIntakeAmount
         }
     }
 }
