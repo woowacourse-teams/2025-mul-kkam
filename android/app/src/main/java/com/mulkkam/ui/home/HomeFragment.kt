@@ -31,4 +31,9 @@ class HomeFragment :
             binding.pbHomeWaterProgress.progress = summary.totalIntakeAmount
         }
     }
+
+    override fun onReselected() {
+        viewModel.loadTodayIntakeHistorySummary()
+        viewModel.loadCups()
+    }
 }
