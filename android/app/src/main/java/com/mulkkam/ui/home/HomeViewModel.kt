@@ -18,9 +18,7 @@ class HomeViewModel : ViewModel() {
 
     init {
         loadTodayIntakeHistorySummary()
-        viewModelScope.launch {
-            cups = RepositoryInjection.cupsRepository.getCups()
-        }
+        loadCups()
     }
 
     fun loadTodayIntakeHistorySummary() {
@@ -33,6 +31,12 @@ class HomeViewModel : ViewModel() {
                 summary ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
                     targetAmount = RepositoryInjection.intakeRepository.getIntakeTarget(),
                 )
+        }
+    }
+
+    fun loadCups() {
+        viewModelScope.launch {
+            cups = RepositoryInjection.cupsRepository.getCups()
         }
     }
 
