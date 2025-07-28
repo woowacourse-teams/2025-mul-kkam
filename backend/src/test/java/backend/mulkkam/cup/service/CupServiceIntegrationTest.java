@@ -156,11 +156,13 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
-            Cup cup1 = CupFixtureBuilder.withMember(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .build();
 
-            Cup cup2 = CupFixtureBuilder.withMember(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
             List<Cup> cups = List.of(cup1, cup2);
