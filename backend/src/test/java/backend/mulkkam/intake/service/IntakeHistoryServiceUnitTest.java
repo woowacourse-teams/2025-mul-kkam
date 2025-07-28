@@ -10,8 +10,8 @@ import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryFixture;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -63,7 +63,7 @@ class IntakeHistoryServiceUnitTest {
         void success_amountMoreThan0() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder().build();
+            Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -86,7 +86,7 @@ class IntakeHistoryServiceUnitTest {
         void error_amountIsLessThan0() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder().build();
+            Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
@@ -135,14 +135,14 @@ class IntakeHistoryServiceUnitTest {
         void success_containsOnlyInDateRange() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder().build();
+            Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
 
-            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -150,7 +150,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 21),
@@ -158,7 +158,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 23),
@@ -166,7 +166,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 24),
@@ -174,7 +174,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 26),
@@ -224,14 +224,14 @@ class IntakeHistoryServiceUnitTest {
         void success_orderByDateAscInSummaryResponses() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder().build();
+            Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -239,7 +239,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -247,7 +247,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -255,7 +255,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -263,7 +263,7 @@ class IntakeHistoryServiceUnitTest {
                     ))
                     .build();
 
-            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 10, 20),
@@ -328,7 +328,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateAchievementRate() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
             given(memberRepository.findById(memberId))
@@ -337,27 +337,27 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
@@ -401,7 +401,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateTotalIntakeAmount() {
             // given
             Long memberId = 1L;
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
             given(memberRepository.findById(memberId))
@@ -410,27 +410,27 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = IntakeHistoryFixture.builder()
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixture.builder()
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixture.builder()
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();
 
-            IntakeHistory fifthHistory = IntakeHistoryFixture.builder()
+            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(member)
                     .intakeAmount(new Amount(100))
                     .build();

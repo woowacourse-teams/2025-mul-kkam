@@ -7,7 +7,7 @@ import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -104,7 +104,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .gender(null)
                     .weight(null)
                     .build();
@@ -123,7 +123,7 @@ public class IntakeAmountServiceUnitTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .gender(null)
                     .weight(null)
                     .build();

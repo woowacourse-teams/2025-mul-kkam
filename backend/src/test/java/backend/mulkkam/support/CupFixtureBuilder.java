@@ -6,39 +6,39 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 
-public class CupFixture {
+public class CupFixtureBuilder {
 
     private Member member;
     private CupNickname cupNickname;
     private CupAmount cupAmount;
     private CupRank cupRank;
 
-    private CupFixture() {
+    private CupFixtureBuilder() {
         this.cupNickname = new CupNickname("스타벅스");
         this.cupAmount = new CupAmount(500);
         this.cupRank = new CupRank(1);
     }
 
-    public static CupFixture builder() {
-        return new CupFixture();
+    public static CupFixtureBuilder builder() {
+        return new CupFixtureBuilder();
     }
 
-    public CupFixture member(Member member) {
+    public CupFixtureBuilder member(Member member) {
         this.member = member;
         return this;
     }
 
-    public CupFixture cupNickname(CupNickname cupNickname) {
+    public CupFixtureBuilder cupNickname(CupNickname cupNickname) {
         this.cupNickname = cupNickname;
         return this;
     }
 
-    public CupFixture cupAmount(CupAmount cupAmount) {
+    public CupFixtureBuilder cupAmount(CupAmount cupAmount) {
         this.cupAmount = cupAmount;
         return this;
     }
 
-    public CupFixture cupRank(CupRank cupRank) {
+    public CupFixtureBuilder cupRank(CupRank cupRank) {
         this.cupRank = cupRank;
         return this;
     }
