@@ -5,6 +5,7 @@ import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.MemberNicknameResponse;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -35,6 +36,11 @@ public class MemberService {
     ) {
         Member member = getById(memberId);
         member.updateNickname(new MemberNickname(memberNicknameModifyRequest.memberNickname()));
+    }
+
+    public MemberNicknameResponse getNickname(Long memberId) {
+        Member member = getById(memberId);
+        return new MemberNicknameResponse(member);
     }
 
     private Member getById(Long id) {
