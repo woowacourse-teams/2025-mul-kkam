@@ -29,7 +29,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void checkForDuplicates(String nickname, Long id) {
+    public void checkForDuplicates(
+            String nickname,
+            Long id
+    ) {
         Member member = getById(id);
         if (member.getMemberNickname().value().equals(nickname)) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
