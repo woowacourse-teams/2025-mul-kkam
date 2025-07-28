@@ -95,9 +95,7 @@ class HistoryFragment :
 
         pieCharts.forEach { chart ->
             chart.apply {
-                post {
-                    setPaintColor(R.color.primary_200)
-                }
+                setPaintColor(R.color.primary_200)
                 setStroke(DONUT_CHART_SOLID_STROKE)
                 setBackgroundPaintColor(R.color.primary_50)
             }
