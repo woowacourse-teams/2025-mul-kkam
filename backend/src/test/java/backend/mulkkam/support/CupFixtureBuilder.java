@@ -7,6 +7,7 @@ import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 
 public class CupFixtureBuilder {
+
     private final Member member;
     private CupNickname cupNickname = new CupNickname("스타벅스");
     private CupAmount cupAmount = new CupAmount(500);
