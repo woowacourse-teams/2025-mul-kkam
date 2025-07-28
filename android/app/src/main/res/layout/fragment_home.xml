@@ -101,18 +101,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
+        android:text="200ml"
         app:layout_constraintBottom_toBottomOf="@id/fab_home_drink"
-        app:layout_constraintEnd_toStartOf="@id/btn_home_cup_rank_third"
-        android:text="200ml" />
+        app:layout_constraintEnd_toStartOf="@id/btn_home_cup_rank_third" />
 
     <Button
         android:id="@+id/btn_home_cup_rank_third"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:text="510ml"
         app:layout_constraintBottom_toBottomOf="@id/fab_home_drink"
-        app:layout_constraintEnd_toStartOf="@id/fab_home_drink"
-        android:text="510ml" />
+        app:layout_constraintEnd_toStartOf="@id/fab_home_drink" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab_home_drink"
@@ -127,6 +127,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:shapeAppearanceOverlay="@style/ShapeAppearance.Fab.Rounded"
         app:tint="@null" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
