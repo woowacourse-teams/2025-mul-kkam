@@ -42,6 +42,7 @@ class HistoryFragment :
         initChartOptions()
         initCustomChartOptions()
         initObservers()
+        initClickListeners()
     }
 
     private fun initHighlight() {
@@ -248,6 +249,16 @@ class HistoryFragment :
         )
     }
 
+    private fun initClickListeners() {
+        binding.ibWeekPrev.setOnClickListener {
+            viewModel.moveWeek(WEEK_OFFSET_PREV)
+        }
+
+        binding.ibWeekNext.setOnClickListener {
+            viewModel.moveWeek(WEEK_OFFSET_NEXT)
+        }
+    }
+
     override fun onReselected() {
         viewModel.loadIntakeHistories()
     }
@@ -257,6 +268,9 @@ class HistoryFragment :
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
         private val WEEK_RANGE_FORMATTER: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일")
+
+        private const val WEEK_OFFSET_PREV: Long = -1L
+        private const val WEEK_OFFSET_NEXT: Long = 1L
 
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f

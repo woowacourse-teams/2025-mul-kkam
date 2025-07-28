@@ -23,9 +23,9 @@ class HistoryViewModel : ViewModel() {
         loadIntakeHistories()
     }
 
-    fun loadIntakeHistories() {
+    fun loadIntakeHistories(baseDate: LocalDate = LocalDate.now()) {
         viewModelScope.launch {
-            val weekDates = getCurrentWeekDates()
+            val weekDates = getWeekDates(baseDate)
             val summaries =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
@@ -36,9 +36,8 @@ class HistoryViewModel : ViewModel() {
         }
     }
 
-    private fun getCurrentWeekDates(): List<LocalDate> {
-        val today = LocalDate.now()
-        val monday = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    private fun getWeekDates(baseDate: LocalDate): List<LocalDate> {
+        val monday = baseDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
@@ -62,6 +61,15 @@ class HistoryViewModel : ViewModel() {
 
     fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
         _dailyIntakeHistories.value = dailyIntakeHistories
+    }
+
+    fun moveWeek(offset: Long) {
+        val newBaseDate =
+            weeklyIntakeHistories.value
+                ?.first()
+                ?.date
+                ?.plusWeeks(offset) ?: LocalDate.now()
+        loadIntakeHistories(newBaseDate)
     }
 
     companion object {
