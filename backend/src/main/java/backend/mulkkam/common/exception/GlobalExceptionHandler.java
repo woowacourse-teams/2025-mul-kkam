@@ -14,7 +14,7 @@ public class GlobalExceptionHandler{
     }
 
     @ExceptionHandler(CommonException.class)
-    public ErrorResponse<FailureBody> handleInvalidEnum(CommonException e) {
+    public ErrorResponse<FailureBody> handleCommonException(CommonException e) {
         return ErrorResponse.from(e.getErrorCode());
     }
 }

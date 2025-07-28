@@ -4,9 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 
 import backend.mulkkam.common.exception.CommonException;
 
-public record CupRank(
-        Integer value
-) {
+public record CupRank(Integer value) {
 
     private static final int MAX_CUP_COUNT = 3;
     private static final int MIN_CUP_COUNT = 0;

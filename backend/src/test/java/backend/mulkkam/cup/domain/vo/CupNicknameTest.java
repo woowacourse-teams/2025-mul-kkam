@@ -30,7 +30,7 @@ class CupNicknameTest {
 
         @DisplayName("범위를 벗어난 닉네임은 설정할 수 없다.")
         @ParameterizedTest
-        @ValueSource(strings = {"", "1", "66_666_666_666"})
+        @ValueSource(strings = {"", "1", "666666666666"})
         void error_nameLengthOutOfRange(String input) {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
