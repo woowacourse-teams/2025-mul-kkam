@@ -89,7 +89,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             ));
         }
 
-        @DisplayName("이미 존재하는 닉네임이면 예외를 발생한다")
+        @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
         @Test
         void error_duplicateNickname() {
             // given
