@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -48,7 +49,7 @@ class HistoryViewModel : ViewModel() {
         val completedWeekIntake =
             weekDates.map { date ->
                 summaries.find { it.date == date }
-                    ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = date)
+                    ?: EMPTY_DAILY_WATER_INTAKE.copy(date = date)
             }
 
         _weeklyIntakeHistories.value = completedWeekIntake
