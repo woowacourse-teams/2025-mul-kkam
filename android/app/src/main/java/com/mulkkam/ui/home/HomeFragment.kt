@@ -56,7 +56,7 @@ class HomeFragment :
             getColoredSpannable(
                 summaryColorResId,
                 getString(
-                    R.string.history_daily_intake_summary,
+                    R.string.home_daily_intake_summary,
                     intakeHistorySummary.totalIntakeAmount,
                     intakeHistorySummary.targetAmount,
                 ),
