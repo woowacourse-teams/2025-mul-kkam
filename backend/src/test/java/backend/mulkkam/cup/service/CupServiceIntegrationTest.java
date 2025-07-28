@@ -18,11 +18,19 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -39,6 +47,13 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class Create {
 
+        private final Member member = MemberFixtureBuilder.builder().build();
+
+        @BeforeEach
+        void setup() {
+            memberRepository.save(member);
+        }
+
         @DisplayName("정상적으로 저장한다")
         @Test
         void success_validData() {
@@ -49,8 +64,6 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
 
             // when
             CupResponse cupResponse = cupService.create(
@@ -76,8 +89,6 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cupNickname,
                     cupAmount
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -92,8 +103,6 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(cupNickname, cupAmount);
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -109,8 +118,6 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     "스타벅스1",
                     500
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
             CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
                     "스타벅스2",
                     500
