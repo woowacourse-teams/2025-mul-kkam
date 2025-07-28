@@ -1,20 +1,20 @@
 package backend.mulkkam.cup.repository;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixture;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.CupFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DataJpaTest
 class CupRepositoryTest {
@@ -33,15 +33,15 @@ class CupRepositoryTest {
         @Test
         void success_isSorted() {
             // given
-            Member member = new MemberFixture().build();
+            Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
-            Cup cup1 = new CupFixture()
-                    .member(member)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(2))
                     .build();
-            Cup cup2 = new CupFixture()
-                    .member(member)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -62,19 +62,19 @@ class CupRepositoryTest {
         @Test
         void success_onlyReadMyCups() {
             // given
-            Member member1 = new MemberFixture().build();
-            Member member2 = new MemberFixture()
+            Member member1 = MemberFixtureBuilder.builder().build();
+            Member member2 = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("체체"))
                     .build();
             memberRepository.save(member1);
             memberRepository.save(member2);
 
-            Cup cup1 = new CupFixture()
-                    .member(member1)
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member1)
                     .cupRank(new CupRank(1))
                     .build();
-            Cup cup2 = new CupFixture()
-                    .member(member2)
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member2)
                     .cupRank(new CupRank(1))
                     .build();
 
