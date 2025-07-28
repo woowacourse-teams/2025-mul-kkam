@@ -80,14 +80,16 @@ public class MemberServiceUnitTest {
             Long memberId = 1L;
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
-            String modifyNickname = "msv0b";
+            String modifyNickname = "msv0a";
             MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
 
             // when
-            memberService.modifyNickname(memberNicknameModifyRequest, memberId);
+            memberService.modifyNickname(
+                    memberNicknameModifyRequest,
+                    memberId
+            );
 
             // then
-
             assertSoftly(softly -> {
                 softly.assertThat(member.getMemberNickname().value()).isEqualTo(modifyNickname);
                 softly.assertThat(member.getPhysicalAttributes().getGender()).isEqualTo(member.getPhysicalAttributes().getGender());

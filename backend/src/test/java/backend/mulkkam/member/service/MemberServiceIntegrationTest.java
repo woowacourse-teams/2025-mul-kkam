@@ -75,7 +75,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
-            String modifyNickname = "msv0b";
+            String modifyNickname = "msv0a";
             MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
 
             // when

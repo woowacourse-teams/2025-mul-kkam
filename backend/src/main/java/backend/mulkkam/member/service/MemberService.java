@@ -29,7 +29,10 @@ public class MemberService {
     }
 
     @Transactional
-    public void modifyNickname(MemberNicknameModifyRequest memberNicknameModifyRequest, Long memberId) {
+    public void modifyNickname(
+            MemberNicknameModifyRequest memberNicknameModifyRequest,
+            Long memberId
+    ) {
         Member member = getById(memberId);
         member.updateNickname(new MemberNickname(memberNicknameModifyRequest.memberNickname()));
     }
