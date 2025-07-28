@@ -7,7 +7,7 @@ import backend.mulkkam.intake.dto.IntakeAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +37,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void success_amountMoreThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -61,7 +61,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         void error_amountIsLessThan0() {
             // given
             int originTargetAmount = 2_000;
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -96,7 +96,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributes() {
             // given
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .weight(60.0)
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -112,7 +112,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_physicalAttributesIsNotExisted() {
             // given
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .weight(null)
                     .build();
             Member savedMember = memberRepository.save(member);

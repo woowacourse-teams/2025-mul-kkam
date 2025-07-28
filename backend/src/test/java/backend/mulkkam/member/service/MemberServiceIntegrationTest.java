@@ -4,7 +4,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +29,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = MemberFixture.builder()
+            Member member = MemberFixtureBuilder.builder()
                     .weight(null)
                     .gender(null)
                     .build();

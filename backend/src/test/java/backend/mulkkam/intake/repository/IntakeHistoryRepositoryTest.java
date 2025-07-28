@@ -5,8 +5,8 @@ import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryFixture;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -38,7 +38,7 @@ class IntakeHistoryRepositoryTest {
 
         @BeforeEach
         void setUp() {
-            Member member = MemberFixture.builder().build();
+            Member member = MemberFixtureBuilder.builder().build();
             savedMember = memberRepository.save(member);
         }
 
@@ -47,7 +47,7 @@ class IntakeHistoryRepositoryTest {
         void success_withExistedMemberId() {
             // given
 
-            IntakeHistory firstIntakeHistory = IntakeHistoryFixture.builder()
+            IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 3, 16),
@@ -55,7 +55,7 @@ class IntakeHistoryRepositoryTest {
                     ))
                     .build();
 
-            IntakeHistory secondIntakeHistory = IntakeHistoryFixture.builder()
+            IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder.builder()
                     .member(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 3, 17),
@@ -81,12 +81,12 @@ class IntakeHistoryRepositoryTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member anotherMember = MemberFixture.builder()
+            Member anotherMember = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
 
-            IntakeHistory historyOfAnotherMember = IntakeHistoryFixture.builder()
+            IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder.builder()
                     .member(savedAnotherMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 3, 16),
@@ -94,7 +94,7 @@ class IntakeHistoryRepositoryTest {
                     ))
                     .build();
 
-            IntakeHistory historyOfMember = IntakeHistoryFixture.builder()
+            IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder.builder()
                     .member(savedMember)
                     .dateTime(LocalDateTime.of(
                             LocalDate.of(2025, 3, 17),
@@ -133,7 +133,7 @@ class IntakeHistoryRepositoryTest {
                 LocalDate startDate = LocalDate.of(2025, 10, 20);
                 LocalDate endDate = LocalDate.of(2025, 10, 23);
 
-                IntakeHistory firstHistoryInRange = IntakeHistoryFixture.builder()
+                IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 20),
@@ -141,7 +141,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory secondHistoryInRange = IntakeHistoryFixture.builder()
+                IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 21),
@@ -149,7 +149,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory thirdHistoryInRange = IntakeHistoryFixture.builder()
+                IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 23),
@@ -157,7 +157,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory firstHistoryNotInRange = IntakeHistoryFixture.builder()
+                IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 24),
@@ -165,7 +165,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory secondHistoryNotInRange = IntakeHistoryFixture.builder()
+                IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 26),
@@ -211,7 +211,7 @@ class IntakeHistoryRepositoryTest {
                 LocalDate startDate = LocalDate.of(2025, 10, 20);
                 LocalDate endDate = LocalDate.of(2025, 10, 20);
 
-                IntakeHistory firstHistoryInRange = IntakeHistoryFixture.builder()
+                IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 20),
@@ -219,7 +219,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory secondHistoryInRange = IntakeHistoryFixture.builder()
+                IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 20),
@@ -227,7 +227,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory firstHistoryNotInRange = IntakeHistoryFixture.builder()
+                IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 22),
@@ -265,7 +265,7 @@ class IntakeHistoryRepositoryTest {
             @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
             @Test
             void success_containsOnlyHistoryOfMember() {
-                Member anotherMember = MemberFixture.builder()
+                Member anotherMember = MemberFixtureBuilder.builder()
                         .memberNickname(new MemberNickname("칼리"))
                         .build();
                 Member savedAnotherMember = memberRepository.save(anotherMember);
@@ -273,7 +273,7 @@ class IntakeHistoryRepositoryTest {
                 LocalDate startDate = LocalDate.of(2025, 10, 20);
                 LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-                IntakeHistory historyOfAnotherMember = IntakeHistoryFixture.builder()
+                IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder.builder()
                         .member(savedAnotherMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 20),
@@ -281,7 +281,7 @@ class IntakeHistoryRepositoryTest {
                         ))
                         .build();
 
-                IntakeHistory historyOfMember = IntakeHistoryFixture.builder()
+                IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder.builder()
                         .member(savedMember)
                         .dateTime(LocalDateTime.of(
                                 LocalDate.of(2025, 10, 21),
