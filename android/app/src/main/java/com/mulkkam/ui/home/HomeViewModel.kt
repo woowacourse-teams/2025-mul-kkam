@@ -17,15 +17,22 @@ class HomeViewModel : ViewModel() {
     var cups: Cups? = null
 
     init {
+        loadTodayIntakeHistorySummary()
+        viewModelScope.launch {
+            cups = RepositoryInjection.cupsRepository.getCups()
+        }
+    }
+
+    fun loadTodayIntakeHistorySummary() {
         viewModelScope.launch {
             val today = LocalDate.now()
             val summary =
                 RepositoryInjection.intakeRepository.getIntakeHistory(today, today).firstOrNull()
 
             _todayIntakeHistorySummary.value =
-                summary ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE
-
-            cups = RepositoryInjection.cupsRepository.getCups()
+                summary ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
+                    targetAmount = RepositoryInjection.intakeRepository.getIntakeTarget(),
+                )
         }
     }
 
