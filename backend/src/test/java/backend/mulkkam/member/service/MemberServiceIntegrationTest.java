@@ -82,7 +82,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
 
             // when
-            memberService.modifyNickname(memberNicknameModifyRequest, member.getId());
+            memberService.modifyNickname(
+                    memberNicknameModifyRequest,
+                    member.getId()
+            );
 
             // then
             Member result = memberRepository.findById(member.getId()).orElseThrow();
