@@ -255,7 +255,7 @@ class CupServiceUnitTest {
 
         @DisplayName("수정할 컵만 변경된다")
         @Test
-        void success_onlyOneCupShouldBeModified() {
+        void success_whenCertainCupChanges() {
             // given
             Member member = MemberFixtureBuilder.builder().build();
 
