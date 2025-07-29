@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
