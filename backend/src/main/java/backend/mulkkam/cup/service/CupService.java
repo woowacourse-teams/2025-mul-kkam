@@ -60,11 +60,15 @@ public class CupService {
         Member member = getMember(memberId);
         Cup cup = getCup(id);
 
+        validateCupOwnership(member, cup);
+        cup.modifyNicknameAndAmount(
+                new CupNickname(cupNicknameAndAmountModifyRequest.cupNickname()),
+                new CupAmount(cupNicknameAndAmountModifyRequest.cupAmount())
+        );
+    }
+
+    private void validateCupOwnership(Member member, Cup cup) {
         if (member.equals(cup.getMember())) {
-            cup.modifyNicknameAndAmount(
-                    new CupNickname(cupNicknameAndAmountModifyRequest.cupNickname()),
-                    new CupAmount(cupNicknameAndAmountModifyRequest.cupAmount())
-            );
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_CUP);
