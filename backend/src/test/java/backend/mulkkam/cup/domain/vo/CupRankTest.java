@@ -5,7 +5,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
@@ -47,16 +46,17 @@ class CupRankTest {
 
         @DisplayName("한 단계 높은 우선순위의 랭크를 반환한다.")
         @ParameterizedTest
-        @CsvSource(value = {"2, 1", "3, 2"}, delimiter = ',')
-        void success_valueBetween2And3(int from, int expected) {
+        @ValueSource(ints = {2, 3})
+        void success_valueBetween2And3(int from) {
             // given
-            CupRank originRank = new CupRank(from);
+            CupRank origin = new CupRank(from);
+            CupRank expected = new CupRank(from - 1);
 
             // when
-            CupRank resultRank = originRank.promote();
+            CupRank resultRank = origin.promote();
 
             // then
-            assertThat(resultRank).isEqualTo(new CupRank(expected));
+            assertThat(resultRank).isEqualTo(expected);
         }
 
         @DisplayName("이미 가장 높은 우선순위일 경우 예외가 발생한다.")
@@ -78,16 +78,17 @@ class CupRankTest {
 
         @DisplayName("한 단계 낮은 우선순위의 랭크를 반환한다.")
         @ParameterizedTest
-        @CsvSource(value = {"1, 2", "2, 3"}, delimiter = ',')
-        void success_valueBetween2And3(int from, int expected) {
+        @ValueSource(ints = {1, 2})
+        void success_valueBetween2And3(int from) {
             // given
-            CupRank originRank = new CupRank(from);
+            CupRank origin = new CupRank(from);
+            CupRank expected = new CupRank(from + 1);
 
             // when
-            CupRank resultRank = originRank.demote();
+            CupRank resultRank = origin.demote();
 
             // then
-            assertThat(resultRank).isEqualTo(new CupRank(expected));
+            assertThat(resultRank).isEqualTo(expected);
         }
 
         @DisplayName("이미 가장 낮은 우선순위일 경우 예외가 발생한다.")
