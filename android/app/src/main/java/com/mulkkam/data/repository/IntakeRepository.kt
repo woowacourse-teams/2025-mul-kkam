@@ -40,6 +40,5 @@ class IntakeRepository(
 
     companion object {
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-//        val formatterWithTime: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm")
     }
 }
