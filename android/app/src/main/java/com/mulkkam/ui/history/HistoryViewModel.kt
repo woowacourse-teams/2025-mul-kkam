@@ -36,8 +36,8 @@ class HistoryViewModel : ViewModel() {
         }
     }
 
-    private fun getWeekDates(baseDate: LocalDate): List<LocalDate> {
-        val monday = baseDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+    private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
+        val monday = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
         return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
