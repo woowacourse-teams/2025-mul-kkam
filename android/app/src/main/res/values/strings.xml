@@ -7,12 +7,13 @@
 
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
+    <string name="home_daily_intake_summary">%,dml / %,dml</string>
 
     <string name="history_view_label">깜지</string>
     <string name="history_view_sub_label_prefix">깜빡하지 않은 </string>
     <string name="history_view_sub_label_suffix">물 일지</string>
     <string name="history_daily_chart_label">%s의 깜지</string>
-    <string name="history_week_range">7월 21일 - 7월 27일</string>
+    <string name="history_week_range">%s - %s</string>
     <string name="history_daily_intake_summary">%,dml / %,dml</string>
     <string name="history_intake_history_label">상세 내역</string>
     <string name="history_intake_amount">+%,dml</string>

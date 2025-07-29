@@ -1,10 +1,13 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
+import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.IntakeHistorySummaryResponse
+import com.mulkkam.data.remote.model.response.IntakeTargetAmountResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface IntakeService {
@@ -14,8 +17,16 @@ interface IntakeService {
         @Query("to") to: String?,
     ): List<IntakeHistorySummaryResponse>
 
+    @POST("/intake/history")
+    suspend fun postIntakeHistory(
+        @Body intakeHistory: IntakeHistoryRequest,
+    )
+
     @PATCH("/intake/amount/target")
     suspend fun patchIntakeTarget(
         @Body intakeAmount: IntakeAmountRequest,
     )
+
+    @GET("/intake/amount/target")
+    suspend fun getIntakeTarget(): IntakeTargetAmountResponse
 }

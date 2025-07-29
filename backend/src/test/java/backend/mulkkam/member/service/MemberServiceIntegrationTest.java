@@ -1,17 +1,17 @@
 package backend.mulkkam.member.service;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -29,10 +29,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = new MemberFixture()
-                     .weight(null)
-                     .gender(null)
-                     .build();
+            Member member = MemberFixtureBuilder.builder()
+                    .weight(null)
+                    .gender(null)
+                    .build();
             memberRepository.save(member);
 
             Double weight = 50.2;
