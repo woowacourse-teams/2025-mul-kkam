@@ -58,8 +58,6 @@ public class CupService {
             UpdateCupRanksRequest request,
             Long memberId
     ) {
-        Member member = getMember(memberId);
-
         Map<Long, Integer> requestedCupRanks = request.cups()
                 .stream()
                 .collect(Collectors.toMap(CupRankDto::id, CupRankDto::rank));
@@ -69,6 +67,7 @@ public class CupService {
         List<Cup> cups = cupRepository.findAllById(requestedCupRanks.keySet());
         validateExistence(requestedCupRanks.keySet(), cups);
 
+        Member member = getMember(memberId);
         validateOwnership(cups, member);
 
         cups.forEach(cup ->
