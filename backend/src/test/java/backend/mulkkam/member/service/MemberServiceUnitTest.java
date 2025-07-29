@@ -24,9 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.when;
-
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
 
@@ -86,7 +83,8 @@ public class MemberServiceUnitTest {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
@@ -106,7 +104,8 @@ public class MemberServiceUnitTest {
             String oldNickname = "체체";
             String newNickname = "체체1";
 
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
 
@@ -127,7 +126,8 @@ public class MemberServiceUnitTest {
         void error_sameAsBeforeNickname() {
             // given
             String nickname = "체체";
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(nickname))
                     .build();
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));

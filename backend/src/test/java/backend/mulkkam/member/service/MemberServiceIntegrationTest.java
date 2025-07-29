@@ -13,15 +13,12 @@ import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -100,12 +97,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             String oldNickname = "체체";
             String newNickname = "체체1";
 
-            Member member1 = new MemberFixture()
+            Member member1 = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
             memberRepository.save(member1);
 
-            Member member2 = new MemberFixture()
+            Member member2 = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(newNickname))
                     .build();
             memberRepository.save(member2);
@@ -124,7 +123,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         void error_sameAsBeforeNickname() {
             // given
             String nickname = "체체";
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(nickname))
                     .build();
             memberRepository.save(member);
