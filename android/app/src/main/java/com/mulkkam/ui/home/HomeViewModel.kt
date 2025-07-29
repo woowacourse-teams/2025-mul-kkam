@@ -10,6 +10,7 @@ import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.domain.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
     private val _todayIntakeHistorySummary = MutableLiveData<IntakeHistorySummary>()
@@ -46,14 +47,21 @@ class HomeViewModel : ViewModel() {
         val cup = cups?.cups?.find { it.cupRank == cupRank }
         val cupAmount = cup?.cupAmount
 
-        _todayIntakeHistorySummary.value =
-            _todayIntakeHistorySummary.value?.copy(
-                totalIntakeAmount =
-                    (
-                        _todayIntakeHistorySummary.value?.totalIntakeAmount
-                            ?: DEFAULT_INTAKE_AMOUNT
-                    ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+        viewModelScope.launch {
+            RepositoryInjection.intakeRepository.postIntakeHistory(
+                LocalDateTime.now(),
+                cupAmount ?: DEFAULT_INTAKE_AMOUNT,
             )
+
+            _todayIntakeHistorySummary.value =
+                _todayIntakeHistorySummary.value?.copy(
+                    totalIntakeAmount =
+                        (
+                            _todayIntakeHistorySummary.value?.totalIntakeAmount
+                                ?: DEFAULT_INTAKE_AMOUNT
+                        ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+                )
+        }
     }
 
     companion object {
