@@ -28,7 +28,7 @@ public class MemberController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/validation")
+    @GetMapping("/nickname/validation")
     public ResponseEntity<Void> checkForDuplicates(@RequestParam String nickname) {
         memberService.checkForDuplicates(
                 nickname,
