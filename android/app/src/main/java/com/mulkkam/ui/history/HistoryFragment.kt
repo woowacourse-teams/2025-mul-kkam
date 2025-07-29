@@ -150,16 +150,8 @@ class HistoryFragment :
         binding.tvWeekRange.text =
             getString(
                 R.string.history_week_range,
-                getString(
-                    R.string.date_format_week_range,
-                    weeklyIntakeHistories.firstDay.monthValue,
-                    weeklyIntakeHistories.firstDay.dayOfMonth,
-                ),
-                getString(
-                    R.string.date_format_week_range,
-                    weeklyIntakeHistories.lastDay.monthValue,
-                    weeklyIntakeHistories.lastDay.dayOfMonth,
-                ),
+                weeklyIntakeHistories.firstDay.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.lastDay.format(WEEK_RANGE_FORMATTER),
             )
     }
 
@@ -275,6 +267,8 @@ class HistoryFragment :
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        private val WEEK_RANGE_FORMATTER: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("M월 d일")
 
         private const val WEEK_OFFSET_PREV: Long = -1L
         private const val WEEK_OFFSET_NEXT: Long = 1L
