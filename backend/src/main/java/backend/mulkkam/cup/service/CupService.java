@@ -44,7 +44,10 @@ public class CupService {
     }
 
     @Transactional
-    public void delete(Long cupId, Long memberId) {
+    public void delete(
+            Long cupId,
+            Long memberId
+    ) {
         Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
 
