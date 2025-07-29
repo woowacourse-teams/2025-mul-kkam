@@ -1,5 +1,7 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
@@ -15,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -45,91 +46,79 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
                 dateRangeRequest.startDateTime(),
                 dateRangeRequest.endDateTime()
         );
 
-        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistories.stream()
+        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
-        List<IntakeHistorySummaryResponse> result = toIntakeHistorySummaryResponses(
+        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
                 historiesGroupedByDate,
                 member
         );
 
-        return result.stream()
+        return summaryOfIntakeHistories.stream()
                 .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
                 .toList();
     }
 
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+    }
+
     private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
-            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
+            Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate,
             Member member
     ) {
-        List<IntakeHistorySummaryResponse> result = new ArrayList<>();
-
-        for (LocalDate date : intakeHistoriesOfDate.keySet()) {
-            IntakeHistorySummaryResponse intakeHistorySummaryResponse = toIntakeHistorySummaryResponse(
-                    intakeHistoriesOfDate,
-                    member,
-                    date
-            );
-            result.add(intakeHistorySummaryResponse);
+        List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
+        for (Map.Entry<LocalDate, List<IntakeHistory>> entry : historiesGroupedByDate.entrySet()) {
+            intakeHistorySummaryResponses.add(toIntakeHistorySummaryResponse(entry.getValue(), entry.getKey()));
         }
-
-        return result;
+        return intakeHistorySummaryResponses;
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            Map<LocalDate, List<IntakeHistory>> intakeHistoriesOfDate,
-            Member member,
+            List<IntakeHistory> intakeHistoryOfDate,
             LocalDate date
     ) {
-
-        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(
-                intakeHistoriesOfDate.get(date));
+        List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
+        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
 
         Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
 
+        Amount targetAmountOfTheDay = sortedIntakeHistories.getLast().getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
-                member.getTargetAmount()
+                targetAmountOfTheDay
         );
 
         return new IntakeHistorySummaryResponse(
                 date,
-                member.getTargetAmount().value(),
+                targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
                 intakeHistoryResponses
         );
     }
 
+    private List<IntakeHistory> sortIntakeHistories(List<IntakeHistory> intakeHistories) {
+        return intakeHistories.stream()
+                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
+                .toList();
+    }
+
+    private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
+        return intakeHistories.stream()
+                .map(IntakeHistoryResponse::new).toList();
+    }
+
     private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
         return new Amount(intakeHistoryResponses.stream()
                 .mapToInt(IntakeHistoryResponse::intakeAmount)
                 .sum());
-    }
-
-    private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
-        List<IntakeHistory> sortedIntakeHistory = intakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
-                .toList();
-
-        return sortedIntakeHistory.stream()
-                .map(intakeHistory ->
-                        new IntakeHistoryResponse(
-                                intakeHistory.getId(),
-                                intakeHistory.getDateTime(),
-                                intakeHistory.getIntakeAmount().value()
-                        )
-                ).toList();
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("해당 회원을 찾을 수 없습니다."));
     }
 }

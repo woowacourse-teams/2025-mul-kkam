@@ -14,11 +14,14 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -36,7 +39,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder.builder()
                     .weight(null)
                     .gender(null)
                     .build();
@@ -77,7 +80,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
             memberRepository.save(member);

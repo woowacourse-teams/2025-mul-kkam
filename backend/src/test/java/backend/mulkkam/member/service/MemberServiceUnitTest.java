@@ -14,7 +14,7 @@ import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixture;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -23,6 +23,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
@@ -41,7 +44,7 @@ public class MemberServiceUnitTest {
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = new MemberFixture()
+            Member member = MemberFixtureBuilder.builder()
                     .weight(null)
                     .gender(null)
                     .build();
