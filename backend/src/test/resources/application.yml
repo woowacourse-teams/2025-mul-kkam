@@ -1,6 +1,3 @@
-server:
-  port: 8080
-
 spring:
   application:
     name: mulkkam
@@ -9,13 +6,9 @@ spring:
     driver-class-name: org.h2.Driver
   sql:
     init:
-      data-locations: classpath:/data.sql
+      mode: never
 
   jpa:
     hibernate:
       ddl-auto: create-drop
-    defer-datasource-initialization: true
-
-  h2:
-    console:
-      enabled: true
+    defer-datasource-initialization: false
