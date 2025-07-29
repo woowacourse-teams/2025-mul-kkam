@@ -221,9 +221,7 @@ class CupServiceUnitTest {
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
 
             String beforeCupNickName = "변경 전";
-            String afterCupNickName = "변경 후";
             Integer beforeCupAmount = 500;
-            Integer afterCupAmount = 1000;
 
             Cup cup = CupFixtureBuilder
                     .withMember(member)
@@ -232,6 +230,9 @@ class CupServiceUnitTest {
                     .build();
 
             given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
                     afterCupNickName,
@@ -259,17 +260,15 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder.builder().build();
 
             String beforeCupNickName1 = "변경 전1";
-            String beforeCupNickName2 = "변경 전2";
-            String afterCupNickName = "변경 후";
             Integer beforeCupAmount1 = 300;
-            Integer beforeCupAmount2 = 500;
-            Integer afterCupAmount = 1000;
-
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
                     .build();
+
+            String beforeCupNickName2 = "변경 전2";
+            Integer beforeCupAmount2 = 500;
 
             Cup cup2 = CupFixtureBuilder
                     .withMember(member)
@@ -279,6 +278,9 @@ class CupServiceUnitTest {
 
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
                     afterCupNickName,
@@ -315,15 +317,16 @@ class CupServiceUnitTest {
                     .build();
 
             String beforeCupNickName = "변경 전";
-            String afterCupNickName = "변경 후";
             Integer beforeCupAmount = 500;
-            Integer afterCupAmount = 1000;
 
             Cup cup = CupFixtureBuilder
                     .withMember(member1)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .build();
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
                     afterCupNickName,

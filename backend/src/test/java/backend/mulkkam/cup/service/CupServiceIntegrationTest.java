@@ -206,15 +206,16 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             String beforeCupNickName = "변경 전";
-            String afterCupNickName = "변경 후";
             Integer beforeCupAmount = 500;
-            Integer afterCupAmount = 1000;
 
             Cup cup = CupFixtureBuilder
                     .withMember(member)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .build();
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
 
             Cup savedCup = cupRepository.save(cup);
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
@@ -313,9 +314,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.saveAll(List.of(member1, member2));
 
             String beforeCupNickName = "변경 전";
-            String afterCupNickName = "변경 후";
+
             Integer beforeCupAmount = 500;
-            Integer afterCupAmount = 1000;
 
             Cup cup = CupFixtureBuilder
                     .withMember(member1)
@@ -324,6 +324,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             cupRepository.save(cup);
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
 
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
                     afterCupNickName,
