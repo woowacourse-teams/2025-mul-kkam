@@ -239,30 +239,29 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("수정할 컵만 변경된다")
+        @DisplayName("그 멤버의 수정할 컵만 변경된다")
         @Test
-        void success_onlyOneCupShouldBeModified() {
+        void success_whenCertainMembersCupChanges() {
             // given
             Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
             String beforeCupNickName1 = "변경 전1";
-            String beforeCupNickName2 = "변경 전2";
-            String afterCupNickName = "변경 후";
             Integer beforeCupAmount1 = 300;
-            Integer beforeCupAmount2 = 500;
-            Integer afterCupAmount = 1000;
 
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
-                    .cupAmount(new CupAmount(beforeCupAmount1))
                     .cupNickname(new CupNickname(beforeCupNickName1))
+                    .cupAmount(new CupAmount(beforeCupAmount1))
                     .build();
+
+            String beforeCupNickName2 = "변경 전2";
+            Integer beforeCupAmount2 = 500;
 
             Cup cup2 = CupFixtureBuilder
                     .withMember(member)
-                    .cupAmount(new CupAmount(beforeCupAmount2))
                     .cupNickname(new CupNickname(beforeCupNickName2))
+                    .cupAmount(new CupAmount(beforeCupAmount2))
                     .build();
 
             cupRepository.saveAll(List.of(
@@ -270,6 +269,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     cup2
             ));
 
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
                     afterCupNickName,
                     afterCupAmount
