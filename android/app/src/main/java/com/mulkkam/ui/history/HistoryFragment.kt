@@ -16,6 +16,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
 import com.mulkkam.domain.IntakeHistory
+import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
@@ -129,7 +130,7 @@ class HistoryFragment :
         }
     }
 
-    private fun bindWeeklyChartData(weeklyIntakeHistories: List<IntakeHistorySummary>) {
+    private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
         val pieCharts =
             listOf(
                 binding.includeChartMon,
@@ -142,15 +143,15 @@ class HistoryFragment :
             )
 
         pieCharts.forEachIndexed { index, chart ->
-            val intake = weeklyIntakeHistories[index]
+            val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
         }
 
         binding.tvWeekRange.text =
             getString(
                 R.string.history_week_range,
-                weeklyIntakeHistories.first().date.format(WEEK_RANGE_FORMATTER),
-                weeklyIntakeHistories.last().date.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.firstDay.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.lastDay.format(WEEK_RANGE_FORMATTER),
             )
     }
 

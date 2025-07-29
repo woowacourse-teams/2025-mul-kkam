@@ -5,16 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
-import com.mulkkam.domain.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
 class HistoryViewModel : ViewModel() {
-    private val _weeklyIntakeHistories = MutableLiveData<List<IntakeHistorySummary>>()
-    val weeklyIntakeHistories: LiveData<List<IntakeHistorySummary>> get() = _weeklyIntakeHistories
+    private val _weeklyIntakeHistories = MutableLiveData<IntakeHistorySummaries>()
+    val weeklyIntakeHistories: LiveData<IntakeHistorySummaries> get() = _weeklyIntakeHistories
 
     private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
@@ -43,15 +43,14 @@ class HistoryViewModel : ViewModel() {
 
     private fun updateIntakeSummary(
         weekDates: List<LocalDate>,
-        summaries: List<IntakeHistorySummary>,
+        summaries: IntakeHistorySummaries,
     ) {
         val completedWeekIntake =
             weekDates.map { date ->
-                summaries.find { it.date == date }
-                    ?: EMPTY_DAILY_WATER_INTAKE.copy(date = date)
+                summaries.getByDateOrEmpty(date)
             }
 
-        _weeklyIntakeHistories.value = completedWeekIntake
+        _weeklyIntakeHistories.value = IntakeHistorySummaries(completedWeekIntake)
         if (weekDates.contains(LocalDate.now())) {
             _dailyIntakeHistories.value = completedWeekIntake.find { it.date == LocalDate.now() }
         } else {
@@ -64,11 +63,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun moveWeek(offset: Long) {
-        val newBaseDate =
-            weeklyIntakeHistories.value
-                ?.first()
-                ?.date
-                ?.plusWeeks(offset) ?: LocalDate.now()
+        val newBaseDate = weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
         loadIntakeHistories(newBaseDate)
     }
 
