@@ -14,7 +14,7 @@ data class IntakeHistorySummaries(
         intakeHistorySummaries.find { it.date == targetDate }
             ?: EMPTY_DAILY_WATER_INTAKE.copy(date = targetDate)
 
-    fun getByIndex(index: Int): IntakeHistorySummary = intakeHistorySummaries[index]
+    fun getByIndex(index: Int): IntakeHistorySummary = intakeHistorySummaries.getOrNull(index) ?: EMPTY_DAILY_WATER_INTAKE
 
     fun getDateByWeekOffset(offset: Long): LocalDate = firstDay.plusWeeks(offset)
 }
