@@ -1,0 +1,52 @@
+name: PR Title Sync
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  sync-title:
+    name: sync-title
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Get Branch Name
+        id: get_branch
+        run: |
+          echo "::set-output name=branch_name::${{ github.event.pull_request.head.ref }}"
+
+      - name: Extract Issue Number
+        id: extract_issue
+        run: |
+          ISSUE_NUMBER=$(echo "${{ steps.get_branch.outputs.branch_name }}" | grep -oP '(?<=/)\d+(?=[^0-9]*$)')
+          echo "::set-output name=issue_number::$ISSUE_NUMBER"
+
+      - name: Get Issue Title
+        id: get_issue
+        if: steps.extract_issue.outputs.issue_number != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = process.env.ISSUE_NUMBER;
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+            core.setOutput('issue_title', issue.data.title);
+        env:
+          ISSUE_NUMBER: ${{ steps.extract_issue.outputs.issue_number }}
+
+
+      - name: Update Pull Request Title
+        if: steps.get_issue.outputs.issue_title != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              title: process.env.ISSUE_TITLE
+            });
+        env:
+          ISSUE_TITLE: ${{ steps.get_issue.outputs.issue_title }}
