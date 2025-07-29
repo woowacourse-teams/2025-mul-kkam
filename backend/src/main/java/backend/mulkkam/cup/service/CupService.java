@@ -1,17 +1,29 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.DUPLICATED_CUP_RANKS;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.FORBIDDEN;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
+import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,6 +51,59 @@ public class CupService {
         Cup createdCup = cupRepository.save(cup);
 
         return new CupResponse(createdCup);
+    }
+
+    @Transactional
+    public CupsRanksResponse updateRanks(
+            UpdateCupRanksRequest request,
+            Long memberId
+    ) {
+        Member member = getMember(memberId);
+
+        Map<Long, Integer> requestedCupRanks = request.cups()
+                .stream()
+                .collect(Collectors.toMap(CupRankDto::id, CupRankDto::rank));
+
+        validateDistinctRanks(requestedCupRanks);
+
+        List<Cup> cups = cupRepository.findAllById(requestedCupRanks.keySet());
+        validateExistence(requestedCupRanks.keySet(), cups);
+
+        validateOwnership(cups, member);
+
+        cups.forEach(cup ->
+                cup.modifyRank(new CupRank(requestedCupRanks.get(cup.getId())))
+        );
+
+        return new CupsRanksResponse(
+                cups.stream()
+                        .map(c -> new CupRankDto(c.getId(), c.getCupRank().value()))
+                        .toList()
+        );
+    }
+
+    private void validateDistinctRanks(Map<Long, Integer> ranks) {
+        Set<Integer> rankSet = new HashSet<>(ranks.values());
+        if (rankSet.size() != ranks.size()) {
+            throw new CommonException(DUPLICATED_CUP_RANKS);
+        }
+    }
+
+    private void validateExistence(Set<Long> cupIds, List<Cup> cups) {
+        Set<Long> foundIds = cups.stream()
+                .map(Cup::getId)
+                .collect(Collectors.toSet());
+        if (!foundIds.equals(cupIds)) {
+            throw new CommonException(NOT_FOUND_CUP);
+        }
+    }
+
+    private void validateOwnership(List<Cup> cups, Member member) {
+        boolean anyNotOwner = cups.stream()
+                .anyMatch(cup -> !cup.isOwnerOf(member));
+        if (anyNotOwner) {
+            throw new CommonException(FORBIDDEN);
+        }
     }
 
     public CupsResponse readCupsByMemberId(Long memberId) {

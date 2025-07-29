@@ -2,13 +2,12 @@ package backend.mulkkam.common.exception.errorCode;
 
 import org.springframework.http.HttpStatus;
 
-public enum NotFoundErrorCode implements ErrorCode {
+public enum ForbiddenErrorCode implements ErrorCode {
 
-    NOT_FOUND_MEMBER,
-    NOT_FOUND_CUP,
+    FORBIDDEN,
     ;
 
-    private static final HttpStatus status = HttpStatus.NOT_FOUND;
+    private static final HttpStatus status = HttpStatus.FORBIDDEN;
 
     @Override
     public HttpStatus getStatus() {
