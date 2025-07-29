@@ -41,7 +41,7 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntake(cupRank: Int) {
         // TODO: 현재 cupRank가 2부터 들어가있음
         val cup = cups?.cups?.find { it.rank == cupRank }
-        val cupAmount = cup?.cupAmount
+        val cupAmount = cup?.amount
 
         viewModelScope.launch {
             RepositoryInjection.intakeRepository.postIntakeHistory(
