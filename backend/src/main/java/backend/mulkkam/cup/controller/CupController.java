@@ -35,7 +35,7 @@ public class CupController {
         return ResponseEntity.ok().build();
     }
 
-    @PatchMapping("{cupId}")
+    @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
             @RequestBody CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest,
             @PathVariable Long cupId
