@@ -65,4 +65,12 @@ public class Cup {
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
     }
+
+    public boolean isOwnerOf(Member member) {
+        return this.member.getId().equals(member.getId());
+    }
+
+    public void modifyRank(CupRank rank) {
+        this.cupRank = rank;
+    }
 }
