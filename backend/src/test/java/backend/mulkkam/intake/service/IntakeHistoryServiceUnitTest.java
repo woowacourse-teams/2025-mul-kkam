@@ -5,6 +5,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
+import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -31,6 +32,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -72,6 +74,19 @@ class IntakeHistoryServiceUnitTest {
                     DATE_TIME,
                     intakeAmount
             );
+
+            LocalDate date = DATE_TIME.toLocalDate();
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .dateTime(DATE_TIME)
+                    .intakeAmount(new Amount(500))
+                    .build();
+
+            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                    memberId,
+                    date.atStartOfDay(),
+                    date.atTime(LocalTime.MAX)
+            )).willReturn(List.of(intakeHistory));
 
             // when
             intakeHistoryService.create(request, memberId);
@@ -123,6 +138,54 @@ class IntakeHistoryServiceUnitTest {
             assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
 
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
+        }
+
+        @DisplayName("이미 저장된 기록에 대해 정상적으로 달성률이 계산된다")
+        @Test
+        void success_alreadySavedIntakeHistories() {
+            // given
+            Long memberId = 1L;
+            Amount targetAmount = new Amount(1_000);
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(targetAmount)
+                    .build();
+            given(memberRepository.findById(memberId))
+                    .willReturn(Optional.of(member));
+
+            int intakeAmountToSave = 500;
+            IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
+                    DATE_TIME,
+                    intakeAmountToSave
+            );
+
+            LocalDate date = DATE_TIME.toLocalDate();
+            IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .dateTime(DATE_TIME)
+                    .intakeAmount(new Amount(500))
+                    .build();
+
+            IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .dateTime(DATE_TIME)
+                    .intakeAmount(new Amount(100))
+                    .build();
+
+            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                    memberId,
+                    date.atStartOfDay(),
+                    date.atTime(LocalTime.MAX)
+            )).willReturn(List.of(
+                    firstIntakeHistory,
+                    secondIntakeHistory
+            ));
+
+            // when
+            IntakeHistoryCreatedResponse actual = intakeHistoryService.create(request, memberId);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.achievementRate()).isCloseTo(60.0, within(0.01));
+                softly.assertThat(actual.comment()).contains("절반 이상 마셨어요");
+            });
         }
     }
 
