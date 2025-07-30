@@ -12,11 +12,10 @@ import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.service.vo.DateRange;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -76,13 +75,15 @@ public class IntakeHistoryService {
             LocalDate date,
             Long memberId
     ) {
-        LocalDateTime startAt = date.atStartOfDay();
-        LocalDateTime endAt = date.atTime(LocalTime.MAX);
+        DateRange dateRange = new DateRange(
+                date,
+                date
+        );
 
         return intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
-                startAt,
-                endAt
+                dateRange.startDateTime(),
+                dateRange.endDateTime()
         );
     }
 
@@ -96,11 +97,13 @@ public class IntakeHistoryService {
             DateRangeRequest dateRangeRequest,
             Long memberId
     ) {
+        DateRange dateRange = dateRangeRequest.toDateRange();
+
         Member member = getMember(memberId);
         List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                 memberId,
-                dateRangeRequest.startDateTime(),
-                dateRangeRequest.endDateTime()
+                dateRange.startDateTime(),
+                dateRange.endDateTime()
         );
 
         Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()

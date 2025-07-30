@@ -9,6 +9,7 @@ import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.service.vo.DateRange;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -259,10 +260,12 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
+            DateRange dateRange = dateRangeRequest.toDateRange();
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
+                    dateRange.startDateTime(),
+                    dateRange.endDateTime()
             )).willReturn(histories);
 
             // when
@@ -348,10 +351,12 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
+            DateRange dateRange = dateRangeRequest.toDateRange();
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
+                    dateRange.startDateTime(),
+                    dateRange.endDateTime()
             )).willReturn(histories);
 
             // when
@@ -380,9 +385,16 @@ class IntakeHistoryServiceUnitTest {
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.empty());
 
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    LocalDate.of(2025, 3, 25),
+                    LocalDate.of(2025, 3, 26)
+            );
+
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L));
+                    () -> intakeHistoryService.readSummaryOfIntakeHistories(
+                            dateRangeRequest, 1L
+                    ));
             assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
 
@@ -439,10 +451,12 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
+            DateRange dateRange = dateRangeRequest.toDateRange();
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
+                    dateRange.startDateTime(),
+                    dateRange.endDateTime()
             )).willReturn(histories);
 
             // when
@@ -512,10 +526,12 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
+            DateRange dateRange = dateRangeRequest.toDateRange();
+
             given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                     memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
+                    dateRange.startDateTime(),
+                    dateRange.endDateTime()
             )).willReturn(histories);
 
             // when

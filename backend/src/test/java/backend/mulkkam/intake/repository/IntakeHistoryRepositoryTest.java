@@ -2,6 +2,7 @@ package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.dto.DateRangeRequest;
+import backend.mulkkam.intake.service.vo.DateRange;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -186,11 +187,13 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
+                DateRange dateRange = dateRangeRequest.toDateRange();
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        dateRangeRequest.startDateTime(),
-                        dateRangeRequest.endDateTime()
+                        dateRange.startDateTime(),
+                        dateRange.endDateTime()
                 );
 
                 // then
@@ -245,11 +248,13 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
+                DateRange dateRange = dateRangeRequest.toDateRange();
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        dateRangeRequest.startDateTime(),
-                        dateRangeRequest.endDateTime()
+                        dateRange.startDateTime(),
+                        dateRange.endDateTime()
                 );
 
                 // then
@@ -299,11 +304,13 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
+                DateRange dateRange = dateRangeRequest.toDateRange();
+
                 // when
                 List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
                         savedMember.getId(),
-                        dateRangeRequest.startDateTime(),
-                        dateRangeRequest.endDateTime()
+                        dateRange.startDateTime(),
+                        dateRange.endDateTime()
                 );
 
                 // then
