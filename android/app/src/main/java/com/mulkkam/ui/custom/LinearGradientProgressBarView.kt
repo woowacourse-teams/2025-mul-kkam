@@ -10,6 +10,9 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
+import com.mulkkam.R
 
 class LinearGradientProgressBarView(
     context: Context,
@@ -23,6 +26,7 @@ class LinearGradientProgressBarView(
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
+            setBackgroundShadow()
         }
 
     private var linearGradient: LinearGradient? = null
@@ -38,6 +42,7 @@ class LinearGradientProgressBarView(
 
         val width = width.toFloat()
         val height = height.toFloat()
+        rect.set(CHART_RECT_START, CHART_RECT_START, width, height)
         canvas.drawRoundRect(rect, cornerRadius, cornerRadius, backgroundPaint)
 
         settingPaint()
@@ -77,6 +82,17 @@ class LinearGradientProgressBarView(
 
     fun setCornerRadius(radius: Float) {
         cornerRadius = radius * density
+    }
+
+    private fun setBackgroundShadow() {
+        val baseColor = ContextCompat.getColor(context, R.color.black)
+        val shadowColor = ColorUtils.setAlphaComponent(baseColor, (255 * 0.25).toInt())
+        backgroundPaint.setShadowLayer(
+            4 * density,
+            0 * density,
+            4 * density,
+            shadowColor,
+        )
     }
 
     companion object {
