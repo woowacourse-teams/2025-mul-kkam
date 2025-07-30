@@ -28,7 +28,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.flywaydb:flyway-core:10.12.0'
     implementation 'org.flywaydb:flyway-mysql:10.12.0'
-	implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.8.8'
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
 
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
