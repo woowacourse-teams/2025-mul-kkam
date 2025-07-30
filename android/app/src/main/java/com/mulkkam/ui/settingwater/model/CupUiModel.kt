@@ -1,6 +1,7 @@
 package com.mulkkam.ui.settingwater.model
 
 import android.os.Parcelable
+import com.mulkkam.domain.Cup
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -9,7 +10,7 @@ data class CupUiModel(
     val nickname: String,
     val amount: Int,
     val rank: Int,
-    val isRepresentative: Boolean = false,
+    val isRepresentative: Boolean,
 ) : Parcelable {
     companion object {
         val EMPTY_CUP_UI_MODEL =
@@ -22,3 +23,12 @@ data class CupUiModel(
             )
     }
 }
+
+fun Cup.toUi(): CupUiModel =
+    CupUiModel(
+        id = id,
+        nickname = nickname,
+        amount = amount,
+        rank = rank,
+        isRepresentative = isRepresentative,
+    )
