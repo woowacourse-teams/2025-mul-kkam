@@ -26,7 +26,14 @@ class LinearGradientProgressBarView(
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.FILL
-            setBackgroundShadow()
+            val baseColor = ContextCompat.getColor(context, R.color.black)
+            val shadowColor = ColorUtils.setAlphaComponent(baseColor, (255 * 0.25).toInt())
+            setShadowLayer(
+                4 * density,
+                0 * density,
+                4 * density,
+                shadowColor,
+            )
         }
 
     private var linearGradient: LinearGradient? = null
@@ -82,17 +89,6 @@ class LinearGradientProgressBarView(
 
     fun setCornerRadius(radius: Float) {
         cornerRadius = radius * density
-    }
-
-    private fun setBackgroundShadow() {
-        val baseColor = ContextCompat.getColor(context, R.color.black)
-        val shadowColor = ColorUtils.setAlphaComponent(baseColor, (255 * 0.25).toInt())
-        backgroundPaint.setShadowLayer(
-            4 * density,
-            0 * density,
-            4 * density,
-            shadowColor,
-        )
     }
 
     companion object {
