@@ -31,9 +31,9 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberId(memberId);
+        final int cupCount = cupRepository.countByMemberId(memberId);
 
-        CupRank nextCupRank = new CupRank(cups.size() + 1);
+        CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
                 nextCupRank

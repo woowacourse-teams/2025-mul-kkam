@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface CupRepository extends JpaRepository<Cup, Long> {
 
+    int countByMemberId(Long memberId);
+
     Optional<Cup> findByIdAndMemberId(Long id, Long memberId);
 
     List<Cup> findAllByMemberId(Long memberId);
