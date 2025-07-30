@@ -5,6 +5,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
+import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -64,7 +65,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
+            intakeHistoryService.create(
+                    intakeHistoryCreateRequest,
+                    member.getId()
+            );
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
@@ -107,6 +111,85 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             CommonException ex = assertThrows(CommonException.class,
                     () -> intakeHistoryService.create(intakeHistoryCreateRequest, 1L));
             assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
+        }
+
+        @DisplayName("하나의 기록만 존재하는 경우 반환값으로 올바른 달성률과 코멘트를 반환한다")
+        @Test
+        void success_singleIntakeHistory() {
+            // given
+            Amount targetAmount = new Amount(1_000);
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(targetAmount)
+                    .build();
+            memberRepository.save(member);
+
+            int intakeAmount = 500;
+            IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
+                    DATE_TIME,
+                    intakeAmount
+            );
+
+            // when
+            IntakeHistoryCreatedResponse actual = intakeHistoryService.create(
+                    intakeHistoryCreateRequest,
+                    member.getId()
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.achievementRate()).isCloseTo(50.0, within(0.01));
+                softly.assertThat(actual.comment()).contains("절반 이상 마셨어요");
+            });
+        }
+
+        @DisplayName("이미 저장된 기록만 존재하는 경우 반환값으로 올바른 달성률과 코멘트를 반환한다")
+        @Test
+        void success_withAlreadySavedHistories() {
+            // given
+            Amount targetAmount = new Amount(1_000);
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(targetAmount)
+                    .build();
+            memberRepository.save(member);
+
+            IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .intakeAmount(new Amount(100))
+                    .dateTime(LocalDateTime.of(
+                            DATE_TIME.toLocalDate(),
+                            LocalTime.of(10, 30)
+                    ))
+                    .build();
+
+            IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .intakeAmount(new Amount(100))
+                    .dateTime(LocalDateTime.of(
+                            DATE_TIME.toLocalDate(),
+                            LocalTime.of(11, 30)
+                    ))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstIntakeHistory,
+                    secondIntakeHistory
+            ));
+
+            int intakeAmount = 100;
+            IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
+                    DATE_TIME,
+                    intakeAmount
+            );
+
+            // when
+            IntakeHistoryCreatedResponse actual = intakeHistoryService.create(
+                    intakeHistoryCreateRequest,
+                    member.getId()
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.achievementRate()).isCloseTo(30.0, within(0.01));
+                softly.assertThat(actual.comment()).contains("천리길도 한 걸음부터");
+            });
         }
     }
 
