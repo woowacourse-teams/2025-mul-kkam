@@ -2,17 +2,21 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
+import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -31,7 +35,7 @@ public class IntakeHistoryService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void create(
+    public IntakeHistoryCreatedResponse create(
             IntakeHistoryCreateRequest intakeHistoryCreateRequest,
             Long memberId
     ) {
@@ -39,6 +43,53 @@ public class IntakeHistoryService {
 
         IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
         intakeHistoryRepository.save(intakeHistory);
+
+        List<IntakeHistory> intakeHistoriesOfDate = findIntakeHistoriesOfDate(
+                intakeHistoryCreateRequest.dateTime().toLocalDate(),
+                memberId
+        );
+
+        AchievementRate achievementRate = calculateAchievementRate(
+                intakeHistoriesOfDate,
+                member.getTargetAmount()
+        );
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
+
+        return new IntakeHistoryCreatedResponse(
+                achievementRate.value(),
+                commentByAchievementRate
+        );
+    }
+
+    private AchievementRate calculateAchievementRate(
+            List<IntakeHistory> intakeHistoriesOfDate,
+            Amount targetIntakeAmount
+    ) {
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoriesOfDate);
+        return new AchievementRate(
+                totalIntakeAmount,
+                targetIntakeAmount
+        );
+    }
+
+    private List<IntakeHistory> findIntakeHistoriesOfDate(
+            LocalDate date,
+            Long memberId
+    ) {
+        LocalDateTime startAt = date.atStartOfDay();
+        LocalDateTime endAt = date.atTime(LocalTime.MAX);
+
+        return intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                memberId,
+                startAt,
+                endAt
+        );
+    }
+
+    private Amount calculateTotalIntakeAmount(List<IntakeHistory> intakeHistories) {
+        return new Amount(intakeHistories.stream()
+                .mapToInt(intakeHistory -> intakeHistory.getIntakeAmount().value())
+                .sum());
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
@@ -88,7 +139,7 @@ public class IntakeHistoryService {
         List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
         List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeHistories);
 
         Amount targetAmountOfTheDay = sortedIntakeHistories.getLast().getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
@@ -114,11 +165,5 @@ public class IntakeHistoryService {
     private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
         return intakeHistories.stream()
                 .map(IntakeHistoryResponse::new).toList();
-    }
-
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
-        return new Amount(intakeHistoryResponses.stream()
-                .mapToInt(IntakeHistoryResponse::intakeAmount)
-                .sum());
     }
 }
