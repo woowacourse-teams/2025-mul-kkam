@@ -39,7 +39,7 @@ public class MemberService {
 
     public MemberNicknameResponse getNickname(Long memberId) {
         Member member = getById(memberId);
-        return new MemberNicknameResponse(member);
+        return new MemberNicknameResponse(member.getMemberNickname());
     }
 
     private Member getById(Long id) {

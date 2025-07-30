@@ -1,10 +1,10 @@
 package backend.mulkkam.member.dto.response;
 
-import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 
 public record MemberNicknameResponse(String memberNickname) {
 
-    public MemberNicknameResponse(Member member) {
-        this(member.getMemberNickname().value());
+    public MemberNicknameResponse(MemberNickname memberNickname) {
+        this(memberNickname.value());
     }
 }
