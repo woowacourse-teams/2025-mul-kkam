@@ -34,6 +34,6 @@ public class CupController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
         cupService.delete(id, 1L);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }
