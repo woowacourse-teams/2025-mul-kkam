@@ -60,6 +60,37 @@ public class IntakeHistoryService {
         );
     }
 
+    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
+            DateRangeRequest dateRangeRequest,
+            Long memberId
+    ) {
+        DateRange dateRange = dateRangeRequest.toDateRange();
+
+        Member member = getMember(memberId);
+        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                memberId,
+                dateRange.startDateTime(),
+                dateRange.endDateTime()
+        );
+
+        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
+                .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
+
+        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
+                historiesGroupedByDate,
+                member
+        );
+
+        return summaryOfIntakeHistories.stream()
+                .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
+                .toList();
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+    }
+
     private AchievementRate calculateAchievementRate(
             List<IntakeHistory> intakeHistoriesOfDate,
             Amount targetIntakeAmount
@@ -91,37 +122,6 @@ public class IntakeHistoryService {
         return new Amount(intakeHistories.stream()
                 .mapToInt(intakeHistory -> intakeHistory.getIntakeAmount().value())
                 .sum());
-    }
-
-    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
-            DateRangeRequest dateRangeRequest,
-            Long memberId
-    ) {
-        DateRange dateRange = dateRangeRequest.toDateRange();
-
-        Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                memberId,
-                dateRange.startDateTime(),
-                dateRange.endDateTime()
-        );
-
-        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
-                .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
-
-        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
-                historiesGroupedByDate,
-                member
-        );
-
-        return summaryOfIntakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
-                .toList();
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
     private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
