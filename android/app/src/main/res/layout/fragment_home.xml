@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clipChildren="false"
     tools:context=".ui.home.HomeFragment">
 
     <TextView
@@ -41,13 +42,14 @@
         app:layout_constraintTop_toBottomOf="@id/view_home_underline" />
 
     <TextView
+        android:id="@+id/tv_streak"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="12dp"
         android:text="@string/home_water_streak_message"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/pb_home_water_progress"
         app:layout_constraintStart_toStartOf="@id/pb_home_water_progress"
+        app:layout_constraintTop_toBottomOf="@id/tv_home_sub_label"
         tools:text="환노님은 물 마시기 120일 째" />
 
     <com.mulkkam.ui.custom.LinearGradientProgressBarView
@@ -55,10 +57,10 @@
         android:layout_width="match_parent"
         android:layout_height="16dp"
         android:layout_marginHorizontal="36dp"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="12dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_home_sub_label" />
+        app:layout_constraintTop_toBottomOf="@id/tv_streak" />
 
     <TextView
         android:id="@+id/tv_daily_intake_summary"
@@ -69,6 +71,7 @@
         app:layout_constraintEnd_toEndOf="@id/pb_home_water_progress"
         app:layout_constraintTop_toBottomOf="@id/pb_home_water_progress"
         tools:text="100ml / 1,200ml" />
+
 
     <ImageView
         android:id="@+id/iv_home_notification"
