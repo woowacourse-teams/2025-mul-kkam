@@ -3,10 +3,9 @@ package backend.mulkkam.member.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
-import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -35,7 +34,7 @@ public class MemberService {
             Long memberId
     ) {
         Member member = getById(memberId);
-        member.updateNickname(new MemberNickname(memberNicknameModifyRequest.memberNickname()));
+        member.updateNickname(memberNicknameModifyRequest.toMemberNickname());
     }
 
     public MemberNicknameResponse getNickname(Long memberId) {
