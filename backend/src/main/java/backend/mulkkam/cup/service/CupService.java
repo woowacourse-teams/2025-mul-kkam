@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -26,6 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CupService {
 
+    private static final int MAX_CUP_COUNT = 3;
+
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
@@ -35,15 +38,36 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
-        CupRank currentCupRank = new CupRank(cups.size());
+        final int cupCount = cupRepository.countByMemberId(memberId);
+
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
+
+        CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
-                currentCupRank.nextRank()
+                nextCupRank
         );
         Cup createdCup = cupRepository.save(cup);
 
         return new CupResponse(createdCup);
+    }
+
+    @Transactional
+    public void delete(
+            Long cupId,
+            Long memberId
+    ) {
+        Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
+
+        cupRepository.delete(targetCup);
+
+        cupRepository.findAllByMemberId(memberId)
+                .stream()
+                .filter(cup -> cup.isLowerPriorityThan(targetCup))
+                .forEach(Cup::promoteRank);
     }
 
     public CupsResponse readCupsByMemberId(Long memberId) {

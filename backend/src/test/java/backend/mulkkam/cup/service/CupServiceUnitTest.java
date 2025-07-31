@@ -1,7 +1,7 @@
 package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -25,8 +25,6 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -34,6 +32,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class CupServiceUnitTest {
@@ -154,12 +155,12 @@ class CupServiceUnitTest {
             );
 
             // when
-            when(cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId())).thenReturn(cups);
+            when(cupRepository.countByMemberId(member.getId())).thenReturn(cups.size());
 
             // then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
         }
     }
 
@@ -209,6 +210,58 @@ class CupServiceUnitTest {
         }
     }
 
+    @DisplayName("컵을 삭제할 때")
+    @Nested
+    class Delete {
+
+        private final Member member = MemberFixtureBuilder.builder().build();
+        private final Cup firstCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(1))
+                .build();
+        private final Cup secondCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(2))
+                .build();
+        private final Cup thirdCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(3))
+                .build();
+
+        @DisplayName("우선순위가 더 낮은 컵들의 우선순위가 한 단계씩 승격된다.")
+        @Test
+        void success_withLowerPriorityCups() {
+            // given
+            when(cupRepository.findByIdAndMemberId(firstCup.getId(), member.getId())).thenReturn(Optional.of(firstCup));
+            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(secondCup, thirdCup));
+
+            // when
+            cupService.delete(firstCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(secondCup.getCupRank()).isEqualTo(new CupRank(1));
+                softly.assertThat(thirdCup.getCupRank()).isEqualTo(new CupRank(2));
+            });
+        }
+
+        @DisplayName("우선순위가 더 낮은 컵이 없는 경우, 그 어떤 컵의 우선순위도 승격되지 않는다.")
+        @Test
+        void success_withoutLowerPriorityCups() {
+            // given
+            when(cupRepository.findByIdAndMemberId(thirdCup.getId(), member.getId())).thenReturn(Optional.of(thirdCup));
+            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(firstCup, secondCup));
+
+            // when
+            cupService.delete(thirdCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(firstCup.getCupRank()).isEqualTo(new CupRank(1));
+                softly.assertThat(secondCup.getCupRank()).isEqualTo(new CupRank(2));
+            });
+        }
+    }
     @DisplayName("컵을 수정할 때에")
     @Nested
     class Modify {
