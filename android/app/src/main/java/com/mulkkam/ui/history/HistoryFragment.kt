@@ -129,6 +129,10 @@ class HistoryFragment :
             updateIntakeHistories(dailyIntakeHistories.intakeHistories)
             updateWeeklyChartHighlight(dailyIntakeHistories.dayOfWeekIndex())
         }
+
+        viewModel.isCurrentWeek.observe(viewLifecycleOwner) { isNextWeekAvailable ->
+            binding.ibWeekNext.isVisible = isNextWeekAvailable
+        }
     }
 
     private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
@@ -237,7 +241,8 @@ class HistoryFragment :
     }
 
     private fun applyChartHighlight(chart: HistoryWaterIntakeChartBinding) {
-        chart.root.background = getDrawable(requireContext(), R.drawable.bg_common_rectangle_stroke_4dp)
+        chart.root.background =
+            getDrawable(requireContext(), R.drawable.bg_common_rectangle_stroke_4dp)
         ViewCompat.setBackgroundTintList(chart.root, null)
     }
 

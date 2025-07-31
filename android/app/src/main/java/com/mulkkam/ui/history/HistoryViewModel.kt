@@ -3,6 +3,7 @@ package com.mulkkam.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.IntakeHistorySummaries
@@ -18,6 +19,11 @@ class HistoryViewModel : ViewModel() {
 
     private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
+
+    val isCurrentWeek: LiveData<Boolean> =
+        weeklyIntakeHistories.map { intakeHistories ->
+            intakeHistories.lastDay < LocalDate.now()
+        }
 
     init {
         loadIntakeHistories()
@@ -38,7 +44,11 @@ class HistoryViewModel : ViewModel() {
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
         val monday = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
+        val today = LocalDate.now()
+
+        return (0 until WEEK_LENGTH)
+            .map { monday.plusDays(it.toLong()) }
+            .takeWhile { it <= today }
     }
 
     private fun updateIntakeSummary(
