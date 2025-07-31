@@ -65,10 +65,6 @@ public class Cup {
         this.cupRank = cupRank;
     }
 
-    public boolean isOwnerOf(Member member) {
-        return this.member.getId().equals(member.getId());
-    }
-
     public boolean isLowerPriorityThan(Cup other) {
         return cupRank.hasLowerPriorityThan(other.getCupRank());
     }
