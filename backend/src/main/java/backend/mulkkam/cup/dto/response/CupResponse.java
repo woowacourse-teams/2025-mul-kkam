@@ -8,7 +8,8 @@ public record CupResponse(
         String cupNickname,
         Integer cupAmount,
         Integer cupRank,
-        IntakeType intakeType
+        IntakeType intakeType,
+        String emoji
 ) {
 
     public CupResponse(Cup cup) {
@@ -17,7 +18,8 @@ public record CupResponse(
                 cup.getNickname().value(),
                 cup.getCupAmount().value(),
                 cup.getCupRank().value(),
-                cup.getIntakeType()
+                cup.getIntakeType(),
+                cup.getEmoji()
         );
     }
 }
