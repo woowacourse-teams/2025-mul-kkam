@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.domain;
 
-import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.vo.Amount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -26,7 +25,6 @@ public class Notification {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private IntakeType intakeType;
     private NotificationType notificationType;
 
     @Column(nullable = false)
@@ -38,9 +36,7 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "recommended_amount", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "recommended_amount"))
     private Amount recommendedAmount;
 }
