@@ -4,7 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 
 import backend.mulkkam.common.exception.CommonException;
 
-public record CupRank(Integer value) implements Comparable<CupRank> {
+public record CupRank(Integer value) {
 
     private static final int MAX = 3;
     private static final int MIN = 1;
@@ -23,8 +23,7 @@ public record CupRank(Integer value) implements Comparable<CupRank> {
         return new CupRank(value + 1);
     }
 
-    @Override
-    public int compareTo(CupRank other) {
-        return value.compareTo(other.value);
+    public boolean hasLowerPriorityThan(CupRank other) {
+        return value > other.value;
     }
 }

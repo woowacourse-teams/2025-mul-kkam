@@ -66,7 +66,7 @@ public class Cup {
     }
 
     public boolean isLowerPriorityThan(Cup other) {
-        return cupRank.compareTo(other.getCupRank()) > 0;
+        return cupRank.hasLowerPriorityThan(other.getCupRank());
     }
 
     public void promoteRank() {
