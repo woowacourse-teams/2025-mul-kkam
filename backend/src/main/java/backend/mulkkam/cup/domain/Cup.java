@@ -53,6 +53,11 @@ public class Cup {
     )
     private CupRank cupRank;
 
+    @Column(nullable = false)
+    private IntakeType intakeType;
+
+    private String emoji;
+
     public Cup(
             Member member,
             CupNickname nickname,
