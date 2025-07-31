@@ -2,13 +2,18 @@ package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.FORBIDDEN;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupAmount;
+import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
+import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
@@ -33,6 +38,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CupService {
 
+    private static final int MAX_CUP_COUNT = 3;
+
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
@@ -42,11 +49,16 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
-        CupRank currentCupRank = new CupRank(cups.size());
+        final int cupCount = cupRepository.countByMemberId(memberId);
+
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
+
+        CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
-                currentCupRank.nextRank()
+                nextCupRank
         );
         Cup createdCup = cupRepository.save(cup);
 
@@ -105,9 +117,53 @@ public class CupService {
         }
     }
 
+    @Transactional
+    public void delete(
+            Long cupId,
+            Long memberId
+    ) {
+        Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
+
+        cupRepository.delete(targetCup);
+
+        cupRepository.findAllByMemberId(memberId)
+                .stream()
+                .filter(cup -> cup.isLowerPriorityThan(targetCup))
+                .forEach(Cup::promoteRank);
+    }
+
     public CupsResponse readCupsByMemberId(Long memberId) {
         List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
         return new CupsResponse(cups);
+    }
+
+    @Transactional
+    public void modifyNicknameAndAmount(
+            Long id,
+            Long memberId,
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest
+    ) {
+        Member member = getMember(memberId);
+        Cup cup = getCup(id);
+
+        validateCupOwnership(member, cup);
+        cup.modifyNicknameAndAmount(
+                new CupNickname(cupNicknameAndAmountModifyRequest.cupNickname()),
+                new CupAmount(cupNicknameAndAmountModifyRequest.cupAmount())
+        );
+    }
+
+    private void validateCupOwnership(Member member, Cup cup) {
+        if (member.equals(cup.getMember())) {
+            return;
+        }
+        throw new CommonException(NOT_PERMITTED_FOR_CUP);
+    }
+
+    private Cup getCup(final Long id) {
+        return cupRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
     }
 
     private Member getMember(Long memberId) {
