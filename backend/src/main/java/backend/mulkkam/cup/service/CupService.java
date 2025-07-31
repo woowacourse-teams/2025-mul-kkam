@@ -49,20 +49,19 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        final int cupCount = cupRepository.countByMemberId(memberId);
 
-        if (cupCount >= MAX_CUP_COUNT) {
-            throw new CommonException(INVALID_CUP_COUNT);
-        }
-
-        CupRank nextCupRank = new CupRank(cupCount + 1);
-        Cup cup = cupRegisterRequest.toCup(
-                member,
-                nextCupRank
-        );
+        Cup cup = cupRegisterRequest.toCup(member, calculateNextCupRank(member));
         Cup createdCup = cupRepository.save(cup);
 
         return new CupResponse(createdCup);
+    }
+
+    private CupRank calculateNextCupRank(Member member) {
+        final int cupCount = cupRepository.countByMemberId(member.getId());
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
+        return new CupRank(cupCount + 1);
     }
 
     @Transactional
