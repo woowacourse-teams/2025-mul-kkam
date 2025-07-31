@@ -3,20 +3,20 @@ package backend.mulkkam.cup.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.RegisterCupRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -58,9 +58,11 @@ class CupServiceUnitTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+            IntakeType intakeType = IntakeType.WATER;
+            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    intakeType
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -75,7 +77,7 @@ class CupServiceUnitTest {
 
             // when
             CupResponse cupResponse = cupService.create(
-                    cupRegisterRequest,
+                    registerCupRequest,
                     member.getId()
             );
 
@@ -90,45 +92,54 @@ class CupServiceUnitTest {
         @Test
         void error_amountLessThan0() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
                     "스타벅스",
-                    -100
+                    -100,
+                    IntakeType.WATER
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+            assertThatThrownBy(() -> cupService.create(
+                    registerCupRequest,
+                    member.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_CUP_AMOUNT.name());
         }
 
         @DisplayName("용량이 0이면 예외가 발생한다")
         @Test
         void error_amountIsEqualTo0() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
                     "스타벅스",
-                    0
+                    0,
+                    IntakeType.WATER
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
                     .willReturn(Optional.of(member));
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+            assertThatThrownBy(() -> cupService.create(
+                    registerCupRequest,
+                    member.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_CUP_AMOUNT.name());
         }
 
         @DisplayName("컵이 3개 저장되어 있을 때 예외가 발생한다")
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
                     "스타벅스",
-                    500
+                    500,
+                    IntakeType.WATER
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -157,9 +168,12 @@ class CupServiceUnitTest {
             when(cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId())).thenReturn(cups);
 
             // then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+            assertThatThrownBy(() -> cupService.create(
+                    registerCupRequest,
+                    member.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_CUP_SIZE.name());
         }
     }
 
@@ -213,7 +227,7 @@ class CupServiceUnitTest {
     @Nested
     class Modify {
 
-        @DisplayName("컵 이름 및 용량이 수정된다")
+        @DisplayName("컵 이름 및 용량 및 타입이 수정된다")
         @Test
         void success_withValidData() {
             // given
@@ -222,34 +236,39 @@ class CupServiceUnitTest {
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
+            IntakeType beforeIntakeType = IntakeType.WATER;
 
             Cup cup = CupFixtureBuilder
                     .withMember(member)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
+                    .intakeType(beforeIntakeType)
                     .build();
 
             given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
+            IntakeType afterIntakeType = IntakeType.COFFEE;
 
-            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
-                    afterCupAmount
+                    afterCupAmount,
+                    afterIntakeType
             );
 
             // when
-            cupService.modifyNicknameAndAmount(
+            cupService.update(
                     cup.getId(),
                     member.getId(),
-                    cupNicknameAndAmountModifyRequest
+                    updateCupRequest
             );
 
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cup.getCupAmount().value()).isEqualTo(afterCupAmount);
                 softly.assertThat(cup.getNickname().value()).isEqualTo(afterCupNickName);
+                softly.assertThat(cup.getIntakeType()).isEqualTo(afterIntakeType);
             });
         }
 
@@ -261,19 +280,24 @@ class CupServiceUnitTest {
 
             String beforeCupNickName1 = "변경 전1";
             Integer beforeCupAmount1 = 300;
+            IntakeType beforeIntakeType1 = IntakeType.COFFEE;
+
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
+                    .intakeType(beforeIntakeType1)
                     .build();
 
             String beforeCupNickName2 = "변경 전2";
             Integer beforeCupAmount2 = 500;
+            IntakeType beforeIntakeType2 = IntakeType.COFFEE;
 
             Cup cup2 = CupFixtureBuilder
                     .withMember(member)
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
+                    .intakeType(beforeIntakeType2)
                     .build();
 
             given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
@@ -281,17 +305,19 @@ class CupServiceUnitTest {
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
+            IntakeType afterIntakeType = IntakeType.COFFEE;
 
-            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
-                    afterCupAmount
+                    afterCupAmount,
+                    afterIntakeType
             );
 
             // when
-            cupService.modifyNicknameAndAmount(
+            cupService.update(
                     cup1.getId(),
                     member.getId(),
-                    cupNicknameAndAmountModifyRequest
+                    updateCupRequest
             );
 
             // then
@@ -328,9 +354,10 @@ class CupServiceUnitTest {
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
 
-            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
-                    afterCupAmount
+                    afterCupAmount,
+                    IntakeType.WATER
             );
             given(memberRepository.findById(member2.getId()))
                     .willReturn(Optional.of(member2));
@@ -338,13 +365,13 @@ class CupServiceUnitTest {
                     .willReturn(Optional.of(cup));
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.modifyNicknameAndAmount(
-                            cup.getId(),
-                            member2.getId(),
-                            cupNicknameAndAmountModifyRequest)
-            );
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
+            assertThatThrownBy(() -> cupService.update(
+                    cup.getId(),
+                    member2.getId(),
+                    updateCupRequest
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }
 }
