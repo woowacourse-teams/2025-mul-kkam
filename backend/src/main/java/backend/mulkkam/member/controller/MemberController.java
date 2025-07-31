@@ -20,7 +20,8 @@ public class MemberController {
 
     @PostMapping("/physical-attributes")
     public ResponseEntity<Void> modifyPhysicalAttributes(
-            @RequestBody PhysicalAttributesModifyRequest physicalAttributesModifyRequest) {
+            @RequestBody PhysicalAttributesModifyRequest physicalAttributesModifyRequest
+    ) {
         memberService.modifyPhysicalAttributes(
                 physicalAttributesModifyRequest,
                 1L
