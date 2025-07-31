@@ -10,6 +10,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,12 +34,8 @@ public class Member {
     private PhysicalAttributes physicalAttributes;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
-
-    public void updateTargetAmount(Amount newTargetAmount) {
-        this.targetAmount = newTargetAmount;
-    }
 
     public Member(
             MemberNickname memberNickname,
@@ -57,11 +54,38 @@ public class Member {
         return physicalAttributes;
     }
 
+    public void updateNickname(MemberNickname memberNickname) {
+        this.memberNickname = memberNickname;
+    }
+
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
         this.physicalAttributes = physicalAttributes;
     }
 
+    public void updateTargetAmount(Amount newTargetAmount) {
+        this.targetAmount = newTargetAmount;
+    }
+
     public boolean isSameNickname(MemberNickname memberNickname) {
         return this.memberNickname.equals(memberNickname);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof final Member other)) {
+            return false;
+        }
+        if (this.id == null || other.id == null) {
+            return false;
+        }
+        return this.id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

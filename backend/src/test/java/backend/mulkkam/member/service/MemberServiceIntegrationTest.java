@@ -2,6 +2,7 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -10,7 +11,9 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
-import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -29,13 +32,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("멤버의 신체적인 속성 값을 수정할 때")
     @Nested
-    class modifyPhysicalAttributes {
+    class ModifyPhysicalAttributes {
 
         @DisplayName("올바른 데이터로 필드를 수정할 시 값이 반영된다")
         @Test
         void success_validDataAllArgs() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .weight(null)
                     .gender(null)
                     .build();
@@ -66,9 +70,34 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("멤버의 닉네임을 수정할 때")
+    @DisplayName("멤버의 닉네임을 수정하려고 할 때에")
     @Nested
     class ModifyNickname {
+
+        @DisplayName("올바른 닉네임으로 필드를 수정할 시 값이 변경된다")
+        @Test
+        void success_validNickname() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("msv0b"))
+                    .build();
+            memberRepository.save(member);
+
+            String modifyNickname = "msv0a";
+            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
+
+            // when
+            memberService.modifyNickname(
+                    memberNicknameModifyRequest,
+                    member.getId()
+            );
+
+            // then
+            Member result = memberRepository.findById(member.getId()).orElseThrow();
+
+            assertThat(result.getMemberNickname().value()).isEqualTo(modifyNickname);
+        }
 
         @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
         @Test
@@ -135,6 +164,29 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 조회하려고 할 때")
+    @Nested
+    class GetNickname {
+
+        @DisplayName("멤버의 닉네임이 올바르게 조회된다")
+        @Test
+        void success_validMemberId() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            String expected = member.getMemberNickname().value();
+
+            // when
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member.getId());
+
+            // then
+            assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
         }
     }
 }

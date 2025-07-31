@@ -1,6 +1,5 @@
 package backend.mulkkam.cup.domain;
 
-
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -64,5 +63,25 @@ public class Cup {
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
+    }
+
+    public boolean isLowerPriorityThan(Cup other) {
+        return cupRank.hasLowerPriorityThan(other.getCupRank());
+    }
+
+    public void promoteRank() {
+        cupRank = cupRank.promote();
+    }
+
+    public void demoteRank() {
+        cupRank = cupRank.demote();
+    }
+
+    public void modifyNicknameAndAmount(
+            CupNickname nickname,
+            CupAmount cupAmount
+    ) {
+        this.nickname = nickname;
+        this.cupAmount = cupAmount;
     }
 }
