@@ -1,5 +1,7 @@
 package backend.mulkkam.member.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
@@ -28,6 +30,6 @@ public class MemberService {
 
     private Member getById(Long id) {
         return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
