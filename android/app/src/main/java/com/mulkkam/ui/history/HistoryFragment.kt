@@ -164,6 +164,9 @@ class HistoryFragment :
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         chart.apply {
+            root.setOnClickListener {
+                viewModel.updateDailyIntakeHistories(intakeHistorySummary)
+            }
             tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
             tvDayOfWeek.text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
@@ -174,10 +177,6 @@ class HistoryFragment :
                     intakeHistorySummary.date.monthValue,
                     intakeHistorySummary.date.dayOfMonth,
                 )
-            // TODO: 클릭리스너 위치 변경 필요
-            pcWaterIntake.setOnClickListener {
-                viewModel.updateDailyIntakeHistories(intakeHistorySummary)
-            }
             pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
         }
     }
