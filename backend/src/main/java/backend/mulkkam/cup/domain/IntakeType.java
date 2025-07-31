@@ -6,6 +6,7 @@ import java.util.Arrays;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 
 public enum IntakeType {
+
     WATER,
     COFFEE,
     ;
