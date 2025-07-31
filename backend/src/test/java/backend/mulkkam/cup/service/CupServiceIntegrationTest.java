@@ -1,14 +1,8 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -23,13 +17,19 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -61,7 +61,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer cupAmount = 500;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    "WATER",
+                    "emoji"
             );
 
             // when
@@ -82,9 +84,30 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_createAfterDeleted() {
             // given
-            Cup firstCup = new Cup(member, new CupNickname("first"), new CupAmount(100), new CupRank(1));
-            Cup secondCup = new Cup(member, new CupNickname("second"), new CupAmount(100), new CupRank(2));
-            Cup thirdCup = new Cup(member, new CupNickname("third"), new CupAmount(100), new CupRank(3));
+            Cup firstCup = new Cup(
+                    member,
+                    new CupNickname("first"),
+                    new CupAmount(100),
+                    new CupRank(1),
+                    IntakeType.WATER,
+                    "emoji"
+            );
+            Cup secondCup = new Cup(
+                    member,
+                    new CupNickname("second"),
+                    new CupAmount(100),
+                    new CupRank(2),
+                    IntakeType.WATER,
+                    "emoji"
+            );
+            Cup thirdCup = new Cup(
+                    member,
+                    new CupNickname("third"),
+                    new CupAmount(100),
+                    new CupRank(3),
+                    IntakeType.WATER,
+                    "emoji"
+            );
 
             cupRepository.save(firstCup);
             cupRepository.save(secondCup);
@@ -92,7 +115,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupService.delete(thirdCup.getId(), member.getId());
 
-            CupRegisterRequest request = new CupRegisterRequest("new", 100);
+            CupRegisterRequest request = new CupRegisterRequest(
+                    "new",
+                    100,
+                    "WATER",
+                    "emoji"
+            );
 
             // when
             cupService.create(request, member.getId());
@@ -113,7 +141,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer cupAmount = -100;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    "WATER",
+                    "emoji"
             );
 
             // when & then
@@ -128,7 +158,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(cupNickname, cupAmount);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    cupNickname,
+                    cupAmount,
+                    "WATER",
+                    "emoji"
+            );
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -142,19 +177,27 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     "스타벅스1",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
                     "스타벅스2",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             CupRegisterRequest cupRegisterRequest2 = new CupRegisterRequest(
                     "스타벅스3",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             CupRegisterRequest cupRegisterRequest3 = new CupRegisterRequest(
                     "스타벅스4",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
 
             // when

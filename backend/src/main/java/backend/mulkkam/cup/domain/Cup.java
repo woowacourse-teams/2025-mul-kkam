@@ -58,16 +58,14 @@ public class Cup {
 
     private String emoji;
 
-    public Cup(
-            Member member,
-            CupNickname nickname,
-            CupAmount cupAmount,
-            CupRank cupRank
-    ) {
+    public Cup(Member member, CupNickname nickname, CupAmount cupAmount, CupRank cupRank, IntakeType intakeType,
+               String emoji) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
+        this.intakeType = intakeType;
+        this.emoji = emoji;
     }
 
     public boolean isLowerPriorityThan(Cup other) {
