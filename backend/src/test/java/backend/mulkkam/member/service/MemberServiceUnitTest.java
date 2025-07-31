@@ -61,6 +61,7 @@ public class MemberServiceUnitTest {
             // given
             Long nonExistingMemberId = 999L;
             when(memberRepository.findById(nonExistingMemberId)).thenReturn(Optional.empty());
+
             // when & then
             assertThatThrownBy(
                     () -> memberService.getMemberById(nonExistingMemberId)
