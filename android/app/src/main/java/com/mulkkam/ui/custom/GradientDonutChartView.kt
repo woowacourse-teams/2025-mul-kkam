@@ -66,7 +66,7 @@ class GradientDonutChartView(
             ValueAnimator.ofFloat(progress, targetProgress).apply {
                 this.duration = ANIMATION_DURATION_MS
                 addUpdateListener {
-                    progress = it.animatedValue as Float
+                    progress = it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
                     invalidate()
                 }
             }
