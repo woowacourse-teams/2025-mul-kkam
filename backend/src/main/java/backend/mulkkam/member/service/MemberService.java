@@ -3,9 +3,9 @@ package backend.mulkkam.member.service;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +18,10 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
 
+    public MemberResponse getMemberById(long id) {
+        Member member = getById(id);
+        return new MemberResponse(member);
+    }
 
     @Transactional
     public void modifyPhysicalAttributes(
