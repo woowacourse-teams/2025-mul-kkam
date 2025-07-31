@@ -25,7 +25,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.FORBIDDEN;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -81,7 +80,10 @@ public class CupService {
         );
     }
 
-    private List<Cup> getAllByIdsAndMemberId(Set<Long> cupIds, Long memberId) {
+    private List<Cup> getAllByIdsAndMemberId(
+            Set<Long> cupIds,
+            Long memberId
+    ) {
         List<Cup> cups = cupRepository.findAllById(cupIds);
         if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
@@ -90,14 +92,17 @@ public class CupService {
         return cups;
     }
 
-    private void validateOwnership(Set<Long> cupIds, Long memberId) {
+    private void validateOwnership(
+            Set<Long> cupIds,
+            Long memberId
+    ) {
         Set<Long> membersCupIds = cupRepository.findAllByMemberId(memberId)
                 .stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
 
         if (!membersCupIds.containsAll(cupIds)) {
-            throw new CommonException(FORBIDDEN);
+            throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
     }
 
