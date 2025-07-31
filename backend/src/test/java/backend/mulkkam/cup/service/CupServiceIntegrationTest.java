@@ -2,7 +2,6 @@ package backend.mulkkam.cup.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -84,30 +83,20 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_createAfterDeleted() {
             // given
-            Cup firstCup = new Cup(
-                    member,
-                    new CupNickname("first"),
-                    new CupAmount(100),
-                    new CupRank(1),
-                    IntakeType.WATER,
-                    "emoji"
-            );
-            Cup secondCup = new Cup(
-                    member,
-                    new CupNickname("second"),
-                    new CupAmount(100),
-                    new CupRank(2),
-                    IntakeType.WATER,
-                    "emoji"
-            );
-            Cup thirdCup = new Cup(
-                    member,
-                    new CupNickname("third"),
-                    new CupAmount(100),
-                    new CupRank(3),
-                    IntakeType.WATER,
-                    "emoji"
-            );
+            Cup firstCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(1))
+                    .build();
+
+            Cup secondCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(2))
+                    .build();
+
+            Cup thirdCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(3))
+                    .build();
 
             cupRepository.save(firstCup);
             cupRepository.save(secondCup);
