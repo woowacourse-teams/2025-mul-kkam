@@ -57,21 +57,11 @@ class HistoryFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initHighlight()
         initHistoryAdapter()
         initChartOptions()
         initCustomChartOptions()
         initObservers()
         initClickListeners()
-    }
-
-    private fun initHighlight() {
-        binding.tvViewSubLabel.text =
-            getColoredSpannable(
-                R.color.primary_200,
-                getString(R.string.history_view_sub_label_prefix) + " " + getString(R.string.history_view_sub_label_suffix),
-                getString(R.string.history_view_sub_label_suffix),
-            )
     }
 
     private fun getColoredSpannable(
