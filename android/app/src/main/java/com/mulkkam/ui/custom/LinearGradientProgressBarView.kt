@@ -20,7 +20,7 @@ class LinearGradientProgressBarView(
 ) : View(context, attrs) {
     private val density = context.resources.displayMetrics.density
 
-    private var progress: Float = PROGRESS_DEFAULT
+    private var progress: Float = PROGRESS_INITIAL_PERCENT
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
     private val backgroundPaint =
@@ -92,8 +92,8 @@ class LinearGradientProgressBarView(
     }
 
     companion object {
-        private const val PROGRESS_DEFAULT: Float = 0f
-        private const val PROGRESS_MAX_PERCENT: Int = 100
+        private const val PROGRESS_INITIAL_PERCENT: Float = 0f
+        private const val PROGRESS_MAX_PERCENT: Float = 100f
 
         private const val CORNER_RADIUS_DEFAULT: Float = 0f
 

@@ -17,7 +17,7 @@ class GradientDonutChartView(
 ) : View(context, attrs) {
     private val density = context.resources.displayMetrics.density
 
-    private var progress: Float = PROGRESS_DEFAULT
+    private var progress: Float = PROGRESS_INITIAL_PERCENT
     private var strokePx: Float = CHART_STROKE_DEFAULT_DP
 
     private val paint = Paint(Paint.ANTI_ALIAS_FLAG)
@@ -99,7 +99,7 @@ class GradientDonutChartView(
     }
 
     companion object {
-        private const val PROGRESS_DEFAULT: Float = 0f
+        private const val PROGRESS_INITIAL_PERCENT: Float = 0f
         private const val PROGRESS_MAX_PERCENT: Float = 100f
 
         private const val CHART_START_ANGLE: Float = 0f
