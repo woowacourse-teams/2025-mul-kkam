@@ -4,8 +4,8 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
