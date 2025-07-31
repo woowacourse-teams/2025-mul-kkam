@@ -9,9 +9,11 @@ data class IntakeHistorySummary(
     val achievementRate: Float,
     val intakeHistories: List<IntakeHistory>,
 ) {
-    fun dayOfWeekIndex(): Int = date.dayOfWeek.value - 1
+    fun dayOfWeekIndex(): Int = date.dayOfWeek.value + DAY_OF_WEEK_OFFSET
 
     companion object {
+        private const val DAY_OF_WEEK_OFFSET: Int = -1
+
         val EMPTY_DAILY_WATER_INTAKE: IntakeHistorySummary =
             IntakeHistorySummary(
                 date = LocalDate.now(),
