@@ -29,7 +29,7 @@ public class MemberService {
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
     }
 
-    public void checkForDuplicateNickname(
+    public void validateDuplicateNickname(
             String nickname,
             Long memberId
     ) {

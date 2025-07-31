@@ -83,7 +83,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatCode(() -> memberService.checkForDuplicateNickname(
+            assertThatCode(() -> memberService.validateDuplicateNickname(
                     newNickname,
                     member.getId()
             )).doesNotThrowAnyException();
@@ -109,7 +109,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member2);
 
             // when & then
-            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     newNickname,
                     member1.getId()
             ))
@@ -129,7 +129,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     nickname,
                     member.getId()
             ))

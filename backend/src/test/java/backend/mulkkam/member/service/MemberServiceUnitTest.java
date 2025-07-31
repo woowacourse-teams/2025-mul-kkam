@@ -90,7 +90,7 @@ public class MemberServiceUnitTest {
             when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
 
             // when & then
-            assertThatCode(() -> memberService.checkForDuplicateNickname(
+            assertThatCode(() -> memberService.validateDuplicateNickname(
                     newNickname,
                     member.getId()
             )).doesNotThrowAnyException();
@@ -112,7 +112,7 @@ public class MemberServiceUnitTest {
             when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
 
             // when & then
-            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     newNickname,
                     member.getId()
             ))
@@ -132,7 +132,7 @@ public class MemberServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     nickname,
                     member.getId()
             ))

@@ -31,7 +31,7 @@ public class MemberController {
 
     @GetMapping("/nickname/validation")
     public ResponseEntity<Void> checkForDuplicates(@RequestParam String nickname) {
-        memberService.checkForDuplicateNickname(
+        memberService.validateDuplicateNickname(
                 nickname,
                 1L
         );
