@@ -61,7 +61,7 @@ public class CupService {
         Cup cup = getCup(id);
 
         validateCupOwnership(member, cup);
-        cup.modifyNicknameAndAmount(
+        cup.update(
                 new CupNickname(updateCupRequest.cupNickname()),
                 new CupAmount(updateCupRequest.cupAmount()),
                 updateCupRequest.intakeType()

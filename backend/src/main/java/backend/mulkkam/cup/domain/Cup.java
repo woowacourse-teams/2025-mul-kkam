@@ -73,7 +73,7 @@ public class Cup {
         this.intakeType = intakeType;
     }
 
-    public void modifyNicknameAndAmount(
+    public void update(
             CupNickname nickname,
             CupAmount cupAmount,
             IntakeType intakeType
