@@ -16,6 +16,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
 import com.mulkkam.domain.IntakeHistory
+import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
@@ -42,6 +43,7 @@ class HistoryFragment :
         initChartOptions()
         initCustomChartOptions()
         initObservers()
+        initClickListeners()
     }
 
     private fun initHighlight() {
@@ -128,7 +130,7 @@ class HistoryFragment :
         }
     }
 
-    private fun bindWeeklyChartData(weeklyIntakeHistories: List<IntakeHistorySummary>) {
+    private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
         val pieCharts =
             listOf(
                 binding.includeChartMon,
@@ -141,9 +143,16 @@ class HistoryFragment :
             )
 
         pieCharts.forEachIndexed { index, chart ->
-            val intake = weeklyIntakeHistories[index]
+            val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
         }
+
+        binding.tvWeekRange.text =
+            getString(
+                R.string.history_week_range,
+                weeklyIntakeHistories.firstDay.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.lastDay.format(WEEK_RANGE_FORMATTER),
+            )
     }
 
     private fun updateWeeklyChart(
@@ -241,6 +250,16 @@ class HistoryFragment :
         )
     }
 
+    private fun initClickListeners() {
+        binding.ibWeekPrev.setOnClickListener {
+            viewModel.moveWeek(WEEK_OFFSET_PREV)
+        }
+
+        binding.ibWeekNext.setOnClickListener {
+            viewModel.moveWeek(WEEK_OFFSET_NEXT)
+        }
+    }
+
     override fun onReselected() {
         viewModel.loadIntakeHistories()
     }
@@ -248,6 +267,11 @@ class HistoryFragment :
     companion object {
         private val DATE_FORMATTER_KR: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
+        private val WEEK_RANGE_FORMATTER: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("M월 d일")
+
+        private const val WEEK_OFFSET_PREV: Long = -1L
+        private const val WEEK_OFFSET_NEXT: Long = 1L
 
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_RANK_VALUE;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -36,7 +37,7 @@ class CupRankTest {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
                     () -> new CupRank(input));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_RANK_VALUE);
         }
     }
 
@@ -68,7 +69,7 @@ class CupRankTest {
             // when & then
             assertThatThrownBy(originRank::promote)
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_CUP_COUNT.name());
+                    .hasMessage(INVALID_CUP_RANK_VALUE.name());
         }
     }
 
@@ -100,7 +101,7 @@ class CupRankTest {
             // when & then
             assertThatThrownBy(originRank::demote)
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_CUP_COUNT.name());
+                    .hasMessage(INVALID_CUP_RANK_VALUE.name());
         }
     }
 }

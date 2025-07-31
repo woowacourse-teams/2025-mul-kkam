@@ -1,15 +1,24 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -21,12 +30,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -289,6 +292,156 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                         .extracting(Cup::getCupRank)
                         .isEqualTo(new CupRank(2));
             });
+        }
+    }
+
+    @DisplayName("컵을 수정할 때에")
+    @Nested
+    class Modify {
+
+        @DisplayName("컵 이름 및 용량이 수정된다")
+        @Test
+        void success_withValidData() {
+            // given
+            Member member = MemberFixtureBuilder.builder().build();
+            memberRepository.save(member);
+
+            String beforeCupNickName = "변경 전";
+            Integer beforeCupAmount = 500;
+
+            Cup cup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupAmount(new CupAmount(beforeCupAmount))
+                    .cupNickname(new CupNickname(beforeCupNickName))
+                    .build();
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
+
+            Cup savedCup = cupRepository.save(cup);
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    afterCupNickName,
+                    afterCupAmount
+            );
+
+            // when
+            cupService.modifyNicknameAndAmount(
+                    savedCup.getId(),
+                    member.getId(),
+                    cupNicknameAndAmountModifyRequest
+            );
+
+            Cup changedCup = cupRepository.findById(savedCup.getId())
+                    .orElseThrow();
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(changedCup.getCupAmount().value()).isEqualTo(afterCupAmount);
+                softly.assertThat(changedCup.getNickname().value()).isEqualTo(afterCupNickName);
+            });
+        }
+
+        @DisplayName("그 멤버의 수정할 컵만 변경된다")
+        @Test
+        void success_whenCertainCupChanges() {
+            // given
+            Member member = MemberFixtureBuilder.builder().build();
+            memberRepository.save(member);
+
+            String beforeCupNickName1 = "변경 전1";
+            Integer beforeCupAmount1 = 300;
+
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname(beforeCupNickName1))
+                    .cupAmount(new CupAmount(beforeCupAmount1))
+                    .build();
+
+            String beforeCupNickName2 = "변경 전2";
+            Integer beforeCupAmount2 = 500;
+
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname(beforeCupNickName2))
+                    .cupAmount(new CupAmount(beforeCupAmount2))
+                    .build();
+
+            cupRepository.saveAll(List.of(
+                    cup1,
+                    cup2
+            ));
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    afterCupNickName,
+                    afterCupAmount
+            );
+
+            // when
+            cupService.modifyNicknameAndAmount(
+                    cup1.getId(),
+                    member.getId(),
+                    cupNicknameAndAmountModifyRequest
+            );
+
+            Cup changedCup1 = cupRepository.findById(cup1.getId())
+                    .orElseThrow();
+            Cup changedCup2 = cupRepository.findById(cup2.getId())
+                    .orElseThrow();
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(changedCup1.getNickname().value()).isEqualTo(afterCupNickName);
+                softly.assertThat(changedCup1.getCupAmount().value()).isEqualTo(afterCupAmount);
+                softly.assertThat(changedCup2.getNickname().value()).isEqualTo(beforeCupNickName2);
+                softly.assertThat(changedCup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
+            });
+        }
+
+        @DisplayName("멤버가 다를 경우 예외가 발생한다")
+        @Test
+        void error_ifTheMembersAreDifferent() {
+            // given
+            Member member1 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("멤버1"))
+                    .build();
+            Member member2 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("멤버2"))
+                    .build();
+
+            memberRepository.saveAll(List.of(member1, member2));
+
+            String beforeCupNickName = "변경 전";
+
+            Integer beforeCupAmount = 500;
+
+            Cup cup = CupFixtureBuilder
+                    .withMember(member1)
+                    .cupNickname(new CupNickname(beforeCupNickName))
+                    .cupAmount(new CupAmount(beforeCupAmount))
+                    .build();
+
+            cupRepository.save(cup);
+
+            String afterCupNickName = "변경 후";
+            Integer afterCupAmount = 1000;
+
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest = new CupNicknameAndAmountModifyRequest(
+                    afterCupNickName,
+                    afterCupAmount
+            );
+
+            // when & then
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> cupService.modifyNicknameAndAmount(
+                            cup.getId(),
+                            member2.getId(),
+                            cupNicknameAndAmountModifyRequest)
+            );
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
         }
     }
 }
