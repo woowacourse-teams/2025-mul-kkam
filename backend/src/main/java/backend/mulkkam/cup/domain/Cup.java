@@ -65,4 +65,12 @@ public class Cup {
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
     }
+
+    public void modifyNicknameAndAmount(
+            CupNickname nickname,
+            CupAmount cupAmount
+    ) {
+        this.nickname = nickname;
+        this.cupAmount = cupAmount;
+    }
 }

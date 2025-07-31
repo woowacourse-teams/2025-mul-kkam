@@ -1,10 +1,15 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.vo.CupAmount;
+import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
@@ -44,6 +49,34 @@ public class CupService {
     public CupsResponse readCupsByMemberId(Long memberId) {
         List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
         return new CupsResponse(cups);
+    }
+
+    @Transactional
+    public void modifyNicknameAndAmount(
+            Long id,
+            Long memberId,
+            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest
+    ) {
+        Member member = getMember(memberId);
+        Cup cup = getCup(id);
+
+        validateCupOwnership(member, cup);
+        cup.modifyNicknameAndAmount(
+                new CupNickname(cupNicknameAndAmountModifyRequest.cupNickname()),
+                new CupAmount(cupNicknameAndAmountModifyRequest.cupAmount())
+        );
+    }
+
+    private void validateCupOwnership(Member member, Cup cup) {
+        if (member.equals(cup.getMember())) {
+            return;
+        }
+        throw new CommonException(NOT_PERMITTED_FOR_CUP);
+    }
+
+    private Cup getCup(final Long id) {
+        return cupRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
     }
 
     private Member getMember(Long memberId) {
