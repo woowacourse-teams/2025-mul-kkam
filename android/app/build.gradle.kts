@@ -36,6 +36,12 @@ android {
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
         buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir, providers).getProperty("base.url"))
+
+        val kakaoKey =
+            gradleLocalProperties(rootDir, providers).getProperty("kakao.key") ?: ""
+        buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+
+        manifestPlaceholders["kakaoKey"] = kakaoKey
     }
 
     buildTypes {
@@ -96,4 +102,7 @@ dependencies {
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.glide)
+
+    // 로그인
+    implementation(libs.v2.user)
 }
