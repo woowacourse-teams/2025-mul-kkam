@@ -69,7 +69,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("멤버의 닉네임을 수정할 때")
     @Nested
-    class modifyNickname {
+    class ModifyNickname {
 
         @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
         @Test
