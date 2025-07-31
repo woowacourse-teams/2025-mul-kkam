@@ -1,14 +1,8 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.DUPLICATED_CUP_RANKS;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.FORBIDDEN;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -22,16 +16,19 @@ import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.FORBIDDEN;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -70,49 +67,36 @@ public class CupService {
             UpdateCupRanksRequest request,
             Long memberId
     ) {
-        Map<Long, Integer> requestedCupRanks = request.cups()
-                .stream()
-                .collect(Collectors.toMap(CupRankDto::id, CupRankDto::rank));
+        CupRanks cupRanks = new CupRanks(request.cups());
+        List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), memberId);
 
-        validateDistinctRanks(requestedCupRanks);
-
-        List<Cup> cups = cupRepository.findAllById(requestedCupRanks.keySet());
-        validateExistence(requestedCupRanks.keySet(), cups);
-
-        Member member = getMember(memberId);
-        validateOwnership(cups, member);
-
-        cups.forEach(cup ->
-                cup.modifyRank(new CupRank(requestedCupRanks.get(cup.getId())))
-        );
+        for (Cup cup : cups) {
+            cup.modifyRank(cupRanks.getCupRank(cup.getId()));
+        }
 
         return new CupsRanksResponse(
                 cups.stream()
-                        .map(c -> new CupRankDto(c.getId(), c.getCupRank().value()))
+                        .map(CupRankDto::new)
                         .toList()
         );
     }
 
-    private void validateDistinctRanks(Map<Long, Integer> ranks) {
-        Set<Integer> rankSet = new HashSet<>(ranks.values());
-        if (rankSet.size() != ranks.size()) {
-            throw new CommonException(DUPLICATED_CUP_RANKS);
-        }
-    }
-
-    private void validateExistence(Set<Long> cupIds, List<Cup> cups) {
-        Set<Long> foundIds = cups.stream()
-                .map(Cup::getId)
-                .collect(Collectors.toSet());
-        if (!foundIds.equals(cupIds)) {
+    private List<Cup> getAllByIdsAndMemberId(Set<Long> cupIds, Long memberId) {
+        List<Cup> cups = cupRepository.findAllById(cupIds);
+        if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
         }
+        validateOwnership(cupIds, memberId);
+        return cups;
     }
 
-    private void validateOwnership(List<Cup> cups, Member member) {
-        boolean anyNotOwner = cups.stream()
-                .anyMatch(cup -> !cup.isOwnerOf(member));
-        if (anyNotOwner) {
+    private void validateOwnership(Set<Long> cupIds, Long memberId) {
+        Set<Long> membersCupIds = cupRepository.findAllByMemberId(memberId)
+                .stream()
+                .map(Cup::getId)
+                .collect(Collectors.toSet());
+
+        if (!membersCupIds.containsAll(cupIds)) {
             throw new CommonException(FORBIDDEN);
         }
     }
