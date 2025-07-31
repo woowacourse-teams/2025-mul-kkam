@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/home_character_description"
-        android:textAppearance="@style/title1"
+        android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="@id/iv_home_character"
         app:layout_constraintStart_toStartOf="@id/iv_home_character"
