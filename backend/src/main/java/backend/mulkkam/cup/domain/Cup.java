@@ -9,6 +9,8 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -54,23 +56,30 @@ public class Cup {
     )
     private CupRank cupRank;
 
+    @Enumerated(EnumType.STRING)
+    private IntakeType intakeType;
+
     public Cup(
             Member member,
             CupNickname nickname,
             CupAmount cupAmount,
-            CupRank cupRank
+            CupRank cupRank,
+            IntakeType intakeType
     ) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
+        this.intakeType = intakeType;
     }
 
     public void modifyNicknameAndAmount(
             CupNickname nickname,
-            CupAmount cupAmount
+            CupAmount cupAmount,
+            IntakeType intakeType
     ) {
         this.nickname = nickname;
         this.cupAmount = cupAmount;
+        this.intakeType = intakeType;
     }
 }

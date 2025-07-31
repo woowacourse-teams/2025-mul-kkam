@@ -9,8 +9,8 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.RegisterCupRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -31,13 +31,13 @@ public class CupService {
 
     @Transactional
     public CupResponse create(
-            CupRegisterRequest cupRegisterRequest,
+            RegisterCupRequest registerCupRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
         List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
         CupRank currentCupRank = new CupRank(cups.size());
-        Cup cup = cupRegisterRequest.toCup(
+        Cup cup = registerCupRequest.toCup(
                 member,
                 currentCupRank.nextRank()
         );
@@ -52,18 +52,19 @@ public class CupService {
     }
 
     @Transactional
-    public void modifyNicknameAndAmount(
+    public void update(
             Long id,
             Long memberId,
-            CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest
+            UpdateCupRequest updateCupRequest
     ) {
         Member member = getMember(memberId);
         Cup cup = getCup(id);
 
         validateCupOwnership(member, cup);
         cup.modifyNicknameAndAmount(
-                new CupNickname(cupNicknameAndAmountModifyRequest.cupNickname()),
-                new CupAmount(cupNicknameAndAmountModifyRequest.cupAmount())
+                new CupNickname(updateCupRequest.cupNickname()),
+                new CupAmount(updateCupRequest.cupAmount()),
+                updateCupRequest.intakeType()
         );
     }
 
