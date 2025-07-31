@@ -8,6 +8,8 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -53,6 +55,7 @@ public class Cup {
     )
     private CupRank cupRank;
 
+    @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private IntakeType intakeType;
 
