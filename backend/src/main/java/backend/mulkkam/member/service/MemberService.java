@@ -27,12 +27,12 @@ public class MemberService {
         Member member = getById(memberId);
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
     }
-    
-    public void checkForDuplicates(
+
+    public void checkForDuplicateNickname(
             String nickname,
-            Long id
+            Long memberId
     ) {
-        Member member = getById(id);
+        Member member = getById(memberId);
         if (member.getMemberNickname().value().equals(nickname)) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
@@ -41,8 +41,8 @@ public class MemberService {
         }
     }
 
-    private Member getById(Long id) {
-        return memberRepository.findById(id)
+    private Member getById(Long memberId) {
+        return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }

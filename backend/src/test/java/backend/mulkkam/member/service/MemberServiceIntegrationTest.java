@@ -84,7 +84,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertDoesNotThrow(() -> memberService.checkForDuplicates(
+            assertDoesNotThrow(() -> memberService.checkForDuplicateNickname(
                     newNickname,
                     member.getId()
             ));
@@ -111,7 +111,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicates(
+                    () -> memberService.checkForDuplicateNickname(
                             newNickname,
                             member1.getId()
                     ));
@@ -131,7 +131,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicates(
+                    () -> memberService.checkForDuplicateNickname(
                             nickname,
                             member.getId()
                     ));

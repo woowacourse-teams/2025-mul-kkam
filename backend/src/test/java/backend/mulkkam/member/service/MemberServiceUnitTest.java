@@ -91,7 +91,7 @@ public class MemberServiceUnitTest {
             when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
 
             // when & then
-            assertDoesNotThrow(() -> memberService.checkForDuplicates(
+            assertDoesNotThrow(() -> memberService.checkForDuplicateNickname(
                     newNickname,
                     member.getId()
             ));
@@ -114,7 +114,7 @@ public class MemberServiceUnitTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicates(
+                    () -> memberService.checkForDuplicateNickname(
                             newNickname,
                             member.getId()
                     ));
@@ -134,7 +134,7 @@ public class MemberServiceUnitTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicates(
+                    () -> memberService.checkForDuplicateNickname(
                             nickname,
                             member.getId()
                     ));
