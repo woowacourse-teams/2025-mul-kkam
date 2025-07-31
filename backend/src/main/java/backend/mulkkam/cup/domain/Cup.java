@@ -61,8 +61,13 @@ public class Cup {
 
     private String emoji;
 
-    public Cup(Member member, CupNickname nickname, CupAmount cupAmount, CupRank cupRank, IntakeType intakeType,
-               String emoji) {
+    public Cup(Member member,
+               CupNickname nickname,
+               CupAmount cupAmount,
+               CupRank cupRank,
+               IntakeType intakeType,
+               String emoji
+    ) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
