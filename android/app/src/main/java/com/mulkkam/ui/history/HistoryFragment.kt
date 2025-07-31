@@ -7,6 +7,7 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
@@ -21,6 +22,8 @@ import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.main.Refreshable
+import java.time.DayOfWeek
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
@@ -162,9 +165,9 @@ class HistoryFragment :
     ) {
         chart.apply {
             tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
-            // TODO: 토/일 색깔 변경 필요
             tvDayOfWeek.text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
+            tvDayOfWeek.setTextColor(getColorByDate(intakeHistorySummary.date))
             tvMonthDay.text =
                 getString(
                     R.string.water_chart_date,
@@ -177,6 +180,16 @@ class HistoryFragment :
             }
             pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
         }
+    }
+
+    private fun getColorByDate(date: LocalDate): Int {
+        val colorResId =
+            when (date.dayOfWeek) {
+                DayOfWeek.SATURDAY -> R.color.primary_300
+                DayOfWeek.SUNDAY -> R.color.secondary_200
+                else -> R.color.gray_400
+            }
+        return getColor(requireContext(), colorResId)
     }
 
     private fun updateDailyChart(intakeHistorySummary: IntakeHistorySummary) {
