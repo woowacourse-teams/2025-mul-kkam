@@ -2,10 +2,9 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -84,10 +83,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertDoesNotThrow(() -> memberService.checkForDuplicateNickname(
+            assertThatCode(() -> memberService.checkForDuplicateNickname(
                     newNickname,
                     member.getId()
-            ));
+            )).doesNotThrowAnyException();
         }
 
         @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
@@ -110,12 +109,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member2);
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicateNickname(
-                            newNickname,
-                            member1.getId()
-                    ));
-            assertThat(ex.getErrorCode()).isEqualTo(DUPLICATE_MEMBER_NICKNAME);
+            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+                    newNickname,
+                    member1.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
         }
 
         @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
@@ -130,12 +129,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> memberService.checkForDuplicateNickname(
-                            nickname,
-                            member.getId()
-                    ));
-            assertThat(ex.getErrorCode()).isEqualTo(SAME_AS_BEFORE_NICKNAME);
+            assertThatThrownBy(() -> memberService.checkForDuplicateNickname(
+                    nickname,
+                    member.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
         }
     }
 }
