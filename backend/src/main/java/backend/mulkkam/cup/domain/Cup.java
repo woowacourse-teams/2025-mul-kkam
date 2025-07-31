@@ -1,6 +1,5 @@
 package backend.mulkkam.cup.domain;
 
-
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -56,21 +55,25 @@ public class Cup {
     )
     private CupRank cupRank;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private IntakeType intakeType;
 
-    public Cup(
-            Member member,
-            CupNickname nickname,
-            CupAmount cupAmount,
-            CupRank cupRank,
-            IntakeType intakeType
+    private String emoji;
+
+    public Cup(Member member,
+               CupNickname nickname,
+               CupAmount cupAmount,
+               CupRank cupRank,
+               IntakeType intakeType,
+               String emoji
     ) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
         this.intakeType = intakeType;
+        this.emoji = emoji;
     }
 
     public void update(
@@ -81,5 +84,17 @@ public class Cup {
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.intakeType = intakeType;
+    }
+
+    public boolean isLowerPriorityThan(Cup other) {
+        return cupRank.hasLowerPriorityThan(other.getCupRank());
+    }
+
+    public void promoteRank() {
+        cupRank = cupRank.promote();
+    }
+
+    public void demoteRank() {
+        cupRank = cupRank.demote();
     }
 }

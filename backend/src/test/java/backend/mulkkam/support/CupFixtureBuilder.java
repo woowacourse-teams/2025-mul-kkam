@@ -14,6 +14,7 @@ public class CupFixtureBuilder {
     private CupAmount cupAmount = new CupAmount(500);
     private CupRank cupRank = new CupRank(1);
     private IntakeType intakeType = IntakeType.WATER;
+    private String emoji = "emoji";
 
     private CupFixtureBuilder(Member member) {
         this.member = member;
@@ -38,12 +39,24 @@ public class CupFixtureBuilder {
         return this;
     }
 
+    public CupFixtureBuilder emoji(String emoji) {
+        this.emoji = emoji;
+        return this;
+    }
+
     public CupFixtureBuilder intakeType(IntakeType intakeType) {
         this.intakeType = intakeType;
         return this;
     }
 
     public Cup build() {
-        return new Cup(member, cupNickname, cupAmount, cupRank, intakeType);
+        return new Cup(
+                member,
+                cupNickname,
+                cupAmount,
+                cupRank,
+                intakeType,
+                emoji
+        );
     }
 }

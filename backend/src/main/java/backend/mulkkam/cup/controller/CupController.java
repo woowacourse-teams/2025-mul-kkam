@@ -6,6 +6,7 @@ import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -46,5 +47,11 @@ public class CupController {
                 updateCupRequest
         );
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
+        cupService.delete(id, 1L);
+        return ResponseEntity.noContent().build();
     }
 }

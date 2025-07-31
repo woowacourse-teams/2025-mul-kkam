@@ -10,19 +10,22 @@ import backend.mulkkam.member.domain.Member;
 public record RegisterCupRequest(
         String cupNickname,
         Integer cupAmount,
-        IntakeType intakeType
+        String intakeType,
+        String emoji
 ) {
 
     public Cup toCup(
             Member member,
-            CupRank cupRank
+            CupRank cupRank,
+            IntakeType intakeType
     ) {
         return new Cup(
                 member,
                 new CupNickname(cupNickname),
                 new CupAmount(cupAmount),
                 cupRank,
-                intakeType
+                intakeType,
+                emoji
         );
     }
 }
