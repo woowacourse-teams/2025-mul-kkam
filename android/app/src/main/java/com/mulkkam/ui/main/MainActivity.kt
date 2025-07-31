@@ -15,6 +15,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
 
+    private var backPressedTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -23,7 +25,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             switchFragment(MainTab.HOME)
         }
 
-        onBackPressedDispatcher.addCallback(this, onBackPressedCallback)
+        setupDoubleBackToExit()
     }
 
     private fun initBottomNavListener() {
@@ -71,18 +73,21 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
     }
 
-    private var backPressedTime: Long = 0
-    private val onBackPressedCallback =
-        object : OnBackPressedCallback(true) {
-            override fun handleOnBackPressed() {
-                if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
-                    backPressedTime = System.currentTimeMillis()
-                    Snackbar.make(binding.root, R.string.main_main_back_press_exit_message, Snackbar.LENGTH_SHORT).show()
-                } else {
-                    finishAffinity()
+    private fun setupDoubleBackToExit() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
+                        backPressedTime = System.currentTimeMillis()
+                        Snackbar.make(binding.root, R.string.main_main_back_press_exit_message, Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        finishAffinity()
+                    }
                 }
-            }
-        }
+            },
+        )
+    }
 
     companion object {
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
