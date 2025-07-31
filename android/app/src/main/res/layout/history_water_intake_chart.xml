@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_10">
+    android:background="@drawable/bg_common_rectangle_4dp"
+    android:backgroundTint="@color/gray_10">
 
     <com.mulkkam.ui.custom.GradientDonutChartView
         android:id="@+id/pc_water_intake"

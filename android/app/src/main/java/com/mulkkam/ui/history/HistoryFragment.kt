@@ -1,5 +1,6 @@
 package com.mulkkam.ui.history
 
+import android.content.res.ColorStateList
 import android.graphics.SweepGradient
 import android.os.Bundle
 import android.text.SpannableString
@@ -8,8 +9,10 @@ import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
+import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -36,6 +39,18 @@ class HistoryFragment :
     Refreshable {
     private val viewModel: HistoryViewModel by viewModels()
     private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
+    private var selectedChartBinding: HistoryWaterIntakeChartBinding? = null
+    private val weeklyCharts: List<HistoryWaterIntakeChartBinding> by lazy {
+        listOf(
+            binding.includeChartMon,
+            binding.includeChartTue,
+            binding.includeChartWed,
+            binding.includeChartThu,
+            binding.includeChartFri,
+            binding.includeChartSat,
+            binding.includeChartSun,
+        )
+    }
 
     override fun onViewCreated(
         view: View,
@@ -88,16 +103,7 @@ class HistoryFragment :
     }
 
     private fun initChartOptions() {
-        val pieCharts =
-            listOf(
-                binding.includeChartMon.pcWaterIntake,
-                binding.includeChartTue.pcWaterIntake,
-                binding.includeChartWed.pcWaterIntake,
-                binding.includeChartThu.pcWaterIntake,
-                binding.includeChartFri.pcWaterIntake,
-                binding.includeChartSat.pcWaterIntake,
-                binding.includeChartSun.pcWaterIntake,
-            )
+        val pieCharts = weeklyCharts.map { it.pcWaterIntake }
 
         pieCharts.forEach { chart ->
             chart.apply {
@@ -131,22 +137,12 @@ class HistoryFragment :
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
             updateDailyChart(dailyIntakeHistories)
             updateIntakeHistories(dailyIntakeHistories.intakeHistories)
+            updateWeeklyChartHighlight(dailyIntakeHistories.dayOfWeekIndex())
         }
     }
 
     private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
-        val pieCharts =
-            listOf(
-                binding.includeChartMon,
-                binding.includeChartTue,
-                binding.includeChartWed,
-                binding.includeChartThu,
-                binding.includeChartFri,
-                binding.includeChartSat,
-                binding.includeChartSun,
-            )
-
-        pieCharts.forEachIndexed { index, chart ->
+        weeklyCharts.forEachIndexed { index, chart ->
             val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
         }
@@ -232,6 +228,27 @@ class HistoryFragment :
     private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
         historyAdapter.changeItems(intakeHistories)
         binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
+    }
+
+    private fun updateWeeklyChartHighlight(dayOfWeek: Int) {
+        selectedChartBinding?.let { resetChartHighlight(it) }
+
+        val newChart = weeklyCharts.getOrNull(dayOfWeek) ?: return
+        applyChartHighlight(newChart)
+        selectedChartBinding = newChart
+    }
+
+    private fun resetChartHighlight(chart: HistoryWaterIntakeChartBinding) {
+        chart.root.background = getDrawable(requireContext(), R.drawable.bg_common_rectangle_4dp)
+        ViewCompat.setBackgroundTintList(
+            chart.root,
+            ColorStateList.valueOf(getColor(requireContext(), R.color.gray_10)),
+        )
+    }
+
+    private fun applyChartHighlight(chart: HistoryWaterIntakeChartBinding) {
+        chart.root.background = getDrawable(requireContext(), R.drawable.bg_common_rectangle_stroke_4dp)
+        ViewCompat.setBackgroundTintList(chart.root, null)
     }
 
     private fun createSweepGradient(
