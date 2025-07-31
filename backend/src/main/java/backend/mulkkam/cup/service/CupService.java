@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
@@ -22,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class CupService {
 
+    private static final int MAX_CUP_COUNT = 3;
+
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
@@ -32,6 +35,10 @@ public class CupService {
     ) {
         Member member = getMember(memberId);
         final int cupCount = cupRepository.countByMemberId(memberId);
+
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
 
         CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(

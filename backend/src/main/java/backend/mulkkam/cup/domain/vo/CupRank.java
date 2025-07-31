@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-
 import backend.mulkkam.common.exception.CommonException;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_RANK_VALUE;
 
 public record CupRank(Integer value) {
 
@@ -11,7 +11,7 @@ public record CupRank(Integer value) {
 
     public CupRank {
         if (value > MAX || value < MIN) {
-            throw new CommonException(INVALID_CUP_COUNT);
+            throw new CommonException(INVALID_CUP_RANK_VALUE);
         }
     }
 
