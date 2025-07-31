@@ -16,3 +16,7 @@ spring:
     enabled: true
     clean-disabled: false
     locations: classpath:db/migration
+
+open-weather:
+  api:
+    key: temp-key
