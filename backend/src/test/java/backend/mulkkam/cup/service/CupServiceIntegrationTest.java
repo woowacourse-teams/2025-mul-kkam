@@ -285,7 +285,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    afterIntakeType
+                    afterIntakeType,
+                    "emoji"
             );
 
             // when
@@ -345,7 +346,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    afterIntakeType
+                    afterIntakeType,
+                    "emoji"
             );
 
             // when
@@ -401,7 +403,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    IntakeType.WATER
+                    IntakeType.WATER,
+                    "emoji"
             );
 
             // when & then

@@ -91,7 +91,8 @@ public class CupService {
         cup.update(
                 new CupNickname(updateCupRequest.cupNickname()),
                 new CupAmount(updateCupRequest.cupAmount()),
-                updateCupRequest.intakeType()
+                updateCupRequest.intakeType(),
+                updateCupRequest.emoji()
         );
     }
 

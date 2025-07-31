@@ -307,11 +307,13 @@ class CupServiceUnitTest {
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
+            String afterEmoji = "emoji";
 
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    afterIntakeType
+                    afterIntakeType,
+                    afterEmoji
             );
 
             // when
@@ -326,6 +328,7 @@ class CupServiceUnitTest {
                 softly.assertThat(cup.getCupAmount().value()).isEqualTo(afterCupAmount);
                 softly.assertThat(cup.getNickname().value()).isEqualTo(afterCupNickName);
                 softly.assertThat(cup.getIntakeType()).isEqualTo(afterIntakeType);
+                softly.assertThat(cup.getEmoji()).isEqualTo(afterEmoji);
             });
         }
 
@@ -363,11 +366,13 @@ class CupServiceUnitTest {
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
+            String afterEmoji = "emoji";
 
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    afterIntakeType
+                    afterIntakeType,
+                    afterEmoji
             );
 
             // when
@@ -383,6 +388,7 @@ class CupServiceUnitTest {
                 softly.assertThat(cup1.getCupAmount().value()).isEqualTo(afterCupAmount);
                 softly.assertThat(cup2.getNickname().value()).isEqualTo(beforeCupNickName2);
                 softly.assertThat(cup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
+                softly.assertThat(cup1.getEmoji()).isEqualTo(afterEmoji);
             });
         }
 
@@ -414,7 +420,8 @@ class CupServiceUnitTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
-                    IntakeType.WATER
+                    IntakeType.WATER,
+                    "emoji"
             );
             given(memberRepository.findById(member2.getId()))
                     .willReturn(Optional.of(member2));
