@@ -22,6 +22,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.main.Refreshable
 import java.time.format.DateTimeFormatter
+import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.min
 
@@ -161,11 +162,9 @@ class HistoryFragment :
     ) {
         chart.apply {
             tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
-            // TODO: 한국어로 매핑 & 토/일 색깔 변경 필요
+            // TODO: 토/일 색깔 변경 필요
             tvDayOfWeek.text =
-                intakeHistorySummary.date.dayOfWeek
-                    .toString()
-                    .substring(0..2)
+                intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
             tvMonthDay.text =
                 getString(
                     R.string.water_chart_date,
