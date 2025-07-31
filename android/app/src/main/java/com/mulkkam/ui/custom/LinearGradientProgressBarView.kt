@@ -14,6 +14,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import com.mulkkam.R
 
+/**
+ * 커스텀 뷰(LinearGradientProgressBarView)의 그림자 요소가 부모 뷰 경계를 넘어 자연스럽게 보이도록 하기 위해 부모 뷰그룹의 clipChildren 옵션을 false로 설정해야 합니다
+ */
+
 class LinearGradientProgressBarView(
     context: Context,
     attrs: AttributeSet? = null,
