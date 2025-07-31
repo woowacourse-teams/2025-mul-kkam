@@ -108,6 +108,6 @@ class GradientDonutChartView(
         private const val CHART_RECT_START: Float = 0f
         private const val CHART_STROKE_DEFAULT_DP: Float = 0f
 
-        private const val ANIMATION_DURATION_MS: Long = 600
+        private const val ANIMATION_DURATION_MS: Long = 600L
     }
 }

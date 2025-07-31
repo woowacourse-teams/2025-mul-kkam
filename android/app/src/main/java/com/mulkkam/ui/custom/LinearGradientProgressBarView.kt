@@ -99,6 +99,6 @@ class LinearGradientProgressBarView(
 
         private const val CHART_RECT_START: Float = 0f
 
-        private const val ANIMATION_DURATION_MS: Long = 600
+        private const val ANIMATION_DURATION_MS: Long = 600L
     }
 }
