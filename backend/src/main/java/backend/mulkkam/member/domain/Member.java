@@ -60,4 +60,8 @@ public class Member {
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
         this.physicalAttributes = physicalAttributes;
     }
+
+    public boolean isSameNickname(MemberNickname memberNickname) {
+        return this.memberNickname.equals(memberNickname);
+    }
 }

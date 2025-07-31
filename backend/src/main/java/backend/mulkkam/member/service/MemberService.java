@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLI
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +34,7 @@ public class MemberService {
             Long memberId
     ) {
         Member member = getById(memberId);
-        if (member.getMemberNickname().value().equals(nickname)) {
+        if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
         if (memberRepository.existsByMemberNicknameValue(nickname)) {
