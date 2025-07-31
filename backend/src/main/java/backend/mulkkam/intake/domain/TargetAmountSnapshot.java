@@ -1,6 +1,7 @@
-package backend.mulkkam.member.domain;
+package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
