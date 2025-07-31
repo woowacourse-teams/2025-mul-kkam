@@ -47,8 +47,7 @@ class IntakeTypeTest {
         void error_notExistedName() {
             // when
             assertThatThrownBy(() -> IntakeType.findByName("not_existed_value"))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_INTAKE_TYPE.name());
+                    .isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_INTAKE_TYPE.name());
         }
 
     }
