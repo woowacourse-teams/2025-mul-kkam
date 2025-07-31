@@ -50,4 +50,6 @@
     <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
     <string name="setting_goal_unit_ml">ml</string>
     <string name="home_sub_label">환노님, 혹시 물을 깜빡하지 않으셨나요?</string>
+
+    <string name="login_kakao">카카오 계정으로 로그인</string>
 </resources>

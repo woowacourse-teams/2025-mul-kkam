@@ -18,6 +18,10 @@
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
         <activity
+            android:name=".ui.onboarding.LoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.settingprofile.SettingProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -42,3 +46,4 @@
     </application>
 
 </manifest>
+
