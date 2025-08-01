@@ -2,8 +2,8 @@ package com.mulkkam.ui.login
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -32,7 +32,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
             if (error != null) {
                 Log.e("[Login Error]", "카카오 계정으로 로그인 실패", error)
             } else if (token != null) {
-                showSnackBar(R.string.login_kakao_success)
+                showToast(R.string.login_kakao_success)
                 viewModel.loginWithKakao(token.accessToken)
                 navigateToNextScreen()
             }
@@ -50,7 +50,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                         callback = kakaoCallback,
                     )
                 } else if (token != null) {
-                    showSnackBar(R.string.login_kakao_success)
+                    showToast(R.string.login_kakao_success)
                     viewModel.loginWithKakao(token.accessToken)
                     navigateToNextScreen()
                 }
@@ -69,9 +69,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         finish()
     }
 
-    private fun showSnackBar(message: Int) {
-        Snackbar
-            .make(binding.root, message, Snackbar.LENGTH_SHORT)
-            .show()
+    private fun showToast(message: Int) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }
