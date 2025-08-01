@@ -108,5 +108,5 @@ dependencies {
     implementation(libs.glide)
 
     // 로그인
-    implementation(libs.v2.user)
+    implementation(libs.kakao.v2.user)
 }

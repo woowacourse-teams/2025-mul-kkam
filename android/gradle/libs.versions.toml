@@ -25,7 +25,7 @@ mannodermaus-junit5 = "1.7.0"
 android-junit5 = "1.12.0.0"
 ktlint = "13.0.0"
 fragment-ktx = "1.8.8"
-v2User = "2.21.4"
+kakaoV2User = "2.21.4"
 
 [libraries]
 # AndroidX 및 UI
@@ -59,7 +59,7 @@ mannodermaus-junit5-runner = { group = "de.mannodermaus.junit5", name = "android
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 
 # 로그인
-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "v2User" }
+kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
