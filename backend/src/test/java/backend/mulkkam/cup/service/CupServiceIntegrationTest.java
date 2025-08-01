@@ -417,4 +417,77 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     .hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }
+    
+    @DisplayName("컵을 삭제할 때")
+    @Nested
+    class Delete {
+
+        private final Member member = MemberFixtureBuilder.builder().build();
+        private final Cup firstCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(1))
+                .build();
+        private final Cup secondCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(2))
+                .build();
+        private final Cup thirdCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(3))
+                .build();
+
+        @BeforeEach
+        void setup() {
+            memberRepository.save(member);
+            cupRepository.save(firstCup);
+            cupRepository.save(secondCup);
+            cupRepository.save(thirdCup);
+        }
+
+        @DisplayName("우선순위가 더 낮은 컵들의 우선순위가 한 단계씩 승격된다.")
+        @Test
+        void success_withLowerPriorityCups() {
+            // when
+            cupService.delete(firstCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupRepository.existsById(firstCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMemberId(member.getId())).hasSize(2);
+                softly.assertThat(cupRepository.findById(secondCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(1));
+                softly.assertThat(cupRepository.findById(thirdCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(2));
+            });
+        }
+
+        @DisplayName("우선순위가 더 낮은 컵이 없는 경우, 그 어떤 컵의 우선순위도 승격되지 않는다.")
+        @Test
+        void success_withoutLowerPriorityCups() {
+            // when
+            cupService.delete(thirdCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupRepository.existsById(thirdCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMemberId(member.getId())).hasSize(2);
+                softly.assertThat(cupRepository.findById(firstCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(1));
+                softly.assertThat(cupRepository.findById(secondCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(2));
+            });
+        }
+    }
 }
