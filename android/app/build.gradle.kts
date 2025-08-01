@@ -101,4 +101,5 @@ dependencies {
     // 구글 서비스
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
 }
