@@ -3,7 +3,7 @@ package backend.mulkkam.member.controller;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
-import backend.mulkkam.member.service.KakaoAuthService;
+import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -1,4 +1,4 @@
-package backend.mulkkam.member.service;
+package backend.mulkkam.auth.service;
 
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
 import backend.mulkkam.auth.dto.OauthLoginResponse;
@@ -26,7 +26,7 @@ public class KakaoAuthService {
     private final MemberRepository memberRepository;
 
     public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
-        KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.accessToken());
+        KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
         Optional<Member> byOauthId = memberRepository.findByOauthId(userInfo.id());
 
         if (byOauthId.isPresent()) {

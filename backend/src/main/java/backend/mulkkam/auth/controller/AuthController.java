@@ -1,8 +1,8 @@
-package backend.mulkkam.auth;
+package backend.mulkkam.auth.controller;
 
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
 import backend.mulkkam.auth.dto.OauthLoginResponse;
-import backend.mulkkam.member.service.KakaoAuthService;
+import backend.mulkkam.auth.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
