@@ -35,11 +35,15 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
-        buildConfigField("String", "BASE_URL", gradleLocalProperties(rootDir, providers).getProperty("base.url"))
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            gradleLocalProperties(rootDir, providers).getProperty("base.url"),
+        )
 
         val kakaoKey =
-            gradleLocalProperties(rootDir, providers).getProperty("kakao.key") ?: ""
-        buildConfigField("String", "KAKAO_KEY", "\"$kakaoKey\"")
+            gradleLocalProperties(rootDir, providers).getProperty("key.kakao") ?: ""
+        buildConfigField("String", "KEY_KAKAO", "\"$kakaoKey\"")
 
         manifestPlaceholders["kakaoKey"] = kakaoKey
     }
