@@ -29,7 +29,6 @@ public class KakaoRestClient {
                         .path("/user/me")
                         .build())
                 .header("Authorization", "Bearer " + accessToken)
-                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                 .retrieve()
                 .body(KakaoUserInfo.class);
     }

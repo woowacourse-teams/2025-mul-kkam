@@ -1,6 +1,7 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.OauthLoginResponse;
 import backend.mulkkam.infrastructure.KakaoRestClient;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
@@ -24,12 +25,12 @@ public class KakaoAuthService {
     private final KakaoRestClient kakaoRestClient;
     private final MemberRepository memberRepository;
 
-    public String signIn(KakaoSigninRequest kakaoSigninRequest) {
+    public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.accessToken());
         Optional<Member> byOauthId = memberRepository.findByOauthId(userInfo.id());
 
         if (byOauthId.isPresent()) {
-            return "히로 최고";
+            return new OauthLoginResponse("냥~");
         }
 
         Member member = new Member(
@@ -43,7 +44,7 @@ public class KakaoAuthService {
         );
 
         memberRepository.save(member);
-        return "회원가입 완";
+        return new OauthLoginResponse("멍~");
     }
 
 }

@@ -1,9 +1,11 @@
 package backend.mulkkam.auth;
 
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.OauthLoginResponse;
 import backend.mulkkam.member.service.KakaoAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,8 +17,8 @@ public class AuthController {
     private final KakaoAuthService kakaoAuthService;
 
     @PostMapping("/kakao")
-    public String signInWithKakao(
-            KakaoSigninRequest kakaoSigninRequest
+    public OauthLoginResponse signInWithKakao(
+            @RequestBody KakaoSigninRequest kakaoSigninRequest
     ) {
         return kakaoAuthService.signIn(kakaoSigninRequest);
     }
