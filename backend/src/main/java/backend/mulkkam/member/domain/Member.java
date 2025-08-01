@@ -37,9 +37,6 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
-    @Column(nullable = false)
-    private String oauthId;
-
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
@@ -48,18 +45,6 @@ public class Member {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
-    }
-
-    public Member(
-            MemberNickname memberNickname,
-            PhysicalAttributes physicalAttributes,
-            Amount targetAmount,
-            String oauthId
-    ) {
-        this.memberNickname = memberNickname;
-        this.physicalAttributes = physicalAttributes;
-        this.targetAmount = targetAmount;
-        this.oauthId = oauthId;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {

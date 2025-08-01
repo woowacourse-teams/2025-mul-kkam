@@ -1,6 +1,9 @@
 package backend.mulkkam.member.dto.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public record KakaoUserInfo(
-        String id
+        @JsonProperty("id")
+        String oauthMemberId
 ) {
 }

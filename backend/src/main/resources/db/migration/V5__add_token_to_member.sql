@@ -1,2 +1,0 @@
-ALTER TABLE member
-    ADD COLUMN oauth_id VARCHAR(50) NOT NULL;
