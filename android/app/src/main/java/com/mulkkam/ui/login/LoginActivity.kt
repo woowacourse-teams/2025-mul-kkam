@@ -1,4 +1,4 @@
-package com.mulkkam.ui.onboarding
+package com.mulkkam.ui.login
 
 import android.os.Bundle
 import android.util.Log
@@ -23,21 +23,21 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                 }
             }
 
-            if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
-                UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+            if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(this)) {
+                UserApiClient.Companion.instance.loginWithKakaoTalk(this) { token, error ->
                     if (error != null) {
                         Log.e("kakao login", "카카오톡으로 로그인 실패", error)
                         if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                             return@loginWithKakaoTalk
                         }
-                        UserApiClient.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
+                        UserApiClient.Companion.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
                     } else if (token != null) {
                         Toast.makeText(this, "카카오 로그인 성공 !", Toast.LENGTH_SHORT).show()
                         finish()
                     }
                 }
             } else {
-                UserApiClient.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
+                UserApiClient.Companion.instance.loginWithKakaoAccount(this, callback = kakaoCallback)
             }
         }
     }
