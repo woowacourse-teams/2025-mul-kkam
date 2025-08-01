@@ -9,28 +9,28 @@ class TokenPreference(
     private val sharedPreference = context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
     val accessToken: String?
-        get() = sharedPreference.getString(ACCESS_TOKEN_KEY, null)
+        get() = sharedPreference.getString(KEY_ACCESS_TOKEN, null)
 
     val fcmToken: String?
-        get() = sharedPreference.getString(FCM_TOKEN_KEY, null)
+        get() = sharedPreference.getString(KEY_FCM_TOKEN, null)
 
     fun saveAccessToken(token: String) {
-        sharedPreference.edit { putString(ACCESS_TOKEN_KEY, token) }
+        sharedPreference.edit { putString(KEY_ACCESS_TOKEN, token) }
     }
 
     fun deleteAccessToken() {
-        sharedPreference.edit { remove(ACCESS_TOKEN_KEY) }
+        sharedPreference.edit { remove(KEY_ACCESS_TOKEN) }
     }
 
-    fun saveFcmToken(token: String) = sharedPreference.edit { putString(FCM_TOKEN_KEY, token) }
+    fun saveFcmToken(token: String) = sharedPreference.edit { putString(KEY_FCM_TOKEN, token) }
 
     fun deleteFcmToken() {
-        sharedPreference.edit { remove(FCM_TOKEN_KEY) }
+        sharedPreference.edit { remove(KEY_FCM_TOKEN) }
     }
 
     companion object {
         private const val PREFERENCE_NAME: String = "TOKEN_PREFERENCE"
-        private const val ACCESS_TOKEN_KEY: String = "ACCESS_TOKEN"
-        private const val FCM_TOKEN_KEY: String = "FCM_TOKEN"
+        private const val KEY_ACCESS_TOKEN: String = "ACCESS_TOKEN"
+        private const val KEY_FCM_TOKEN: String = "FCM_TOKEN"
     }
 }

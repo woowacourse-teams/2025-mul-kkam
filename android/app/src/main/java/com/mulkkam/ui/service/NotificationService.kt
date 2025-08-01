@@ -27,7 +27,7 @@ class NotificationService : FirebaseMessagingService() {
     private fun subscribeToTopic() {
         FirebaseMessaging
             .getInstance()
-            .subscribeToTopic(DEFAULT_TOPIC)
+            .subscribeToTopic(TOPIC_DEFAULT)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -55,7 +55,7 @@ class NotificationService : FirebaseMessagingService() {
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
-                .setGroup(GROUP_KEY)
+                .setGroup(KEY_GROUP)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build()
 
@@ -85,7 +85,7 @@ class NotificationService : FirebaseMessagingService() {
 
         const val EXTRA_ACTION = "EXTRA_ACTION"
 
-        private const val GROUP_KEY = "MULKKAM_GROUP"
-        private const val DEFAULT_TOPIC = "mulkkam"
+        private const val KEY_GROUP = "MULKKAM_GROUP"
+        private const val TOPIC_DEFAULT = "mulkkam"
     }
 }
