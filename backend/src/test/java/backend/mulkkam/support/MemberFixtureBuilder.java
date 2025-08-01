@@ -13,6 +13,7 @@ public class MemberFixtureBuilder {
     private Double weight;
     private PhysicalAttributes physicalAttributes;
     private Amount targetAmount;
+    private String oauthId;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
@@ -20,6 +21,7 @@ public class MemberFixtureBuilder {
         this.weight = 50.2;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
         this.targetAmount = new Amount(1_000);
+        this.oauthId = "temp";
     }
 
     public static MemberFixtureBuilder builder() {
@@ -48,11 +50,17 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+    public MemberFixtureBuilder oauthId(String oauthId) {
+        this.oauthId = oauthId;
+        return this;
+    }
+
     public Member build() {
         return new Member(
                 this.memberNickname,
                 this.physicalAttributes,
-                this.targetAmount
+                this.targetAmount,
+                this.oauthId
         );
     }
 }
