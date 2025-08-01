@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class AuthRequest(
-    @SerialName("accessToken")
-    val accessToken: String,
+    @SerialName("oauthAccessToken")
+    val oauthAccessToken: String,
 )
