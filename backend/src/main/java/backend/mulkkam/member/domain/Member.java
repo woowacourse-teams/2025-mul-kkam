@@ -50,6 +50,18 @@ public class Member {
         this.targetAmount = targetAmount;
     }
 
+    public Member(
+            MemberNickname memberNickname,
+            PhysicalAttributes physicalAttributes,
+            Amount targetAmount,
+            String oauthId
+    ) {
+        this.memberNickname = memberNickname;
+        this.physicalAttributes = physicalAttributes;
+        this.targetAmount = targetAmount;
+        this.oauthId = oauthId;
+    }
+
     public PhysicalAttributes getPhysicalAttributes() {
         if (physicalAttributes == null) {
             return new PhysicalAttributes(null, null);
