@@ -7,7 +7,7 @@ import retrofit2.http.POST
 
 interface AuthService {
     @POST("/auth/kakao")
-    suspend fun postAuth(
+    suspend fun postAuthKakao(
         @Body authRequest: AuthRequest,
     ): AuthResponse
 }

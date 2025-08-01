@@ -6,9 +6,9 @@ import com.mulkkam.data.remote.service.AuthService
 class AuthRepository(
     private val authService: AuthService,
 ) {
-    suspend fun postAuth(accessToken: String) =
+    suspend fun postAuthKakao(oauthAccessToken: String) =
         authService
-            .postAuth(
-                AuthRequest(accessToken),
+            .postAuthKakao(
+                AuthRequest(oauthAccessToken),
             ).accessToken
 }

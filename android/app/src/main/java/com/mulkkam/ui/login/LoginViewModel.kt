@@ -7,9 +7,9 @@ import com.mulkkam.di.RepositoryInjection
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    fun login(accessToken: String) {
+    fun loginWithKakao(token: String) {
         viewModelScope.launch {
-            val accessToken = RepositoryInjection.authRepository.postAuth(accessToken)
+            val accessToken = RepositoryInjection.authRepository.postAuthKakao(token)
             RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
             Log.d("hwannow_log", accessToken)
         }
