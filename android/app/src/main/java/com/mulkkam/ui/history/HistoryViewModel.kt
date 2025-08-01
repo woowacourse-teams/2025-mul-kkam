@@ -25,6 +25,11 @@ class HistoryViewModel : ViewModel() {
             intakeHistories.lastDay < LocalDate.now()
         }
 
+    val isToday: LiveData<Boolean> =
+        dailyIntakeHistories.map { intakeHistory ->
+            intakeHistory.date == LocalDate.now()
+        }
+
     init {
         loadIntakeHistories()
     }

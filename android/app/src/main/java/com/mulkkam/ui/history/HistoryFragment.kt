@@ -133,6 +133,10 @@ class HistoryFragment :
         viewModel.isCurrentWeek.observe(viewLifecycleOwner) { isNextWeekAvailable ->
             binding.ibWeekNext.isVisible = isNextWeekAvailable
         }
+
+        viewModel.isToday.observe(viewLifecycleOwner) { isToday ->
+            binding.tvTodayLabel.isVisible = isToday
+        }
     }
 
     private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
