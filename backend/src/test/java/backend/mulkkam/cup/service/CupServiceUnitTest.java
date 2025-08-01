@@ -58,7 +58,6 @@ class CupServiceUnitTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            IntakeType intakeType = IntakeType.WATER;
             RegisterCupRequest registerCupRequest = new RegisterCupRequest(
                     cupNickname,
                     cupAmount,
