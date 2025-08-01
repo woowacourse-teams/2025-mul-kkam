@@ -4,9 +4,15 @@ spring:
     username: root
     password: password
     driver-class-name: com.mysql.cj.jdbc.Driver
+
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    enabled: true
+    clean-disabled: false
+    locations: classpath:db/migration

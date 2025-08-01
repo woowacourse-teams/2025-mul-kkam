@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: mulkkam
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=MySQL
+    driver-class-name: org.h2.Driver
+  sql:
+    init:
+      mode: never
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: false

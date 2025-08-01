@@ -1,9 +1,11 @@
 package com.mulkkam.ui.main
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.binding.BindingActivity
@@ -14,6 +16,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
 
+    private var backPressedTime: Long = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,6 +26,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             switchFragment(MainTab.HOME)
         }
         handleNotificationEvent()
+        setupDoubleBackToExit()
     }
 
     private fun handleNotificationEvent() {
@@ -77,5 +82,25 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         if (fragment is Refreshable) {
             fragment.onReselected()
         }
+    }
+
+    private fun setupDoubleBackToExit() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
+                        backPressedTime = System.currentTimeMillis()
+                        Snackbar.make(binding.root, R.string.main_main_back_press_exit_message, Snackbar.LENGTH_SHORT).show()
+                    } else {
+                        finishAffinity()
+                    }
+                }
+            },
+        )
+    }
+
+    companion object {
+        private const val BACK_PRESS_THRESHOLD: Long = 2000L
     }
 }
