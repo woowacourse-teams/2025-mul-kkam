@@ -4,32 +4,30 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mulkkam.R
+import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.ui.main.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d("FCM", "New Token: $token")
-        subscribeToTopic(DEFAULT_TOPIC)
+        CoroutineScope(Dispatchers.IO).launch {
+            tokenRepository.saveFcmToken(token)
+        }
+        subscribeToTopic()
     }
 
-    private fun subscribeToTopic(topic: String) {
+    private fun subscribeToTopic() {
         FirebaseMessaging
             .getInstance()
-            .subscribeToTopic(topic)
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    Log.d("FCM", "Subscribed to topic: $topic")
-                } else {
-                    Log.w("FCM", "Failed to subscribe to topic: $topic", task.exception)
-                }
-            }
+            .subscribeToTopic(DEFAULT_TOPIC)
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
@@ -37,7 +35,7 @@ class NotificationService : FirebaseMessagingService() {
 
         val title = remoteMessage.data["title"] ?: remoteMessage.notification?.title ?: getString(R.string.app_name)
         val body = remoteMessage.data["body"] ?: remoteMessage.notification?.body ?: ""
-        val action = remoteMessage.data["action"] ?: ""
+        val action = remoteMessage.data["action"] ?: NotificationAction.UNKNOWN.name
 
         showNotification(title, body, action)
     }
@@ -47,46 +45,47 @@ class NotificationService : FirebaseMessagingService() {
         body: String,
         action: String,
     ) {
-        val intent =
-            Intent(this, MainActivity::class.java).apply {
-                putExtra(EXTRA_ACTION, action)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            }
+        val pendingIntent = createPendingIntent(action)
 
-        val pendingIntent =
-            PendingIntent.getActivity(
-                this,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
-            )
-
-        val builder =
+        val notification =
             NotificationCompat
                 .Builder(this, CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_app)
+                .setSmallIcon(R.mipmap.ic_launcher)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setAutoCancel(true)
                 .setContentIntent(pendingIntent)
                 .setGroup(GROUP_KEY)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .build()
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
-        notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
+        notificationManager.notify(System.currentTimeMillis().toInt(), notification)
+    }
+
+    private fun createPendingIntent(action: String): PendingIntent {
+        val intent =
+            Intent(this, MainActivity::class.java).apply {
+                putExtra(EXTRA_ACTION, action)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            }
+
+        return PendingIntent.getActivity(
+            this,
+            0,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
     }
 
     companion object {
         const val CHANNEL_ID = "MULKKAM_NOTIFICATION_CHANNEL"
-        const val CHANNEL_NAME = "Mulkkam Notification"
-        const val CHANNEL_DESC = "Mulkkam Default Notification Channel"
-
-        const val GROUP_KEY = "MULKKAM_GROUP"
+        const val CHANNEL_NAME = "MulKkam Notification"
+        const val CHANNEL_DESC = "MulKkam Default Notification Channel"
 
         const val EXTRA_ACTION = "EXTRA_ACTION"
 
-        const val TARGET_HOME = "HOME"
-
+        private const val GROUP_KEY = "MULKKAM_GROUP"
         private const val DEFAULT_TOPIC = "mulkkam"
     }
 }
