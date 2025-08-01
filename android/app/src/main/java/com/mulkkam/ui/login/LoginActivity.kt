@@ -11,6 +11,7 @@ import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.main.MainActivity
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
@@ -33,6 +34,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
             } else if (token != null) {
                 showSnackBar(R.string.login_kakao_success)
                 viewModel.loginWithKakao(token.accessToken)
+                navigateToNextScreen()
             }
         }
 
@@ -50,6 +52,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                 } else if (token != null) {
                     showSnackBar(R.string.login_kakao_success)
                     viewModel.loginWithKakao(token.accessToken)
+                    navigateToNextScreen()
                 }
             }
         } else {
@@ -58,6 +61,12 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                 callback = kakaoCallback,
             )
         }
+    }
+
+    private fun navigateToNextScreen() {
+        val intent = MainActivity.newIntent(this)
+        startActivity(intent)
+        finish()
     }
 
     private fun showSnackBar(message: Int) {

@@ -1,5 +1,7 @@
 package com.mulkkam.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
@@ -91,5 +93,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     companion object {
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
+
+        fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
 }
