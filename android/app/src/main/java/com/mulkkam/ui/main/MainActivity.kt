@@ -8,6 +8,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
+import com.mulkkam.ui.service.NotificationService
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -19,6 +20,18 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         initBottomNavListener()
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
+        }
+        handleNotificationEvent()
+    }
+
+    private fun handleNotificationEvent() {
+        intent?.let {
+            val target = it.getStringExtra(NotificationService.EXTRA_TARGET)
+            val payload = it.getStringExtra(NotificationService.EXTRA_PAYLOAD)
+
+            when (target) {
+                NotificationService.TARGET_HOME -> Unit
+            }
         }
     }
 

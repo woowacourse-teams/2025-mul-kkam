@@ -19,7 +19,7 @@
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
 
-        <service android:name=".service.NotificationService"
+        <service android:name=".ui.service.NotificationService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
