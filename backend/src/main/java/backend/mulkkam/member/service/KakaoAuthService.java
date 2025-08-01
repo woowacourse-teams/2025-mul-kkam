@@ -1,5 +1,6 @@
 package backend.mulkkam.member.service;
 
+import backend.mulkkam.auth.dto.KakaoSigninRequest;
 import backend.mulkkam.infrastructure.KakaoRestClient;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
@@ -23,8 +24,8 @@ public class KakaoAuthService {
     private final KakaoRestClient kakaoRestClient;
     private final MemberRepository memberRepository;
 
-    public String signIn(String accessToken) {
-        KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(accessToken);
+    public String signIn(KakaoSigninRequest kakaoSigninRequest) {
+        KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.accessToken());
         Optional<Member> byOauthId = memberRepository.findByOauthId(userInfo.id());
 
         if (byOauthId.isPresent()) {
