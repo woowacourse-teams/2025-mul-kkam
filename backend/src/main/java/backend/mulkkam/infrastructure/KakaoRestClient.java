@@ -24,7 +24,7 @@ public class KakaoRestClient {
     }
 
     public KakaoUserInfo getUserInfo(String accessToken) {
-        return restClient.get()
+        return restClient.post()
                 .uri(uriBuilder -> uriBuilder
                         .path("/user/me")
                         .build())
