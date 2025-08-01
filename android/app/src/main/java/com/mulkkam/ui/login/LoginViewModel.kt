@@ -1,6 +1,5 @@
 package com.mulkkam.ui.login
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
@@ -11,7 +10,6 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             val accessToken = RepositoryInjection.authRepository.postAuthKakao(token)
             RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
-            Log.d("hwannow_log", accessToken)
         }
     }
 }
