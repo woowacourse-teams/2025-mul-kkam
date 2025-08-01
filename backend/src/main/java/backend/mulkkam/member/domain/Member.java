@@ -37,6 +37,9 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
+    @Column(nullable = false)
+    private String oauthId;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
