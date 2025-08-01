@@ -2,6 +2,7 @@ package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mulkkam.BuildConfig
+import com.mulkkam.data.remote.AuthorizationInterceptor
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.IntakeService
@@ -27,11 +28,18 @@ object NetworkInjection {
             .build()
     }
 
+    private val interceptorClient =
+        OkHttpClient()
+            .newBuilder()
+            .addInterceptor(AuthorizationInterceptor())
+            .build()
+
     private val retrofit: Retrofit by lazy {
         Retrofit
             .Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
+            .client(interceptorClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
     }
