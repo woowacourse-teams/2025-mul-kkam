@@ -10,9 +10,11 @@ import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -26,7 +28,7 @@ public class KakaoAuthService {
         Optional<Member> byOauthId = memberRepository.findByOauthId(userInfo.id());
 
         if (byOauthId.isPresent()) {
-            return "로그인 완";
+            return "히로 최고";
         }
 
         Member member = new Member(

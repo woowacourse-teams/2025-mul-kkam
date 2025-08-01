@@ -54,11 +54,4 @@ public class MemberController {
         MemberNicknameResponse memberNicknameResponse = memberService.getNickname(1L);
         return ResponseEntity.ok(memberNicknameResponse);
     }
-
-    @PostMapping("/kakao")
-    public void temp(
-            @RequestParam(name = "token") String accessToken
-    ) {
-        kakaoAuthService.signIn(accessToken);
-    }
 }
