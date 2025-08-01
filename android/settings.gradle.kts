@@ -18,7 +18,7 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         maven("https://jitpack.io")
-        maven { url = java.net.URI("https://devrepo.kakao.com/nexus/content/groups/public/") }
+        maven("https://devrepo.kakao.com/nexus/content/groups/public/")
     }
 }
 
