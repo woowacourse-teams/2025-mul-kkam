@@ -26,10 +26,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun handleNotificationEvent() {
         intent?.let {
-            val target = it.getStringExtra(NotificationService.EXTRA_TARGET)
-            val payload = it.getStringExtra(NotificationService.EXTRA_PAYLOAD)
+            val action = it.getStringExtra(NotificationService.EXTRA_ACTION)
 
-            when (target) {
+            when (action) {
                 NotificationService.TARGET_HOME -> Unit
             }
         }

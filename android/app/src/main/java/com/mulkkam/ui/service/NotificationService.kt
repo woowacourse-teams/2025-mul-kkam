@@ -1,5 +1,6 @@
 package com.mulkkam.ui.service
 
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
@@ -36,22 +37,19 @@ class NotificationService : FirebaseMessagingService() {
 
         val title = remoteMessage.data["title"] ?: remoteMessage.notification?.title ?: getString(R.string.app_name)
         val body = remoteMessage.data["body"] ?: remoteMessage.notification?.body ?: ""
-        val target = remoteMessage.data["target"] ?: TARGET_HOME
-        val payload = remoteMessage.data["payload"] ?: ""
+        val action = remoteMessage.data["action"] ?: ""
 
-        showNotification(title, body, target, payload)
+        showNotification(title, body, action)
     }
 
     private fun showNotification(
         title: String,
         body: String,
-        target: String,
-        payload: String,
+        action: String,
     ) {
         val intent =
             Intent(this, MainActivity::class.java).apply {
-                putExtra(EXTRA_TARGET, target)
-                putExtra(EXTRA_PAYLOAD, payload)
+                putExtra(EXTRA_ACTION, action)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
             }
 
@@ -74,7 +72,7 @@ class NotificationService : FirebaseMessagingService() {
                 .setGroup(GROUP_KEY)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as android.app.NotificationManager
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as? NotificationManager ?: return
         notificationManager.notify(System.currentTimeMillis().toInt(), builder.build())
     }
 
@@ -85,8 +83,7 @@ class NotificationService : FirebaseMessagingService() {
 
         const val GROUP_KEY = "MULKKAM_GROUP"
 
-        const val EXTRA_TARGET = "extra_target"
-        const val EXTRA_PAYLOAD = "extra_payload"
+        const val EXTRA_ACTION = "EXTRA_ACTION"
 
         const val TARGET_HOME = "HOME"
 
