@@ -165,18 +165,10 @@ class HistoryFragment :
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         chart.apply {
+            updateGoalRate(chart, intakeHistorySummary)
             root.setOnClickListener {
                 viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
-            if (intakeHistorySummary.achievementRate == 100f) {
-                tvWaterGoalRate.visibility = View.GONE
-                ivCheck.visibility = View.VISIBLE
-            } else {
-                ivCheck.visibility = View.GONE
-                tvWaterGoalRate.visibility = View.VISIBLE
-                tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
-            }
-
             tvDayOfWeek.text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
             tvDayOfWeek.setTextColor(getColorByDate(intakeHistorySummary.date))
@@ -187,6 +179,22 @@ class HistoryFragment :
                     intakeHistorySummary.date.dayOfMonth,
                 )
             pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
+        }
+    }
+
+    private fun updateGoalRate(
+        chart: HistoryWaterIntakeChartBinding,
+        intakeHistorySummary: IntakeHistorySummary,
+    ) {
+        with(chart) {
+            if (intakeHistorySummary.achievementRate == 100f) {
+                tvWaterGoalRate.visibility = View.GONE
+                ivCheck.visibility = View.VISIBLE
+            } else {
+                tvWaterGoalRate.visibility = View.VISIBLE
+                ivCheck.visibility = View.GONE
+                tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
+            }
         }
     }
 
