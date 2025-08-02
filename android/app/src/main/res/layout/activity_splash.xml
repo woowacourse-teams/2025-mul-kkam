@@ -16,6 +16,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:lottie_colorFilter="@color/primary_100"
         app:lottie_loop="false"
         app:lottie_progress="0.65"
         app:lottie_rawRes="@raw/lottie_splash"
