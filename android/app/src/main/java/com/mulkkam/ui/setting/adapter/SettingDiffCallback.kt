@@ -7,20 +7,18 @@ object SettingDiffCallback : DiffUtil.ItemCallback<SettingItem>() {
         oldItem: SettingItem,
         newItem: SettingItem,
     ): Boolean =
-        when {
-            oldItem is SettingItem.TitleItem && newItem is SettingItem.TitleItem ->
-                oldItem.title == newItem.title
+        when (oldItem) {
+            is SettingItem.TitleItem ->
+                newItem is SettingItem.TitleItem && oldItem.title == newItem.title
 
-            oldItem is SettingItem.NormalItem && newItem is SettingItem.NormalItem ->
-                oldItem.type == newItem.type
+            is SettingItem.NormalItem ->
+                newItem is SettingItem.NormalItem && oldItem.type == newItem.type
 
-            oldItem is SettingItem.SwitchItem && newItem is SettingItem.SwitchItem ->
-                oldItem.type == newItem.type
+            is SettingItem.SwitchItem ->
+                newItem is SettingItem.SwitchItem && oldItem.type == newItem.type
 
-            oldItem is SettingItem.DividerItem && newItem is SettingItem.DividerItem ->
-                true
-
-            else -> false
+            is SettingItem.DividerItem ->
+                newItem is SettingItem.DividerItem
         }
 
     override fun areContentsTheSame(
