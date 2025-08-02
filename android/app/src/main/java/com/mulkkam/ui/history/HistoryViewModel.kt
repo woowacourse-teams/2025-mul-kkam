@@ -35,11 +35,6 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date > LocalDate.now()
         }
 
-    val hasIntakeRecord: LiveData<Boolean> =
-        dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.totalIntakeAmount != 0
-        }
-
     init {
         loadIntakeHistories()
     }

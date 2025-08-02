@@ -130,26 +130,6 @@ class HistoryFragment :
             updateWeeklyChartHighlight(dailyIntakeHistories.dayOfWeekIndex())
         }
 
-        viewModel.hasIntakeRecord.observe(viewLifecycleOwner) { hasIntakeRecord ->
-            if (hasIntakeRecord) {
-                binding.viewDailyChart.isVisible = true
-                binding.ivHistoryCharacter.setImageDrawable(
-                    getDrawable(
-                        requireContext(),
-                        R.drawable.img_history_character,
-                    ),
-                )
-            } else {
-                binding.viewDailyChart.visibility = View.INVISIBLE
-                binding.ivHistoryCharacter.setImageDrawable(
-                    getDrawable(
-                        requireContext(),
-                        R.drawable.img_history_crying_character,
-                    ),
-                )
-            }
-        }
-
         viewModel.isNotCurrentWeek.observe(viewLifecycleOwner) { canMoveToNext ->
             binding.ibWeekNext.isVisible = canMoveToNext
         }
@@ -221,19 +201,30 @@ class HistoryFragment :
     }
 
     private fun updateDailyChart(intakeHistorySummary: IntakeHistorySummary) {
+        updateDailyChartView(intakeHistorySummary)
+        updateDailyChartLabel(intakeHistorySummary.date)
+        updateDailyIntakeSummary(intakeHistorySummary)
+        updateCharacter(intakeHistorySummary.totalIntakeAmount)
+    }
+
+    private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
+            viewDailyChart.visibility =
+                if (intakeHistorySummary.totalIntakeAmount != 0) View.VISIBLE else View.INVISIBLE
             viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
-            tvDailyChartLabel.text =
-                getColoredSpannable(
-                    R.color.primary_200,
-                    getString(
-                        R.string.history_daily_chart_label,
-                        intakeHistorySummary.date.format(FORMATTER_DATE_WITH_DAY),
-                    ),
-                    intakeHistorySummary.date.format(FORMATTER_DATE_WITH_DAY),
-                )
-            updateDailyIntakeSummary(intakeHistorySummary)
         }
+    }
+
+    private fun updateDailyChartLabel(date: LocalDate) {
+        binding.tvDailyChartLabel.text =
+            getColoredSpannable(
+                R.color.primary_200,
+                getString(
+                    R.string.history_daily_chart_label,
+                    date.format(FORMATTER_DATE_WITH_DAY),
+                ),
+                date.format(FORMATTER_DATE_WITH_DAY),
+            )
     }
 
     private fun updateDailyIntakeSummary(intakeHistorySummary: IntakeHistorySummary) {
@@ -241,7 +232,7 @@ class HistoryFragment :
             String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
 
         @ColorRes val summaryColorResId =
-            if (intakeHistorySummary.targetAmount == 0) {
+            if (intakeHistorySummary.targetAmount > intakeHistorySummary.totalIntakeAmount) {
                 R.color.gray_200
             } else {
                 R.color.primary_200
@@ -256,6 +247,18 @@ class HistoryFragment :
                 ),
                 formattedIntake,
             )
+    }
+
+    private fun updateCharacter(intakeAmount: Int) {
+        val drawableRes =
+            if (intakeAmount != 0) {
+                R.drawable.img_history_character
+            } else {
+                R.drawable.img_history_crying_character
+            }
+        binding.ivHistoryCharacter.setImageDrawable(
+            getDrawable(requireContext(), drawableRes),
+        )
     }
 
     private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
