@@ -1,11 +1,15 @@
 package backend.mulkkam.intake.infrastructure;
 
+import backend.mulkkam.intake.dto.OpenWeatherResponse;
+import backend.mulkkam.intake.service.WeatherClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
-public class WeatherClient {
+@Component
+public class WeatherRestClient implements WeatherClient {
 
     private static final String URL = "https://api.openweathermap.org";
 
@@ -14,7 +18,7 @@ public class WeatherClient {
 
     private final RestClient restClient;
 
-    public WeatherClient() {
+    public WeatherRestClient() {
         this.restClient = RestClient.builder()
                 .baseUrl(URL)
                 .defaultHeader(
@@ -24,14 +28,15 @@ public class WeatherClient {
                 .build();
     }
 
-    public String getCurrentWeather(String city) {
+    @Override
+    public OpenWeatherResponse getFourDayWeatherForecast(String cityCode) {
         return restClient.get()
                 .uri(uriBuilder -> uriBuilder
                         .path("/data/2.5/forecast")
-                        .queryParam("id", city)
+                        .queryParam("id", cityCode)
                         .queryParam("appid", apiKey)
                         .build())
                 .retrieve()
-                .body(String.class);
+                .body(OpenWeatherResponse.class);
     }
 }
