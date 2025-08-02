@@ -130,12 +130,36 @@ class HistoryFragment :
             updateWeeklyChartHighlight(dailyIntakeHistories.dayOfWeekIndex())
         }
 
+        viewModel.hasLog.observe(viewLifecycleOwner) { hasLog ->
+            if (!hasLog) {
+                binding.viewDailyChart.visibility = View.INVISIBLE
+                binding.ivHistoryCharacter.setImageDrawable(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.img_history_crying_character,
+                    ),
+                )
+            } else {
+                binding.viewDailyChart.isVisible = true
+                binding.ivHistoryCharacter.setImageDrawable(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.img_history_character,
+                    ),
+                )
+            }
+        }
+
         viewModel.isCurrentWeek.observe(viewLifecycleOwner) { isNextWeekAvailable ->
             binding.ibWeekNext.isVisible = isNextWeekAvailable
         }
 
         viewModel.isToday.observe(viewLifecycleOwner) { isToday ->
             binding.tvTodayLabel.isVisible = isToday
+        }
+
+        viewModel.isFuture.observe(viewLifecycleOwner) { isFuture ->
+            binding.tvDailyIntakeSummary.isVisible = !isFuture
         }
     }
 
@@ -145,11 +169,14 @@ class HistoryFragment :
             updateWeeklyChart(chart, intake)
         }
 
+        val formatter =
+            if (weeklyIntakeHistories.isCurrentYear) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
+
         binding.tvWeekRange.text =
             getString(
                 R.string.history_week_range,
-                weeklyIntakeHistories.firstDay.format(WEEK_RANGE_FORMATTER),
-                weeklyIntakeHistories.lastDay.format(WEEK_RANGE_FORMATTER),
+                weeklyIntakeHistories.firstDay.format(formatter),
+                weeklyIntakeHistories.lastDay.format(formatter),
             )
     }
 
@@ -193,9 +220,9 @@ class HistoryFragment :
                     R.color.primary_200,
                     getString(
                         R.string.history_daily_chart_label,
-                        intakeHistorySummary.date.format(DATE_FORMATTER_KR),
+                        intakeHistorySummary.date.format(FORMATTER_DATE_WITH_DAY),
                     ),
-                    intakeHistorySummary.date.format(DATE_FORMATTER_KR),
+                    intakeHistorySummary.date.format(FORMATTER_DATE_WITH_DAY),
                 )
             updateDailyIntakeSummary(intakeHistorySummary)
         }
@@ -292,10 +319,12 @@ class HistoryFragment :
     }
 
     companion object {
-        private val DATE_FORMATTER_KR: DateTimeFormatter =
+        private val FORMATTER_DATE_WITH_DAY: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
-        private val WEEK_RANGE_FORMATTER: DateTimeFormatter =
+        private val FORMATTER_MONTH_DATE: DateTimeFormatter =
             DateTimeFormatter.ofPattern("M월 d일")
+        private val FORMATTER_FULL_DATE: DateTimeFormatter =
+            DateTimeFormatter.ofPattern("yyyy년 M월 d일")
 
         private const val WEEK_OFFSET_PREV: Long = -1L
         private const val WEEK_OFFSET_NEXT: Long = 1L

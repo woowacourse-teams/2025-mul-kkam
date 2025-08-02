@@ -30,17 +30,28 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date == LocalDate.now()
         }
 
+    val isFuture: LiveData<Boolean> =
+        dailyIntakeHistories.map { intakeHistory ->
+            intakeHistory.date > LocalDate.now()
+        }
+
+    val hasLog: LiveData<Boolean> =
+        dailyIntakeHistories.map { intakeHistory ->
+            intakeHistory.totalIntakeAmount != 0
+        }
+
     init {
         loadIntakeHistories()
     }
 
     fun loadIntakeHistories(baseDate: LocalDate = LocalDate.now()) {
+        val today = LocalDate.now()
         viewModelScope.launch {
             val weekDates = getWeekDates(baseDate)
             val summaries =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
-                    to = weekDates.last(),
+                    to = minOf(weekDates.last(), today),
                 )
 
             updateIntakeSummary(weekDates, summaries)
@@ -49,11 +60,8 @@ class HistoryViewModel : ViewModel() {
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
         val monday = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        val today = LocalDate.now()
 
-        return (0 until WEEK_LENGTH)
-            .map { monday.plusDays(it.toLong()) }
-            .takeWhile { it <= today }
+        return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
     private fun updateIntakeSummary(
@@ -78,7 +86,8 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun moveWeek(offset: Long) {
-        val newBaseDate = weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
+        val newBaseDate =
+            weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
         loadIntakeHistories(newBaseDate)
     }
 
