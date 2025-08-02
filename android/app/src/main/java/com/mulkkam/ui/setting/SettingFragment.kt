@@ -1,7 +1,10 @@
 package com.mulkkam.ui.setting
 
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import android.view.View
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingBinding
@@ -54,9 +57,23 @@ class SettingFragment :
 
             SettingType.Normal.MyCup -> startActivity(SettingWaterActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingGoalActivity.newIntent(requireContext()))
-            SettingType.Normal.Notification -> {
-                // TODO: 푸시 알림 설정 화면 이동
-            }
+            SettingType.Normal.Notification -> navigateToNotificationSetting()
+        }
+    }
+
+    private fun navigateToNotificationSetting() {
+        runCatching {
+            val intent =
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
+                }
+            startActivity(intent)
+        }.onFailure {
+            val intent =
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = "package:${requireContext().packageName}".toUri()
+                }
+            startActivity(intent)
         }
     }
 
