@@ -25,11 +25,8 @@ class SettingFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.rvSettingOptions.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvSettingOptions.adapter = settingAdapter
-
-        val settingItems = createSettingItems()
-        settingAdapter.submitList(settingItems)
+        initSettingsContainer()
+        initSettingItems()
     }
 
     private fun handleSettingClick() =
@@ -46,25 +43,6 @@ class SettingFragment :
                     handleSwitchChange(item.type, isChecked)
                 }
             },
-        )
-
-    private fun createSettingItems(): List<SettingItem> =
-        listOf(
-            SettingItem.TitleItem(getString(R.string.setting_section_account)),
-            SettingItem.NormalItem(getString(R.string.setting_profile_edit_nickname_label), SettingType.Normal.Nickname),
-            SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
-            SettingItem.DividerItem,
-            SettingItem.TitleItem(getString(R.string.setting_section_water)),
-            SettingItem.NormalItem(getString(R.string.setting_water_toolbar_title), SettingType.Normal.MyCup),
-            SettingItem.NormalItem(getString(R.string.setting_goal_toolbar_title), SettingType.Normal.Goal),
-            SettingItem.DividerItem,
-            SettingItem.TitleItem(getString(R.string.setting_section_notification)),
-            SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
-            SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
-            SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
-            SettingItem.DividerItem,
-            SettingItem.TitleItem(getString(R.string.setting_section_permission)),
-            SettingItem.SwitchItem(getString(R.string.setting_item_health_connect), false, SettingType.Switch.HealthConnect),
         )
 
     private fun handleNormalClick(type: SettingType.Normal) {
@@ -99,5 +77,32 @@ class SettingFragment :
                 // TODO: 야간 알림 허용 상태 저장
             }
         }
+    }
+
+    private fun initSettingsContainer() {
+        binding.rvSettingOptions.layoutManager = LinearLayoutManager(requireContext())
+        binding.rvSettingOptions.adapter = settingAdapter
+    }
+
+    private fun initSettingItems() {
+        val settingItems =
+            listOf(
+                SettingItem.TitleItem(getString(R.string.setting_section_account)),
+                SettingItem.NormalItem(getString(R.string.setting_profile_edit_nickname_label), SettingType.Normal.Nickname),
+                SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
+                SettingItem.DividerItem,
+                SettingItem.TitleItem(getString(R.string.setting_section_water)),
+                SettingItem.NormalItem(getString(R.string.setting_water_toolbar_title), SettingType.Normal.MyCup),
+                SettingItem.NormalItem(getString(R.string.setting_goal_toolbar_title), SettingType.Normal.Goal),
+                SettingItem.DividerItem,
+                SettingItem.TitleItem(getString(R.string.setting_section_notification)),
+                SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
+                SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
+                SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
+                SettingItem.DividerItem,
+                SettingItem.TitleItem(getString(R.string.setting_section_permission)),
+                SettingItem.SwitchItem(getString(R.string.setting_item_health_connect), false, SettingType.Switch.HealthConnect),
+            )
+        settingAdapter.submitList(settingItems)
     }
 }
