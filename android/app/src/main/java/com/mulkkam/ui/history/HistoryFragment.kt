@@ -130,16 +130,8 @@ class HistoryFragment :
             updateWeeklyChartHighlight(dailyIntakeHistories.dayOfWeekIndex())
         }
 
-        viewModel.hasLog.observe(viewLifecycleOwner) { hasLog ->
-            if (!hasLog) {
-                binding.viewDailyChart.visibility = View.INVISIBLE
-                binding.ivHistoryCharacter.setImageDrawable(
-                    getDrawable(
-                        requireContext(),
-                        R.drawable.img_history_crying_character,
-                    ),
-                )
-            } else {
+        viewModel.hasIntakeRecord.observe(viewLifecycleOwner) { hasIntakeRecord ->
+            if (hasIntakeRecord) {
                 binding.viewDailyChart.isVisible = true
                 binding.ivHistoryCharacter.setImageDrawable(
                     getDrawable(
@@ -147,19 +139,27 @@ class HistoryFragment :
                         R.drawable.img_history_character,
                     ),
                 )
+            } else {
+                binding.viewDailyChart.visibility = View.INVISIBLE
+                binding.ivHistoryCharacter.setImageDrawable(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.img_history_crying_character,
+                    ),
+                )
             }
         }
 
-        viewModel.isCurrentWeek.observe(viewLifecycleOwner) { isNextWeekAvailable ->
-            binding.ibWeekNext.isVisible = isNextWeekAvailable
+        viewModel.isNotCurrentWeek.observe(viewLifecycleOwner) { canMoveToNext ->
+            binding.ibWeekNext.isVisible = canMoveToNext
         }
 
-        viewModel.isToday.observe(viewLifecycleOwner) { isToday ->
-            binding.tvTodayLabel.isVisible = isToday
+        viewModel.isToday.observe(viewLifecycleOwner) { isTodaySelected ->
+            binding.tvTodayLabel.isVisible = isTodaySelected
         }
 
-        viewModel.isFuture.observe(viewLifecycleOwner) { isFuture ->
-            binding.tvDailyIntakeSummary.isVisible = !isFuture
+        viewModel.isAfterToday.observe(viewLifecycleOwner) { shouldShowSummary ->
+            binding.tvDailyIntakeSummary.isVisible = !shouldShowSummary
         }
     }
 

@@ -20,7 +20,7 @@ class HistoryViewModel : ViewModel() {
     private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
-    val isCurrentWeek: LiveData<Boolean> =
+    val isNotCurrentWeek: LiveData<Boolean> =
         weeklyIntakeHistories.map { intakeHistories ->
             intakeHistories.lastDay < LocalDate.now()
         }
@@ -30,12 +30,12 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date == LocalDate.now()
         }
 
-    val isFuture: LiveData<Boolean> =
+    val isAfterToday: LiveData<Boolean> =
         dailyIntakeHistories.map { intakeHistory ->
             intakeHistory.date > LocalDate.now()
         }
 
-    val hasLog: LiveData<Boolean> =
+    val hasIntakeRecord: LiveData<Boolean> =
         dailyIntakeHistories.map { intakeHistory ->
             intakeHistory.totalIntakeAmount != 0
         }
