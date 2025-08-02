@@ -1,8 +1,9 @@
-package com.mulkkam.data.remote
+package com.mulkkam.data.remote.interceptor
 
 import com.mulkkam.di.PreferenceInjection
 import okhttp3.Interceptor
 import okhttp3.Response
+import kotlin.text.format
 
 class AuthorizationInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {

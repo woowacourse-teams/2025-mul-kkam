@@ -2,7 +2,7 @@ package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mulkkam.BuildConfig
-import com.mulkkam.data.remote.AuthorizationInterceptor
+import com.mulkkam.data.remote.interceptor.AuthorizationInterceptor
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.IntakeService
