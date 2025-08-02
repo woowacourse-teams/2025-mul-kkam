@@ -188,7 +188,15 @@ class HistoryFragment :
             root.setOnClickListener {
                 viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
-            tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
+            if (intakeHistorySummary.achievementRate == 100f) {
+                tvWaterGoalRate.visibility = View.GONE
+                ivCheck.visibility = View.VISIBLE
+            } else {
+                ivCheck.visibility = View.GONE
+                tvWaterGoalRate.visibility = View.VISIBLE
+                tvWaterGoalRate.text = intakeHistorySummary.achievementRate.toInt().toString()
+            }
+
             tvDayOfWeek.text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
             tvDayOfWeek.setTextColor(getColorByDate(intakeHistorySummary.date))
