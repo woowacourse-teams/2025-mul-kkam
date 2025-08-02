@@ -1,4 +1,4 @@
-package backend.mulkkam.common.infrastructure;
+package backend.mulkkam.intake.infrastructure;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
