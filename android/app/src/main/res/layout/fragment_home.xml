@@ -63,6 +63,22 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_alarm_count"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
+        android:layout_marginTop="3dp"
+        android:background="@drawable/bg_common_circle"
+        android:backgroundTint="@color/secondary_200"
+        android:gravity="center"
+        android:includeFontPadding="false"
+        android:textAppearance="@style/label2"
+        android:textColor="@color/white"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/iv_home_notification"
+        app:layout_constraintTop_toTopOf="@id/iv_home_notification"
+        tools:text="2" />
+
     <ImageView
         android:id="@+id/iv_home_character"
         android:layout_width="0dp"
