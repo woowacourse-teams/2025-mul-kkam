@@ -28,38 +28,42 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun loginWithKakao() {
-        val kakaoCallback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            loginWithKakaoTalk()
+        } else {
+            loginWithKakaoAccount()
+        }
+    }
+
+    private fun loginWithKakaoTalk() {
+        UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
             if (error != null) {
-                Log.e("[Login Error]", "카카오 계정으로 로그인 실패", error)
-            } else if (token != null) {
-                showToast(R.string.login_kakao_success)
-                viewModel.loginWithKakao(token.accessToken)
-                navigateToNextScreen()
+                Log.e("[Login Error]", "카카오톡으로 로그인 실패", error)
+                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                    return@loginWithKakaoTalk
+                }
+                loginWithKakaoAccount()
+            } else {
+                handleKakaoLoginResult(token)
             }
         }
+    }
 
-        if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(this)) {
-            UserApiClient.Companion.instance.loginWithKakaoTalk(this) { token, error ->
-                if (error != null) {
-                    Log.e("[Login Error]", "카카오톡으로 로그인 실패", error)
-                    if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        return@loginWithKakaoTalk
-                    }
-                    UserApiClient.Companion.instance.loginWithKakaoAccount(
-                        this,
-                        callback = kakaoCallback,
-                    )
-                } else if (token != null) {
-                    showToast(R.string.login_kakao_success)
-                    viewModel.loginWithKakao(token.accessToken)
-                    navigateToNextScreen()
-                }
+    private fun loginWithKakaoAccount() {
+        UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
+            if (error != null) {
+                Log.e("[Login Error]", "카카오 계정으로 로그인 실패", error)
+            } else {
+                handleKakaoLoginResult(token)
             }
-        } else {
-            UserApiClient.Companion.instance.loginWithKakaoAccount(
-                this,
-                callback = kakaoCallback,
-            )
+        }
+    }
+
+    private fun handleKakaoLoginResult(token: OAuthToken?) {
+        token?.let {
+            showToast(R.string.login_kakao_success)
+            viewModel.loginWithKakao(it.accessToken)
+            navigateToNextScreen()
         }
     }
 
