@@ -187,7 +187,7 @@ class HistoryFragment :
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         with(chart) {
-            if (intakeHistorySummary.achievementRate == 100f) {
+            if (intakeHistorySummary.achievementRate == ACHIEVEMENT_RATE_FULL) {
                 tvWaterGoalRate.visibility = View.GONE
                 ivCheck.visibility = View.VISIBLE
             } else {
@@ -218,7 +218,7 @@ class HistoryFragment :
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
             viewDailyChart.visibility =
-                if (intakeHistorySummary.totalIntakeAmount != 0) View.VISIBLE else View.INVISIBLE
+                if (intakeHistorySummary.totalIntakeAmount != INTAKE_AMOUNT_EMPTY) View.VISIBLE else View.INVISIBLE
             viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
         }
     }
@@ -259,7 +259,7 @@ class HistoryFragment :
 
     private fun updateCharacter(intakeAmount: Int) {
         val drawableRes =
-            if (intakeAmount != 0) {
+            if (intakeAmount != INTAKE_AMOUNT_EMPTY) {
                 R.drawable.img_history_character
             } else {
                 R.drawable.img_history_crying_character
@@ -350,5 +350,8 @@ class HistoryFragment :
 
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
+
+        private const val INTAKE_AMOUNT_EMPTY = 0
+        private const val ACHIEVEMENT_RATE_FULL = 100f
     }
 }
