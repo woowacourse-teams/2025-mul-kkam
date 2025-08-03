@@ -11,15 +11,14 @@
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
     <string name="home_water_streak_message">%s님은 물 마시기 %d일 째</string>
 
-    <string name="history_view_label">깜지</string>
-    <string name="history_view_sub_label_prefix">깜빡하지 않은 </string>
-    <string name="history_view_sub_label_suffix">물 일지</string>
-    <string name="history_daily_chart_label">%s의 깜지</string>
+    <string name="history_view_label">기록</string>
+    <string name="history_daily_chart_label">%s의 기록</string>
     <string name="history_week_range">%s - %s</string>
     <string name="history_daily_intake_summary">%,dml / %,dml</string>
     <string name="history_intake_history_label">상세 내역</string>
     <string name="history_intake_amount">+%,dml</string>
     <string name="history_no_intake_histories">해당 날짜는 기록된 일지가 없어요 🥲</string>
+    <string name="history_today_label">Today!</string>
 
     <string name="water_chart_date">%d/%d</string>
 
