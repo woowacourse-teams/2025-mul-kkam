@@ -24,7 +24,7 @@ class HistoryViewHolder(
     }
 
     companion object {
-        private val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREA)
+        private val timeFormatter = DateTimeFormatter.ofPattern("a h시 mm분", Locale.KOREA)
 
         fun from(parent: ViewGroup): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
