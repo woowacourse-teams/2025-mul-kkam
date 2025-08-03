@@ -107,6 +107,7 @@ dependencies {
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.glide)
+    implementation(libs.lottie)
 
     // 로그인
     implementation(libs.kakao.v2.user)
