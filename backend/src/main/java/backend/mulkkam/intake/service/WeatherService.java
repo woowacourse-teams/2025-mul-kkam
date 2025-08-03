@@ -45,7 +45,7 @@ public class WeatherService {
             OpenWeatherResponse response,
             LocalDate targetDate
     ) {
-        int offsetSeconds = response.city().timezone();
+        int offsetSeconds = response.city().offsetForTimezone();
         Duration offset = Duration.ofSeconds(offsetSeconds);
 
         return response.forecastEntries().stream()
