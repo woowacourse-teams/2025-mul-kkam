@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.view.View
 import androidx.core.net.toUri
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingBinding
 import com.mulkkam.ui.binding.BindingFragment
@@ -28,7 +27,7 @@ class SettingFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initSettingsContainer()
+        binding.rvSettingOptions.adapter = settingAdapter
         initSettingItems()
     }
 
@@ -94,11 +93,6 @@ class SettingFragment :
                 // TODO: 야간 알림 허용 상태 저장
             }
         }
-    }
-
-    private fun initSettingsContainer() {
-        binding.rvSettingOptions.layoutManager = LinearLayoutManager(requireContext())
-        binding.rvSettingOptions.adapter = settingAdapter
     }
 
     private fun initSettingItems() {
