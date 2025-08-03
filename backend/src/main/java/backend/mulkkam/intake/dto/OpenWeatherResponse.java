@@ -7,7 +7,10 @@ import java.util.List;
 
 public record OpenWeatherResponse(
         @JsonProperty("list")
-        List<ForecastEntry> forecastEntries
+        List<ForecastEntry> forecastEntries,
+
+        @JsonProperty("city")
+        CityInfo city
 ) {
     public record ForecastEntry(
             @JsonProperty("main")
@@ -21,5 +24,10 @@ public record OpenWeatherResponse(
                 double temp
         ) {
         }
+    }
+
+    public record CityInfo(
+            int timezone
+    ) {
     }
 }
