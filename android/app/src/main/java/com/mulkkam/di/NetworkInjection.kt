@@ -2,6 +2,8 @@ package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mulkkam.BuildConfig
+import com.mulkkam.data.remote.interceptor.AuthorizationInterceptor
+import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.IntakeService
 import kotlinx.serialization.json.Json
@@ -26,11 +28,18 @@ object NetworkInjection {
             .build()
     }
 
+    private val interceptorClient =
+        OkHttpClient()
+            .newBuilder()
+            .addInterceptor(AuthorizationInterceptor())
+            .build()
+
     private val retrofit: Retrofit by lazy {
         Retrofit
             .Builder()
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
+            .client(interceptorClient)
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
     }
@@ -38,4 +47,6 @@ object NetworkInjection {
     val intakeService: IntakeService = retrofit.create(IntakeService::class.java)
 
     val cupsService: CupsService = retrofit.create(CupsService::class.java)
+
+    val authService: AuthService = retrofit.create(AuthService::class.java)
 }
