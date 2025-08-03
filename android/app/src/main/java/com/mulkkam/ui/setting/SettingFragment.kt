@@ -34,11 +34,11 @@ class SettingFragment :
     private fun handleSettingClick() =
         SettingAdapter(
             object : SettingAdapter.Handler {
-                override fun onNormalItemClick(item: SettingItem.NormalItem) {
-                    handleNormalClick(item.type)
+                override fun onSettingNormalClick(item: SettingItem.NormalItem) {
+                    handleSettingNormalClick(item.type)
                 }
 
-                override fun onSwitchChanged(
+                override fun onSettingSwitchChanged(
                     item: SettingItem.SwitchItem,
                     isChecked: Boolean,
                 ) {
@@ -47,7 +47,7 @@ class SettingFragment :
             },
         )
 
-    private fun handleNormalClick(type: SettingType.Normal) {
+    private fun handleSettingNormalClick(type: SettingType.Normal) {
         when (type) {
             SettingType.Normal.Nickname -> startActivity(SettingProfileActivity.newIntent(requireContext()))
             SettingType.Normal.BodyInfo -> {

@@ -12,12 +12,12 @@ class SwitchViewHolder private constructor(
         binding.tvLabel.text = item.label
         binding.switchSetting.isChecked = item.isChecked
         binding.switchSetting.setOnCheckedChangeListener { _, isChecked ->
-            handler.onSwitchChanged(item, isChecked)
+            handler.onSettingSwitchChanged(item, isChecked)
         }
     }
 
     interface Handler {
-        fun onSwitchChanged(
+        fun onSettingSwitchChanged(
             item: SettingItem.SwitchItem,
             isChecked: Boolean,
         )

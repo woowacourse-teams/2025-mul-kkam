@@ -10,11 +10,11 @@ class NormalViewHolder private constructor(
 ) : SettingViewHolder<SettingItem.NormalItem, ItemSettingNormalBinding>(binding) {
     override fun bind(item: SettingItem.NormalItem) {
         binding.tvLabel.text = item.label
-        binding.root.setOnClickListener { handler.onNormalItemClick(item) }
+        binding.root.setOnClickListener { handler.onSettingNormalClick(item) }
     }
 
     interface Handler {
-        fun onNormalItemClick(item: SettingItem.NormalItem)
+        fun onSettingNormalClick(item: SettingItem.NormalItem)
     }
 
     companion object {
