@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.onboarding.targetamount.TargetAmountFragment">
+
+    <TextView
+        android:id="@+id/tv_view_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/target_amount_input_hint"
+        android:textAppearance="@style/body2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/et_input_goal"
+        android:layout_width="0dp"
+        android:layout_height="42dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="28dp"
+        android:background="@drawable/bg_common_rectangle_stroke_8dp"
+        android:backgroundTint="@color/gray_400"
+        android:hint="@string/setting_goal_hint_input_goal"
+        android:paddingVertical="10dp"
+        android:paddingStart="14dp"
+        android:paddingEnd="42dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="14dp"
+        android:text="@string/setting_goal_unit_ml"
+        android:textAppearance="@style/title2"
+        app:layout_constraintBottom_toBottomOf="@id/et_input_goal"
+        app:layout_constraintEnd_toEndOf="@id/et_input_goal"
+        app:layout_constraintTop_toTopOf="@id/et_input_goal" />
+
+    <TextView
+        android:id="@+id/tv_recommended_water_goal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/target_amount_recommended_water_goal"
+        android:textAppearance="@style/body3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/target_amount_recommended_description"
+        android:textAppearance="@style/body5"
+        android:textColor="@color/gray_200"
+        app:layout_constraintStart_toStartOf="@id/tv_recommended_water_goal"
+        app:layout_constraintTop_toBottomOf="@id/tv_recommended_water_goal" />
+
+    <TextView
+        android:id="@+id/tv_complete"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:layout_margin="24dp"
+        android:background="@drawable/bg_common_rectangle_8dp"
+        android:backgroundTint="@color/gray_200"
+        android:gravity="center"
+        android:text="@string/onboarding_complete"
+        android:textAppearance="@style/title2"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
