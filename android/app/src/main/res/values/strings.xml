@@ -54,6 +54,7 @@
 
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
+    <string name="onboarding_skip">건너뛰기</string>
 
     <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
     <string name="terms_agree_hint_highlight">이용약관</string>

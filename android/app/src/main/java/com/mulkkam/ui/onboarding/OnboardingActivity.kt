@@ -2,6 +2,7 @@ package com.mulkkam.ui.onboarding
 
 import android.os.Bundle
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
@@ -26,6 +27,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     private fun initObservers() {
         viewModel.onboardingState.observe(this) { step ->
             navigateToStep(step)
+        }
+
+        viewModel.canSkip.observe(this) { canSkip ->
+            binding.tvSkip.isVisible = canSkip
         }
     }
 

@@ -19,6 +19,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_skip"
+        android:layout_width="68dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="18dp"
+        android:gravity="center"
+        android:text="@string/onboarding_skip"
+        android:textAppearance="@style/body2"
+        android:textColor="@color/gray_200"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <com.mulkkam.ui.custom.SegmentedProgressBarView
         android:id="@+id/view_onboarding_progress"
         android:layout_width="match_parent"
