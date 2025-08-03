@@ -203,7 +203,7 @@
             android:id="@+id/tv_intake_history_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="24dp"
             android:layout_marginTop="30dp"
             android:text="@string/history_intake_history_label"
             android:textAppearance="@style/title2"
