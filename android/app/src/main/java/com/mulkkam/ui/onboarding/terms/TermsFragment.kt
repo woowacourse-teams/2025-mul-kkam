@@ -6,9 +6,11 @@ import android.text.Spanned
 import android.text.style.TextAppearanceSpan
 import android.view.View
 import androidx.annotation.StyleRes
+import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
 
 class TermsFragment :
@@ -19,6 +21,8 @@ class TermsFragment :
         TermsAdapter()
     }
 
+    private val parentViewModel: OnboardingViewModel by activityViewModels()
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -28,6 +32,7 @@ class TermsFragment :
         initAppearance()
         initTermsAdapter()
         initTermsAgreements()
+        initClickListeners()
     }
 
     private fun initTermsAdapter() {
@@ -72,5 +77,11 @@ class TermsFragment :
         }
 
         return spannable
+    }
+
+    private fun initClickListeners() {
+        binding.tvNext.setOnClickListener {
+            parentViewModel.moveToNextStep()
+        }
     }
 }
