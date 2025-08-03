@@ -92,11 +92,11 @@ public class CupService {
         if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
         }
-        validateOwnership(cupIds, memberId);
+        validateCupsOwnership(cupIds, memberId);
         return cups;
     }
 
-    private void validateOwnership(
+    private void validateCupsOwnership(
             Set<Long> cupIds,
             Long memberId
     ) {
