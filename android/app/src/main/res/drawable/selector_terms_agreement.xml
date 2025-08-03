@@ -3,3 +3,4 @@
     <item android:drawable="@drawable/ic_terms_agreement_check_off" android:state_checked="false" />
     <item android:drawable="@drawable/ic_terms_agreement_check_on" android:state_checked="true" />
 </selector>
+
