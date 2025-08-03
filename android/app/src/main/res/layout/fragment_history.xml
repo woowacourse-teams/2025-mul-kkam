@@ -205,6 +205,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="30dp"
+            android:layout_marginBottom="36dp"
             android:text="@string/history_intake_history_label"
             android:textAppearance="@style/title2"
             app:layout_constraintStart_toStartOf="parent"
