@@ -48,7 +48,7 @@
     <string name="setting_goal_hint_input_goal">목표량을 입력해주세요</string>
     <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
     <string name="setting_goal_unit_ml">ml</string>
-  
+
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_kakao_success">카카오 로그인 성공</string>
 
@@ -56,4 +56,6 @@
 
     <string name="terms_agree_label">이용약관에 동의해 주세요</string>
     <string name="terms_agree_all">물깜 약관 전체동의</string>
+
+    <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
 </resources>

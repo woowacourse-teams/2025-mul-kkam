@@ -14,7 +14,7 @@
         android:layout_marginStart="32dp"
         android:layout_marginTop="34dp"
         android:text="@string/terms_agree_label"
-        android:textAppearance="@style/title1"
+        android:textAppearance="@style/body1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
