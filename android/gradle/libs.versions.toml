@@ -25,6 +25,8 @@ mannodermaus-junit5 = "1.7.0"
 android-junit5 = "1.12.0.0"
 ktlint = "13.0.0"
 fragment-ktx = "1.8.8"
+google-services = "4.4.3"
+firebase-bom = "34.0.0"
 kakaoV2User = "2.21.4"
 
 [libraries]
@@ -61,9 +63,15 @@ glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 
+# 구글 서비스
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android-junit5" }
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
+google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
