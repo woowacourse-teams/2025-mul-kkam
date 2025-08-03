@@ -54,8 +54,8 @@ class TermsFragment :
         binding.tvTermsLabel.text =
             getAppearanceSpannable(
                 R.style.title1,
-                getString(R.string.terms_agree_label),
-                getString(R.string.terms_agree_terms_label),
+                getString(R.string.terms_agree_hint),
+                getString(R.string.terms_agree_hint_highlight),
             )
     }
 
