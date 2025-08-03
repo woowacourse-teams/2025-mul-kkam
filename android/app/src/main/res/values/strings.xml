@@ -67,6 +67,7 @@
     <string name="nickname_input_hint_highlight">닉네임</string>
 
     <string name="physical_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
+    <string name="physical_info_input_hint_highlight">신체 정보</string>
     <string name="physical_info_gender_label">성별</string>
     <string name="physical_info_gender_male">남자</string>
     <string name="physical_info_gender_female">여자</string>
