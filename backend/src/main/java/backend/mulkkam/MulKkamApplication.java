@@ -8,7 +8,6 @@ public class MulKkamApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(MulKkamApplication.class, args);
-        
     }
 
 }
