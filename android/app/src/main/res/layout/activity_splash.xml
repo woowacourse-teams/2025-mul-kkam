@@ -23,6 +23,21 @@
         tools:lottie_progress="1" />
 
     <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingStart="0dp"
+        android:paddingEnd="8dp"
+        android:scaleX="1.5"
+        android:scaleY="1.5"
+        android:src="@drawable/bg_splash"
+        app:layout_constraintBottom_toBottomOf="@id/iv_splash"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="@id/iv_splash"
+        app:layout_constraintStart_toStartOf="@id/iv_splash"
+        app:layout_constraintTop_toTopOf="@id/iv_splash"
+        app:tint="@color/white" />
+
+    <ImageView
         android:id="@+id/iv_splash"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -35,7 +50,8 @@
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black" />
 
     <ImageView
         android:id="@+id/iv_splash_blink"
@@ -51,5 +67,6 @@
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:tint="@color/black" />
 </androidx.constraintlayout.widget.ConstraintLayout>
