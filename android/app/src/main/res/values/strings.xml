@@ -9,7 +9,7 @@
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
-    <string name="home_water_streak_message">%s님은 물 마시기 %d일 째</string>
+    <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
 
     <string name="history_view_label">기록</string>
     <string name="history_daily_chart_label">%s의 기록</string>
@@ -48,8 +48,7 @@
     <string name="setting_goal_hint_input_goal">목표량을 입력해주세요</string>
     <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
     <string name="setting_goal_unit_ml">ml</string>
-    <string name="home_sub_label">환노님, 혹시 물을 깜빡하지 않으셨나요?</string>
-
+  
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_kakao_success">카카오 로그인 성공</string>
 </resources>
