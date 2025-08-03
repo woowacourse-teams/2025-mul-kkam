@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.FORECAST_DATA_NOT_FOUND;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
 
 @RequiredArgsConstructor
@@ -45,7 +46,7 @@ public class WeatherService {
             OpenWeatherResponse response,
             LocalDate targetDate
     ) {
-        int offsetSeconds = response.city().offsetForTimezone();
+        int offsetSeconds = response.city().timezone();
         Duration offset = Duration.ofSeconds(offsetSeconds);
 
         return response.forecastEntries().stream()
@@ -55,7 +56,7 @@ public class WeatherService {
                         .equals(targetDate))
                 .mapToDouble(entry -> entry.info().temp())
                 .average()
-                .orElseThrow(() -> new IllegalArgumentException("해당 날짜의 기온 데이터가 없습니다."));
+                .orElseThrow(() -> new CommonException(FORECAST_DATA_NOT_FOUND));
     }
 
     private double convertFromKelvinToCelsius(double temperatureAsKelvin) {

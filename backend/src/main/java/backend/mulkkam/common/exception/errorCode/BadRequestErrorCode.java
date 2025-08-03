@@ -13,6 +13,7 @@ public enum BadRequestErrorCode implements ErrorCode {
     INVALID_CUP_RANK_VALUE,
     INVALID_MEMBER_NICKNAME,
     INVALID_FORECAST_TARGET_DATE,
+    FORECAST_DATA_NOT_FOUND,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;

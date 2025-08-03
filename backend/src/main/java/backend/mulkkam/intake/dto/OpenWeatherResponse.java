@@ -27,8 +27,8 @@ public record OpenWeatherResponse(
     }
 
     public record CityInfo(
-            @JsonProperty("offsetForTimezone")
-            int offsetForTimezone
+            @JsonProperty("timezone")
+            int timezone
     ) {
     }
 }
