@@ -25,4 +25,4 @@ spring:
 
 open-weather:
   api:
-    key: ${secrets.OPEN_WEATHER_API_KEY}
+    key: ${OPEN_WEATHER_API_KEY}
