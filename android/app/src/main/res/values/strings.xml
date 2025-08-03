@@ -58,4 +58,11 @@
     <string name="terms_agree_all">물깜 약관 전체동의</string>
 
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
+
+    <string name="physical_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
+    <string name="physical_info_gender_label">성별</string>
+    <string name="physical_info_gender_male">남자</string>
+    <string name="physical_info_gender_female">여자</string>
+    <string name="physical_info_weight_label">몸무게</string>
+    <string name="physical_info_weight_hint">몸무게 정보를 입력해 주세요</string>
 </resources>
