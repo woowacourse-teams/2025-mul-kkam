@@ -25,4 +25,4 @@ spring:
 
 logging:
   file:
-    name: ${secrets.LOG_PATH}
+    name: ${LOG_PATH}
