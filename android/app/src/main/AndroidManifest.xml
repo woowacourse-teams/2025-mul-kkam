@@ -27,6 +27,10 @@
         </service>
 
         <activity
+            android:name=".ui.login.LoginActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.settingprofile.SettingProfileActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -48,6 +52,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="oauth"
+                    android:scheme="kakao${kakaoKey}" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
+

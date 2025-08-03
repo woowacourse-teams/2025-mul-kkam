@@ -4,6 +4,7 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
+import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.di.PreferenceInjection
 import com.mulkkam.ui.service.NotificationService
 
@@ -12,6 +13,7 @@ class MulKkamApp : Application() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
         PreferenceInjection.init(this)
+        KakaoSdk.init(this, BuildConfig.KEY_KAKAO)
         createNotificationChannel()
     }
 
