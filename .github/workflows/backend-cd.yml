@@ -63,7 +63,6 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "PROFILES_ACTIVE=dev" >> ~/mulkkam/.env
           echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
           echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
           echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
