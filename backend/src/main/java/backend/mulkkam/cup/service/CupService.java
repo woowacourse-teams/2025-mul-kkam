@@ -1,12 +1,8 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -21,6 +17,11 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,6 +40,7 @@ public class CupService {
     ) {
         Member member = getMember(memberId);
         final int cupCount = cupRepository.countByMemberId(memberId);
+        IntakeType intakeType = IntakeType.findByName(cupRegisterRequest.intakeType());
 
         if (cupCount >= MAX_CUP_COUNT) {
             throw new CommonException(INVALID_CUP_COUNT);
@@ -47,7 +49,8 @@ public class CupService {
         CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
-                nextCupRank
+                nextCupRank,
+                intakeType
         );
         Cup createdCup = cupRepository.save(cup);
 

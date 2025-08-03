@@ -68,6 +68,7 @@ jobs:
           echo "SPRING_DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
+          echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
 
 
       - name: Stop existing services
