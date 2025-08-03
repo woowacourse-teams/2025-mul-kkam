@@ -66,6 +66,10 @@ public class Member {
         this.targetAmount = newTargetAmount;
     }
 
+    public boolean isSameNickname(MemberNickname memberNickname) {
+        return this.memberNickname.equals(memberNickname);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -1,7 +1,13 @@
 package backend.mulkkam.member.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -91,6 +97,73 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member result = memberRepository.findById(member.getId()).orElseThrow();
 
             assertThat(result.getMemberNickname().value()).isEqualTo(modifyNickname);
+        }
+
+        @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
+        @Test
+        void success_validDataArg() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
+            memberRepository.save(member);
+
+            // when & then
+            assertThatCode(() -> memberService.validateDuplicateNickname(
+                    newNickname,
+                    member.getId()
+            )).doesNotThrowAnyException();
+        }
+
+        @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
+        @Test
+        void error_duplicateNickname() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
+
+            Member member1 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
+            memberRepository.save(member1);
+
+            Member member2 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(newNickname))
+                    .build();
+            memberRepository.save(member2);
+
+            // when & then
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
+                    newNickname,
+                    member1.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
+        }
+
+        @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
+        @Test
+        void error_sameAsBeforeNickname() {
+            // given
+            String nickname = "체체";
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(nickname))
+                    .build();
+            memberRepository.save(member);
+
+            // when & then
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
+                    nickname,
+                    member.getId()
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
         }
     }
 

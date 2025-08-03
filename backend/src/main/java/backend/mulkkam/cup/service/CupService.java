@@ -12,17 +12,19 @@ import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
@@ -46,6 +48,7 @@ public class CupService {
     ) {
         Member member = getMember(memberId);
         final int cupCount = cupRepository.countByMemberId(memberId);
+        IntakeType intakeType = IntakeType.findByName(cupRegisterRequest.intakeType());
 
         if (cupCount >= MAX_CUP_COUNT) {
             throw new CommonException(INVALID_CUP_COUNT);
@@ -54,7 +57,8 @@ public class CupService {
         CupRank nextCupRank = new CupRank(cupCount + 1);
         Cup cup = cupRegisterRequest.toCup(
                 member,
-                nextCupRank
+                nextCupRank,
+                intakeType
         );
         Cup createdCup = cupRepository.save(cup);
 
