@@ -51,6 +51,9 @@
   
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_kakao_success">카카오 로그인 성공</string>
+
+    <string name="onboarding_next_step">다음</string>
+
     <string name="terms_agree_label">이용약관에 동의해 주세요</string>
     <string name="terms_agree_all">물깜 약관 전체동의</string>
 </resources>
