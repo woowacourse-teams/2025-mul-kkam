@@ -10,15 +10,16 @@ public record OpenWeatherResponse(
         List<ForecastEntry> forecastEntries
 ) {
     public record ForecastEntry(
+            @JsonProperty("main")
             TemperatureInfo info,
 
+            @JsonProperty("dt_txt")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
             LocalDateTime dtTxt
     ) {
         public record TemperatureInfo(
                 double temp
         ) {
-
         }
     }
 }
