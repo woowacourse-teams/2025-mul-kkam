@@ -32,7 +32,7 @@ public class IntakeAmountController {
             @RequestBody PhysicalAttributesRequest physicalAttributesRequest
     ) {
         RecommendedIntakeAmountResponse recommendedIntakeAmountResponse = intakeAmountService.getRecommendedTargetAmount(physicalAttributesRequest);
-        return ResponseEntity.ok().body(recommendedIntakeAmountResponse);
+        return ResponseEntity.ok(recommendedIntakeAmountResponse);
     }
 
     @PatchMapping("/target")
