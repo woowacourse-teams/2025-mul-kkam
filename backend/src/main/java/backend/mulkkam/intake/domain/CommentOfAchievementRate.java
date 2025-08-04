@@ -31,12 +31,9 @@ public enum CommentOfAchievementRate {
         double rate = achievementRate.value();
 
         return Arrays.stream(CommentOfAchievementRate.values())
-                .sorted(Comparator.comparingDouble(
-                                (CommentOfAchievementRate commentOfAchievementRate) -> commentOfAchievementRate.maxAchievementRate.value())
-                        .reversed())
-                .filter(commentOfAchievementRate -> rate >= commentOfAchievementRate.maxAchievementRate.value())
-                .findFirst()
-                .map(commentOfAchievementRate -> commentOfAchievementRate.comment)
+                .filter(comment -> rate >= comment.maxAchievementRate.value())
+                .max(Comparator.comparingDouble(comment -> comment.maxAchievementRate.value()))
+                .map(comment -> comment.comment)
                 .orElse(DEFAULT.comment);
     }
 }
