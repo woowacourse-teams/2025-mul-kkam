@@ -69,12 +69,6 @@ jobs:
           echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env 
           echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
 
-      - name: Restore FCM Key File
-        run: |
-          mkdir -p /home/ubuntu/mulkkam/key
-          echo "${{ secrets.FCM_KEY_JSON }}" | base64 -d > /home/ubuntu/mulkkam/key/fcm-key.json
-          chmod 600 /home/ubuntu/mulkkam/key/fcm-key.json
-
       - name: Stop existing services
         run: sudo docker compose stop backend-app
         working-directory: /home/ubuntu/mulkkam

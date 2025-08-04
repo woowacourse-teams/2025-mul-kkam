@@ -53,8 +53,5 @@ jobs:
         working-directory: ./backend
 
       - name: Run tests with profile
-        run: ./gradlew test -Dspring.profiles.active=test
+        run: ./gradlew test -Dspring.profiles.active=test -Dfcm.secret-path=${{ secrets.FCM_TEST_KEY }} -Dfcm.project-id=${{ secrets.FCM_TEST_PROJECT_ID }}
         working-directory: ./backend
-        env:
-          FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_TEST_KEY }}
-          FCM_PROJECT_ID: ${{ secrets.FCM_TEST_PROJECT_ID }}
