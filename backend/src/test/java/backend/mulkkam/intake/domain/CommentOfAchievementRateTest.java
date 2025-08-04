@@ -39,7 +39,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("거의 다 마셨어요");
+            assertThat(comment).contains(CommentOfAchievementRate.MOSTLY.getComment());
         }
 
         @DisplayName("50퍼센트 이상이고 70퍼센트 미만인 경우에 해당하는 문구가 반환된다")
