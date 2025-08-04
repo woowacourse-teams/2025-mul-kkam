@@ -1,15 +1,5 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.when;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -25,6 +15,8 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,8 +25,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
-import java.util.Optional;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class CupServiceUnitTest {
@@ -61,7 +60,9 @@ class CupServiceUnitTest {
             Integer cupAmount = 500;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    "WATER",
+                    "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -93,7 +94,9 @@ class CupServiceUnitTest {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     "스타벅스",
-                    -100
+                    -100,
+                    "WATER",
+                    "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -111,7 +114,9 @@ class CupServiceUnitTest {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     "스타벅스",
-                    0
+                    0,
+                    "WATER",
+                    "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -129,7 +134,9 @@ class CupServiceUnitTest {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     "스타벅스",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(member.getId()))
@@ -262,6 +269,7 @@ class CupServiceUnitTest {
             });
         }
     }
+
     @DisplayName("컵을 수정할 때에")
     @Nested
     class Modify {
