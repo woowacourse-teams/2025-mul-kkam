@@ -28,5 +28,5 @@ logging:
     name: ${LOG_PATH}
 
 fcm:
-  secret-path: /home/ubuntu/mulkkam/key/fcm-key.json
+  secret-path: ${FCM_BASE64_ENCODING_KEY}
   project-id: ${FCM_PROJECT_ID}

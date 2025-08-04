@@ -18,5 +18,5 @@ spring:
     locations: classpath:db/migration
 
 fcm:
-  secret-path: src/main/resources/key/tmp.json
-  project-id: project-id
+  secret-path: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}
