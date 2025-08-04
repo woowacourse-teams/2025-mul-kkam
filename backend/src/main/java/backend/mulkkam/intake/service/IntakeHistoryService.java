@@ -22,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 
@@ -78,6 +79,11 @@ public class IntakeHistoryService {
 
         if (!intakeHistory.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
+        }
+
+        LocalDate today = LocalDate.now();
+        if (!intakeHistory.isCreatedAt(today)) {
+            throw new CommonException(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
         }
 
         intakeHistoryRepository.delete(intakeHistory);
