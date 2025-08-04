@@ -52,10 +52,6 @@ jobs:
           chmod +x ./gradlew
         working-directory: ./backend
 
-      - name: Restore application-private.yml from secret
-        run: |
-          echo "${{ secrets.APPLICATION_PRIVATE_YML }}" | base64 -d > backend/src/main/resources/application-private.yml
-
       - name: Run tests with profile
         run: ./gradlew test -Dspring.profiles.active=test
         working-directory: ./backend
