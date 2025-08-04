@@ -25,7 +25,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("모두 달성했어요");
+            assertThat(comment).contains(CommentOfAchievementRate.FULL.getComment());
         }
 
         @DisplayName("70퍼센트 이상이고 100퍼센트 미만인 경우에 해당하는 문구가 반환된다")
@@ -53,7 +53,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("절반 이상 마셨어요");
+            assertThat(comment).contains(CommentOfAchievementRate.HALF.getComment());
         }
 
         @DisplayName("30퍼센트 이상이고 50퍼센트 미만인 경우에 해당하는 문구가 반환된다")
@@ -67,7 +67,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("천리길도 한 걸음부터");
+            assertThat(comment).contains(CommentOfAchievementRate.LOW.getComment());
         }
 
         @DisplayName("10퍼센트 이상이고 30퍼센트 미만인 경우에 해당하는 문구가 반환된다")
@@ -81,7 +81,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("하뭉이는 아직 갈증나요");
+            assertThat(comment).contains(CommentOfAchievementRate.VERY_LOW.getComment());
         }
 
         @DisplayName("0퍼센트 이상이고 10퍼센트 미만인 경우에 해당하는 문구가 반환된다")
@@ -95,7 +95,7 @@ class CommentOfAchievementRateTest {
             String comment = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
             // then
-            assertThat(comment).contains("물 마시기는 정말 중요한 습관이랍니다!");
+            assertThat(comment).contains(CommentOfAchievementRate.DEFAULT.getComment());
         }
     }
 }

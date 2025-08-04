@@ -3,7 +3,9 @@ package backend.mulkkam.intake.domain;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import java.util.Arrays;
 import java.util.Comparator;
+import lombok.Getter;
 
+@Getter
 public enum CommentOfAchievementRate {
 
     FULL(new AchievementRate(100), "야호! 모두 달성했어요. 오늘은 내가 이 세상에서 제일 가는 하마"),

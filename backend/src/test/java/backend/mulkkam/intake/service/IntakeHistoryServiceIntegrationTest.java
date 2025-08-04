@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
@@ -138,7 +139,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.achievementRate()).isCloseTo(50.0, within(0.01));
-                softly.assertThat(actual.comment()).contains("절반 이상 마셨어요");
+                softly.assertThat(actual.comment()).contains(CommentOfAchievementRate.HALF.getComment());
             });
         }
 
@@ -188,7 +189,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.achievementRate()).isCloseTo(30.0, within(0.01));
-                softly.assertThat(actual.comment()).contains("천리길도 한 걸음부터");
+                softly.assertThat(actual.comment()).contains(CommentOfAchievementRate.LOW.getComment());
             });
         }
     }
