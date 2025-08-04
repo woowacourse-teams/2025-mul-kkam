@@ -2,9 +2,9 @@ name: backend-cd.yml
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
     paths:
-      - 'backend/**'
+      - "backend/**"
 
 jobs:
   build-and-push:
@@ -16,8 +16,8 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
-          java-version: '21'
+          distribution: "temurin"
+          java-version: "21"
 
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
@@ -67,7 +67,7 @@ jobs:
           echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
           echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
           echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
-
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
 
       - name: Stop existing services
         run: sudo docker compose stop backend-app

@@ -26,3 +26,8 @@ spring:
 logging:
   file:
     name: ${LOG_PATH}
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    expire-length: 36000000
