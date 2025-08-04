@@ -11,6 +11,9 @@ class TokenPreference(
     val accessToken: String?
         get() = sharedPreference.getString(KEY_ACCESS_TOKEN, null)
 
+    val fcmToken: String?
+        get() = sharedPreference.getString(KEY_FCM_TOKEN, null)
+
     fun saveAccessToken(token: String) {
         sharedPreference.edit { putString(KEY_ACCESS_TOKEN, token) }
     }
@@ -19,8 +22,15 @@ class TokenPreference(
         sharedPreference.edit { remove(KEY_ACCESS_TOKEN) }
     }
 
+    fun saveFcmToken(token: String) = sharedPreference.edit { putString(KEY_FCM_TOKEN, token) }
+
+    fun deleteFcmToken() {
+        sharedPreference.edit { remove(KEY_FCM_TOKEN) }
+    }
+
     companion object {
         private const val PREFERENCE_NAME: String = "TOKEN_PREFERENCE"
         private const val KEY_ACCESS_TOKEN: String = "ACCESS_TOKEN"
+        private const val KEY_FCM_TOKEN: String = "FCM_TOKEN"
     }
 }

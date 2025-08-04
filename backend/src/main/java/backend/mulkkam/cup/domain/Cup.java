@@ -99,4 +99,16 @@ public class Cup {
     public void demoteRank() {
         cupRank = cupRank.demote();
     }
+
+    public void modifyNicknameAndAmount(
+            CupNickname nickname,
+            CupAmount cupAmount
+    ) {
+        this.nickname = nickname;
+        this.cupAmount = cupAmount;
+    }
+
+    public void modifyRank(CupRank rank) {
+        this.cupRank = rank;
+    }
 }

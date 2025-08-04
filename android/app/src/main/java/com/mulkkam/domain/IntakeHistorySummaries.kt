@@ -10,6 +10,8 @@ data class IntakeHistorySummaries(
 
     val lastDay: LocalDate get() = intakeHistorySummaries.last().date
 
+    val isCurrentYear: Boolean get() = firstDay.year == LocalDate.now().year && lastDay.year == LocalDate.now().year
+
     fun getByDateOrEmpty(targetDate: LocalDate): IntakeHistorySummary =
         intakeHistorySummaries.find { it.date == targetDate }
             ?: EMPTY_DAILY_WATER_INTAKE.copy(date = targetDate)

@@ -1,5 +1,7 @@
 package com.mulkkam.ui.main
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
@@ -10,6 +12,8 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
+import com.mulkkam.ui.service.NotificationAction
+import com.mulkkam.ui.service.NotificationService
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -24,8 +28,21 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
         }
-
+        handleNotificationEvent()
         setupDoubleBackToExit()
+    }
+
+    private fun handleNotificationEvent() {
+        intent?.let {
+            val action = NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
+
+            // TODO: 푸시 알림 클릭 시 처리 로직 추가
+            when (action) {
+                NotificationAction.GO_HOME -> Unit
+                NotificationAction.GO_NOTIFICATION -> Unit
+                NotificationAction.UNKNOWN -> Unit
+            }
+        }
     }
 
     private fun initBottomNavListener() {
@@ -91,5 +108,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     companion object {
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
+
+        fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
 }
