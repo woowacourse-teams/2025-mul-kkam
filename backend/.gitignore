@@ -26,3 +26,6 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+application-private.yml
+fcm-key.json
