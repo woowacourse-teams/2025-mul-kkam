@@ -51,4 +51,8 @@ public class IntakeHistory {
         this.intakeAmount = intakeAmount;
         this.targetAmount = targetAmount;
     }
+
+    public boolean isOwnedBy(Member comparedMember) {
+        return this.member.equals(comparedMember);
+    }
 }

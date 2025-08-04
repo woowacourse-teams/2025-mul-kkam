@@ -22,6 +22,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -63,6 +66,21 @@ public class IntakeHistoryService {
         return summaryOfIntakeHistories.stream()
                 .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
                 .toList();
+    }
+
+    @Transactional
+    public void delete(
+            Long intakeHistoryId,
+            Long memberId
+    ) {
+        Member member = getMember(memberId);
+        IntakeHistory intakeHistory = findById(intakeHistoryId);
+
+        if (!intakeHistory.isOwnedBy(member)) {
+            throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
+        }
+
+        intakeHistoryRepository.delete(intakeHistory);
     }
 
     private Member getMember(Long id) {
@@ -120,5 +138,10 @@ public class IntakeHistoryService {
         return new Amount(intakeHistoryResponses.stream()
                 .mapToInt(IntakeHistoryResponse::intakeAmount)
                 .sum());
+    }
+
+    private IntakeHistory findById(Long id) {
+        return intakeHistoryRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
     }
 }
