@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingVertical="10dp"
-    android:background ="?attr/selectableItemBackground">
+    android:background="@drawable/bg_history_item_press"
+    android:clickable="true"
+    android:paddingVertical="10dp">
 
     <TextView
         android:id="@+id/tv_intake_time"
