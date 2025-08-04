@@ -77,6 +77,14 @@ public class IntakeHistoryService {
         Member member = getMember(memberId);
         IntakeHistory intakeHistory = findById(intakeHistoryId);
 
+        validateToDelete(intakeHistory, member);
+        intakeHistoryRepository.delete(intakeHistory);
+    }
+
+    private void validateToDelete(
+            IntakeHistory intakeHistory,
+            Member member
+    ) {
         if (!intakeHistory.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
         }
@@ -85,8 +93,6 @@ public class IntakeHistoryService {
         if (!intakeHistory.isCreatedAt(today)) {
             throw new CommonException(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
         }
-
-        intakeHistoryRepository.delete(intakeHistory);
     }
 
     private Member getMember(Long id) {
