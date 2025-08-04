@@ -18,6 +18,6 @@ spring:
     locations: classpath:db/migration
 
 fcm:
-  secret: ${fcm.secret}
-  project-id: ${fcm.project-id}
+  secret-json: ${FCM_SECRET_JSON}
+  project-id: ${FCM_PROJECT_ID}
 

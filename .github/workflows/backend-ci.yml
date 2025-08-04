@@ -52,6 +52,9 @@ jobs:
           chmod +x ./gradlew
         working-directory: ./backend
 
-      - name: Run tests with profile
-        run: ./gradlew test -Dspring.profiles.active=test -Dfcm.secret="${{ secrets.FCM_BASE64_ENCODING_KEY }}" -Dfcm.project-id="${{ secrets.FCM_PROJECT_ID }}"
+      - name: Run tests
+        run: ./gradlew test -Dspring.profiles.active=test
         working-directory: ./backend
+        env:
+          FCM_SECRET_JSON: ${{ secrets.FCM_BASE64_ENCODING_KEY }}
+          FCM_PROJECT_ID: ${{ secrets.FCM_PROJECT_ID }}

@@ -14,8 +14,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${fcm.secret}")
-    private String base64EncodedSecret;
+    @Value("${fcm.secret-json}")
+    private String secretJson;
 
     @Value("${fcm.project-id}")
     private String projectId;
@@ -23,14 +23,11 @@ public class FirebaseConfig {
     @Bean
     public FirebaseApp firebaseApp() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
-            byte[] decodedBytes = Base64.getDecoder().decode(base64EncodedSecret);
-            ByteArrayInputStream serviceAccount = new ByteArrayInputStream(decodedBytes);
-
+            byte[] decoded = Base64.getDecoder().decode(secretJson);
             FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(decoded)))
                     .setProjectId(projectId)
                     .build();
-
             return FirebaseApp.initializeApp(options);
         } else {
             return FirebaseApp.getInstance();
