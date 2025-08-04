@@ -16,3 +16,8 @@ spring:
     enabled: true
     clean-disabled: false
     locations: classpath:db/migration
+
+fcm:
+  secret: ${fcm.secret}
+  project-id: ${fcm.project-id}
+
