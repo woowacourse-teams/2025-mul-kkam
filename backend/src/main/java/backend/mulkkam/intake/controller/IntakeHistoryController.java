@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,6 +38,12 @@ public class IntakeHistoryController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest) {
         intakeHistoryService.create(intakeHistoryCreateRequest, 1L);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(Long id) {
+        intakeHistoryService.delete(id, 1L);
         return ResponseEntity.ok().build();
     }
 }
