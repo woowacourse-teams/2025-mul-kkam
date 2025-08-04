@@ -24,6 +24,9 @@ public interface TargetAmountSnapshotRepository extends JpaRepository<TargetAmou
             @Param("memberId") Long memberId,
             @Param("before") LocalDate before
     );
-    
-    Optional<TargetAmountSnapshot> findByMemberIdAndUpdatedAt(Long memberId, LocalDate updatedAt);
+
+    Optional<TargetAmountSnapshot> findByMemberIdAndUpdatedAt(
+            Long memberId,
+            LocalDate updatedAt
+    );
 }
