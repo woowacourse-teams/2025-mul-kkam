@@ -68,12 +68,14 @@ class TermsFragment :
 
         highlightedText.forEach { target ->
             var startIndex = fullText.indexOf(target)
-            spannable.setSpan(
-                TextAppearanceSpan(context, typographyResId),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
+            if (startIndex != -1) {
+                spannable.setSpan(
+                    TextAppearanceSpan(context, typographyResId),
+                    startIndex,
+                    startIndex + target.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
         }
 
         return spannable

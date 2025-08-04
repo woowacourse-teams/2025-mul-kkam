@@ -74,12 +74,14 @@ class HistoryFragment :
 
         highlightedText.forEach { target ->
             var startIndex = fullText.indexOf(target)
-            spannable.setSpan(
-                ForegroundColorSpan(color),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
+            if (startIndex != -1) {
+                spannable.setSpan(
+                    ForegroundColorSpan(color),
+                    startIndex,
+                    startIndex + target.length,
+                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+                )
+            }
         }
 
         return spannable
