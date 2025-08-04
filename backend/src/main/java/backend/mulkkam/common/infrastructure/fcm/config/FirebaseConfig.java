@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${fcm.secret-path}")
+    @Value("${fcm.secret}")
     private String base64EncodedSecret;
 
     @Value("${fcm.project-id}")
