@@ -59,7 +59,7 @@ public class IntakeHistoryService {
         Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
-        List<LocalDate> dates = dateRangeRequest.getDates();
+        List<LocalDate> dates = dateRangeRequest.getConsecutiveDates();
 
         List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
                 historiesGroupedByDate,

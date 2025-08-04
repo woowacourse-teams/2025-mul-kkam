@@ -19,7 +19,7 @@ public record DateRangeRequest(
         }
     }
 
-    public List<LocalDate> getDates() {
+    public List<LocalDate> getConsecutiveDates() {
         return from.datesUntil(to.plusDays(1)).toList();
     }
 
