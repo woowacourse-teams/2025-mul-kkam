@@ -6,7 +6,10 @@ import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
+import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeAmountService {
 
     private final MemberRepository memberRepository;
+    private final IntakeAmountCalculator intakeAmountCalculator;
 
     @Transactional
     public void modifyTarget(
@@ -31,9 +35,9 @@ public class IntakeAmountService {
     public IntakeRecommendedAmountResponse getRecommended(Long memberId) {
         Member member = getMember(memberId);
 
-        double weight = member.getPhysicalAttributes().getWeight();
+        PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
 
-        return new IntakeRecommendedAmountResponse(new Amount((int) (weight * 30)));
+        return new IntakeRecommendedAmountResponse(getIntakeRecommendedAmountResponse(physicalAttributes));
     }
 
     public IntakeTargetAmountResponse getTarget(Long memberId) {
@@ -44,5 +48,15 @@ public class IntakeAmountService {
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    public RecommendedIntakeAmountResponse getRecommendedTargetAmount(PhysicalAttributesRequest physicalAttributesRequest) {
+        PhysicalAttributes physicalAttributes = new PhysicalAttributes(physicalAttributesRequest.gender(),
+                physicalAttributesRequest.weight());
+        return new RecommendedIntakeAmountResponse(getIntakeRecommendedAmountResponse(physicalAttributes));
+    }
+
+    private Amount getIntakeRecommendedAmountResponse(PhysicalAttributes physicalAttributes) {
+        return intakeAmountCalculator.calculate(physicalAttributes);
     }
 }
