@@ -1,4 +1,4 @@
-package backend.mulkkam.auth.service;
+package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
