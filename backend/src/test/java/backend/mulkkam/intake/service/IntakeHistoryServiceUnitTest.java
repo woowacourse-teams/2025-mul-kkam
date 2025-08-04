@@ -5,7 +5,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -180,7 +180,7 @@ class IntakeHistoryServiceUnitTest {
             ));
 
             // when
-            IntakeHistoryCreatedResponse actual = intakeHistoryService.create(request, memberId);
+            CreateIntakeHistoryResponse actual = intakeHistoryService.create(request, memberId);
 
             // then
             assertSoftly(softly -> {

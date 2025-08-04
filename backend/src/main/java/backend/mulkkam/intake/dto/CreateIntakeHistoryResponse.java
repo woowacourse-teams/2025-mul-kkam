@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.dto;
 
-public record IntakeHistoryCreatedResponse(
+public record CreateIntakeHistoryResponse(
         double achievementRate,
         String comment
 ) {

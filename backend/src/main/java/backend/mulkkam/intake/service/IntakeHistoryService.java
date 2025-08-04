@@ -8,7 +8,7 @@ import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryCreatedResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -34,7 +34,7 @@ public class IntakeHistoryService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public IntakeHistoryCreatedResponse create(
+    public CreateIntakeHistoryResponse create(
             IntakeHistoryCreateRequest intakeHistoryCreateRequest,
             Long memberId
     ) {
@@ -54,7 +54,7 @@ public class IntakeHistoryService {
         );
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
-        return new IntakeHistoryCreatedResponse(
+        return new CreateIntakeHistoryResponse(
                 achievementRate.value(),
                 commentByAchievementRate
         );
