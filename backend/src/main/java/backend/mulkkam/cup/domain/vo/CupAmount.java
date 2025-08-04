@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-
 import backend.mulkkam.common.exception.CommonException;
+
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_AMOUNT;
 
 public record CupAmount(Integer value) {
 

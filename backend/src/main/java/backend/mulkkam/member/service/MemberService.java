@@ -1,10 +1,6 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
@@ -15,6 +11,10 @@ import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.SAME_AS_BEFORE_NICKNAME;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -66,6 +66,6 @@ public class MemberService {
 
     private Member getById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

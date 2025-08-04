@@ -1,9 +1,9 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_NICKNAME;
-
 import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Embeddable;
+
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_NICKNAME;
 
 @Embeddable
 public record CupNickname(

@@ -1,6 +1,6 @@
 package backend.mulkkam.cup.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,7 +34,7 @@ class CupAmountTest {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
                     () -> new CupAmount(input));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+            assertThat(ex.getErrorCode()).isSameAs(INVALID_CUP_AMOUNT);
         }
     }
 }

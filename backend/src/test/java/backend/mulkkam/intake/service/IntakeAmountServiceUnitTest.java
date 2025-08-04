@@ -1,7 +1,6 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
@@ -17,6 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -90,7 +90,7 @@ public class IntakeAmountServiceUnitTest {
             // when & then
             CommonException exception = assertThrows(CommonException.class,
                     () -> intakeAmountService.modifyTarget(any(IntakeTargetAmountModifyRequest.class), MEMBER_ID));
-            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+            assertThat(exception.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
     }
 

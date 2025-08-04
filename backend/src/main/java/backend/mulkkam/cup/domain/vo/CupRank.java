@@ -2,7 +2,7 @@ package backend.mulkkam.cup.domain.vo;
 
 import backend.mulkkam.common.exception.CommonException;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_RANK_VALUE;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_RANK_VALUE;
 
 public record CupRank(Integer value) {
 

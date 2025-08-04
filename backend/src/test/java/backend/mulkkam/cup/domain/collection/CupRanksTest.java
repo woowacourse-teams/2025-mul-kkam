@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.DUPLICATED_CUP_RANKS;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CupRanksTest {

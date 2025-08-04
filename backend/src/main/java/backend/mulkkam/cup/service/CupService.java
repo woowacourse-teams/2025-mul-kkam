@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.DUPLICATED_CUP;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_FOUND_CUP;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_PERMITTED_FOR_CUP;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

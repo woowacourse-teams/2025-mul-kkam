@@ -1,9 +1,9 @@
 package backend.mulkkam.member.domain.vo;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-
 import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Embeddable;
+
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_MEMBER_NICKNAME;
 
 @Embeddable
 public record MemberNickname(

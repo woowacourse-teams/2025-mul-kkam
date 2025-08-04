@@ -15,8 +15,6 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,9 +23,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import java.util.List;
+import java.util.Optional;
+
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ErrorCode.NOT_PERMITTED_FOR_CUP;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -105,7 +106,7 @@ class CupServiceUnitTest {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+            assertThat(ex.getErrorCode()).isSameAs(INVALID_CUP_AMOUNT);
         }
 
         @DisplayName("용량이 0이면 예외가 발생한다")
@@ -125,7 +126,7 @@ class CupServiceUnitTest {
             // when & then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+            assertThat(ex.getErrorCode()).isSameAs(INVALID_CUP_AMOUNT);
         }
 
         @DisplayName("컵이 3개 저장되어 있을 때 예외가 발생한다")
@@ -167,7 +168,7 @@ class CupServiceUnitTest {
             // then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
+            assertThat(ex.getErrorCode()).isSameAs(INVALID_CUP_COUNT);
         }
     }
 
@@ -405,7 +406,7 @@ class CupServiceUnitTest {
                             member2.getId(),
                             cupNicknameAndAmountModifyRequest)
             );
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
+            assertThat(ex.getErrorCode()).isSameAs(NOT_PERMITTED_FOR_CUP);
         }
     }
 }
