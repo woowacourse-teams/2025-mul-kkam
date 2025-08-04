@@ -1,8 +1,10 @@
 package com.mulkkam.ui.onboarding.terms.adapter
 
+import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.mulkkam.R
 import com.mulkkam.databinding.ItemTermsAgreementBinding
 import com.mulkkam.ui.onboarding.terms.TermsAgreementUiModel
 
@@ -10,8 +12,10 @@ class TermsAgreementViewHolder(
     private val binding: ItemTermsAgreementBinding,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(termsAgreement: TermsAgreementUiModel) {
-        val asdf = if (termsAgreement.isRequired) " (필수)" else " (선택)"
-        binding.tvLabel.text = termsAgreement.title + asdf
+        val requirementLabel =
+            if (termsAgreement.isRequired) R.string.terms_required_suffix else R.string.terms_optional_suffix
+        binding.tvLabel.text =
+            binding.root.context.getString(termsAgreement.labelId, requirementLabel)
         binding.cbAgreement.isChecked = termsAgreement.isChecked
     }
 

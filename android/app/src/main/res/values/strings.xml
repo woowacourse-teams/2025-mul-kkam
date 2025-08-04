@@ -63,7 +63,9 @@
     <string name="terms_agree_privacy">개인정보 수집 및 이용 동의</string>
     <string name="terms_agree_night_notification">야간 알림 수신 동의</string>
     <string name="terms_agree_marketing">마케팅 정보 수신 동의</string>
-    
+    <string name="terms_required_suffix">(필수)</string>
+    <string name="terms_optional_suffix">(선택)</string>
+
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
     <string name="nickname_input_hint_highlight">닉네임</string>
 

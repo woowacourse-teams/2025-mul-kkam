@@ -42,10 +42,10 @@ class TermsFragment :
     private fun initTermsAgreements() {
         val terms =
             listOf(
-                TermsAgreementUiModel(getString(R.string.terms_agree_service), true),
-                TermsAgreementUiModel(getString(R.string.terms_agree_privacy), true),
-                TermsAgreementUiModel(getString(R.string.terms_agree_night_notification), false),
-                TermsAgreementUiModel(getString(R.string.terms_agree_marketing), false),
+                TermsAgreementUiModel(R.string.terms_agree_service, true),
+                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
+                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
+                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
             )
         termsAdapter.submitList(terms)
     }
