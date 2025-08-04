@@ -9,5 +9,4 @@ class MulKkamApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
