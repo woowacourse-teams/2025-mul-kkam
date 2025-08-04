@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.domain.collection;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.dto.CupRankDto;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.CupRankDto;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ public class CupRanks {
         this(convert(cupRanks));
     }
 
-    private static void validateRanksDuplicated(Map<Long, CupRank> ranks) {
+    private void validateRanksDuplicated(Map<Long, CupRank> ranks) {
         Set<CupRank> distinctRanks = new HashSet<>(ranks.values());
         if (distinctRanks.size() != ranks.size()) {
             throw new CommonException(DUPLICATED_CUP_RANKS);

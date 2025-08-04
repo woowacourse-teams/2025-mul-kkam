@@ -3,10 +3,11 @@ package backend.mulkkam.cup.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.collection.CupRanks;
+import backend.mulkkam.cup.domain.dto.CupRankDto;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.CupRankDto;
+import backend.mulkkam.cup.dto.UpdateCupRankDto;
 import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
@@ -70,7 +71,11 @@ public class CupService {
             UpdateCupRanksRequest request,
             Long memberId
     ) {
-        CupRanks cupRanks = new CupRanks(request.cups());
+        List<CupRankDto> cupRankDtos = request.cups()
+                .stream()
+                .map(UpdateCupRankDto::toCupRankDto)
+                .toList();
+        CupRanks cupRanks = new CupRanks(cupRankDtos);
         List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), memberId);
 
         for (Cup cup : cups) {
@@ -79,7 +84,7 @@ public class CupService {
 
         return new CupsRanksResponse(
                 cups.stream()
-                        .map(CupRankDto::new)
+                        .map(UpdateCupRankDto::new)
                         .toList()
         );
     }
