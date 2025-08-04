@@ -11,7 +11,8 @@ public enum BadRequestErrorCode implements ErrorCode {
     SAME_AS_BEFORE_NICKNAME,
     INVALID_CUP_COUNT,
     INVALID_CUP_RANK_VALUE,
-    INVALID_MEMBER_NICKNAME;
+    INVALID_MEMBER_NICKNAME
+    ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;
 

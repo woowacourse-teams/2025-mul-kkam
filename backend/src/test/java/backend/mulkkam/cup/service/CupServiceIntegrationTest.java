@@ -5,8 +5,10 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -28,6 +30,13 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
@@ -474,6 +483,147 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                             cupNicknameAndAmountModifyRequest)
             );
             assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
+        }
+    }
+
+    @DisplayName("컵의 우선순위를 변경할 때")
+    @Nested
+    class UpdateRanks {
+
+        private final Member member = MemberFixtureBuilder.builder().build();
+
+        @BeforeEach
+        void setup() {
+            memberRepository.save(member);
+        }
+
+        @DisplayName("중복되지 않는 식별자 및 우선순위로 자신의 컵을 수정할 수 있다.")
+        @Test
+        void success_ifModifyMyCups() {
+            // given
+            Cup firstCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname("first"))
+                    .cupRank(new CupRank(1))
+                    .build();
+            Cup secondCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname("second"))
+                    .cupRank(new CupRank(2))
+                    .build();
+            Cup thirdCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname("third"))
+                    .cupRank(new CupRank(3))
+                    .build();
+
+            cupRepository.saveAll(List.of(firstCup, secondCup, thirdCup));
+
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 3),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 1)
+            );
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
+
+            // when & then
+            assertSoftly(softly -> {
+                softly.assertThatCode(() -> cupService.updateRanks(request, member.getId()))
+                        .doesNotThrowAnyException();
+                softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank()).isEqualTo(new CupRank(3));
+                softly.assertThat(cupRepository.findById(secondCup.getId()).get().getCupRank()).isEqualTo(new CupRank(2));
+                softly.assertThat(cupRepository.findById(thirdCup.getId()).get().getCupRank()).isEqualTo(new CupRank(1));
+            });
+        }
+
+        @DisplayName("요청에 존재하지 않는 컵 식별자가 포함된 경우 예외가 발생한다.")
+        @Test
+        void error_containsNotExistCupId() {
+            // given
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1)
+            );
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
+
+            // when & then
+            assertThatThrownBy(() -> cupService.updateRanks(request, member.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_CUP.name());
+        }
+
+        @DisplayName("중복되는 컵 id가 존재하는 경우 예외가 발생한다.")
+        @Test
+        void error_existsDuplicatedCupIds() {
+            // given
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(1L, 2),
+                    new CupRankDto(2L, 3)
+            );
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
+
+            // when & then
+            assertThatThrownBy(() -> cupService.updateRanks(request, member.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_CUP.name());
+        }
+
+        @DisplayName("중복되는 컵 우선순위가 존재하는 경우 예외가 발생한다.")
+        @Test
+        void error_existsDuplicatedCupRanks() {
+            // given
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 1),
+                    new CupRankDto(3L, 3)
+            );
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
+
+            // when & then
+            assertThatThrownBy(() -> cupService.updateRanks(request, member.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_CUP_RANKS.name());
+        }
+
+        @DisplayName("다른 멤버의 컵을 수정하려는 경우 예외가 발생한다.")
+        @Test
+        void error_ifModifyOtherMemberCup() {
+            // given
+            Member me = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("me"))
+                    .build();
+            Member other = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("other"))
+                    .build();
+
+            memberRepository.saveAll(List.of(me, other));
+
+            Cup firstCup = CupFixtureBuilder
+                    .withMember(me)
+                    .cupNickname(new CupNickname("first"))
+                    .build();
+            Cup secondCup = CupFixtureBuilder
+                    .withMember(other)
+                    .cupNickname(new CupNickname("second"))
+                    .build();
+            Cup thirdCup = CupFixtureBuilder
+                    .withMember(other)
+                    .cupNickname(new CupNickname("third"))
+                    .build();
+
+            cupRepository.saveAll(List.of(firstCup, secondCup, thirdCup));
+
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 3)
+            );
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
+
+            // when & then
+            assertThatThrownBy(() -> cupService.updateRanks(request, other.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }
 }
