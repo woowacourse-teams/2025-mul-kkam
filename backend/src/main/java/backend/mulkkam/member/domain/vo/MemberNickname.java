@@ -1,5 +1,8 @@
 package backend.mulkkam.member.domain.vo;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -12,7 +15,7 @@ public record MemberNickname(
 
     public MemberNickname {
         if (value.length() > MAX_LENGTH || value.length() < MIN_LENGTH) {
-            throw new IllegalArgumentException("닉네임 형식이 올바르지 않습니다.");
+            throw new CommonException(INVALID_MEMBER_NICKNAME);
         }
     }
 }
