@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.domain.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import kotlinx.coroutines.launch
@@ -62,6 +63,13 @@ class HistoryViewModel : ViewModel() {
 
     fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
         _dailyIntakeHistories.value = dailyIntakeHistories
+    }
+
+    fun deleteIntakeHistory(history: IntakeHistory) {
+//        viewModelScope.launch {
+//            RepositoryInjection.intakeRepository.deleteIntakeHistory(history)
+//            loadIntakeHistories()
+//        }
     }
 
     companion object {
