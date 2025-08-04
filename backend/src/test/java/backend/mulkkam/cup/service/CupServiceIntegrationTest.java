@@ -5,7 +5,7 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.UpdateCupRankDto;
+import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
 import backend.mulkkam.cup.dto.request.CupRegisterRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
@@ -519,10 +519,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupRepository.saveAll(List.of(firstCup, secondCup, thirdCup));
 
-            List<UpdateCupRankDto> cupRanks = List.of(
-                    new UpdateCupRankDto(1L, 3),
-                    new UpdateCupRankDto(2L, 2),
-                    new UpdateCupRankDto(3L, 1)
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 3),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 1)
             );
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
@@ -540,8 +540,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_containsNotExistCupId() {
             // given
-            List<UpdateCupRankDto> cupRanks = List.of(
-                    new UpdateCupRankDto(1L, 1)
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1)
             );
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
@@ -555,10 +555,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_existsDuplicatedCupIds() {
             // given
-            List<UpdateCupRankDto> cupRanks = List.of(
-                    new UpdateCupRankDto(1L, 1),
-                    new UpdateCupRankDto(1L, 2),
-                    new UpdateCupRankDto(2L, 3)
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(1L, 2),
+                    new CupRankDto(2L, 3)
             );
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
@@ -572,10 +572,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_existsDuplicatedCupRanks() {
             // given
-            List<UpdateCupRankDto> cupRanks = List.of(
-                    new UpdateCupRankDto(1L, 1),
-                    new UpdateCupRankDto(2L, 1),
-                    new UpdateCupRankDto(3L, 3)
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 1),
+                    new CupRankDto(3L, 3)
             );
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
@@ -613,10 +613,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupRepository.saveAll(List.of(firstCup, secondCup, thirdCup));
 
-            List<UpdateCupRankDto> cupRanks = List.of(
-                    new UpdateCupRankDto(1L, 1),
-                    new UpdateCupRankDto(2L, 2),
-                    new UpdateCupRankDto(3L, 3)
+            List<CupRankDto> cupRanks = List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 3)
             );
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
