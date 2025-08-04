@@ -4,13 +4,14 @@ import com.mulkkam.data.remote.model.request.AddCupRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.Cups
+import com.mulkkam.domain.repository.CupsRepository
 
-class CupsRepository(
+class CupsRepositoryImpl(
     private val cupsService: CupsService,
-) {
-    suspend fun getCups(): Cups = cupsService.getCups().toDomain()
+) : CupsRepository {
+    override suspend fun getCups(): Cups = cupsService.getCups().toDomain()
 
-    suspend fun postCup(
+    override suspend fun postCup(
         cupAmount: Int,
         cupNickname: String,
     ) {

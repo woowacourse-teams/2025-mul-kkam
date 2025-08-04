@@ -5,14 +5,15 @@ import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.IntakeHistorySummaries
+import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class IntakeRepository(
+class IntakeRepositoryImpl(
     private val intakeService: IntakeService,
-) {
-    suspend fun getIntakeHistory(
+) : IntakeRepository {
+    override suspend fun getIntakeHistory(
         from: LocalDate?,
         to: LocalDate?,
     ): IntakeHistorySummaries {
@@ -20,7 +21,7 @@ class IntakeRepository(
         return IntakeHistorySummaries(result.map { it.toDomain() })
     }
 
-    suspend fun postIntakeHistory(
+    override suspend fun postIntakeHistory(
         dateTime: LocalDateTime,
         amount: Int,
     ) {
@@ -29,11 +30,11 @@ class IntakeRepository(
 
     private fun dateToString(date: LocalDate?) = date?.format(formatter)
 
-    suspend fun patchIntakeTarget(amount: Int) {
+    override suspend fun patchIntakeTarget(amount: Int) {
         intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
     }
 
-    suspend fun getIntakeTarget(): Int {
+    override suspend fun getIntakeTarget(): Int {
         val result = intakeService.getIntakeTarget()
         return result.amount
     }
