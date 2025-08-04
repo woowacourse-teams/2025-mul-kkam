@@ -45,7 +45,7 @@ class TermsFragment :
     }
 
     private fun initTermsAdapter() {
-        binding.rcvList.adapter = termsAdapter
+        binding.rvList.adapter = termsAdapter
     }
 
     private fun initTermsAgreements() {
