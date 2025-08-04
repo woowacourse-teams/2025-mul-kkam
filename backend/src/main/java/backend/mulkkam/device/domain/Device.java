@@ -38,4 +38,8 @@ public class Device {
         this.deviceId = deviceId;
         this.member = member;
     }
+
+    public void modifyToken(String token) {
+        this.token = token;
+    }
 }

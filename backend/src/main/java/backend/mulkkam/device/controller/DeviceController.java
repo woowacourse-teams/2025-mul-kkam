@@ -1,6 +1,6 @@
 package backend.mulkkam.device.controller;
 
-import backend.mulkkam.device.dto.CreateDeviceRequest;
+import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.service.DeviceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,8 +17,8 @@ public class DeviceController {
     private final DeviceService deviceService;
 
     @PostMapping()
-    public ResponseEntity<Void> create(@RequestBody CreateDeviceRequest createDeviceRequest) {
-        deviceService.create(createDeviceRequest, 1L);
+    public ResponseEntity<Void> register(@RequestBody RegisterDeviceRequest registerDeviceRequest) {
+        deviceService.register(registerDeviceRequest, 1L);
         return ResponseEntity.ok().build();
     }
 }

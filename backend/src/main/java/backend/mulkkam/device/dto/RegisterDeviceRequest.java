@@ -3,7 +3,7 @@ package backend.mulkkam.device.dto;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.member.domain.Member;
 
-public record CreateDeviceRequest(
+public record RegisterDeviceRequest(
         String token,
         String deviceId
 ) {

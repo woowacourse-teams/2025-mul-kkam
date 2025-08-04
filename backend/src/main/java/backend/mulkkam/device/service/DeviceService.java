@@ -4,10 +4,11 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.device.domain.Device;
-import backend.mulkkam.device.dto.CreateDeviceRequest;
+import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,10 +22,17 @@ public class DeviceService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void create(CreateDeviceRequest createDeviceRequest, Long memberId) {
+    public void register(RegisterDeviceRequest registerDeviceRequest, Long memberId) {
         Member member = getMember(memberId);
-        Device device = createDeviceRequest.toDevice(member);
-        deviceRepository.save(device);
+        Optional<Device> deviceOptional = deviceRepository.findByDeviceIdAndMemberId(
+                registerDeviceRequest.deviceId(), member.getId());
+        if (deviceOptional.isEmpty()) {
+            Device device = registerDeviceRequest.toDevice(member);
+            deviceRepository.save(device);
+            return ;
+        }
+        Device device = deviceOptional.get();
+        device.modifyToken(registerDeviceRequest.token());
     }
 
     private Member getMember(Long memberId) {
