@@ -6,6 +6,7 @@ import backend.mulkkam.common.exception.CommonException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 public record DateRangeRequest(
         LocalDate from,
@@ -16,6 +17,10 @@ public record DateRangeRequest(
         if (from.isAfter(to)) {
             throw new CommonException(INVALID_DATE_RANGE);
         }
+    }
+
+    public List<LocalDate> getDates() {
+        return from.datesUntil(to.plusDays(1)).toList();
     }
 
     public LocalDateTime startDateTime() {

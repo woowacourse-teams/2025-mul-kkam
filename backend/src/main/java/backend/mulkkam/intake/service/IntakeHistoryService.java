@@ -10,13 +10,16 @@ import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,7 @@ public class IntakeHistoryService {
 
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
+    private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @Transactional
     public void create(
@@ -55,8 +59,11 @@ public class IntakeHistoryService {
         Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
                 .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
 
+        List<LocalDate> dates = dateRangeRequest.getDates();
+
         List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
                 historiesGroupedByDate,
+                dates,
                 member
         );
 
@@ -72,19 +79,37 @@ public class IntakeHistoryService {
 
     private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
             Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate,
+            List<LocalDate> dates,
             Member member
     ) {
         List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
-        for (Map.Entry<LocalDate, List<IntakeHistory>> entry : historiesGroupedByDate.entrySet()) {
-            intakeHistorySummaryResponses.add(toIntakeHistorySummaryResponse(entry.getValue(), entry.getKey()));
+        for (LocalDate date : dates) {
+            intakeHistorySummaryResponses.add(
+                    toIntakeHistorySummaryResponse(historiesGroupedByDate.get(date), date, member));
         }
         return intakeHistorySummaryResponses;
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
             List<IntakeHistory> intakeHistoryOfDate,
-            LocalDate date
+            LocalDate date,
+            Member member
     ) {
+        if (intakeHistoryOfDate == null || intakeHistoryOfDate.isEmpty()) {
+            if (date.isEqual(LocalDate.now())) {
+                return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value(), 0, 0,
+                        Collections.emptyList());
+            }
+            Optional<Integer> targetAmountSnapshot = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(
+                    member.getId(), date);
+            return targetAmountSnapshot.map(targetAmount -> new IntakeHistorySummaryResponse(
+                    date,
+                    targetAmount,
+                    0,
+                    0,
+                    Collections.emptyList()
+            )).orElseGet(() -> new IntakeHistorySummaryResponse(date, 0, 0, 0, Collections.emptyList()));
+        }
         List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
         List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
 
