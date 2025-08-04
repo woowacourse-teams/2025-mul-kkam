@@ -7,6 +7,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
@@ -67,6 +68,20 @@ class HistoryFragment :
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+        historyAdapter.onItemLongClickListener = { history ->
+            showDeleteDialog(history)
+        }
+    }
+
+    private fun showDeleteDialog(history: IntakeHistory) {
+        AlertDialog
+            .Builder(requireContext())
+            .setTitle(R.string.history_delete_dialog_title)
+            .setMessage("삭제된 기록은 복구가 불가능 합니다.")
+            .setPositiveButton("확인") { _, _ ->
+                viewModel.deleteIntakeHistory(history)
+            }.setNegativeButton("취소") { _, _ -> }
+            .show()
     }
 
     private fun initChartOptions() {

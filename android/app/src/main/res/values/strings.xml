@@ -108,4 +108,6 @@
     <string name="target_amount_input_hint_highlight">물 목표 섭취량</string>
     <string name="target_amount_recommended_water_goal">%s 님의\n하루 물 권장 섭취량은\n%,dml 입니다</string>
     <string name="target_amount_recommended_description">입력해 주신 성별, 몸무게 정보를 바탕으로 계산했어요.</string>
+
+    <string name="history_delete_dialog_title">해당 기록을 삭제하시겠어요?</string>
 </resources>
