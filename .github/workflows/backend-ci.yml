@@ -56,5 +56,5 @@ jobs:
         run: ./gradlew test -Dspring.profiles.active=test
         working-directory: ./backend
         env:
-          FCM_BASE64_ENCODING_KEY: "fcm_key_for_test"
-          FCM_PROJECT_ID: "project_id_for_test"
+          FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_TEST_KEY }}
+          FCM_PROJECT_ID: ${{ secrets.FCM_TEST_PROJECT_ID }}
