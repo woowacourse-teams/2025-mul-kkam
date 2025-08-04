@@ -4,9 +4,9 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -66,10 +66,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            intakeHistoryService.create(
-                    intakeHistoryCreateRequest,
-                    member.getId()
-            );
+            intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
@@ -131,10 +128,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            CreateIntakeHistoryResponse actual = intakeHistoryService.create(
-                    intakeHistoryCreateRequest,
-                    member.getId()
-            );
+            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
 
             // then
             assertSoftly(softly -> {
@@ -181,10 +175,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            CreateIntakeHistoryResponse actual = intakeHistoryService.create(
-                    intakeHistoryCreateRequest,
-                    member.getId()
-            );
+            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
 
             // then
             assertSoftly(softly -> {

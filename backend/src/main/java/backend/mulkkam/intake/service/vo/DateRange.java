@@ -11,6 +11,7 @@ public record DateRange(
         LocalDate from,
         LocalDate to
 ) {
+
     public DateRange {
         if (from.isAfter(to)) {
             throw new CommonException(INVALID_DATE_RANGE);
