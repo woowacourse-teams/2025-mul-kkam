@@ -21,7 +21,17 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
             viewModel.updateOnboardingState(OnboardingStep.TERMS)
         }
 
+        initProgressBarView()
         initObservers()
+    }
+
+    private fun initProgressBarView() {
+        binding.viewOnboardingProgress.apply {
+            setSegmentCount(OnboardingStep.entries.size)
+            setActiveColor(R.color.gray_400)
+            setInactiveColor(R.color.gray_200)
+            setProgress(PROGRESS_DEFAULT)
+        }
     }
 
     private fun initObservers() {
@@ -35,7 +45,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     }
 
     private fun navigateToStep(step: OnboardingStep) {
-        binding.viewOnboardingProgress.currentProgress = step.ordinal + OFFSET_STEP_ORDINAL
+        binding.viewOnboardingProgress.setProgress(step.ordinal + OFFSET_STEP_ORDINAL)
         step.create().also { fragment ->
             supportFragmentManager.commit {
                 addToBackStack(null)
@@ -46,6 +56,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     }
 
     companion object {
+        private const val PROGRESS_DEFAULT: Int = 0
         private const val OFFSET_STEP_ORDINAL: Int = 1
     }
 }
