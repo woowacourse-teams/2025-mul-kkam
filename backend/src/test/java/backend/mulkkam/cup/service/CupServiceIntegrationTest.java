@@ -2,7 +2,10 @@ package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -12,12 +15,10 @@ import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.RegisterCupRequest;
-import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -33,20 +34,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -76,7 +63,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            RegisterCupRequest cupRegisterRequest = new RegisterCupRequest(
+            CreateCupRequest cupRegisterRequest = new CreateCupRequest(
                     cupNickname,
                     cupAmount,
                     "WATER",
@@ -123,7 +110,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupService.delete(thirdCup.getId(), member.getId());
 
-            RegisterCupRequest request = new RegisterCupRequest(
+            CreateCupRequest request = new CreateCupRequest(
                     "new",
                     100,
                     "WATER",
@@ -147,7 +134,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = -100;
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     cupNickname,
                     cupAmount,
                     "WATER",
@@ -166,7 +153,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     cupNickname,
                     cupAmount,
                     "WATER",
@@ -183,25 +170,25 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     "스타벅스1",
                     500,
                     "WATER",
                     "emoji"
             );
-            RegisterCupRequest registerCupRequest1 = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest1 = new CreateCupRequest(
                     "스타벅스2",
                     500,
                     "WATER",
                     "emoji"
             );
-            RegisterCupRequest registerCupRequest2 = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest2 = new CreateCupRequest(
                     "스타벅스3",
                     500,
                     "WATER",
                     "emoji"
             );
-            RegisterCupRequest registerCupRequest3 = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest3 = new CreateCupRequest(
                     "스타벅스4",
                     500,
                     "WATER",
@@ -553,9 +540,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThatCode(() -> cupService.updateRanks(request, member.getId()))
                         .doesNotThrowAnyException();
-                softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank()).isEqualTo(new CupRank(3));
-                softly.assertThat(cupRepository.findById(secondCup.getId()).get().getCupRank()).isEqualTo(new CupRank(2));
-                softly.assertThat(cupRepository.findById(thirdCup.getId()).get().getCupRank()).isEqualTo(new CupRank(1));
+                softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank())
+                        .isEqualTo(new CupRank(3));
+                softly.assertThat(cupRepository.findById(secondCup.getId()).get().getCupRank())
+                        .isEqualTo(new CupRank(2));
+                softly.assertThat(cupRepository.findById(thirdCup.getId()).get().getCupRank())
+                        .isEqualTo(new CupRank(1));
             });
         }
 

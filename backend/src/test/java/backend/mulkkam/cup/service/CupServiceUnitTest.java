@@ -15,7 +15,7 @@ import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.RegisterCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
@@ -58,7 +58,7 @@ class CupServiceUnitTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     cupNickname,
                     cupAmount,
                     "WATER",
@@ -92,7 +92,7 @@ class CupServiceUnitTest {
         @Test
         void error_amountLessThan0() {
             // given
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     "스타벅스",
                     -100,
                     "WATER",
@@ -115,7 +115,7 @@ class CupServiceUnitTest {
         @Test
         void error_amountIsEqualTo0() {
             // given
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     "스타벅스",
                     0,
                     "WATER",
@@ -138,7 +138,7 @@ class CupServiceUnitTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            RegisterCupRequest registerCupRequest = new RegisterCupRequest(
+            CreateCupRequest registerCupRequest = new CreateCupRequest(
                     "스타벅스",
                     500,
                     "WATER",

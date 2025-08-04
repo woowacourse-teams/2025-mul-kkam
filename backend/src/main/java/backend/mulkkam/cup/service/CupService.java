@@ -1,6 +1,7 @@
 package backend.mulkkam.cup.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -12,33 +13,24 @@ import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.RegisterCupRequest;
-import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -52,7 +44,7 @@ public class CupService {
 
     @Transactional
     public CupResponse create(
-            RegisterCupRequest registerCupRequest,
+            CreateCupRequest registerCupRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
