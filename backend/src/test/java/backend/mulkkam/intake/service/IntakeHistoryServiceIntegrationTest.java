@@ -24,6 +24,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -394,6 +395,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.now(),
+                            LocalTime.of(12, 30)
+                    ))
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
@@ -417,6 +422,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedAnotherMember = memberRepository.save(anotherMember);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.now(),
+                            LocalTime.of(12, 30)
+                    ))
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
@@ -435,6 +444,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.now(),
+                            LocalTime.of(12, 30)
+                    ))
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
@@ -444,6 +457,28 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findById(intakeHistory.getId());
             assertThat(foundIntakeHistory).isNotPresent();
+        }
+
+        @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
+        @Test
+        void error_requestToDeletePastDate() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+                    .dateTime(LocalDateTime.of(
+                            LocalDate.now().minusDays(1),
+                            LocalTime.of(12, 30)
+                    ))
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), savedMember.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }
     }
 }
