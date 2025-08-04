@@ -26,3 +26,7 @@ spring:
 logging:
   file:
     name: ${LOG_PATH}
+
+fcm:
+  secret-path: /home/ubuntu/mulkkam/key/fcm-key.json
+  project-id: ${FCM_PROJECT_ID}
