@@ -1,4 +1,4 @@
-package backend.mulkkam.member.dto;
+package backend.mulkkam.member.dto.request;
 
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;

@@ -1,12 +1,5 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_SIZE;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -24,10 +17,18 @@ import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -44,6 +45,13 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class Create {
 
+        private final Member member = MemberFixtureBuilder.builder().build();
+
+        @BeforeEach
+        void setup() {
+            memberRepository.save(member);
+        }
+
         @DisplayName("정상적으로 저장한다")
         @Test
         void success_validData() {
@@ -52,10 +60,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer cupAmount = 500;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    "WATER",
+                    "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
 
             // when
             CupResponse cupResponse = cupService.create(
@@ -71,6 +79,49 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
+        @DisplayName("세 개의 컵이 삭제되었다가 추가되는 경우, 우선순위가 중복되지 않는다.")
+        @Test
+        void success_createAfterDeleted() {
+            // given
+            Cup firstCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(1))
+                    .build();
+
+            Cup secondCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(2))
+                    .build();
+
+            Cup thirdCup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupRank(new CupRank(3))
+                    .build();
+
+            cupRepository.save(firstCup);
+            cupRepository.save(secondCup);
+            cupRepository.save(thirdCup);
+
+            cupService.delete(thirdCup.getId(), member.getId());
+
+            CupRegisterRequest request = new CupRegisterRequest(
+                    "new",
+                    100,
+                    "WATER",
+                    "emoji"
+            );
+
+            // when
+            cupService.create(request, member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                List<Cup> cups = cupRepository.findAllByMemberId(member.getId());
+                softly.assertThat(cups).hasSize(3);
+                softly.assertThat(cups.stream().map(Cup::getCupRank)).doesNotHaveDuplicates();
+            });
+        }
+
         @DisplayName("용량이 음수면 예외가 발생한다")
         @Test
         void error_amountLessThan0() {
@@ -79,10 +130,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer cupAmount = -100;
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     cupNickname,
-                    cupAmount
+                    cupAmount,
+                    "WATER",
+                    "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -96,9 +147,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
-            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(cupNickname, cupAmount);
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
+            CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
+                    cupNickname,
+                    cupAmount,
+                    "WATER",
+                    "emoji"
+            );
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -112,21 +166,27 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             CupRegisterRequest cupRegisterRequest = new CupRegisterRequest(
                     "스타벅스1",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
             CupRegisterRequest cupRegisterRequest1 = new CupRegisterRequest(
                     "스타벅스2",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             CupRegisterRequest cupRegisterRequest2 = new CupRegisterRequest(
                     "스타벅스3",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
             CupRegisterRequest cupRegisterRequest3 = new CupRegisterRequest(
                     "스타벅스4",
-                    500
+                    500,
+                    "WATER",
+                    "emoji"
             );
 
             // when
@@ -146,7 +206,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.create(cupRegisterRequest, member.getId()));
-            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_SIZE);
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
         }
     }
 
@@ -190,6 +250,79 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                         .map(CupResponse::cupRank)
                         .toList();
                 softly.assertThat(ranks).isSorted();
+            });
+        }
+    }
+
+    @DisplayName("컵을 삭제할 때")
+    @Nested
+    class Delete {
+
+        private final Member member = MemberFixtureBuilder.builder().build();
+        private final Cup firstCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(1))
+                .build();
+        private final Cup secondCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(2))
+                .build();
+        private final Cup thirdCup = CupFixtureBuilder
+                .withMember(member)
+                .cupRank(new CupRank(3))
+                .build();
+
+        @BeforeEach
+        void setup() {
+            memberRepository.save(member);
+            cupRepository.save(firstCup);
+            cupRepository.save(secondCup);
+            cupRepository.save(thirdCup);
+        }
+
+        @DisplayName("우선순위가 더 낮은 컵들의 우선순위가 한 단계씩 승격된다.")
+        @Test
+        void success_withLowerPriorityCups() {
+            // when
+            cupService.delete(firstCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupRepository.existsById(firstCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMemberId(member.getId())).hasSize(2);
+                softly.assertThat(cupRepository.findById(secondCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(1));
+                softly.assertThat(cupRepository.findById(thirdCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(2));
+            });
+        }
+
+        @DisplayName("우선순위가 더 낮은 컵이 없는 경우, 그 어떤 컵의 우선순위도 승격되지 않는다.")
+        @Test
+        void success_withoutLowerPriorityCups() {
+            // when
+            cupService.delete(thirdCup.getId(), member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cupRepository.existsById(thirdCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMemberId(member.getId())).hasSize(2);
+                softly.assertThat(cupRepository.findById(firstCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(1));
+                softly.assertThat(cupRepository.findById(secondCup.getId()))
+                        .isPresent()
+                        .get()
+                        .extracting(Cup::getCupRank)
+                        .isEqualTo(new CupRank(2));
             });
         }
     }
@@ -343,5 +476,4 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);
         }
     }
-
 }

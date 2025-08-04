@@ -1,12 +1,15 @@
 package backend.mulkkam.member.domain.vo;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class MemberNicknameTest {
 
@@ -33,9 +36,9 @@ class MemberNicknameTest {
             // given
 
             // when & then
-            assertThatThrownBy(() -> {
-                new MemberNickname(input);
-            }).isInstanceOf(IllegalArgumentException.class);
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> new MemberNickname(input));
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_MEMBER_NICKNAME);
         }
     }
 }
