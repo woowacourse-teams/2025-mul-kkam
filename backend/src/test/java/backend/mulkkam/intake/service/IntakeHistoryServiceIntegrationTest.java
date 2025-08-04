@@ -1,19 +1,29 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryResponse;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,13 +32,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -40,6 +43,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("음용량을 저장할 때에")
     @Nested
@@ -361,6 +367,38 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(responseOfTheDay.achievementRate()).isCloseTo(
                     100, within(0.01)
             );
+        }
+
+        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @Test
+        void success_ifNotExistsIntakeHistoryFindSnapshot() {
+            // given
+            int targetAmountOfMember = 1_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(new Amount(targetAmountOfMember))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
+                    .withMember(savedMember)
+                    .updatedAt(LocalDate.of(2025, 7, 10))
+                    .targetAmount(new Amount(5_555))
+                    .build();
+
+            targetAmountSnapshotRepository.save(targetAmountSnapshot);
+
+            LocalDate startDate = LocalDate.of(2025, 7, 12);
+            LocalDate endDate = LocalDate.of(2025, 7, 12);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
+            List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, savedMember.getId());
+
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistorySummaryResponses.size()).isEqualTo(1);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().targetAmount()).isEqualTo(5555);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().achievementRate()).isEqualTo(0.0);
+            });
         }
     }
 }
