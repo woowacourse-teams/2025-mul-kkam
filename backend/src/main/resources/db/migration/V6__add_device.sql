@@ -1,4 +1,4 @@
-CREATE TABLE device_table
+CREATE TABLE device
 (
     id         BIGINT PRIMARY KEY AUTO_INCREMENT,
     token   VARCHAR(255) NOT NULL,
