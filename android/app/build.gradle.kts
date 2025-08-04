@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.junit5)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.google.services)
     id("kotlin-parcelize")
 }
 
@@ -106,7 +107,13 @@ dependencies {
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.glide)
+    implementation(libs.lottie)
 
     // 로그인
     implementation(libs.kakao.v2.user)
+
+    // 구글 서비스
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.analytics)
+    implementation(libs.firebase.messaging)
 }

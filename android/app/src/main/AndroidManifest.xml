@@ -4,6 +4,7 @@
     tools:ignore="DiscouragedApi,LockedOrientationActivity">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:name=".MulKkamApp"
@@ -17,6 +18,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
+
+        <service android:name=".ui.service.NotificationService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="false"
@@ -39,6 +48,10 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.main.MainActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.splash.SplashActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
