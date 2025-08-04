@@ -9,6 +9,7 @@ import androidx.annotation.StyleRes
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTargetAmountBinding
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 
 class TargetAmountFragment :
     BindingFragment<FragmentTargetAmountBinding>(
@@ -20,6 +21,7 @@ class TargetAmountFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
         initTextAppearance()
+        initClickListeners()
     }
 
     private fun initTextAppearance() {
@@ -51,5 +53,13 @@ class TargetAmountFragment :
         }
 
         return spannable
+    }
+
+    private fun initClickListeners() {
+        binding.tvComplete.setOnClickListener {
+            val dialog = CompleteDialogFragment()
+            dialog.isCancelable = false
+            dialog.show(parentFragmentManager, null)
+        }
     }
 }

@@ -66,6 +66,8 @@
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
     <string name="onboarding_skip">건너뛰기</string>
+    <string name="onboarding_complete_greeting">%s님 반갑습니다!</string>
+    <string name="onboarding_complete_description">회원가입이 성공적으로 완료되었어요</string>
 
     <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
     <string name="terms_agree_hint_highlight">이용약관</string>
