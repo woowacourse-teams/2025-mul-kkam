@@ -17,9 +17,7 @@ public class AuthController {
     private final KakaoAuthService kakaoAuthService;
 
     @PostMapping("/kakao")
-    public OauthLoginResponse signInWithKakao(
-            @RequestBody KakaoSigninRequest kakaoSigninRequest
-    ) {
+    public OauthLoginResponse signInWithKakao(@RequestBody KakaoSigninRequest kakaoSigninRequest) {
         return kakaoAuthService.signIn(kakaoSigninRequest);
     }
 }
