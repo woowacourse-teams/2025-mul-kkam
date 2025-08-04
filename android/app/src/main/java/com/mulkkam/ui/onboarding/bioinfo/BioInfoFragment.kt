@@ -11,6 +11,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentBioInfoBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
+import com.mulkkam.ui.onboarding.bioinfo.dialog.WeightFragment
 
 class BioInfoFragment :
     BindingFragment<FragmentBioInfoBinding>(
@@ -61,6 +62,10 @@ class BioInfoFragment :
     private fun initClickListeners() {
         binding.tvNext.setOnClickListener {
             parentViewModel.moveToNextStep()
+        }
+
+        binding.tvWeight.setOnClickListener {
+            WeightFragment().show(parentFragmentManager, null)
         }
     }
 }
