@@ -1,4 +1,4 @@
-package com.mulkkam.ui.onboarding.physicalinfo
+package com.mulkkam.ui.onboarding.bioinfo
 
 import android.os.Bundle
 import android.text.SpannableString
@@ -8,13 +8,13 @@ import android.view.View
 import androidx.annotation.StyleRes
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentPhysicalInfoBinding
+import com.mulkkam.databinding.FragmentBioInfoBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 
-class PhysicalInfoFragment :
-    BindingFragment<FragmentPhysicalInfoBinding>(
-        FragmentPhysicalInfoBinding::inflate,
+class BioInfoFragment :
+    BindingFragment<FragmentBioInfoBinding>(
+        FragmentBioInfoBinding::inflate,
     ) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
 
@@ -31,8 +31,8 @@ class PhysicalInfoFragment :
         binding.tvViewLabel.text =
             getAppearanceSpannable(
                 R.style.title1,
-                getString(R.string.physical_info_input_hint),
-                getString(R.string.physical_info_input_hint_highlight),
+                getString(R.string.bio_info_input_hint),
+                getString(R.string.bio_info_input_hint_highlight),
             )
     }
 

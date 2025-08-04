@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.onboarding.physicalinfo.PhysicalInfoFragment">
+    tools:context=".ui.onboarding.bioinfo.BioInfoFragment">
 
     <TextView
         android:id="@+id/tv_view_label"
@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="26dp"
-        android:text="@string/physical_info_input_hint"
+        android:text="@string/bio_info_input_hint"
         android:textAppearance="@style/body2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="28dp"
-        android:text="@string/physical_info_gender_label"
+        android:text="@string/bio_info_gender_label"
         android:textAppearance="@style/title2"
         app:layout_constraintStart_toStartOf="@id/tv_view_label"
         app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
@@ -35,7 +35,7 @@
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
-        android:text="@string/physical_info_gender_male"
+        android:text="@string/bio_info_gender_male"
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toStartOf="@id/tv_gender_female"
@@ -51,7 +51,7 @@
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
-        android:text="@string/physical_info_gender_female"
+        android:text="@string/bio_info_gender_female"
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintBottom_toBottomOf="@id/tv_gender_male"
@@ -64,7 +64,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/physical_info_weight_label"
+        android:text="@string/bio_info_weight_label"
         android:textAppearance="@style/title2"
         app:layout_constraintStart_toStartOf="@id/tv_gender_male"
         app:layout_constraintTop_toBottomOf="@id/tv_gender_male" />
@@ -77,7 +77,7 @@
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
-        android:text="@string/physical_info_weight_hint"
+        android:text="@string/bio_info_weight_hint"
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
