@@ -23,11 +23,11 @@ class PhysicalInfoFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initHighlight()
+        initTextAppearance()
         initClickListeners()
     }
 
-    private fun initHighlight() {
+    private fun initTextAppearance() {
         binding.tvViewLabel.text =
             getAppearanceSpannable(
                 R.style.title1,

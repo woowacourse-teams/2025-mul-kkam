@@ -29,10 +29,19 @@ class TermsFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initAppearance()
+        initTextAppearance()
         initTermsAdapter()
         initTermsAgreements()
         initClickListeners()
+    }
+
+    private fun initTextAppearance() {
+        binding.tvTermsLabel.text =
+            getAppearanceSpannable(
+                R.style.title1,
+                getString(R.string.terms_agree_hint),
+                getString(R.string.terms_agree_hint_highlight),
+            )
     }
 
     private fun initTermsAdapter() {
@@ -48,15 +57,6 @@ class TermsFragment :
                 TermsAgreementUiModel(R.string.terms_agree_marketing, false),
             )
         termsAdapter.submitList(terms)
-    }
-
-    private fun initAppearance() {
-        binding.tvTermsLabel.text =
-            getAppearanceSpannable(
-                R.style.title1,
-                getString(R.string.terms_agree_hint),
-                getString(R.string.terms_agree_hint_highlight),
-            )
     }
 
     private fun getAppearanceSpannable(

@@ -23,11 +23,11 @@ class NicknameFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initAppearance()
+        initTextAppearance()
         initClickListeners()
     }
 
-    private fun initAppearance() {
+    private fun initTextAppearance() {
         binding.tvViewLabel.text =
             getAppearanceSpannable(
                 R.style.title1,

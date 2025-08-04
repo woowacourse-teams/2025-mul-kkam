@@ -7,7 +7,6 @@ import android.text.style.TextAppearanceSpan
 import android.view.View
 import androidx.annotation.StyleRes
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentPhysicalInfoBinding.inflate
 import com.mulkkam.databinding.FragmentTargetAmountBinding
 import com.mulkkam.ui.binding.BindingFragment
 
@@ -20,10 +19,10 @@ class TargetAmountFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        initAppearance()
+        initTextAppearance()
     }
 
-    private fun initAppearance() {
+    private fun initTextAppearance() {
         binding.tvViewLabel.text =
             getAppearanceSpannable(
                 R.style.title1,
