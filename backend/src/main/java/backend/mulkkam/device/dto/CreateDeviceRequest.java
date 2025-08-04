@@ -1,6 +1,6 @@
-package backend.mulkkam.common.infrastructure.fcm.dto.request;
+package backend.mulkkam.device.dto;
 
-import backend.mulkkam.common.infrastructure.fcm.domain.Device;
+import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.member.domain.Member;
 
 public record CreateDeviceRequest(

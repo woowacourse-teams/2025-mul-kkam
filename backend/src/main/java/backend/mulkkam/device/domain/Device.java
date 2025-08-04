@@ -1,4 +1,4 @@
-package backend.mulkkam.common.infrastructure.fcm.domain;
+package backend.mulkkam.device.domain;
 
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.Column;

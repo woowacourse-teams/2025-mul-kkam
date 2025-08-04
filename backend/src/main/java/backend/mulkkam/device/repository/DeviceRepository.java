@@ -1,6 +1,6 @@
-package backend.mulkkam.common.infrastructure.fcm.repository;
+package backend.mulkkam.device.repository;
 
-import backend.mulkkam.common.infrastructure.fcm.domain.Device;
+import backend.mulkkam.device.domain.Device;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeviceRepository extends JpaRepository<Device, Long> {

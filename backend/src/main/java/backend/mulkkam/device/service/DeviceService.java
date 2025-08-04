@@ -1,11 +1,11 @@
-package backend.mulkkam.common.infrastructure.fcm.service;
+package backend.mulkkam.device.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.infrastructure.fcm.domain.Device;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.CreateDeviceRequest;
-import backend.mulkkam.common.infrastructure.fcm.repository.DeviceRepository;
+import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.dto.CreateDeviceRequest;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
