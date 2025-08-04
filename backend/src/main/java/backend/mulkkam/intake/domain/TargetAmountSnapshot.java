@@ -36,7 +36,11 @@ public class TargetAmountSnapshot {
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
-    public TargetAmountSnapshot(Member member, LocalDate updatedAt, Amount targetAmount) {
+    public TargetAmountSnapshot(
+            Member member,
+            LocalDate updatedAt,
+            Amount targetAmount
+    ) {
         this.member = member;
         this.updatedAt = updatedAt;
         this.targetAmount = targetAmount;
