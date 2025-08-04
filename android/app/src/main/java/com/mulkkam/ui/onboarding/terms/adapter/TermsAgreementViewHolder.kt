@@ -1,6 +1,5 @@
 package com.mulkkam.ui.onboarding.terms.adapter
 
-import android.provider.Settings.Global.getString
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
