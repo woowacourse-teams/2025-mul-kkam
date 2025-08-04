@@ -10,7 +10,7 @@ class OnboardingViewModel : ViewModel() {
     val onboardingState: LiveData<OnboardingStep> get() = _onboardingState
 
     val canSkip: LiveData<Boolean> =
-        onboardingState.map { state -> state == OnboardingStep.PHYSICAL_INFO }
+        onboardingState.map { state -> state == OnboardingStep.BIO_INFO }
 
     fun updateOnboardingState(state: OnboardingStep) {
         _onboardingState.value = state

@@ -17,7 +17,8 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
         supportFragmentManager.commit {
             setReorderingAllowed(true)
-            add(R.id.fcv_onboarding, TermsFragment())
+            addToBackStack(null)
+            add(R.id.fcv_onboarding, TermsFragment::class.java, null, OnboardingStep.TERMS.name)
             viewModel.updateOnboardingState(OnboardingStep.TERMS)
         }
 
@@ -46,11 +47,11 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
     private fun navigateToStep(step: OnboardingStep) {
         binding.viewOnboardingProgress.setProgress(step.ordinal + OFFSET_STEP_ORDINAL)
-        step.create().also { fragment ->
+        if (supportFragmentManager.findFragmentByTag(step.name) == null) {
             supportFragmentManager.commit {
                 addToBackStack(null)
                 setReorderingAllowed(true)
-                replace(R.id.fcv_onboarding, fragment)
+                add(R.id.fcv_onboarding, step.fragment, null, step.name)
             }
         }
     }
