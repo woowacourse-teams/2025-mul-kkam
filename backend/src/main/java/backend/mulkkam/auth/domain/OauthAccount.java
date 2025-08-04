@@ -46,4 +46,8 @@ public class OauthAccount {
     ) {
         this(null, oauthId, oauthProvider);
     }
+
+    public void modifyMember(Member member) {
+        this.member = member;
+    }
 }
