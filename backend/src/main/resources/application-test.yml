@@ -16,3 +16,7 @@ spring:
     enabled: true
     clean-disabled: false
     locations: classpath:db/migration
+
+fcm:
+  secret-path: src/main/resources/key/fcm-key.json
+  project-id: project-id
