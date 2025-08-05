@@ -111,9 +111,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
 
-        @DisplayName("하나의 기록만 존재하는 경우 반환값으로 올바른 달성률과 코멘트를 반환한다")
+        @DisplayName("기록을 추가하면 누적된 기록을 토대로 달성률과 코멘트를 반환한다")
         @Test
-        void success_singleIntakeHistory() {
+        void success_addNewHistory() {
             // given
             Amount targetAmount = new Amount(1_000);
             Member member = MemberFixtureBuilder.builder()
@@ -128,7 +128,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
+            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest,
+                    member.getId());
 
             // then
             assertSoftly(softly -> {
@@ -137,7 +138,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("이미 저장된 기록만 존재하는 경우 반환값으로 올바른 달성률과 코멘트를 반환한다")
+        @DisplayName("이미 기록이 저장된 상태에서 새로운 기록을 추가하면 누적된 기록을 토대로 달성률과 코멘트를 반환한다")
         @Test
         void success_withAlreadySavedHistories() {
             // given
@@ -175,7 +176,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
+            CreateIntakeHistoryResponse actual = intakeHistoryService.create(intakeHistoryCreateRequest,
+                    member.getId());
 
             // then
             assertSoftly(softly -> {
