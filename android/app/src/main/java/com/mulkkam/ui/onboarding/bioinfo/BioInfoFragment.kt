@@ -14,6 +14,9 @@ class BioInfoFragment :
     BindingFragment<FragmentBioInfoBinding>(
         FragmentBioInfoBinding::inflate,
     ) {
+    private val weightFragment: WeightFragment by lazy {
+        WeightFragment()
+    }
     private val parentViewModel: OnboardingViewModel by activityViewModels()
 
     override fun onViewCreated(
@@ -40,7 +43,7 @@ class BioInfoFragment :
         }
 
         binding.tvWeight.setOnClickListener {
-            WeightFragment().show(parentFragmentManager, null)
+            weightFragment.show(parentFragmentManager, null)
         }
     }
 }
