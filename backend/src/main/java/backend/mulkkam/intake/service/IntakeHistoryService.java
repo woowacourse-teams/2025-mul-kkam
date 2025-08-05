@@ -44,7 +44,7 @@ public class IntakeHistoryService {
         intakeHistoryRepository.save(intakeHistory);
 
         List<IntakeHistory> intakeHistoriesOfDate = findIntakeHistoriesOfDate(
-                intakeHistoryCreateRequest.dateTime().toLocalDate(),
+                intakeHistoryCreateRequest.getDateTimeAsLocalDate(),
                 memberId
         );
 
