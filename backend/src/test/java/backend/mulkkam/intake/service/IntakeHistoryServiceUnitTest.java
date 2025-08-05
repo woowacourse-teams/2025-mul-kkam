@@ -1,15 +1,29 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.IntakeDetail;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.DateRangeRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryResponse;
-import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
+import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.repository.IntakeDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.IntakeDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
@@ -27,16 +41,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
 
@@ -48,6 +52,9 @@ class IntakeHistoryServiceUnitTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private IntakeDetailRepository intakeDetailRepository;
 
     @DisplayName("물의 음용량을 저장할 때에")
     @Nested
@@ -68,7 +75,7 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.of(member));
 
             int intakeAmount = 500;
-            IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
+            IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount
             );
@@ -91,15 +98,19 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.of(member));
 
             int intakeAmount = -1;
-            IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
+            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount
             );
 
-            // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(request, memberId))
-                    .isInstanceOf(IllegalArgumentException.class);
+            IntakeHistory existingHistory = mock(IntakeHistory.class);
+            given(intakeHistoryRepository.findByMemberIdAndDate(memberId, LocalDate.now()))
+                    .willReturn(Optional.of(existingHistory));
 
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
+                    .isInstanceOf(IllegalArgumentException.class);
+            verify(intakeDetailRepository, never()).save(any(IntakeDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
 
@@ -112,7 +123,7 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.empty());
 
             int intakeAmount = 500;
-            IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
+            IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount
             );
@@ -135,6 +146,7 @@ class IntakeHistoryServiceUnitTest {
         void success_containsOnlyInDateRange() {
             // given
             Long memberId = 1L;
+            Long intakeHistoryId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
@@ -142,65 +154,35 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
 
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(10, 30, 30)
-                    ))
+            IntakeHistory intakeHistory = mock(IntakeHistory.class);
+            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
+            when(intakeHistory.getDate()).thenReturn(LocalDate.of(2025, 10, 20));
+            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
+
+            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 21),
-                            LocalTime.of(10, 30, 30)
-                    ))
+            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 23),
-                            LocalTime.of(23, 59, 59)
-                    ))
+            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 24),
-                            LocalTime.of(10, 30, 30)
-                    ))
-                    .build();
+            List<IntakeDetail> details = new ArrayList<>(
+                    List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail));
 
-            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 26),
-                            LocalTime.of(10, 30, 30)
-                    ))
-                    .build();
+            Collections.shuffle(details);
 
-            List<IntakeHistory> histories = new ArrayList<>(List.of(
-                    firstHistory,
-                    secondHistory,
-                    thirdHistory,
-                    fourthHistory,
-                    fifthHistory
-            ));
-            Collections.shuffle(histories);
-
-            DateRangeRequest dateRangeRequest = new DateRangeRequest(
-                    startDate,
-                    endDate
-            );
-
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
-            )).willReturn(histories);
+            given(intakeHistoryRepository.findAllByMemberIdAndDateBetween(memberId, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
+            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -215,7 +197,6 @@ class IntakeHistoryServiceUnitTest {
             List<LocalDate> dates = actual.stream()
                     .map(IntakeHistorySummaryResponse::date)
                     .toList();
-
             assertThat(dates).isSorted();
         }
 
@@ -231,65 +212,38 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(12, 30, 30)
-                    ))
+                    .date(LocalDate.of(2025, 3, 16))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(11, 31, 30)
-                    ))
+            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .time(LocalTime.of(10, 0))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(10, 32, 59)
-                    ))
+            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .time(LocalTime.of(11, 0))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(13, 30, 30)
-                    ))
+            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .time(LocalTime.of(15, 0))
                     .build();
 
-            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 10, 20),
-                            LocalTime.of(16, 30, 30)
-                    ))
+            IntakeDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .time(LocalTime.of(13, 0))
                     .build();
 
-            List<IntakeHistory> histories = new ArrayList<>(List.of(
-                    firstHistory,
-                    secondHistory,
-                    thirdHistory,
-                    fourthHistory,
-                    fifthHistory
+            List<IntakeDetail> details = new ArrayList<>(List.of(
+                    firstIntakeDetail,
+                    secondIntakeDetail,
+                    thirdIntakeDetail,
+                    fourthIntakeDetail
             ));
-            Collections.shuffle(histories);
-
-            DateRangeRequest dateRangeRequest = new DateRangeRequest(
-                    startDate,
-                    endDate
-            );
-
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
-            )).willReturn(histories);
+            Collections.shuffle(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -301,9 +255,9 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // then
-            List<LocalDateTime> dateTimes = actual.stream()
-                    .flatMap(summary -> summary.intakeHistories().stream())
-                    .map(IntakeHistoryResponse::dateTime)
+            List<LocalTime> dateTimes = actual.stream()
+                    .flatMap(summary -> summary.intakeDetailResponses().stream())
+                    .map(IntakeDetailResponse::time)
                     .toList();
 
             assertThat(dateTimes).isSorted();
@@ -316,84 +270,13 @@ class IntakeHistoryServiceUnitTest {
             Long memberId = 1L;
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.empty());
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(LocalDate.now(), LocalDate.now());
 
             // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L));
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
-        }
-
-        @DisplayName("달성률이 정상적으로 계산된다")
-        @Test
-        void success_calculateAchievementRate() {
-            // given
-            Long memberId = 1L;
-            Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(1_000))
-                    .build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
-
-            LocalDate startDate = LocalDate.of(2025, 10, 20);
-            LocalDate endDate = LocalDate.of(2025, 10, 21);
-
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            List<IntakeHistory> histories = new ArrayList<>(List.of(
-                    firstHistory,
-                    secondHistory,
-                    thirdHistory,
-                    fourthHistory,
-                    fifthHistory
-            ));
-            Collections.shuffle(histories);
-
-            DateRangeRequest dateRangeRequest = new DateRangeRequest(
-                    startDate,
-                    endDate
-            );
-
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
-            )).willReturn(histories);
-
-            // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
-                    new DateRangeRequest(
-                            startDate,
-                            endDate
-                    ),
-                    memberId
-            );
-
-            // then
-            assertThat(actual.getFirst().achievementRate())
-                    .isCloseTo(50.0, within(0.01));
+            assertThatThrownBy(
+                    () -> intakeHistoryService.readSummaryOfIntakeHistories(dateRangeRequest, memberId))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_MEMBER.name());
         }
 
         @DisplayName("전체 음용량이 정상적으로 계산된다")
@@ -401,6 +284,8 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateTotalIntakeAmount() {
             // given
             Long memberId = 1L;
+            Long intakeHistoryId = 1L;
+
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
@@ -410,63 +295,42 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
+            IntakeHistory intakeHistory = mock(IntakeHistory.class);
+            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
+            when(intakeHistory.getDate()).thenReturn(LocalDate.of(2025, 10, 20));
+            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
+
+            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
+            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
+            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistory fourthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
+            List<IntakeDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            IntakeHistory fifthHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .intakeAmount(new Amount(100))
-                    .build();
-
-            List<IntakeHistory> histories = new ArrayList<>(List.of(
-                    firstHistory,
-                    secondHistory,
-                    thirdHistory,
-                    fourthHistory,
-                    fifthHistory
-            ));
-            Collections.shuffle(histories);
-
-            DateRangeRequest dateRangeRequest = new DateRangeRequest(
-                    startDate,
-                    endDate
-            );
-
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
-                    dateRangeRequest.startDateTime(),
-                    dateRangeRequest.endDateTime()
-            )).willReturn(histories);
+            given(intakeHistoryRepository.findAllByMemberIdAndDateBetween(memberId, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
+            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
-                    new DateRangeRequest(
-                            startDate,
-                            endDate
-                    ),
+                    new DateRangeRequest(startDate, endDate),
                     memberId
             );
 
             // then
             assertThat(actual.getFirst().totalIntakeAmount())
-                    .isEqualTo(500);
+                    .isEqualTo(1_500);
         }
     }
 }

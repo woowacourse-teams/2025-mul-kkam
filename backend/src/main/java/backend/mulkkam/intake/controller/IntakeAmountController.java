@@ -1,8 +1,8 @@
 package backend.mulkkam.intake.controller;
 
-import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
-import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

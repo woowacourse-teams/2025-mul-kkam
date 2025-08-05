@@ -1,7 +1,6 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -12,37 +11,33 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
+import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
 @Entity
-public class IntakeHistory {
+public class IntakeDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Member member;
-
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalTime time;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
-    private Amount targetAmount;
+    @AttributeOverride(name = "value", column = @Column(name = "intakeAmount", nullable = false))
+    private Amount intakeAmount;
 
-    public IntakeHistory(
-            Member member,
-            LocalDate date,
-            Amount targetAmount
-    ) {
-        this.member = member;
-        this.date = date;
-        this.targetAmount = targetAmount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private IntakeHistory intakeHistory;
+
+    public IntakeDetail(LocalTime time, Amount intakeAmount, IntakeHistory intakeHistory) {
+        this.time = time;
+        this.intakeAmount = intakeAmount;
+        this.intakeHistory = intakeHistory;
     }
 }
