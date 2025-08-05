@@ -42,7 +42,7 @@ public class IntakeHistoryService {
     ) {
         Member member = getMember(memberId);
         Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
-                LocalDate.now());
+                intakeDetailCreateRequest.dateTime().toLocalDate());
         if (intakeHistory.isPresent()) {
             IntakeDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory.get());
             intakeDetailRepository.save(intakeDetail);
@@ -121,7 +121,7 @@ public class IntakeHistoryService {
                 totalIntakeAmount,
                 targetAmountOfTheDay
         );
-        
+
         return new IntakeHistorySummaryResponse(
                 intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
