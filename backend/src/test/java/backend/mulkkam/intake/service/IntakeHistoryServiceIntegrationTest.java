@@ -33,6 +33,14 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -93,8 +101,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when & then
+
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
         }
 
         @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")

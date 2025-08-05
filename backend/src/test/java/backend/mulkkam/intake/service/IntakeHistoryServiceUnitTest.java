@@ -41,6 +41,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
 
@@ -109,7 +120,8 @@ class IntakeHistoryServiceUnitTest {
 
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
             verify(intakeDetailRepository, never()).save(any(IntakeDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
