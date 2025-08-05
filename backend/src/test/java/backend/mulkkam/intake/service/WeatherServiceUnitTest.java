@@ -62,7 +62,7 @@ class WeatherServiceUnitTest {
             // given
             LocalDate targetDate = LocalDate.now().plusDays(5).plusDays(1);
 
-            // when &  then
+            // when & then
             assertThatThrownBy(() -> weatherService.getAverageTemperatureForDate(targetDate))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
@@ -87,7 +87,7 @@ class WeatherServiceUnitTest {
                             new CityInfo(32000)
                     ));
 
-            // when &  then
+            // when & then
             assertThatCode(() -> weatherService.getAverageTemperatureForDate(targetDate))
                     .doesNotThrowAnyException();
         }

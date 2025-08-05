@@ -88,5 +88,4 @@ class IntakeRecommendedAmountServiceUnitTest {
             assertThat(actual).isEqualTo(0);
         }
     }
-
 }
