@@ -19,9 +19,11 @@ class WeightFragment :
     }
 
     private fun initWeight() {
-        binding.npWeightChoose.maxValue = WEIGHT_MAX_VALUE
-        binding.npWeightChoose.minValue = WEIGHT_MIN_VALUE
-        binding.npWeightChoose.value = WEIGHT_DEFAULT_VALUE
+        binding.npWeightChoose.apply {
+            minValue = WEIGHT_MIN_VALUE
+            maxValue = WEIGHT_MAX_VALUE
+            value = WEIGHT_DEFAULT_VALUE
+        }
     }
 
     private fun initClickListeners() {
