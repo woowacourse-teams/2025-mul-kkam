@@ -18,6 +18,5 @@ spring:
     locations: classpath:db/migration
 
 fcm:
-  secret-json: ${FCM_SECRET_JSON}
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
   project-id: ${FCM_PROJECT_ID}
-

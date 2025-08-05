@@ -28,5 +28,5 @@ logging:
     name: ${LOG_PATH}
 
 fcm:
-  secret-path: ${FCM_BASE64_ENCODING_KEY}
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
   project-id: ${FCM_PROJECT_ID}
