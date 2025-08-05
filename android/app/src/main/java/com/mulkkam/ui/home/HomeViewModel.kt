@@ -25,8 +25,11 @@ class HomeViewModel : ViewModel() {
     fun loadTodayIntakeHistorySummary() {
         viewModelScope.launch {
             val today = LocalDate.now()
-            val summary =
-                RepositoryInjection.intakeRepository.getIntakeHistory(today, today).getByIndex(FIRST_INDEX)
+            val result = RepositoryInjection.intakeRepository.getIntakeHistory(today, today)
+            if (!result.isSuccess) {
+                // TODO: 에러 처리
+            }
+            val summary = result.data!!.getByIndex(FIRST_INDEX)
 
             _todayIntakeHistorySummary.value = summary
         }
@@ -34,12 +37,17 @@ class HomeViewModel : ViewModel() {
 
     fun loadCups() {
         viewModelScope.launch {
-            cups = RepositoryInjection.cupsRepository.getCups()
+            val result = RepositoryInjection.cupsRepository.getCups()
+
+            if (!result.isSuccess) {
+                // TODO: 에러 처리
+            }
+
+            cups = result.data
         }
     }
 
     fun addWaterIntake(cupRank: Int) {
-        // TODO: 현재 cupRank가 2부터 들어가있음
         val cup = cups?.cups?.find { it.rank == cupRank }
         val cupAmount = cup?.amount
 

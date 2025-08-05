@@ -18,7 +18,7 @@ class SettingWaterViewModel : ViewModel() {
             runCatching {
                 cupsRepository.getCups()
             }.onSuccess {
-                _cups.value = it.toUi()
+                _cups.value = it.data?.toUi()
             }
         }
     }
