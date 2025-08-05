@@ -4,23 +4,27 @@ import android.content.Context
 import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.mulkkam.di.RepositoryInjection.healthRepository
-import com.mulkkam.util.CalorieWorkerFactory
+import com.mulkkam.domain.work.CalorieScheduler
+import com.mulkkam.util.work.CalorieSchedulerImpl
+import com.mulkkam.util.work.WorkerFactory
 
 object WorkInjection {
-    private var _workManager: WorkManager? = null
-    val workManager: WorkManager
-        get() = _workManager ?: throw IllegalArgumentException()
+    private lateinit var workManager: WorkManager
+
+    val calorieScheduler: CalorieScheduler by lazy {
+        CalorieSchedulerImpl(workManager)
+    }
 
     fun init(context: Context) {
-        if (_workManager == null) {
+        if (::workManager.isInitialized.not()) {
             val config =
                 Configuration
                     .Builder()
-                    .setWorkerFactory(CalorieWorkerFactory(healthRepository))
+                    .setWorkerFactory(WorkerFactory(healthRepository))
                     .build()
 
             WorkManager.initialize(context, config)
-            _workManager = WorkManager.getInstance(context)
+            workManager = WorkManager.getInstance(context)
         }
     }
 }

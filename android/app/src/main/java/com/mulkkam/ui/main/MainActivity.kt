@@ -14,12 +14,10 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
-import com.mulkkam.domain.repository.HealthRepository.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
-import com.mulkkam.util.CalorieSchedulerImpl
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -129,7 +127,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     private fun initObservers() {
         viewModel.isHealthPermissionGranted.observe(this) { isGranted ->
             if (isGranted) {
-                CalorieSchedulerImpl.getOrCreate().scheduleCalorieCheck(DEFAULT_CHECK_CALORIE_INTERVAL_HOURS)
+                viewModel.scheduleCalorieCheck()
             } else {
                 requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
             }
