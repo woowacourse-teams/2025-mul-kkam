@@ -2,6 +2,7 @@ package com.mulkkam.di
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import com.mulkkam.BuildConfig
+import com.mulkkam.data.remote.MulKkamCallAdapterFactory
 import com.mulkkam.data.remote.interceptor.AuthorizationInterceptor
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
@@ -40,6 +41,7 @@ object NetworkInjection {
             .baseUrl(BuildConfig.BASE_URL)
             .client(okHttpClient)
             .client(interceptorClient)
+            .addCallAdapterFactory(MulKkamCallAdapterFactory())
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
     }
