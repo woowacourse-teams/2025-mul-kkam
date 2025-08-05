@@ -37,6 +37,12 @@ public class OauthAccount {
     @Column(nullable = false)
     private OauthProvider oauthProvider;
 
+    public OauthAccount(Long id, String oauthId, OauthProvider oauthProvider) {
+        this.id = id;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
+    }
+
     public OauthAccount(Member member, String oauthId, OauthProvider oauthProvider) {
         this.member = member;
         this.oauthId = oauthId;
@@ -47,7 +53,8 @@ public class OauthAccount {
             String oauthId,
             OauthProvider oauthProvider
     ) {
-        this(null, oauthId, oauthProvider);
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
     }
 
     public void modifyMember(Member member) {
