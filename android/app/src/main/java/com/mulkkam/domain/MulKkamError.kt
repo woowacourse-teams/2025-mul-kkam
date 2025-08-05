@@ -1,68 +1,106 @@
 sealed class MulKkamError(
     val code: String,
-) {
+) : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError(
         code: String,
     ) : MulKkamError(code) {
-        object TooShort : NicknameError("NICKNAME_TOO_SHORT")
+        object TooShort : NicknameError("NICKNAME_TOO_SHORT") {
+            private fun readResolve(): Any = TooShort
+        }
 
-        object TooLong : NicknameError("NICKNAME_TOO_LONG")
+        object TooLong : NicknameError("NICKNAME_TOO_LONG") {
+            private fun readResolve(): Any = TooLong
+        }
 
-        object InvalidCharacter : NicknameError("NICKNAME_INVALID_CHAR")
+        object InvalidCharacter : NicknameError("NICKNAME_INVALID_CHAR") {
+            private fun readResolve(): Any = InvalidCharacter
+        }
 
-        object SameAsBefore : NicknameError("SAME_AS_BEFORE_NICKNAME")
+        object SameAsBefore : NicknameError("SAME_AS_BEFORE_NICKNAME") {
+            private fun readResolve(): Any = SameAsBefore
+        }
 
-        object InvalidNickname : NicknameError("INVALID_MEMBER_NICKNAME")
+        object InvalidNickname : NicknameError("INVALID_MEMBER_NICKNAME") {
+            private fun readResolve(): Any = InvalidNickname
+        }
 
-        object DuplicateNickname : NicknameError("DUPLICATE_MEMBER_NICKNAME")
+        object DuplicateNickname : NicknameError("DUPLICATE_MEMBER_NICKNAME") {
+            private fun readResolve(): Any = DuplicateNickname
+        }
     }
 
     // 컵 설정 관련 에러
     sealed class SettingCupsError(
         code: String,
     ) : MulKkamError(code) {
-        object InvalidCount : SettingCupsError("INVALID_CUP_COUNT")
+        object InvalidCount : SettingCupsError("INVALID_CUP_COUNT") {
+            private fun readResolve(): Any = InvalidCount
+        }
 
-        object InvalidAmount : SettingCupsError("INVALID_CUP_AMOUNT")
+        object InvalidAmount : SettingCupsError("INVALID_CUP_AMOUNT") {
+            private fun readResolve(): Any = InvalidAmount
+        }
 
-        object InvalidNickname : SettingCupsError("INVALID_CUP_NICKNAME")
+        object InvalidNickname : SettingCupsError("INVALID_CUP_NICKNAME") {
+            private fun readResolve(): Any = InvalidNickname
+        }
 
-        object InvalidRankValue : SettingCupsError("INVALID_CUP_RANK_VALUE")
+        object InvalidRankValue : SettingCupsError("INVALID_CUP_RANK_VALUE") {
+            private fun readResolve(): Any = InvalidRankValue
+        }
     }
 
     // 계정 관련 에러
     sealed class AccountError(
         code: String,
     ) : MulKkamError(code) {
-        object NotExistUser : AccountError("NOT_EXIST_USER")
+        object NotExistUser : AccountError("NOT_EXIST_USER") {
+            private fun readResolve(): Any = NotExistUser
+        }
 
-        object InvalidToken : AccountError("INVALID_TOKEN")
+        object InvalidToken : AccountError("INVALID_TOKEN") {
+            private fun readResolve(): Any = InvalidToken
+        }
     }
 
     // 기록 관련 에러
     sealed class HistoryError(
         code: String,
     ) : MulKkamError(code) {
-        object InvalidDateRange : HistoryError("INVALID_DATE_RANGE")
+        object InvalidDateRange : HistoryError("INVALID_DATE_RANGE") {
+            private fun readResolve(): Any = InvalidDateRange
+        }
     }
 
     sealed class NotFoundError(
         code: String,
     ) : MulKkamError(code) {
-        object Member : NotFoundError("NOT_FOUND_MEMBER")
+        object Member : NotFoundError("NOT_FOUND_MEMBER") {
+            private fun readResolve(): Any = Member
+        }
 
-        object Cup : NotFoundError("NOT_FOUND_CUP")
+        object Cup : NotFoundError("NOT_FOUND_CUP") {
+            private fun readResolve(): Any = Cup
+        }
 
-        object IntakeType : NotFoundError("NOT_FOUND_INTAKE_TYPE")
+        object IntakeType : NotFoundError("NOT_FOUND_INTAKE_TYPE") {
+            private fun readResolve(): Any = IntakeType
+        }
     }
 
     // 기타 공통 에러
-    object NetworkUnavailable : MulKkamError("NETWORK_UNAVAILABLE")
+    object NetworkUnavailable : MulKkamError("NETWORK_UNAVAILABLE") {
+        private fun readResolve(): Any = NetworkUnavailable
+    }
 
-    object DatabaseError : MulKkamError("DATABASE_ERROR")
+    object DatabaseError : MulKkamError("DATABASE_ERROR") {
+        private fun readResolve(): Any = DatabaseError
+    }
 
-    object Unknown : MulKkamError("UNKNOWN")
+    object Unknown : MulKkamError("UNKNOWN") {
+        private fun readResolve(): Any = Unknown
+    }
 
     companion object {
         fun from(code: String?): MulKkamError? =
