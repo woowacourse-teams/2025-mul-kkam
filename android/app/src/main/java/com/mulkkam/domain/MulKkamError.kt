@@ -1,3 +1,5 @@
+package com.mulkkam.domain
+
 sealed class MulKkamError(
     val code: String,
 ) : Throwable() {

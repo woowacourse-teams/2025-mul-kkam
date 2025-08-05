@@ -1,6 +1,7 @@
-package com.mulkkam.data.remote
+package com.mulkkam.data.remote.adapter
 
 import com.mulkkam.data.remote.model.response.ErrorResponse
+import com.mulkkam.domain.MulKkamError
 import kotlinx.serialization.json.Json
 import okhttp3.Request
 import okhttp3.ResponseBody

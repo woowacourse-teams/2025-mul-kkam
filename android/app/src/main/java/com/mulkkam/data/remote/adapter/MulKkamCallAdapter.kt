@@ -1,4 +1,4 @@
-package com.mulkkam.data.remote
+package com.mulkkam.data.remote.adapter
 
 import retrofit2.Call
 import retrofit2.CallAdapter

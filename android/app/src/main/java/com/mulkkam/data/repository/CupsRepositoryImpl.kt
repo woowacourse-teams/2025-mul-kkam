@@ -1,10 +1,10 @@
 package com.mulkkam.data.repository
 
-import MulKkamError
 import com.mulkkam.data.remote.model.request.AddCupRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.Cups
+import com.mulkkam.domain.MulKkamError
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 

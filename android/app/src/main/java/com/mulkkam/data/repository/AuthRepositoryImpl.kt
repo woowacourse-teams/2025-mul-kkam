@@ -1,8 +1,8 @@
 package com.mulkkam.data.repository
 
-import MulKkamError
 import com.mulkkam.data.remote.model.request.AuthRequest
 import com.mulkkam.data.remote.service.AuthService
+import com.mulkkam.domain.MulKkamError
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.AuthRepository
 
