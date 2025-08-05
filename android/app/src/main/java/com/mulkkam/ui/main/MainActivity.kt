@@ -18,6 +18,7 @@ import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
+import com.mulkkam.util.extensions.isHealthConnectAvailable
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -25,12 +26,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private val viewModel: MainViewModel by viewModels()
 
+    // TODO: 온보딩으로 로직 이동
     private val requestPermissionsLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
             if (results.containsAll(HEALTH_CONNECT_PERMISSIONS)) {
                 viewModel.updateHealthPermissionStatus(true)
-            } else {
-                Snackbar.make(binding.root, "칼로리 권한이 필요합니다.", Snackbar.LENGTH_SHORT).show()
             }
         }
 
@@ -47,7 +47,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         setupDoubleBackToExit()
         initObservers()
 
-        viewModel.requestPermissionsIfNeeded(HEALTH_CONNECT_PERMISSIONS)
+        if (isHealthConnectAvailable()) {
+            viewModel.requestPermissionsIfNeeded(HEALTH_CONNECT_PERMISSIONS)
+        }
     }
 
     private fun handleNotificationEvent() {

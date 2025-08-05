@@ -8,6 +8,8 @@ object HealthConnectInjection {
     val healthConnectClient: HealthConnectClient
         get() = _healthConnectClient ?: throw IllegalArgumentException()
 
+    val providerPackageName = "com.google.android.apps.healthdata"
+
     fun init(context: Context) {
         if (_healthConnectClient == null) {
             _healthConnectClient = HealthConnectClient.getOrCreate(context)
