@@ -31,14 +31,22 @@ class IntakeRepositoryImpl(
     override suspend fun postIntakeHistory(
         dateTime: LocalDateTime,
         amount: Int,
-    ) {
-        intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
+    ): MulKkamResult<Unit> {
+        val result = intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
+        )
     }
 
     private fun dateToString(date: LocalDate?) = date?.format(formatter)
 
-    override suspend fun patchIntakeTarget(amount: Int) {
-        intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
+    override suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit> {
+        val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
+        )
     }
 
     override suspend fun getIntakeTarget(): MulKkamResult<Int> {

@@ -14,9 +14,9 @@ interface IntakeRepository {
     suspend fun postIntakeHistory(
         dateTime: LocalDateTime,
         amount: Int,
-    )
+    ): MulKkamResult<Unit>
 
-    suspend fun patchIntakeTarget(amount: Int)
+    suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit>
 
     suspend fun getIntakeTarget(): MulKkamResult<Int>
 }

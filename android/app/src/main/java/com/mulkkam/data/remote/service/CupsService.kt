@@ -13,5 +13,5 @@ interface CupsService {
     @POST("/cups")
     suspend fun postCups(
         @Body addCupRequest: AddCupRequest,
-    )
+    ): Result<Unit>
 }

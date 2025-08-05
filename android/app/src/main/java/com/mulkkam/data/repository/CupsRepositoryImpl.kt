@@ -22,9 +22,14 @@ class CupsRepositoryImpl(
     override suspend fun postCup(
         cupAmount: Int,
         cupNickname: String,
-    ) {
-        cupsService.postCups(
-            AddCupRequest(cupAmount, cupNickname),
+    ): MulKkamResult<Unit> {
+        val result =
+            cupsService.postCups(
+                AddCupRequest(cupAmount, cupNickname),
+            )
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
         )
     }
 }

@@ -20,12 +20,12 @@ interface IntakeService {
     @POST("/intake/history")
     suspend fun postIntakeHistory(
         @Body intakeHistory: IntakeHistoryRequest,
-    )
+    ): Result<Unit>
 
     @PATCH("/intake/amount/target")
     suspend fun patchIntakeTarget(
         @Body intakeAmount: IntakeAmountRequest,
-    )
+    ): Result<Unit>
 
     @GET("/intake/amount/target")
     suspend fun getIntakeTarget(): Result<IntakeTargetAmountResponse>

@@ -52,10 +52,14 @@ class HomeViewModel : ViewModel() {
         val cupAmount = cup?.amount
 
         viewModelScope.launch {
-            RepositoryInjection.intakeRepository.postIntakeHistory(
-                LocalDateTime.now(),
-                cupAmount ?: DEFAULT_INTAKE_AMOUNT,
-            )
+            val result =
+                RepositoryInjection.intakeRepository.postIntakeHistory(
+                    LocalDateTime.now(),
+                    cupAmount ?: DEFAULT_INTAKE_AMOUNT,
+                )
+            if (!result.isSuccess) {
+                // TODO: 에러 처리
+            }
 
             _todayIntakeHistorySummary.value =
                 _todayIntakeHistorySummary.value?.copy(

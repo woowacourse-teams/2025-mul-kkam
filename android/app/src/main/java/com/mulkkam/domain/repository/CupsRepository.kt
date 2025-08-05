@@ -9,5 +9,5 @@ interface CupsRepository {
     suspend fun postCup(
         cupAmount: Int,
         cupNickname: String,
-    )
+    ): MulKkamResult<Unit>
 }

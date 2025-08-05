@@ -54,13 +54,15 @@ class SettingWaterCupViewModel : ViewModel() {
 
     private fun addCup() {
         viewModelScope.launch {
-            runCatching {
+            val result =
                 cupsRepository.postCup(
                     cupAmount = _cup.value?.amount ?: 0,
                     cupNickname = _cup.value?.nickname ?: "",
                 )
-            }.onSuccess {
+            if (result.isSuccess) {
                 _success.value = true
+            } else {
+                // TODO: 에러 처리
             }
         }
     }
