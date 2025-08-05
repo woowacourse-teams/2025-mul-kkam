@@ -1,8 +1,11 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
@@ -22,8 +25,11 @@ public class NotificationService {
     private static final int DAY_LIMIT = 7;
 
     private final NotificationRepository notificationRepository;
+    private final MemberRepository memberRepository;
 
-    public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest) {
+    public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest, Long memberId) {
+        Member member = getMemberById(memberId);
+
         validateSizeRange(readNotificationsRequest);
         int size = readNotificationsRequest.size();
 
@@ -33,7 +39,7 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = readNotificationsRequest.lastId();
-        List<Notification> notifications = getNotificationsByLastId(lastId, limitStartDateTime, pageable);
+        List<Notification> notifications = getNotificationsByLastIdAndMember(member, lastId, limitStartDateTime, pageable);
 
         boolean hasNext = notifications.size() > size;
 
@@ -49,14 +55,15 @@ public class NotificationService {
         }
     }
 
-    private List<Notification> getNotificationsByLastId(
+    private List<Notification> getNotificationsByLastIdAndMember(
+            Member member,
             Long lastId,
             LocalDateTime limitStartDateTime,
             Pageable pageable) {
         if (lastId == null) {
-            return notificationRepository.findLatest(limitStartDateTime, pageable);
+            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
         }
-        return notificationRepository.findByCursor(lastId, limitStartDateTime, pageable);
+        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
     }
 
     private Long getNextCursor(
@@ -80,5 +87,10 @@ public class NotificationService {
         return notifications.stream()
                 .map(ReadNotificationResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    private Member getMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

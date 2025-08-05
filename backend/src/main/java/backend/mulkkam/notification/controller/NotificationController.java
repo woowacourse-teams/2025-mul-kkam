@@ -20,7 +20,7 @@ public class NotificationController {
 
     @GetMapping
     ResponseEntity<ReadNotificationsResponse> getNotifications(@Valid @ModelAttribute ReadNotificationsRequest readNotificationsRequest) {
-        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(readNotificationsRequest);
+        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(readNotificationsRequest, 1L);
         return ResponseEntity.ok(readNotificationsResponse);
     }
 }

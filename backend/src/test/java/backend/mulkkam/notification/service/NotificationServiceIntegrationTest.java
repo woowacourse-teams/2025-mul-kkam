@@ -38,6 +38,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     private NotificationRepository notificationRepository;
 
     private Member savedMember;
+    private Long savedMemberId;
     @Autowired
     private MemberRepository memberRepository;
 
@@ -45,6 +46,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     void setUp() {
         Member member = MemberFixtureBuilder.builder().build();
         savedMember = memberRepository.save(member);
+        savedMemberId = savedMember.getId();
     }
 
     @DisplayName("알림 조회 기능을 사용할 때")
@@ -81,7 +83,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -109,7 +111,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -131,7 +133,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(notifications.size());
@@ -163,7 +165,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
@@ -190,7 +192,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
 
             // then
             assertThat(response.nextCursor()).isNull();
@@ -203,7 +205,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request))
+            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, savedMemberId))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
