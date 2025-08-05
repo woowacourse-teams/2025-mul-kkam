@@ -6,8 +6,8 @@ import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -27,21 +27,30 @@ public class NotificationService {
 
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
         Pageable pageable = Pageable.ofSize(size + 1);
-        List<Notification> notifications = notificationRepository.findByCursor(lastId, limitStartDateTime, pageable); // TODO 2025. 8. 5. 16:50: limitDateTime 인 거를 sql에서 할 지 비지니스에서 할 지
+        List<Notification> notifications = notificationRepository.findByCursor(lastId, limitStartDateTime, pageable);
 
         boolean hasNext = notifications.size() > size;
 
+        Long nextCursor = getNextCursor(hasNext, notifications);
+        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(hasNext, notifications);
+
+        return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
+    }
+
+    private static Long getNextCursor(boolean hasNext, List<Notification> notifications) {
+        if (hasNext) {
+            return notifications.getLast().getId();
+        }
+        return null;
+    }
+
+    private List<ReadNotificationResponse> toReadNotificationResponses(boolean hasNext, List<Notification> notifications) {
         if (hasNext) {
             notifications.removeLast();
         }
 
-        Long nextCursor = hasNext ? notifications.getLast().getId() : null;
-
-        List<ReadNotificationResponse> readNotificationResponses = new ArrayList<>();
-        for (Notification notification : notifications) {
-            readNotificationResponses.add(new ReadNotificationResponse(notification));
-        }
-
-        return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
+        return notifications.stream()
+                .map(ReadNotificationResponse::new)
+                .collect(Collectors.toList());
     }
 }
