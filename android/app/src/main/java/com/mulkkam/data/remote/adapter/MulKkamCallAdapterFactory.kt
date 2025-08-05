@@ -19,18 +19,21 @@ class MulKkamCallAdapterFactory : CallAdapter.Factory() {
         returnType: Type,
         annotations: Array<Annotation>,
         retrofit: Retrofit,
-    ): CallAdapter<*, *>? {
-        // [1] 반환 타입이 Call<...> 형태인지 확인
-        if (getRawType(returnType) != Call::class.java) return null
-        if (returnType !is ParameterizedType) return null
+    ): CallAdapter<*, *>? =
+        when {
+            // [1] 반환 타입이 Call<...> 형태인지 확인
+            getRawType(returnType) != Call::class.java -> null
+            returnType !is ParameterizedType -> null
 
-        // [2] Call<Result<...>> 형태인지 확인
-        val innerType = getParameterUpperBound(0, returnType)
-        if (getRawType(innerType) != Result::class.java) return null
-        if (innerType !is ParameterizedType) return null
+            // [2] Call<Result<...>> 형태인지 확인
+            getRawType(getParameterUpperBound(0, returnType)) != Result::class.java -> null
+            getParameterUpperBound(0, returnType) !is ParameterizedType -> null
 
-        // [3] Result<T>의 T 타입을 추출하여 어댑터 생성
-        val responseType = getParameterUpperBound(0, innerType)
-        return MulKkamCallAdapter<Any>(responseType)
-    }
+            // [3] Result<T>의 T 타입을 추출하여 어댑터 생성
+            else -> {
+                val innerType = getParameterUpperBound(0, returnType) as ParameterizedType
+                val responseType = getParameterUpperBound(0, innerType)
+                MulKkamCallAdapter<Any>(responseType)
+            }
+        }
 }
