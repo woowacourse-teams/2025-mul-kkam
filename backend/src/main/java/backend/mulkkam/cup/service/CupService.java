@@ -48,22 +48,21 @@ public class CupService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        final int cupCount = cupRepository.countByMemberId(memberId);
+
         IntakeType intakeType = IntakeType.findByName(registerCupRequest.intakeType());
+        Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType);
 
-        if (cupCount >= MAX_CUP_COUNT) {
-            throw new CommonException(INVALID_CUP_COUNT);
-        }
-
-        CupRank nextCupRank = new CupRank(cupCount + 1);
-        Cup cup = registerCupRequest.toCup(
-                member,
-                nextCupRank,
-                intakeType
-        );
         Cup createdCup = cupRepository.save(cup);
 
         return new CupResponse(createdCup);
+    }
+
+    private CupRank calculateNextCupRank(Member member) {
+        final int cupCount = cupRepository.countByMemberId(member.getId());
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
+        return new CupRank(cupCount + 1);
     }
 
     @Transactional
