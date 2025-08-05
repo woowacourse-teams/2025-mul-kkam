@@ -8,10 +8,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeDetail;
@@ -26,6 +24,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -104,9 +103,13 @@ class IntakeHistoryServiceUnitTest {
                     intakeAmount
             );
 
-            IntakeHistory existingHistory = mock(IntakeHistory.class);
-            given(intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId, LocalDate.now()))
-                    .willReturn(Optional.of(existingHistory));
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 3, 19))
+                    .build();
+
+            given(intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId, LocalDate.of(2025, 3, 19)))
+                    .willReturn(Optional.ofNullable(intakeHistory));
 
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
@@ -148,7 +151,6 @@ class IntakeHistoryServiceUnitTest {
         void success_containsOnlyInDateRange() {
             // given
             Long memberId = 1L;
-            Long intakeHistoryId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
@@ -156,10 +158,9 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
 
-            IntakeHistory intakeHistory = mock(IntakeHistory.class);
-            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
-            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
-            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .build();
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
@@ -181,9 +182,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -207,7 +206,6 @@ class IntakeHistoryServiceUnitTest {
         void success_orderByDateAscInSummaryResponses() {
             // given
             Long memberId = 1L;
-            Long intakeHistoryId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
@@ -215,10 +213,9 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory intakeHistory = mock(IntakeHistory.class);
-            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
-            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
-            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .build();
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
@@ -246,9 +243,7 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -266,8 +261,8 @@ class IntakeHistoryServiceUnitTest {
                     .map(IntakeDetailResponse::time)
                     .toList();
 
-            assertThat(dateTimes).isSorted();
             assertSoftly(softly -> {
+                softly.assertThat(dateTimes).isSorted();
                 softly.assertThat(dateTimes).hasSize(4);
                 softly.assertThat(dateTimes).isSorted();
             });
@@ -294,7 +289,6 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateTotalIntakeAmount() {
             // given
             Long memberId = 1L;
-            Long intakeHistoryId = 1L;
 
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
@@ -305,10 +299,9 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory intakeHistory = mock(IntakeHistory.class);
-            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
-            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
-            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .build();
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
@@ -327,9 +320,7 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when

@@ -15,12 +15,10 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -61,29 +59,19 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(
+        List<IntakeDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
         );
-
-        List<Long> historyIds = intakeHistoriesInDateRange.stream()
-                .map(IntakeHistory::getId)
-                .toList();
-
-        List<IntakeDetail> allDetails = intakeDetailRepository.findAllByIntakeHistoryIdIn(historyIds);
-
-        Map<Long, IntakeHistory> historyIdToHistory = intakeHistoriesInDateRange.stream()
-                .collect(Collectors.toMap(IntakeHistory::getId, Function.identity()));
-
-        Map<IntakeHistory, List<IntakeDetail>> historiesGroupedByDate = allDetails.stream()
-                .collect(Collectors.groupingBy(detail -> historyIdToHistory.get(detail.getIntakeHistory().getId())));
-
-        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
-                historiesGroupedByDate);
-
-        return summaryOfIntakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
+        return details.stream()
+                .collect(Collectors.groupingBy(
+                        IntakeDetail::getIntakeHistory,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ))
+                .entrySet().stream()
+                .map(entry -> toIntakeHistorySummaryResponse(entry.getKey(), entry.getValue()))
                 .toList();
     }
 
@@ -98,18 +86,9 @@ public class IntakeHistoryService {
         return yesterdayIntakeHistory.map(IntakeHistory::getStreak).orElse(0);
     }
 
-    private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
-            Map<IntakeHistory, List<IntakeDetail>> historiesGroupedByDate) {
-        List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
-        for (Map.Entry<IntakeHistory, List<IntakeDetail>> entry : historiesGroupedByDate.entrySet()) {
-            intakeHistorySummaryResponses.add(toIntakeHistorySummaryResponse(entry.getValue(), entry.getKey()));
-        }
-        return intakeHistorySummaryResponses;
-    }
-
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            List<IntakeDetail> intakeDetailsOfDate,
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            List<IntakeDetail> intakeDetailsOfDate
     ) {
         List<IntakeDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
         List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
