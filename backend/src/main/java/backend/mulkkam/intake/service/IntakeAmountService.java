@@ -2,7 +2,7 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
@@ -20,8 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class IntakeAmountService {
 
-    private static final int WATER_INTAKE_PER_KG = 30;
-
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -37,8 +35,8 @@ public class IntakeAmountService {
         Member member = getMember(memberId);
 
         PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
-
-        return new IntakeRecommendedAmountResponse(calculateRecommendedTargetAmount(physicalAttributes));
+        RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
+        return new IntakeRecommendedAmountResponse(recommendedTargetAmount.amount());
     }
 
     public IntakeTargetAmountResponse getTarget(Long memberId) {
@@ -47,18 +45,13 @@ public class IntakeAmountService {
     }
 
     public RecommendedIntakeAmountResponse getRecommendedTargetAmount(PhysicalAttributesRequest physicalAttributesRequest) {
-        PhysicalAttributes physicalAttributes = new PhysicalAttributes(physicalAttributesRequest.gender(),
-                physicalAttributesRequest.weight());
-        return new RecommendedIntakeAmountResponse(calculateRecommendedTargetAmount(physicalAttributes));
+        PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
+        RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
+        return new RecommendedIntakeAmountResponse(recommendedTargetAmount.amount());
     }
 
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
-    }
-
-    private Amount calculateRecommendedTargetAmount(PhysicalAttributes physicalAttributes) {
-        int recommendedTargetAmount = (int) (physicalAttributes.getWeight() * WATER_INTAKE_PER_KG);
-        return new Amount(recommendedTargetAmount);
     }
 }
