@@ -49,4 +49,20 @@ public class Notification {
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
+
+    public Notification(
+            NotificationType notificationType,
+            String title,
+            boolean isRead,
+            LocalDateTime createdAt,
+            Amount recommendedTargetAmount,
+            Member member
+    ) {
+        this.notificationType = notificationType;
+        this.title = title;
+        this.isRead = isRead;
+        this.createdAt = createdAt;
+        this.recommendedTargetAmount = recommendedTargetAmount;
+        this.member = member;
+    }
 }
