@@ -1,5 +1,8 @@
 package backend.mulkkam.member.service;
 
+import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.domain.OauthProvider;
+import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
@@ -38,6 +41,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private OauthAccountRepository oauthAccountRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -253,8 +259,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     rawTargetIntakeAmount
             );
 
+            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
             // when
-            memberService.create(createMemberRequest);
+            memberService.create(oauthAccount, createMemberRequest);
 
             // then
             List<Member> savedMembers = memberRepository.findAll();
@@ -284,12 +293,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     rawTargetIntakeAmount
             );
 
+            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
             // when & then
-            assertThatThrownBy(() -> memberService.create(createMemberRequest))
+            assertThatThrownBy(() -> memberService.create(oauthAccount, createMemberRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_MEMBER_NICKNAME.name());
         }
-
     }
 
     @DisplayName("유효하지 않은 목표 음용량을 사용할 경우 예외를 반환한다")
@@ -307,8 +318,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 invalidIntakeAmount
         );
 
+        OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+        oauthAccountRepository.save(oauthAccount);
+
         // when & then
-        assertThatThrownBy(() -> memberService.create(createMemberRequest))
+        assertThatThrownBy(() -> memberService.create(oauthAccount, createMemberRequest))
                 .isInstanceOf(CommonException.class)
                 .hasMessage(INVALID_AMOUNT.name());
     }
