@@ -90,6 +90,7 @@
     <string name="bio_info_gender_female">여자</string>
     <string name="bio_info_weight_label">몸무게</string>
     <string name="bio_info_weight_hint">몸무게 정보를 입력해 주세요</string>
+    <string name="bio_info_weight_format">%d kg</string>
 
     <string name="weight_label">몸무게 설정</string>
     <string name="weight_complete">완료</string>
