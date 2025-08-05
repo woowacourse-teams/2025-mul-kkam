@@ -1,8 +1,9 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.model.error.toDomain
+import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.AuthRequest
 import com.mulkkam.data.remote.service.AuthService
-import com.mulkkam.domain.MulKkamError
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.AuthRepository
 
@@ -18,7 +19,7 @@ class AuthRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.accessToken) },
-            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
 }

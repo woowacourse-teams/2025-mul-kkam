@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.adapter
 
+import com.mulkkam.data.remote.model.error.ResponseError
 import com.mulkkam.data.remote.model.response.ErrorResponse
-import com.mulkkam.domain.MulKkamError
 import kotlinx.serialization.json.Json
 import okhttp3.Request
 import okhttp3.ResponseBody
@@ -39,7 +39,7 @@ class ResponseCall<T>(
             val body = response.body()
             val errorCode = parseErrorCode(response.errorBody())
             if (errorCode != null) {
-                throw MulKkamError.from(errorCode) ?: MulKkamError.Unknown
+                throw ResponseError.from(errorCode) ?: ResponseError.Unknown
             }
 
             body ?: throw NullPointerException("Response body is null")

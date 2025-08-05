@@ -1,10 +1,11 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.model.error.toDomain
+import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.AddCupRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.Cups
-import com.mulkkam.domain.MulKkamError
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 
@@ -15,7 +16,7 @@ class CupsRepositoryImpl(
         val result = cupsService.getCups()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
 
@@ -29,7 +30,7 @@ class CupsRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
 }
