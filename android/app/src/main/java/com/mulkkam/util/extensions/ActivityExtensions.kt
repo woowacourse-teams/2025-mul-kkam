@@ -4,7 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.di.HealthConnectInjection.providerPackageName
+import com.mulkkam.di.HealthConnectInjection.PROVIDER_PACKAGE_NAME
 
 /**
  * Health Connect SDK 설치/업데이트 상태를 확인한다.
@@ -12,7 +12,7 @@ import com.mulkkam.di.HealthConnectInjection.providerPackageName
  * @return true → 사용 가능 / false → 설치 또는 업데이트 필요
  */
 fun Activity.isHealthConnectAvailable(): Boolean =
-    HealthConnectClient.getSdkStatus(this, providerPackageName) ==
+    HealthConnectClient.getSdkStatus(this, PROVIDER_PACKAGE_NAME) ==
         HealthConnectClient.SDK_AVAILABLE
 
 /**
@@ -20,7 +20,7 @@ fun Activity.isHealthConnectAvailable(): Boolean =
  */
 fun Activity.navigateToHealthConnectStore() {
     val uriString =
-        "market://details?id=$providerPackageName&url=healthconnect%3A%2F%2Fonboarding"
+        "market://details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding"
     startActivity(
         Intent(Intent.ACTION_VIEW).apply {
             setPackage("com.android.vending")
