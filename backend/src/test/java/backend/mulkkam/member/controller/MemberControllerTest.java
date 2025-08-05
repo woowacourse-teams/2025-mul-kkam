@@ -6,8 +6,10 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
+import backend.mulkkam.support.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,6 +27,9 @@ class MemberControllerTest {
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
+
+    @Autowired
+    DatabaseCleaner databaseCleaner;
 
     @DisplayName("Filter 검증")
     @Nested
@@ -154,6 +159,11 @@ class MemberControllerTest {
     @DisplayName("온보딩 진행 시")
     @Nested
     class Create {
+
+        @BeforeEach
+        void setUp() {
+            databaseCleaner.clean();
+        }
 
         @DisplayName("토큰에 대한 OauthAccount 를 추출해 정상적으로 저장이 이뤄진다")
         @Test
