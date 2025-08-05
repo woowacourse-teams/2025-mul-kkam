@@ -45,20 +45,22 @@ class BioInfoFragment :
     }
 
     private fun initClickListeners() {
-        binding.tvNext.setOnClickListener {
-            parentViewModel.moveToNextStep()
-        }
+        with(binding) {
+            tvNext.setOnClickListener {
+                parentViewModel.moveToNextStep()
+            }
 
-        binding.tvWeight.setOnClickListener {
-            weightFragment.show(parentFragmentManager, null)
-        }
+            tvWeight.setOnClickListener {
+                weightFragment.show(parentFragmentManager, null)
+            }
 
-        binding.tvGenderMale.setOnClickListener {
-            viewModel.updateGender(MALE)
-        }
+            tvGenderMale.setOnClickListener {
+                viewModel.updateGender(MALE)
+            }
 
-        binding.tvGenderFemale.setOnClickListener {
-            viewModel.updateGender(FEMALE)
+            tvGenderFemale.setOnClickListener {
+                viewModel.updateGender(FEMALE)
+            }
         }
     }
 
@@ -72,7 +74,7 @@ class BioInfoFragment :
         }
 
         viewModel.canNext.observe(viewLifecycleOwner) { enabled ->
-            updateNextButtonState(enabled)
+            updateNextButtonEnabled(enabled)
         }
     }
 
@@ -109,7 +111,7 @@ class BioInfoFragment :
         }
     }
 
-    private fun updateNextButtonState(enabled: Boolean) {
+    private fun updateNextButtonEnabled(enabled: Boolean) {
         binding.tvNext.isEnabled = enabled
         if (enabled) {
             binding.tvNext.backgroundTintList =
