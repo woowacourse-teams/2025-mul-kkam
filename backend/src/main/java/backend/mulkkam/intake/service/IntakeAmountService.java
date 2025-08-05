@@ -45,7 +45,8 @@ public class IntakeAmountService {
     }
 
     public RecommendedIntakeAmountResponse getRecommendedTargetAmount(
-            PhysicalAttributesRequest physicalAttributesRequest) {
+            PhysicalAttributesRequest physicalAttributesRequest
+    ) {
         PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
         return new RecommendedIntakeAmountResponse(recommendedTargetAmount.amount());
