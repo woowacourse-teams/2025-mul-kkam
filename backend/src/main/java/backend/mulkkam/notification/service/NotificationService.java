@@ -24,7 +24,6 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest) {
-
         validateSizeRange(readNotificationsRequest);
         int size = readNotificationsRequest.size();
 
