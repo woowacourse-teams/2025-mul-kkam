@@ -25,4 +25,14 @@ class OnboardingViewModel : ViewModel() {
             ) ?: OnboardingStep.TERMS,
         )
     }
+
+    fun moveToPreviousStep() {
+        updateOnboardingState(
+            OnboardingStep.entries.getOrNull(
+                onboardingState.value?.ordinal?.minus(
+                    1,
+                ) ?: 0,
+            ) ?: OnboardingStep.TERMS,
+        )
+    }
 }

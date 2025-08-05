@@ -1,6 +1,7 @@
 package com.mulkkam.ui.onboarding
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.commit
@@ -24,6 +25,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
         initProgressBarView()
         initObservers()
+        initBackPressHandler()
     }
 
     private fun initProgressBarView() {
@@ -54,6 +56,18 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
                 add(R.id.fcv_onboarding, step.fragment, null, step.name)
             }
         }
+    }
+
+    private fun initBackPressHandler() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    supportFragmentManager.popBackStack()
+                    viewModel.moveToPreviousStep()
+                }
+            },
+        )
     }
 
     companion object {
