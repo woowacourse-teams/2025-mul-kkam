@@ -11,7 +11,7 @@ public record IntakeDetailResponse(
     public IntakeDetailResponse(IntakeDetail intakeDetail) {
         this(
                 intakeDetail.getId(),
-                intakeDetail.getTime(),
+                intakeDetail.getIntakeTime(),
                 intakeDetail.getIntakeAmount().value()
         );
     }

@@ -41,7 +41,7 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndDate(memberId,
+        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
                 LocalDate.now());
         if (intakeHistory.isPresent()) {
             IntakeDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory.get());
@@ -61,7 +61,7 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateBetween(
+        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(
                 memberId,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
@@ -117,7 +117,7 @@ public class IntakeHistoryService {
         );
 
         return new IntakeHistorySummaryResponse(
-                intakeHistory.getDate(),
+                intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
@@ -127,7 +127,7 @@ public class IntakeHistoryService {
 
     private List<IntakeDetail> sortIntakeHistories(List<IntakeDetail> intakeDetails) {
         return intakeDetails.stream()
-                .sorted(Comparator.comparing(IntakeDetail::getTime))
+                .sorted(Comparator.comparing(IntakeDetail::getIntakeTime))
                 .toList();
     }
 

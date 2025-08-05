@@ -75,7 +75,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories).hasSize(1);
-                softly.assertThat(intakeHistories.getFirst().getDate()).isEqualTo(DATE);
+                softly.assertThat(intakeHistories.getFirst().getHistoryDate()).isEqualTo(DATE);
             });
         }
 

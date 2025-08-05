@@ -30,7 +30,7 @@ public class IntakeHistory {
     private Member member;
 
     @Column(nullable = false)
-    private LocalDate date;
+    private LocalDate historyDate;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
@@ -38,11 +38,11 @@ public class IntakeHistory {
 
     public IntakeHistory(
             Member member,
-            LocalDate date,
+            LocalDate historyDate,
             Amount targetAmount
     ) {
         this.member = member;
-        this.date = date;
+        this.historyDate = historyDate;
         this.targetAmount = targetAmount;
     }
 }

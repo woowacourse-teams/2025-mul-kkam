@@ -25,7 +25,7 @@ public class IntakeDetail {
     private Long id;
 
     @Column(nullable = false)
-    private LocalTime time;
+    private LocalTime intakeTime;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "intakeAmount", nullable = false))
@@ -36,11 +36,11 @@ public class IntakeDetail {
     private IntakeHistory intakeHistory;
 
     public IntakeDetail(
-            LocalTime time,
+            LocalTime intakeTime,
             Amount intakeAmount,
             IntakeHistory intakeHistory
     ) {
-        this.time = time;
+        this.intakeTime = intakeTime;
         this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
     }

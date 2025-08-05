@@ -104,7 +104,7 @@ class IntakeHistoryServiceUnitTest {
             );
 
             IntakeHistory existingHistory = mock(IntakeHistory.class);
-            given(intakeHistoryRepository.findByMemberIdAndDate(memberId, LocalDate.now()))
+            given(intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId, LocalDate.now()))
                     .willReturn(Optional.of(existingHistory));
 
             // when & then
@@ -156,7 +156,7 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistory intakeHistory = mock(IntakeHistory.class);
             when(intakeHistory.getId()).thenReturn(intakeHistoryId);
-            when(intakeHistory.getDate()).thenReturn(LocalDate.of(2025, 10, 20));
+            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
             when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
@@ -179,7 +179,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateBetween(memberId, startDate, endDate))
+            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
                     .willReturn(List.of(intakeHistory));
             given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
                     .willReturn(details);
@@ -297,7 +297,7 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistory intakeHistory = mock(IntakeHistory.class);
             when(intakeHistory.getId()).thenReturn(intakeHistoryId);
-            when(intakeHistory.getDate()).thenReturn(LocalDate.of(2025, 10, 20));
+            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
             when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
@@ -317,7 +317,7 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateBetween(memberId, startDate, endDate))
+            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
                     .willReturn(List.of(intakeHistory));
             given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
                     .willReturn(details);
