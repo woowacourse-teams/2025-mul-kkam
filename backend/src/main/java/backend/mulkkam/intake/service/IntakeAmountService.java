@@ -43,7 +43,7 @@ public class IntakeAmountService {
 
     public IntakeTargetAmountResponse getTarget(Long memberId) {
         Member member = getMember(memberId);
-        return new IntakeTargetAmountResponse(member.getTargetAmount().value());
+        return new IntakeTargetAmountResponse(member.getTargetAmount());
     }
 
     public RecommendedIntakeAmountResponse getRecommendedTargetAmount(PhysicalAttributesRequest physicalAttributesRequest) {
