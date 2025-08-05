@@ -21,7 +21,6 @@ import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -103,12 +102,6 @@ public class IntakeAmountServiceUnitTest {
     class GetRecommended {
 
         public static final long MEMBER_ID = 1L;
-        private IntakeAmountService intakeAmountService;
-
-        @BeforeEach
-        void setUp() {
-            intakeAmountService = new IntakeAmountService(memberRepository, new SimpleWeightBasedCalculator());
-        }
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
@@ -154,13 +147,6 @@ public class IntakeAmountServiceUnitTest {
     @DisplayName("사용자의 신체적 속성으로 추천 음용량을 조회하려고 할 때")
     @Nested
     class GetRecommendedTargetAmount {
-
-        private IntakeAmountService intakeAmountService;
-
-        @BeforeEach
-        void setUp() {
-            intakeAmountService = new IntakeAmountService(memberRepository, new SimpleWeightBasedCalculator());
-        }
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
