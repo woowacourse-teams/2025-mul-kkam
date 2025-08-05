@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.domain;
 
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
 
 @Getter
 @NoArgsConstructor
@@ -48,6 +51,9 @@ public class OauthAccount {
     }
 
     public void modifyMember(Member member) {
+        if (this.member != null) {
+            throw new CommonException(MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT);
+        }
         this.member = member;
     }
 }
