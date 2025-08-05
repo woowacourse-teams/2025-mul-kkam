@@ -29,6 +29,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 @ExtendWith(MockitoExtension.class)
 public class IntakeAmountServiceUnitTest {
 
@@ -78,7 +88,8 @@ public class IntakeAmountServiceUnitTest {
 
             // when & then
             assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, MEMBER_ID))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
             verify(memberRepository).findById(MEMBER_ID);
             verify(member, never()).updateTargetAmount(any(Amount.class));
         }
