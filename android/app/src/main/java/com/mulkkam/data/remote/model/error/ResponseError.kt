@@ -9,6 +9,7 @@ import com.mulkkam.data.remote.model.error.ResponseError.NotFoundError
 import com.mulkkam.data.remote.model.error.ResponseError.SettingCupsError
 import com.mulkkam.data.remote.model.error.ResponseError.Unknown
 import com.mulkkam.domain.MulKkamError
+import java.net.ConnectException
 
 sealed class ResponseError(
     val code: String,
@@ -170,4 +171,11 @@ fun ResponseError.toDomain(): MulKkamError =
         else -> MulKkamError.Unknown
     }
 
-fun Throwable.toResponseError(): ResponseError = this as? ResponseError ?: Unknown
+fun Throwable.toResponseError(): ResponseError =
+    when (this) {
+        is ResponseError -> this
+
+        is ConnectException -> NetworkUnavailable
+
+        else -> Unknown
+    }

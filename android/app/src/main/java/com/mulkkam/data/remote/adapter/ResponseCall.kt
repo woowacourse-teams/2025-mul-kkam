@@ -1,6 +1,7 @@
 package com.mulkkam.data.remote.adapter
 
 import com.mulkkam.data.remote.model.error.ResponseError
+import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.response.ErrorResponse
 import kotlinx.serialization.json.Json
 import okhttp3.Request
@@ -28,7 +29,7 @@ class ResponseCall<T>(
                     call: Call<T>,
                     t: Throwable,
                 ) {
-                    callback.onResponse(this@ResponseCall, Response.success(Result.failure(t)))
+                    callback.onResponse(this@ResponseCall, Response.success(Result.failure(t.toResponseError())))
                 }
             },
         )
