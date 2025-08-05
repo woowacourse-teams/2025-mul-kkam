@@ -1,14 +1,30 @@
 package backend.mulkkam.member.controller;
 
+import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.domain.OauthProvider;
+import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
+import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.dto.CreateMemberRequest;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class MemberControllerTest {
+
+    @Autowired
+    private OauthJwtTokenHandler oauthJwtTokenHandler;
+
+    @Autowired
+    private OauthAccountRepository oauthAccountRepository;
 
     @DisplayName("Filter 검증")
     @Nested
@@ -132,6 +148,41 @@ class MemberControllerTest {
                         .then().log().all()
                         .statusCode(HttpStatus.UNAUTHORIZED.value());
             }
+        }
+    }
+
+    @DisplayName("온보딩 진행 시")
+    @Nested
+    class Create {
+
+        @DisplayName("토큰에 대한 OauthAccount 를 추출해 정상적으로 저장이 이뤄진다")
+        @Test
+        void success_withValidHeader() {
+            // given
+            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
+                    "히로",
+                    70.0,
+                    Gender.FEMALE,
+                    1_000
+            );
+
+            // when
+            RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .body(createMemberRequest)
+                    .when().post("/members")
+                    .then().log().all()
+                    .statusCode(HttpStatus.OK.value());
+
+            // then
+            OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
+            assertThat(savedOauthAccount.getMember()).isNotNull();
         }
     }
 }
