@@ -27,13 +27,18 @@ public class IntakeRecommendedAmountService {
         Member member = getMember(memberId);
         Double weight = member.getPhysicalAttributes().getWeight();
 
-        double additionalIntakeAmount = 0;
-        if (averageTemperatureForDate > EXTRA_INTAKE_TEMPERATURE_THRESHOLD) {
-            double differenceBetweenThreshold = averageTemperatureForDate - EXTRA_INTAKE_TEMPERATURE_THRESHOLD;
-            additionalIntakeAmount = weight * WATER_INTAKE_COEFFICIENT_PER_DEGREE * differenceBetweenThreshold;
-        }
+        return calculateAdditionalIntakeAmount(averageTemperatureForDate, weight);
+    }
 
-        return additionalIntakeAmount;
+    private static double calculateAdditionalIntakeAmount(
+            double averageTemperatureForDate,
+            Double weight
+    ) {
+        if (averageTemperatureForDate <= EXTRA_INTAKE_TEMPERATURE_THRESHOLD) {
+            return 0;
+        }
+        double differenceBetweenThreshold = averageTemperatureForDate - EXTRA_INTAKE_TEMPERATURE_THRESHOLD;
+        return weight * WATER_INTAKE_COEFFICIENT_PER_DEGREE * differenceBetweenThreshold;
     }
 
     private Member getMember(Long id) {
