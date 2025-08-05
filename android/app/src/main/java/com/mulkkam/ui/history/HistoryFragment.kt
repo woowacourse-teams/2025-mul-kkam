@@ -7,7 +7,6 @@ import android.text.Spanned
 import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
-import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
@@ -20,6 +19,7 @@ import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
+import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -32,6 +32,7 @@ class HistoryFragment :
     Refreshable {
     private val viewModel: HistoryViewModel by viewModels()
     private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
+    private var historyToDelete: IntakeHistory? = null
 
     override fun onViewCreated(
         view: View,
@@ -43,6 +44,7 @@ class HistoryFragment :
         initChartOptions()
         initCustomChartOptions()
         initObservers()
+        initDialogResultListener()
     }
 
     private fun initHighlight() {
@@ -81,19 +83,27 @@ class HistoryFragment :
             layoutManager = LinearLayoutManager(requireContext())
         }
         historyAdapter.onItemLongClickListener = { history ->
-            showDeleteDialog(history)
+            this.historyToDelete = history
+            DeleteConfirmDialogFragment().show(
+                childFragmentManager,
+                DeleteConfirmDialogFragment.TAG,
+            )
         }
     }
 
-    private fun showDeleteDialog(history: IntakeHistory) {
-        AlertDialog
-            .Builder(requireContext())
-            .setTitle(R.string.history_delete_dialog_title)
-            .setMessage("삭제된 기록은 복구가 불가능 합니다.")
-            .setPositiveButton("확인") { _, _ ->
-                viewModel.deleteIntakeHistory(history)
-            }.setNegativeButton("취소") { _, _ -> }
-            .show()
+    private fun initDialogResultListener() {
+        childFragmentManager.setFragmentResultListener(
+            DeleteConfirmDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { requestKey, bundle ->
+            val isConfirmed = bundle.getBoolean(DeleteConfirmDialogFragment.BUNDLE_KEY_CONFIRM)
+            if (isConfirmed) {
+                historyToDelete?.let {
+                    viewModel.deleteIntakeHistory(it)
+                }
+                historyToDelete = null
+            }
+        }
     }
 
     private fun initChartOptions() {
