@@ -48,9 +48,9 @@ public class IntakeHistoryService {
             intakeDetailRepository.save(intakeDetail);
             return;
         }
-
+        int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
         IntakeHistory newIntakeHistory = new IntakeHistory(member, intakeDetailCreateRequest.dateTime().toLocalDate(),
-                member.getTargetAmount());
+                member.getTargetAmount(), streak);
         IntakeHistory savedIntakeHistory = intakeHistoryRepository.save(newIntakeHistory);
         IntakeDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(savedIntakeHistory);
         intakeDetailRepository.save(intakeDetail);
@@ -92,6 +92,12 @@ public class IntakeHistoryService {
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
+    private int findStreak(Member member, LocalDate todayDate) {
+        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                member.getId(), todayDate.minusDays(1));
+        return yesterdayIntakeHistory.map(IntakeHistory::getStreak).orElse(0);
+    }
+
     private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
             Map<IntakeHistory, List<IntakeDetail>> historiesGroupedByDate) {
         List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
@@ -115,12 +121,13 @@ public class IntakeHistoryService {
                 totalIntakeAmount,
                 targetAmountOfTheDay
         );
-
+        
         return new IntakeHistorySummaryResponse(
                 intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
+                intakeHistory.getStreak(),
                 intakeDetailResponses
         );
     }

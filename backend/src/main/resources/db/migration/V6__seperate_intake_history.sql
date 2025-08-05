@@ -2,6 +2,9 @@ ALTER TABLE intake_history
     ADD COLUMN history_date DATE NOT NULL;
 
 ALTER TABLE intake_history
+    ADD COLUMN streak INT NOT NULL;
+
+ALTER TABLE intake_history
     DROP COLUMN date_time;
 
 ALTER TABLE intake_history

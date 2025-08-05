@@ -10,6 +10,7 @@ public class IntakeHistoryFixtureBuilder {
     private final Member member;
     private LocalDate date = LocalDate.of(2025, 3, 19);
     private Amount targetIntakeAmount = new Amount(1_000);
+    private int streak = 5;
 
     private IntakeHistoryFixtureBuilder(Member member) {
         this.member = member;
@@ -29,11 +30,17 @@ public class IntakeHistoryFixtureBuilder {
         return this;
     }
 
+    public IntakeHistoryFixtureBuilder streak(int streak) {
+        this.streak = streak;
+        return this;
+    }
+
     public IntakeHistory build() {
         return new IntakeHistory(
                 this.member,
                 this.date,
-                this.targetIntakeAmount
+                this.targetIntakeAmount,
+                this.streak
         );
     }
 }

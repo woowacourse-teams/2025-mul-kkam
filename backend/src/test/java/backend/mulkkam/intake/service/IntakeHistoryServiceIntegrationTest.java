@@ -112,6 +112,58 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     () -> intakeHistoryService.create(intakeDetailCreateRequest, 1L));
             assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
+
+        @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryNotExist() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder().
+                    build();
+            memberRepository.save(member);
+
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
+            intakeHistoryService.create(intakeDetailCreateRequest, member.getId());
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(1);
+                softly.assertThat(intakeHistories.getFirst().getStreak()).isEqualTo(1);
+            });
+        }
+
+        @DisplayName("전날에 기록이 있다면 스트릭이 전 날 스트릭의 +1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryExist() {
+            // given
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+            Member member = MemberFixtureBuilder
+                    .builder().
+                    build();
+            memberRepository.save(member);
+            IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(dateTime.toLocalDate().minusDays(1))
+                    .streak(45)
+                    .build();
+            intakeHistoryRepository.save(yesterDayIntakeHistory);
+
+            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
+            intakeHistoryService.create(intakeDetailCreateRequest, member.getId());
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(2);
+                softly.assertThat(intakeHistories.get(1).getStreak()).isEqualTo(46);
+            });
+        }
     }
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")

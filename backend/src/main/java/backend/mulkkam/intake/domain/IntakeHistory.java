@@ -36,13 +36,18 @@ public class IntakeHistory {
     @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
     private Amount targetAmount;
 
+    @Column(nullable = false)
+    private int streak;
+
     public IntakeHistory(
             Member member,
             LocalDate historyDate,
-            Amount targetAmount
+            Amount targetAmount,
+            int streak
     ) {
         this.member = member;
         this.historyDate = historyDate;
         this.targetAmount = targetAmount;
+        this.streak = streak;
     }
 }
