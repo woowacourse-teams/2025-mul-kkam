@@ -1,5 +1,8 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
@@ -22,7 +25,10 @@ public class NotificationService {
 
     public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest) {
         Long lastId = readNotificationsRequest.lastId();
+
+        validateSizeRange(readNotificationsRequest);
         int size = readNotificationsRequest.size();
+
         LocalDateTime clientTime = readNotificationsRequest.clientTime();
 
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
@@ -37,7 +43,13 @@ public class NotificationService {
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
 
-    private static Long getNextCursor(
+    private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
+        if (readNotificationsRequest.size() < 1) {
+            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
+        }
+    }
+
+    private Long getNextCursor(
             boolean hasNext,
             List<Notification> notifications
     ) {

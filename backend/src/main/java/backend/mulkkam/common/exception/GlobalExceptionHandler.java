@@ -1,7 +1,10 @@
 package backend.mulkkam.common.exception;
 
-import backend.mulkkam.common.exception.errorCode.BadRequestErrorCode;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_ENUM_VALUE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_METHOD_ARGUMENT;
+
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -10,7 +13,12 @@ public class GlobalExceptionHandler{
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse<FailureBody> handleInvalidEnum(HttpMessageNotReadableException e) {
-        return ErrorResponse.from(BadRequestErrorCode.INVALID_ENUM_VALUE);
+        return ErrorResponse.from(INVALID_ENUM_VALUE);
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ErrorResponse<FailureBody> handleInvalidMethodArgument(MethodArgumentNotValidException e) {
+        return ErrorResponse.from(INVALID_METHOD_ARGUMENT);
     }
 
     @ExceptionHandler(CommonException.class)
