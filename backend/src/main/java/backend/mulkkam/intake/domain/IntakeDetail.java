@@ -28,7 +28,7 @@ public class IntakeDetail {
     private LocalTime intakeTime;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "intakeAmount", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
     private Amount intakeAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)

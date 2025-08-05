@@ -33,7 +33,7 @@ public class IntakeHistory {
     private LocalDate historyDate;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
     @Column(nullable = false)
