@@ -2,8 +2,6 @@ spring:
   profiles:
     active: local
     include: private
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
 
 management:
   endpoints:
