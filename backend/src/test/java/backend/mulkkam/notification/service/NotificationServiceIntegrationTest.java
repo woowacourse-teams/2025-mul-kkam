@@ -18,6 +18,7 @@ import backend.mulkkam.support.NotificationFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,7 +30,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
     private static final int DAY_LIMIT = 7;
-    private final LocalDateTime localDateTime = LocalDateTime.of(2025, 8, 6, 10, 10);
 
     @Autowired
     private NotificationService notificationService;
@@ -51,78 +51,46 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class GetNotificationsAfter {
 
+        private final LocalDateTime requestTime = LocalDateTime.of(2025, 8, 7, 10, 10);
+        private final int defaultSize = 5;
+
+        private List<Notification> createNotifications(LocalDate... dates) {
+            return Arrays.stream(dates)
+                    .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).build())
+                    .toList();
+        }
+
         @DisplayName("요청 날짜로부터 7일 내의 최신순으로 데이터만이 불러와진다")
         @Test
         void success_returnsNotificationsWithin7DaysSortedByLatest() {
             // given
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 1))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 2))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 3))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 4))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 5))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 6))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 7))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 8))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 9))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 10))
-                            .build()
-            );
-            notificationRepository.saveAll(notifications);
+            notificationRepository.saveAll(createNotifications(
+                    LocalDate.of(2025, 8, 1),
+                    LocalDate.of(2025, 8, 2),
+                    LocalDate.of(2025, 8, 3),
+                    LocalDate.of(2025, 8, 4),
+                    LocalDate.of(2025, 8, 5),
+                    LocalDate.of(2025, 8, 6),
+                    LocalDate.of(2025, 8, 7),
+                    LocalDate.of(2025, 8, 8),
+                    LocalDate.of(2025, 8, 9),
+                    LocalDate.of(2025, 8, 10)
+            ));
 
-            LocalDateTime localDateTime = LocalDateTime.of(2025, 8, 7, 10, 10);
-            LocalDateTime limitStartDateTime = localDateTime.minusDays(DAY_LIMIT);
-            int size = 5;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(10L, localDateTime, size);
+            LocalDateTime limitStart = requestTime.minusDays(DAY_LIMIT);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                    readNotificationsRequest);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
 
             // then
-            int actualSize = readNotificationsResponse.readNotificationResponses().size();
-            List<ReadNotificationResponse> actualReadNotificationResponses = readNotificationsResponse.readNotificationResponses();
-            List<LocalDateTime> createdAts = readNotificationsResponse.readNotificationResponses().stream()
-                    .map(ReadNotificationResponse::createdAt)
-                    .toList();
+            List<ReadNotificationResponse> results = response.readNotificationResponses();
+            List<LocalDateTime> createdAts = results.stream().map(ReadNotificationResponse::createdAt).toList();
 
             assertSoftly(softly -> {
-                softly.assertThat(actualSize).isEqualTo(size);
-                actualReadNotificationResponses
-                        .forEach(
-                                response -> softly.assertThat(response.createdAt()).isAfterOrEqualTo(limitStartDateTime)
-                        );
-                softly.assertThat(createdAts)
-                        .isSortedAccordingTo(Comparator.reverseOrder());
+                softly.assertThat(results).hasSize(defaultSize);
+                results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStart));
+                softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }
 
@@ -130,144 +98,80 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 1))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 2))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 3))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 4))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 5))
-                            .build()
-            );
-            notificationRepository.saveAll(notifications);
+            notificationRepository.saveAll(createNotifications(
+                    LocalDate.of(2025, 8, 1),
+                    LocalDate.of(2025, 8, 2),
+                    LocalDate.of(2025, 8, 3),
+                    LocalDate.of(2025, 8, 4),
+                    LocalDate.of(2025, 8, 5)
+            ));
 
-            int size = 5;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(6L, localDateTime, size);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                    readNotificationsRequest);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
 
             // then
-            assertThat(readNotificationsResponse.readNotificationResponses().size()).isEqualTo(size);
+            assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
         }
 
         @DisplayName("요청 갯수보다 작아도 예외 없이 데이터가 불러와진다")
         @Test
         void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
             // given
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 1))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 2))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 3))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 4))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 5))
-                            .build()
+            List<Notification> notifications = createNotifications(
+                    LocalDate.of(2025, 8, 1),
+                    LocalDate.of(2025, 8, 2),
+                    LocalDate.of(2025, 8, 3),
+                    LocalDate.of(2025, 8, 4),
+                    LocalDate.of(2025, 8, 5)
             );
             notificationRepository.saveAll(notifications);
 
-            int size = 10;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(6L, localDateTime, size);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                    readNotificationsRequest);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
 
             // then
-            assertThat(readNotificationsResponse.readNotificationResponses().size()).isEqualTo(notifications.size());
+            assertThat(response.readNotificationResponses().size()).isEqualTo(notifications.size());
         }
 
         @DisplayName("lastId가 null이 들어오면 맨 마지막부터 불러와진다")
         @Test
         void success_returnsFromLatestWhenLastIdIsNull() {
             // given
-            Notification lastestNotification = NotificationFixtureBuilder
+            Notification latestNotification = NotificationFixtureBuilder
                     .withMember(savedMember)
                     .createdAt(LocalDate.of(2025, 8, 10))
                     .build();
 
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 1))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 2))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 3))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 4))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 5))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 6))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 7))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 8))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 9))
-                            .build(),
-                    lastestNotification
+            List<Notification> notifications = createNotifications(
+                    LocalDate.of(2025, 8, 1),
+                    LocalDate.of(2025, 8, 2),
+                    LocalDate.of(2025, 8, 3),
+                    LocalDate.of(2025, 8, 4),
+                    LocalDate.of(2025, 8, 5),
+                    LocalDate.of(2025, 8, 6),
+                    LocalDate.of(2025, 8, 7),
+                    LocalDate.of(2025, 8, 8),
+                    LocalDate.of(2025, 8, 9)
             );
             notificationRepository.saveAll(notifications);
+            notificationRepository.save(latestNotification);
 
-            int size = 5;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(null, localDateTime, size);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                    readNotificationsRequest);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
 
             // then
-            List<ReadNotificationResponse> readNotificationResponses = readNotificationsResponse.readNotificationResponses();
+            List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
 
             assertSoftly(softly -> {
-                softly.assertThat(readNotificationResponses.size()).isEqualTo(size);
+                softly.assertThat(readNotificationResponses.size()).isEqualTo(defaultSize);
                 softly.assertThat(readNotificationResponses.getFirst().createdAt())
-                        .isEqualTo(lastestNotification.getCreatedAt());
+                        .isEqualTo(latestNotification.getCreatedAt());
             });
         }
 
@@ -275,53 +179,32 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_nextCursorIsNullWhenNoMoreData() {
             // given
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 1))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 2))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 3))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 4))
-                            .build(),
-                    NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 5))
-                            .build()
-            );
-            notificationRepository.saveAll(notifications);
+            notificationRepository.saveAll(createNotifications(
+                    LocalDate.of(2025, 8, 1),
+                    LocalDate.of(2025, 8, 2),
+                    LocalDate.of(2025, 8, 3),
+                    LocalDate.of(2025, 8, 4),
+                    LocalDate.of(2025, 8, 5)
+            ));
 
-            int size = 5;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(6L, localDateTime, size);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                    readNotificationsRequest);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request);
 
             // then
-            assertThat(readNotificationsResponse.nextCursor()).isNull();
+            assertThat(response.nextCursor()).isNull();
         }
 
         @DisplayName("size가 음수일 때 예외가 발생한다")
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            LocalDateTime localDateTime = LocalDateTime.of(2025, 8, 6, 10, 10);
-            int size = -1;
-            ReadNotificationsRequest readNotificationsRequest = new ReadNotificationsRequest(6L, localDateTime, size);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(
-                    () -> notificationService.getNotificationsAfter(readNotificationsRequest)
-            ).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request))
+                    .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
     }
