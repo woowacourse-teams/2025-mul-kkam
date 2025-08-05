@@ -16,6 +16,7 @@ class CalorieWorker(
     override suspend fun doWork(): Result {
         val burn = healthRepository.getActiveCaloriesBurned(Instant.now().minusSeconds(SECONDS_IN_TWO_HOURS), Instant.now())
         Log.d("CalorieWorker", "[2시간 주기] 오늘 칼로리 소모량: ${burn.kcal} kcal")
+        // TODO: 서버로 칼로리 소모량 전송
         return Result.success()
     }
 }
