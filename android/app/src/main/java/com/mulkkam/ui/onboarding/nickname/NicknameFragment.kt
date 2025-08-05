@@ -103,20 +103,14 @@ class NicknameFragment :
         }
     }
 
-    private fun updateNextButtonEnabled(isValid: Boolean) {
-        with(binding.tvNext) {
-            isEnabled = isValid
-            backgroundTintList =
-                ColorStateList.valueOf(
-                    if (isValid) {
-                        getColor(requireContext(), R.color.primary_200)
-                    } else {
-                        getColor(
-                            requireContext(),
-                            R.color.gray_200,
-                        )
-                    },
-                )
+    private fun updateNextButtonEnabled(enabled: Boolean) {
+        binding.tvNext.isEnabled = enabled
+        if (enabled) {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
+        } else {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
         }
     }
 

@@ -52,12 +52,14 @@ class TermsFragment :
     }
 
     private fun initClickListeners() {
-        binding.tvNext.setOnClickListener {
-            parentViewModel.moveToNextStep()
-        }
+        with(binding) {
+            tvNext.setOnClickListener {
+                parentViewModel.moveToNextStep()
+            }
 
-        binding.cbAllCheck.setOnClickListener {
-            viewModel.checkAllAgreement()
+            cbAllCheck.setOnClickListener {
+                viewModel.checkAllAgreement()
+            }
         }
     }
 
@@ -71,14 +73,18 @@ class TermsFragment :
         }
 
         viewModel.canNext.observe(viewLifecycleOwner) {
-            binding.tvNext.isEnabled = it
-            if (it) {
-                binding.tvNext.backgroundTintList =
-                    ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
-            } else {
-                binding.tvNext.backgroundTintList =
-                    ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
-            }
+            updateNextButtonEnabled(it)
+        }
+    }
+
+    private fun updateNextButtonEnabled(enabled: Boolean) {
+        binding.tvNext.isEnabled = enabled
+        if (enabled) {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
+        } else {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
         }
     }
 }
