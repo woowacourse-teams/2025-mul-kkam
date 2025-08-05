@@ -16,3 +16,12 @@ spring:
     enabled: true
     clean-disabled: false
     locations: classpath:db/migration
+
+fcm:
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}
+
+security:
+  jwt:
+    secret-key: 910cf806fc2736a9365429796dc9f78e
+    expire-length: 36000000

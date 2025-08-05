@@ -1,5 +1,6 @@
 package backend.mulkkam.member.controller;
 
+import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
@@ -59,5 +60,11 @@ public class MemberController {
     public ResponseEntity<MemberNicknameResponse> getNickname() {
         MemberNicknameResponse memberNicknameResponse = memberService.getNickname(1L);
         return ResponseEntity.ok(memberNicknameResponse);
+    }
+
+    @PostMapping
+    public ResponseEntity<MemberNicknameResponse> create(@RequestBody CreateMemberRequest createMemberRequest) {
+        memberService.create(createMemberRequest);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,8 +1,7 @@
 spring:
   profiles:
     active: local
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    include: private
 
 management:
   endpoints:
@@ -10,8 +9,3 @@ management:
       exposure:
         include:
           - health
-
-security:
-  jwt:
-    secret-key: 910cf806fc2736a9365429796dc9f78e
-    expire-length: 36000000
