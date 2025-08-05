@@ -61,7 +61,6 @@ class SettingWaterCupViewModel : ViewModel() {
                 )
             runCatching {
                 result.getOrError()
-//                result.checkError()
                 _success.value = true
             }.onFailure {
                 // TODO: 에러 처리
