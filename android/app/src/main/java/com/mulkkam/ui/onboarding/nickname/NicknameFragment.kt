@@ -48,6 +48,7 @@ class NicknameFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
+                parentViewModel.updateNickname(etInputNickname.text.toString())
                 parentViewModel.moveToNextStep()
             }
 

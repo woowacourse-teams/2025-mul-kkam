@@ -31,4 +31,8 @@ class BioInfoViewModel : ViewModel() {
     fun updateGender(gender: Gender) {
         _gender.value = gender
     }
+
+    fun applyGenderAndWeight(callback: (String, Int) -> Unit) {
+        callback(gender.value.toString(), weight.value ?: 0)
+    }
 }

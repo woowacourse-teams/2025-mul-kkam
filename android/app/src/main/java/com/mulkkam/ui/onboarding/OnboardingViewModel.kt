@@ -18,6 +18,8 @@ class OnboardingViewModel : ViewModel() {
     val onCompleteOnboarding: SingleLiveData<Unit>
         get() = _onCompleteOnboarding
 
+    private var onboardingInfo: OnboardingInfo = OnboardingInfo()
+
     fun updateOnboardingState(state: OnboardingStep) {
         _onboardingState.value = state
     }
@@ -47,6 +49,22 @@ class OnboardingViewModel : ViewModel() {
         runCatching {
             _onCompleteOnboarding.setValue(Unit)
         }
+    }
+
+    fun updateNickname(nickname: String) {
+        onboardingInfo = onboardingInfo.copy(nickname = nickname)
+    }
+
+    fun updateBioInfo(
+        gender: String,
+        weight: Int,
+    ) {
+        onboardingInfo = onboardingInfo.copy(gender = gender)
+        onboardingInfo = onboardingInfo.copy(weight = weight)
+    }
+
+    fun updateTargetAmount(targetAmount: Int) {
+        onboardingInfo = onboardingInfo.copy(targetAmount = targetAmount)
     }
 
     companion object {

@@ -47,7 +47,11 @@ class TargetAmountFragment :
 
     private fun initClickListeners() {
         binding.tvComplete.setOnClickListener {
-            // TODO: 목표 음용량 저장 로직 후 completeOnboarding
+            val targetAmount =
+                binding.etInputGoal.text
+                    .toString()
+                    .toInt()
+            parentViewModel.updateTargetAmount(targetAmount)
             parentViewModel.completeOnboarding()
         }
     }
