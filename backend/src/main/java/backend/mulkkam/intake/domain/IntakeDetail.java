@@ -35,7 +35,11 @@ public class IntakeDetail {
     @JoinColumn(nullable = false)
     private IntakeHistory intakeHistory;
 
-    public IntakeDetail(LocalTime time, Amount intakeAmount, IntakeHistory intakeHistory) {
+    public IntakeDetail(
+            LocalTime time,
+            Amount intakeAmount,
+            IntakeHistory intakeHistory
+    ) {
         this.time = time;
         this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
