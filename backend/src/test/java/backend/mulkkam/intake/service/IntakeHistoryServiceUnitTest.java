@@ -264,7 +264,6 @@ class IntakeHistoryServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(dateTimes).isSorted();
                 softly.assertThat(dateTimes).hasSize(4);
-                softly.assertThat(dateTimes).isSorted();
             });
         }
 
