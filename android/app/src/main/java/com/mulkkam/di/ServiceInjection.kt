@@ -1,8 +1,8 @@
 package com.mulkkam.di
 
+import com.mulkkam.data.local.service.HealthService
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
-import com.mulkkam.data.remote.service.HealthService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit

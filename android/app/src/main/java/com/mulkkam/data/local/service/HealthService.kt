@@ -1,4 +1,4 @@
-package com.mulkkam.data.remote.service
+package com.mulkkam.data.local.service
 
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord

@@ -1,6 +1,6 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.remote.service.HealthService
+import com.mulkkam.data.local.service.HealthService
 import com.mulkkam.domain.model.CalorieBurn
 import com.mulkkam.domain.repository.HealthRepository
 import java.time.Instant

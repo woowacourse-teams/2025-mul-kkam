@@ -1,4 +1,4 @@
-package com.mulkkam.util.work
+package com.mulkkam.data.local.work
 
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
