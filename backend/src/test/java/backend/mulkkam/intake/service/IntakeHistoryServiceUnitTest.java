@@ -1,8 +1,10 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -24,7 +26,6 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,17 +41,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
@@ -217,6 +207,7 @@ class IntakeHistoryServiceUnitTest {
         void success_orderByDateAscInSummaryResponses() {
             // given
             Long memberId = 1L;
+            Long intakeHistoryId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
             given(memberRepository.findById(memberId))
                     .willReturn(Optional.of(member));
@@ -224,10 +215,10 @@ class IntakeHistoryServiceUnitTest {
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.of(2025, 3, 16))
-                    .build();
+            IntakeHistory intakeHistory = mock(IntakeHistory.class);
+            when(intakeHistory.getId()).thenReturn(intakeHistoryId);
+            when(intakeHistory.getHistoryDate()).thenReturn(LocalDate.of(2025, 10, 20));
+            when(intakeHistory.getTargetAmount()).thenReturn(new Amount(1500));
 
             IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
@@ -255,7 +246,10 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            Collections.shuffle(details);
+            given(intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(memberId, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
+            given(intakeDetailRepository.findAllByIntakeHistoryIdIn(List.of(intakeHistoryId)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -273,6 +267,10 @@ class IntakeHistoryServiceUnitTest {
                     .toList();
 
             assertThat(dateTimes).isSorted();
+            assertSoftly(softly -> {
+                softly.assertThat(dateTimes).hasSize(4);
+                softly.assertThat(dateTimes).isSorted();
+            });
         }
 
         @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")

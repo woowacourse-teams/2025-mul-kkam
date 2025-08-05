@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -32,14 +33,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -192,28 +185,28 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .date(LocalDate.of(2025, 3, 16))
+                    .date(LocalDate.of(2025, 10, 20))
                     .build();
 
             IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .date(LocalDate.of(2025, 3, 16))
+                    .date(LocalDate.of(2025, 10, 21))
                     .build();
 
             IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .date(LocalDate.of(2025, 3, 16))
+                    .date(LocalDate.of(2025, 10, 22))
 
                     .build();
 
             IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .date(LocalDate.of(2025, 3, 16))
+                    .date(LocalDate.of(2025, 10, 24))
                     .build();
 
             IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .date(LocalDate.of(2025, 3, 16))
+                    .date(LocalDate.of(2025, 10, 25))
                     .build();
 
             intakeHistoryRepository.saveAll(List.of(
