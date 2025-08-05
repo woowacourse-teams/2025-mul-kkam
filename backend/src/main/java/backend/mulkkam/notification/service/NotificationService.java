@@ -37,14 +37,20 @@ public class NotificationService {
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
 
-    private static Long getNextCursor(boolean hasNext, List<Notification> notifications) {
+    private static Long getNextCursor(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
         if (hasNext) {
             return notifications.getLast().getId();
         }
         return null;
     }
 
-    private List<ReadNotificationResponse> toReadNotificationResponses(boolean hasNext, List<Notification> notifications) {
+    private List<ReadNotificationResponse> toReadNotificationResponses(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
         if (hasNext) {
             notifications.removeLast();
         }
