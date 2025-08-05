@@ -24,7 +24,7 @@ class IntakeRepositoryImpl(
             onSuccess = {
                 MulKkamResult(data = IntakeHistorySummaries(it.map { it.toDomain() }))
             },
-            onFailure = { MulKkamResult(error = it as MulKkamError) },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
         )
     }
 
@@ -45,7 +45,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.getIntakeTarget()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it as MulKkamError) },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
         )
     }
 

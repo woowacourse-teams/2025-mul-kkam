@@ -18,7 +18,7 @@ class AuthRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.accessToken) },
-            onFailure = { MulKkamResult(error = it as MulKkamError) },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
         )
     }
 }

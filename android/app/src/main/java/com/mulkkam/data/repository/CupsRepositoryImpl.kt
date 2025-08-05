@@ -15,7 +15,7 @@ class CupsRepositoryImpl(
         val result = cupsService.getCups()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it as MulKkamError) },
+            onFailure = { MulKkamResult(error = it as? MulKkamError ?: MulKkamError.Unknown) },
         )
     }
 
