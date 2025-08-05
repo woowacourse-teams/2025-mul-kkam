@@ -81,6 +81,7 @@
 
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
     <string name="nickname_input_hint_highlight">닉네임</string>
+    <string name="nickname_valid">좋은 닉네임이시네요!</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>
