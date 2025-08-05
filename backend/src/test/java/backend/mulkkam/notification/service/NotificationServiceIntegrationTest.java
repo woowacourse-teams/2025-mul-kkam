@@ -77,7 +77,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 10)
             ));
 
-            LocalDateTime limitStart = requestTime.minusDays(DAY_LIMIT);
+            LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
             ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
@@ -89,7 +89,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
-                results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStart));
+                results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }
