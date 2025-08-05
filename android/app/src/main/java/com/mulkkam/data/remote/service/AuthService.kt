@@ -9,5 +9,5 @@ interface AuthService {
     @POST("/auth/kakao")
     suspend fun postAuthKakao(
         @Body authRequest: AuthRequest,
-    ): AuthResponse
+    ): Result<AuthResponse>
 }

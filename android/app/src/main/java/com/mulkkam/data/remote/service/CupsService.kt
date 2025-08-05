@@ -8,7 +8,7 @@ import retrofit2.http.POST
 
 interface CupsService {
     @GET("/cups")
-    suspend fun getCups(): CupsResponse
+    suspend fun getCups(): Result<CupsResponse>
 
     @POST("/cups")
     suspend fun postCups(
