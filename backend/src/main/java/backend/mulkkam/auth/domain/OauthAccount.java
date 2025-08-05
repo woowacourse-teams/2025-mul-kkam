@@ -63,4 +63,8 @@ public class OauthAccount {
         }
         this.member = member;
     }
+
+    public boolean finishedOnboarding() {
+        return this.member != null;
+    }
 }

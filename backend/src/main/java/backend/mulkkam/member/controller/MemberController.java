@@ -2,6 +2,7 @@ package backend.mulkkam.member.controller;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
+import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
@@ -69,5 +70,11 @@ public class MemberController {
             @RequestBody CreateMemberRequest createMemberRequest) {
         memberService.create(oauthAccount, createMemberRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/check/onboarding")
+    public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(OauthAccount oauthAccount) {
+        OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(oauthAccount);
+        return ResponseEntity.ok(onboardingStatusResponse);
     }
 }

@@ -1,13 +1,13 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.CreateMemberRequest;
+import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
@@ -82,5 +82,10 @@ public class MemberService {
     private Member getById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {
+        boolean finishedOnboarding = oauthAccount.finishedOnboarding();
+        return new OnboardingStatusResponse(finishedOnboarding);
     }
 }
