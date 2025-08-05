@@ -59,7 +59,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_amountMoreThan0() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
@@ -84,7 +86,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsLessThan0() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
             memberRepository.save(member);
 
             int intakeAmount = -1;
@@ -124,7 +128,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyInDateRange() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -200,7 +206,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_startDateAndEndDateIsSame() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
             Member savedMember = memberRepository.save(member);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -256,10 +264,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
             Member savedMember = memberRepository.save(member);
 
-            Member anotherMember = MemberFixtureBuilder.builder()
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
@@ -309,7 +320,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
             // given
             int targetAmountOfMember = 1_000;
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .targetAmount(new Amount(targetAmountOfMember))
                     .build();
             Member savedMember = memberRepository.save(member);
@@ -378,7 +390,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_historyIsNotExisted() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .build();
             memberRepository.save(member);
 
@@ -392,11 +405,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberIsNotExisted() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .build();
             memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -414,16 +429,19 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberIsNotPermitted() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .build();
             memberRepository.save(member);
 
-            Member anotherMember = MemberFixtureBuilder.builder()
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -441,11 +459,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validData() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .build();
             memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -465,11 +485,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_requestToDeletePastDate() {
             // given
-            Member member = MemberFixtureBuilder.builder()
+            Member member = MemberFixtureBuilder
+                    .builder()
                     .build();
             memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now().minusDays(1),
                             LocalTime.of(12, 30)
