@@ -8,6 +8,7 @@ import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 import com.mulkkam.ui.onboarding.terms.TermsFragment
 
 class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOnboardingBinding::inflate) {
@@ -45,6 +46,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         viewModel.canSkip.observe(this) { canSkip ->
             binding.tvSkip.isVisible = canSkip
         }
+
+        viewModel.onCompleteOnboarding.observe(this) {
+            showCompleteDialogFragment()
+        }
     }
 
     private fun navigateToStep(step: OnboardingStep) {
@@ -56,6 +61,12 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
                 add(R.id.fcv_onboarding, step.fragment, null, step.name)
             }
         }
+    }
+
+    private fun showCompleteDialogFragment() {
+        val completeDialogFragment = CompleteDialogFragment()
+        completeDialogFragment.isCancelable = false
+        completeDialogFragment.show(supportFragmentManager, null)
     }
 
     private fun initBackPressHandler() {

@@ -4,6 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 
 class OnboardingViewModel : ViewModel() {
     private val _onboardingState = MutableLiveData<OnboardingStep>()
@@ -11,6 +13,10 @@ class OnboardingViewModel : ViewModel() {
 
     val canSkip: LiveData<Boolean> =
         onboardingState.map { state -> state == OnboardingStep.BIO_INFO }
+
+    private val _onCompleteOnboarding = MutableSingleLiveData<Unit>()
+    val onCompleteOnboarding: SingleLiveData<Unit>
+        get() = _onCompleteOnboarding
 
     fun updateOnboardingState(state: OnboardingStep) {
         _onboardingState.value = state
@@ -34,5 +40,12 @@ class OnboardingViewModel : ViewModel() {
                 ) ?: 0,
             ) ?: OnboardingStep.TERMS,
         )
+    }
+
+    fun completeOnboarding() {
+        // TODO: 회원가입 API 호출
+        runCatching {
+            _onCompleteOnboarding.setValue(Unit)
+        }
     }
 }
