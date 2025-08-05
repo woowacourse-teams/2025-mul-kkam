@@ -24,7 +24,6 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest) {
-        Long lastId = readNotificationsRequest.lastId();
 
         validateSizeRange(readNotificationsRequest);
         int size = readNotificationsRequest.size();
@@ -33,7 +32,9 @@ public class NotificationService {
 
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
         Pageable pageable = Pageable.ofSize(size + 1);
-        List<Notification> notifications = notificationRepository.findByCursor(lastId, limitStartDateTime, pageable);
+
+        Long lastId = readNotificationsRequest.lastId();
+        List<Notification> notifications = getNotificationsByLastId(lastId, limitStartDateTime, pageable);
 
         boolean hasNext = notifications.size() > size;
 
@@ -47,6 +48,16 @@ public class NotificationService {
         if (readNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
+    }
+
+    private List<Notification> getNotificationsByLastId(
+            Long lastId,
+            LocalDateTime limitStartDateTime,
+            Pageable pageable) {
+        if (lastId == null) {
+            return notificationRepository.findLatest(limitStartDateTime, pageable);
+        }
+        return notificationRepository.findByCursor(lastId, limitStartDateTime, pageable);
     }
 
     private Long getNextCursor(
