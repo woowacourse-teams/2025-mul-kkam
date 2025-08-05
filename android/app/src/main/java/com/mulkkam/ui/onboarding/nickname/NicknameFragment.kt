@@ -46,18 +46,40 @@ class NicknameFragment :
     }
 
     private fun initClickListeners() {
-        binding.tvNext.setOnClickListener {
-            parentViewModel.moveToNextStep()
-        }
+        with(binding) {
+            tvNext.setOnClickListener {
+                parentViewModel.moveToNextStep()
+            }
 
-        binding.tvCheckDuplicate.setOnClickListener {
-            viewModel.checkNicknameDuplicate()
+            tvCheckDuplicate.setOnClickListener {
+                viewModel.checkNicknameDuplicate()
+            }
         }
     }
 
     private fun initObservers() {
-        viewModel.isValid.observe(viewLifecycleOwner) { isValid ->
+        viewModel.nicknameValidationState.observe(viewLifecycleOwner) { isValid ->
+            if (isValid == null) {
+                clearNicknameValidationUI()
+                return@observe
+            }
             updateNicknameValidationUI(isValid)
+            updateNextButtonEnabled(isValid)
+        }
+    }
+
+    private fun clearNicknameValidationUI() {
+        with(binding) {
+            etInputNickname.backgroundTintList =
+                ColorStateList.valueOf(
+                    getColor(requireContext(), R.color.gray_400),
+                )
+            tvNicknameValidationMessage.text = ""
+            tvNext.isEnabled = false
+            tvNext.backgroundTintList =
+                ColorStateList.valueOf(
+                    getColor(requireContext(), R.color.gray_200),
+                )
         }
     }
 
@@ -78,11 +100,22 @@ class NicknameFragment :
             tvNicknameValidationMessage.text = getString(messageResId)
             tvNicknameValidationMessage.setTextColor(color)
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
+        }
+    }
 
-            tvNext.isEnabled = isValid
-            tvNext.backgroundTintList =
+    private fun updateNextButtonEnabled(isValid: Boolean) {
+        with(binding.tvNext) {
+            isEnabled = isValid
+            backgroundTintList =
                 ColorStateList.valueOf(
-                    if (isValid) color else getColor(requireContext(), R.color.gray_200),
+                    if (isValid) {
+                        getColor(requireContext(), R.color.primary_200)
+                    } else {
+                        getColor(
+                            requireContext(),
+                            R.color.gray_200,
+                        )
+                    },
                 )
         }
     }
@@ -105,9 +138,10 @@ class NicknameFragment :
                         isEnabled = isValid
                         backgroundTintList = ColorStateList.valueOf(color)
                     }
+                    viewModel.clearNicknameValidationState()
                 }
 
-            debounceHandler.postDelayed(debounceRunnable!!, 300L)
+            debounceHandler.postDelayed(debounceRunnable!!, 100L)
         }
     }
 }
