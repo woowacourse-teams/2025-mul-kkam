@@ -1,0 +1,16 @@
+package com.mulkkam.di
+
+import android.content.Context
+import androidx.health.connect.client.HealthConnectClient
+
+object HealthConnectInjection {
+    private var _healthConnectClient: HealthConnectClient? = null
+    val healthConnectClient: HealthConnectClient
+        get() = _healthConnectClient ?: throw IllegalArgumentException()
+
+    fun init(context: Context) {
+        if (_healthConnectClient == null) {
+            _healthConnectClient = HealthConnectClient.getOrCreate(context)
+        }
+    }
+}

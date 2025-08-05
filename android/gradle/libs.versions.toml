@@ -1,5 +1,4 @@
 [versions]
-healthConnect = "1.2.0-alpha01"
 glide = "4.16.0"
 lottie = "6.6.7"
 minSdk = "28"
@@ -31,6 +30,7 @@ google-services = "4.4.3"
 firebase-bom = "34.0.0"
 kakaoV2User = "2.21.4"
 workManager = "2.10.3"
+healthConnect = "1.2.0-alpha01"
 
 [libraries]
 # AndroidX 및 UI
