@@ -9,25 +9,24 @@ public record OpenWeatherResponse(
         @JsonProperty("list")
         List<ForecastEntry> forecastEntries,
 
-        @JsonProperty("city")
         CityInfo city
 ) {
     public record ForecastEntry(
             @JsonProperty("main")
-            TemperatureInfo info,
+            TemperatureInfo temperatureInfo,
 
             @JsonProperty("dt_txt")
             @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-            LocalDateTime dtTxt
+            LocalDateTime dateTime
     ) {
         public record TemperatureInfo(
-                double temp
+                @JsonProperty("temperature")
+                double temperature
         ) {
         }
     }
 
     public record CityInfo(
-            @JsonProperty("timezone")
             int timezone
     ) {
     }

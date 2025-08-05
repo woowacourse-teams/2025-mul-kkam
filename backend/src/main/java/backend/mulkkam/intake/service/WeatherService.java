@@ -50,11 +50,11 @@ public class WeatherService {
         Duration offset = Duration.ofSeconds(offsetSeconds);
 
         return response.forecastEntries().stream()
-                .filter(entry -> entry.dtTxt()
+                .filter(entry -> entry.dateTime()
                         .plusSeconds(offset.getSeconds())
                         .toLocalDate()
                         .equals(targetDate))
-                .mapToDouble(entry -> entry.info().temp())
+                .mapToDouble(entry -> entry.temperatureInfo().temperature())
                 .average()
                 .orElseThrow(() -> new CommonException(FORECAST_DATA_NOT_FOUND));
     }
