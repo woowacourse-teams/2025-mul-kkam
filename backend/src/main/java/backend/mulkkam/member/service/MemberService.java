@@ -10,6 +10,7 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
+import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+
+    public MemberResponse getMemberById(long id) {
+        Member member = getById(id);
+        return new MemberResponse(member);
+    }
 
     @Transactional
     public void modifyPhysicalAttributes(

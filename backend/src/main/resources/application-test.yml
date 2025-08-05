@@ -20,3 +20,7 @@ spring:
 open-weather:
   api:
     key: temp-key
+
+fcm:
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}

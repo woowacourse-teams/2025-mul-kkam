@@ -7,11 +7,21 @@ class TokenRepository(
 ) {
     fun getAccessToken(): String? = tokenPreference.accessToken
 
+    fun getFcmToken(): String? = tokenPreference.fcmToken
+
     fun saveAccessToken(token: String) {
         tokenPreference.saveAccessToken(token)
     }
 
     fun deleteAccessToken() {
         tokenPreference.deleteAccessToken()
+    }
+
+    fun saveFcmToken(token: String) {
+        tokenPreference.saveFcmToken(token)
+    }
+
+    fun deleteFcmToken() {
+        tokenPreference.deleteFcmToken()
     }
 }

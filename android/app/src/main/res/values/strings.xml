@@ -49,9 +49,6 @@
     <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
     <string name="setting_goal_unit_ml">ml</string>
 
-    <string name="login_kakao">카카오 계정으로 로그인</string>
-    <string name="login_kakao_success">카카오 로그인 성공</string>
-
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
     <string name="setting_section_permission">권한 설정</string>
@@ -62,4 +59,37 @@
     <string name="setting_item_notification">시스템 알림 설정</string>
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>
+  
+    <string name="login_kakao">카카오 계정으로 로그인</string>
+    <string name="login_kakao_success">카카오 로그인 성공</string>
+
+    <string name="onboarding_next_step">다음</string>
+    <string name="onboarding_complete">완료</string>
+    <string name="onboarding_skip">건너뛰기</string>
+
+    <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
+    <string name="terms_agree_hint_highlight">이용약관</string>
+    <string name="terms_agree_all">물깜 약관 전체동의</string>
+    <string name="terms_agree_service">서비스 이용 약관 동의</string>
+    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의</string>
+    <string name="terms_agree_night_notification">야간 알림 수신 동의</string>
+    <string name="terms_agree_marketing">마케팅 정보 수신 동의</string>
+    <string name="terms_required_suffix">(필수)</string>
+    <string name="terms_optional_suffix">(선택)</string>
+
+    <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
+    <string name="nickname_input_hint_highlight">닉네임</string>
+
+    <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
+    <string name="bio_info_input_hint_highlight">신체 정보</string>
+    <string name="bio_info_gender_label">성별</string>
+    <string name="bio_info_gender_male">남자</string>
+    <string name="bio_info_gender_female">여자</string>
+    <string name="bio_info_weight_label">몸무게</string>
+    <string name="bio_info_weight_hint">몸무게 정보를 입력해 주세요</string>
+
+    <string name="target_amount_input_hint">물 목표 섭취량을 입력해 주세요</string>
+    <string name="target_amount_input_hint_highlight">물 목표 섭취량</string>
+    <string name="target_amount_recommended_water_goal">%s 님의\n하루 물 권장 섭취량은\n%,dml 입니다</string>
+    <string name="target_amount_recommended_description">입력해 주신 성별, 몸무게 정보를 바탕으로 계산했어요.</string>
 </resources>
