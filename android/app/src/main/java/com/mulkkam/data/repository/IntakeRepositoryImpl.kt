@@ -1,10 +1,12 @@
 package com.mulkkam.data.repository
 
+import MulKkamError
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.IntakeHistorySummaries
+import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -16,9 +18,14 @@ class IntakeRepositoryImpl(
     override suspend fun getIntakeHistory(
         from: LocalDate?,
         to: LocalDate?,
-    ): IntakeHistorySummaries {
+    ): MulKkamResult<IntakeHistorySummaries> {
         val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
-        return IntakeHistorySummaries(result.map { it.toDomain() })
+        return result.fold(
+            onSuccess = {
+                MulKkamResult(data = IntakeHistorySummaries(it.map { it.toDomain() }))
+            },
+            onFailure = { MulKkamResult(error = it as MulKkamError) },
+        )
     }
 
     override suspend fun postIntakeHistory(
@@ -34,9 +41,12 @@ class IntakeRepositoryImpl(
         intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
     }
 
-    override suspend fun getIntakeTarget(): Int {
+    override suspend fun getIntakeTarget(): MulKkamResult<Int> {
         val result = intakeService.getIntakeTarget()
-        return result.amount
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.amount) },
+            onFailure = { MulKkamResult(error = it as MulKkamError) },
+        )
     }
 
     companion object {
