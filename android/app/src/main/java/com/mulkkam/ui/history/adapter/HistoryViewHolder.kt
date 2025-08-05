@@ -11,14 +11,14 @@ import java.util.Locale
 
 class HistoryViewHolder(
     private val binding: ItemIntakeHistoryBinding,
-    private val onItemLongClickListener: ((IntakeHistory) -> Unit)?,
+    private val onItemLongClickListener: OnItemLongClickListener?,
 ) : RecyclerView.ViewHolder(binding.root) {
     private var clickedIntakeHistory: IntakeHistory? = null
 
     init {
         binding.root.setOnLongClickListener {
             clickedIntakeHistory?.let { history ->
-                onItemLongClickListener?.invoke(history)
+                onItemLongClickListener?.onItemLongClick(history)
             }
             true
         }
@@ -42,7 +42,7 @@ class HistoryViewHolder(
 
         fun from(
             parent: ViewGroup,
-            onItemLongClickListener: ((IntakeHistory) -> Unit)?,
+            onItemLongClickListener: OnItemLongClickListener?,
         ): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)
