@@ -34,34 +34,25 @@ class ResponseCall<T>(
         )
     }
 
-    private fun parseResponse(response: Response<T>): Result<T> {
-        return try {
+    private fun parseResponse(response: Response<T>): Result<T> =
+        runCatching {
             val body = response.body()
             val errorCode = parseErrorCode(response.errorBody())
             if (errorCode != null) {
-                return Result.failure(MulKkamError.from(errorCode) ?: MulKkamError.Unknown)
+                throw MulKkamError.from(errorCode) ?: MulKkamError.Unknown
             }
 
-            when (body) {
-                null -> {
-                    Result.failure(NullPointerException("Response body is null"))
-                }
-
-                else -> Result.success(body)
-            }
-        } catch (e: Exception) {
-            Result.failure(MulKkamError.Unknown)
-        }
-    }
+            body ?: throw NullPointerException("Response body is null")
+        }.fold(
+            onSuccess = { Result.success(it) },
+            onFailure = { Result.failure(it) },
+        )
 
     private fun parseErrorCode(errorBody: ResponseBody?): String? =
         errorBody?.let {
-            try {
-                val errorResponse = Json.decodeFromString<ErrorResponse>(it.string())
-                errorResponse.code
-            } catch (e: Exception) {
-                null
-            }
+            runCatching {
+                Json.decodeFromString<ErrorResponse>(it.string()).code
+            }.getOrNull()
         }
 
     override fun clone(): Call<Result<T>> = ResponseCall(call.clone())
