@@ -3,9 +3,6 @@ package com.mulkkam.ui.history
 import android.content.res.ColorStateList
 import android.graphics.SweepGradient
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.ForegroundColorSpan
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
@@ -25,6 +22,7 @@ import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.util.getColoredSpannable
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -62,27 +60,6 @@ class HistoryFragment :
         initCustomChartOptions()
         initObservers()
         initClickListeners()
-    }
-
-    private fun getColoredSpannable(
-        @ColorRes colorResId: Int,
-        fullText: String,
-        vararg highlightedText: String,
-    ): SpannableString {
-        val color = requireContext().getColor(colorResId)
-        val spannable = SpannableString(fullText)
-
-        highlightedText.forEach { target ->
-            var startIndex = fullText.indexOf(target)
-            spannable.setSpan(
-                ForegroundColorSpan(color),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
-        }
-
-        return spannable
     }
 
     private fun initHistoryAdapter() {
@@ -225,12 +202,12 @@ class HistoryFragment :
 
     private fun updateDailyChartLabel(date: LocalDate) {
         binding.tvDailyChartLabel.text =
-            getColoredSpannable(
+            getString(
+                R.string.history_daily_chart_label,
+                date.format(FORMATTER_DATE_WITH_DAY),
+            ).getColoredSpannable(
+                requireContext(),
                 R.color.primary_200,
-                getString(
-                    R.string.history_daily_chart_label,
-                    date.format(FORMATTER_DATE_WITH_DAY),
-                ),
                 date.format(FORMATTER_DATE_WITH_DAY),
             )
     }
@@ -246,13 +223,13 @@ class HistoryFragment :
                 R.color.primary_200
             }
         binding.tvDailyIntakeSummary.text =
-            getColoredSpannable(
+            getString(
+                R.string.history_daily_intake_summary,
+                intakeHistorySummary.totalIntakeAmount,
+                intakeHistorySummary.targetAmount,
+            ).getColoredSpannable(
+                requireContext(),
                 summaryColorResId,
-                getString(
-                    R.string.history_daily_intake_summary,
-                    intakeHistorySummary.totalIntakeAmount,
-                    intakeHistorySummary.targetAmount,
-                ),
                 formattedIntake,
             )
     }

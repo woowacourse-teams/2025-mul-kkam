@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -75,7 +76,8 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(
                     () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
         }
 
         @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
