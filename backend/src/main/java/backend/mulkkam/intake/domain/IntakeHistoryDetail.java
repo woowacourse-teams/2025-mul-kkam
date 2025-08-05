@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @Entity
-public class IntakeDetail {
+public class IntakeHistoryDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -35,7 +35,7 @@ public class IntakeDetail {
     @JoinColumn(nullable = false)
     private IntakeHistory intakeHistory;
 
-    public IntakeDetail(
+    public IntakeHistoryDetail(
             LocalTime intakeTime,
             Amount intakeAmount,
             IntakeHistory intakeHistory

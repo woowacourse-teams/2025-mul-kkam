@@ -9,8 +9,8 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.domain.IntakeDetail;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
@@ -258,7 +258,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeDetail detailOfAnotherMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfAnotherMember = IntakeDetailFixtureBuilder
                     .withIntakeHistory(historyOfAnotherMember)
                     .build();
 
@@ -267,7 +267,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeDetail detailOfMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfMember = IntakeDetailFixtureBuilder
                     .withIntakeHistory(historyOfMember)
                     .build();
 
@@ -313,17 +313,17 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .targetIntakeAmount(new Amount(targetAmountOfMember))
                     .build();
 
-            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();

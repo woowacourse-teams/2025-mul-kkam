@@ -12,8 +12,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.domain.IntakeDetail;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
@@ -115,7 +115,7 @@ class IntakeHistoryServiceUnitTest {
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-            verify(intakeDetailRepository, never()).save(any(IntakeDetail.class));
+            verify(intakeDetailRepository, never()).save(any(IntakeHistoryDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
 
@@ -162,22 +162,22 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            List<IntakeDetail> details = new ArrayList<>(
+            List<IntakeHistoryDetail> details = new ArrayList<>(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail));
 
             Collections.shuffle(details);
@@ -217,27 +217,27 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
-            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
-            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
-            IntakeDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
 
-            List<IntakeDetail> details = new ArrayList<>(List.of(
+            List<IntakeHistoryDetail> details = new ArrayList<>(List.of(
                     firstIntakeDetail,
                     secondIntakeDetail,
                     thirdIntakeDetail,
@@ -303,22 +303,22 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            List<IntakeDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
+            List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
             given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);

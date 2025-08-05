@@ -2,8 +2,8 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.intake.domain.IntakeDetail;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -42,7 +42,7 @@ public class IntakeHistoryService {
         Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
                 intakeDetailCreateRequest.dateTime().toLocalDate());
         if (intakeHistory.isPresent()) {
-            IntakeDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory.get());
+            IntakeHistoryDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory.get());
             intakeDetailRepository.save(intakeDetail);
             return;
         }
@@ -50,7 +50,7 @@ public class IntakeHistoryService {
         IntakeHistory newIntakeHistory = new IntakeHistory(member, intakeDetailCreateRequest.dateTime().toLocalDate(),
                 member.getTargetAmount(), streak);
         IntakeHistory savedIntakeHistory = intakeHistoryRepository.save(newIntakeHistory);
-        IntakeDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(savedIntakeHistory);
+        IntakeHistoryDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(savedIntakeHistory);
         intakeDetailRepository.save(intakeDetail);
     }
 
@@ -59,14 +59,14 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
+        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
         );
         return details.stream()
                 .collect(Collectors.groupingBy(
-                        IntakeDetail::getIntakeHistory,
+                        IntakeHistoryDetail::getIntakeHistory,
                         LinkedHashMap::new,
                         Collectors.toList()
                 ))
@@ -88,9 +88,9 @@ public class IntakeHistoryService {
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
             IntakeHistory intakeHistory,
-            List<IntakeDetail> intakeDetailsOfDate
+            List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
+        List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
         List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
         Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailResponses);
@@ -111,13 +111,13 @@ public class IntakeHistoryService {
         );
     }
 
-    private List<IntakeDetail> sortIntakeHistories(List<IntakeDetail> intakeDetails) {
+    private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
-                .sorted(Comparator.comparing(IntakeDetail::getIntakeTime))
+                .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
                 .toList();
     }
 
-    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeDetail> intakeDetails) {
+    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
                 .map(IntakeDetailResponse::new).toList();
     }

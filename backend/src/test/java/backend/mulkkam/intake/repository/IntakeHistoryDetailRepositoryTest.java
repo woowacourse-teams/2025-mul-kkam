@@ -2,8 +2,8 @@ package backend.mulkkam.intake.repository;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import backend.mulkkam.intake.domain.IntakeDetail;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeDetailFixtureBuilder;
@@ -19,7 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class IntakeDetailRepositoryTest {
+public class IntakeHistoryDetailRepositoryTest {
 
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
@@ -56,22 +56,22 @@ public class IntakeDetailRepositoryTest {
                     .build();
             intakeHistoryRepository.save(secondIntakeHistory);
 
-            IntakeDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
-            IntakeDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
-            IntakeDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
-            IntakeDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
@@ -80,12 +80,15 @@ public class IntakeDetailRepositoryTest {
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));
 
             // when
-            List<IntakeDetail> firstDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(), date,
+            List<IntakeHistoryDetail> firstDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
+                    member.getId(), date,
                     date);
-            List<IntakeDetail> secondDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
+            List<IntakeHistoryDetail> secondDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
+                    member.getId(),
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeDetail> allDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(), date,
+            List<IntakeHistoryDetail> allDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
+                    date,
                     date.plusDays(1));
 
             // then

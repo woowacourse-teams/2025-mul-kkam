@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.dto.response;
 
-import backend.mulkkam.intake.domain.IntakeDetail;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import java.time.LocalTime;
 
 public record IntakeDetailResponse(
@@ -8,7 +8,7 @@ public record IntakeDetailResponse(
         LocalTime time,
         int intakeAmount
 ) {
-    public IntakeDetailResponse(IntakeDetail intakeDetail) {
+    public IntakeDetailResponse(IntakeHistoryDetail intakeDetail) {
         this(
                 intakeDetail.getId(),
                 intakeDetail.getIntakeTime(),
