@@ -6,6 +6,7 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
+import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.support.DatabaseCleaner;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
@@ -193,6 +194,37 @@ class MemberControllerTest {
             // then
             OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
             assertThat(savedOauthAccount.getMember()).isNotNull();
+        }
+    }
+
+    @DisplayName("온보딩 진행 여부 확인 시")
+    @Nested
+    class CheckOnboardingStatus {
+
+        @BeforeEach
+        void setUp() {
+            databaseCleaner.clean();
+        }
+
+        @DisplayName("정상적으로 온보딩 진행 여부가 반환된다")
+        @Test
+        void success_withValidHeader() {
+            // given
+            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+
+            // when
+            OnboardingStatusResponse response = RestAssured.given().log().all()
+                    .header("Authorization", "Bearer " + token)
+                    .when().get("/members/check/onboarding")
+                    .then().log().all()
+                    .statusCode(HttpStatus.OK.value())
+                    .extract().as(OnboardingStatusResponse.class);
+
+            // then
+            assertThat(response.finishedOnboarding()).isFalse();
         }
     }
 }
