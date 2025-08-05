@@ -26,3 +26,5 @@ HELP.md
 
 ### VS Code ###
 .vscode/
+
+application-private.yml

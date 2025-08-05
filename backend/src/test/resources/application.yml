@@ -1,6 +1,8 @@
 spring:
   application:
     name: mulkkam
+  profiles:
+    include: private
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MySQL
     driver-class-name: org.h2.Driver
