@@ -4,8 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import com.bumptech.glide.Glide
-import com.mulkkam.R
 import com.mulkkam.databinding.FragmentCompleteDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
 import com.mulkkam.ui.main.MainActivity
@@ -19,13 +17,8 @@ class CompleteDialogFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        loadCompletionIllustration()
         setWindowWidth()
         initClickListener()
-    }
-
-    private fun loadCompletionIllustration() {
-        Glide.with(this).load(R.drawable.ic_onboarding_complete).into(binding.ivOnboardingComplete)
     }
 
     private fun setWindowWidth() {
