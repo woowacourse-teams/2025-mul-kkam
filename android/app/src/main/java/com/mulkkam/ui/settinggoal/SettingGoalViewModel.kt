@@ -21,9 +21,11 @@ class SettingGoalViewModel : ViewModel() {
     fun saveGoal() {
         viewModelScope.launch {
             val result = goal.value?.let { intakeRepository.patchIntakeTarget(it) }
-            if (result?.isSuccess == true) {
+            runCatching {
+//                result?.checkError()
+                result?.getOrError()
                 _success.value = true
-            } else {
+            }.onFailure {
                 // TODO: 에러 처리
             }
         }

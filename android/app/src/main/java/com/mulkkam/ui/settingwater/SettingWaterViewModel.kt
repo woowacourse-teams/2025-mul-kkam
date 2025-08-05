@@ -15,10 +15,11 @@ class SettingWaterViewModel : ViewModel() {
 
     fun loadCups() {
         viewModelScope.launch {
+            val result = cupsRepository.getCups()
             runCatching {
-                cupsRepository.getCups()
-            }.onSuccess {
-                _cups.value = it.data?.toUi()
+                _cups.value = result.getOrError().toUi()
+            }.onFailure {
+                // TODO: 예외 처리
             }
         }
     }

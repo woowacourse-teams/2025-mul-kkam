@@ -48,12 +48,12 @@ class HistoryViewModel : ViewModel() {
                     from = weekDates.first(),
                     to = minOf(weekDates.last(), today),
                 )
-            if (!result.isSuccess) {
+            runCatching {
+                val summaries = result.getOrError()
+                updateIntakeSummary(weekDates, summaries)
+            }.onFailure {
                 // TODO: 에러 처리
             }
-            val summaries = result.data!!
-
-            updateIntakeSummary(weekDates, summaries)
         }
     }
 

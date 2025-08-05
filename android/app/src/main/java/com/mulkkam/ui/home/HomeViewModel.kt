@@ -26,24 +26,23 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val today = LocalDate.now()
             val result = RepositoryInjection.intakeRepository.getIntakeHistory(today, today)
-            if (!result.isSuccess) {
+            runCatching {
+                val summary = result.getOrError().getByIndex(FIRST_INDEX)
+                _todayIntakeHistorySummary.value = summary
+            }.onFailure {
                 // TODO: 에러 처리
             }
-            val summary = result.data!!.getByIndex(FIRST_INDEX)
-
-            _todayIntakeHistorySummary.value = summary
         }
     }
 
     fun loadCups() {
         viewModelScope.launch {
             val result = RepositoryInjection.cupsRepository.getCups()
-
-            if (!result.isSuccess) {
+            runCatching {
+                cups = result.getOrError()
+            }.onFailure {
                 // TODO: 에러 처리
             }
-
-            cups = result.data
         }
     }
 
@@ -57,18 +56,20 @@ class HomeViewModel : ViewModel() {
                     LocalDateTime.now(),
                     cupAmount ?: DEFAULT_INTAKE_AMOUNT,
                 )
-            if (!result.isSuccess) {
+            runCatching {
+                val achievementRate = result.getOrError()
+                // TODO: process 진척 로직 필요
+                _todayIntakeHistorySummary.value =
+                    _todayIntakeHistorySummary.value?.copy(
+                        totalIntakeAmount =
+                            (
+                                _todayIntakeHistorySummary.value?.totalIntakeAmount
+                                    ?: DEFAULT_INTAKE_AMOUNT
+                            ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+                    )
+            }.onFailure {
                 // TODO: 에러 처리
             }
-
-            _todayIntakeHistorySummary.value =
-                _todayIntakeHistorySummary.value?.copy(
-                    totalIntakeAmount =
-                        (
-                            _todayIntakeHistorySummary.value?.totalIntakeAmount
-                                ?: DEFAULT_INTAKE_AMOUNT
-                        ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
-                )
         }
     }
 

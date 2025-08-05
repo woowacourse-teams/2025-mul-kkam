@@ -59,9 +59,11 @@ class SettingWaterCupViewModel : ViewModel() {
                     cupAmount = _cup.value?.amount ?: 0,
                     cupNickname = _cup.value?.nickname ?: "",
                 )
-            if (result.isSuccess) {
+            runCatching {
+                result.getOrError()
+//                result.checkError()
                 _success.value = true
-            } else {
+            }.onFailure {
                 // TODO: 에러 처리
             }
         }

@@ -4,6 +4,10 @@ data class MulKkamResult<T>(
     val error: MulKkamError? = null,
     val data: T? = null,
 ) {
-    val isSuccess: Boolean
-        get() = error == null
+    fun getOrError(): T =
+        when {
+            error != null -> throw error
+            data != null -> data
+            else -> Unit as T
+        }
 }
