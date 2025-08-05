@@ -4,6 +4,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
 import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -39,7 +40,6 @@ public class WeatherService {
         if (targetDate.isAfter(now.plusDays(AVAILABLE_DATE_RANGE_FOR_FORECAST))) {
             throw new CommonException(INVALID_FORECAST_TARGET_DATE);
         }
-
     }
 
     private double computeAverageTemperatureForDate(
@@ -50,10 +50,7 @@ public class WeatherService {
         Duration offset = Duration.ofSeconds(offsetSeconds);
 
         return response.forecastEntries().stream()
-                .filter(entry -> entry.dateTime()
-                        .plusSeconds(offset.getSeconds())
-                        .toLocalDate()
-                        .equals(targetDate))
+                .filter(entry -> isSameDate(entry.dateTime(), targetDate, offset))
                 .mapToDouble(entry -> entry.temperatureInfo().temperature())
                 .average()
                 .orElseThrow(() -> new CommonException(FORECAST_DATA_NOT_FOUND));
@@ -63,4 +60,13 @@ public class WeatherService {
         return temperatureAsKelvin - 273.15;
     }
 
+    private boolean isSameDate(
+            LocalDateTime dateTime,
+            LocalDate targetDate,
+            Duration offset
+    ) {
+        return dateTime.plusSeconds(offset.getSeconds())
+                .toLocalDate()
+                .equals(targetDate);
+    }
 }
