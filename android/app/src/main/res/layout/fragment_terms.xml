@@ -60,6 +60,7 @@
         android:layout_margin="24dp"
         android:background="@drawable/bg_common_rectangle_8dp"
         android:backgroundTint="@color/gray_200"
+        android:enabled="false"
         android:gravity="center"
         android:text="@string/onboarding_next_step"
         android:textAppearance="@style/title2"

@@ -1,8 +1,11 @@
 package com.mulkkam.ui.onboarding.terms
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.binding.BindingFragment
@@ -15,10 +18,13 @@ class TermsFragment :
         FragmentTermsBinding::inflate,
     ) {
     private val termsAdapter: TermsAdapter by lazy {
-        TermsAdapter()
+        TermsAdapter {
+            viewModel.updateCheckState(it)
+        }
     }
 
     private val parentViewModel: OnboardingViewModel by activityViewModels()
+    private val viewModel: TermsViewModel by viewModels()
 
     override fun onViewCreated(
         view: View,
@@ -28,8 +34,8 @@ class TermsFragment :
 
         initTextAppearance()
         initTermsAdapter()
-        initTermsAgreements()
         initClickListeners()
+        initObservers()
     }
 
     private fun initTextAppearance() {
@@ -45,20 +51,34 @@ class TermsFragment :
         binding.rvList.adapter = termsAdapter
     }
 
-    private fun initTermsAgreements() {
-        val terms =
-            listOf(
-                TermsAgreementUiModel(R.string.terms_agree_service, true),
-                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
-                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
-                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
-            )
-        termsAdapter.submitList(terms)
-    }
-
     private fun initClickListeners() {
         binding.tvNext.setOnClickListener {
             parentViewModel.moveToNextStep()
+        }
+
+        binding.cbAllCheck.setOnClickListener {
+            viewModel.checkAllAgreement()
+        }
+    }
+
+    private fun initObservers() {
+        viewModel.termsAgreements.observe(viewLifecycleOwner) {
+            termsAdapter.submitList(it)
+        }
+
+        viewModel.isAllChecked.observe(viewLifecycleOwner) {
+            binding.cbAllCheck.isChecked = it
+        }
+
+        viewModel.canNext.observe(viewLifecycleOwner) {
+            binding.tvNext.isEnabled = it
+            if (it) {
+                binding.tvNext.backgroundTintList =
+                    ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
+            } else {
+                binding.tvNext.backgroundTintList =
+                    ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
+            }
         }
     }
 }
