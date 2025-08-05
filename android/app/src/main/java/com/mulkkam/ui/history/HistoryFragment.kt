@@ -22,6 +22,7 @@ import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
+import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.getColoredSpannable
 import java.time.DayOfWeek
@@ -50,6 +51,7 @@ class HistoryFragment :
             binding.includeChartSun,
         )
     }
+    private var historyToDelete: IntakeHistory? = null
 
     override fun onViewCreated(
         view: View,
@@ -61,6 +63,37 @@ class HistoryFragment :
         initCustomChartOptions()
         initObservers()
         initClickListeners()
+        initDialogResultListener()
+    }
+
+    private fun initHighlight() {
+        binding.tvViewSubLabel.text =
+            getColoredSpannable(
+                R.color.primary_200,
+                getString(R.string.history_view_sub_label_prefix) + " " + getString(R.string.history_view_sub_label_suffix),
+                getString(R.string.history_view_sub_label_suffix),
+            )
+    }
+
+    private fun getColoredSpannable(
+        @ColorRes colorResId: Int,
+        fullText: String,
+        vararg highlightedText: String,
+    ): SpannableString {
+        val color = requireContext().getColor(colorResId)
+        val spannable = SpannableString(fullText)
+
+        highlightedText.forEach { target ->
+            var startIndex = fullText.indexOf(target)
+            spannable.setSpan(
+                ForegroundColorSpan(color),
+                startIndex,
+                startIndex + target.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+
+        return spannable
     }
 
     private fun initHistoryAdapter() {
@@ -69,19 +102,27 @@ class HistoryFragment :
             layoutManager = LinearLayoutManager(requireContext())
         }
         historyAdapter.onItemLongClickListener = { history ->
-            showDeleteDialog(history)
+            this.historyToDelete = history
+            DeleteConfirmDialogFragment().show(
+                childFragmentManager,
+                DeleteConfirmDialogFragment.TAG,
+            )
         }
     }
 
-    private fun showDeleteDialog(history: IntakeHistory) {
-        AlertDialog
-            .Builder(requireContext())
-            .setTitle(R.string.history_delete_dialog_title)
-            .setMessage("삭제된 기록은 복구가 불가능 합니다.")
-            .setPositiveButton("확인") { _, _ ->
-                viewModel.deleteIntakeHistory(history)
-            }.setNegativeButton("취소") { _, _ -> }
-            .show()
+    private fun initDialogResultListener() {
+        childFragmentManager.setFragmentResultListener(
+            DeleteConfirmDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { requestKey, bundle ->
+            val isConfirmed = bundle.getBoolean(DeleteConfirmDialogFragment.BUNDLE_KEY_CONFIRM)
+            if (isConfirmed) {
+                historyToDelete?.let {
+                    viewModel.deleteIntakeHistory(it)
+                }
+                historyToDelete = null
+            }
+        }
     }
 
     private fun initChartOptions() {
