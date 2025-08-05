@@ -1,9 +1,12 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,7 +18,8 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    ResponseEntity<Void> get() {
-        return null;
+    ResponseEntity<ReadNotificationsResponse> getNotifications(@ModelAttribute ReadNotificationsRequest readNotificationsRequest) {
+        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(readNotificationsRequest);
+        return ResponseEntity.ok(readNotificationsResponse);
     }
 }
