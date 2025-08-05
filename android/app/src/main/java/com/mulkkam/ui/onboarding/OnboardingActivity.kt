@@ -25,6 +25,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         }
 
         initProgressBarView()
+        initClickListeners()
         initObservers()
         initBackPressHandler()
     }
@@ -35,6 +36,12 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
             setActiveColor(R.color.gray_400)
             setInactiveColor(R.color.gray_200)
             setProgress(PROGRESS_DEFAULT)
+        }
+    }
+
+    private fun initClickListeners() {
+        binding.tvSkip.setOnClickListener {
+            viewModel.moveToNextStep()
         }
     }
 

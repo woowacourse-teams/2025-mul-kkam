@@ -26,8 +26,8 @@ class OnboardingViewModel : ViewModel() {
         updateOnboardingState(
             OnboardingStep.entries.getOrNull(
                 onboardingState.value?.ordinal?.plus(
-                    1,
-                ) ?: 0,
+                    STEP_OFFSET,
+                ) ?: FIRST_ONBOARDING_INDEX,
             ) ?: OnboardingStep.TERMS,
         )
     }
@@ -36,8 +36,8 @@ class OnboardingViewModel : ViewModel() {
         updateOnboardingState(
             OnboardingStep.entries.getOrNull(
                 onboardingState.value?.ordinal?.minus(
-                    1,
-                ) ?: 0,
+                    STEP_OFFSET,
+                ) ?: FIRST_ONBOARDING_INDEX,
             ) ?: OnboardingStep.TERMS,
         )
     }
@@ -47,5 +47,10 @@ class OnboardingViewModel : ViewModel() {
         runCatching {
             _onCompleteOnboarding.setValue(Unit)
         }
+    }
+
+    companion object {
+        const val STEP_OFFSET = 1
+        const val FIRST_ONBOARDING_INDEX = 0
     }
 }
