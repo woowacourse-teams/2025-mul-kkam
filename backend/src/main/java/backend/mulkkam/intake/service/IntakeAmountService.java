@@ -20,8 +20,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class IntakeAmountService {
 
+    private static final int WATER_INTAKE_PER_KG = 30;
+
     private final MemberRepository memberRepository;
-    private final IntakeAmountCalculator intakeAmountCalculator;
 
     @Transactional
     public void modifyTarget(
@@ -37,7 +38,7 @@ public class IntakeAmountService {
 
         PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
 
-        return new IntakeRecommendedAmountResponse(getIntakeRecommendedAmountResponse(physicalAttributes));
+        return new IntakeRecommendedAmountResponse(calculateRecommendedTargetAmount(physicalAttributes));
     }
 
     public IntakeTargetAmountResponse getTarget(Long memberId) {
@@ -45,18 +46,19 @@ public class IntakeAmountService {
         return new IntakeTargetAmountResponse(member.getTargetAmount().value());
     }
 
+    public RecommendedIntakeAmountResponse getRecommendedTargetAmount(PhysicalAttributesRequest physicalAttributesRequest) {
+        PhysicalAttributes physicalAttributes = new PhysicalAttributes(physicalAttributesRequest.gender(),
+                physicalAttributesRequest.weight());
+        return new RecommendedIntakeAmountResponse(calculateRecommendedTargetAmount(physicalAttributes));
+    }
+
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
-    public RecommendedIntakeAmountResponse getRecommendedTargetAmount(PhysicalAttributesRequest physicalAttributesRequest) {
-        PhysicalAttributes physicalAttributes = new PhysicalAttributes(physicalAttributesRequest.gender(),
-                physicalAttributesRequest.weight());
-        return new RecommendedIntakeAmountResponse(getIntakeRecommendedAmountResponse(physicalAttributes));
-    }
-
-    private Amount getIntakeRecommendedAmountResponse(PhysicalAttributes physicalAttributes) {
-        return intakeAmountCalculator.calculate(physicalAttributes);
+    private Amount calculateRecommendedTargetAmount(PhysicalAttributes physicalAttributes) {
+        int recommendedTargetAmount = (int) (physicalAttributes.getWeight() * WATER_INTAKE_PER_KG);
+        return new Amount(recommendedTargetAmount);
     }
 }
