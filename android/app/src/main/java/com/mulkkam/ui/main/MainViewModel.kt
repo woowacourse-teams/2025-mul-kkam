@@ -13,7 +13,7 @@ class MainViewModel : ViewModel() {
     val isHealthPermissionGranted: MutableLiveData<Boolean>
         get() = _isHealthPermissionGranted
 
-    fun requestPermissionsIfNeeded(permissions: Set<String>) {
+    fun checkHealthPermissions(permissions: Set<String>) {
         viewModelScope.launch {
             _isHealthPermissionGranted.value = healthRepository.hasPermissions(permissions)
         }

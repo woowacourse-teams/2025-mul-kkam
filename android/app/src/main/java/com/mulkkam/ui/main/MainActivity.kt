@@ -48,7 +48,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         initObservers()
 
         if (isHealthConnectAvailable()) {
-            viewModel.requestPermissionsIfNeeded(HEALTH_CONNECT_PERMISSIONS)
+            viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
         }
     }
 
