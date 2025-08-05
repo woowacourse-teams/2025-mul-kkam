@@ -77,11 +77,11 @@ public class IntakeHistoryService {
         Member member = getMember(memberId);
         IntakeHistory intakeHistory = findById(intakeHistoryId);
 
-        validateToDelete(intakeHistory, member);
+        validatePossibleToDelete(intakeHistory, member);
         intakeHistoryRepository.delete(intakeHistory);
     }
 
-    private void validateToDelete(
+    private void validatePossibleToDelete(
             IntakeHistory intakeHistory,
             Member member
     ) {
