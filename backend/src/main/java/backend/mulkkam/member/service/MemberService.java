@@ -70,11 +70,9 @@ public class MemberService {
     }
 
     @Transactional
-    public void create(CreateMemberRequest createMemberRequest) {
-        // 추후 토큰 관련 로직 추가되면 삭제할 예정
-        OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-        oauthAccountRepository.save(oauthAccount);
-
+    public void create(
+            OauthAccount oauthAccount,
+            CreateMemberRequest createMemberRequest) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
 

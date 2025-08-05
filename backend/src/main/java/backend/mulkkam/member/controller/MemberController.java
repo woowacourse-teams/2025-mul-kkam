@@ -1,5 +1,6 @@
 package backend.mulkkam.member.controller;
 
+import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
@@ -63,8 +64,10 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<MemberNicknameResponse> create(@RequestBody CreateMemberRequest createMemberRequest) {
-        memberService.create(createMemberRequest);
+    public ResponseEntity<MemberNicknameResponse> create(
+            OauthAccount oauthAccount,
+            @RequestBody CreateMemberRequest createMemberRequest) {
+        memberService.create(oauthAccount, createMemberRequest);
         return ResponseEntity.ok().build();
     }
 }
