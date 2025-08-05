@@ -15,6 +15,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -39,19 +40,17 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
-                intakeDetailCreateRequest.dateTime().toLocalDate());
-        if (intakeHistory.isPresent()) {
-            IntakeHistoryDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory.get());
-            intakeDetailRepository.save(intakeDetail);
-            return;
-        }
-        int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
-        IntakeHistory newIntakeHistory = new IntakeHistory(member, intakeDetailCreateRequest.dateTime().toLocalDate(),
-                member.getTargetAmount(), streak);
-        IntakeHistory savedIntakeHistory = intakeHistoryRepository.save(newIntakeHistory);
-        IntakeHistoryDetail intakeDetail = intakeDetailCreateRequest.toIntakeDetail(savedIntakeHistory);
-        intakeDetailRepository.save(intakeDetail);
+        LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
+                        intakeDateTime.toLocalDate())
+                .orElseGet(() -> {
+                    int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
+                    IntakeHistory newIntakeHistory = new IntakeHistory(member, intakeDateTime.toLocalDate(),
+                            member.getTargetAmount(), streak);
+                    return intakeHistoryRepository.save(newIntakeHistory);
+                });
+        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
+        intakeDetailRepository.save(intakeHistoryDetail);
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
