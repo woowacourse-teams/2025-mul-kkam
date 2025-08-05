@@ -372,7 +372,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("음용 기록을 삭제할 때에")
     @Nested
-    class DELETE {
+    class Delete {
 
         @DisplayName("존재하지 않는 기록에 대한 요청인 경우 예외가 발생한다")
         @Test
@@ -380,7 +380,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.delete(1L, member.getId()))
@@ -394,9 +394,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -405,7 +405,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), savedMember.getId() + 1L))
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId() + 1L))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_MEMBER.name());
         }
@@ -416,14 +416,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             Member anotherMember = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼리"))
                     .build();
             Member savedAnotherMember = memberRepository.save(anotherMember);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -443,9 +443,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now(),
                             LocalTime.of(12, 30)
@@ -454,7 +454,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             // when
-            intakeHistoryService.delete(intakeHistory.getId(), savedMember.getId());
+            intakeHistoryService.delete(intakeHistory.getId(), member.getId());
 
             // then
             Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findById(intakeHistory.getId());
@@ -467,9 +467,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(savedMember)
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .dateTime(LocalDateTime.of(
                             LocalDate.now().minusDays(1),
                             LocalTime.of(12, 30)
@@ -478,7 +478,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), savedMember.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId()))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }
