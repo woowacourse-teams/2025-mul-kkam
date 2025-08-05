@@ -2,6 +2,7 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class GetAverageTemperatureForDate {
 
-        //        @Disabled
+        @Disabled
         @DisplayName("정상적으로 실제 API 연결을 통해 평균 기온을 구한다")
         @Test
         void success_withExactDate() {
