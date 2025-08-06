@@ -11,6 +11,6 @@ public record IntakeHistorySummaryResponse(
         @JsonFormat(shape = JsonFormat.Shape.NUMBER, pattern = "0.0")
         double achievementRate,
         int streak,
-        List<IntakeDetailResponse> intakeDetailResponses
+        List<IntakeDetailResponse> intakeDetails
 ) {
 }
