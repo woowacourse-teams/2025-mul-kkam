@@ -106,7 +106,7 @@
         tools:text="@string/setting_nickname_warning_duplicated_nickname" />
 
     <TextView
-        android:id="@+id/tv_save_profile"
+        android:id="@+id/tv_save_nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
