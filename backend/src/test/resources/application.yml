@@ -18,3 +18,8 @@ spring:
 open-weather:
   api:
     key: temp
+
+security:
+  jwt:
+    secret-key: 090243421414217456af1bab82e65fb2
+    expire-length: 36000000
