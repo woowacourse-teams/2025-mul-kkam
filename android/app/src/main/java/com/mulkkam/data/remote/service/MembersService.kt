@@ -1,6 +1,7 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.MemberNicknameRequest
+import com.mulkkam.data.remote.model.response.MemberNicknameResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
@@ -11,6 +12,9 @@ interface MembersService {
     suspend fun getMembersNicknameValidation(
         @Query("nickname") nickname: String,
     ): Result<Unit>
+
+    @GET("/members/nickname")
+    suspend fun getMembersNickname(): Result<MemberNicknameResponse>
 
     @PATCH("/members/nickname")
     suspend fun patchMembersNickname(

@@ -25,4 +25,12 @@ class MembersRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun getMembersNickname(): MulKkamResult<String> {
+        val result = membersService.getMembersNickname()
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.memberNickname) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
