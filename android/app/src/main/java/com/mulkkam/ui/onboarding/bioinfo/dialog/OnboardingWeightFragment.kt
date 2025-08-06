@@ -7,7 +7,7 @@ import com.mulkkam.databinding.FragmentWeightBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 
-class WeightFragment :
+class OnboardingWeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
         FragmentWeightBinding::inflate,
     ) {

@@ -12,15 +12,15 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.Gender.FEMALE
 import com.mulkkam.ui.onboarding.bioinfo.Gender.MALE
-import com.mulkkam.ui.onboarding.bioinfo.dialog.WeightFragment
+import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
 import com.mulkkam.ui.util.getAppearanceSpannable
 
 class BioInfoFragment :
     BindingFragment<FragmentBioInfoBinding>(
         FragmentBioInfoBinding::inflate,
     ) {
-    private val weightFragment: WeightFragment by lazy {
-        WeightFragment()
+    private val weightFragment: OnboardingWeightFragment by lazy {
+        OnboardingWeightFragment()
     }
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: BioInfoViewModel by activityViewModels()
