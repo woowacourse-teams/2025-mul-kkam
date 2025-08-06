@@ -25,38 +25,51 @@ class HomeViewModel : ViewModel() {
     fun loadTodayIntakeHistorySummary() {
         viewModelScope.launch {
             val today = LocalDate.now()
-            val summary =
-                RepositoryInjection.intakeRepository.getIntakeHistory(today, today).getByIndex(FIRST_INDEX)
-
-            _todayIntakeHistorySummary.value = summary
+            val result = RepositoryInjection.intakeRepository.getIntakeHistory(today, today)
+            runCatching {
+                val summary = result.getOrError().getByIndex(FIRST_INDEX)
+                _todayIntakeHistorySummary.value = summary
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
     fun loadCups() {
         viewModelScope.launch {
-            cups = RepositoryInjection.cupsRepository.getCups()
+            val result = RepositoryInjection.cupsRepository.getCups()
+            runCatching {
+                cups = result.getOrError()
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
     fun addWaterIntake(cupRank: Int) {
-        // TODO: 현재 cupRank가 2부터 들어가있음
         val cup = cups?.cups?.find { it.rank == cupRank }
         val cupAmount = cup?.amount
 
         viewModelScope.launch {
-            RepositoryInjection.intakeRepository.postIntakeHistory(
-                LocalDateTime.now(),
-                cupAmount ?: DEFAULT_INTAKE_AMOUNT,
-            )
-
-            _todayIntakeHistorySummary.value =
-                _todayIntakeHistorySummary.value?.copy(
-                    totalIntakeAmount =
-                        (
-                            _todayIntakeHistorySummary.value?.totalIntakeAmount
-                                ?: DEFAULT_INTAKE_AMOUNT
-                        ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+            val result =
+                RepositoryInjection.intakeRepository.postIntakeHistory(
+                    LocalDateTime.now(),
+                    cupAmount ?: DEFAULT_INTAKE_AMOUNT,
                 )
+            runCatching {
+                val achievementRate = result.getOrError()
+                // TODO: process 진척 로직 필요
+                _todayIntakeHistorySummary.value =
+                    _todayIntakeHistorySummary.value?.copy(
+                        totalIntakeAmount =
+                            (
+                                _todayIntakeHistorySummary.value?.totalIntakeAmount
+                                    ?: DEFAULT_INTAKE_AMOUNT
+                            ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+                    )
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
