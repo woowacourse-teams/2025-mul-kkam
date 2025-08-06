@@ -49,7 +49,7 @@ class HomeFragment :
         }
     }
 
-    fun initCustomChartOptions() {
+    private fun initCustomChartOptions() {
         with(binding.pbHomeWaterProgress) {
             post {
                 setPaintGradient(createLinearGradient(width.toFloat()))
