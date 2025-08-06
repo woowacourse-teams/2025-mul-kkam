@@ -1,4 +1,4 @@
-package backend.mulkkam.intake.dto;
+package backend.mulkkam.intake.dto.response;
 
 import backend.mulkkam.intake.domain.vo.Amount;
 

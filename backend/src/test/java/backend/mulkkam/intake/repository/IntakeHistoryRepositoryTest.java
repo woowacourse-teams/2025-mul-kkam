@@ -1,16 +1,13 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.dto.DateRangeRequest;
-import backend.mulkkam.intake.service.vo.DateRange;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -50,18 +47,12 @@ class IntakeHistoryRepositoryTest {
 
             IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 3, 16),
-                            LocalTime.of(10, 30, 30)
-                    ))
+                    .date(LocalDate.of(2025, 3, 16))
                     .build();
 
             IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 3, 17),
-                            LocalTime.of(10, 30, 30)
-                    ))
+                    .date(LocalDate.of(2025, 3, 16))
                     .build();
 
             intakeHistoryRepository.saveAll(List.of(
@@ -89,18 +80,13 @@ class IntakeHistoryRepositoryTest {
 
             IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder
                     .withMember(savedAnotherMember)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 3, 16),
-                            LocalTime.of(10, 30, 30)
-                    ))
+                    .date(LocalDate.of(2025, 3, 16))
+
                     .build();
 
             IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
-                    .dateTime(LocalDateTime.of(
-                            LocalDate.of(2025, 3, 17),
-                            LocalTime.of(10, 30, 30)
-                    ))
+                    .date(LocalDate.of(2025, 3, 16))
                     .build();
 
             intakeHistoryRepository.saveAll(List.of(
@@ -136,42 +122,27 @@ class IntakeHistoryRepositoryTest {
 
                 IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 20),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 20))
                         .build();
 
                 IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 21),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 21))
                         .build();
 
                 IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 23),
-                                LocalTime.of(23, 59, 59)
-                        ))
+                        .date(LocalDate.of(2025, 10, 22))
                         .build();
 
                 IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 24),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 24))
                         .build();
 
                 IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 26),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 25))
                         .build();
 
                 intakeHistoryRepository.saveAll(List.of(
@@ -187,13 +158,11 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
-                DateRange dateRange = dateRangeRequest.toDateRange();
-
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(
                         savedMember.getId(),
-                        dateRange.startDateTime(),
-                        dateRange.endDateTime()
+                        dateRangeRequest.from(),
+                        dateRangeRequest.to()
                 );
 
                 // then
@@ -216,26 +185,17 @@ class IntakeHistoryRepositoryTest {
 
                 IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 20),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 20))
                         .build();
 
                 IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 20),
-                                LocalTime.of(23, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 20))
                         .build();
 
                 IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 22),
-                                LocalTime.of(23, 50, 59)
-                        ))
+                        .date(LocalDate.of(2025, 10, 21))
                         .build();
 
                 intakeHistoryRepository.saveAll(List.of(
@@ -248,13 +208,11 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
-                DateRange dateRange = dateRangeRequest.toDateRange();
-
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(
                         savedMember.getId(),
-                        dateRange.startDateTime(),
-                        dateRange.endDateTime()
+                        dateRangeRequest.from(),
+                        dateRangeRequest.to()
                 );
 
                 // then
@@ -280,18 +238,12 @@ class IntakeHistoryRepositoryTest {
 
                 IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder
                         .withMember(savedAnotherMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 20),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 20))
                         .build();
 
                 IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
                         .withMember(savedMember)
-                        .dateTime(LocalDateTime.of(
-                                LocalDate.of(2025, 10, 21),
-                                LocalTime.of(10, 30, 30)
-                        ))
+                        .date(LocalDate.of(2025, 10, 21))
                         .build();
 
                 intakeHistoryRepository.saveAll(List.of(
@@ -304,13 +256,11 @@ class IntakeHistoryRepositoryTest {
                         endDate
                 );
 
-                DateRange dateRange = dateRangeRequest.toDateRange();
-
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberIdAndHistoryDateBetween(
                         savedMember.getId(),
-                        dateRange.startDateTime(),
-                        dateRange.endDateTime()
+                        dateRangeRequest.from(),
+                        dateRangeRequest.to()
                 );
 
                 // then
