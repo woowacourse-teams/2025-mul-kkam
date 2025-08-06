@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -34,9 +35,12 @@ public class IntakeHistoryController {
         return ResponseEntity.ok().body(dailyResponses);
     }
 
+
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody IntakeDetailCreateRequest intakeDetailCreateRequest) {
-        intakeHistoryService.create(intakeDetailCreateRequest, 1L);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CreateIntakeHistoryResponse> create(
+            @RequestBody IntakeDetailCreateRequest intakeDetailCreateRequest) {
+        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.create(
+                intakeDetailCreateRequest, 1L);
+        return ResponseEntity.ok(createIntakeHistoryResponse);
     }
 }
