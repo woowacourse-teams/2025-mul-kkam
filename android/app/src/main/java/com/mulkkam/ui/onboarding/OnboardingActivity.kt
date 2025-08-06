@@ -28,6 +28,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         initClickListeners()
         initObservers()
         initBackPressHandler()
+        finishIfNoFragmentsLeft()
     }
 
     private fun initProgressBarView() {
@@ -42,6 +43,11 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     private fun initClickListeners() {
         binding.tvSkip.setOnClickListener {
             viewModel.moveToNextStep()
+        }
+
+        binding.ivPrev.setOnClickListener {
+            supportFragmentManager.popBackStack()
+            viewModel.moveToPreviousStep()
         }
     }
 
@@ -86,6 +92,16 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
                 }
             },
         )
+    }
+
+    private fun finishIfNoFragmentsLeft() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            val fragments = supportFragmentManager.fragments
+
+            if (fragments.isEmpty()) {
+                finish()
+            }
+        }
     }
 
     companion object {
