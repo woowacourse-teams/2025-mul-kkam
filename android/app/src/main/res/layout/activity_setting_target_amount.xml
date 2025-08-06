@@ -107,7 +107,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="26dp"
+        android:layout_marginTop="60dp"
         android:text="@string/target_amount_recommended_water_goal"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
