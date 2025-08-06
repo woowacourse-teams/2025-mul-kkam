@@ -31,7 +31,7 @@
     <string name="setting_nickname_check_duplicate">중복확인</string>
     <string name="setting_nickname_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
     <string name="setting_nickname_valid">좋은 닉네임이시네요!</string>
-    <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요 !</string>
+    <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요!</string>
 
     <string name="setting_water_toolbar_title">물 마시기 설정</string>
     <string name="setting_water_default">기본</string>
