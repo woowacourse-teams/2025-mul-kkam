@@ -31,6 +31,8 @@ workManager = "2.10.3"
 healthConnect = "1.2.0-alpha01"
 mockk = "1.14.0"
 assertj-core = "3.27.3"
+timber = "5.0.1"
+firebase-crashlytics = "3.0.5"
 
 [libraries]
 # AndroidX 및 UI
@@ -66,10 +68,14 @@ lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 
-# 구글 서비스
+# 파이어베이스
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+
+# 로깅
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
 
 # 헬스 커넥트 연결
 androidx-health-connect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
@@ -84,3 +90,5 @@ android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }

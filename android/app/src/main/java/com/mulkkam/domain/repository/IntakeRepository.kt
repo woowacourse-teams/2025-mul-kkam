@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 
 interface IntakeRepository {
     suspend fun getIntakeHistory(
-        from: LocalDate?,
-        to: LocalDate?,
+        from: LocalDate,
+        to: LocalDate,
     ): MulKkamResult<IntakeHistorySummaries>
 
     suspend fun postIntakeHistory(

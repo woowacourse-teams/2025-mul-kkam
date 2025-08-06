@@ -1,18 +1,18 @@
-package backend.mulkkam.intake.dto;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
+package backend.mulkkam.intake.service.vo;
 
 import backend.mulkkam.common.exception.CommonException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-public record DateRangeRequest(
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
+
+public record DateRange(
         LocalDate from,
         LocalDate to
 ) {
 
-    public DateRangeRequest {
+    public DateRange {
         if (from.isAfter(to)) {
             throw new CommonException(INVALID_DATE_RANGE);
         }
