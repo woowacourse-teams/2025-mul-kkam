@@ -40,7 +40,9 @@ class SettingCupsViewModel : ViewModel() {
         viewModelScope.launch {
             val result = cupsRepository.putCupsRank(reorderedCups)
             runCatching {
-                _cups.value = result.getOrError().toUi()
+                if (reorderedCups != result.getOrError()) {
+                    _cups.value = result.getOrError().toUi()
+                }
             }.onFailure {
                 _cups.value = cups.value
                 // TODO: 예외 처리
