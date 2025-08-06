@@ -10,7 +10,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -80,7 +80,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
-            ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
             ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
@@ -108,7 +108,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
             ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
@@ -130,7 +130,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
             notificationRepository.saveAll(notifications);
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, 10);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, 10);
 
             // when
             ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
@@ -162,7 +162,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             notificationRepository.saveAll(notifications);
             notificationRepository.save(latestNotification);
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
             ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
@@ -189,7 +189,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
             ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMemberId);
@@ -202,7 +202,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
 
             // when & then
             assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, savedMemberId))

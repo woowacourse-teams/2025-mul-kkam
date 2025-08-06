@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.NotificationService;
 import jakarta.validation.Valid;
@@ -22,8 +22,9 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @GetMapping
-    ResponseEntity<ReadNotificationsResponse> getNotifications(@Valid @ModelAttribute ReadNotificationsRequest readNotificationsRequest) {
-        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(readNotificationsRequest, 1L);
+    ResponseEntity<ReadNotificationsResponse> getNotifications(@Valid @ModelAttribute GetNotificationsRequest getNotificationsRequest) {
+        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
+                getNotificationsRequest, 1L);
         return ResponseEntity.ok(readNotificationsResponse);
     }
 

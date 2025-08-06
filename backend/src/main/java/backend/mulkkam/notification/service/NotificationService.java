@@ -16,7 +16,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
@@ -42,20 +42,20 @@ public class NotificationService {
     private final MemberRepository memberRepository;
 
     public ReadNotificationsResponse getNotificationsAfter(
-            ReadNotificationsRequest readNotificationsRequest,
+            GetNotificationsRequest getNotificationsRequest,
             Long memberId
     ) {
         Member member = getMemberById(memberId);
 
-        validateSizeRange(readNotificationsRequest);
-        int size = readNotificationsRequest.size();
+        validateSizeRange(getNotificationsRequest);
+        int size = getNotificationsRequest.size();
 
-        LocalDateTime clientTime = readNotificationsRequest.clientTime();
+        LocalDateTime clientTime = getNotificationsRequest.clientTime();
 
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
         Pageable pageable = Pageable.ofSize(size + 1);
 
-        Long lastId = readNotificationsRequest.lastId();
+        Long lastId = getNotificationsRequest.lastId();
         List<Notification> notifications = getNotificationsByLastIdAndMember(member, lastId, limitStartDateTime, pageable);
 
         boolean hasNext = notifications.size() > size;
@@ -98,8 +98,8 @@ public class NotificationService {
         notificationRepository.save(createTokenNotificationRequest.toNotification());
     }
 
-    private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
-        if (readNotificationsRequest.size() < 1) {
+    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
+        if (getNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }
