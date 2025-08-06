@@ -25,7 +25,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final OauthJwtTokenHandler oauthJwtTokenHandler;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            FilterChain filterChain
+    ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
             oauthJwtTokenHandler.getSubject(token);
