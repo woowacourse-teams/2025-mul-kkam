@@ -24,7 +24,21 @@ class SettingBioInfoViewModel : ViewModel() {
     val onBioInfoChanged: SingleLiveData<Unit>
         get() = _onBioInfoChanged
 
+    val canSave =
+        MediatorLiveData<Boolean>().apply {
+            fun update() {
+                value = _gender.value != null && _weight.value != null
+            }
+
+            addSource(_gender) { update() }
+            addSource(_weight) { update() }
+        }
+
     init {
+        loadMemberInfo()
+    }
+
+    private fun loadMemberInfo() {
         viewModelScope.launch {
             val result = RepositoryInjection.membersRepository.getMembers()
             runCatching {
@@ -36,16 +50,6 @@ class SettingBioInfoViewModel : ViewModel() {
             }
         }
     }
-
-    val canSave =
-        MediatorLiveData<Boolean>().apply {
-            fun update() {
-                value = _gender.value != null && _weight.value != null
-            }
-
-            addSource(_gender) { update() }
-            addSource(_weight) { update() }
-        }
 
     fun updateWeight(value: Int) {
         _weight.value = value
