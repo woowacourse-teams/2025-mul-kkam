@@ -31,7 +31,7 @@ class IntakeHistoryRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    @DisplayName("Member 의 id 을 통해 음용 기록을 찾을 때")
+    @DisplayName("Member 의 oauthMemberId 을 통해 음용 기록을 찾을 때")
     @Nested
     class FindAllByMemberId {
 

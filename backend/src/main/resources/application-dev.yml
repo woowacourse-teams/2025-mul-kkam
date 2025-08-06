@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${secrets.DATASOURCE_URL}
-    username: ${secrets.DATASOURCE_USERNAME}
-    password: ${secrets.DATASOURCE_PASSWORD}
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -22,3 +22,11 @@ spring:
     validate-on-migrate: true
     locations: classpath:db/migration
     clean-disabled: true
+
+logging:
+  file:
+    name: ${LOG_PATH}
+
+fcm:
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}

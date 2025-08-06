@@ -14,7 +14,12 @@ class HistoryViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(intakeHistory: IntakeHistory) {
         with(binding) {
-            tvIntakeTime.text = intakeHistory.dateTime.format(timeFormatter)
+            tvIntakeTime.text =
+                if (intakeHistory.dateTime.minute == 0) {
+                    intakeHistory.dateTime.format(timeFormatterWithoutMinutes)
+                } else {
+                    intakeHistory.dateTime.format(timeFormatterWithMinutes)
+                }
             tvIntakeAmount.text =
                 binding.root.context.getString(
                     R.string.history_intake_amount,
@@ -24,7 +29,8 @@ class HistoryViewHolder(
     }
 
     companion object {
-        private val timeFormatter = DateTimeFormatter.ofPattern("a h:mm", Locale.KOREA)
+        private val timeFormatterWithMinutes = DateTimeFormatter.ofPattern("a h시 m분", Locale.KOREA)
+        private val timeFormatterWithoutMinutes = DateTimeFormatter.ofPattern("a h시", Locale.KOREA)
 
         fun from(parent: ViewGroup): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
