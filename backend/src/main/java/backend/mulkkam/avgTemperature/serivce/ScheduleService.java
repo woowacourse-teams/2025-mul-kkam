@@ -40,9 +40,10 @@ public class ScheduleService {
     public void saveAverageTemperatureByWeather() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
         LocalDate todayDateInSeoul = ZonedDateTime.now(seoulZone).toLocalDate();
+        LocalDate tomorrowDateInSeoul = todayDateInSeoul.plusDays(1);
 
-        double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(todayDateInSeoul);
-        AverageTemperature averageTemperature = new AverageTemperature(todayDateInSeoul, averageTemperatureForDate);
+        double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(tomorrowDateInSeoul);
+        AverageTemperature averageTemperature = new AverageTemperature(tomorrowDateInSeoul, averageTemperatureForDate);
         averageTemperatureRepository.save(averageTemperature);
     }
 
