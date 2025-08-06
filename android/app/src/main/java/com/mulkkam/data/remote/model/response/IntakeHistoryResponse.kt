@@ -3,13 +3,14 @@ package com.mulkkam.data.remote.model.response
 import com.mulkkam.domain.IntakeHistory
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 
 @Serializable
 data class IntakeHistoryResponse(
     @SerialName("id")
     val id: Int,
-    @SerialName("dateTime")
+    @SerialName("time")
     val dateTime: String,
     @SerialName("intakeAmount")
     val intakeAmount: Int,
@@ -18,6 +19,6 @@ data class IntakeHistoryResponse(
 fun IntakeHistoryResponse.toDomain() =
     IntakeHistory(
         id = id,
-        dateTime = LocalDateTime.parse(this.dateTime),
+        dateTime = LocalTime.parse(this.dateTime, DateTimeFormatter.ofPattern("HH:mm:ss")),
         intakeAmount = intakeAmount,
     )
