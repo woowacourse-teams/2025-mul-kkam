@@ -134,9 +134,7 @@ class NicknameFragment :
                         backgroundTintList = ColorStateList.valueOf(color)
                     }
                     viewModel.clearNicknameValidationState()
-                }
-
-            debounceHandler.postDelayed(debounceRunnable!!, 100L)
+                }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
 }

@@ -81,9 +81,7 @@ class TargetAmountFragment :
                         isEnabled = isValid
                         backgroundTintList = ColorStateList.valueOf(color)
                     }
-                }
-
-            debounceHandler.postDelayed(debounceRunnable!!, 300L)
+                }.apply { debounceHandler.postDelayed(this, 300L) }
         }
     }
 }
