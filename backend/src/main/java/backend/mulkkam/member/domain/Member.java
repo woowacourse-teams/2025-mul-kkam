@@ -37,14 +37,19 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
-    public Member(
-            MemberNickname memberNickname,
-            PhysicalAttributes physicalAttributes,
-            Amount targetAmount
-    ) {
+    @Column(nullable = false)
+    private boolean isMarketingNotificationAgreed;
+
+    @Column(nullable = false)
+    private boolean isNightNotificationAgreed;
+
+    public Member(MemberNickname memberNickname, PhysicalAttributes physicalAttributes, Amount targetAmount,
+                  boolean isMarketingNotificationAgreed, boolean isNightNotificationAgreed) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {
