@@ -68,18 +68,24 @@ class SettingBioInfoActivity :
         }
 
         viewModel.onBioInfoChanged.observe(this) {
-            Toast.makeText(this, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT).show()
+            Toast
+                .makeText(this, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
+                .show()
             finish()
         }
     }
 
     private fun changeGender(selectedGender: Gender) {
-        if (selectedGender == MALE) {
-            selectGender(binding.tvGenderMale)
-            deselectGender(binding.tvGenderFemale)
-        } else {
-            selectGender(binding.tvGenderFemale)
-            deselectGender(binding.tvGenderMale)
+        when (selectedGender) {
+            MALE -> {
+                selectGender(binding.tvGenderMale)
+                deselectGender(binding.tvGenderFemale)
+            }
+
+            FEMALE -> {
+                selectGender(binding.tvGenderFemale)
+                deselectGender(binding.tvGenderMale)
+            }
         }
     }
 
