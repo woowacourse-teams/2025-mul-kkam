@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
@@ -32,7 +33,7 @@ class SettingBioInfoActivity :
     private fun initClickListeners() {
         with(binding) {
             tvSave.setOnClickListener {
-                // TODO: 저장 API 연결
+                viewModel.saveBioInfo()
             }
 
             tvWeight.setOnClickListener {
@@ -60,6 +61,11 @@ class SettingBioInfoActivity :
 
         viewModel.canSave.observe(this) { enabled ->
             updateNextButtonEnabled(enabled)
+        }
+
+        viewModel.onBioInfoChanged.observe(this) {
+            Toast.makeText(this, "신체 정보가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 

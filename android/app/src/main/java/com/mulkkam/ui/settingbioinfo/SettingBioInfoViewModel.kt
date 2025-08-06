@@ -7,6 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.Gender
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingBioInfoViewModel : ViewModel() {
@@ -17,6 +19,10 @@ class SettingBioInfoViewModel : ViewModel() {
     private val _weight = MutableLiveData<Int?>()
     val weight: MutableLiveData<Int?>
         get() = _weight
+
+    private val _onBioInfoChanged = MutableSingleLiveData<Unit>()
+    val onBioInfoChanged: SingleLiveData<Unit>
+        get() = _onBioInfoChanged
 
     init {
         viewModelScope.launch {
@@ -47,5 +53,21 @@ class SettingBioInfoViewModel : ViewModel() {
 
     fun updateGender(gender: Gender) {
         _gender.value = gender
+    }
+
+    fun saveBioInfo() {
+        viewModelScope.launch {
+            val result =
+                RepositoryInjection.membersRepository.postMembersPhysicalAttributes(
+                    gender = _gender.value!!,
+                    weight = _weight.value!!,
+                )
+            runCatching {
+                result.getOrError()
+                _onBioInfoChanged.setValue(Unit)
+            }.onFailure {
+                // TODO: 예외 처리
+            }
+        }
     }
 }
