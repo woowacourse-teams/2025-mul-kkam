@@ -18,8 +18,3 @@ spring:
 open-weather:
   api:
     key: temp
-
-security:
-  jwt:
-    secret-key: ${JWT_SECRET}
-    expire-length: ${ACCESS_TOKEN_EXPIRE}
