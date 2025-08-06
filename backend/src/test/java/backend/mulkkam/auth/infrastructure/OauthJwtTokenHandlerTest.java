@@ -1,8 +1,7 @@
-package backend.mulkkam.auth.service;
+package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +32,26 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
             // when
             String token = oauthJwtTokenHandler.createToken(oauthAccount);
+            Long actual = oauthJwtTokenHandler.getSubject(token);
+
+            // then
+            assertThat(actual).isEqualTo(oauthAccount.getId());
+        }
+    }
+
+    @DisplayName("토큰의 subject를 요청할 때")
+    @Nested
+    class GetSubject {
+
+        @DisplayName("OauthAccount 엔티티의 id 값을 반환한다.")
+        @Test
+        void success_createdToken() {
+            // given
+            OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+
+            // when
             Long actual = oauthJwtTokenHandler.getSubject(token);
 
             // then
