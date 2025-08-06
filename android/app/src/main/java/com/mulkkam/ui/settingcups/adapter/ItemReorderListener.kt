@@ -1,6 +1,6 @@
 package com.mulkkam.ui.settingcups.adapter
 
-interface ItemTouchHelperAdapter {
+interface ItemReorderListener {
     fun onItemMove(
         fromPosition: Int,
         toPosition: Int,

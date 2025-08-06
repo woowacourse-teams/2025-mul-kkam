@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
 class CupItemTouchHelperCallback(
-    private val adapter: ItemTouchHelperAdapter,
+    private val adapter: ItemReorderListener,
 ) : ItemTouchHelper.Callback() {
     override fun isLongPressDragEnabled(): Boolean = false
 

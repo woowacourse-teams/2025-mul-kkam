@@ -7,7 +7,7 @@ import androidx.viewbinding.ViewBinding
 class SettingCupsAdapter(
     private val handler: Handler,
 ) : ListAdapter<SettingCupsItem, SettingCupsViewHolder<out SettingCupsItem, out ViewBinding>>(SettingCupsDiffCallback),
-    ItemTouchHelperAdapter {
+    ItemReorderListener {
     private val mutableItems = mutableListOf<SettingCupsItem>()
 
     override fun submitList(list: List<SettingCupsItem>?) {
