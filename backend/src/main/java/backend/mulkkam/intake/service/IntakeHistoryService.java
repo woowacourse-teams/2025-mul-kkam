@@ -3,24 +3,23 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.DateRangeRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryResponse;
-import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
+import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.repository.IntakeDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,43 +31,56 @@ public class IntakeHistoryService {
 
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
+    private final IntakeDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @Transactional
     public void create(
-            IntakeHistoryCreateRequest intakeHistoryCreateRequest,
+            IntakeDetailCreateRequest intakeDetailCreateRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
-
-        IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
-        intakeHistoryRepository.save(intakeHistory);
+        LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                        memberId,
+                        intakeDateTime.toLocalDate()
+                )
+                .orElseGet(() -> {
+                    int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
+                    IntakeHistory newIntakeHistory = new IntakeHistory(
+                            member,
+                            intakeDateTime.toLocalDate(),
+                            member.getTargetAmount(),
+                            streak
+                    );
+                    return intakeHistoryRepository.save(newIntakeHistory);
+                });
+        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
+        intakeDetailRepository.save(intakeHistoryDetail);
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
             Long memberId
     ) {
-        Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                memberId,
-                dateRangeRequest.startDateTime(),
-                dateRangeRequest.endDateTime()
-        );
-
-        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
-                .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
-
         List<LocalDate> dates = dateRangeRequest.getConsecutiveDates();
-
-        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
-                historiesGroupedByDate,
-                dates,
-                member
+        Member member = getMember(memberId);
+        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
+                memberId,
+                dateRangeRequest.from(),
+                dateRangeRequest.to()
         );
-
-        return summaryOfIntakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
+        return dates.stream()
+                .map(date -> {
+                    List<IntakeHistoryDetail> detailsOfDate = details.stream()
+                            .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
+                            .toList();
+                    if (detailsOfDate.isEmpty()) {
+                        return createDefaultResponse(date, member);
+                    }
+                    IntakeHistory intakeHistory = detailsOfDate.getFirst().getIntakeHistory();
+                    return toIntakeHistorySummaryResponse(intakeHistory, detailsOfDate);
+                })
                 .toList();
     }
 
@@ -77,73 +89,77 @@ public class IntakeHistoryService {
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
-    private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
-            Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate,
-            List<LocalDate> dates,
-            Member member
-    ) {
-        List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
-        for (LocalDate date : dates) {
-            intakeHistorySummaryResponses.add(
-                    toIntakeHistorySummaryResponse(historiesGroupedByDate.get(date), date, member));
-        }
-        return intakeHistorySummaryResponses;
+    private int findStreak(Member member, LocalDate todayDate) {
+        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                member.getId(), todayDate.minusDays(1));
+        return yesterdayIntakeHistory.map(IntakeHistory::getStreak).orElse(0);
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            List<IntakeHistory> intakeHistoryOfDate,
-            LocalDate date,
-            Member member
+            IntakeHistory intakeHistory,
+            List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        if (intakeHistoryOfDate == null || intakeHistoryOfDate.isEmpty()) {
-            if (date.isEqual(LocalDate.now())) {
-                return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value(), 0, 0,
-                        Collections.emptyList());
-            }
-            Optional<Integer> targetAmountSnapshot = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(
-                    member.getId(), date);
-            return targetAmountSnapshot.map(targetAmount -> new IntakeHistorySummaryResponse(
-                    date,
-                    targetAmount,
-                    0,
-                    0,
-                    Collections.emptyList()
-            )).orElseGet(() -> new IntakeHistorySummaryResponse(date, 0, 0, 0, Collections.emptyList()));
-        }
-        List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
-        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
+        List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
+        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailResponses);
 
-        Amount targetAmountOfTheDay = sortedIntakeHistories.getLast().getTargetAmount();
+        Amount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 targetAmountOfTheDay
         );
 
         return new IntakeHistorySummaryResponse(
-                date,
+                intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
-                intakeHistoryResponses
+                intakeHistory.getStreak(),
+                intakeDetailResponses
         );
     }
 
-    private List<IntakeHistory> sortIntakeHistories(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
+    private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
+        return intakeDetails
+                .stream()
+                .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
                 .toList();
     }
 
-    private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .map(IntakeHistoryResponse::new).toList();
+    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
+        return intakeDetails.stream()
+                .map(IntakeDetailResponse::new).toList();
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
-        return new Amount(intakeHistoryResponses.stream()
-                .mapToInt(IntakeHistoryResponse::intakeAmount)
-                .sum());
+    private Amount calculateTotalIntakeAmount(List<IntakeDetailResponse> intakeDetailResponses) {
+        int total = intakeDetailResponses
+                .stream()
+                .mapToInt(IntakeDetailResponse::intakeAmount)
+                .sum();
+        return new Amount(total);
+    }
+
+    private IntakeHistorySummaryResponse createDefaultResponse(LocalDate date, Member member) {
+        Optional<Integer> targetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate
+                (
+                        member.getId(),
+                        date
+                );
+        return targetAmount.map(integer -> new IntakeHistorySummaryResponse(
+                date,
+                integer,
+                0,
+                0.0,
+                0,
+                List.of()
+        )).orElseGet(() -> new IntakeHistorySummaryResponse(
+                date,
+                0,
+                0,
+                0.0,
+                0,
+                List.of()
+        ));
     }
 }
