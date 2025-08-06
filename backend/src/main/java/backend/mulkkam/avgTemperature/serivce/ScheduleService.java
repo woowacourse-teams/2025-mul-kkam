@@ -8,6 +8,9 @@ import backend.mulkkam.avgTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
+import backend.mulkkam.intake.service.IntakeRecommendedAmountService;
+import backend.mulkkam.intake.service.WeatherService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.NotificationType;
@@ -65,16 +68,14 @@ public class ScheduleService {
             AverageTemperature averageTemperature,
             Member member
     ) {
-        double intakeRecommendedAmount = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByAvgTemperature(averageTemperature, member.getId());
+        ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(member.getId(), averageTemperature.getAverageTemperature());
         return new CreateTokenNotificationRequest(
                 "날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?",
-                        averageTemperature.getAverageTemperature(),
-                        intakeRecommendedAmount),
+                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?", averageTemperature.getAverageTemperature(), extraIntakeAmount),
                 member,
                 Action.GO_NOTIFICATION,
                 NotificationType.SUGGESTION,
-                new Amount(member.getTargetAmount().value() + (int) (intakeRecommendedAmount)),
+                new Amount(member.getTargetAmount().value() + (int) (extraIntakeAmount.value())),
                 todayDateTimeInSeoul
         );
     }
