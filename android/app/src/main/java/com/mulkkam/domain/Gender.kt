@@ -6,8 +6,8 @@ enum class Gender {
     ;
 
     companion object {
-        fun from(asdf: String): Gender =
-            when (asdf) {
+        fun from(gender: String): Gender =
+            when (gender) {
                 MALE.name -> MALE
                 FEMALE.name -> FEMALE
                 else -> throw IllegalArgumentException()
