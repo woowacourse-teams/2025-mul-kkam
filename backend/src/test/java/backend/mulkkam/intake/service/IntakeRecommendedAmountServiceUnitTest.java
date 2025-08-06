@@ -3,7 +3,6 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,12 +21,6 @@ class IntakeRecommendedAmountServiceUnitTest {
     @Mock
     MemberRepository memberRepository;
 
-    @Mock
-    WeatherService weatherService;
-
-    @Mock
-    WeatherClient weatherClient;
-
     @InjectMocks
     IntakeRecommendedAmountService intakeRecommendedAmountService;
 
@@ -40,7 +33,7 @@ class IntakeRecommendedAmountServiceUnitTest {
         void success_withHighAverageTemperature() {
             // given
             Long memberId = 1L;
-            Double weight = 70.0;
+            double weight = 70.0;
             double averageTemperature = 27.0;
 
             Member member = MemberFixtureBuilder.builder()
@@ -49,13 +42,9 @@ class IntakeRecommendedAmountServiceUnitTest {
             when(memberRepository.findById(memberId))
                     .thenReturn(Optional.ofNullable(member));
 
-            LocalDate date = LocalDate.now();
-            when(weatherService.getAverageTemperatureForDate(date))
-                    .thenReturn(averageTemperature);
-
             // when
-            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(date,
-                    memberId);
+            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(memberId,
+                    averageTemperature);
 
             // then
             double expected = (averageTemperature - 26) * weight * 5;
@@ -76,13 +65,9 @@ class IntakeRecommendedAmountServiceUnitTest {
             when(memberRepository.findById(memberId))
                     .thenReturn(Optional.ofNullable(member));
 
-            LocalDate date = LocalDate.now();
-            when(weatherService.getAverageTemperatureForDate(date))
-                    .thenReturn(averageTemperature);
-
             // when
-            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(date,
-                    memberId);
+            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(memberId,
+                    averageTemperature);
 
             // then
             assertThat(actual).isEqualTo(0);

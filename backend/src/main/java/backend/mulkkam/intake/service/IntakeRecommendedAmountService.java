@@ -4,7 +4,6 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,15 +14,12 @@ public class IntakeRecommendedAmountService {
     private static final int EXTRA_INTAKE_TEMPERATURE_THRESHOLD = 26;
     private static final int WATER_INTAKE_COEFFICIENT_PER_DEGREE = 5;
 
-    private final WeatherService weatherService;
     private final MemberRepository memberRepository;
 
     public double calculateAdditionalIntakeAmountByWeather(
-            LocalDate targetDate,
-            Long memberId
+            Long memberId,
+            double averageTemperatureForDate
     ) {
-        double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(targetDate);
-
         Member member = getMember(memberId);
         Double weight = member.getPhysicalAttributes().getWeight();
 
