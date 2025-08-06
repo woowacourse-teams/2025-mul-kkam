@@ -6,7 +6,6 @@ import androidx.viewbinding.ViewBinding
 
 class SettingCupsAdapter(
     private val handler: Handler,
-    private val dragStartListener: OnStartDragListener,
 ) : ListAdapter<SettingCupsItem, SettingCupsViewHolder<out SettingCupsItem, out ViewBinding>>(SettingCupsDiffCallback),
     ItemTouchHelperAdapter {
     private val mutableItems = mutableListOf<SettingCupsItem>()
@@ -38,7 +37,7 @@ class SettingCupsAdapter(
         viewType: Int,
     ): SettingCupsViewHolder<out SettingCupsItem, out ViewBinding> =
         when (SettingCupsViewType.entries[viewType]) {
-            SettingCupsViewType.CUP -> CupViewHolder(parent, handler, dragStartListener)
+            SettingCupsViewType.CUP -> CupViewHolder(parent, handler)
             SettingCupsViewType.ADD -> AddViewHolder(parent, handler)
         }
 

@@ -9,7 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.databinding.ActivitySettingCupsBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingcups.adapter.CupItemTouchHelperCallback
-import com.mulkkam.ui.settingcups.adapter.OnStartDragListener
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
@@ -19,21 +18,20 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     private lateinit var itemTouchHelper: ItemTouchHelper
     private val viewModel: SettingCupsViewModel by viewModels()
 
-    private val dragStartListener =
-        object : OnStartDragListener {
-            override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
-                itemTouchHelper.startDrag(viewHolder)
-            }
-        }
-
     private val settingCupsAdapter: SettingCupsAdapter by lazy {
-        SettingCupsAdapter(handler, dragStartListener)
+        SettingCupsAdapter(handler)
     }
 
-    private val handler =
+    private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
+
+    private fun handleSettingCupClick() =
         object : SettingCupsAdapter.Handler {
             override fun onEditClick(cup: CupUiModel) {
                 showEditBottomSheetDialog(cup)
+            }
+
+            override fun onOrderDrag(viewHolder: RecyclerView.ViewHolder) {
+                itemTouchHelper.startDrag(viewHolder)
             }
 
             override fun onAddClick() {
@@ -41,7 +39,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             }
 
             override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
-                viewModel.updateCupOrder(newOrder.map { it.value })
+                viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
             }
         }
 

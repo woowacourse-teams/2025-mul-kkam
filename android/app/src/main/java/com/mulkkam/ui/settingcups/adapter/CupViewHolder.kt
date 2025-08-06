@@ -3,6 +3,7 @@ package com.mulkkam.ui.settingcups.adapter
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -10,7 +11,6 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 class CupViewHolder(
     parent: ViewGroup,
     private val handler: Handler,
-    private val dragStartListener: OnStartDragListener,
 ) : SettingCupsViewHolder<SettingCupsItem.CupItem, ItemSettingCupsCupBinding>(
         ItemSettingCupsCupBinding.inflate(LayoutInflater.from(parent.context), parent, false),
     ) {
@@ -40,7 +40,7 @@ class CupViewHolder(
         binding.ivMove.apply {
             setOnTouchListener { view, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
-                    dragStartListener.onStartDrag(this@CupViewHolder)
+                    this@CupViewHolder.handler.onOrderDrag(this@CupViewHolder)
                     view.performClick()
                     return@setOnTouchListener true
                 }
@@ -52,5 +52,7 @@ class CupViewHolder(
 
     interface Handler {
         fun onEditClick(cup: CupUiModel)
+
+        fun onOrderDrag(viewHolder: RecyclerView.ViewHolder)
     }
 }

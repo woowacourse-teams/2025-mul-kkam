@@ -49,9 +49,4 @@ class SettingCupsViewModel : ViewModel() {
             }
         }
     }
-
-    private fun reorderRanks(cups: List<CupUiModel>): List<CupUiModel> =
-        cups.mapIndexed { index, cup ->
-            cup.copy(rank = index + 1)
-        }
 }
