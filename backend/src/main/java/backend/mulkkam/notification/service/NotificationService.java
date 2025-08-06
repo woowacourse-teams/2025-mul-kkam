@@ -1,9 +1,15 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadGateErrorCode.SEND_MESSAGE_FAILED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
@@ -11,6 +17,8 @@ import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.avgTemperature.dto.CreateTopicNotificationRequest;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +34,15 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
 
+    private final FcmService fcmService;
+    private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
 
-    public ReadNotificationsResponse getNotificationsAfter(ReadNotificationsRequest readNotificationsRequest, Long memberId) {
+    public ReadNotificationsResponse getNotificationsAfter(
+            ReadNotificationsRequest readNotificationsRequest,
+            Long memberId
+    ) {
         Member member = getMemberById(memberId);
 
         validateSizeRange(readNotificationsRequest);
@@ -49,6 +62,46 @@ public class NotificationService {
         List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(hasNext, notifications);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
+    }
+
+    @Transactional
+    public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toFcmTopic();
+        try {
+            fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+        } catch (FirebaseMessagingException e) {
+            throw new CommonException(SEND_MESSAGE_FAILED);
+        }
+
+        List<Member> allMember = memberRepository.findAll();
+        for (Member member : allMember) {
+            Notification notification = createTopicNotificationRequest.toNotification(member);
+            notificationRepository.save(notification);
+        }
+    }
+
+    @Transactional
+    public void createTokenNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        Member member = createTopicNotificationRequest.member();
+        List<Device> devicesByMember = deviceRepository.findAllByMember(member);
+
+        try {
+            for (Device device : devicesByMember) {
+                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTopicNotificationRequest.toFcmToken(
+                        device.getToken());
+                fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            }
+        } catch (Exception e) {
+            throw new CommonException(SEND_MESSAGE_FAILED);
+        }
+        notificationRepository.save(
+                new Notification(
+                        createTopicNotificationRequest.notificationType(),
+                        createTopicNotificationRequest.body(),
+                        createTopicNotificationRequest.createdAt(),
+                        createTopicNotificationRequest.recommendedTargetAmount(),
+                        createTopicNotificationRequest.member())
+        );
     }
 
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {

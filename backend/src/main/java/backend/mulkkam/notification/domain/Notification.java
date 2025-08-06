@@ -53,6 +53,21 @@ public class Notification {
     public Notification(
             NotificationType notificationType,
             String title,
+            LocalDateTime createdAt,
+            Amount recommendedTargetAmount,
+            Member member
+    ) {
+        this.notificationType = notificationType;
+        this.title = title;
+        this.isRead = false;
+        this.createdAt = createdAt;
+        this.recommendedTargetAmount = recommendedTargetAmount;
+        this.member = member;
+    }
+
+    public Notification(
+            NotificationType notificationType,
+            String title,
             boolean isRead,
             LocalDateTime createdAt,
             Amount recommendedTargetAmount,
