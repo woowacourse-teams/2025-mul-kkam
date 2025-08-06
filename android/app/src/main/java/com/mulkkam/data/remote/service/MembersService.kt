@@ -5,7 +5,7 @@ import retrofit2.http.Query
 
 interface MembersService {
     @GET("/members/nickname/validation")
-    suspend fun getMemberNicknameValidation(
+    suspend fun getMembersNicknameValidation(
         @Query("nickname") nickname: String,
     ): Result<Unit>
 }

@@ -29,7 +29,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun initClickListeners() {
         with(binding) {
             btnCheckDuplicate.setOnClickListener {
-                viewModel.checkNicknameDuplicate()
+                viewModel.checkNicknameDuplicate(getTrimmedNickname())
             }
 
             ivBack.setOnClickListener {
@@ -41,6 +41,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
         }
     }
+
+    private fun getTrimmedNickname(): String =
+        binding.etInputNickname.text
+            .toString()
+            .trim()
 
     private fun initObservers() {
         viewModel.nicknameValidationState.observe(this) { isValid ->
@@ -104,11 +109,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
             debounceRunnable =
                 Runnable {
-                    val nickname =
-                        binding.etInputNickname.text
-                            .toString()
-                            .trim()
-                    val isValid = nickname.isNotEmpty()
+                    val isValid = getTrimmedNickname().isNotEmpty()
                     val colorResId = if (isValid) R.color.primary_200 else R.color.gray_200
                     val color = getColor(colorResId)
 

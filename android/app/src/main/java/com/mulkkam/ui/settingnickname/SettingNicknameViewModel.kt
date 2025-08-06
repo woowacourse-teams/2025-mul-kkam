@@ -2,15 +2,25 @@ package com.mulkkam.ui.settingnickname
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection
+import kotlinx.coroutines.launch
 
 class SettingNicknameViewModel : ViewModel() {
     private val _nicknameValidationState = MutableLiveData<Boolean?>()
     val nicknameValidationState: MutableLiveData<Boolean?>
         get() = _nicknameValidationState
 
-    fun checkNicknameDuplicate() {
-        // TODO: 중복 확인 API 연결
-        _nicknameValidationState.value = nicknameValidationState.value?.not() == true
+    fun checkNicknameDuplicate(nickname: String) {
+        viewModelScope.launch {
+            val result = RepositoryInjection.membersRepository.getMembersNicknameValidation(nickname)
+            runCatching {
+                result.getOrError()
+                _nicknameValidationState.value = true
+            }.onFailure {
+                _nicknameValidationState.value = false
+            }
+        }
     }
 
     fun clearNicknameValidationState() {

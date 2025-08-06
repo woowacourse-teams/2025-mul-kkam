@@ -9,8 +9,8 @@ import com.mulkkam.domain.repository.MembersRepository
 class MembersRepositoryImpl(
     private val membersService: MembersService,
 ) : MembersRepository {
-    override suspend fun getMemberNicknameValidation(nickname: String): MulKkamResult<Unit> {
-        val result = membersService.getMemberNicknameValidation(nickname)
+    override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
+        val result = membersService.getMembersNicknameValidation(nickname)
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
