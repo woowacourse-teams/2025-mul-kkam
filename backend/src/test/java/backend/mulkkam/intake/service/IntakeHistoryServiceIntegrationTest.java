@@ -140,7 +140,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("이미 기록이 저장된 상태에서 새로운 기록을 추가하면 누적된 기록을 토대로 달성률과 코멘트를 반환한다")
+        @DisplayName("이미 기록이 저장된 상태에서 새로운 기록 추가 시 누적된 기록을 토대로 달성률과 코멘트를 반환한다")
         @Test
         void success_withAlreadySavedHistories() {
             // given
