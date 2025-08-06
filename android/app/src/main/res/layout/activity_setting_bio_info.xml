@@ -8,7 +8,6 @@
     android:background="@color/white"
     tools:context=".ui.settingbioinfo.SettingBioInfoActivity">
 
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_bio_info"
         android:layout_width="match_parent"
@@ -46,7 +45,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tb_setting_bio_info" />
-
 
     <TextView
         android:id="@+id/tv_gender_label"
@@ -89,7 +87,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_gender_male"
         app:layout_constraintTop_toTopOf="@id/tv_gender_male" />
-
 
     <TextView
         android:id="@+id/tv_weight_label"
