@@ -14,6 +14,8 @@ public enum BadRequestErrorCode implements ErrorCode {
     INVALID_MEMBER_NICKNAME,
     INVALID_FORECAST_TARGET_DATE,
     INVALID_FORECAST_DATE,
+    INVALID_AMOUNT,
+    MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;

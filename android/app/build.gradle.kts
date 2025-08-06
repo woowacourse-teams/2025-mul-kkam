@@ -116,4 +116,10 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.messaging)
+
+    // 헬스 커넥트
+    implementation(libs.androidx.health.connect)
+
+    // 워크 매니저
+    implementation(libs.androidx.work.runtime.ktx)
 }

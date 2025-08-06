@@ -59,13 +59,15 @@
     <string name="setting_item_notification">시스템 알림 설정</string>
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>
-  
+
     <string name="login_kakao">카카오 계정으로 로그인</string>
     <string name="login_kakao_success">카카오 로그인 성공</string>
 
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
     <string name="onboarding_skip">건너뛰기</string>
+    <string name="onboarding_complete_greeting">%s님 반갑습니다!</string>
+    <string name="onboarding_complete_description">회원가입이 성공적으로 완료되었어요</string>
 
     <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
     <string name="terms_agree_hint_highlight">이용약관</string>
@@ -87,6 +89,9 @@
     <string name="bio_info_gender_female">여자</string>
     <string name="bio_info_weight_label">몸무게</string>
     <string name="bio_info_weight_hint">몸무게 정보를 입력해 주세요</string>
+
+    <string name="weight_label">몸무게 설정</string>
+    <string name="weight_complete">완료</string>
 
     <string name="target_amount_input_hint">물 목표 섭취량을 입력해 주세요</string>
     <string name="target_amount_input_hint_highlight">물 목표 섭취량</string>

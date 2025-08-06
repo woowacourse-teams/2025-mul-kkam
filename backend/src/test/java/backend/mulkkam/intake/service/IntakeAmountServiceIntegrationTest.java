@@ -1,12 +1,21 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
-import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
+import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -15,11 +24,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -75,7 +79,8 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(
                     () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId()))
-                    .isInstanceOf(IllegalArgumentException.class);
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
         }
 
         @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
@@ -151,6 +156,39 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             assertThat(actual.amount()).isEqualTo(expected);
+        }
+    }
+
+    @DisplayName("사용자의 신체적 속성으로 추천 음용량을 조회하려고 할 때")
+    @Nested
+    class GetRecommendedTargetAmount {
+
+        @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
+        @Test
+        void success_physicalAttributes() {
+            // given
+            PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(Gender.FEMALE, 60.0);
+
+            // when
+            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+                    physicalAttributesRequest);
+
+            // then
+            assertThat(recommendedTargetAmount.amount()).isEqualTo(1_800);
+        }
+
+        @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
+        @Test
+        void success_physicalAttributesIsNotExisted() {
+            // given
+            PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(null, null);
+
+            // when
+            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+                    physicalAttributesRequest);
+
+            // then
+            assertThat(recommendedTargetAmount.amount()).isEqualTo(1_800);
         }
     }
 }

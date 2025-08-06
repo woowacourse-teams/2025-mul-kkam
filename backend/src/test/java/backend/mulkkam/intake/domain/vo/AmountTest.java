@@ -1,10 +1,12 @@
 package backend.mulkkam.intake.domain.vo;
 
+import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -33,9 +35,9 @@ class AmountTest {
             // given
 
             // when & then
-            assertThatThrownBy(() -> {
-                new Amount(input);
-            }).isInstanceOf(IllegalArgumentException.class);
+            assertThatThrownBy(() -> new Amount(input))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_AMOUNT.name());
         }
     }
 }
