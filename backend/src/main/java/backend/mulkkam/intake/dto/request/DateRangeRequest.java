@@ -4,8 +4,6 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 
 import backend.mulkkam.common.exception.CommonException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 
 public record DateRangeRequest(
@@ -19,7 +17,7 @@ public record DateRangeRequest(
         }
     }
 
-    public List<LocalDate> getConsecutiveDates() {
+    public List<LocalDate> getAllDatesInRange() {
         return from.datesUntil(to.plusDays(1)).toList();
     }
 }
