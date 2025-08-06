@@ -47,7 +47,7 @@ public class ScheduleService {
     public void createNotificationsByWeather() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
         LocalDateTime todayInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
-        AverageTemperature averageTemperature = getAvgTemperature(todayInSeoul.toLocalDate());
+        AverageTemperature averageTemperature = getAverageTemperature(todayInSeoul.toLocalDate());
 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
@@ -55,7 +55,7 @@ public class ScheduleService {
         }
     }
 
-    private AverageTemperature getAvgTemperature(LocalDate todayInSeoul) {
+    private AverageTemperature getAverageTemperature(LocalDate todayInSeoul) {
         return averageTemperatureRepository.findByDate(todayInSeoul)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
