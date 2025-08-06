@@ -33,6 +33,8 @@ workManager = "2.10.3"
 healthConnect = "1.2.0-alpha01"
 timber = "5.0.1"
 firebase-crashlytics = "3.0.5"
+androidsvg = "1.4"
+kapt = "2.2.0"
 
 [libraries]
 # AndroidX 및 UI
@@ -64,7 +66,9 @@ mannodermaus-junit5-runner = { group = "de.mannodermaus.junit5", name = "android
 
 # 이미지 로딩
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvg" }
 
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
@@ -93,3 +97,4 @@ ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
 kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
