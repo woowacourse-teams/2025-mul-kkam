@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.NotificationService;
@@ -8,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,5 +25,11 @@ public class NotificationController {
     ResponseEntity<ReadNotificationsResponse> getNotifications(@Valid @ModelAttribute ReadNotificationsRequest readNotificationsRequest) {
         ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(readNotificationsRequest, 1L);
         return ResponseEntity.ok(readNotificationsResponse);
+    }
+
+    @PostMapping("/activity")
+    ResponseEntity<Void> createNotificationByActivity(@RequestBody CreateActivityNotification createActivityNotification) {
+        notificationService.createActivityNotification(createActivityNotification, 1L);
+        return ResponseEntity.ok().build();
     }
 }
