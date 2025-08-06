@@ -13,11 +13,12 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.avgTemperature.dto.CreateTopicNotificationRequest;
+import backend.mulkkam.avgTemperature.dto.CreateTokenNotificationRequest;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -81,27 +82,19 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createTokenNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        Member member = createTopicNotificationRequest.member();
+    public void createTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
+        Member member = createTokenNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         try {
             for (Device device : devicesByMember) {
-                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTopicNotificationRequest.toFcmToken(
-                        device.getToken());
+                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toFcmToken(device.getToken());
                 fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
             }
         } catch (Exception e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
         }
-        notificationRepository.save(
-                new Notification(
-                        createTopicNotificationRequest.notificationType(),
-                        createTopicNotificationRequest.body(),
-                        createTopicNotificationRequest.createdAt(),
-                        createTopicNotificationRequest.recommendedTargetAmount(),
-                        createTopicNotificationRequest.member())
-        );
+        notificationRepository.save(createTokenNotificationRequest.toNotification());
     }
 
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {

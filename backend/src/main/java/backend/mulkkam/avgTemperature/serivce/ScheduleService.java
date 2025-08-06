@@ -3,7 +3,7 @@ package backend.mulkkam.avgTemperature.serivce;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_AVERAGE_TEMPERATURE;
 
 import backend.mulkkam.avgTemperature.domain.AverageTemperature;
-import backend.mulkkam.avgTemperature.dto.CreateTopicNotificationRequest;
+import backend.mulkkam.avgTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.avgTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
@@ -36,22 +36,22 @@ public class ScheduleService {
     @Scheduled(cron = "0 0 19 * * *")
     public void saveAverageTemperatureByWeather() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
-        LocalDate todayInSeoul = ZonedDateTime.now(seoulZone).toLocalDate();
+        LocalDate todayDateInSeoul = ZonedDateTime.now(seoulZone).toLocalDate();
 
-        double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(todayInSeoul);
-        AverageTemperature averageTemperature = new AverageTemperature(todayInSeoul, averageTemperatureForDate);
+        double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(todayDateInSeoul);
+        AverageTemperature averageTemperature = new AverageTemperature(todayDateInSeoul, averageTemperatureForDate);
         averageTemperatureRepository.save(averageTemperature);
     }
 
     @Scheduled(cron = "0 0 8 * * *")
     public void createNotificationsByWeather() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
-        LocalDateTime todayInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
-        AverageTemperature averageTemperature = getAverageTemperature(todayInSeoul.toLocalDate());
+        LocalDateTime todayDateTimeInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
+        AverageTemperature averageTemperature = getAverageTemperature(todayDateTimeInSeoul.toLocalDate());
 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
-            notificationService.createTokenNotification(toCreateNotificationRequest(todayInSeoul, averageTemperature, member));
+            notificationService.createTokenNotification(toCreateNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
         }
     }
 
@@ -60,14 +60,13 @@ public class ScheduleService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
 
-    private CreateTopicNotificationRequest toCreateNotificationRequest(
-            LocalDateTime todayInSeoul,
+    private CreateTokenNotificationRequest toCreateNotificationRequest(
+            LocalDateTime todayDateTimeInSeoul,
             AverageTemperature averageTemperature,
             Member member
     ) {
-        double intakeRecommendedAmount = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByAvgTemperature(
-                averageTemperature, member.getId());
-        return new CreateTopicNotificationRequest(
+        double intakeRecommendedAmount = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByAvgTemperature(averageTemperature, member.getId());
+        return new CreateTokenNotificationRequest(
                 "날씨에 따른 수분 충전",
                 String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?",
                         averageTemperature.getAverageTemperature(),
@@ -76,7 +75,7 @@ public class ScheduleService {
                 Action.GO_NOTIFICATION,
                 NotificationType.SUGGESTION,
                 new Amount(member.getTargetAmount().value() + (int) (intakeRecommendedAmount)),
-                todayInSeoul
+                todayDateTimeInSeoul
         );
     }
 }
