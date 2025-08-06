@@ -69,4 +69,15 @@ public class MemberFixtureBuilder {
                 this.isNightNotificationAgreed
         );
     }
+
+    public Member buildWithId(Long id) {
+        return new Member(
+                id,
+                this.memberNickname,
+                this.physicalAttributes,
+                this.targetAmount,
+                this.isMarketingNotificationAgreed,
+                this.isNightNotificationAgreed
+        );
+    }
 }

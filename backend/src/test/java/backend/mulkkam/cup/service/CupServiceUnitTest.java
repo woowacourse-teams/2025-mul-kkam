@@ -64,14 +64,14 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             Cup savedCup = CupFixtureBuilder
                     .withMember(member)
                     .cupRank(new CupRank(1))
-                    .build();
+                    .buildWithId(1L);
 
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
 
@@ -98,9 +98,9 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -118,9 +118,9 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
@@ -138,9 +138,9 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
@@ -278,8 +278,9 @@ class CupServiceUnitTest {
         @Test
         void success_withValidData() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
@@ -288,7 +289,7 @@ class CupServiceUnitTest {
                     .withMember(member)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
-                    .build();
+                    .buildWithId(1L);
 
             given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
 
@@ -318,7 +319,9 @@ class CupServiceUnitTest {
         @Test
         void success_whenCertainCupChanges() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             String beforeCupNickName1 = "변경 전1";
             Integer beforeCupAmount1 = 300;
@@ -326,7 +329,7 @@ class CupServiceUnitTest {
                     .withMember(member)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
-                    .build();
+                    .buildWithId(1L);
 
             String beforeCupNickName2 = "변경 전2";
             Integer beforeCupAmount2 = 500;
@@ -335,7 +338,7 @@ class CupServiceUnitTest {
                     .withMember(member)
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
-                    .build();
+                    .buildWithId(2L);
 
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
 
@@ -370,11 +373,11 @@ class CupServiceUnitTest {
             Member member1 = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("멤버1"))
-                    .build();
-            Member member2 = MemberFixtureBuilder
-                    .builder()
+                    .buildWithId(1L);
+
+            Member member2 = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("멤버2"))
-                    .build();
+                    .buildWithId(2L);
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
@@ -383,7 +386,7 @@ class CupServiceUnitTest {
                     .withMember(member1)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount))
-                    .build();
+                    .buildWithId(1L);
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
@@ -392,8 +395,7 @@ class CupServiceUnitTest {
                     afterCupNickName,
                     afterCupAmount
             );
-            given(memberRepository.findById(member2.getId()))
-                    .willReturn(Optional.of(member2));
+
             given(cupRepository.findById(cup.getId()))
                     .willReturn(Optional.of(cup));
 
