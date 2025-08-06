@@ -59,8 +59,8 @@ class SettingBioInfoViewModel : ViewModel() {
         viewModelScope.launch {
             val result =
                 RepositoryInjection.membersRepository.postMembersPhysicalAttributes(
-                    gender = _gender.value!!,
-                    weight = _weight.value!!,
+                    gender = _gender.value ?: return@launch,
+                    weight = _weight.value ?: return@launch,
                 )
             runCatching {
                 result.getOrError()
