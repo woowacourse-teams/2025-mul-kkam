@@ -1,15 +1,15 @@
-package com.mulkkam.ui.settinggoal
+package com.mulkkam.ui.settingtargetamount
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
-import com.mulkkam.databinding.ActivitySettingGoalBinding
+import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.ui.binding.BindingActivity
 
-class SettingGoalActivity : BindingActivity<ActivitySettingGoalBinding>(ActivitySettingGoalBinding::inflate) {
-    private val viewModel: SettingGoalViewModel by viewModels()
+class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
+    private val viewModel: SettingTargetAmountViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,6 +43,6 @@ class SettingGoalActivity : BindingActivity<ActivitySettingGoalBinding>(Activity
     }
 
     companion object {
-        fun newIntent(context: Context): Intent = Intent(context, SettingGoalActivity::class.java)
+        fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)
     }
 }

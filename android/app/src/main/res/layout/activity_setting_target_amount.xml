@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.settinggoal.SettingGoalActivity">
+    tools:context=".ui.settingtargetamount.SettingTargetAmountActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_goal"
@@ -61,12 +61,11 @@
     <EditText
         android:id="@+id/et_input_goal"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="42dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_common_rectangle_8dp"
-        android:backgroundTint="@color/white"
-        android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:background="@drawable/bg_common_rectangle_stroke_8dp"
+        android:backgroundTint="@color/gray_400"
         android:hint="@string/setting_goal_hint_input_goal"
         android:inputType="number"
         android:paddingHorizontal="12dp"
@@ -102,6 +101,30 @@
         android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/et_input_goal"
         app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
+
+    <TextView
+        android:id="@+id/tv_recommended_water_goal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/target_amount_recommended_water_goal"
+        android:textAppearance="@style/body3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/target_amount_recommended_description"
+        android:textAppearance="@style/body5"
+        android:textColor="@color/gray_200"
+        app:layout_constraintStart_toStartOf="@id/tv_recommended_water_goal"
+        app:layout_constraintTop_toBottomOf="@id/tv_recommended_water_goal" />
+
 
     <TextView
         android:id="@+id/tv_save_goal"

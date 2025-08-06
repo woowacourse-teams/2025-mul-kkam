@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settinggoal
+package com.mulkkam.ui.settingtargetamount
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import kotlinx.coroutines.launch
 
-class SettingGoalViewModel : ViewModel() {
+class SettingTargetAmountViewModel : ViewModel() {
     private var _goal: MutableLiveData<Int> = MutableLiveData(0)
     val goal: LiveData<Int> get() = _goal
 
