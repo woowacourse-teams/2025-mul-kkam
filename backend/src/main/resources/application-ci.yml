@@ -1,6 +1,6 @@
 spring:
   config:
-    active:
+    activate:
       on-profile: ci
 
   datasource:
