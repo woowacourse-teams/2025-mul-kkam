@@ -1,8 +1,8 @@
 ALTER TABLE intake_history
-    ADD COLUMN history_date DATE NOT NULL;
+    ADD COLUMN history_date DATE NOT NULL DEFAULT CURRENT_DATE;
 
 ALTER TABLE intake_history
-    ADD COLUMN streak INT NOT NULL;
+    ADD COLUMN streak INT NOT NULL DEFAULT 0;
 
 ALTER TABLE intake_history
     DROP COLUMN date_time;
