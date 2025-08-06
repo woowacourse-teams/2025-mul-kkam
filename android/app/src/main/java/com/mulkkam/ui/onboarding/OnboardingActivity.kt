@@ -28,7 +28,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         initClickListeners()
         initObservers()
         initBackPressHandler()
-        finishIfNoFragmentsLeft()
+        finishOnFragmentsEmpty()
     }
 
     private fun initProgressBarView() {
@@ -94,7 +94,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         )
     }
 
-    private fun finishIfNoFragmentsLeft() {
+    private fun finishOnFragmentsEmpty() {
         supportFragmentManager.addOnBackStackChangedListener {
             val fragments = supportFragmentManager.fragments
 
