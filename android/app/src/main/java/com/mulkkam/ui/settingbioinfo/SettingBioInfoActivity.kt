@@ -55,7 +55,7 @@ class SettingBioInfoActivity :
         }
 
         viewModel.gender.observe(this) { selectedGender ->
-            changeGender(selectedGender)
+            selectedGender?.let { changeGender(it) }
         }
 
         viewModel.canSave.observe(this) { enabled ->
