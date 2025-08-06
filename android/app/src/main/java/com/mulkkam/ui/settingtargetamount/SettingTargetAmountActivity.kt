@@ -2,10 +2,15 @@ package com.mulkkam.ui.settingtargetamount
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.core.view.isVisible
 import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.ui.binding.BindingActivity
@@ -17,11 +22,15 @@ import kotlin.String
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
     private val viewModel: SettingTargetAmountViewModel by viewModels()
 
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initClickListeners()
         initObservers()
         initGoalInputListener()
+        initTargetAmountInputWatcher()
     }
 
     private fun initClickListeners() {
@@ -30,7 +39,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         }
 
         binding.tvSaveGoal.setOnClickListener {
-            viewModel.saveGoal()
+            viewModel.saveTargetAmount()
         }
     }
 
@@ -47,6 +56,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
         viewModel.onRecommendationReady.observe(this) {
             updateRecommendedTargetAmount()
+        }
+
+        viewModel.isTargetAmountValid.observe(this) { isValid ->
+            updateTargetAmountValidationUI(isValid)
         }
     }
 
@@ -69,12 +82,43 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             )
     }
 
+    private fun updateTargetAmountValidationUI(isValid: Boolean?) {
+        val buttonColorRes = if (isValid == true) R.color.primary_200 else R.color.gray_200
+        val editTextColorRes = if (isValid != false) R.color.gray_400 else R.color.secondary_200
+
+        with(binding) {
+            tvSaveGoal.isEnabled = isValid == true
+            tvSaveGoal.backgroundTintList = ColorStateList.valueOf(getColor(buttonColorRes))
+
+            tvTargetAmountWarningMessage.isVisible = isValid == false
+
+            etInputGoal.backgroundTintList =
+                ColorStateList.valueOf(getColor(editTextColorRes))
+        }
+    }
+
     private fun initGoalInputListener() {
         binding.etInputGoal.addTextChangedListener {
             val text = it?.toString() ?: ""
             val number = text.toIntOrNull() ?: 0
 
-            viewModel.updateGoal(number)
+            viewModel.updateTargetAmount(number)
+        }
+    }
+
+    private fun initTargetAmountInputWatcher() {
+        binding.etInputGoal.doAfterTextChanged {
+            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+
+            debounceRunnable =
+                Runnable {
+                    val targetAmount =
+                        binding.etInputGoal.text
+                            .toString()
+                            .trim()
+                            .toIntOrNull()
+                    viewModel.updateTargetAmount(targetAmount)
+                }.apply { debounceHandler.postDelayed(this, 300L) }
         }
     }
 
