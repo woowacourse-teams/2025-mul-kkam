@@ -7,10 +7,10 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import java.util.Base64;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 public class OauthJwtTokenHandler {
@@ -37,11 +37,12 @@ public class OauthJwtTokenHandler {
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + expireLengthInMilliseconds);
+        byte[] keyBytes = Base64.getDecoder().decode(secretKey);
         return Jwts.builder()
                 .claims(claims)
                 .issuedAt(now)
                 .expiration(validity)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .signWith(Keys.hmacShaKeyFor(keyBytes))
                 .compact();
     }
 
