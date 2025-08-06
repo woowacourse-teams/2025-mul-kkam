@@ -2,11 +2,14 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
-import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.domain.vo.RecommendAmount;
+import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
+import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -31,14 +34,22 @@ public class IntakeAmountService {
     public IntakeRecommendedAmountResponse getRecommended(Long memberId) {
         Member member = getMember(memberId);
 
-        double weight = member.getPhysicalAttributes().getWeight();
-
-        return new IntakeRecommendedAmountResponse(new Amount((int) (weight * 30)));
+        PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
+        RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
+        return new IntakeRecommendedAmountResponse(recommendedTargetAmount.amount());
     }
 
     public IntakeTargetAmountResponse getTarget(Long memberId) {
         Member member = getMember(memberId);
-        return new IntakeTargetAmountResponse(member.getTargetAmount().value());
+        return new IntakeTargetAmountResponse(member.getTargetAmount());
+    }
+
+    public RecommendedIntakeAmountResponse getRecommendedTargetAmount(
+            PhysicalAttributesRequest physicalAttributesRequest
+    ) {
+        PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
+        RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
+        return new RecommendedIntakeAmountResponse(recommendedTargetAmount.amount());
     }
 
     private Member getMember(Long id) {

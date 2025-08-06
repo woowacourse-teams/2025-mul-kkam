@@ -1,27 +1,30 @@
 package com.mulkkam.ui.onboarding.terms
 
+import android.content.res.ColorStateList
 import android.os.Bundle
-import android.text.SpannableString
-import android.text.Spanned
-import android.text.style.TextAppearanceSpan
 import android.view.View
-import androidx.annotation.StyleRes
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
+import com.mulkkam.ui.util.getAppearanceSpannable
 
 class TermsFragment :
     BindingFragment<FragmentTermsBinding>(
         FragmentTermsBinding::inflate,
     ) {
     private val termsAdapter: TermsAdapter by lazy {
-        TermsAdapter()
+        TermsAdapter {
+            viewModel.updateCheckState(it)
+        }
     }
 
     private val parentViewModel: OnboardingViewModel by activityViewModels()
+    private val viewModel: TermsViewModel by viewModels()
 
     override fun onViewCreated(
         view: View,
@@ -31,15 +34,15 @@ class TermsFragment :
 
         initTextAppearance()
         initTermsAdapter()
-        initTermsAgreements()
         initClickListeners()
+        initObservers()
     }
 
     private fun initTextAppearance() {
         binding.tvTermsLabel.text =
-            getAppearanceSpannable(
+            getString(R.string.terms_agree_hint).getAppearanceSpannable(
+                requireContext(),
                 R.style.title1,
-                getString(R.string.terms_agree_hint),
                 getString(R.string.terms_agree_hint_highlight),
             )
     }
@@ -48,42 +51,40 @@ class TermsFragment :
         binding.rvList.adapter = termsAdapter
     }
 
-    private fun initTermsAgreements() {
-        val terms =
-            listOf(
-                TermsAgreementUiModel(R.string.terms_agree_service, true),
-                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
-                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
-                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
-            )
-        termsAdapter.submitList(terms)
-    }
+    private fun initClickListeners() {
+        with(binding) {
+            tvNext.setOnClickListener {
+                parentViewModel.moveToNextStep()
+            }
 
-    private fun getAppearanceSpannable(
-        @StyleRes typographyResId: Int,
-        fullText: String,
-        vararg highlightedText: String,
-    ): SpannableString {
-        val spannable = SpannableString(fullText)
-
-        highlightedText.forEach { target ->
-            var startIndex = fullText.indexOf(target)
-            if (startIndex != -1) {
-                spannable.setSpan(
-                    TextAppearanceSpan(context, typographyResId),
-                    startIndex,
-                    startIndex + target.length,
-                    Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-                )
+            cbAllCheck.setOnClickListener {
+                viewModel.checkAllAgreement()
             }
         }
-
-        return spannable
     }
 
-    private fun initClickListeners() {
-        binding.tvNext.setOnClickListener {
-            parentViewModel.moveToNextStep()
+    private fun initObservers() {
+        viewModel.termsAgreements.observe(viewLifecycleOwner) {
+            termsAdapter.submitList(it)
+        }
+
+        viewModel.isAllChecked.observe(viewLifecycleOwner) {
+            binding.cbAllCheck.isChecked = it
+        }
+
+        viewModel.canNext.observe(viewLifecycleOwner) {
+            updateNextButtonEnabled(it)
+        }
+    }
+
+    private fun updateNextButtonEnabled(enabled: Boolean) {
+        binding.tvNext.isEnabled = enabled
+        if (enabled) {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
+        } else {
+            binding.tvNext.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
         }
     }
 }

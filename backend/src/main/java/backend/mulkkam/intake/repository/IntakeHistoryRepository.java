@@ -1,16 +1,19 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Long> {
     List<IntakeHistory> findAllByMemberId(Long memberId);
 
-    List<IntakeHistory> findAllByMemberIdAndDateTimeBetween(
+    List<IntakeHistory> findAllByMemberIdAndHistoryDateBetween(
             Long memberId,
-            LocalDateTime dateTimeAfter,
-            LocalDateTime dateTimeBefore
+            LocalDate dateAfter,
+            LocalDate dateBefore
     );
+
+    Optional<IntakeHistory> findByMemberIdAndHistoryDate(Long memberId, LocalDate date);
 }

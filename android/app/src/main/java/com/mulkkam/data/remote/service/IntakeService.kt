@@ -13,20 +13,20 @@ import retrofit2.http.Query
 interface IntakeService {
     @GET("/intake/history")
     suspend fun getIntakeHistory(
-        @Query("from") from: String?,
-        @Query("to") to: String?,
-    ): List<IntakeHistorySummaryResponse>
+        @Query("from") from: String,
+        @Query("to") to: String,
+    ): Result<List<IntakeHistorySummaryResponse>>
 
     @POST("/intake/history")
     suspend fun postIntakeHistory(
         @Body intakeHistory: IntakeHistoryRequest,
-    )
+    ): Result<Unit>
 
     @PATCH("/intake/amount/target")
     suspend fun patchIntakeTarget(
         @Body intakeAmount: IntakeAmountRequest,
-    )
+    ): Result<Unit>
 
     @GET("/intake/amount/target")
-    suspend fun getIntakeTarget(): IntakeTargetAmountResponse
+    suspend fun getIntakeTarget(): Result<IntakeTargetAmountResponse>
 }
