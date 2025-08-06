@@ -59,4 +59,4 @@ jobs:
           FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_BASE64_ENCODING_KEY }}
           FCM_PROJECT_ID: ${{ secrets.FCM_PROJECT_ID }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          ACCESS_TOKEN_EXPIRE: ${{ secrets.ACCESS_TOKEN_EXPIRE }}
+          ACCESS_TOKEN_EXPIRE: $(( secrets.ACCESS_TOKEN_EXPIRE ))

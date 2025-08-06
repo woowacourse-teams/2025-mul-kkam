@@ -19,7 +19,7 @@ public class OauthJwtTokenHandler {
     private String secretKey;
 
     @Value("${security.jwt.expire-length}")
-    private long expireLengthInMilliseconds;
+    private Long expireLengthInMilliseconds;
 
     private JwtParser parser;
 
