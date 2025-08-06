@@ -4,6 +4,7 @@ import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
+import backend.mulkkam.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,21 +21,23 @@ public class IntakeAmountController {
     private final IntakeAmountService intakeAmountService;
 
     @GetMapping("/recommended")
-    public ResponseEntity<IntakeRecommendedAmountResponse> getRecommended() {
-        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(1L);
+    public ResponseEntity<IntakeRecommendedAmountResponse> getRecommended(Member member) {
+        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(member);
         return ResponseEntity.ok(intakeRecommendedAmountResponse);
     }
 
     @PatchMapping("/target")
     public ResponseEntity<Void> modifyTarget(
-            @RequestBody IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest) {
-        intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, 1L);
+            Member member,
+            @RequestBody IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
+    ) {
+        intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/target")
-    public ResponseEntity<IntakeTargetAmountResponse> getTarget() {
-        IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(1L);
+    public ResponseEntity<IntakeTargetAmountResponse> getTarget(Member member) {
+        IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(member);
         return ResponseEntity.ok(intakeTargetAmountResponse);
     }
 }

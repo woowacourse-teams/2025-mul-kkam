@@ -1,7 +1,6 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
@@ -20,7 +19,6 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -42,14 +40,14 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(originTargetAmount))
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             int newTargetAmount = 1_000;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId());
+            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
 
             // then
             Optional<Member> foundMember = memberRepository.findById(member.getId());
@@ -75,23 +73,9 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId()))
+                    () -> intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-        }
-
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            int newTargetAmount = 1_000;
-            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
-                    newTargetAmount);
-
-            // when & then
-            CommonException exception = assertThrows(CommonException.class,
-                    () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, Long.MAX_VALUE));
-            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
         }
     }
 
@@ -110,7 +94,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember.getId());
+                    savedMember);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -123,11 +107,11 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder()
                     .weight(null)
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember.getId());
+                    member);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -146,10 +130,10 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     .builder()
                     .targetAmount(new Amount(expected))
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             // when
-            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(savedMember.getId());
+            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(member);
 
             // then
             assertThat(actual.amount()).isEqualTo(expected);

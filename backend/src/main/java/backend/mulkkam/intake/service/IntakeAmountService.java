@@ -1,7 +1,5 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
@@ -21,28 +19,19 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyTarget(
-            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest,
-            Long memberId
+            Member member,
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        Member member = getMember(memberId);
         member.updateTargetAmount(intakeTargetAmountModifyRequest.toAmount());
+        memberRepository.save(member);
     }
 
-    public IntakeRecommendedAmountResponse getRecommended(Long memberId) {
-        Member member = getMember(memberId);
-
+    public IntakeRecommendedAmountResponse getRecommended(Member member) {
         double weight = member.getPhysicalAttributes().getWeight();
-
         return new IntakeRecommendedAmountResponse(new Amount((int) (weight * 30)));
     }
 
-    public IntakeTargetAmountResponse getTarget(Long memberId) {
-        Member member = getMember(memberId);
+    public IntakeTargetAmountResponse getTarget(Member member) {
         return new IntakeTargetAmountResponse(member.getTargetAmount().value());
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }
