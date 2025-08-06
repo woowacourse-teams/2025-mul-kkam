@@ -18,6 +18,7 @@ public enum BadRequestErrorCode implements ErrorCode {
     MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT,
     INVALID_PAGE_SIZE_RANGE,
     INVALID_METHOD_ARGUMENT,
+    INVALID_DATE_FOR_DELETE_INTAKE_HISTORY,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;

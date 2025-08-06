@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.settingprofile.SettingProfileActivity">
+    tools:context=".ui.settingnickname.SettingNicknameActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_profile"
@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/setting_profile_toolbar_title"
+            android:text="@string/setting_nickname_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/setting_profile_edit_nickname_label"
+        android:text="@string/setting_nickname_edit_nickname_label"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
@@ -63,9 +63,9 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
-        android:background="@drawable/bg_common_rectangle_8dp"
-        android:backgroundTint="@color/gray_50"
-        android:hint="@string/setting_profile_hint_input_nickname"
+        android:background="@drawable/bg_common_rectangle_stroke_8dp"
+        android:backgroundTint="@color/gray_400"
+        android:hint="@string/setting_nickname_hint_input_nickname"
         android:paddingHorizontal="12dp"
         android:paddingVertical="10dp"
         android:textAppearance="@style/body3"
@@ -85,7 +85,7 @@
         android:backgroundTint="@color/gray_200"
         android:gravity="center"
         android:paddingHorizontal="12dp"
-        android:text="@string/setting_profile_check_duplicate"
+        android:text="@string/setting_nickname_check_duplicate"
         android:textAppearance="@style/title3"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="@id/et_input_nickname"
@@ -99,14 +99,14 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginTop="8dp"
-        android:text="@string/setting_profile_warning_duplicated_nickname"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
         app:layout_constraintStart_toStartOf="@id/et_input_nickname"
-        app:layout_constraintTop_toBottomOf="@id/et_input_nickname" />
+        app:layout_constraintTop_toBottomOf="@id/et_input_nickname"
+        tools:text="@string/setting_nickname_warning_duplicated_nickname" />
 
     <TextView
-        android:id="@+id/tv_save_profile"
+        android:id="@+id/tv_save_nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"

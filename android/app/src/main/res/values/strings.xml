@@ -25,11 +25,13 @@
     <string name="setting_title">설정</string>
     <string name="setting_save">저장</string>
 
-    <string name="setting_profile_toolbar_title">프로필 설정</string>
-    <string name="setting_profile_edit_nickname_label">닉네임 변경</string>
-    <string name="setting_profile_hint_input_nickname">닉네임을 입력해 주세요</string>
-    <string name="setting_profile_check_duplicate">중복확인</string>
-    <string name="setting_profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_nickname_toolbar_title">닉네임 설정</string>
+    <string name="setting_nickname_edit_nickname_label">닉네임 변경</string>
+    <string name="setting_nickname_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="setting_nickname_check_duplicate">중복확인</string>
+    <string name="setting_nickname_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_nickname_valid">좋은 닉네임이시네요!</string>
+    <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요!</string>
 
     <string name="setting_water_toolbar_title">물 마시기 설정</string>
     <string name="setting_water_default">기본</string>
@@ -81,7 +83,6 @@
 
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
     <string name="nickname_input_hint_highlight">닉네임</string>
-    <string name="nickname_valid">좋은 닉네임이시네요!</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>

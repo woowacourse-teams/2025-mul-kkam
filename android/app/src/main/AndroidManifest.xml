@@ -52,7 +52,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settingprofile.SettingProfileActivity"
+            android:name=".ui.settingnickname.SettingNicknameActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
