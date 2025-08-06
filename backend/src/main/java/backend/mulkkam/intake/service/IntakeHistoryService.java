@@ -63,7 +63,7 @@ public class IntakeHistoryService {
             DateRangeRequest dateRangeRequest,
             Long memberId
     ) {
-        List<LocalDate> dates = dateRangeRequest.getConsecutiveDates();
+        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         Member member = getMember(memberId);
         List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
@@ -146,20 +146,7 @@ public class IntakeHistoryService {
                         member.getId(),
                         date
                 );
-        return targetAmount.map(integer -> new IntakeHistorySummaryResponse(
-                date,
-                integer,
-                0,
-                0.0,
-                0,
-                List.of()
-        )).orElseGet(() -> new IntakeHistorySummaryResponse(
-                date,
-                0,
-                0,
-                0.0,
-                0,
-                List.of()
-        ));
+        return targetAmount.map(integer -> new IntakeHistorySummaryResponse(date, integer))
+                .orElseGet(() -> new IntakeHistorySummaryResponse(date));
     }
 }
