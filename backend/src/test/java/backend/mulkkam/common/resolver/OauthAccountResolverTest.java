@@ -26,7 +26,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
-class LoginMemberArgumentResolverTest {
+class OauthAccountResolverTest {
 
     @Mock
     OauthJwtTokenHandler oauthJwtTokenHandler;
