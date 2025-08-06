@@ -13,6 +13,10 @@ class HistoryViewHolder(
     private val binding: ItemIntakeHistoryBinding,
     private val onItemLongClickListener: OnItemLongClickListener?,
 ) : RecyclerView.ViewHolder(binding.root) {
+    fun interface OnItemLongClickListener {
+        fun onItemLongClick(history: IntakeHistory)
+    }
+
     private var clickedIntakeHistory: IntakeHistory? = null
 
     init {
