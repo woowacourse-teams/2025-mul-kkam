@@ -3,6 +3,7 @@ package com.mulkkam.ui.settingtargetamount
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
@@ -22,14 +23,16 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         binding.ivBack.setOnClickListener {
             finish()
         }
+
         binding.tvSaveGoal.setOnClickListener {
             viewModel.saveGoal()
         }
     }
 
     private fun initObservers() {
-        viewModel.success.observe(this) { success ->
-            if (success) finish()
+        viewModel.onSaveTargetAmount.observe(this) { success ->
+            Toast.makeText(this, "마시기 목표 설정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+            finish()
         }
     }
 
