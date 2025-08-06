@@ -53,9 +53,11 @@ jobs:
         working-directory: ./backend
 
       - name: Run tests
-        run: ./gradlew test -Dspring.profiles.active=test
-                            -Dsecurity.jwt.secret-key=${{ secrets.JWT_SECRET }} \
-                            -Dsecurity.jwt.expire-length=${{ secrets.ACCESS_TOKEN_EXPIRE }}
+        run: |
+          ./gradlew test \
+            -Dspring.profiles.active=test \
+            -Dsecurity.jwt.secret-key=${{ secrets.JWT_SECRET }} \
+            -Dsecurity.jwt.expire-length=${{ secrets.ACCESS_TOKEN_EXPIRE }}
         working-directory: ./backend
         env:
           FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_BASE64_ENCODING_KEY }}
