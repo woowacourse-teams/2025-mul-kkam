@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mulkkam.ui.onboarding.bioinfo.Gender
+import com.mulkkam.domain.Gender
 
 class SettingBioInfoViewModel : ViewModel() {
     private val _gender = MutableLiveData<Gender>()

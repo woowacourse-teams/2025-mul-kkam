@@ -8,10 +8,10 @@ import android.widget.TextView
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
+import com.mulkkam.domain.Gender
+import com.mulkkam.domain.Gender.FEMALE
+import com.mulkkam.domain.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
-import com.mulkkam.ui.onboarding.bioinfo.Gender
-import com.mulkkam.ui.onboarding.bioinfo.Gender.FEMALE
-import com.mulkkam.ui.onboarding.bioinfo.Gender.MALE
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
 
 class SettingBioInfoActivity :
