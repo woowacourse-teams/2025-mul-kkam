@@ -28,4 +28,4 @@ security:
 
 open-weather:
   api:
-    key: temp-key
+    key: ${OPEN_WEATHER_API_KEY}
