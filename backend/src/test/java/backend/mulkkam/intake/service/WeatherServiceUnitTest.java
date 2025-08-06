@@ -20,7 +20,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.FORECAST_DATA_NOT_FOUND;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_DATE;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -141,7 +141,7 @@ class WeatherServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> weatherService.getAverageTemperatureForDate(targetDate))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(FORECAST_DATA_NOT_FOUND.name());
+                    .hasMessage(INVALID_FORECAST_DATE.name());
         }
 
         @Test

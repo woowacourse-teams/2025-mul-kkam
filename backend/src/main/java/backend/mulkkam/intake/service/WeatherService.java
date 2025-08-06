@@ -9,7 +9,7 @@ import java.time.ZoneId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.FORECAST_DATA_NOT_FOUND;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_DATE;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
 
 @RequiredArgsConstructor
@@ -53,7 +53,7 @@ public class WeatherService {
                 .filter(entry -> isSameDate(entry.dateTime(), targetDate, offset))
                 .mapToDouble(entry -> entry.temperatureInfo().temperature())
                 .average()
-                .orElseThrow(() -> new CommonException(FORECAST_DATA_NOT_FOUND));
+                .orElseThrow(() -> new CommonException(INVALID_FORECAST_DATE));
     }
 
     private double convertFromKelvinToCelsius(double temperatureAsKelvin) {
