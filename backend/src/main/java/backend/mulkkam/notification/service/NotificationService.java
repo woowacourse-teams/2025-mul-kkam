@@ -91,7 +91,7 @@ public class NotificationService {
                 SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toFcmToken(device.getToken());
                 fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
             }
-        } catch (Exception e) {
+        } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
         }
         notificationRepository.save(createTokenNotificationRequest.toNotification());
