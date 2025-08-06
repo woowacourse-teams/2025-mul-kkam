@@ -257,7 +257,7 @@ class IntakeHistoryServiceUnitTest {
 
             // then
             List<LocalTime> dateTimes = actual.stream()
-                    .flatMap(summary -> summary.intakeDetailResponses().stream())
+                    .flatMap(summary -> summary.intakeDetails().stream())
                     .map(IntakeDetailResponse::time)
                     .toList();
 

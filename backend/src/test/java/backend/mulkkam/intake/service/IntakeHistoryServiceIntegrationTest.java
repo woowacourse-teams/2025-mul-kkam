@@ -287,7 +287,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             List<Long> intakeHistoryIds = actual.stream()
-                    .flatMap(summary -> summary.intakeDetailResponses().stream())
+                    .flatMap(summary -> summary.intakeDetails().stream())
                     .map(IntakeDetailResponse::id)
                     .toList();
 
