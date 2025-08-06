@@ -10,19 +10,21 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 @Component
 public class OauthJwtTokenHandler {
 
-    private final String secretKey;
-    private final long expireLengthInMilliseconds;
-    private final JwtParser parser;
+    @Value("${security.jwt.secret-key}")
+    private String secretKey;
 
-    public OauthJwtTokenHandler(
-            @Value("${security.jwt.secret-key}") String secretKey,
-            @Value("${security.jwt.expire-length}") long expireLengthInMilliseconds
-    ) {
-        this.secretKey = secretKey;
-        this.expireLengthInMilliseconds = expireLengthInMilliseconds;
+    @Value("${security.jwt.expire-length}")
+    private Long expireLengthInMilliseconds;
+
+    private JwtParser parser;
+
+    @PostConstruct
+    public void init() {
         this.parser = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .build();
