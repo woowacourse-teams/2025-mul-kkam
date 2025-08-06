@@ -83,7 +83,7 @@ interface Logger {
      * 개발용 상세 로그를 기록합니다.
      */
     fun debug(
-        event: LogEvent,
+        event: LogEvent = LogEvent.DEBUG,
         message: String = "",
         userId: String? = null,
     ) = log(LogEntry(LogLevel.DEBUG, event, message, userId))

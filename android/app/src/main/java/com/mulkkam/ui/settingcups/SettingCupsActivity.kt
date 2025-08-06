@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.databinding.ActivitySettingCupsBinding
 import com.mulkkam.ui.binding.BindingActivity
-import com.mulkkam.ui.settingcups.adapter.CupItemTouchHelperCallback
+import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
@@ -47,7 +47,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         super.onCreate(savedInstanceState)
         binding.rvCups.adapter = settingCupsAdapter
 
-        val callback = CupItemTouchHelperCallback(settingCupsAdapter)
+        val callback = CupsItemTouchHelperCallback(settingCupsAdapter)
         itemTouchHelper = ItemTouchHelper(callback)
         itemTouchHelper.attachToRecyclerView(binding.rvCups)
 

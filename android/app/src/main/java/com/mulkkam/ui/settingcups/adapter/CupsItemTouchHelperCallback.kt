@@ -3,7 +3,7 @@ package com.mulkkam.ui.settingcups.adapter
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 
-class CupItemTouchHelperCallback(
+class CupsItemTouchHelperCallback(
     private val adapter: ItemReorderListener,
 ) : ItemTouchHelper.Callback() {
     override fun isLongPressDragEnabled(): Boolean = false
@@ -23,14 +23,23 @@ class CupItemTouchHelperCallback(
         source: RecyclerView.ViewHolder,
         target: RecyclerView.ViewHolder,
     ): Boolean {
-        adapter.onItemMove(source.adapterPosition, target.adapterPosition)
+        val fromPos = source.adapterPosition
+        val toPos = target.adapterPosition
+
+        val adapter = recyclerView.adapter as? SettingCupsAdapter ?: return false
+        if (adapter.getItemViewType(toPos) == SettingCupsViewType.ADD.ordinal) {
+            return false
+        }
+
+        adapter.onItemMove(fromPos, toPos)
         return true
     }
 
     override fun onSwiped(
         viewHolder: RecyclerView.ViewHolder,
         direction: Int,
-    ) {}
+    ) {
+    }
 
     override fun clearView(
         recyclerView: RecyclerView,
