@@ -21,12 +21,16 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -348,6 +352,118 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(responseOfTheDay.achievementRate()).isCloseTo(
                     100, within(0.01)
             );
+        }
+    }
+
+    @DisplayName("음용 기록을 삭제할 때에")
+    @Nested
+    class Delete {
+
+        @DisplayName("존재하지 않는 기록에 대한 요청인 경우 예외가 발생한다")
+        @Test
+        void error_historyIsNotExisted() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.delete(1L, member.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_INTAKE_HISTORY.name());
+        }
+
+        @DisplayName("존재하지 않는 멤버에 대한 요청인 경우 예외가 발생한다")
+        @Test
+        void error_memberIsNotExisted() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId() + 1L))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_MEMBER.name());
+        }
+
+        @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")
+        @Test
+        void error_memberIsNotPermitted() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            Member savedAnotherMember = memberRepository.save(anotherMember);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), savedAnotherMember.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
+        }
+
+        @DisplayName("정상적으로 음용 기록이 삭제된다")
+        @Test
+        void success_validData() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            // when
+            intakeHistoryService.delete(intakeHistory.getId(), member.getId());
+
+            // then
+            Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findById(intakeHistory.getId());
+            assertThat(foundIntakeHistory).isNotPresent();
+        }
+
+        @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
+        @Test
+        void error_requestToDeletePastDate() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now().minusDays(1))
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            // when & then
+            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId()))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }
     }
 }
