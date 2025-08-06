@@ -76,6 +76,18 @@ public class Cup {
         this.emoji = emoji;
     }
 
+    public void update(
+            CupNickname nickname,
+            CupAmount cupAmount,
+            IntakeType intakeType,
+            String emoji
+    ) {
+        this.nickname = nickname;
+        this.cupAmount = cupAmount;
+        this.intakeType = intakeType;
+        this.emoji = emoji;
+    }
+
     public boolean isLowerPriorityThan(Cup other) {
         return cupRank.hasLowerPriorityThan(other.getCupRank());
     }

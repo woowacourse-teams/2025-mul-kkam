@@ -121,4 +121,10 @@ dependencies {
 
     // 로깅
     implementation(libs.timber)
+
+    // 헬스 커넥트
+    implementation(libs.androidx.health.connect)
+
+    // 워크 매니저
+    implementation(libs.androidx.work.runtime.ktx)
 }
