@@ -43,13 +43,17 @@ class HistoryViewModel : ViewModel() {
         val today = LocalDate.now()
         viewModelScope.launch {
             val weekDates = getWeekDates(baseDate)
-            val summaries =
+            val result =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
                     to = minOf(weekDates.last(), today),
                 )
-
-            updateIntakeSummary(weekDates, summaries)
+            runCatching {
+                val summaries = result.getOrError()
+                updateIntakeSummary(weekDates, summaries)
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
