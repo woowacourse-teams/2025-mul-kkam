@@ -56,8 +56,8 @@ class OnboardingViewModel : ViewModel() {
     }
 
     fun updateBioInfo(
-        gender: String,
-        weight: Int,
+        gender: String?,
+        weight: Int?,
     ) {
         onboardingInfo = onboardingInfo.copy(gender = gender)
         onboardingInfo = onboardingInfo.copy(weight = weight)
