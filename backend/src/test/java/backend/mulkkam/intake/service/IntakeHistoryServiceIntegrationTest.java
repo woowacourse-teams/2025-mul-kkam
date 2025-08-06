@@ -13,7 +13,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -262,7 +262,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeHistoryDetail detailOfAnotherMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfAnotherMember = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(historyOfAnotherMember)
                     .build();
 
@@ -271,7 +271,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeHistoryDetail detailOfMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfMember = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(historyOfMember)
                     .build();
 
@@ -317,17 +317,17 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .targetIntakeAmount(new Amount(targetAmountOfMember))
                     .build();
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
@@ -389,7 +389,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
-            IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
@@ -422,7 +422,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
-            IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
@@ -449,7 +449,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
-            IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
@@ -478,7 +478,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
-            IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
