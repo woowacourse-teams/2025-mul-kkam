@@ -1,9 +1,7 @@
 package backend.mulkkam.member.service;
 
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.CreateMemberRequest;
@@ -26,27 +24,24 @@ import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLI
 public class MemberService {
 
     private final MemberRepository memberRepository;
-    private final OauthAccountRepository oauthAccountRepository;
 
-    public MemberResponse getMemberById(long id) {
-        Member member = getById(id);
+    public MemberResponse get(Member member) {
         return new MemberResponse(member);
     }
 
     @Transactional
     public void modifyPhysicalAttributes(
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getById(memberId);
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
+        memberRepository.save(member);
     }
 
     public void validateDuplicateNickname(
             String nickname,
-            Long memberId
+            Member member
     ) {
-        Member member = getById(memberId);
         if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
@@ -58,14 +53,13 @@ public class MemberService {
     @Transactional
     public void modifyNickname(
             MemberNicknameModifyRequest memberNicknameModifyRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getById(memberId);
         member.updateNickname(memberNicknameModifyRequest.toMemberNickname());
+        memberRepository.save(member);
     }
 
-    public MemberNicknameResponse getNickname(Long memberId) {
-        Member member = getById(memberId);
+    public MemberNicknameResponse getNickname(Member member) {
         return new MemberNicknameResponse(member.getMemberNickname());
     }
 
@@ -78,11 +72,6 @@ public class MemberService {
         memberRepository.save(member);
 
         oauthAccount.modifyMember(member);
-    }
-
-    private Member getById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {

@@ -28,7 +28,6 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -55,28 +54,19 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Member savedMember = memberRepository.save(member);
+            memberRepository.save(member);
 
             // when
-            MemberResponse result = memberService.getMemberById(savedMember.getId());
+            MemberResponse result = memberService.get(member);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(result.id()).isEqualTo(savedMember.getId());
+                softly.assertThat(result.id()).isEqualTo(member.getId());
                 softly.assertThat(result.nickname()).isEqualTo(member.getMemberNickname().value());
                 softly.assertThat(result.weight()).isEqualTo(member.getPhysicalAttributes().getWeight());
                 softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
-        }
-
-        @DisplayName("존재하지 않는 멤버 id로 조회 시 예외가 발생한다 : NOT_FOUND_MEMBER")
-        @Test
-        void error_whenNonExistingId() {
-            // when & then
-            assertThatThrownBy(
-                    () -> memberService.getMemberById(Integer.MAX_VALUE)
-            ).isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_MEMBER.name());
         }
     }
 
@@ -105,7 +95,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             memberService.modifyPhysicalAttributes(
                     physicalAttributesModifyRequest,
-                    member.getId()
+                    member
             );
 
             // then
@@ -135,12 +125,13 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             String modifyNickname = "msv0a";
-            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
+            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(
+                    modifyNickname);
 
             // when
             memberService.modifyNickname(
                     memberNicknameModifyRequest,
-                    member.getId()
+                    member
             );
 
             // then
@@ -164,7 +155,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatCode(() -> memberService.validateDuplicateNickname(
                     newNickname,
-                    member.getId()
+                    member
             )).doesNotThrowAnyException();
         }
 
@@ -190,7 +181,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     newNickname,
-                    member1.getId()
+                    member1
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
@@ -210,7 +201,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     nickname,
-                    member.getId()
+                    member
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
@@ -233,7 +224,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             String expected = member.getMemberNickname().value();
 
             // when
-            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member.getId());
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member);
 
             // then
             assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
