@@ -2,6 +2,7 @@ package backend.mulkkam.auth.service;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
+import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
