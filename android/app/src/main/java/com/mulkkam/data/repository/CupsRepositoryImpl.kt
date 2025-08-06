@@ -3,6 +3,7 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.AddCupRequest
+import com.mulkkam.data.remote.model.request.toData
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.MulKkamResult
@@ -30,6 +31,15 @@ class CupsRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun putCupsRank(cups: Cups): MulKkamResult<Cups> {
+        val request = cups.toData()
+        val result = cupsService.putCupsRank(request)
+        return result.fold(
+            onSuccess = { MulKkamResult(data = cups) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }

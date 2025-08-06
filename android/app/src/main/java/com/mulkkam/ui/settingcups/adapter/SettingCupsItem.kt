@@ -7,17 +7,17 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 sealed class SettingCupsItem(
     val viewType: SettingCupsViewType,
 ) {
-    abstract val id: Int
+    abstract val id: Long
 
     data class CupItem(
         val value: CupUiModel,
     ) : SettingCupsItem(CUP) {
-        override val id: Int
+        override val id: Long
             get() = value.id
     }
 
     data object AddItem : SettingCupsItem(ADD) {
-        private const val LOAD_MORE_ITEM_ID = -1
-        override val id: Int = LOAD_MORE_ITEM_ID
+        private const val LOAD_MORE_ITEM_ID: Long = -1L
+        override val id: Long = LOAD_MORE_ITEM_ID
     }
 }

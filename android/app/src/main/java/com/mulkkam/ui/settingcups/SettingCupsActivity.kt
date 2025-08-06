@@ -41,7 +41,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             }
 
             override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
-                // ViewModel로 순서 저장
+                viewModel.updateCupOrder(newOrder.map { it.value })
             }
         }
 

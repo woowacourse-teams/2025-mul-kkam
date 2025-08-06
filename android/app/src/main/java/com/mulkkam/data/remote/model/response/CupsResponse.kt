@@ -14,6 +14,5 @@ data class CupsResponse(
 
 fun CupsResponse.toDomain() =
     Cups(
-        size = size,
         cups = cups.map { it.toDomain() },
     )

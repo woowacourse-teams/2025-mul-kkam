@@ -1,7 +1,7 @@
 package com.mulkkam.domain.model
 
 data class Cup(
-    val id: Int,
+    val id: Long,
     val nickname: String,
     val amount: Int,
     val rank: Int,
