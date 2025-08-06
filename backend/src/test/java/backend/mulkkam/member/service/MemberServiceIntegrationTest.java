@@ -256,7 +256,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     rawNickname,
                     weight,
                     gender,
-                    rawTargetIntakeAmount
+                    rawTargetIntakeAmount,
+                    true,
+                    false
             );
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
@@ -290,7 +292,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     invalidNickname,
                     weight,
                     gender,
-                    rawTargetIntakeAmount
+                    rawTargetIntakeAmount,
+                    true,
+                    false
             );
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
@@ -315,7 +319,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 rawNickname,
                 weight,
                 gender,
-                invalidIntakeAmount
+                invalidIntakeAmount,
+                true,
+                false
         );
 
         OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);

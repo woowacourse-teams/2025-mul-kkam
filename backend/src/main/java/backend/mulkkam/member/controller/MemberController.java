@@ -67,7 +67,8 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<MemberNicknameResponse> create(
             OauthAccount oauthAccount,
-            @RequestBody CreateMemberRequest createMemberRequest) {
+            @RequestBody CreateMemberRequest createMemberRequest
+    ) {
         memberService.create(oauthAccount, createMemberRequest);
         return ResponseEntity.ok().build();
     }

@@ -179,7 +179,9 @@ class MemberControllerTest {
                     "히로",
                     70.0,
                     Gender.FEMALE,
-                    1_000
+                    1_000,
+                    true,
+                    false
             );
 
             // when

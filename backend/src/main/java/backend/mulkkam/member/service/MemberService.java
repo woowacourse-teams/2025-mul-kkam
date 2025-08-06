@@ -72,7 +72,8 @@ public class MemberService {
     @Transactional
     public void create(
             OauthAccount oauthAccount,
-            CreateMemberRequest createMemberRequest) {
+            CreateMemberRequest createMemberRequest
+    ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
 
