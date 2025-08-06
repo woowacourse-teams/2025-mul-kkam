@@ -8,17 +8,22 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -32,6 +37,8 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     MemberRepository memberRepository;
+    @Autowired
+    private IntakeHistoryRepository intakeHistoryRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -95,6 +102,41 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             CommonException exception = assertThrows(CommonException.class,
                     () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, Long.MAX_VALUE));
             assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+        }
+
+        @DisplayName("해당 수정이 추천에 의한 수정일 경우 금일 목표에만 반영된다")
+        @Test
+        void success_recommendAmount() {
+            // given
+            int memberTargetAmount = 1500;
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .targetAmount(new Amount(memberTargetAmount))
+                    .build();
+            memberRepository.save(member);
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
+                    (
+                            1000
+                    );
+            // when
+            intakeAmountService.modifyTargetByRecommended(modifyIntakeTargetAmountByRecommendRequest, member.getId());
+            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                    member.getId(),
+                    LocalDate.now());
+            Optional<Member> findMember = memberRepository.findById(member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(findIntakeHistory).isPresent();
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
+                softly.assertThat(findMember).isPresent();
+                softly.assertThat(findMember.get().getTargetAmount().value()).isEqualTo(memberTargetAmount);
+            });
         }
     }
 

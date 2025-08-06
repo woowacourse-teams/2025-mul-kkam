@@ -3,6 +3,7 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
@@ -47,5 +48,12 @@ public class IntakeAmountController {
     public ResponseEntity<IntakeTargetAmountResponse> getTarget() {
         IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(1L);
         return ResponseEntity.ok(intakeTargetAmountResponse);
+    }
+
+    @PatchMapping("/target/suggested")
+    public ResponseEntity<Void> modifyTargetByRecommended(
+            @RequestBody ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest) {
+        intakeAmountService.modifyTargetByRecommended(modifyIntakeTargetAmountByRecommendRequest, 1L);
+        return ResponseEntity.ok().build();
     }
 }
