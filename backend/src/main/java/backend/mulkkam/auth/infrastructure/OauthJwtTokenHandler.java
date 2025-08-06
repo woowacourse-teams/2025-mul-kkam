@@ -54,7 +54,7 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    private Claims getClaims(final String token) {
+    private Claims getClaims(String token) {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
