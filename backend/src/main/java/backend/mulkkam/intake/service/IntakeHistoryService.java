@@ -2,21 +2,26 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.dto.DateRangeRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
-import backend.mulkkam.intake.dto.IntakeHistoryResponse;
-import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
+import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.repository.IntakeDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,16 +38,54 @@ public class IntakeHistoryService {
 
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
+    private final IntakeDetailRepository intakeDetailRepository;
 
     @Transactional
-    public void create(
-            IntakeHistoryCreateRequest intakeHistoryCreateRequest,
+    public CreateIntakeHistoryResponse create(
+            IntakeDetailCreateRequest intakeDetailCreateRequest,
             Long memberId
     ) {
         Member member = getMember(memberId);
+        LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                        memberId,
+                        intakeDateTime.toLocalDate()
+                )
+                .orElseGet(() -> {
+                    int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
+                    IntakeHistory newIntakeHistory = new IntakeHistory(
+                            member,
+                            intakeDateTime.toLocalDate(),
+                            member.getTargetAmount(),
+                            streak
+                    );
+                    return intakeHistoryRepository.save(newIntakeHistory);
+                });
+        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
+        intakeDetailRepository.save(intakeHistoryDetail);
 
-        IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
-        intakeHistoryRepository.save(intakeHistory);
+        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(
+                intakeDetailCreateRequest.dateTime().toLocalDate(),
+                memberId
+        );
+
+        if (intakeHistoryDetails.isEmpty()) {
+            return new CreateIntakeHistoryResponse(
+                    0,
+                    CommentOfAchievementRate.VERY_LOW.getComment()
+            );
+        }
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        AchievementRate achievementRate = new AchievementRate(
+                totalIntakeAmount,
+                intakeHistory.getTargetAmount()
+        );
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
+
+        return new CreateIntakeHistoryResponse(
+                achievementRate.value(),
+                commentByAchievementRate
+        );
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
@@ -50,22 +93,19 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
+        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
-                dateRangeRequest.startDateTime(),
-                dateRangeRequest.endDateTime()
+                dateRangeRequest.from(),
+                dateRangeRequest.to()
         );
-
-        Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate = intakeHistoriesInDateRange.stream()
-                .collect(Collectors.groupingBy(intakeHistory -> intakeHistory.getDateTime().toLocalDate()));
-
-        List<IntakeHistorySummaryResponse> summaryOfIntakeHistories = toIntakeHistorySummaryResponses(
-                historiesGroupedByDate,
-                member
-        );
-
-        return summaryOfIntakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistorySummaryResponse::date))
+        return details.stream()
+                .collect(Collectors.groupingBy(
+                        IntakeHistoryDetail::getIntakeHistory,
+                        LinkedHashMap::new,
+                        Collectors.toList()
+                ))
+                .entrySet().stream()
+                .map(entry -> toIntakeHistorySummaryResponse(entry.getKey(), entry.getValue()))
                 .toList();
     }
 
@@ -100,56 +140,66 @@ public class IntakeHistoryService {
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 
-    private List<IntakeHistorySummaryResponse> toIntakeHistorySummaryResponses(
-            Map<LocalDate, List<IntakeHistory>> historiesGroupedByDate,
-            Member member
+    private List<IntakeHistoryDetail> findIntakeHistoriesOfDate(
+            LocalDate date,
+            Long memberId
     ) {
-        List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = new ArrayList<>();
-        for (Map.Entry<LocalDate, List<IntakeHistory>> entry : historiesGroupedByDate.entrySet()) {
-            intakeHistorySummaryResponses.add(toIntakeHistorySummaryResponse(entry.getValue(), entry.getKey()));
-        }
-        return intakeHistorySummaryResponses;
+        return intakeDetailRepository.findAllByMemberIdAndDateRange(
+                memberId,
+                date,
+                date
+        );
+    }
+
+    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+        int total = intakeHistoryDetails
+                .stream()
+                .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
+                .sum();
+        return new Amount(total);
+    }
+
+    private int findStreak(Member member, LocalDate todayDate) {
+        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                member.getId(), todayDate.minusDays(1));
+        return yesterdayIntakeHistory.map(IntakeHistory::getStreak).orElse(0);
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
-            List<IntakeHistory> intakeHistoryOfDate,
-            LocalDate date
+            IntakeHistory intakeHistory,
+            List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeHistory> sortedIntakeHistories = sortIntakeHistories(intakeHistoryOfDate);
-        List<IntakeHistoryResponse> intakeHistoryResponses = toIntakeHistoryResponses(sortedIntakeHistories);
+        List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
+        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryResponses);
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
 
-        Amount targetAmountOfTheDay = sortedIntakeHistories.getLast().getTargetAmount();
+        Amount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 targetAmountOfTheDay
         );
 
         return new IntakeHistorySummaryResponse(
-                date,
+                intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
                 totalIntakeAmount.value(),
                 achievementRate.value(),
-                intakeHistoryResponses
+                intakeHistory.getStreak(),
+                intakeDetailResponses
         );
     }
 
-    private List<IntakeHistory> sortIntakeHistories(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .sorted(Comparator.comparing(IntakeHistory::getDateTime))
+    private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
+        return intakeDetails
+                .stream()
+                .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
                 .toList();
     }
 
-    private List<IntakeHistoryResponse> toIntakeHistoryResponses(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .map(IntakeHistoryResponse::new).toList();
-    }
-
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryResponse> intakeHistoryResponses) {
-        return new Amount(intakeHistoryResponses.stream()
-                .mapToInt(IntakeHistoryResponse::intakeAmount)
-                .sum());
+    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
+        return intakeDetails.stream()
+                .map(IntakeDetailResponse::new).toList();
     }
 
     private IntakeHistory findById(Long id) {

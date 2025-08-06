@@ -4,13 +4,15 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.ui.onboarding.terms.TermsAgreementUiModel
 
-class TermsAdapter : RecyclerView.Adapter<TermsAgreementViewHolder>() {
+class TermsAdapter(
+    private val termsAgreementHandler: TermsAgreementHandler,
+) : RecyclerView.Adapter<TermsAgreementViewHolder>() {
     private val termsAgreements = mutableListOf<TermsAgreementUiModel>()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): TermsAgreementViewHolder = TermsAgreementViewHolder.from(parent)
+    ): TermsAgreementViewHolder = TermsAgreementViewHolder.from(parent, termsAgreementHandler)
 
     override fun onBindViewHolder(
         holder: TermsAgreementViewHolder,

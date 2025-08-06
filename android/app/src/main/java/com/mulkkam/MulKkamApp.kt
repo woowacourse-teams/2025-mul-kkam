@@ -5,16 +5,23 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
+import com.mulkkam.di.HealthConnectInjection
 import com.mulkkam.di.PreferenceInjection
+import com.mulkkam.di.WorkInjection
 import com.mulkkam.ui.service.NotificationService
+import com.mulkkam.util.logger.LoggingTree
+import timber.log.Timber
 
 class MulKkamApp : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        HealthConnectInjection.init(this)
         PreferenceInjection.init(this)
+        WorkInjection.init(this)
         KakaoSdk.init(this, BuildConfig.KEY_KAKAO)
         createNotificationChannel()
+        initLogger()
     }
 
     private fun createNotificationChannel() {
@@ -28,5 +35,13 @@ class MulKkamApp : Application() {
             }
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
+    }
+
+    private fun initLogger() {
+        if (BuildConfig.DEBUG) {
+            Timber.plant(Timber.DebugTree())
+        } else {
+            Timber.plant(LoggingTree())
+        }
     }
 }

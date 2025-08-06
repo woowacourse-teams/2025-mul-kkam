@@ -1,11 +1,11 @@
 package backend.mulkkam.intake.controller;
 
-import backend.mulkkam.intake.dto.IntakeRecommendedAmountResponse;
-import backend.mulkkam.intake.dto.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
-import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.service.IntakeAmountService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,7 +31,8 @@ public class IntakeAmountController {
     public ResponseEntity<RecommendedIntakeAmountResponse> getRecommendedTargetAmount(
             @RequestBody PhysicalAttributesRequest physicalAttributesRequest
     ) {
-        RecommendedIntakeAmountResponse recommendedIntakeAmountResponse = intakeAmountService.getRecommendedTargetAmount(physicalAttributesRequest);
+        RecommendedIntakeAmountResponse recommendedIntakeAmountResponse = intakeAmountService.getRecommendedTargetAmount(
+                physicalAttributesRequest);
         return ResponseEntity.ok(recommendedIntakeAmountResponse);
     }
 

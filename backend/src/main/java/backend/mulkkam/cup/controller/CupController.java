@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.controller;
 
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
@@ -31,9 +31,9 @@ public class CupController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CupRegisterRequest cupRegisterRequest) {
+    public ResponseEntity<Void> create(@RequestBody CreateCupRequest registerCupRequest) {
         cupService.create(
-                cupRegisterRequest,
+                registerCupRequest,
                 1L
         );
         return ResponseEntity.ok().build();
@@ -47,13 +47,13 @@ public class CupController {
 
     @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
-            @RequestBody CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest,
+            @RequestBody UpdateCupRequest updateCupRequest,
             @PathVariable Long cupId
     ) {
-        cupService.modifyNicknameAndAmount(
+        cupService.update(
                 cupId,
                 1L,
-                cupNicknameAndAmountModifyRequest
+                updateCupRequest
         );
         return ResponseEntity.ok().build();
     }
