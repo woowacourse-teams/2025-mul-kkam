@@ -11,6 +11,15 @@ data class IntakeHistorySummary(
 ) {
     fun dayOfWeekIndex(): Int = date.dayOfWeek.value + DAY_OF_WEEK_OFFSET
 
+    fun updateIntakeResult(
+        amount: Int,
+        achievementRate: Float,
+    ): IntakeHistorySummary =
+        copy(
+            totalIntakeAmount = totalIntakeAmount + amount,
+            achievementRate = achievementRate,
+        )
+
     companion object {
         private const val DAY_OF_WEEK_OFFSET: Int = -1
 
