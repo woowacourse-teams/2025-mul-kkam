@@ -60,9 +60,11 @@ public class ScheduleService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
 
-    private CreateTopicNotificationRequest toCreateNotificationRequest(LocalDateTime todayInSeoul,
-                                                                       AverageTemperature averageTemperature,
-                                                                       Member member) {
+    private CreateTopicNotificationRequest toCreateNotificationRequest(
+            LocalDateTime todayInSeoul,
+            AverageTemperature averageTemperature,
+            Member member
+    ) {
         double intakeRecommendedAmount = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByAvgTemperature(
                 averageTemperature, member.getId());
         return new CreateTopicNotificationRequest(
