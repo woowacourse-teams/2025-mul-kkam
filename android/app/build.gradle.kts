@@ -6,7 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.google.services)
-    id("kotlin-parcelize")
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.firebase.crashlytics)
 }
 
 android {
@@ -112,10 +113,14 @@ dependencies {
     // 로그인
     implementation(libs.kakao.v2.user)
 
-    // 구글 서비스
+    // 파이어베이스
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
+    implementation(libs.firebase.crashlytics)
     implementation(libs.firebase.messaging)
+
+    // 로깅
+    implementation(libs.timber)
 
     // 헬스 커넥트
     implementation(libs.androidx.health.connect)
