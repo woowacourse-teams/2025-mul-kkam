@@ -47,7 +47,7 @@ class BioInfoFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
-                parentViewModel.updateBioInfo(viewModel.gender.value?.name, viewModel.weight.value)
+                parentViewModel.updateBioInfo(viewModel.gender.value, viewModel.weight.value)
                 parentViewModel.moveToNextStep()
             }
 

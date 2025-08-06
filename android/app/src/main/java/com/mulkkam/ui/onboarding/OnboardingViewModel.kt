@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import com.mulkkam.ui.onboarding.bioinfo.Gender
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 
@@ -56,11 +57,10 @@ class OnboardingViewModel : ViewModel() {
     }
 
     fun updateBioInfo(
-        gender: String?,
+        gender: Gender?,
         weight: Int?,
     ) {
-        onboardingInfo = onboardingInfo.copy(gender = gender)
-        onboardingInfo = onboardingInfo.copy(weight = weight)
+        onboardingInfo = onboardingInfo.copy(gender = gender, weight = weight)
     }
 
     fun updateTargetAmount(targetAmount: Int) {
