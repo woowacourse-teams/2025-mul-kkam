@@ -1,4 +1,4 @@
-package com.mulkkam.util
+package com.mulkkam.util.extensions
 
 import android.os.Build
 import android.os.Bundle

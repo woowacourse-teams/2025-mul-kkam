@@ -4,9 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
@@ -14,10 +18,21 @@ import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
+import com.mulkkam.util.extensions.isHealthConnectAvailable
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
+
+    private val viewModel: MainViewModel by viewModels()
+
+    // TODO: 온보딩으로 로직 이동
+    private val requestPermissionsLauncher =
+        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
+            if (results.containsAll(HEALTH_CONNECT_PERMISSIONS)) {
+                viewModel.updateHealthPermissionStatus(true)
+            }
+        }
 
     private var backPressedTime: Long = 0
 
@@ -30,6 +45,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
         handleNotificationEvent()
         setupDoubleBackToExit()
+        initObservers()
+
+        if (isHealthConnectAvailable()) {
+            viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
+        }
     }
 
     private fun handleNotificationEvent() {
@@ -106,8 +126,22 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         )
     }
 
+    private fun initObservers() {
+        viewModel.isHealthPermissionGranted.observe(this) { isGranted ->
+            if (isGranted) {
+                viewModel.scheduleCalorieCheck()
+            } else {
+                requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
+            }
+        }
+    }
+
     companion object {
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
+        private val HEALTH_CONNECT_PERMISSIONS =
+            setOf(
+                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+            )
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
