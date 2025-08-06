@@ -21,7 +21,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
@@ -69,10 +69,10 @@ class OauthAccountResolverTest {
             );
 
             // then
-            assertAll(
-                    () -> assertThat(result).isInstanceOf(OauthAccount.class),
-                    () -> assertThat(result.getId()).isEqualTo(oauthAccountId)
-            );
+            assertSoftly(softAssertions -> {
+                assertThat(result).isInstanceOf(OauthAccount.class);
+                assertThat(result.getId()).isEqualTo(oauthAccountId);
+            });
         }
     }
 }

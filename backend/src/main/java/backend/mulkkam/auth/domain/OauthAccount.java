@@ -39,13 +39,21 @@ public class OauthAccount {
     @Column(nullable = false)
     private OauthProvider oauthProvider;
 
-    public OauthAccount(Long id, String oauthId, OauthProvider oauthProvider) {
+    public OauthAccount(
+            Long id,
+            String oauthId,
+            OauthProvider oauthProvider
+    ) {
         this.id = id;
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
     }
 
-    public OauthAccount(Member member, String oauthId, OauthProvider oauthProvider) {
+    public OauthAccount(
+            Member member,
+            String oauthId,
+            OauthProvider oauthProvider
+    ) {
         this.member = member;
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;

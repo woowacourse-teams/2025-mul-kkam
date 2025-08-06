@@ -37,6 +37,7 @@ public class OauthAccountResolver implements HandlerMethodArgumentResolver {
         String token = authenticationHeaderHandler.extractToken(request);
         Long oauthAccountId = oauthJwtTokenHandler.getSubject(token);
 
+        // TODO: 추후 에러 코드로 반영
         return oauthAccountRepository.findById(oauthAccountId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
     }
