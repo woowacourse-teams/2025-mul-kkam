@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
@@ -37,7 +38,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
 
             tvSaveNickname.setOnClickListener {
-                viewModel.saveNickname()
+                viewModel.saveNickname(getTrimmedNickname())
             }
         }
     }
@@ -55,6 +56,13 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
             updateNicknameValidationUI(isValid)
             updateSaveButtonEnabled(isValid)
+        }
+
+        viewModel.onNicknameChanged.observe(this) {
+            Toast
+                .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
+                .show()
+            finish()
         }
     }
 
