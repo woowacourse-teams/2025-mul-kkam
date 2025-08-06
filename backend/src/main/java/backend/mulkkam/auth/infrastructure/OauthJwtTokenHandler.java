@@ -47,7 +47,7 @@ public class OauthJwtTokenHandler {
 
     public Long getSubject(String token) {
         try {
-            Claims claims = getBodyWithValidation(token);
+            Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
         } catch (NumberFormatException e) {
             // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
@@ -55,7 +55,7 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    private Claims getBodyWithValidation(final String token) {
+    private Claims getClaims(final String token) {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
