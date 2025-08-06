@@ -31,7 +31,3 @@ spring:
     console:
       enabled: true
       path: /h2-console
-
-open-weather:
-  api:
-    key: temp-key
