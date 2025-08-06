@@ -8,11 +8,11 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
@@ -54,7 +54,7 @@ class IntakeHistoryServiceUnitTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("물의 음용량을 저장할 때에")
     @Nested
@@ -115,7 +115,7 @@ class IntakeHistoryServiceUnitTest {
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-            verify(intakeDetailRepository, never()).save(any(IntakeHistoryDetail.class));
+            verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
 
@@ -162,17 +162,17 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
@@ -182,7 +182,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -217,22 +217,22 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
-            IntakeHistoryDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
@@ -243,7 +243,7 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -302,24 +302,24 @@ class IntakeHistoryServiceUnitTest {
                     .withMember(member)
                     .build();
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when

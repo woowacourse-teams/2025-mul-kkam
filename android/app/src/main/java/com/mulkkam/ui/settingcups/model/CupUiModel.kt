@@ -1,7 +1,7 @@
 package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
-import com.mulkkam.domain.Cup
+import com.mulkkam.domain.model.Cup
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

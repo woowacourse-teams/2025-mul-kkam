@@ -1,10 +1,12 @@
-package com.mulkkam.domain
+package com.mulkkam.domain.model
 
 data class Cup(
     val id: Int,
     val nickname: String,
     val amount: Int,
     val rank: Int,
+    val intakeType: IntakeType,
+    val emoji: String,
 ) {
     val isRepresentative: Boolean
         get() = rank == REPRESENTATIVE_RANK

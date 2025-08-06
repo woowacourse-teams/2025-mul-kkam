@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.Cups
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.Cups
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,7 +15,11 @@ class HomeViewModel : ViewModel() {
     private val _todayIntakeHistorySummary = MutableLiveData<IntakeHistorySummary>()
     val todayIntakeHistorySummary: LiveData<IntakeHistorySummary> get() = _todayIntakeHistorySummary
 
-    var cups: Cups? = null
+    private val _cups: MutableLiveData<Cups> = MutableLiveData()
+    val cups: LiveData<Cups> get() = _cups
+
+    private val _characterChat: MutableLiveData<String> = MutableLiveData()
+    val characterChat: LiveData<String> get() = _characterChat
 
     init {
         loadTodayIntakeHistorySummary()
@@ -39,34 +43,27 @@ class HomeViewModel : ViewModel() {
         viewModelScope.launch {
             val result = RepositoryInjection.cupsRepository.getCups()
             runCatching {
-                cups = result.getOrError()
+                _cups.value = result.getOrError()
             }.onFailure {
                 // TODO: 에러 처리
             }
         }
     }
 
-    fun addWaterIntake(cupRank: Int) {
-        val cup = cups?.cups?.find { it.rank == cupRank }
-        val cupAmount = cup?.amount
+    fun addWaterIntake(cupId: Int) {
+        val cup = cups.value?.findCupById(cupId) ?: return
 
         viewModelScope.launch {
             val result =
                 RepositoryInjection.intakeRepository.postIntakeHistory(
                     LocalDateTime.now(),
-                    cupAmount ?: DEFAULT_INTAKE_AMOUNT,
+                    cup.amount,
                 )
             runCatching {
-                val achievementRate = result.getOrError()
-                // TODO: process 진척 로직 필요
+                val intakeHistoryResult = result.getOrError()
                 _todayIntakeHistorySummary.value =
-                    _todayIntakeHistorySummary.value?.copy(
-                        totalIntakeAmount =
-                            (
-                                _todayIntakeHistorySummary.value?.totalIntakeAmount
-                                    ?: DEFAULT_INTAKE_AMOUNT
-                            ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
-                    )
+                    todayIntakeHistorySummary.value?.updateIntakeResult(cup.amount, intakeHistoryResult.achievementRate)
+                _characterChat.value = intakeHistoryResult.comment
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -75,6 +72,5 @@ class HomeViewModel : ViewModel() {
 
     companion object {
         private const val FIRST_INDEX: Int = 0
-        private const val DEFAULT_INTAKE_AMOUNT: Int = 0
     }
 }

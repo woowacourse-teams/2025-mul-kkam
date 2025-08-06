@@ -8,12 +8,12 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
@@ -30,7 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -50,7 +50,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("음용량을 저장할 때에")
     @Nested
@@ -262,7 +262,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeHistoryDetail detailOfAnotherMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfAnotherMember = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(historyOfAnotherMember)
                     .build();
 
@@ -271,14 +271,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.of(2025, 10, 20))
                     .build();
 
-            IntakeHistoryDetail detailOfMember = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail detailOfMember = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(historyOfMember)
                     .build();
 
             intakeHistoryRepository.save(historyOfAnotherMember);
             IntakeHistory savedHistoryOfMember = intakeHistoryRepository.save(historyOfMember);
 
-            intakeDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
+            intakeHistoryDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -317,23 +317,23 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .targetIntakeAmount(new Amount(targetAmountOfMember))
                     .build();
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new Amount(500))
                     .build();
 
             intakeHistoryRepository.save(intakeHistory);
-            intakeDetailRepository.saveAll(List.of(
+            intakeHistoryDetailRepository.saveAll(List.of(
                     firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail
             ));
 
@@ -355,13 +355,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("음용 기록을 삭제할 때에")
+    @DisplayName("음용 세부 기록을 삭제할 때에")
     @Nested
     class Delete {
 
         @DisplayName("존재하지 않는 기록에 대한 요청인 경우 예외가 발생한다")
         @Test
-        void error_historyIsNotExisted() {
+        void error_historyDetailIsNotExisted() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -369,9 +369,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(1L, member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, member.getId()))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_INTAKE_HISTORY.name());
+                    .hasMessage(NOT_FOUND_INTAKE_HISTORY_DETAIL.name());
         }
 
         @DisplayName("존재하지 않는 멤버에 대한 요청인 경우 예외가 발생한다")
@@ -389,8 +389,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId() + 1L))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId() + 1L))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_MEMBER.name());
         }
@@ -416,13 +422,19 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), savedAnotherMember.getId()))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), savedAnotherMember.getId()))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
         }
 
-        @DisplayName("정상적으로 음용 기록이 삭제된다")
+        @DisplayName("정상적으로 삭제된다")
         @Test
         void success_validData() {
             // given
@@ -437,12 +449,18 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
             // when
-            intakeHistoryService.delete(intakeHistory.getId(), member.getId());
+            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId());
 
             // then
-            Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findById(intakeHistory.getId());
-            assertThat(foundIntakeHistory).isNotPresent();
+            Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeHistoryDetailRepository.findById(
+                    intakeHistory.getId());
+            assertThat(foundIntakeHistoryDetail).isNotPresent();
         }
 
         @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
@@ -460,8 +478,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.delete(intakeHistory.getId(), member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId()))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }

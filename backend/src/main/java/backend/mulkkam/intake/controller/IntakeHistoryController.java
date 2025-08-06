@@ -46,9 +46,9 @@ public class IntakeHistoryController {
         return ResponseEntity.ok(createIntakeHistoryResponse);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        intakeHistoryService.delete(id, 1L);
+    @DeleteMapping("/details/{id}")
+    public ResponseEntity<Void> deleteDetailHistory(@PathVariable Long id) {
+        intakeHistoryService.deleteDetailHistory(id, 1L);
         return ResponseEntity.ok().build();
     }
 }
