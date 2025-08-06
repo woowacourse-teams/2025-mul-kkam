@@ -1,4 +1,4 @@
-package backend.mulkkam.avgTemperature.domain;
+package backend.mulkkam.averageTemperature.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

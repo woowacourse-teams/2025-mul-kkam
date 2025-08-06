@@ -1,6 +1,6 @@
-package backend.mulkkam.avgTemperature.repository;
+package backend.mulkkam.averageTemperature.repository;
 
-import backend.mulkkam.avgTemperature.domain.AverageTemperature;
+import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

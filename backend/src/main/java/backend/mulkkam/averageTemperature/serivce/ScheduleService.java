@@ -1,10 +1,10 @@
-package backend.mulkkam.avgTemperature.service;
+package backend.mulkkam.averageTemperature.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_AVERAGE_TEMPERATURE;
 
-import backend.mulkkam.avgTemperature.domain.AverageTemperature;
-import backend.mulkkam.avgTemperature.dto.CreateTokenNotificationRequest;
-import backend.mulkkam.avgTemperature.repository.AverageTemperatureRepository;
+import backend.mulkkam.averageTemperature.domain.AverageTemperature;
+import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.intake.domain.vo.Amount;

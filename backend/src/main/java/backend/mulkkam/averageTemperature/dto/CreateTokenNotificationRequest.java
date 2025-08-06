@@ -1,4 +1,4 @@
-package backend.mulkkam.avgTemperature.dto;
+package backend.mulkkam.averageTemperature.dto;
 
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;

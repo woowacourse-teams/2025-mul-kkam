@@ -18,7 +18,7 @@ import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.avgTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
