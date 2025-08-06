@@ -53,7 +53,7 @@ jobs:
         working-directory: ./backend
 
       - name: Run tests
-        run: ./gradlew -Dspring.profiles.active=ci test
+        run: ./gradlew test -Dspring.profiles.active=ci
         working-directory: ./backend
         env:
           FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_BASE64_ENCODING_KEY }}
