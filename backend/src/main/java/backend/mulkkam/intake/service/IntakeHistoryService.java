@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -110,27 +111,28 @@ public class IntakeHistoryService {
     }
 
     @Transactional
-    public void delete(
-            Long intakeHistoryId,
+    public void deleteDetailHistory(
+            Long intakeHistoryDetailId,
             Long memberId
     ) {
         Member member = getMember(memberId);
-        IntakeHistory intakeHistory = findById(intakeHistoryId);
+        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
+                intakeHistoryDetailId);
 
-        validatePossibleToDelete(intakeHistory, member);
-        intakeHistoryRepository.delete(intakeHistory);
+        validatePossibleToDelete(intakeHistoryDetail, member);
+        intakeDetailRepository.delete(intakeHistoryDetail);
     }
 
     private void validatePossibleToDelete(
-            IntakeHistory intakeHistory,
+            IntakeHistoryDetail intakeHistoryDetail,
             Member member
     ) {
-        if (!intakeHistory.isOwnedBy(member)) {
+        if (!intakeHistoryDetail.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
         }
 
         LocalDate today = LocalDate.now();
-        if (!intakeHistory.isCreatedAt(today)) {
+        if (!intakeHistoryDetail.isCreatedAt(today)) {
             throw new CommonException(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
         }
     }
@@ -205,5 +207,10 @@ public class IntakeHistoryService {
     private IntakeHistory findById(Long id) {
         return intakeHistoryRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
+    }
+
+    private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
+        return intakeDetailRepository.findWithHistoryAndMemberById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY_DETAIL));
     }
 }
