@@ -2,15 +2,20 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.repository.MemberRepository;
+import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeAmountService {
 
     private final MemberRepository memberRepository;
+    private final IntakeHistoryRepository intakeHistoryRepository;
 
     @Transactional
     public void modifyTarget(
@@ -29,6 +35,11 @@ public class IntakeAmountService {
     ) {
         Member member = getMember(memberId);
         member.updateTargetAmount(intakeTargetAmountModifyRequest.toAmount());
+
+        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
+                LocalDate.now());
+        intakeHistory.ifPresent(
+                history -> history.modifyTargetAmount(new Amount(intakeTargetAmountModifyRequest.toAmount().value())));
     }
 
     public IntakeRecommendedAmountResponse getRecommended(Long memberId) {

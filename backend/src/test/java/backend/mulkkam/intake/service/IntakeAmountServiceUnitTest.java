@@ -17,6 +17,7 @@ import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -35,6 +36,9 @@ public class IntakeAmountServiceUnitTest {
 
     @InjectMocks
     IntakeAmountService intakeAmountService;
+
+    @Mock
+    IntakeHistoryRepository intakeHistoryRepository;
 
     @Mock
     MemberRepository memberRepository;
