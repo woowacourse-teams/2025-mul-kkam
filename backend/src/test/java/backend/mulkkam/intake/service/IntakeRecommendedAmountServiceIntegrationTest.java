@@ -1,32 +1,28 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.Optional;
+import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
-class IntakeRecommendedAmountServiceUnitTest {
+class IntakeRecommendedAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
-    @Mock
-    MemberRepository memberRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    @InjectMocks
+    @Autowired
     IntakeRecommendedAmountService intakeRecommendedAmountService;
 
     @DisplayName("날씨에 따라 추가될 추천 음용량을 구하는 경우")
     @Nested
-    class CalculateAdditionalIntakeAmountByWeather {
+    class CalculateExtraIntakeAmountBasedOnWeather {
 
         @DisplayName("평균 기온이 기준 기온보다 높은 경우 기준 날씨와의 격차를 통해 추가 음용량을 계산한다")
         @Test
@@ -39,15 +35,14 @@ class IntakeRecommendedAmountServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .weight(weight)
                     .build();
-            when(memberRepository.findById(memberId))
-                    .thenReturn(Optional.ofNullable(member));
+            memberRepository.save(member);
 
             // when
-            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(memberId,
+            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(memberId,
                     averageTemperature);
 
             // then
-            double expected = (averageTemperature - 26) * weight * 5;
+            ExtraIntakeAmount expected = new ExtraIntakeAmount(350);
             assertThat(actual).isEqualTo(expected);
         }
 
@@ -62,15 +57,14 @@ class IntakeRecommendedAmountServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .weight(weight)
                     .build();
-            when(memberRepository.findById(memberId))
-                    .thenReturn(Optional.ofNullable(member));
+            memberRepository.save(member);
 
             // when
-            double actual = intakeRecommendedAmountService.calculateAdditionalIntakeAmountByWeather(memberId,
+            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(memberId,
                     averageTemperature);
-
             // then
-            assertThat(actual).isEqualTo(0);
+            assertThat(actual).isEqualTo(new ExtraIntakeAmount(0));
         }
+
     }
 }
