@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEM
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class OauthAccount {
 
