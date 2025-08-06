@@ -1,4 +1,4 @@
-package backend.mulkkam.avgTemperature.serivce;
+package backend.mulkkam.avgTemperature.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_AVERAGE_TEMPERATURE;
 
