@@ -9,13 +9,11 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
-import com.mulkkam.di.LoggingInjection.logger
 import com.mulkkam.domain.IntakeHistorySummary
-import com.mulkkam.domain.model.LogEvent
+import com.mulkkam.domain.model.Cups
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.main.Refreshable
-import com.mulkkam.ui.settingwater.model.CupUiModel
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
 
@@ -32,39 +30,32 @@ class HomeFragment :
 
         initObservers()
         initCustomChartOptions()
-
-        binding.fabHomeDrink.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 1)
-        }
-
-        binding.fabHomeDrink.setMenuItems(
-            listOf<ExtendableFloatingMenuItem<CupUiModel>>(
-                ExtendableFloatingMenuItem(
-                    label = "Kou",
-                    iconUrl = "https://www.svgrepo.com/show/532086/water-arrow-up.svg",
-                ),
-                ExtendableFloatingMenuItem(
-                    label = "Kong",
-                    iconUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/560px-PNG_transparency_demonstration_1.png",
-                ),
-                ExtendableFloatingMenuItem(
-                    label = "Keren",
-                    iconUrl = "https://github.com/user-attachments/assets/b1d372d8-08c2-41d5-ac06-9a3462f032ab",
-                ),
-            ),
-            { item ->
-                logger.debug(LogEvent.DEBUG, "HomeFragment", "Selected menu item: $item")
-            },
-        )
     }
 
     private fun initObservers() {
         viewModel.todayIntakeHistorySummary.observe(viewLifecycleOwner) { summary ->
-            with(binding) {
-                pbHomeWaterProgress.setProgress(summary.achievementRate)
-            }
+            binding.pbHomeWaterProgress.setProgress(summary.achievementRate)
             updateDailyIntakeSummary(summary)
         }
+        viewModel.cups.observe(viewLifecycleOwner) { cups ->
+            updateDrinkMenu(cups)
+        }
+        viewModel.characterChat.observe(viewLifecycleOwner) { chat ->
+            binding.tvHomeCharacterChat.text = chat ?: return@observe
+        }
+    }
+
+    private fun updateDrinkMenu(cups: Cups) {
+        binding.fabHomeDrink.setMenuItems(
+            items =
+                cups.cups.map { cup ->
+                    ExtendableFloatingMenuItem(cup.nickname, cup.emoji, cup)
+                },
+            onItemClick = {
+                // TODO: null 시 수동 입력 기능 추가
+                viewModel.addWaterIntake(it.data?.id ?: return@setMenuItems)
+            },
+        )
     }
 
     private fun initCustomChartOptions() {
