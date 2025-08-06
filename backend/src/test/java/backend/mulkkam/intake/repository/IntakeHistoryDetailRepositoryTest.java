@@ -81,8 +81,10 @@ public class IntakeHistoryDetailRepositoryTest {
 
             // when
             List<IntakeHistoryDetail> firstDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
-                    member.getId(), date,
-                    date);
+                    member.getId(),
+                    date,
+                    date
+            );
             List<IntakeHistoryDetail> secondDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
                     member.getId(),
                     date.plusDays(1),

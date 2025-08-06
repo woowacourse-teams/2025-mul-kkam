@@ -41,12 +41,18 @@ public class IntakeHistoryService {
     ) {
         Member member = getMember(memberId);
         LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
-        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
-                        intakeDateTime.toLocalDate())
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
+                        memberId,
+                        intakeDateTime.toLocalDate()
+                )
                 .orElseGet(() -> {
                     int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate()) + 1;
-                    IntakeHistory newIntakeHistory = new IntakeHistory(member, intakeDateTime.toLocalDate(),
-                            member.getTargetAmount(), streak);
+                    IntakeHistory newIntakeHistory = new IntakeHistory(
+                            member,
+                            intakeDateTime.toLocalDate(),
+                            member.getTargetAmount(),
+                            streak
+                    );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
         IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
@@ -111,7 +117,8 @@ public class IntakeHistoryService {
     }
 
     private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
-        return intakeDetails.stream()
+        return intakeDetails
+                .stream()
                 .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
                 .toList();
     }
@@ -122,8 +129,10 @@ public class IntakeHistoryService {
     }
 
     private Amount calculateTotalIntakeAmount(List<IntakeDetailResponse> intakeDetailResponses) {
-        return new Amount(intakeDetailResponses.stream()
+        int total = intakeDetailResponses
+                .stream()
                 .mapToInt(IntakeDetailResponse::intakeAmount)
-                .sum());
+                .sum();
+        return new Amount(total);
     }
 }
