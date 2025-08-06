@@ -37,8 +37,7 @@
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
 
-    <View
-        android:id="@+id/view_toolbar_divider"
+    <com.google.android.material.divider.MaterialDivider
         android:layout_width="0dp"
         android:layout_height="1dp"
         android:background="@color/gray_100"
