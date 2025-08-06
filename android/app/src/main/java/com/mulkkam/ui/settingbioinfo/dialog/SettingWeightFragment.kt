@@ -26,7 +26,7 @@ class SettingWeightFragment :
         binding.npWeightChoose.apply {
             minValue = WEIGHT_MIN_VALUE
             maxValue = WEIGHT_MAX_VALUE
-            value = WEIGHT_DEFAULT_VALUE
+            value = parentViewModel.weight.value ?: WEIGHT_DEFAULT_VALUE
         }
     }
 
