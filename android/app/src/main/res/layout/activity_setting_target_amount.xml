@@ -32,7 +32,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/setting_goal_toolbar_title"
+            android:text="@string/setting_target_amount_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/setting_goal_edit_goal_label"
+        android:text="@string/setting_target_amount_edit_goal_label"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,7 +66,7 @@
         android:layout_marginTop="12dp"
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:backgroundTint="@color/gray_400"
-        android:hint="@string/setting_goal_hint_input_goal"
+        android:hint="@string/setting_target_amount_hint_input_goal"
         android:inputType="number"
         android:paddingHorizontal="12dp"
         android:paddingVertical="10dp"
@@ -82,7 +82,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:text="@string/setting_goal_unit_ml"
+        android:text="@string/setting_target_amount_unit_ml"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintBottom_toBottomOf="@id/et_input_goal"
@@ -90,12 +90,12 @@
         app:layout_constraintTop_toTopOf="@id/et_input_goal" />
 
     <TextView
-        android:id="@+id/tv_goal_warning_message"
+        android:id="@+id/tv_target_amount_warning_message"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginTop="7dp"
-        android:text="@string/setting_goal_warning_too_much"
+        android:text="@string/setting_target_amount_warning_too_much"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
         android:visibility="gone"
@@ -103,7 +103,7 @@
         app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
 
     <TextView
-        android:id="@+id/tv_recommended_water_goal"
+        android:id="@+id/tv_recommended_target_amount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -122,8 +122,8 @@
         android:text="@string/target_amount_recommended_description"
         android:textAppearance="@style/body5"
         android:textColor="@color/gray_200"
-        app:layout_constraintStart_toStartOf="@id/tv_recommended_water_goal"
-        app:layout_constraintTop_toBottomOf="@id/tv_recommended_water_goal" />
+        app:layout_constraintStart_toStartOf="@id/tv_recommended_target_amount"
+        app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount" />
 
 
     <TextView

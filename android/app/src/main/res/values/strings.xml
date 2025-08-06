@@ -46,11 +46,12 @@
     <string name="setting_water_cup_amount">용량</string>
     <string name="setting_water_cup_save">완료</string>
 
-    <string name="setting_goal_toolbar_title">마시기 목표 설정</string>
-    <string name="setting_goal_edit_goal_label">하루 목표량</string>
-    <string name="setting_goal_hint_input_goal">목표량을 입력해주세요</string>
-    <string name="setting_goal_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
-    <string name="setting_goal_unit_ml">ml</string>
+    <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
+    <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
+    <string name="setting_target_amount_hint_input_goal">목표량을 입력해주세요</string>
+    <string name="setting_target_amount_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_target_amount_unit_ml">ml</string>
+    <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>

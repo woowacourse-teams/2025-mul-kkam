@@ -103,7 +103,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:text="@string/setting_goal_unit_ml"
+        android:text="@string/setting_target_amount_unit_ml"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintBottom_toBottomOf="@id/et_setting_water_cup_amount"

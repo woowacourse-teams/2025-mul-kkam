@@ -6,8 +6,13 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.addTextChangedListener
+import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.getColoredSpannable
+import java.util.Locale
+import kotlin.String
 
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
     private val viewModel: SettingTargetAmountViewModel by viewModels()
@@ -30,10 +35,38 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun initObservers() {
-        viewModel.onSaveTargetAmount.observe(this) { success ->
-            Toast.makeText(this, "마시기 목표 설정이 완료되었습니다", Toast.LENGTH_SHORT).show()
+        viewModel.onSaveTargetAmount.observe(this) {
+            Toast
+                .makeText(
+                    this,
+                    R.string.setting_target_amount_complete_description,
+                    Toast.LENGTH_SHORT,
+                ).show()
             finish()
         }
+
+        viewModel.onRecommendationReady.observe(this) {
+            updateRecommendedTargetAmount()
+        }
+    }
+
+    private fun updateRecommendedTargetAmount() {
+        binding.tvRecommendedTargetAmount.text =
+            getString(
+                R.string.target_amount_recommended_water_goal,
+                viewModel.nickname,
+                viewModel.recommendedTargetAmount,
+            ).getAppearanceSpannable(
+                this,
+                R.style.title2,
+                viewModel.nickname ?: "",
+                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
+            ).getColoredSpannable(
+                this,
+                R.color.primary_200,
+                viewModel.nickname ?: "",
+                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
+            )
     }
 
     private fun initGoalInputListener() {

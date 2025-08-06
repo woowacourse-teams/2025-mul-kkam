@@ -104,7 +104,7 @@ class SettingFragment :
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
                 SettingItem.NormalItem(getString(R.string.setting_water_toolbar_title), SettingType.Normal.MyCup),
-                SettingItem.NormalItem(getString(R.string.setting_goal_toolbar_title), SettingType.Normal.Goal),
+                SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.Normal.Goal),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
