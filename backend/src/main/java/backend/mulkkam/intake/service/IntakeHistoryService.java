@@ -12,7 +12,7 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -39,7 +39,7 @@ public class IntakeHistoryService {
 
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
-    private final IntakeDetailRepository intakeDetailRepository;
+    private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @Transactional
     public CreateIntakeHistoryResponse create(
@@ -63,7 +63,7 @@ public class IntakeHistoryService {
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
         IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
-        intakeDetailRepository.save(intakeHistoryDetail);
+        intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(
                 intakeDetailCreateRequest.dateTime().toLocalDate(),
@@ -94,7 +94,7 @@ public class IntakeHistoryService {
             Long memberId
     ) {
         Member member = getMember(memberId);
-        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
+        List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
@@ -120,7 +120,7 @@ public class IntakeHistoryService {
                 intakeHistoryDetailId);
 
         validatePossibleToDelete(intakeHistoryDetail, member);
-        intakeDetailRepository.delete(intakeHistoryDetail);
+        intakeHistoryDetailRepository.delete(intakeHistoryDetail);
     }
 
     private void validatePossibleToDelete(
@@ -146,7 +146,7 @@ public class IntakeHistoryService {
             LocalDate date,
             Long memberId
     ) {
-        return intakeDetailRepository.findAllByMemberIdAndDateRange(
+        return intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
                 memberId,
                 date,
                 date
@@ -210,7 +210,7 @@ public class IntakeHistoryService {
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
-        return intakeDetailRepository.findWithHistoryAndMemberById(id)
+        return intakeHistoryDetailRepository.findWithHistoryAndMemberById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY_DETAIL));
     }
 }

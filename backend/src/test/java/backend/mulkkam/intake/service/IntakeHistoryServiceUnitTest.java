@@ -8,7 +8,7 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -54,7 +54,7 @@ class IntakeHistoryServiceUnitTest {
     private MemberRepository memberRepository;
 
     @Mock
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("물의 음용량을 저장할 때에")
     @Nested
@@ -115,7 +115,7 @@ class IntakeHistoryServiceUnitTest {
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, memberId))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-            verify(intakeDetailRepository, never()).save(any(IntakeHistoryDetail.class));
+            verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
 
@@ -182,7 +182,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -243,7 +243,7 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -319,7 +319,7 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(memberId, startDate, endDate))
                     .willReturn(details);
 
             // when

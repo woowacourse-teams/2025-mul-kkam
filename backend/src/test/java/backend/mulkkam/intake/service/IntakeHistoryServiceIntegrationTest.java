@@ -8,7 +8,7 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -50,7 +50,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("음용량을 저장할 때에")
     @Nested
@@ -278,7 +278,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(historyOfAnotherMember);
             IntakeHistory savedHistoryOfMember = intakeHistoryRepository.save(historyOfMember);
 
-            intakeDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
+            intakeHistoryDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -333,7 +333,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             intakeHistoryRepository.save(intakeHistory);
-            intakeDetailRepository.saveAll(List.of(
+            intakeHistoryDetailRepository.saveAll(List.of(
                     firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail
             ));
 
@@ -392,7 +392,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
-            intakeDetailRepository.save(intakeHistoryDetail);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
             assertThatThrownBy(
@@ -425,7 +425,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
-            intakeDetailRepository.save(intakeHistoryDetail);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
             assertThatThrownBy(
@@ -452,13 +452,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
-            intakeDetailRepository.save(intakeHistoryDetail);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
             intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId());
 
             // then
-            Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeDetailRepository.findById(
+            Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeHistoryDetailRepository.findById(
                     intakeHistory.getId());
             assertThat(foundIntakeHistoryDetail).isNotPresent();
         }
@@ -481,7 +481,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
-            intakeDetailRepository.save(intakeHistoryDetail);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId()))

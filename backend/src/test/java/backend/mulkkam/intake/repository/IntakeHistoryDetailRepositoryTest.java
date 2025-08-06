@@ -28,7 +28,7 @@ public class IntakeHistoryDetailRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("음용 세부 기록을 조회할 때에")
     @Nested
@@ -76,20 +76,20 @@ public class IntakeHistoryDetailRepositoryTest {
                     .time(LocalTime.of(13, 0))
                     .build();
 
-            intakeDetailRepository.saveAll(
+            intakeHistoryDetailRepository.saveAll(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));
 
             // when
-            List<IntakeHistoryDetail> firstDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
+            List<IntakeHistoryDetail> firstDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
                     member.getId(),
                     date,
                     date
             );
-            List<IntakeHistoryDetail> secondDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
+            List<IntakeHistoryDetail> secondDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
                     member.getId(),
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeHistoryDetail> allDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
+            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
                     date,
                     date.plusDays(1));
 
