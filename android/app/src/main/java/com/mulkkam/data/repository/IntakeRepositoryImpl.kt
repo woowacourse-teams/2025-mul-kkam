@@ -17,8 +17,8 @@ class IntakeRepositoryImpl(
     private val intakeService: IntakeService,
 ) : IntakeRepository {
     override suspend fun getIntakeHistory(
-        from: LocalDate?,
-        to: LocalDate?,
+        from: LocalDate,
+        to: LocalDate,
     ): MulKkamResult<IntakeHistorySummaries> {
         val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
         return result.fold(
@@ -41,7 +41,7 @@ class IntakeRepositoryImpl(
         )
     }
 
-    private fun dateToString(date: LocalDate?) = date?.format(formatter)
+    private fun dateToString(date: LocalDate) = date.format(formatter)
 
     override suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit> {
         val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))

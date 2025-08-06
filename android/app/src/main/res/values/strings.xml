@@ -25,11 +25,13 @@
     <string name="setting_title">설정</string>
     <string name="setting_save">저장</string>
 
-    <string name="setting_profile_toolbar_title">프로필 설정</string>
-    <string name="setting_profile_edit_nickname_label">닉네임 변경</string>
-    <string name="setting_profile_hint_input_nickname">닉네임을 입력해 주세요</string>
-    <string name="setting_profile_check_duplicate">중복확인</string>
-    <string name="setting_profile_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_nickname_toolbar_title">닉네임 설정</string>
+    <string name="setting_nickname_edit_nickname_label">닉네임 변경</string>
+    <string name="setting_nickname_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="setting_nickname_check_duplicate">중복확인</string>
+    <string name="setting_nickname_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_nickname_valid">좋은 닉네임이시네요!</string>
+    <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요!</string>
 
     <string name="setting_water_toolbar_title">물 마시기 설정</string>
     <string name="setting_water_default">기본</string>
@@ -72,10 +74,10 @@
     <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
     <string name="terms_agree_hint_highlight">이용약관</string>
     <string name="terms_agree_all">물깜 약관 전체동의</string>
-    <string name="terms_agree_service">서비스 이용 약관 동의</string>
-    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의</string>
-    <string name="terms_agree_night_notification">야간 알림 수신 동의</string>
-    <string name="terms_agree_marketing">마케팅 정보 수신 동의</string>
+    <string name="terms_agree_service">서비스 이용 약관 동의 %s</string>
+    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %s</string>
+    <string name="terms_agree_night_notification">야간 알림 수신 동의 %s</string>
+    <string name="terms_agree_marketing">마케팅 정보 수신 동의 %s</string>
     <string name="terms_required_suffix">(필수)</string>
     <string name="terms_optional_suffix">(선택)</string>
 
@@ -89,6 +91,7 @@
     <string name="bio_info_gender_female">여자</string>
     <string name="bio_info_weight_label">몸무게</string>
     <string name="bio_info_weight_hint">몸무게 정보를 입력해 주세요</string>
+    <string name="bio_info_weight_format">%d kg</string>
 
     <string name="weight_label">몸무게 설정</string>
     <string name="weight_complete">완료</string>

@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -8,6 +9,7 @@ import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,9 +36,18 @@ public class IntakeHistoryController {
         return ResponseEntity.ok().body(dailyResponses);
     }
 
+
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody IntakeDetailCreateRequest intakeDetailCreateRequest) {
-        intakeHistoryService.create(intakeDetailCreateRequest, 1L);
+    public ResponseEntity<CreateIntakeHistoryResponse> create(
+            @RequestBody IntakeDetailCreateRequest intakeDetailCreateRequest) {
+        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.create(
+                intakeDetailCreateRequest, 1L);
+        return ResponseEntity.ok(createIntakeHistoryResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(Long id) {
+        intakeHistoryService.delete(id, 1L);
         return ResponseEntity.ok().build();
     }
 }

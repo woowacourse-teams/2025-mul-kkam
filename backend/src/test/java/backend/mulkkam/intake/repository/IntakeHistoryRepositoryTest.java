@@ -1,8 +1,5 @@
 package backend.mulkkam.intake.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.member.domain.Member;
@@ -18,6 +15,9 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DataJpaTest
 class IntakeHistoryRepositoryTest {

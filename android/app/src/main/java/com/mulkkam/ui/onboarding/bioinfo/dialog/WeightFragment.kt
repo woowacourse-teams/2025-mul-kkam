@@ -2,13 +2,17 @@ package com.mulkkam.ui.onboarding.bioinfo.dialog
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentWeightBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 
 class WeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
         FragmentWeightBinding::inflate,
     ) {
+    private val parentViewModel: BioInfoViewModel by activityViewModels()
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -30,7 +34,7 @@ class WeightFragment :
         binding.ivWeightClose.setOnClickListener { dismiss() }
 
         binding.tvComplete.setOnClickListener {
-            // TODO: 몸무게 저장 로직 필요 ( 부모 뷰모델을 통해 저장할 듯 )
+            parentViewModel.updateWeight(binding.npWeightChoose.value)
             dismiss()
         }
     }

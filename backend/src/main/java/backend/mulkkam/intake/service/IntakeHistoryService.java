@@ -2,10 +2,12 @@ package backend.mulkkam.intake.service;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
@@ -25,6 +27,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -35,7 +41,7 @@ public class IntakeHistoryService {
     private final IntakeDetailRepository intakeDetailRepository;
 
     @Transactional
-    public void create(
+    public CreateIntakeHistoryResponse create(
             IntakeDetailCreateRequest intakeDetailCreateRequest,
             Long memberId
     ) {
@@ -57,6 +63,29 @@ public class IntakeHistoryService {
                 });
         IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
         intakeDetailRepository.save(intakeHistoryDetail);
+
+        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(
+                intakeDetailCreateRequest.dateTime().toLocalDate(),
+                memberId
+        );
+
+        if (intakeHistoryDetails.isEmpty()) {
+            return new CreateIntakeHistoryResponse(
+                    0,
+                    CommentOfAchievementRate.VERY_LOW.getComment()
+            );
+        }
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        AchievementRate achievementRate = new AchievementRate(
+                totalIntakeAmount,
+                intakeHistory.getTargetAmount()
+        );
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
+
+        return new CreateIntakeHistoryResponse(
+                achievementRate.value(),
+                commentByAchievementRate
+        );
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
@@ -80,9 +109,54 @@ public class IntakeHistoryService {
                 .toList();
     }
 
+    @Transactional
+    public void delete(
+            Long intakeHistoryId,
+            Long memberId
+    ) {
+        Member member = getMember(memberId);
+        IntakeHistory intakeHistory = findById(intakeHistoryId);
+
+        validatePossibleToDelete(intakeHistory, member);
+        intakeHistoryRepository.delete(intakeHistory);
+    }
+
+    private void validatePossibleToDelete(
+            IntakeHistory intakeHistory,
+            Member member
+    ) {
+        if (!intakeHistory.isOwnedBy(member)) {
+            throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
+        }
+
+        LocalDate today = LocalDate.now();
+        if (!intakeHistory.isCreatedAt(today)) {
+            throw new CommonException(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
+        }
+    }
+
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
+    }
+
+    private List<IntakeHistoryDetail> findIntakeHistoriesOfDate(
+            LocalDate date,
+            Long memberId
+    ) {
+        return intakeDetailRepository.findAllByMemberIdAndDateRange(
+                memberId,
+                date,
+                date
+        );
+    }
+
+    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+        int total = intakeHistoryDetails
+                .stream()
+                .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
+                .sum();
+        return new Amount(total);
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
@@ -98,7 +172,7 @@ public class IntakeHistoryService {
         List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
         List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailResponses);
+        Amount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
 
         Amount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
@@ -128,11 +202,8 @@ public class IntakeHistoryService {
                 .map(IntakeDetailResponse::new).toList();
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeDetailResponse> intakeDetailResponses) {
-        int total = intakeDetailResponses
-                .stream()
-                .mapToInt(IntakeDetailResponse::intakeAmount)
-                .sum();
-        return new Amount(total);
+    private IntakeHistory findById(Long id) {
+        return intakeHistoryRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
     }
 }

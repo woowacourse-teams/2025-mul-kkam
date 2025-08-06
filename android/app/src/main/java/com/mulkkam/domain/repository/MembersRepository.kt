@@ -1,0 +1,11 @@
+package com.mulkkam.domain.repository
+
+import com.mulkkam.domain.MulKkamResult
+
+interface MembersRepository {
+    suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit>
+
+    suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit>
+
+    suspend fun getMembersNickname(): MulKkamResult<String>
+}
