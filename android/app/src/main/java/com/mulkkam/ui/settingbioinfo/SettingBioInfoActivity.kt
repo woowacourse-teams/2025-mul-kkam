@@ -47,6 +47,10 @@ class SettingBioInfoActivity :
             tvGenderFemale.setOnClickListener {
                 viewModel.updateGender(FEMALE)
             }
+
+            ivBack.setOnClickListener {
+                finish()
+            }
         }
     }
 
