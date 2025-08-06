@@ -6,7 +6,9 @@ import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -68,5 +70,11 @@ public class MemberController {
     public ResponseEntity<MemberNicknameResponse> create(@RequestBody CreateMemberRequest createMemberRequest) {
         memberService.create(createMemberRequest);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/progress-info")
+    public ResponseEntity<ProgressInfoResponse> getProgressInfo(@RequestParam LocalDate date) {
+        ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(date, 1L);
+        return ResponseEntity.ok().body(progressInfoResponse);
     }
 }

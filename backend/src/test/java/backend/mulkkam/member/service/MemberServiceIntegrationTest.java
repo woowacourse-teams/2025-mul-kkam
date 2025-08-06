@@ -1,26 +1,5 @@
 package backend.mulkkam.member.service;
 
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.Gender;
-import backend.mulkkam.member.domain.vo.MemberNickname;
-import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
-import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
-import backend.mulkkam.member.dto.response.MemberNicknameResponse;
-import backend.mulkkam.member.dto.response.MemberResponse;
-import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
-import java.util.List;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
@@ -31,6 +10,35 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.dto.CreateMemberRequest;
+import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberNicknameResponse;
+import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.ProgressInfoResponse;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
+import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.beans.factory.annotation.Autowired;
+
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -38,6 +46,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private IntakeHistoryRepository intakeHistoryRepository;
+    @Autowired
+    private IntakeDetailRepository intakeDetailRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -311,5 +323,51 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         assertThatThrownBy(() -> memberService.create(createMemberRequest))
                 .isInstanceOf(CommonException.class)
                 .hasMessage(INVALID_AMOUNT.name());
+    }
+
+    @DisplayName("멤버의 진행 상황을 조회할 때")
+    @Nested
+    class GetProgressInfo {
+
+        @DisplayName("정상적으로 작동한다")
+        @Test
+        void success_validData() {
+            // given
+            String nickname = "체체";
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(nickname))
+                    .build();
+            memberRepository.save(member);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .targetIntakeAmount(new Amount(1000))
+                    .date(LocalDate.of(2025, 7, 15))
+                    .streak(42)
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new Amount(500))
+                    .build();
+            intakeDetailRepository.save(intakeHistoryDetail);
+
+            // when
+            ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
+                    LocalDate.of(2025, 7, 15),
+                    member.getId()
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(progressInfoResponse.memberNickname()).isEqualTo(nickname);
+                softly.assertThat(progressInfoResponse.streak()).isEqualTo(42);
+                softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(50.0);
+                softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(1000);
+                softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(500);
+            });
+        }
     }
 }
