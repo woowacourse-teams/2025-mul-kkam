@@ -6,14 +6,14 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.mulkkam.util.glide.SvgSoftwareLayerSetter
 
-private const val SVG_EXTENSION = ".svg"
+private val svgRegex = Regex("(?i)\\.svg(\\?.*)?$")
 
 fun ImageView.loadUrl(
     url: String,
     placeholderRes: Int? = null,
     errorRes: Int? = null,
 ) {
-    if (url.lowercase().endsWith(SVG_EXTENSION)) {
+    if (url.isSvgUrl()) {
         val request =
             Glide
                 .with(context)
@@ -24,7 +24,6 @@ fun ImageView.loadUrl(
 
         placeholderRes?.let { request.placeholder(it) }
         errorRes?.let { request.error(it) }
-
         request.into(this)
     } else {
         val request =
@@ -36,7 +35,8 @@ fun ImageView.loadUrl(
 
         placeholderRes?.let { request.placeholder(it) }
         errorRes?.let { request.error(it) }
-
         request.into(this)
     }
 }
+
+private fun String.isSvgUrl(): Boolean = svgRegex.containsMatchIn(this)

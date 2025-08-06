@@ -48,8 +48,9 @@
 
         <ImageView
             android:id="@+id/iv_icon"
-            android:layout_width="72dp"
-            android:layout_height="72dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_margin="20dp"
             tools:src="@drawable/ic_app" />
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>
