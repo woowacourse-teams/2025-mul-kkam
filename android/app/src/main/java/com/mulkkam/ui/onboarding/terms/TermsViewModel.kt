@@ -23,13 +23,7 @@ class TermsViewModel : ViewModel() {
         }
 
     init {
-        _termsAgreements.value =
-            listOf(
-                TermsAgreementUiModel(R.string.terms_agree_service, true),
-                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
-                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
-                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
-            )
+        _termsAgreements.value = TERMS_AGREEMENTS
     }
 
     fun updateCheckState(termsAgreement: TermsAgreementUiModel) {
@@ -56,5 +50,15 @@ class TermsViewModel : ViewModel() {
                     agreement.copy(isChecked = false)
                 }
         }
+    }
+
+    companion object {
+        private val TERMS_AGREEMENTS: List<TermsAgreementUiModel> =
+            listOf(
+                TermsAgreementUiModel(R.string.terms_agree_service, true),
+                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
+                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
+                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
+            )
     }
 }
