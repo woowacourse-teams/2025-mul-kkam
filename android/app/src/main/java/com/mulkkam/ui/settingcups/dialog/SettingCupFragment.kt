@@ -1,22 +1,22 @@
-package com.mulkkam.ui.settingwater.dialog
+package com.mulkkam.ui.settingcups.dialog
 
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentSettingWaterCupBinding
+import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
-import com.mulkkam.ui.settingwater.model.CupUiModel
-import com.mulkkam.ui.settingwater.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
-import com.mulkkam.ui.settingwater.model.SettingWaterCupEditType
+import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
+import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.util.extensions.getParcelableCompat
 
-class SettingWaterCupFragment :
-    BindingBottomSheetDialogFragment<FragmentSettingWaterCupBinding>(
-        FragmentSettingWaterCupBinding::inflate,
+class SettingCupFragment :
+    BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
+        FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: SettingWaterCupViewModel by viewModels()
+    private val viewModel: SettingCupViewModel by viewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     override fun onViewCreated(
@@ -72,8 +72,8 @@ class SettingWaterCupFragment :
     private fun showTitle(editType: SettingWaterCupEditType) {
         binding.dialogSettingWaterCupTitle.setText(
             when (editType) {
-                SettingWaterCupEditType.ADD -> R.string.setting_water_cup_add_title
-                SettingWaterCupEditType.EDIT -> R.string.setting_water_cup_edit_title
+                SettingWaterCupEditType.ADD -> R.string.setting_cup_add_title
+                SettingWaterCupEditType.EDIT -> R.string.setting_cup_edit_title
             },
         )
     }
@@ -95,8 +95,8 @@ class SettingWaterCupFragment :
         const val TAG: String = "SETTING_WATER_CUP_FRAGMENT"
         private const val ARG_CUP: String = "CUP"
 
-        fun newInstance(cup: CupUiModel?): SettingWaterCupFragment =
-            SettingWaterCupFragment().apply {
+        fun newInstance(cup: CupUiModel?): SettingCupFragment =
+            SettingCupFragment().apply {
                 arguments =
                     Bundle().apply {
                         putParcelable(ARG_CUP, cup)

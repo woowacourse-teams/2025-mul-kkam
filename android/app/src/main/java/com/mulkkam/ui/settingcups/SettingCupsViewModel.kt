@@ -1,15 +1,15 @@
-package com.mulkkam.ui.settingwater
+package com.mulkkam.ui.settingcups
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
-import com.mulkkam.ui.settingwater.model.CupsUiModel
-import com.mulkkam.ui.settingwater.model.toUi
+import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.settingcups.model.toUi
 import kotlinx.coroutines.launch
 
-class SettingWaterViewModel : ViewModel() {
+class SettingCupsViewModel : ViewModel() {
     private var _cups: MutableLiveData<CupsUiModel> = MutableLiveData()
     val cups: LiveData<CupsUiModel> get() = _cups
 

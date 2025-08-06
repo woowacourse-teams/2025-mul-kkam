@@ -27,7 +27,7 @@
             android:backgroundTint="@color/gray_400"
             android:paddingHorizontal="4dp"
             android:paddingVertical="2dp"
-            android:text="@string/setting_water_default"
+            android:text="@string/setting_cups_default"
             android:textAppearance="@style/label2"
             android:textColor="@color/white"
             android:visibility="gone"
@@ -41,22 +41,10 @@
             android:backgroundTint="@color/primary_200"
             android:paddingHorizontal="4dp"
             android:paddingVertical="2dp"
-            android:text="@string/setting_water_label_water"
+            android:text="@string/setting_cups_label_water"
             android:textAppearance="@style/label2"
             android:textColor="@color/white" />
     </LinearLayout>
-
-    <ImageView
-        android:id="@+id/iv_setting_water_cup_delete"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="12dp"
-        android:importantForAccessibility="no"
-        android:src="@drawable/ic_setting_water_cross"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="@color/gray_400" />
 
     <TextView
         android:id="@+id/tv_setting_water_cup_name"
@@ -73,7 +61,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="14dp"
-        android:text="@string/setting_water_increment"
+        android:text="@string/setting_cups_increment"
         android:textAppearance="@style/body4"
         android:textColor="@color/primary_200"
         app:layout_constraintBottom_toBottomOf="@id/tv_setting_water_cup_name"
@@ -90,7 +78,7 @@
         android:backgroundTint="@color/gray_400"
         android:gravity="center"
         android:paddingVertical="6dp"
-        android:text="@string/setting_water_edit"
+        android:text="@string/setting_cups_edit"
         android:textAppearance="@style/body4"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"

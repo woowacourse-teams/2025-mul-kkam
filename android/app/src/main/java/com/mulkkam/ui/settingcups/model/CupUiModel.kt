@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingwater.model
+package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
 import com.mulkkam.domain.Cup

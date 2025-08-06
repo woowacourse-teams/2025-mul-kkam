@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingwater.model
+package com.mulkkam.ui.settingcups.model
 
 import com.mulkkam.domain.Cups
 

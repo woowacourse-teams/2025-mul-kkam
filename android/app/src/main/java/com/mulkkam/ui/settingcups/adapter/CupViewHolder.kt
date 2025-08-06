@@ -1,56 +1,50 @@
-package com.mulkkam.ui.settingwater.adapter
+package com.mulkkam.ui.settingcups.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mulkkam.R
-import com.mulkkam.databinding.ItemSettingWaterCupBinding
-import com.mulkkam.ui.settingwater.model.CupUiModel
+import com.mulkkam.databinding.ItemSettingCupsCupBinding
+import com.mulkkam.ui.settingcups.model.CupUiModel
 
 class CupViewHolder(
     parent: ViewGroup,
     private val handler: Handler,
-) : SettingWaterViewHolder<SettingWaterItem.CupItem, ItemSettingWaterCupBinding>(
-        ItemSettingWaterCupBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+) : SettingCupsViewHolder<SettingCupsItem.CupItem, ItemSettingCupsCupBinding>(
+        ItemSettingCupsCupBinding.inflate(LayoutInflater.from(parent.context), parent, false),
     ) {
-    override fun bind(item: SettingWaterItem.CupItem) {
+    override fun bind(item: SettingCupsItem.CupItem) {
         super.bind(item)
         showCupInfo(item)
         handleRepresentativeCup(item)
         initClickListeners(item)
     }
 
-    private fun showCupInfo(item: SettingWaterItem.CupItem) =
+    private fun showCupInfo(item: SettingCupsItem.CupItem) =
         with(binding) {
             tvSettingWaterCupName.text = item.value.nickname
             tvSettingWaterCupIncrement.text =
                 root.context.getString(
-                    R.string.setting_water_increment,
+                    R.string.setting_cups_increment,
                     item.value.amount,
                 )
         }
 
-    private fun handleRepresentativeCup(item: SettingWaterItem.CupItem) =
+    private fun handleRepresentativeCup(item: SettingCupsItem.CupItem) =
         with(binding) {
             if (item.value.isRepresentative) {
                 tvSettingWaterCupTagRepresentative.visibility = View.VISIBLE
-                ivSettingWaterCupDelete.visibility = View.GONE
             }
         }
 
-    private fun initClickListeners(item: SettingWaterItem.CupItem) =
+    private fun initClickListeners(item: SettingCupsItem.CupItem) =
         with(binding) {
             tvSettingWaterCupEdit.setOnClickListener {
                 handler.onEditClick(item.value)
-            }
-            ivSettingWaterCupDelete.setOnClickListener {
-                handler.onDeleteClick(item.id)
             }
         }
 
     interface Handler {
         fun onEditClick(cup: CupUiModel)
-
-        fun onDeleteClick(id: Int)
     }
 }
