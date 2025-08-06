@@ -197,6 +197,38 @@ class MemberControllerTest {
             OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
             assertThat(savedOauthAccount.getMember()).isNotNull();
         }
+
+        @DisplayName("생체 정보 없이도 저장이 정상적으로 이뤄진다")
+        @Test
+        void success_withoutPhysicalAttributes() {
+            // given
+            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
+                    "히로",
+                    null,
+                    null,
+                    1_000,
+                    true,
+                    false
+            );
+
+            // when
+            RestAssured.given().log().all()
+                    .contentType(ContentType.JSON)
+                    .header("Authorization", "Bearer " + token)
+                    .body(createMemberRequest)
+                    .when().post("/members")
+                    .then().log().all()
+                    .statusCode(HttpStatus.OK.value());
+
+            // then
+            OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
+            assertThat(savedOauthAccount.getMember()).isNotNull();
+        }
     }
 
     @DisplayName("온보딩 진행 여부 확인 시")
