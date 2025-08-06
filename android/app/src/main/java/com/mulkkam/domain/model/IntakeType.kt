@@ -9,8 +9,8 @@ enum class IntakeType {
     companion object {
         fun from(intakeType: String): IntakeType =
             when (intakeType) {
-                "WATER" -> WATER
-                "COFFEE" -> COFFEE
+                WATER.name -> WATER
+                COFFEE.name -> COFFEE
                 else -> UNKNOWN
             }
     }
