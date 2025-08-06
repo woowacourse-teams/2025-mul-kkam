@@ -6,13 +6,39 @@ import androidx.viewbinding.ViewBinding
 
 class SettingCupsAdapter(
     private val handler: Handler,
-) : ListAdapter<SettingCupsItem, SettingCupsViewHolder<out SettingCupsItem, out ViewBinding>>(SettingCupsDiffCallback) {
+    private val dragStartListener: OnStartDragListener,
+) : ListAdapter<SettingCupsItem, SettingCupsViewHolder<out SettingCupsItem, out ViewBinding>>(SettingCupsDiffCallback),
+    ItemTouchHelperAdapter {
+    private val mutableItems = mutableListOf<SettingCupsItem>()
+
+    override fun submitList(list: List<SettingCupsItem>?) {
+        mutableItems.clear()
+        if (list != null) mutableItems.addAll(list)
+        super.submitList(list)
+    }
+
+    override fun onItemMove(
+        fromPosition: Int,
+        toPosition: Int,
+    ) {
+        if (fromPosition in mutableItems.indices && toPosition in mutableItems.indices) {
+            val movedItem = mutableItems.removeAt(fromPosition)
+            mutableItems.add(toPosition, movedItem)
+            notifyItemMoved(fromPosition, toPosition)
+        }
+    }
+
+    override fun onItemDrop() {
+        val cupsOrder = mutableItems.filterIsInstance<SettingCupsItem.CupItem>()
+        handler.onCupsOrderChanged(cupsOrder)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
     ): SettingCupsViewHolder<out SettingCupsItem, out ViewBinding> =
         when (SettingCupsViewType.entries[viewType]) {
-            SettingCupsViewType.CUP -> CupViewHolder(parent, handler)
+            SettingCupsViewType.CUP -> CupViewHolder(parent, handler, dragStartListener)
             SettingCupsViewType.ADD -> AddViewHolder(parent, handler)
         }
 
@@ -21,18 +47,17 @@ class SettingCupsAdapter(
         position: Int,
     ) {
         val item = getItem(position)
-
         when {
             holder is CupViewHolder && item is SettingCupsItem.CupItem -> holder.bind(item)
             holder is AddViewHolder && item is SettingCupsItem.AddItem -> holder.bind(item)
         }
     }
 
-    override fun getItemCount(): Int = currentList.size
-
     override fun getItemViewType(position: Int): Int = getItem(position).viewType.ordinal
 
     interface Handler :
         CupViewHolder.Handler,
-        AddViewHolder.Handler
+        AddViewHolder.Handler {
+        fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>)
+    }
 }

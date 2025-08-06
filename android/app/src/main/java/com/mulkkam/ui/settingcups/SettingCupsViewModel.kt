@@ -13,7 +13,11 @@ class SettingCupsViewModel : ViewModel() {
     private var _cups: MutableLiveData<CupsUiModel> = MutableLiveData()
     val cups: LiveData<CupsUiModel> get() = _cups
 
-    fun loadCups() {
+    init {
+        loadCups()
+    }
+
+    private fun loadCups() {
         viewModelScope.launch {
             val result = cupsRepository.getCups()
             runCatching {
