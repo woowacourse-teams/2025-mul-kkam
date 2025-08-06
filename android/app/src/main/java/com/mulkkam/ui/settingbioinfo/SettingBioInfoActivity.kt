@@ -68,7 +68,7 @@ class SettingBioInfoActivity :
         }
 
         viewModel.onBioInfoChanged.observe(this) {
-            Toast.makeText(this, "신체 정보가 저장되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT).show()
             finish()
         }
     }
