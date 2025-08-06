@@ -15,7 +15,6 @@ spring:
       ddl-auto: create-drop
     defer-datasource-initialization: false
 
-security:
-  jwt:
-    secret-key: 910cf806fc2736a9365429796dc9f78e
-    expire-length: 36000000
+open-weather:
+  api:
+    key: temp

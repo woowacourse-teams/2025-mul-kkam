@@ -71,6 +71,7 @@ jobs:
           echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
           echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
           echo "FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}" >> ~/mulkkam/.env
+          echo "OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}" >> ~/mulkkam/.env
 
       - name: Stop existing services
         run: sudo docker compose stop backend-app

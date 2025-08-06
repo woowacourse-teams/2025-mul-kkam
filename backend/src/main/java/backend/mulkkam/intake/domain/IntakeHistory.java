@@ -12,7 +12,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,25 +31,38 @@ public class IntakeHistory {
     private Member member;
 
     @Column(nullable = false)
-    private LocalDateTime dateTime;
+    private LocalDate historyDate;
 
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "intakeAmount", nullable = false))
-    private Amount intakeAmount;
-
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "targetAmount", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
+
+    @Column(nullable = false)
+    private int streak;
 
     public IntakeHistory(
             Member member,
-            LocalDateTime dateTime,
-            Amount intakeAmount,
-            Amount targetAmount
+            LocalDate historyDate,
+            Amount targetAmount,
+            int streak
     ) {
         this.member = member;
-        this.dateTime = dateTime;
-        this.intakeAmount = intakeAmount;
+        this.historyDate = historyDate;
         this.targetAmount = targetAmount;
+        this.streak = streak;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final IntakeHistory that = (IntakeHistory) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }

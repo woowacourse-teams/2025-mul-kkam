@@ -15,7 +15,9 @@ data class IntakeHistorySummaryResponse(
     val totalIntakeAmount: Int,
     @SerialName("achievementRate")
     val achievementRate: Double,
-    @SerialName("intakeHistories")
+    @SerialName("streak")
+    val streak: Int,
+    @SerialName("intakeDetails")
     val intakeHistories: List<IntakeHistoryResponse>,
 )
 
