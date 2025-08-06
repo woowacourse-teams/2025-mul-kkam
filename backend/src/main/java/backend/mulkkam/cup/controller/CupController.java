@@ -6,6 +6,7 @@ import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
+import backend.mulkkam.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -26,41 +27,51 @@ public class CupController {
     private final CupService cupService;
 
     @GetMapping
-    public ResponseEntity<CupsResponse> read() {
-        return ResponseEntity.ok().body(cupService.readCupsByMemberId(1L));
+    public ResponseEntity<CupsResponse> read(Member member) {
+        return ResponseEntity.ok().body(cupService.readCupsByMember(member));
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CupRegisterRequest cupRegisterRequest) {
+    public ResponseEntity<Void> create(
+            Member member,
+            @RequestBody CupRegisterRequest cupRegisterRequest
+    ) {
         cupService.create(
                 cupRegisterRequest,
-                1L
+                member
         );
         return ResponseEntity.ok().build();
     }
 
     @PutMapping("/ranks")
-    public ResponseEntity<CupsRanksResponse> updateRanks(@RequestBody UpdateCupRanksRequest request) {
-        CupsRanksResponse response = cupService.updateRanks(request, 1L);
+    public ResponseEntity<CupsRanksResponse> updateRanks(
+            Member member,
+            @RequestBody UpdateCupRanksRequest request
+    ) {
+        CupsRanksResponse response = cupService.updateRanks(member, request);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
+            Member member,
             @RequestBody CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest,
             @PathVariable Long cupId
     ) {
         cupService.modifyNicknameAndAmount(
                 cupId,
-                1L,
+                member,
                 cupNicknameAndAmountModifyRequest
         );
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable("id") Long id) {
-        cupService.delete(id, 1L);
+    public ResponseEntity<Void> delete(
+            Member member,
+            @PathVariable("id") Long id
+    ) {
+        cupService.delete(member, 1L);
         return ResponseEntity.noContent().build();
     }
 }

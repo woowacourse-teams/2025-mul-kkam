@@ -78,7 +78,7 @@ class CupServiceUnitTest {
             // when
             CupResponse cupResponse = cupService.create(
                     cupRegisterRequest,
-                    member.getId()
+                    member
             );
 
             // then
@@ -104,7 +104,7 @@ class CupServiceUnitTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
+                    () -> cupService.create(cupRegisterRequest, member));
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
         }
 
@@ -124,7 +124,7 @@ class CupServiceUnitTest {
 
             // when & then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
+                    () -> cupService.create(cupRegisterRequest, member));
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
         }
 
@@ -166,7 +166,7 @@ class CupServiceUnitTest {
 
             // then
             CommonException ex = assertThrows(CommonException.class,
-                    () -> cupService.create(cupRegisterRequest, member.getId()));
+                    () -> cupService.create(cupRegisterRequest, member));
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_COUNT);
         }
     }
@@ -194,10 +194,10 @@ class CupServiceUnitTest {
                     .build();
             List<Cup> cups = List.of(cup2, cup1);
 
-            when(cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId())).thenReturn(cups);
+            when(cupRepository.findAllByMemberOrderByCupRankAsc(member)).thenReturn(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readCupsByMemberId(member.getId());
+            CupsResponse cupsResponse = cupService.readCupsByMember(member);
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
@@ -239,11 +239,11 @@ class CupServiceUnitTest {
         @Test
         void success_withLowerPriorityCups() {
             // given
-            when(cupRepository.findByIdAndMemberId(firstCup.getId(), member.getId())).thenReturn(Optional.of(firstCup));
-            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(secondCup, thirdCup));
+            when(cupRepository.findByIdAndMember(firstCup.getId(), member)).thenReturn(Optional.of(firstCup));
+            when(cupRepository.findAllByMember(member)).thenReturn(List.of(secondCup, thirdCup));
 
             // when
-            cupService.delete(firstCup.getId(), member.getId());
+            cupService.delete(member, firstCup.getId());
 
             // then
             assertSoftly(softly -> {
@@ -256,11 +256,11 @@ class CupServiceUnitTest {
         @Test
         void success_withoutLowerPriorityCups() {
             // given
-            when(cupRepository.findByIdAndMemberId(thirdCup.getId(), member.getId())).thenReturn(Optional.of(thirdCup));
-            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(firstCup, secondCup));
+            when(cupRepository.findByIdAndMember(thirdCup.getId(), member)).thenReturn(Optional.of(thirdCup));
+            when(cupRepository.findAllByMember(member)).thenReturn(List.of(firstCup, secondCup));
 
             // when
-            cupService.delete(thirdCup.getId(), member.getId());
+            cupService.delete(member, thirdCup.getId());
 
             // then
             assertSoftly(softly -> {
@@ -303,7 +303,7 @@ class CupServiceUnitTest {
             // when
             cupService.modifyNicknameAndAmount(
                     cup.getId(),
-                    member.getId(),
+                    member,
                     cupNicknameAndAmountModifyRequest
             );
 
@@ -337,7 +337,6 @@ class CupServiceUnitTest {
                     .cupAmount(new CupAmount(beforeCupAmount2))
                     .build();
 
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
 
             String afterCupNickName = "변경 후";
@@ -351,7 +350,7 @@ class CupServiceUnitTest {
             // when
             cupService.modifyNicknameAndAmount(
                     cup1.getId(),
-                    member.getId(),
+                    member,
                     cupNicknameAndAmountModifyRequest
             );
 
@@ -402,7 +401,7 @@ class CupServiceUnitTest {
             CommonException ex = assertThrows(CommonException.class,
                     () -> cupService.modifyNicknameAndAmount(
                             cup.getId(),
-                            member2.getId(),
+                            member2,
                             cupNicknameAndAmountModifyRequest)
             );
             assertThat(ex.getErrorCode()).isEqualTo(NOT_PERMITTED_FOR_CUP);

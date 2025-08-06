@@ -17,21 +17,19 @@ import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -46,10 +44,8 @@ public class CupService {
     @Transactional
     public CupResponse create(
             CupRegisterRequest cupRegisterRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
-
         IntakeType intakeType = IntakeType.findByName(cupRegisterRequest.intakeType());
         Cup cup = cupRegisterRequest.toCup(member, calculateNextCupRank(member), intakeType);
 
@@ -68,11 +64,11 @@ public class CupService {
 
     @Transactional
     public CupsRanksResponse updateRanks(
-            UpdateCupRanksRequest request,
-            Long memberId
+            Member member,
+            UpdateCupRanksRequest request
     ) {
         CupRanks cupRanks = new CupRanks(buildCupRankMapById(request.cups()));
-        List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), memberId);
+        List<Cup> cups = getAllByIdsAndMember(cupRanks.getCupIds(), member);
 
         for (Cup cup : cups) {
             cup.modifyRank(cupRanks.getCupRank(cup.getId()));
@@ -96,23 +92,23 @@ public class CupService {
         return ranks;
     }
 
-    private List<Cup> getAllByIdsAndMemberId(
+    private List<Cup> getAllByIdsAndMember(
             Set<Long> cupIds,
-            Long memberId
+            Member member
     ) {
         List<Cup> cups = cupRepository.findAllById(cupIds);
         if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
         }
-        validateCupsOwnership(cupIds, memberId);
+        validateCupsOwnership(cupIds, member);
         return cups;
     }
 
     private void validateCupsOwnership(
             Set<Long> cupIds,
-            Long memberId
+            Member member
     ) {
-        Set<Long> membersCupIds = cupRepository.findAllByMemberId(memberId)
+        Set<Long> membersCupIds = cupRepository.findAllByMember(member)
                 .stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
@@ -124,33 +120,32 @@ public class CupService {
 
     @Transactional
     public void delete(
-            Long cupId,
-            Long memberId
+            Member member,
+            Long cupId
     ) {
-        Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
+        Cup targetCup = cupRepository.findByIdAndMember(cupId, member)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
 
         cupRepository.delete(targetCup);
 
-        cupRepository.findAllByMemberId(memberId)
+        cupRepository.findAllByMember(member)
                 .stream()
                 .filter(cup -> cup.isLowerPriorityThan(targetCup))
                 .forEach(Cup::promoteRank);
     }
 
-    public CupsResponse readCupsByMemberId(Long memberId) {
-        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
+    public CupsResponse readCupsByMember(Member member) {
+        List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
         return new CupsResponse(cups);
     }
 
     @Transactional
     public void modifyNicknameAndAmount(
             Long id,
-            Long memberId,
+            Member member,
             CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest
     ) {
-        Member member = getMember(memberId);
-        Cup cup = getCup(id);
+        Cup cup = getCupWithMember(id);
 
         validateCupOwnership(member, cup);
         cup.modifyNicknameAndAmount(
@@ -159,20 +154,17 @@ public class CupService {
         );
     }
 
-    private void validateCupOwnership(Member member, Cup cup) {
-        if (member.equals(cup.getMember())) {
-            return;
+    private void validateCupOwnership(
+            Member member,
+            Cup cup
+    ) {
+        if (!member.getId().equals(cup.getMember().getId())) {
+            throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
-        throw new CommonException(NOT_PERMITTED_FOR_CUP);
     }
 
-    private Cup getCup(final Long id) {
+    private Cup getCupWithMember(final Long id) {
         return cupRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
-    }
-
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

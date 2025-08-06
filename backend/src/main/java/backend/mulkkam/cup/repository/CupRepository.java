@@ -1,18 +1,18 @@
 package backend.mulkkam.cup.repository;
 
 import backend.mulkkam.cup.domain.Cup;
-import org.springframework.data.jpa.repository.JpaRepository;
-
+import backend.mulkkam.member.domain.Member;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface CupRepository extends JpaRepository<Cup, Long> {
 
     int countByMemberId(Long memberId);
 
-    Optional<Cup> findByIdAndMemberId(Long id, Long memberId);
+    Optional<Cup> findByIdAndMember(Long id, Member member);
 
-    List<Cup> findAllByMemberId(Long memberId);
+    List<Cup> findAllByMember(Member member);
 
-    List<Cup> findAllByMemberIdOrderByCupRankAsc(Long memberId);
+    List<Cup> findAllByMemberOrderByCupRankAsc(Member member);
 }
