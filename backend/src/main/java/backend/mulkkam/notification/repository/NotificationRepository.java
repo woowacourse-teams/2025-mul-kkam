@@ -12,9 +12,22 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    @Query("SELECT n FROM Notification n WHERE (n.id < :lastId and n.createdAt >= :limitStartDateTime and n.member = :member) ORDER BY n.id DESC")
+    @Query("""
+    SELECT n
+    FROM Notification n
+    WHERE n.id < :lastId
+      AND n.createdAt >= :limitStartDateTime
+      AND n.member = :member
+    ORDER BY n.id DESC
+    """)
     List<Notification> findByCursor(Member member, Long lastId, LocalDateTime limitStartDateTime, Pageable pageable);
 
-    @Query("SELECT n FROM Notification n WHERE (n.createdAt >= :limitStartDateTime and n.member = :member) ORDER BY n.id DESC")
+    @Query("""
+    SELECT n
+    FROM Notification n
+    WHERE n.createdAt >= :limitStartDateTime
+      AND n.member = :member
+    ORDER BY n.id DESC
+    """)
     List<Notification> findLatest(Member member, LocalDateTime limitStartDateTime, Pageable pageable);
 }
