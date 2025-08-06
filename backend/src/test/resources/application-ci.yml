@@ -1,8 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: ci
-
   datasource:
     url: jdbc:mysql://localhost:3306/test_db
     username: root
