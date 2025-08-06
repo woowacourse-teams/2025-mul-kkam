@@ -48,15 +48,20 @@ class NicknameFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
-                parentViewModel.updateNickname(etInputNickname.text.toString())
+                parentViewModel.updateNickname(getTrimmedNickname())
                 parentViewModel.moveToNextStep()
             }
 
             tvCheckDuplicate.setOnClickListener {
-                viewModel.checkNicknameDuplicate()
+                viewModel.checkNicknameDuplicate(getTrimmedNickname())
             }
         }
     }
+
+    private fun getTrimmedNickname(): String =
+        binding.etInputNickname.text
+            .toString()
+            .trim()
 
     private fun initObservers() {
         viewModel.nicknameValidationState.observe(viewLifecycleOwner) { isValid ->
