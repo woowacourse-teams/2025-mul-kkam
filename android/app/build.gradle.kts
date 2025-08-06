@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -102,6 +103,8 @@ dependencies {
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.glide)
     implementation(libs.lottie)
+    implementation(libs.androidsvg)
+    kapt(libs.glide.compiler)
 
     // 로그인
     implementation(libs.kakao.v2.user)
