@@ -6,25 +6,20 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
+import java.util.Date;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import java.util.Date;
 
 @Component
 public class OauthJwtTokenHandler {
 
-    @Value("${security.jwt.secret-key}")
-    private String secretKey;
+    private final String secretKey;
+    private final long expireLengthInMilliseconds;
+    private final JwtParser parser;
 
-    @Value("${security.jwt.expire-length}")
-    private long expireLengthInMilliseconds;
-
-    private JwtParser parser;
-
-    @PostConstruct
-    public void init() {
+    public OauthJwtTokenHandler(@Value("${security.jwt.secret-key}") String secretKey, @Value("${security.jwt.expire-length}")long expireLengthInMilliseconds) {
+        this.secretKey = secretKey;
+        this.expireLengthInMilliseconds = expireLengthInMilliseconds;
         this.parser = Jwts.parser()
                 .verifyWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .build();
