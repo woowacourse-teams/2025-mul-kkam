@@ -10,6 +10,7 @@ public enum NotFoundErrorCode implements ErrorCode {
     NOT_FOUND_INTAKE_HISTORY,
     NOT_FOUND_DEVICE,
     NOT_FOUND_AVERAGE_TEMPERATURE,
+    NOT_FOUND_INTAKE_HISTORY_DETAIL,
     ;
 
     private static final HttpStatus status = HttpStatus.NOT_FOUND;
