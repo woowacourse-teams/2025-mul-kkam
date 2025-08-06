@@ -68,6 +68,7 @@ jobs:
           echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
           echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
+          echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
           echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
           echo "FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}" >> ~/mulkkam/.env
 
