@@ -24,12 +24,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -65,7 +63,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            intakeHistoryService.create(intakeHistoryCreateRequest, member.getId());
+            intakeHistoryService.create(intakeHistoryCreateRequest, member);
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
@@ -90,25 +88,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeHistoryCreateRequest, member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeHistoryCreateRequest, member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-        }
-
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            int intakeAmount = 500;
-            IntakeHistoryCreateRequest intakeHistoryCreateRequest = new IntakeHistoryCreateRequest(
-                    DATE_TIME,
-                    intakeAmount
-            );
-
-            // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.create(intakeHistoryCreateRequest, 1L));
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
     }
 
@@ -181,7 +163,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest,
-                    savedMember.getId()
+                    savedMember
             );
 
             // then
@@ -238,7 +220,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                             startDate,
                             endDate
                     ),
-                    savedMember.getId()
+                    savedMember
             );
 
             // then
@@ -288,7 +270,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                             startDate,
                             endDate
                     ),
-                    savedMember.getId()
+                    savedMember
             );
 
             // then
@@ -355,7 +337,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
-                    dateRangeRequest, savedMember.getId());
+                    dateRangeRequest, savedMember);
 
             // then
             IntakeHistorySummaryResponse responseOfTheDay = actual.getFirst();

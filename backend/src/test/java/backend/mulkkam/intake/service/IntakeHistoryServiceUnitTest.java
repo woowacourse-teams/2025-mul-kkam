@@ -18,7 +18,6 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,11 +27,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
@@ -65,8 +62,6 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             int intakeAmount = 500;
             IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
@@ -75,10 +70,9 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // when
-            intakeHistoryService.create(request, memberId);
+            intakeHistoryService.create(request, member);
 
             // then
-            verify(memberRepository).findById(memberId);
             verify(intakeHistoryRepository).save(any(IntakeHistory.class));
         }
 
@@ -88,8 +82,6 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             int intakeAmount = -1;
             IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
@@ -98,31 +90,9 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(request, memberId))
+            assertThatThrownBy(() -> intakeHistoryService.create(request, member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-
-            verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
-        }
-
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            Long memberId = 999L;
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.empty());
-
-            int intakeAmount = 500;
-            IntakeHistoryCreateRequest request = new IntakeHistoryCreateRequest(
-                    DATE_TIME,
-                    intakeAmount
-            );
-
-            // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.create(request, memberId));
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
 
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
@@ -138,8 +108,6 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
@@ -198,8 +166,8 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
+            given(intakeHistoryRepository.findAllByMemberAndDateTimeBetween(
+                    member,
                     dateRangeRequest.startDateTime(),
                     dateRangeRequest.endDateTime()
             )).willReturn(histories);
@@ -210,7 +178,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    memberId
+                    member
             );
 
             // then
@@ -227,8 +195,6 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
@@ -287,8 +253,8 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
+            given(intakeHistoryRepository.findAllByMemberAndDateTimeBetween(
+                    member,
                     dateRangeRequest.startDateTime(),
                     dateRangeRequest.endDateTime()
             )).willReturn(histories);
@@ -299,7 +265,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    memberId
+                    member
             );
 
             // then
@@ -311,20 +277,6 @@ class IntakeHistoryServiceUnitTest {
             assertThat(dateTimes).isSorted();
         }
 
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            Long memberId = 1L;
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.empty());
-
-            // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.readSummaryOfIntakeHistories(any(DateRangeRequest.class), 1L));
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
-        }
-
         @DisplayName("달성률이 정상적으로 계산된다")
         @Test
         void success_calculateAchievementRate() {
@@ -333,8 +285,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
@@ -378,8 +328,8 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
+            given(intakeHistoryRepository.findAllByMemberAndDateTimeBetween(
+                    member,
                     dateRangeRequest.startDateTime(),
                     dateRangeRequest.endDateTime()
             )).willReturn(histories);
@@ -390,7 +340,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    memberId
+                    member
             );
 
             // then
@@ -406,8 +356,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new Amount(1_000))
                     .build();
-            given(memberRepository.findById(memberId))
-                    .willReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 21);
@@ -451,8 +399,8 @@ class IntakeHistoryServiceUnitTest {
                     endDate
             );
 
-            given(intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                    memberId,
+            given(intakeHistoryRepository.findAllByMemberAndDateTimeBetween(
+                    member,
                     dateRangeRequest.startDateTime(),
                     dateRangeRequest.endDateTime()
             )).willReturn(histories);
@@ -463,7 +411,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    memberId
+                    member
             );
 
             // then

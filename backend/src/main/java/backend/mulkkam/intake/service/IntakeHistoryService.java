@@ -33,21 +33,18 @@ public class IntakeHistoryService {
     @Transactional
     public void create(
             IntakeHistoryCreateRequest intakeHistoryCreateRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
-
         IntakeHistory intakeHistory = intakeHistoryCreateRequest.toIntakeHistory(member);
         intakeHistoryRepository.save(intakeHistory);
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
-        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberIdAndDateTimeBetween(
-                memberId,
+        List<IntakeHistory> intakeHistoriesInDateRange = intakeHistoryRepository.findAllByMemberAndDateTimeBetween(
+                member,
                 dateRangeRequest.startDateTime(),
                 dateRangeRequest.endDateTime()
         );

@@ -4,6 +4,7 @@ import backend.mulkkam.intake.dto.DateRangeRequest;
 import backend.mulkkam.intake.dto.IntakeHistoryCreateRequest;
 import backend.mulkkam.intake.dto.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;
+import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,19 +25,22 @@ public class IntakeHistoryController {
 
     @GetMapping
     public ResponseEntity<List<IntakeHistorySummaryResponse>> readSummaryOfIntakeHistories(
+            Member member,
             @RequestParam LocalDate from,
             @RequestParam LocalDate to
     ) {
         DateRangeRequest dateRangeRequest = new DateRangeRequest(from, to);
         List<IntakeHistorySummaryResponse> dailyResponses = intakeHistoryService.readSummaryOfIntakeHistories(
-                dateRangeRequest,
-                1L);
+                dateRangeRequest, member);
         return ResponseEntity.ok().body(dailyResponses);
     }
 
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest) {
-        intakeHistoryService.create(intakeHistoryCreateRequest, 1L);
+    public ResponseEntity<Void> create(
+            Member member,
+            @RequestBody IntakeHistoryCreateRequest intakeHistoryCreateRequest
+    ) {
+        intakeHistoryService.create(intakeHistoryCreateRequest, member);
         return ResponseEntity.ok().build();
     }
 }
