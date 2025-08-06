@@ -23,5 +23,5 @@ fcm:
 
 security:
   jwt:
-    secret-key: 910cf806fc2736a9365429796dc9f78e
-    expire-length: 36000000
+    secret-key: ${JWT_SECRET}
+    expire-length: ${ACCESS_TOKEN_EXPIRE}

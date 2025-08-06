@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
@@ -36,6 +37,37 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
             // then
             assertThat(actual).isEqualTo(oauthAccount.getId());
+        }
+    }
+
+    @DisplayName("토큰의 subject를 요청할 때")
+    @Nested
+    class GetSubject {
+
+        @DisplayName("직접 생성한 토큰에 대해서는 OauthAccount 엔티티의 id 값을 올바르게 반환한다.")
+        @Test
+        void success_createdToken() {
+            // given
+            OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+
+            // when
+            Long actual = oauthJwtTokenHandler.getSubject(token);
+
+            // then
+            assertThat(actual).isEqualTo(oauthAccount.getId());
+        }
+
+        @DisplayName("올바르지 않은 토큰은 예외가 발생한다.")
+        @Test
+        void error_withInvalidToken() {
+            // given
+            String invalidToken = "invalidToken";
+
+            // when & then
+            assertThatThrownBy(() -> oauthJwtTokenHandler.getSubject(invalidToken))
+                    .isInstanceOf(IllegalArgumentException.class); // TODO: Custom Exception으로 변경 후 반영
         }
     }
 }
