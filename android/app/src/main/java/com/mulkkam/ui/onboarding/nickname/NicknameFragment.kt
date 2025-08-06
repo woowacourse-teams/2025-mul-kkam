@@ -64,7 +64,7 @@ class NicknameFragment :
             .trim()
 
     private fun initObservers() {
-        viewModel.nicknameValidationState.observe(viewLifecycleOwner) { isValid ->
+        viewModel.isValidNickname.observe(viewLifecycleOwner) { isValid ->
             if (isValid == null) {
                 clearNicknameValidationUI()
                 return@observe

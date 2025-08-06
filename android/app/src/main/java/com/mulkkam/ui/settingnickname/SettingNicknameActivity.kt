@@ -53,7 +53,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             binding.etInputNickname.setText(it)
         }
 
-        viewModel.nicknameValidationState.observe(this) { isValid ->
+        viewModel.isValidNickname.observe(this) { isValid ->
             if (isValid == null) {
                 clearNicknameValidationUI()
                 return@observe

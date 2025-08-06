@@ -7,9 +7,9 @@ import com.mulkkam.di.RepositoryInjection
 import kotlinx.coroutines.launch
 
 class NicknameViewModel : ViewModel() {
-    private val _nicknameValidationState = MutableLiveData<Boolean?>()
-    val nicknameValidationState: MutableLiveData<Boolean?>
-        get() = _nicknameValidationState
+    private val _isValidNickname = MutableLiveData<Boolean?>()
+    val isValidNickname: MutableLiveData<Boolean?>
+        get() = _isValidNickname
 
     fun checkNicknameDuplicate(nickname: String) {
         viewModelScope.launch {
@@ -17,14 +17,14 @@ class NicknameViewModel : ViewModel() {
                 RepositoryInjection.membersRepository.getMembersNicknameValidation(nickname)
             runCatching {
                 result.getOrError()
-                _nicknameValidationState.value = true
+                _isValidNickname.value = true
             }.onFailure {
-                _nicknameValidationState.value = false
+                _isValidNickname.value = false
             }
         }
     }
 
     fun clearNicknameValidationState() {
-        _nicknameValidationState.value = null
+        _isValidNickname.value = null
     }
 }

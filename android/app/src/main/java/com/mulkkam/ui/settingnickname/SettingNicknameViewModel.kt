@@ -14,9 +14,9 @@ class SettingNicknameViewModel : ViewModel() {
     val currentNickname: LiveData<String?>
         get() = _currentNickname
 
-    private val _nicknameValidationState = MutableLiveData<Boolean?>()
-    val nicknameValidationState: MutableLiveData<Boolean?>
-        get() = _nicknameValidationState
+    private val _isValidNickname = MutableLiveData<Boolean?>()
+    val isValidNickname: MutableLiveData<Boolean?>
+        get() = _isValidNickname
 
     private val _onNicknameChanged = MutableSingleLiveData<Unit>()
     val onNicknameChanged: SingleLiveData<Unit>
@@ -39,15 +39,15 @@ class SettingNicknameViewModel : ViewModel() {
                 RepositoryInjection.membersRepository.getMembersNicknameValidation(nickname)
             runCatching {
                 result.getOrError()
-                _nicknameValidationState.value = true
+                _isValidNickname.value = true
             }.onFailure {
-                _nicknameValidationState.value = false
+                _isValidNickname.value = false
             }
         }
     }
 
     fun clearNicknameValidationState() {
-        _nicknameValidationState.value = null
+        _isValidNickname.value = null
     }
 
     fun saveNickname(nickname: String) {
