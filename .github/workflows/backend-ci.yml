@@ -58,5 +58,5 @@ jobs:
           FCM_PROJECT_ID: ${{ secrets.FCM_PROJECT_ID }}
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE: ${{ secrets.ACCESS_TOKEN_EXPIRE }}
-        run: ./gradlew test -Pspring.profiles.active=ci --stacktrace
+        run: SPRING_PROFILES_ACTIVE=ci ./gradlew clean test --stacktrace
         working-directory: ./backend
