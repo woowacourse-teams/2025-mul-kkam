@@ -92,9 +92,9 @@ class NicknameFragment :
             )
         val messageResId =
             if (isValid) {
-                R.string.nickname_valid
+                R.string.setting_nickname_valid
             } else {
-                R.string.setting_profile_warning_duplicated_nickname
+                R.string.setting_nickname_warning_duplicated_nickname
             }
 
         with(binding) {
