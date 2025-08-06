@@ -20,4 +20,6 @@ interface IntakeRepository {
     suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit>
 
     suspend fun getIntakeTarget(): MulKkamResult<Int>
+
+    suspend fun getIntakeAmountRecommended(): MulKkamResult<Int>
 }

@@ -30,4 +30,7 @@ interface IntakeService {
 
     @GET("/intake/amount/target")
     suspend fun getIntakeTarget(): Result<IntakeTargetAmountResponse>
+
+    @GET("/intake/amount/recommended")
+    suspend fun getIntakeAmountRecommended(): Result<IntakeTargetAmountResponse>
 }
