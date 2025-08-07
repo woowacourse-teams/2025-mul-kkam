@@ -1,16 +1,23 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.repository.MemberRepository;
+import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +30,7 @@ import java.time.LocalDate;
 public class IntakeAmountService {
 
     private final MemberRepository memberRepository;
+    private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final IntakeHistoryRepository intakeHistoryRepository;
 
     @Transactional
@@ -30,9 +38,8 @@ public class IntakeAmountService {
             Member member,
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        Amount updateAmount = intakeTargetAmountModifyRequest.toAmount();
-
-        member.updateTargetAmount(updateAmount);
+        member.updateTargetAmount(intakeTargetAmountModifyRequest.toAmount());
+        updateTargetAmountSnapshot(member);
         memberRepository.save(member);
 
         intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
@@ -55,5 +62,16 @@ public class IntakeAmountService {
         PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
         return new RecommendedIntakeAmountResponse(recommendedTargetAmount.amount());
+    }
+
+    private void updateTargetAmountSnapshot(Member member) {
+        LocalDate today = LocalDate.now();
+        Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
+                member.getId(), today);
+        if (targetAmountSnapshot.isPresent()) {
+            targetAmountSnapshot.get().updateTargetAmount(member.getTargetAmount());
+            return;
+        }
+        targetAmountSnapshotRepository.save(new TargetAmountSnapshot(member, today, member.getTargetAmount()));
     }
 }

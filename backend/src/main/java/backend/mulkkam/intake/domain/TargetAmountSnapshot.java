@@ -12,7 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -30,9 +30,23 @@ public class TargetAmountSnapshot {
     private Member member;
 
     @Column(nullable = false)
-    private LocalDateTime updatedAt;
+    private LocalDate updatedAt;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
+
+    public TargetAmountSnapshot(
+            Member member,
+            LocalDate updatedAt,
+            Amount targetAmount
+    ) {
+        this.member = member;
+        this.updatedAt = updatedAt;
+        this.targetAmount = targetAmount;
+    }
+
+    public void updateTargetAmount(Amount targetAmount) {
+        this.targetAmount = targetAmount;
+    }
 }

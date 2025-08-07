@@ -14,6 +14,7 @@ import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -38,6 +39,9 @@ public class IntakeAmountServiceUnitTest {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -81,8 +85,6 @@ public class IntakeAmountServiceUnitTest {
     @DisplayName("하루 섭취 목표 응용량을 추천받을 때에")
     @Nested
     class GetRecommended {
-
-        public static final long MEMBER_ID = 1L;
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
