@@ -5,6 +5,7 @@ import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
 import com.mulkkam.data.remote.model.request.MembersRequest
 import com.mulkkam.data.remote.model.response.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.MembersCheckOnboardingResponse
+import com.mulkkam.data.remote.model.response.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.MembersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -44,4 +45,9 @@ interface MembersService {
 
     @GET("/members/check/onboarding")
     suspend fun getMembersCheckOnboarding(): Result<MembersCheckOnboardingResponse>
+
+    @GET("/members/progress-info")
+    suspend fun getMembersProgressInfo(
+        @Query("date") date: String,
+    ): Result<MembersProgressInfoResponse>
 }
