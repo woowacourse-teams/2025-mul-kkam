@@ -1,8 +1,10 @@
 package com.mulkkam.ui.main
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.provider.Settings
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -46,6 +48,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         handleNotificationEvent()
         setupDoubleBackToExit()
         initObservers()
+        loadDeviceId()
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
@@ -134,7 +137,19 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
             }
         }
+        viewModel.fcmToken.observe(this) { token ->
+            token?.let {
+                viewModel.saveDeviceInfo(loadDeviceId())
+            }
+        }
     }
+
+    @SuppressLint("HardwareIds")
+    private fun loadDeviceId(): String =
+        Settings.Secure.getString(
+            this.contentResolver,
+            Settings.Secure.ANDROID_ID,
+        )
 
     companion object {
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
