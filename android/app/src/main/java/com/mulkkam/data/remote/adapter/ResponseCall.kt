@@ -35,19 +35,24 @@ class ResponseCall<T>(
         )
     }
 
-    private fun parseResponse(response: Response<T>): Result<T> =
-        runCatching {
-            val body = response.body()
-            val errorCode = parseErrorCode(response.errorBody())
-            if (errorCode != null) {
-                throw ResponseError.from(errorCode) ?: ResponseError.Unknown
+    private fun parseResponse(response: Response<T>): Result<T> {
+        val errorCode = parseErrorCode(response.errorBody())
+        if (errorCode != null) {
+            return Result.failure(ResponseError.from(errorCode) ?: ResponseError.Unknown)
+        }
+
+        val body = response.body()
+
+        return when {
+            body != null -> Result.success(body)
+            response.isSuccessful -> {
+                @Suppress("UNCHECKED_CAST")
+                Result.success(Unit as T)
             }
 
-            body ?: throw NullPointerException("Response body is null")
-        }.fold(
-            onSuccess = { Result.success(it) },
-            onFailure = { Result.failure(it) },
-        )
+            else -> Result.failure(NullPointerException("Response body is null"))
+        }
+    }
 
     private fun parseErrorCode(errorBody: ResponseBody?): String? =
         errorBody?.let {

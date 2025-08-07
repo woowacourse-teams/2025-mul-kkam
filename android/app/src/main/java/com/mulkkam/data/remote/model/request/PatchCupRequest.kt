@@ -5,21 +5,21 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AddCupRequest(
-    @SerialName("cupAmount")
-    val cupAmount: Int,
+data class PatchCupRequest(
     @SerialName("cupNickname")
     val cupNickname: String,
+    @SerialName("cupAmount")
+    val cupAmount: Int,
     @SerialName("intakeType")
     val intakeType: String,
     @SerialName("emoji")
     val emoji: String,
 )
 
-fun Cup.toAddCupRequest(): AddCupRequest =
-    AddCupRequest(
-        cupAmount = amount,
+fun Cup.toPatchCupRequest(): PatchCupRequest =
+    PatchCupRequest(
         cupNickname = nickname,
+        cupAmount = amount,
         intakeType = intakeType.name,
         emoji = emoji,
     )

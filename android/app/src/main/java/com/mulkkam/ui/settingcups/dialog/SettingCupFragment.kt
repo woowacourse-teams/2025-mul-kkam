@@ -2,11 +2,16 @@ package com.mulkkam.ui.settingcups.dialog
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
+import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -17,6 +22,7 @@ class SettingCupFragment :
         FragmentSettingCupBinding::inflate,
     ) {
     private val viewModel: SettingCupViewModel by viewModels()
+    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     override fun onViewCreated(
@@ -29,13 +35,19 @@ class SettingCupFragment :
         initClickListeners()
         initObservers()
         initInputListeners()
+        initChips()
+        initDeleteButton()
     }
 
     private fun initClickListeners() {
-        binding.ivSettingWaterCupClose.setOnClickListener { dismiss() }
+        binding.ivClose.setOnClickListener { dismiss() }
 
-        binding.tvSettingWaterCupSave.setOnClickListener {
+        binding.tvSave.setOnClickListener {
             viewModel.saveCup()
+        }
+
+        binding.tvDelete.setOnClickListener {
+            viewModel.deleteCup()
         }
     }
 
@@ -46,31 +58,38 @@ class SettingCupFragment :
         viewModel.editType.observe(this) { editType ->
             editType?.let { showTitle(it) }
         }
-        viewModel.success.observe(this) { success ->
-            if (success) dismiss()
+        viewModel.saveSuccess.observe(this) {
+            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
+            settingCupsViewModel.loadCups()
+            dismiss()
+        }
+        viewModel.deleteSuccess.observe(this) {
+            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
+            settingCupsViewModel.loadCups()
+            dismiss()
         }
     }
 
     private fun showCupInfo(cup: CupUiModel) {
         with(binding) {
-            val isNicknameChanged = etSettingWaterCupName.text.toString() != cup.nickname
+            val isNicknameChanged = etNickname.text.toString() != cup.nickname
             val isNicknameValid = cup.nickname != EMPTY_CUP_UI_MODEL.nickname
 
-            val isAmountChanged = etSettingWaterCupAmount.text.toString() != cup.amount.toString()
+            val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
 
             if (isNicknameChanged && isNicknameValid) {
-                etSettingWaterCupName.setText(cup.nickname)
+                etNickname.setText(cup.nickname)
             }
 
             if (isAmountChanged && isAmountValid) {
-                etSettingWaterCupAmount.setText(cup.amount.toString())
+                etAmount.setText(cup.amount.toString())
             }
         }
     }
 
     private fun showTitle(editType: SettingWaterCupEditType) {
-        binding.dialogSettingWaterCupTitle.setText(
+        binding.tvTitle.setText(
             when (editType) {
                 SettingWaterCupEditType.ADD -> R.string.setting_cup_add_title
                 SettingWaterCupEditType.EDIT -> R.string.setting_cup_edit_title
@@ -79,15 +98,59 @@ class SettingCupFragment :
     }
 
     private fun initInputListeners() {
-        binding.etSettingWaterCupName.addTextChangedListener {
+        binding.etNickname.addTextChangedListener {
             viewModel.updateNickname(it?.toString().orEmpty())
         }
 
-        binding.etSettingWaterCupAmount.addTextChangedListener {
+        binding.etAmount.addTextChangedListener {
             val input = it?.toString().orEmpty()
             val amount = input.toIntOrNull() ?: 0
 
             viewModel.updateAmount(amount)
+        }
+    }
+
+    private fun initChips() {
+        val intakeAdapter =
+            MulKkamChipGroupAdapter<IntakeType>(
+                context = requireContext(),
+                labelProvider = { it.toLabel() },
+                colorProvider = { it.toColorHex() },
+                isMultiSelect = false,
+                requireSelection = true,
+                onItemSelected = { selectedList ->
+                    viewModel.updateIntakeType(selectedList.firstOrNull() ?: IntakeType.UNKNOWN)
+                },
+            )
+
+        binding.mcgIntakeType.setAdapter(intakeAdapter)
+        binding.mcgIntakeType.setItems(
+            listOf(
+                IntakeType.WATER,
+                IntakeType.COFFEE,
+            ),
+        )
+    }
+
+    // TODO: 추후 서버에서 받아오는 IntakeType 반영
+    private fun IntakeType.toLabel(): String =
+        when (this) {
+            IntakeType.WATER -> "물"
+            IntakeType.COFFEE -> "커피"
+            IntakeType.UNKNOWN -> ""
+        }
+
+    private fun IntakeType.toColorHex(): String =
+        when (this) {
+            IntakeType.WATER -> "#90E0EF"
+            IntakeType.COFFEE -> "#C68760"
+            IntakeType.UNKNOWN -> ""
+        }
+
+    private fun initDeleteButton() {
+        when (cup == null) {
+            true -> binding.tvDelete.visibility = View.GONE
+            false -> binding.tvDelete.visibility = View.VISIBLE
         }
     }
 
