@@ -16,33 +16,29 @@ class SplashViewModel : ViewModel() {
     fun updateAuthState() {
         viewModelScope.launch {
             runCatching {
-                tokenRepository.getAccessToken().getOrError()
-            }.onSuccess { token ->
+                val token = tokenRepository.getAccessToken().getOrError()
                 if (token == null) {
                     _authState.value = AppAuthState.UNAUTHORIZED
-                    return@onSuccess
-                } else {
-                    updateAuthStateWithOnboarding()
+                    return@launch
                 }
-            }.onFailure {
-                _authState.value = AppAuthState.UNAUTHORIZED
-            }
-        }
-    }
-
-    private fun updateAuthStateWithOnboarding() {
-        viewModelScope.launch {
-            runCatching {
-                membersRepository.getMembersCheckOnboarding().getOrError()
-            }.onSuccess { hasCompletedOnboarding ->
-                _authState.value =
-                    when {
-                        hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
-                        else -> AppAuthState.UNONBOARDED
-                    }
             }.onFailure {
                 // TODO: 에러 처리
             }
+            updateAuthStateWithOnboarding()
+        }
+    }
+
+    private suspend fun updateAuthStateWithOnboarding() {
+        runCatching {
+            membersRepository.getMembersCheckOnboarding().getOrError()
+        }.onSuccess { hasCompletedOnboarding ->
+            _authState.value =
+                when {
+                    hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
+                    else -> AppAuthState.UNONBOARDED
+                }
+        }.onFailure {
+            // TODO: 에러 처리
         }
     }
 }

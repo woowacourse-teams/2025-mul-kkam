@@ -12,7 +12,7 @@ data class MulKkamResult<T>(
         when {
             error != null -> throw error
             data != null -> data
-            else -> Unit as T
+            else -> null as T
         }
 }
 
