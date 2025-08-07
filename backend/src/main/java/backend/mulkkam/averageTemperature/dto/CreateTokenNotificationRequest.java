@@ -18,7 +18,7 @@ public record CreateTokenNotificationRequest(
         LocalDateTime createdAt
 ) {
 
-    public SendMessageByFcmTokenRequest toFcmToken(String token) {
+    public SendMessageByFcmTokenRequest toSendMessageByFcmTokenRequest(String token) {
         return new SendMessageByFcmTokenRequest(
                 title,
                 body,

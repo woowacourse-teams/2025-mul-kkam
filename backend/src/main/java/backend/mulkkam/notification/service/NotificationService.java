@@ -89,7 +89,7 @@ public class NotificationService {
 
         try {
             for (Device device : devicesByMember) {
-                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toFcmToken(device.getToken());
+                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(device.getToken());
                 fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
             }
         } catch (FirebaseMessagingException e) {
