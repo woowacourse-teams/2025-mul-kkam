@@ -60,6 +60,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         viewModel.isTargetAmountValid.observe(this) { isValid ->
             updateTargetAmountValidationUI(isValid)
         }
+
+        viewModel.previousTargetAmount.observe(this) {
+            binding.etInputGoal.setText(it.toString())
+        }
     }
 
     private fun updateRecommendedTargetAmount() {

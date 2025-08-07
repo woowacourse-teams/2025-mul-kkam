@@ -15,6 +15,9 @@ class SettingTargetAmountViewModel : ViewModel() {
     private var _targetAmount = MutableLiveData<TargetAmount>()
     val targetAmount: LiveData<TargetAmount> get() = _targetAmount
 
+    private val _previousTargetAmount = MutableLiveData<Int>()
+    val previousTargetAmount: LiveData<Int> get() = _previousTargetAmount
+
     private val _onSaveTargetAmount = MutableSingleLiveData<Unit>()
     val onSaveTargetAmount: SingleLiveData<Unit> get() = _onSaveTargetAmount
 
@@ -32,15 +35,30 @@ class SettingTargetAmountViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val recommendedTargetAmountResult = intakeRepository.getIntakeAmountRecommended()
-            val nicknameResult = membersRepository.getMembersNickname()
-            runCatching {
-                _recommendedTargetAmount.value = recommendedTargetAmountResult.getOrError()
-                _nickname.value = nicknameResult.getOrError()
-                _onRecommendationReady.setValue(Unit)
-            }.onFailure {
-                // TODO: 에러 처리
-            }
+            loadTargetAmountRecommended()
+            loadTargetAmount()
+        }
+    }
+
+    private suspend fun loadTargetAmountRecommended() {
+        val recommendedTargetAmountResult = intakeRepository.getIntakeAmountRecommended()
+        val nicknameResult = membersRepository.getMembersNickname()
+        runCatching {
+            _recommendedTargetAmount.value = recommendedTargetAmountResult.getOrError()
+            _nickname.value = nicknameResult.getOrError()
+            _onRecommendationReady.setValue(Unit)
+        }.onFailure {
+            // TODO: 에러 처리
+        }
+    }
+
+    private suspend fun loadTargetAmount() {
+        val result = intakeRepository.getIntakeTarget()
+        runCatching {
+            val amount = result.getOrError()
+            _previousTargetAmount.value = amount
+        }.onFailure {
+            // TODO: 에러 처리
         }
     }
 
