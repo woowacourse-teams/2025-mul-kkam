@@ -88,14 +88,19 @@ public class NotificationService {
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         try {
-            for (Device device : devicesByMember) {
-                SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(device.getToken());
-                fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
-            }
+            sendNotificaionbyMember(createTokenNotificationRequest, devicesByMember);
         } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
         }
         notificationRepository.save(createTokenNotificationRequest.toNotification());
+    }
+
+    private void sendNotificaionbyMember(CreateTokenNotificationRequest createTokenNotificationRequest, List<Device> devicesByMember)
+            throws FirebaseMessagingException {
+        for (Device device : devicesByMember) {
+            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(device.getToken());
+            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+        }
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
