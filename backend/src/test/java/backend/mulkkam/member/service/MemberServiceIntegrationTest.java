@@ -6,7 +6,6 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -388,45 +387,13 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("오늘의 기록이 존재하지 않는 경우 오늘 이전에 저장된 스냅샷을 통해 목표 음용량을 조회한다")
+        @DisplayName("오늘의 기록이 존재하지 않는 경우 멤버의 목표 음용량을 조회한다")
         @Test
-        void success_withoutIntakeHistoryAndWithAlreadySavedSnapshot() {
-            // given
-            String nickname = "체체";
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .memberNickname(new MemberNickname(nickname))
-                    .build();
-            memberRepository.save(member);
-
-            LocalDate date = LocalDate.of(2025, 3, 25);
-            int rawTargetAmount = 1_000;
-            TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(member, date,
-                    new Amount(rawTargetAmount));
-            targetAmountSnapshotRepository.save(targetAmountSnapshot);
-
-            // when
-            ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
-                    member,
-                    date.plusDays(1)
-            );
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(progressInfoResponse.memberNickname()).isEqualTo(nickname);
-                softly.assertThat(progressInfoResponse.streak()).isEqualTo(0);
-                softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(0);
-                softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(rawTargetAmount);
-                softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(0);
-            });
-        }
-
-        @DisplayName("첫 스냅샷을 저장한 날에 조회하는 경우 멤버에 저장된 목표 음용량을 반환한다")
-        @Test
-        void success_withoutSnapshot() {
+        void success_withoutIntakeHistory() {
             // given
             String nickname = "체체";
             int rawTargetAmount = 1_000;
+
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
