@@ -12,9 +12,10 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
-import com.mulkkam.ui.settinggoal.SettingGoalActivity
-import com.mulkkam.ui.settingprofile.SettingProfileActivity
-import com.mulkkam.ui.settingwater.SettingWaterActivity
+import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
+import com.mulkkam.ui.settingcups.SettingCupsActivity
+import com.mulkkam.ui.settingnickname.SettingNicknameActivity
+import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),
@@ -49,13 +50,10 @@ class SettingFragment :
 
     private fun handleSettingNormalClick(type: SettingType.Normal) {
         when (type) {
-            SettingType.Normal.Nickname -> startActivity(SettingProfileActivity.newIntent(requireContext()))
-            SettingType.Normal.BodyInfo -> {
-                // TODO: 신체 정보 설정 화면 이동
-            }
-
-            SettingType.Normal.MyCup -> startActivity(SettingWaterActivity.newIntent(requireContext()))
-            SettingType.Normal.Goal -> startActivity(SettingGoalActivity.newIntent(requireContext()))
+            SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
+            SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
+            SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
+            SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.Notification -> navigateToNotificationSetting()
         }
     }
@@ -99,12 +97,12 @@ class SettingFragment :
         val settingItems =
             listOf(
                 SettingItem.TitleItem(getString(R.string.setting_section_account)),
-                SettingItem.NormalItem(getString(R.string.setting_profile_edit_nickname_label), SettingType.Normal.Nickname),
+                SettingItem.NormalItem(getString(R.string.setting_nickname_edit_nickname_label), SettingType.Normal.Nickname),
                 SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
-                SettingItem.NormalItem(getString(R.string.setting_water_toolbar_title), SettingType.Normal.MyCup),
-                SettingItem.NormalItem(getString(R.string.setting_goal_toolbar_title), SettingType.Normal.Goal),
+                SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.Normal.MyCup),
+                SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.Normal.Goal),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),

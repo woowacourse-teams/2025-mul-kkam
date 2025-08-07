@@ -1,12 +1,14 @@
 package com.mulkkam.ui.onboarding
 
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 import com.mulkkam.ui.onboarding.terms.TermsFragment
 
 class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOnboardingBinding::inflate) {
@@ -23,7 +25,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         }
 
         initProgressBarView()
+        initClickListeners()
         initObservers()
+        initBackPressHandler()
+        finishOnFragmentsEmpty()
     }
 
     private fun initProgressBarView() {
@@ -35,6 +40,17 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         }
     }
 
+    private fun initClickListeners() {
+        binding.tvSkip.setOnClickListener {
+            viewModel.moveToNextStep()
+        }
+
+        binding.ivPrev.setOnClickListener {
+            supportFragmentManager.popBackStack()
+            viewModel.moveToPreviousStep()
+        }
+    }
+
     private fun initObservers() {
         viewModel.onboardingState.observe(this) { step ->
             navigateToStep(step)
@@ -42,6 +58,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
         viewModel.canSkip.observe(this) { canSkip ->
             binding.tvSkip.isVisible = canSkip
+        }
+
+        viewModel.onCompleteOnboarding.observe(this) {
+            showCompleteDialogFragment()
         }
     }
 
@@ -52,6 +72,34 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
                 addToBackStack(null)
                 setReorderingAllowed(true)
                 add(R.id.fcv_onboarding, step.fragment, null, step.name)
+            }
+        }
+    }
+
+    private fun showCompleteDialogFragment() {
+        val completeDialogFragment = CompleteDialogFragment()
+        completeDialogFragment.isCancelable = false
+        completeDialogFragment.show(supportFragmentManager, null)
+    }
+
+    private fun initBackPressHandler() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    supportFragmentManager.popBackStack()
+                    viewModel.moveToPreviousStep()
+                }
+            },
+        )
+    }
+
+    private fun finishOnFragmentsEmpty() {
+        supportFragmentManager.addOnBackStackChangedListener {
+            val fragments = supportFragmentManager.fragments
+
+            if (fragments.isEmpty()) {
+                finish()
             }
         }
     }

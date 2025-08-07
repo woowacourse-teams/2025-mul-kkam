@@ -59,4 +59,16 @@ public class CupFixtureBuilder {
                 emoji
         );
     }
+
+    public Cup buildWithId(Long id) {
+        return new Cup(
+                id,
+                member,
+                cupNickname,
+                cupAmount,
+                cupRank,
+                intakeType,
+                emoji
+        );
+    }
 }

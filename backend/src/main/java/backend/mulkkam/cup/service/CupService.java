@@ -45,10 +45,8 @@ public class CupService {
     @Transactional
     public CupResponse create(
             CreateCupRequest registerCupRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
-
         IntakeType intakeType = IntakeType.findByName(registerCupRequest.intakeType());
         Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType);
 
@@ -68,10 +66,10 @@ public class CupService {
     @Transactional
     public CupsRanksResponse updateRanks(
             UpdateCupRanksRequest request,
-            Long memberId
+            Member member
     ) {
         CupRanks cupRanks = new CupRanks(buildCupRankMapById(request.cups()));
-        List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), memberId);
+        List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), member);
 
         for (Cup cup : cups) {
             cup.modifyRank(cupRanks.getCupRank(cup.getId()));
@@ -97,21 +95,21 @@ public class CupService {
 
     private List<Cup> getAllByIdsAndMemberId(
             Set<Long> cupIds,
-            Long memberId
+            Member member
     ) {
         List<Cup> cups = cupRepository.findAllById(cupIds);
         if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
         }
-        validateCupsOwnership(cupIds, memberId);
+        validateCupsOwnership(cupIds, member);
         return cups;
     }
 
     private void validateCupsOwnership(
             Set<Long> cupIds,
-            Long memberId
+            Member member
     ) {
-        Set<Long> membersCupIds = cupRepository.findAllByMemberId(memberId)
+        Set<Long> membersCupIds = cupRepository.findAllByMember(member)
                 .stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
@@ -124,31 +122,30 @@ public class CupService {
     @Transactional
     public void delete(
             Long cupId,
-            Long memberId
+            Member member
     ) {
-        Cup targetCup = cupRepository.findByIdAndMemberId(cupId, memberId)
+        Cup targetCup = cupRepository.findByIdAndMember(cupId, member)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
 
         cupRepository.delete(targetCup);
 
-        cupRepository.findAllByMemberId(memberId)
+        cupRepository.findAllByMember(member)
                 .stream()
                 .filter(cup -> cup.isLowerPriorityThan(targetCup))
                 .forEach(Cup::promoteRank);
     }
 
-    public CupsResponse readCupsByMemberId(Long memberId) {
-        List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(memberId);
+    public CupsResponse readCupsByMemberId(Member member) {
+        List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
         return new CupsResponse(cups);
     }
 
     @Transactional
     public void update(
             Long id,
-            Long memberId,
+            Member member,
             UpdateCupRequest updateCupRequest
     ) {
-        Member member = getMember(memberId);
         Cup cup = getCup(id);
 
         validateCupOwnership(member, cup);
@@ -158,13 +155,13 @@ public class CupService {
                 updateCupRequest.intakeType(),
                 updateCupRequest.emoji()
         );
+        cupRepository.save(cup);
     }
 
     private void validateCupOwnership(Member member, Cup cup) {
-        if (member.equals(cup.getMember())) {
-            return;
+        if (!member.getId().equals(cup.getMember().getId())) {
+            throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
-        throw new CommonException(NOT_PERMITTED_FOR_CUP);
     }
 
     private Cup getCup(final Long id) {

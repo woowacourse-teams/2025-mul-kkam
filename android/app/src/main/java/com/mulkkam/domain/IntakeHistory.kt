@@ -1,9 +1,9 @@
 package com.mulkkam.domain
 
-import java.time.LocalDateTime
+import java.time.LocalTime
 
 data class IntakeHistory(
     val id: Int,
-    val dateTime: LocalDateTime,
+    val dateTime: LocalTime,
     val intakeAmount: Int,
 )
