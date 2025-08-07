@@ -9,9 +9,9 @@ import com.mulkkam.databinding.ActivitySplashBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.model.AppEntryState.ACTIVE_USER
-import com.mulkkam.ui.model.AppEntryState.UNAUTHORIZED
-import com.mulkkam.ui.model.AppEntryState.UNONBOARDED
+import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
+import com.mulkkam.ui.model.AppAuthState.UNAUTHORIZED
+import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
 
 @SuppressLint("CustomSplashScreen")
@@ -52,7 +52,7 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
     }
 
     private fun initObservers() {
-        viewModel.entryState.observe(this@SplashActivity) { entryState ->
+        viewModel.authState.observe(this@SplashActivity) { entryState ->
             val intent =
                 when (entryState) {
                     UNAUTHORIZED -> LoginActivity.newIntent(this@SplashActivity)

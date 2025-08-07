@@ -1,6 +1,6 @@
 package com.mulkkam.ui.model
 
-enum class AppEntryState {
+enum class AppAuthState {
     UNAUTHORIZED,
     UNONBOARDED,
     ACTIVE_USER,

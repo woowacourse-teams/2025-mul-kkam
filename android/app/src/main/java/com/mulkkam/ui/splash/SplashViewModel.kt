@@ -4,25 +4,25 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.ui.model.AppEntryState
+import com.mulkkam.ui.model.AppAuthState
 
 class SplashViewModel : ViewModel() {
-    private val _entryState = MutableLiveData<AppEntryState>()
-    val entryState: LiveData<AppEntryState> = _entryState
+    private val _authState = MutableLiveData<AppAuthState>()
+    val authState: LiveData<AppAuthState> = _authState
 
     fun updateEntryState() {
         val token = RepositoryInjection.tokenRepository.getAccessToken()
         if (token == null) {
-            _entryState.value = AppEntryState.UNAUTHORIZED
+            _authState.value = AppAuthState.UNAUTHORIZED
             return
         }
 
         // TODO: 온보딩 여부 API 연결
         val hasCompletedOnboarding = false
-        _entryState.value =
+        _authState.value =
             when {
-                hasCompletedOnboarding -> AppEntryState.ACTIVE_USER
-                else -> AppEntryState.UNONBOARDED
+                hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
+                else -> AppAuthState.UNONBOARDED
             }
     }
 }
