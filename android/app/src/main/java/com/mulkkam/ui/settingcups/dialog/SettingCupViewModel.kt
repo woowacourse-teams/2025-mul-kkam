@@ -75,7 +75,8 @@ class SettingCupViewModel : ViewModel() {
                 )
             runCatching {
                 result.getOrError()
-                _saveSuccess.postValue(Unit)
+            }.onSuccess {
+                _saveSuccess.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -84,13 +85,13 @@ class SettingCupViewModel : ViewModel() {
 
     private fun editCup() {
         viewModelScope.launch {
-            val result =
-                cupsRepository.patchCup(
-                    cup = cup.value?.toDomain() ?: return@launch,
-                )
             runCatching {
-                result.getOrError()
-                _saveSuccess.postValue(Unit)
+                cupsRepository
+                    .patchCup(
+                        cup = cup.value?.toDomain() ?: return@launch,
+                    ).getOrError()
+            }.onSuccess {
+                _saveSuccess.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -99,13 +100,13 @@ class SettingCupViewModel : ViewModel() {
 
     fun deleteCup() {
         viewModelScope.launch {
-            val result =
-                cupsRepository.deleteCup(
-                    id = cup.value?.id ?: return@launch,
-                )
             runCatching {
-                result.getOrError()
-                _deleteSuccess.postValue(Unit)
+                cupsRepository
+                    .deleteCup(
+                        id = cup.value?.id ?: return@launch,
+                    ).getOrError()
+            }.onSuccess {
+                _deleteSuccess.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }

@@ -22,9 +22,10 @@ class SettingCupsViewModel : ViewModel() {
 
     fun loadCups() {
         viewModelScope.launch {
-            val result = cupsRepository.getCups()
             runCatching {
-                _cups.value = result.getOrError().toUi()
+                cupsRepository.getCups().getOrError()
+            }.onSuccess { cups ->
+                _cups.value = cups.toUi()
             }.onFailure {
                 // TODO: 예외 처리
             }
@@ -38,10 +39,11 @@ class SettingCupsViewModel : ViewModel() {
             ).reorderRanks()
 
         viewModelScope.launch {
-            val result = cupsRepository.putCupsRank(reorderedCups)
             runCatching {
-                if (reorderedCups != result.getOrError()) {
-                    _cups.value = result.getOrError().toUi()
+                cupsRepository.putCupsRank(reorderedCups).getOrError()
+            }.onSuccess { cups ->
+                if (reorderedCups != cups) {
+                    _cups.value = cups.toUi()
                 }
             }.onFailure {
                 _cups.value = cups.value
