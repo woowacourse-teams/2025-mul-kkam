@@ -38,9 +38,25 @@ public record ProgressInfoResponse(
                 member.getMemberNickname().value(),
                 0,
                 0.0,
-                0,
+                member.getTargetAmount().value(),
                 0,
                 CommentOfAchievementRate.VERY_LOW.getComment()
         );
     }
+
+    public ProgressInfoResponse(
+            Member member,
+            int targetAmount
+    ) {
+        this(
+                member.getMemberNickname().value(),
+                0,
+                0.0,
+                targetAmount,
+                0,
+                CommentOfAchievementRate.VERY_LOW.getComment()
+        );
+    }
+
+
 }
