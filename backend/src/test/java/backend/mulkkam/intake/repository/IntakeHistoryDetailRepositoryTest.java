@@ -6,7 +6,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
@@ -28,7 +28,7 @@ public class IntakeHistoryDetailRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @DisplayName("음용 세부 기록을 조회할 때에")
     @Nested
@@ -56,40 +56,40 @@ public class IntakeHistoryDetailRepositoryTest {
                     .build();
             intakeHistoryRepository.save(secondIntakeHistory);
 
-            IntakeHistoryDetail firstIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
-            IntakeHistoryDetail secondIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
-            IntakeHistoryDetail thirdIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
-            IntakeHistoryDetail fourthIntakeDetail = IntakeDetailFixtureBuilder
+            IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
 
-            intakeDetailRepository.saveAll(
+            intakeHistoryDetailRepository.saveAll(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));
 
             // when
-            List<IntakeHistoryDetail> firstDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
-                    member.getId(),
+            List<IntakeHistoryDetail> firstDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    member,
                     date,
                     date
             );
-            List<IntakeHistoryDetail> secondDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(
-                    member.getId(),
+            List<IntakeHistoryDetail> secondDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    member,
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeHistoryDetail> allDetails = intakeDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
+            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(member,
                     date,
                     date.plusDays(1));
 

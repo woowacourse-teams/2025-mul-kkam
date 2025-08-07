@@ -44,6 +44,10 @@
         </service>
 
         <activity
+            android:name=".ui.settingbioinfo.SettingBioInfoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
@@ -56,11 +60,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settingwater.SettingWaterActivity"
+            android:name=".ui.settingcups.SettingCupsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settinggoal.SettingGoalActivity"
+            android:name=".ui.settingtargetamount.SettingTargetAmountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -96,4 +100,5 @@
             </intent-filter>
         </activity>
     </application>
+
 </manifest>

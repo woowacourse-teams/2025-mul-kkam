@@ -3,25 +3,22 @@ package backend.mulkkam.intake.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -39,29 +36,27 @@ public class IntakeAmountServiceUnitTest {
     @Mock
     MemberRepository memberRepository;
 
+    @Mock
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
     class ModifyTarget {
-
-        public static final long MEMBER_ID = 1L;
 
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
         void success_amountMoreThan0() {
             // given
             Member mockMember = mock(Member.class);
-            given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.of(mockMember));
 
             int newTargetAmount = 1_000;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, MEMBER_ID);
+            intakeAmountService.modifyTarget(mockMember, intakeTargetAmountModifyRequest);
 
             // then
-            verify(memberRepository).findById(MEMBER_ID);
             verify(mockMember).updateTargetAmount(new Amount(newTargetAmount));
         }
 
@@ -70,41 +65,23 @@ public class IntakeAmountServiceUnitTest {
         void error_amountIsLessThan0() {
             // given
             Member member = mock(Member.class);
-            given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.ofNullable(member));
 
             int newTargetAmount = -1;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, MEMBER_ID))
+            assertThatThrownBy(() -> intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-            verify(memberRepository).findById(MEMBER_ID);
             verify(member, never()).updateTargetAmount(any(Amount.class));
-        }
-
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.empty());
-
-            // when & then
-            CommonException exception = assertThrows(CommonException.class,
-                    () -> intakeAmountService.modifyTarget(any(IntakeTargetAmountModifyRequest.class), MEMBER_ID));
-            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
         }
     }
 
     @DisplayName("하루 섭취 목표 응용량을 추천받을 때에")
     @Nested
     class GetRecommended {
-
-        public static final long MEMBER_ID = 1L;
-
+        
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
         void success_physicalAttributes() {
@@ -113,13 +90,11 @@ public class IntakeAmountServiceUnitTest {
                     .builder()
                     .gender(null)
                     .weight(null)
-                    .build();
-            given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.of(member));
+                    .buildWithId(1L);
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    MEMBER_ID);
+                    member);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -133,13 +108,11 @@ public class IntakeAmountServiceUnitTest {
                     .builder()
                     .gender(null)
                     .weight(null)
-                    .build();
-            given(memberRepository.findById(MEMBER_ID))
-                    .willReturn(Optional.of(member));
+                    .buildWithId(1L);
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    MEMBER_ID);
+                    member);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);

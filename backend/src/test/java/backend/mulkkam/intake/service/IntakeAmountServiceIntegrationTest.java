@@ -1,14 +1,8 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
@@ -17,18 +11,25 @@ import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendReq
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -39,6 +40,9 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
     MemberRepository memberRepository;
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
+
+    @Autowired
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -59,7 +63,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId());
+            intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest);
 
             // then
             Optional<Member> foundMember = memberRepository.findById(member.getId());
@@ -85,23 +89,32 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, savedMember.getId()))
+                    () -> intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
         }
 
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
+        @DisplayName("스냅샷이 저장된다")
         @Test
-        void error_memberIsNotExisted() {
+        void success_whenAmountIsModified() {
             // given
+            int originTargetAmount = 2_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(new Amount(originTargetAmount))
+                    .build();
+            memberRepository.save(member);
+
             int newTargetAmount = 1_000;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
-            // when & then
-            CommonException exception = assertThrows(CommonException.class,
-                    () -> intakeAmountService.modifyTarget(intakeTargetAmountModifyRequest, Long.MAX_VALUE));
-            assertThat(exception.getErrorCode()).isEqualTo(NotFoundErrorCode.NOT_FOUND_MEMBER);
+            // when
+            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
+                    member.getId(), LocalDate.now());
+
+            // then
+            assertThat(targetAmountSnapshot.get().getTargetAmount().value()).isEqualTo(newTargetAmount);
         }
 
         @DisplayName("해당 수정이 추천에 의한 수정일 경우 금일 목표에만 반영된다")
@@ -124,11 +137,11 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                             1_000
                     );
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(modifyIntakeTargetAmountByRecommendRequest,
-                    member.getId());
-            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
-                    member.getId(),
-                    LocalDate.now());
+            intakeAmountService.modifyDailyTargetBySuggested(member, modifyIntakeTargetAmountByRecommendRequest);
+            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                    member,
+                    LocalDate.now()
+            );
             Optional<Member> findMember = memberRepository.findById(member.getId());
 
             // then
@@ -156,7 +169,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember.getId());
+                    savedMember);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -173,7 +186,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember.getId());
+                    savedMember);
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -195,7 +208,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(savedMember.getId());
+            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(savedMember);
 
             // then
             assertThat(actual.amount()).isEqualTo(expected);

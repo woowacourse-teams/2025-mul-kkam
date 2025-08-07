@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,5 +16,5 @@ public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Lo
             LocalDate dateBefore
     );
 
-    Optional<IntakeHistory> findByMemberIdAndHistoryDate(Long memberId, LocalDate date);
+    Optional<IntakeHistory> findByMemberAndHistoryDate(Member member, LocalDate date);
 }
