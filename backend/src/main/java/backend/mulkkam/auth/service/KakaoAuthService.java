@@ -23,6 +23,7 @@ public class KakaoAuthService {
     private final OauthJwtTokenHandler jwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
 
+    @Transactional
     public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
