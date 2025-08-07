@@ -125,26 +125,38 @@
         app:layout_constraintStart_toStartOf="@id/tv_weight"
         app:layout_constraintTop_toBottomOf="@id/tv_weight" />
 
-    <TextView
-        android:id="@+id/tv_health_connect_description"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/ll_health_connect"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:text="@string/setting_bio_info_health_connect_description"
-        android:textAppearance="@style/body2"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toStartOf="@id/tv_health_connect_label"
-        app:layout_constraintTop_toBottomOf="@id/tv_health_connect_label" />
-
-    <ImageView
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="16dp"
-        android:padding="8dp"
-        android:src="@drawable/ic_setting_next"
-        app:layout_constraintBottom_toBottomOf="@id/tv_health_connect_description"
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingVertical="6dp"
+        android:paddingStart="24dp"
+        android:paddingEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/tv_health_connect_description" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_health_connect_label">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/setting_bio_info_health_connect_description"
+            android:textAppearance="@style/body2"
+            android:textColor="@color/black" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_setting_next" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/tv_save"

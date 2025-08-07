@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
+import androidx.health.connect.client.HealthConnectClient
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
 import com.mulkkam.domain.Gender
@@ -14,6 +17,8 @@ import com.mulkkam.domain.Gender.FEMALE
 import com.mulkkam.domain.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
+import com.mulkkam.util.extensions.isHealthConnectAvailable
+import com.mulkkam.util.extensions.navigateToHealthConnectStore
 
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(
@@ -21,6 +26,9 @@ class SettingBioInfoActivity :
     ) {
     private val weightFragment: SettingWeightFragment by lazy {
         SettingWeightFragment()
+    }
+    private val healthConnectIntent: Intent by lazy {
+        Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
     }
     private val viewModel: SettingBioInfoViewModel by viewModels()
 
@@ -50,6 +58,14 @@ class SettingBioInfoActivity :
 
             ivBack.setOnClickListener {
                 finish()
+            }
+
+            llHealthConnect.setOnClickListener {
+                if (isHealthConnectAvailable()) {
+                    startActivity(healthConnectIntent)
+                } else {
+                    navigateToHealthConnectStore()
+                }
             }
         }
     }
@@ -122,6 +138,11 @@ class SettingBioInfoActivity :
     }
 
     companion object {
+        private val HEALTH_CONNECT_PERMISSIONS =
+            setOf(
+                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+            )
+
         fun newIntent(context: Context): Intent = Intent(context, SettingBioInfoActivity::class.java)
     }
 }
