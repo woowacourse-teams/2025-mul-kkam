@@ -108,7 +108,8 @@ public class NotificationService {
             Member member,
             Long lastId,
             LocalDateTime limitStartDateTime,
-            Pageable pageable) {
+            Pageable pageable
+) {
         if (lastId == null) {
             return notificationRepository.findLatest(member, limitStartDateTime, pageable);
         }
