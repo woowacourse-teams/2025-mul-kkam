@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface IntakeDetailRepository extends JpaRepository<IntakeHistoryDetail, Long> {
+public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHistoryDetail, Long> {
 
     @Query("SELECT d FROM IntakeHistoryDetail d " +
             "JOIN d.intakeHistory h " +

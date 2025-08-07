@@ -28,7 +28,7 @@ public class IntakeHistoryDetailRepositoryTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeDetailRepository;
 
     @DisplayName("음용 세부 기록을 조회할 때에")
     @Nested

@@ -14,7 +14,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -49,9 +49,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
-    
+
     @Autowired
-    private IntakeDetailRepository intakeDetailRepository;
+    private IntakeHistoryDetailRepository intakeDetailRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested

@@ -12,7 +12,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
-import backend.mulkkam.intake.repository.IntakeDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -38,7 +38,7 @@ public class MemberService {
     private final OauthAccountRepository oauthAccountRepository;
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
-    private final IntakeDetailRepository intakeDetailRepository;
+    private final IntakeHistoryDetailRepository intakeDetailRepository;
 
     public MemberResponse getMemberById(long id) {
         Member member = getById(id);
