@@ -114,17 +114,18 @@ public class MemberService {
             Member member,
             LocalDate date
     ) {
-        Optional<IntakeHistory> intakeHistoryOptional = intakeHistoryRepository.findByMemberAndHistoryDate(member,
+        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
                 date);
-        if (intakeHistoryOptional.isEmpty()) {
+        if (foundIntakeHistory.isEmpty()) {
             return new ProgressInfoResponse(member);
         }
+
         List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberAndDateRange(
                 member,
                 date,
                 date
         );
-        IntakeHistory intakeHistory = intakeHistoryOptional.get();
+        IntakeHistory intakeHistory = foundIntakeHistory.get();
         Amount totalAmount = calculateTotalIntakeAmount(details);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
