@@ -11,6 +11,7 @@ import backend.mulkkam.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +32,7 @@ public class IntakeAmountController {
 
     @GetMapping("/target/recommended")
     public ResponseEntity<RecommendedIntakeAmountResponse> getRecommendedTargetAmount(
-            @RequestBody PhysicalAttributesRequest physicalAttributesRequest
+            @ModelAttribute PhysicalAttributesRequest physicalAttributesRequest
     ) {
         RecommendedIntakeAmountResponse recommendedIntakeAmountResponse = intakeAmountService.getRecommendedTargetAmount(
                 physicalAttributesRequest);
