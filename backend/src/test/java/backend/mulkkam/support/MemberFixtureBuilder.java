@@ -13,6 +13,8 @@ public class MemberFixtureBuilder {
     private Double weight;
     private PhysicalAttributes physicalAttributes;
     private Amount targetAmount;
+    private boolean isMarketingNotificationAgreed;
+    private boolean isNightNotificationAgreed;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
@@ -20,6 +22,8 @@ public class MemberFixtureBuilder {
         this.weight = 50.2;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
         this.targetAmount = new Amount(1_000);
+        this.isMarketingNotificationAgreed = false;
+        this.isNightNotificationAgreed = false;
     }
 
     public static MemberFixtureBuilder builder() {
@@ -48,11 +52,34 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+    public MemberFixtureBuilder isMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+        return this;
+    }
+
+    public MemberFixtureBuilder isNightNotificationAgreed(boolean isNightNotificationAgreed) {
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
+        return this;
+    }
+
     public Member build() {
         return new Member(
                 this.memberNickname,
                 this.physicalAttributes,
-                this.targetAmount
+                this.targetAmount,
+                this.isMarketingNotificationAgreed,
+                this.isNightNotificationAgreed
+        );
+    }
+
+    public Member buildWithId(Long id) {
+        return new Member(
+                id,
+                this.memberNickname,
+                this.physicalAttributes,
+                this.targetAmount,
+                this.isMarketingNotificationAgreed,
+                this.isNightNotificationAgreed
         );
     }
 }

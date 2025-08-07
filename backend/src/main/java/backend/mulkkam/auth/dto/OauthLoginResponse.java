@@ -1,6 +1,7 @@
 package backend.mulkkam.auth.dto;
 
 public record OauthLoginResponse(
-        String accessToken
+        String accessToken,
+        boolean finishedOnboarding
 ) {
 }

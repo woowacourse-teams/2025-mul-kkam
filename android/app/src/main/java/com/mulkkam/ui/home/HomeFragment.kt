@@ -10,7 +10,9 @@ import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.Cups
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
@@ -28,28 +30,35 @@ class HomeFragment :
 
         initObservers()
         initCustomChartOptions()
-
-        binding.fabHomeDrink.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 1)
-        }
-        binding.btnHomeCupRankSecond.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 2)
-        }
-        binding.btnHomeCupRankThird.setOnClickListener {
-            viewModel.addWaterIntake(cupRank = 3)
-        }
     }
 
     private fun initObservers() {
         viewModel.todayIntakeHistorySummary.observe(viewLifecycleOwner) { summary ->
-            with(binding) {
-                pbHomeWaterProgress.setProgress(summary.achievementRate)
-            }
+            binding.pbHomeWaterProgress.setProgress(summary.achievementRate)
             updateDailyIntakeSummary(summary)
+        }
+        viewModel.cups.observe(viewLifecycleOwner) { cups ->
+            updateDrinkMenu(cups)
+        }
+        viewModel.characterChat.observe(viewLifecycleOwner) { chat ->
+            binding.tvHomeCharacterChat.text = chat ?: return@observe
         }
     }
 
-    fun initCustomChartOptions() {
+    private fun updateDrinkMenu(cups: Cups) {
+        binding.fabHomeDrink.setMenuItems(
+            items =
+                cups.cups.map { cup ->
+                    ExtendableFloatingMenuItem(cup.nickname, cup.emoji, cup)
+                } + ExtendableFloatingMenuItem(getString(R.string.home_drink_manual), MANUAL_DRINK_IMAGE),
+            onItemClick = {
+                // TODO: null 시 수동 입력 기능 추가
+                viewModel.addWaterIntake(it.data?.id ?: return@setMenuItems)
+            },
+        )
+    }
+
+    private fun initCustomChartOptions() {
         with(binding.pbHomeWaterProgress) {
             post {
                 setPaintGradient(createLinearGradient(width.toFloat()))
@@ -109,5 +118,7 @@ class HomeFragment :
 
     companion object {
         private const val PROGRESS_BAR_RADIUS: Float = 12f
+        private const val MANUAL_DRINK_IMAGE: String =
+            "https://github-production-user-asset-6210df.s3.amazonaws.com/127238018/474919237-4e25a9f8-ab08-46e4-bd01-578d2de907df.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250806%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250806T085526Z&X-Amz-Expires=300&X-Amz-Signature=2c41117c496fdf0a94dd9062232cc396e7e44f58048958a92185c836d1caf5d4&X-Amz-SignedHeaders=host"
     }
 }

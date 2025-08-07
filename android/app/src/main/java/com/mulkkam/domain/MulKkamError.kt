@@ -35,6 +35,12 @@ sealed class MulKkamError : Throwable() {
         }
     }
 
+    sealed class TargetAmountError : MulKkamError() {
+        object InvalidTargetAmount : TargetAmountError() {
+            private fun readResolve(): Any = InvalidTargetAmount
+        }
+    }
+
     // 계정 관련 에러
     sealed class AccountError : MulKkamError() {
         object NotExistUser : AccountError() {

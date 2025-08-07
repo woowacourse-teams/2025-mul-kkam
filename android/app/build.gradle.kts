@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 android {
@@ -95,20 +96,15 @@ dependencies {
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.kotest.runner.junit5)
     testImplementation(libs.junit.jupiter)
-
-    // Instrumented 테스트 의존성 (Android 기기에서 실행)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.junit.jupiter)
-    androidTestImplementation(libs.kotest.runner.junit5)
-    androidTestImplementation(libs.mannodermaus.junit5.core)
-    androidTestImplementation(libs.androidx.espresso.core)
-
-    // Instrumented 테스트 런타임 전용 의존성
-    androidTestRuntimeOnly(libs.mannodermaus.junit5.runner)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.assertj.core)
+    testImplementation(libs.mockk)
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.glide)
     implementation(libs.lottie)
+    implementation(libs.androidsvg)
+    kapt(libs.glide.compiler)
 
     // 로그인
     implementation(libs.kakao.v2.user)

@@ -2,7 +2,6 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -19,7 +18,6 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -47,11 +45,9 @@ public class MemberServiceUnitTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when
-            MemberResponse result = memberService.getMemberById(memberId);
+            MemberResponse result = memberService.get(member);
 
             // then
             assertSoftly(softly -> {
@@ -60,19 +56,6 @@ public class MemberServiceUnitTest {
                 softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
-        }
-
-        @DisplayName("존재하지 않는 멤버 id로 조회 시 예외가 발생한다 : NOT_FOUND_MEMBER")
-        @Test
-        void error_whenNonExistingId() {
-            // given
-            Long nonExistingMemberId = 999L;
-            when(memberRepository.findById(nonExistingMemberId)).thenReturn(Optional.empty());
-
-            // when & then
-            assertThatThrownBy(
-                    () -> memberService.getMemberById(nonExistingMemberId)
-            ).isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_MEMBER.name());
         }
     }
 
@@ -89,7 +72,6 @@ public class MemberServiceUnitTest {
                     .gender(null)
                     .build();
             Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             Gender gender = Gender.FEMALE;
             Double weight = 50.2;
@@ -101,7 +83,7 @@ public class MemberServiceUnitTest {
             // when
             memberService.modifyPhysicalAttributes(
                     physicalAttributesModifyRequest,
-                    memberId
+                    member
             );
 
             // then
@@ -126,113 +108,107 @@ public class MemberServiceUnitTest {
                     .builder()
                     .memberNickname(new MemberNickname("msv0b"))
                     .build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             String modifyNickname = "msv0a";
-            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(modifyNickname);
+            MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(
+                    modifyNickname);
 
             // when
             memberService.modifyNickname(
                     memberNicknameModifyRequest,
-                    memberId
+                    member
             );
 
             // then
             assertThat(member.getMemberNickname().value()).isEqualTo(modifyNickname);
         }
+    }
 
-        @DisplayName("멤버의 닉네임을 수정할 때")
-        @Nested
-        class modifyNickname {
+    @DisplayName("멤버의 닉네임을 수정할 때")
+    @Nested
+    class modifyNickname {
 
-            @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
-            @Test
-            void success_validDataArg() {
-                // given
-                String oldNickname = "체체";
-                String newNickname = "체체1";
-                Member member = MemberFixtureBuilder
-                        .builder()
-                        .memberNickname(new MemberNickname(oldNickname))
-                        .build();
-                when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-                when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
+        @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
+        @Test
+        void success_validDataArg() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
+            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
 
-                // when & then
-                assertThatCode(() -> memberService.validateDuplicateNickname(
-                        newNickname,
-                        member.getId()
-                )).doesNotThrowAnyException();
-            }
-
-            @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
-            @Test
-            void error_duplicateNickname() {
-                // given
-                String oldNickname = "체체";
-                String newNickname = "체체1";
-
-                Member member = MemberFixtureBuilder
-                        .builder()
-                        .memberNickname(new MemberNickname(oldNickname))
-                        .build();
-
-                when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-                when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
-
-                // when & then
-                assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                        newNickname,
-                        member.getId()
-                ))
-                        .isInstanceOf(CommonException.class)
-                        .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
-            }
-
-            @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
-            @Test
-            void error_sameAsBeforeNickname() {
-                // given
-                String nickname = "체체";
-                Member member = MemberFixtureBuilder
-                        .builder()
-                        .memberNickname(new MemberNickname(nickname))
-                        .build();
-                when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-
-                // when & then
-                assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                        nickname,
-                        member.getId()
-                ))
-                        .isInstanceOf(CommonException.class)
-                        .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
-            }
+            // when & then
+            assertThatCode(() -> memberService.validateDuplicateNickname(
+                    newNickname,
+                    member
+            )).doesNotThrowAnyException();
         }
 
-        @DisplayName("멤버의 닉네임을 조회하려고 할 때")
-        @Nested
-        class GetNickname {
+        @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
+        @Test
+        void error_duplicateNickname() {
+            // given
+            String oldNickname = "체체";
+            String newNickname = "체체1";
 
-            @DisplayName("멤버의 닉네임이 올바르게 조회된다")
-            @Test
-            void success_validMemberId() {
-                // given
-                Member member = MemberFixtureBuilder
-                        .builder()
-                        .build();
-                Long memberId = 1L;
-                when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(oldNickname))
+                    .build();
 
-                String expected = member.getMemberNickname().value();
+            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
 
-                // when
-                MemberNicknameResponse memberNicknameResponse = memberService.getNickname(memberId);
+            // when & then
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
+                    newNickname,
+                    member
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
+        }
 
-                // then
-                assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
-            }
+        @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
+        @Test
+        void error_sameAsBeforeNickname() {
+            // given
+            String nickname = "체체";
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(nickname))
+                    .build();
+
+            // when & then
+            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
+                    nickname,
+                    member
+            ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
+        }
+    }
+
+    @DisplayName("멤버의 닉네임을 조회하려고 할 때")
+    @Nested
+    class GetNickname {
+
+        @DisplayName("멤버의 닉네임이 올바르게 조회된다")
+        @Test
+        void success_validMemberId() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+
+            String expected = member.getMemberNickname().value();
+
+            // when
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member);
+
+            // then
+            assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
         }
     }
 }
