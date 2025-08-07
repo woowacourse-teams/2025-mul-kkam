@@ -3,8 +3,10 @@ package com.mulkkam.ui.splash
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.ui.model.AppAuthState
+import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
     private val _authState = MutableLiveData<AppAuthState>()
@@ -17,12 +19,22 @@ class SplashViewModel : ViewModel() {
             return
         }
 
-        // TODO: 온보딩 여부 API 연결
-        val hasCompletedOnboarding = false
-        _authState.value =
-            when {
-                hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
-                else -> AppAuthState.UNONBOARDED
+        updateAuthStateWithOnboarding()
+    }
+
+    private fun updateAuthStateWithOnboarding() {
+        viewModelScope.launch {
+            val result = RepositoryInjection.membersRepository.getMembersCheckOnboarding()
+            runCatching {
+                val hasCompletedOnboarding = result.getOrError()
+                _authState.value =
+                    when {
+                        hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
+                        else -> AppAuthState.UNONBOARDED
+                    }
+            }.onFailure {
+                // TODO: 에러 처리
             }
+        }
     }
 }
