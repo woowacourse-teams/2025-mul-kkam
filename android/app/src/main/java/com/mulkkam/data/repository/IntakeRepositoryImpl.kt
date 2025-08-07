@@ -3,9 +3,11 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
+import com.mulkkam.data.remote.model.request.IntakeAmountTargetRecommendedRequest
 import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
+import com.mulkkam.domain.Gender
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.model.IntakeHistoryResult
@@ -34,7 +36,8 @@ class IntakeRepositoryImpl(
         dateTime: LocalDateTime,
         amount: Int,
     ): MulKkamResult<IntakeHistoryResult> {
-        val result = intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
+        val result =
+            intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -61,6 +64,23 @@ class IntakeRepositoryImpl(
 
     override suspend fun getIntakeAmountRecommended(): MulKkamResult<Int> {
         val result = intakeService.getIntakeAmountRecommended()
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.amount) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun getIntakeAmountTargetRecommended(
+        gender: Gender?,
+        weight: Int?,
+    ): MulKkamResult<Int> {
+        val result =
+            intakeService.getIntakeAmountTargetRecommended(
+                IntakeAmountTargetRecommendedRequest(
+                    gender?.name,
+                    weight?.toDouble(),
+                ),
+            )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
