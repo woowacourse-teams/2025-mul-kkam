@@ -84,8 +84,8 @@ public class MemberService {
     ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
-
         oauthAccount.modifyMember(member);
+        oauthAccountRepository.save(oauthAccount);
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {
