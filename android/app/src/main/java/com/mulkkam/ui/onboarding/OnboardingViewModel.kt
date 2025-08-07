@@ -23,7 +23,8 @@ class OnboardingViewModel : ViewModel() {
     val onCompleteOnboarding: SingleLiveData<Unit>
         get() = _onCompleteOnboarding
 
-    private var onboardingInfo: OnboardingInfo = OnboardingInfo()
+    var onboardingInfo: OnboardingInfo = OnboardingInfo()
+        private set
 
     fun updateOnboardingState(state: OnboardingStep) {
         _onboardingState.value = state

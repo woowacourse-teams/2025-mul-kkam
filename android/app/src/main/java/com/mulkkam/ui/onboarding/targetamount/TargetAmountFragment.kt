@@ -31,6 +31,11 @@ class TargetAmountFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+        viewModel.getRecommendedTargetAmount(
+            parentViewModel.onboardingInfo.gender,
+            parentViewModel.onboardingInfo.weight,
+        )
+
         initTextAppearance()
         initClickListeners()
         initObservers()
