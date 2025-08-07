@@ -25,7 +25,7 @@ class CupsRepositoryImpl(
 
     override suspend fun postCup(cup: Cup): MulKkamResult<Unit> {
         val result =
-            cupsService.postCups(cup.toAddCupRequest())
+            cupsService.postCup(cup.toAddCupRequest())
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },

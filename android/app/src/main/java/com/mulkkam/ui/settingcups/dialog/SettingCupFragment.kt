@@ -3,12 +3,14 @@ package com.mulkkam.ui.settingcups.dialog
 import android.os.Bundle
 import android.view.View
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
+import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -19,6 +21,7 @@ class SettingCupFragment :
         FragmentSettingCupBinding::inflate,
     ) {
     private val viewModel: SettingCupViewModel by viewModels()
+    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     override fun onViewCreated(
@@ -55,6 +58,11 @@ class SettingCupFragment :
             editType?.let { showTitle(it) }
         }
         viewModel.saveSuccess.observe(this) {
+            settingCupsViewModel.loadCups()
+            dismiss()
+        }
+        viewModel.deleteSuccess.observe(this) {
+            settingCupsViewModel.loadCups()
             dismiss()
         }
     }
