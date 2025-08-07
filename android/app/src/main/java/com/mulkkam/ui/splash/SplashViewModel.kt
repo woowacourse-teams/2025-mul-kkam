@@ -12,7 +12,7 @@ class SplashViewModel : ViewModel() {
     private val _authState = MutableLiveData<AppAuthState>()
     val authState: LiveData<AppAuthState> = _authState
 
-    fun updateEntryState() {
+    fun updateAuthState() {
         val token = RepositoryInjection.tokenRepository.getAccessToken()
         if (token == null) {
             _authState.value = AppAuthState.UNAUTHORIZED

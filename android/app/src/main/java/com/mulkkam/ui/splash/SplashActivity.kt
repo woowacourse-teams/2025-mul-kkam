@@ -41,7 +41,7 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationCancel(p0: Animator) = Unit
 
                 override fun onAnimationEnd(p0: Animator) {
-                    viewModel.updateEntryState()
+                    viewModel.updateAuthState()
                 }
 
                 override fun onAnimationRepeat(p0: Animator) = Unit
@@ -52,9 +52,9 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
     }
 
     private fun initObservers() {
-        viewModel.authState.observe(this@SplashActivity) { entryState ->
+        viewModel.authState.observe(this@SplashActivity) { authState ->
             val intent =
-                when (entryState) {
+                when (authState) {
                     UNAUTHORIZED -> LoginActivity.newIntent(this@SplashActivity)
                     UNONBOARDED -> OnboardingActivity.newIntent(this@SplashActivity)
                     ACTIVE_USER -> MainActivity.newIntent(this@SplashActivity)
