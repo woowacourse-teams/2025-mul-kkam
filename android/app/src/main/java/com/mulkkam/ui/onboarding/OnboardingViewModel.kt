@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.mulkkam.domain.Gender
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 
