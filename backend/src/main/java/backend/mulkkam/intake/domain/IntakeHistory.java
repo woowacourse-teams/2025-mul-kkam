@@ -52,16 +52,16 @@ public class IntakeHistory {
         this.streak = streak;
     }
 
-    public void modifyTargetAmount(Amount targetAmount) {
-        this.targetAmount = targetAmount;
-    }
-
     public boolean isOwnedBy(Member comparedMember) {
         return this.member.equals(comparedMember);
     }
 
     public boolean isCreatedAt(LocalDate comparedDate) {
         return this.historyDate.equals(comparedDate);
+    }
+
+    public void modifyTargetAmount(Amount targetAmount) {
+        this.targetAmount = targetAmount;
     }
 
     @Override

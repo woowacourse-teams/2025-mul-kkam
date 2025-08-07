@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.service;
 
+
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -12,36 +13,38 @@ import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.util.Optional;
+
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
-    IntakeAmountService intakeAmountService;
+    private IntakeAmountService intakeAmountService;
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
 
     @Autowired
-    IntakeHistoryRepository intakeHistoryRepository;
+    private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
-    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -114,6 +117,43 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             assertThat(targetAmountSnapshot.get().getTargetAmount().value()).isEqualTo(newTargetAmount);
+        }
+
+        @DisplayName("해당 수정이 추천에 의한 수정일 경우 금일 목표에만 반영된다")
+        @Test
+        void success_recommendAmount() {
+            // given
+            int memberTargetAmount = 1_500;
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .targetAmount(new Amount(memberTargetAmount))
+                    .build();
+
+            memberRepository.save(member);
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
+                    (
+                            1_000
+                    );
+            // when
+            intakeAmountService.modifyDailyTargetBySuggested(member, modifyIntakeTargetAmountByRecommendRequest);
+            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                    member,
+                    LocalDate.now()
+            );
+            Optional<Member> findMember = memberRepository.findById(member.getId());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(findIntakeHistory).isPresent();
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
+                softly.assertThat(findMember).isPresent();
+                softly.assertThat(findMember.get().getTargetAmount().value()).isEqualTo(memberTargetAmount);
+            });
         }
 
         @DisplayName("오늘의 기록이 있다면 금일 목표 음용량도 변경한다")
