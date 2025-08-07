@@ -3,11 +3,10 @@ package com.mulkkam.ui.history.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.IntakeHistory
-import com.mulkkam.ui.history.adapter.HistoryViewHolder.OnItemLongClickListener
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()
-    lateinit var onItemLongClickListener: OnItemLongClickListener
+    lateinit var onItemLongClickListener: HistoryViewHolder.Handler
 
     override fun onCreateViewHolder(
         parent: ViewGroup,

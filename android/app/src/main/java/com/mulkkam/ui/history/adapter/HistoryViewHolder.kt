@@ -11,12 +11,8 @@ import java.util.Locale
 
 class HistoryViewHolder(
     private val binding: ItemIntakeHistoryBinding,
-    private val onItemLongClickListener: OnItemLongClickListener?,
+    private val onItemLongClickListener: Handler?,
 ) : RecyclerView.ViewHolder(binding.root) {
-    fun interface OnItemLongClickListener {
-        fun onItemLongClick(history: IntakeHistory)
-    }
-
     private var clickedIntakeHistory: IntakeHistory? = null
 
     init {
@@ -46,13 +42,17 @@ class HistoryViewHolder(
         }
     }
 
+    fun interface Handler {
+        fun onItemLongClick(history: IntakeHistory)
+    }
+
     companion object {
         private val timeFormatterWithMinutes = DateTimeFormatter.ofPattern("a h시 m분", Locale.KOREA)
         private val timeFormatterWithoutMinutes = DateTimeFormatter.ofPattern("a h시", Locale.KOREA)
 
         fun from(
             parent: ViewGroup,
-            onItemLongClickListener: OnItemLongClickListener,
+            onItemLongClickListener: Handler,
         ): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)

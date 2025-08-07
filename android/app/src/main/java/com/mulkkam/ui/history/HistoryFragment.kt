@@ -72,7 +72,7 @@ class HistoryFragment :
             layoutManager = LinearLayoutManager(requireContext())
         }
         historyAdapter.onItemLongClickListener =
-            HistoryViewHolder.OnItemLongClickListener { history ->
+            HistoryViewHolder.Handler { history ->
                 this.historyToDelete = history
                 DeleteConfirmDialogFragment().show(
                     childFragmentManager,
