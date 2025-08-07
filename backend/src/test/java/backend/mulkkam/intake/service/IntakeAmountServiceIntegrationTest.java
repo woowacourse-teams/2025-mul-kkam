@@ -108,7 +108,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_recommendAmount() {
             // given
-            int memberTargetAmount = 1500;
+            int memberTargetAmount = 1_500;
             Member member = MemberFixtureBuilder
                     .builder()
                     .targetAmount(new Amount(memberTargetAmount))
@@ -121,7 +121,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
                     (
-                            1000
+                            1_000
                     );
             // when
             intakeAmountService.modifyDailyTargetBySuggested(modifyIntakeTargetAmountByRecommendRequest,
