@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingwater.model
+package com.mulkkam.ui.settingcups.model
 
 import com.mulkkam.domain.model.Cups
 
@@ -11,4 +11,9 @@ fun Cups.toUi(): CupsUiModel =
     CupsUiModel(
         cups = cups.map { cup -> cup.toUi() },
         isAddable = isMaxSize.not(),
+    )
+
+fun CupsUiModel.toDomain(): Cups =
+    Cups(
+        cups = cups.map { cup -> cup.toDomain() },
     )

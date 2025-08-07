@@ -1,14 +1,14 @@
-package com.mulkkam.ui.settingwater.adapter
+package com.mulkkam.ui.settingcups.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import com.mulkkam.databinding.ItemSettingWaterAddBinding
+import com.mulkkam.databinding.ItemSettingCupsAddBinding
 
 class AddViewHolder(
     parent: ViewGroup,
     handler: Handler,
-) : SettingWaterViewHolder<SettingWaterItem.AddItem, ItemSettingWaterAddBinding>(
-        ItemSettingWaterAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
+) : SettingCupsViewHolder<SettingCupsItem.AddItem, ItemSettingCupsAddBinding>(
+        ItemSettingCupsAddBinding.inflate(LayoutInflater.from(parent.context), parent, false),
     ) {
     init {
         initClickListener(handler)

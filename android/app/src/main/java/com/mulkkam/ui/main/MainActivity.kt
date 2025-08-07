@@ -34,7 +34,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             }
         }
 
-    private var backPressedTime: Long = 0
+    private var backPressedTime: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
