@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_common_rectangle_14dp"
-    android:backgroundTint="@color/white"
-    tools:context=".ui.onboarding.dialog.CompleteDialogFragment">
+    android:background="@drawable/bg_common_rectangle_14dp">
 
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/lottie_splash_confetti"
