@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_common_rectangle_top_12dp"
@@ -18,7 +19,7 @@
         app:tint="@color/gray_400" />
 
     <TextView
-        android:id="@+id/dialog_setting_water_cup_title"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -30,32 +31,32 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
-        android:id="@+id/iv_setting_water_cup_close"
+        android:id="@+id/iv_close"
         android:layout_width="40dp"
         android:layout_height="40dp"
         android:layout_marginEnd="16dp"
         android:importantForAccessibility="no"
         android:padding="12dp"
         android:src="@drawable/ic_bio_info_weight_close"
-        app:layout_constraintBottom_toBottomOf="@id/dialog_setting_water_cup_title"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@id/dialog_setting_water_cup_title"
+        app:layout_constraintTop_toTopOf="@id/tv_title"
         app:tint="@color/gray_400" />
 
     <TextView
-        android:id="@+id/tv_setting_water_cup_name"
+        android:id="@+id/tv_nickname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="26dp"
         android:text="@string/setting_cup_nickname"
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_setting_water_cup_title" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <EditText
-        android:id="@+id/et_setting_water_cup_name"
+        android:id="@+id/et_nickname"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -68,10 +69,32 @@
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_setting_water_cup_name" />
+        app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
 
     <TextView
-        android:id="@+id/tv_setting_water_cup_amount"
+        android:id="@+id/tv_intake_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/setting_cup_intake_type"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_nickname" />
+
+    <com.mulkkam.ui.custom.MulKkamChipGroup
+        android:id="@+id/mcg_intake_type"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_intake_type"
+        tools:layout_hegiht="36dp" />
+
+    <TextView
+        android:id="@+id/tv_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
@@ -80,14 +103,14 @@
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_setting_water_cup_name" />
+        app:layout_constraintTop_toBottomOf="@id/mcg_intake_type" />
 
     <EditText
-        android:id="@+id/et_setting_water_cup_amount"
+        android:id="@+id/et_amount"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
         android:inputType="number"
@@ -97,7 +120,7 @@
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_setting_water_cup_amount" />
+        app:layout_constraintTop_toBottomOf="@id/tv_amount" />
 
     <TextView
         android:id="@+id/tv_unit"
@@ -107,16 +130,16 @@
         android:text="@string/setting_target_amount_unit_ml"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
-        app:layout_constraintBottom_toBottomOf="@id/et_setting_water_cup_amount"
-        app:layout_constraintEnd_toEndOf="@id/et_setting_water_cup_amount"
-        app:layout_constraintTop_toTopOf="@id/et_setting_water_cup_amount" />
+        app:layout_constraintBottom_toBottomOf="@id/et_amount"
+        app:layout_constraintEnd_toEndOf="@id/et_amount"
+        app:layout_constraintTop_toTopOf="@id/et_amount" />
 
     <TextView
-        android:id="@+id/tv_setting_water_cup_save"
+        android:id="@+id/tv_save"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="22dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/bg_common_rectangle_8dp"
         android:backgroundTint="@color/primary_200"
@@ -128,5 +151,22 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_setting_water_cup_amount" />
+        app:layout_constraintTop_toBottomOf="@id/et_amount" />
+
+    <TextView
+        android:id="@+id/tv_delete"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="8dp"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="6dp"
+        android:text="@string/setting_cup_delete"
+        android:textAppearance="@style/label1"
+        android:textColor="@color/secondary_200"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_save" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

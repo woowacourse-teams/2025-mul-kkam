@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
@@ -26,6 +27,7 @@ class SettingCupsViewModel : ViewModel() {
             runCatching {
                 _cups.value = result.getOrError().toUi()
             }.onFailure {
+                _cups.value = DUMMY_CUPS
                 // TODO: 예외 처리
             }
         }
@@ -48,5 +50,31 @@ class SettingCupsViewModel : ViewModel() {
                 // TODO: 예외 처리
             }
         }
+    }
+
+    companion object {
+        private val DUMMY_CUPS =
+            CupsUiModel(
+                cups =
+                    listOf(
+                        CupUiModel(
+                            id = 1L,
+                            nickname = "컵 1",
+                            amount = 250,
+                            rank = 1,
+                            intakeType = IntakeType.WATER,
+                            emoji = "💧",
+                        ),
+                        CupUiModel(
+                            id = 2L,
+                            nickname = "컵 2",
+                            amount = 500,
+                            rank = 2,
+                            intakeType = IntakeType.COFFEE,
+                            emoji = "☕",
+                        ),
+                    ),
+                isAddable = true,
+            )
     }
 }

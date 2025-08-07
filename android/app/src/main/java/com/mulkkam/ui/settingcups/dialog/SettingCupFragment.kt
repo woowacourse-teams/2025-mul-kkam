@@ -6,7 +6,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
+import com.mulkkam.di.LoggingInjection.logger
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -19,6 +22,22 @@ class SettingCupFragment :
     private val viewModel: SettingCupViewModel by viewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
+    val IntakeType.label: String
+        get() =
+            when (this) {
+                IntakeType.WATER -> "물"
+                IntakeType.COFFEE -> "커피"
+                IntakeType.UNKNOWN -> "기타"
+            }
+
+    val IntakeType.colorHex: String
+        get() =
+            when (this) {
+                IntakeType.WATER -> "#90E0EF"
+                IntakeType.COFFEE -> "#C68760"
+                IntakeType.UNKNOWN -> "#999999"
+            }
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -29,12 +48,27 @@ class SettingCupFragment :
         initClickListeners()
         initObservers()
         initInputListeners()
+
+        val intakeAdapter =
+            MulKkamChipGroupAdapter<IntakeType>(
+                context = requireContext(),
+                labelProvider = { it.label },
+                colorProvider = { it.colorHex },
+                isMultiSelect = false,
+                requireSelection = true,
+                onItemSelected = { selectedList ->
+                    logger.debug(message = "Selected items: $selectedList")
+                },
+            )
+
+        binding.mcgIntakeType.setAdapter(intakeAdapter)
+        binding.mcgIntakeType.setItems(listOf(IntakeType.WATER, IntakeType.COFFEE))
     }
 
     private fun initClickListeners() {
-        binding.ivSettingWaterCupClose.setOnClickListener { dismiss() }
+        binding.ivClose.setOnClickListener { dismiss() }
 
-        binding.tvSettingWaterCupSave.setOnClickListener {
+        binding.tvSave.setOnClickListener {
             viewModel.saveCup()
         }
     }
@@ -53,24 +87,24 @@ class SettingCupFragment :
 
     private fun showCupInfo(cup: CupUiModel) {
         with(binding) {
-            val isNicknameChanged = etSettingWaterCupName.text.toString() != cup.nickname
+            val isNicknameChanged = etNickname.text.toString() != cup.nickname
             val isNicknameValid = cup.nickname != EMPTY_CUP_UI_MODEL.nickname
 
-            val isAmountChanged = etSettingWaterCupAmount.text.toString() != cup.amount.toString()
+            val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
 
             if (isNicknameChanged && isNicknameValid) {
-                etSettingWaterCupName.setText(cup.nickname)
+                etNickname.setText(cup.nickname)
             }
 
             if (isAmountChanged && isAmountValid) {
-                etSettingWaterCupAmount.setText(cup.amount.toString())
+                etAmount.setText(cup.amount.toString())
             }
         }
     }
 
     private fun showTitle(editType: SettingWaterCupEditType) {
-        binding.dialogSettingWaterCupTitle.setText(
+        binding.tvTitle.setText(
             when (editType) {
                 SettingWaterCupEditType.ADD -> R.string.setting_cup_add_title
                 SettingWaterCupEditType.EDIT -> R.string.setting_cup_edit_title
@@ -79,11 +113,11 @@ class SettingCupFragment :
     }
 
     private fun initInputListeners() {
-        binding.etSettingWaterCupName.addTextChangedListener {
+        binding.etNickname.addTextChangedListener {
             viewModel.updateNickname(it?.toString().orEmpty())
         }
 
-        binding.etSettingWaterCupAmount.addTextChangedListener {
+        binding.etAmount.addTextChangedListener {
             val input = it?.toString().orEmpty()
             val amount = input.toIntOrNull() ?: 0
 
