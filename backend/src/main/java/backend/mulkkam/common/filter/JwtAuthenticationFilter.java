@@ -18,7 +18,9 @@ import java.util.List;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
-        HttpEndpoint.of("/auth", HttpMethod.POST)
+        HttpEndpoint.of("/auth", HttpMethod.POST),
+        HttpEndpoint.of("/swagger-ui", HttpMethod.GET),
+        HttpEndpoint.of("/v3/api-docs", HttpMethod.GET)
     );
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;
@@ -49,14 +51,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private record HttpEndpoint(
             String pathPrefix,
-            HttpMethod method
+            List<HttpMethod> methods
     ) {
-        public static HttpEndpoint of(String pathPrefix, HttpMethod method) {
-            return new HttpEndpoint(pathPrefix, method);
+        public static HttpEndpoint of(String pathPrefix, HttpMethod... methods) {
+            return new HttpEndpoint(pathPrefix, List.of(methods));
         }
 
         public boolean isMatchedWith(String uri, String method) {
-            return uri.startsWith(this.pathPrefix) && method.equalsIgnoreCase(this.method.name());
+            return uri.startsWith(pathPrefix)
+                    && methods.stream().anyMatch(target -> target.name().equalsIgnoreCase(method));
         }
     }
 }
