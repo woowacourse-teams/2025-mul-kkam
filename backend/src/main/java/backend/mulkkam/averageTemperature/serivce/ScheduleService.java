@@ -69,10 +69,10 @@ public class ScheduleService {
             AverageTemperature averageTemperature,
             Member member
     ) {
-        ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(member.getId(), averageTemperature.getAverageTemperature());
+        ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(member.getId(), averageTemperature.getTemperature());
         return new CreateTokenNotificationRequest(
                 "날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?", (int)(averageTemperature.getAverageTemperature()), (int)(extraIntakeAmount.value())),
+                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?", (int)(averageTemperature.getTemperature()), (int)(extraIntakeAmount.value())),
                 member,
                 Action.GO_NOTIFICATION,
                 NotificationType.SUGGESTION,

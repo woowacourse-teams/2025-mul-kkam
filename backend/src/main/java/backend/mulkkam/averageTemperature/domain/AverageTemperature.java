@@ -23,14 +23,14 @@ public class AverageTemperature {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false, name = "average_temperature")
-    private double averageTemperature;
+    @Column(nullable = false, name = "temperature")
+    private double temperature;
 
     public AverageTemperature(
             LocalDate date,
-            double averageTemperature
+            double temperature
     ) {
         this.date = date;
-        this.averageTemperature = averageTemperature;
+        this.temperature = temperature;
     }
 }
