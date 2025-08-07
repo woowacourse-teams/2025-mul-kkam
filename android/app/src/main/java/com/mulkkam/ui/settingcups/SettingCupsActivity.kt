@@ -15,14 +15,28 @@ import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
 
 class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(ActivitySettingCupsBinding::inflate) {
-    private lateinit var itemTouchHelper: ItemTouchHelper
     private val viewModel: SettingCupsViewModel by viewModels()
-
     private val settingCupsAdapter: SettingCupsAdapter by lazy {
         SettingCupsAdapter(handler)
     }
+    private val itemTouchHelper: ItemTouchHelper by lazy {
+        ItemTouchHelper(CupsItemTouchHelperCallback(settingCupsAdapter))
+    }
 
     private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        initRecyclerView()
+        initObserver()
+        initClickListener()
+    }
+
+    private fun initRecyclerView() {
+        binding.rvCups.adapter = settingCupsAdapter
+        itemTouchHelper.attachToRecyclerView(binding.rvCups)
+    }
 
     private fun handleSettingCupClick() =
         object : SettingCupsAdapter.Handler {
@@ -42,18 +56,6 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
                 viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
             }
         }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding.rvCups.adapter = settingCupsAdapter
-
-        val callback = CupsItemTouchHelperCallback(settingCupsAdapter)
-        itemTouchHelper = ItemTouchHelper(callback)
-        itemTouchHelper.attachToRecyclerView(binding.rvCups)
-
-        initObserver()
-        initClickListener()
-    }
 
     private fun initObserver() {
         viewModel.cups.observe(this) { cups ->
