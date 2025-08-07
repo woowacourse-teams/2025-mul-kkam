@@ -7,7 +7,7 @@ import com.mulkkam.databinding.FragmentWeightBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 
-class WeightFragment :
+class OnboardingWeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
         FragmentWeightBinding::inflate,
     ) {
@@ -24,9 +24,9 @@ class WeightFragment :
 
     private fun initWeight() {
         binding.npWeightChoose.apply {
-            minValue = WEIGHT_MIN_VALUE
-            maxValue = WEIGHT_MAX_VALUE
-            value = WEIGHT_DEFAULT_VALUE
+            minValue = WEIGHT_MIN
+            maxValue = WEIGHT_MAX
+            value = parentViewModel.weight.value ?: WEIGHT_DEFAULT
         }
     }
 
@@ -40,8 +40,8 @@ class WeightFragment :
     }
 
     companion object {
-        private const val WEIGHT_MAX_VALUE: Int = 150
-        private const val WEIGHT_MIN_VALUE: Int = 25
-        private const val WEIGHT_DEFAULT_VALUE: Int = 50
+        private const val WEIGHT_MAX: Int = 150
+        private const val WEIGHT_MIN: Int = 25
+        private const val WEIGHT_DEFAULT: Int = 50
     }
 }
