@@ -15,7 +15,7 @@ import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
-import com.mulkkam.databinding.HistoryWaterIntakeChartBinding
+import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
 import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
@@ -37,8 +37,8 @@ class HistoryFragment :
     Refreshable {
     private val viewModel: HistoryViewModel by viewModels()
     private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
-    private var selectedChartBinding: HistoryWaterIntakeChartBinding? = null
-    private val weeklyCharts: List<HistoryWaterIntakeChartBinding> by lazy {
+    private var selectedChartBinding: LayoutHistoryWaterIntakeChartBinding? = null
+    private val weeklyCharts: List<LayoutHistoryWaterIntakeChartBinding> by lazy {
         listOf(
             binding.includeChartMon,
             binding.includeChartTue,
@@ -138,7 +138,7 @@ class HistoryFragment :
     }
 
     private fun updateWeeklyChart(
-        chart: HistoryWaterIntakeChartBinding,
+        chart: LayoutHistoryWaterIntakeChartBinding,
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         chart.apply {
@@ -160,7 +160,7 @@ class HistoryFragment :
     }
 
     private fun updateGoalRate(
-        chart: HistoryWaterIntakeChartBinding,
+        chart: LayoutHistoryWaterIntakeChartBinding,
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         with(chart) {
@@ -259,7 +259,7 @@ class HistoryFragment :
         selectedChartBinding = newChart
     }
 
-    private fun resetChartHighlight(chart: HistoryWaterIntakeChartBinding) {
+    private fun resetChartHighlight(chart: LayoutHistoryWaterIntakeChartBinding) {
         chart.root.background = getDrawable(requireContext(), R.drawable.bg_common_rectangle_4dp)
         ViewCompat.setBackgroundTintList(
             chart.root,
@@ -267,7 +267,7 @@ class HistoryFragment :
         )
     }
 
-    private fun applyChartHighlight(chart: HistoryWaterIntakeChartBinding) {
+    private fun applyChartHighlight(chart: LayoutHistoryWaterIntakeChartBinding) {
         chart.root.background =
             getDrawable(requireContext(), R.drawable.bg_common_rectangle_stroke_4dp)
         ViewCompat.setBackgroundTintList(chart.root, null)

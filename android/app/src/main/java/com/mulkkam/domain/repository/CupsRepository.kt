@@ -10,4 +10,6 @@ interface CupsRepository {
         cupAmount: Int,
         cupNickname: String,
     ): MulKkamResult<Unit>
+
+    suspend fun putCupsRank(cups: Cups): MulKkamResult<Cups>
 }

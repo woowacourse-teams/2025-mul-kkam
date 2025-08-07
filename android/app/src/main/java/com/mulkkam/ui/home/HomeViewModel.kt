@@ -50,7 +50,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun addWaterIntake(cupId: Int) {
+    fun addWaterIntake(cupId: Long) {
         val cup = cups.value?.findCupById(cupId) ?: return
 
         viewModelScope.launch {

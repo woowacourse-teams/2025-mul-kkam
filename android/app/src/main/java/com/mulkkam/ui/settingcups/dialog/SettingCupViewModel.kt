@@ -1,16 +1,16 @@
-package com.mulkkam.ui.settingwater.dialog
+package com.mulkkam.ui.settingcups.dialog
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
-import com.mulkkam.ui.settingwater.model.CupUiModel
-import com.mulkkam.ui.settingwater.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
-import com.mulkkam.ui.settingwater.model.SettingWaterCupEditType
+import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
+import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import kotlinx.coroutines.launch
 
-class SettingWaterCupViewModel : ViewModel() {
+class SettingCupViewModel : ViewModel() {
     private var _cup: MutableLiveData<CupUiModel> = MutableLiveData(EMPTY_CUP_UI_MODEL)
     val cup: LiveData<CupUiModel> get() = _cup
 

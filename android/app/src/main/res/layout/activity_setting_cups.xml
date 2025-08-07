@@ -7,7 +7,7 @@
     android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_setting_profile"
+        android:id="@+id/tb_setting_cups"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/setting_water_toolbar_title"
+            android:text="@string/setting_cups_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -42,22 +42,33 @@
         android:background="@color/gray_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_setting_profile" />
+        app:layout_constraintTop_toBottomOf="@id/tb_setting_cups" />
 
     <TextView
-        android:id="@+id/tv_setting_water_cup_title"
+        android:id="@+id/tv_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
-        android:text="@string/setting_water_cup_title"
+        android:text="@string/setting_cups_cup_title"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/divider_toolbar_divider" />
 
+    <TextView
+        android:id="@+id/tv_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="12dp"
+        android:padding="12dp"
+        android:text="기본값으로 재설정"
+        app:layout_constraintBottom_toBottomOf="@id/tv_title"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/tv_title" />
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_setting_water"
+        android:id="@+id/rv_cups"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="10dp"
@@ -65,6 +76,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_setting_water_cup_title"
-        tools:listitem="@layout/item_setting_water_cup" />
+        app:layout_constraintTop_toBottomOf="@id/tv_title"
+        tools:listitem="@layout/item_setting_cups_cup" />
 </androidx.constraintlayout.widget.ConstraintLayout>
