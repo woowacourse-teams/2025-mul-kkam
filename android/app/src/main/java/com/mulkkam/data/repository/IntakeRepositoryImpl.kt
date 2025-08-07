@@ -3,7 +3,6 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.IntakeAmountTargetRecommendedRequest
 import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
@@ -76,10 +75,8 @@ class IntakeRepositoryImpl(
     ): MulKkamResult<Int> {
         val result =
             intakeService.getIntakeAmountTargetRecommended(
-                IntakeAmountTargetRecommendedRequest(
-                    gender?.name,
-                    weight?.toDouble(),
-                ),
+                gender?.name,
+                weight?.toDouble(),
             )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },

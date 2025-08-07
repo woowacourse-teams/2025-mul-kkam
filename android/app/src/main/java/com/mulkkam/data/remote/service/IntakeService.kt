@@ -1,7 +1,6 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.IntakeAmountTargetRecommendedRequest
 import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.IntakeHistoryResultResponse
 import com.mulkkam.data.remote.model.response.IntakeHistorySummaryResponse
@@ -37,6 +36,7 @@ interface IntakeService {
 
     @GET("/intake/amount/target/recommended")
     suspend fun getIntakeAmountTargetRecommended(
-        @Body intakeAmountTargetRecommended: IntakeAmountTargetRecommendedRequest,
+        @Query("gender") gender: String?,
+        @Query("weight") weight: Double?,
     ): Result<IntakeTargetAmountResponse>
 }
