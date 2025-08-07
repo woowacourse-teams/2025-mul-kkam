@@ -27,7 +27,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.context.request.RequestAttributes;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
@@ -41,7 +40,6 @@ public class MemberService {
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
     private final IntakeHistoryDetailRepository intakeDetailRepository;
-    private final RequestAttributes requestAttributes;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     public MemberResponse get(Member member) {
