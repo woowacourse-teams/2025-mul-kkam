@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -12,11 +13,11 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
 
     @Query("SELECT d FROM IntakeHistoryDetail d " +
             "JOIN d.intakeHistory h " +
-            "WHERE h.member.id = :memberId " +
+            "WHERE h.member = :member " +
             "AND h.historyDate BETWEEN :dateAfter AND :dateBefore " +
             "ORDER BY h.historyDate")
-    List<IntakeHistoryDetail> findAllByMemberIdAndDateRange(
-            @Param("memberId") Long memberId,
+    List<IntakeHistoryDetail> findAllByMemberAndDateRange(
+            @Param("member") Member member,
             @Param("dateAfter") LocalDate dateAfter,
             @Param("dateBefore") LocalDate dateBefore
     );

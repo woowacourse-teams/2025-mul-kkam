@@ -1,5 +1,14 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -26,17 +35,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.Assertions.within;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -74,7 +72,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            intakeHistoryService.create(intakeDetailCreateRequest, member.getId());
+            intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
@@ -99,25 +97,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
 
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
-        }
-
-        @DisplayName("존재하지 않는 회원에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            int intakeAmount = 500;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    DATE_TIME,
-                    intakeAmount
-            );
-
-            // when & then
-            CommonException ex = assertThrows(CommonException.class,
-                    () -> intakeHistoryService.create(intakeDetailCreateRequest, 1L));
-            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_MEMBER);
         }
 
         @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
@@ -131,7 +113,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, member.getId());
+            intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
@@ -160,7 +142,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, member.getId());
+            intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
@@ -228,7 +210,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest,
-                    savedMember.getId()
+                    savedMember
             );
 
             // then
@@ -286,7 +268,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                             startDate,
                             endDate
                     ),
-                    savedMember.getId()
+                    savedMember
             );
 
             // then
@@ -344,7 +326,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
-                    dateRangeRequest, savedMember.getId());
+                    dateRangeRequest, savedMember);
 
             // then
             IntakeHistorySummaryResponse responseOfTheDay = actual.getFirst();
@@ -369,36 +351,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_INTAKE_HISTORY_DETAIL.name());
-        }
-
-        @DisplayName("존재하지 않는 멤버에 대한 요청인 경우 예외가 발생한다")
-        @Test
-        void error_memberIsNotExisted() {
-            // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
-
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.now())
-                    .build();
-            intakeHistoryRepository.save(intakeHistory);
-
-            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
-                    .build();
-            intakeHistoryDetailRepository.save(intakeHistoryDetail);
-
-            // when & then
-            assertThatThrownBy(
-                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId() + 1L))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_MEMBER.name());
         }
 
         @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")
@@ -429,7 +384,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), savedAnotherMember.getId()))
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), savedAnotherMember))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
         }
@@ -455,7 +410,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
-            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId());
+            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member);
 
             // then
             Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeHistoryDetailRepository.findById(
@@ -484,7 +439,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member.getId()))
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }

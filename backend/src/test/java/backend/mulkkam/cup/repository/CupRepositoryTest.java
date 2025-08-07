@@ -48,7 +48,7 @@ class CupRepositoryTest {
             cupRepository.saveAll(List.of(cup1, cup2));
 
             // when
-            List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId());
+            List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
 
             // then
             assertSoftly(softly -> {
@@ -81,7 +81,7 @@ class CupRepositoryTest {
             cupRepository.saveAll(List.of(cup1, cup2));
 
             // when
-            List<Cup> cups = cupRepository.findAllByMemberIdOrderByCupRankAsc(member1.getId());
+            List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member1);
 
             // then
             assertSoftly(softly -> {
