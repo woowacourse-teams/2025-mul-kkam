@@ -96,7 +96,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("조회된 데이터가 size와 동일할 경우 size만큼 불러와진다")
+        @DisplayName("조회된 데이터의 크기가 size와 동일할 경우 size만큼 불러와진다")
         @Test
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
