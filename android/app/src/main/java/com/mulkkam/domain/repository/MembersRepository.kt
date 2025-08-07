@@ -17,4 +17,6 @@ interface MembersRepository {
         gender: Gender,
         weight: Int,
     ): MulKkamResult<Unit>
+
+    suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean>
 }
