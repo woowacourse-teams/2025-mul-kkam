@@ -52,6 +52,10 @@ public class IntakeHistory {
         this.streak = streak;
     }
 
+    public void modifyTargetAmount(Amount targetAmount) {
+        this.targetAmount = targetAmount;
+    }
+
     public boolean isOwnedBy(Member comparedMember) {
         return this.member.equals(comparedMember);
     }

@@ -1,11 +1,12 @@
 package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
@@ -14,9 +15,11 @@ import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
@@ -33,6 +36,9 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
     TargetAmountSnapshotRepository targetAmountSnapshotRepository;
@@ -108,6 +114,37 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             assertThat(targetAmountSnapshot.get().getTargetAmount().value()).isEqualTo(newTargetAmount);
+        }
+
+        @DisplayName("오늘의 기록이 있다면 금일 목표 음용량도 변경한다")
+        @Test
+        void success_changeTodayTargetAmount() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .targetAmount(new Amount(1500))
+                    .build();
+            memberRepository.save(member);
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .targetIntakeAmount(new Amount(1500))
+                    .build();
+
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(1000);
+
+            // when
+            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                    member, LocalDate.now());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(findIntakeHistory).isPresent();
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
+            });
         }
     }
 
