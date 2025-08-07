@@ -34,6 +34,11 @@
     <string name="setting_nickname_valid">좋은 닉네임이시네요!</string>
     <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요!</string>
 
+    <string name="setting_bio_info_toolbar_title">신체 정보 설정</string>
+    <string name="setting_bio_info_health_connect_label">헬스 커넥트</string>
+    <string name="setting_bio_info_health_connect_description">헬스 커넥트 연동 설정</string>
+    <string name="setting_bio_info_complete_description">신체 정보가 저장되었어요</string>
+
     <string name="setting_cups_toolbar_title">나의 컵 설정</string>
     <string name="setting_cups_label_water">물</string>
     <string name="setting_cups_increment">+ %dml</string>

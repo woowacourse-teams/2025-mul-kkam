@@ -1,4 +1,4 @@
-package backend.mulkkam.infrastructure;
+package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import org.springframework.http.HttpHeaders;
