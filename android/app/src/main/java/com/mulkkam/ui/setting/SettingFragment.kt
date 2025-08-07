@@ -79,10 +79,6 @@ class SettingFragment :
         isChecked: Boolean,
     ) {
         when (type) {
-            SettingType.Switch.HealthConnect -> {
-                // TODO: 헬스 커넥트 연동 상태 저장
-            }
-
             SettingType.Switch.Marketing -> {
                 // TODO: 마케팅 수신 허용 상태 저장
             }
@@ -108,9 +104,6 @@ class SettingFragment :
                 SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
                 SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
                 SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
-                SettingItem.DividerItem,
-                SettingItem.TitleItem(getString(R.string.setting_section_permission)),
-                SettingItem.SwitchItem(getString(R.string.setting_item_health_connect), false, SettingType.Switch.HealthConnect),
             )
         settingAdapter.submitList(settingItems)
     }

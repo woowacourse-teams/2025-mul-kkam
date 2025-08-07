@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.membersRepository
+import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.ui.model.AppAuthState
 import kotlinx.coroutines.launch
 
@@ -15,32 +16,29 @@ class SplashViewModel : ViewModel() {
     fun updateAuthState() {
         viewModelScope.launch {
             runCatching {
-                val result = RepositoryInjection.tokenRepository.getAccessToken()
-                result.getOrError()
-            }.onSuccess { token ->
+                val token = tokenRepository.getAccessToken().getOrError()
                 if (token == null) {
                     _authState.value = AppAuthState.UNAUTHORIZED
-                    return@onSuccess
+                    return@launch
                 }
-            }
-        }
-
-        updateAuthStateWithOnboarding()
-    }
-
-    private fun updateAuthStateWithOnboarding() {
-        viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembersCheckOnboarding()
-            runCatching {
-                val hasCompletedOnboarding = result.getOrError()
-                _authState.value =
-                    when {
-                        hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
-                        else -> AppAuthState.UNONBOARDED
-                    }
             }.onFailure {
                 // TODO: 에러 처리
             }
+            updateAuthStateWithOnboarding()
+        }
+    }
+
+    private suspend fun updateAuthStateWithOnboarding() {
+        runCatching {
+            membersRepository.getMembersCheckOnboarding().getOrError()
+        }.onSuccess { hasCompletedOnboarding ->
+            _authState.value =
+                when {
+                    hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
+                    else -> AppAuthState.UNONBOARDED
+                }
+        }.onFailure {
+            // TODO: 에러 처리
         }
     }
 }
