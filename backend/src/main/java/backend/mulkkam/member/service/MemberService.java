@@ -1,17 +1,16 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.CreateMemberRequest;
@@ -28,6 +27,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -38,6 +41,8 @@ public class MemberService {
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
     private final IntakeHistoryDetailRepository intakeDetailRepository;
+    private final RequestAttributes requestAttributes;
+    private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     public MemberResponse get(Member member) {
         return new MemberResponse(member);
@@ -90,8 +95,16 @@ public class MemberService {
     ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
+
         oauthAccount.modifyMember(member);
         oauthAccountRepository.save(oauthAccount);
+
+        TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
+                member,
+                LocalDate.now(),
+                new Amount(createMemberRequest.targetIntakeAmount())
+        );
+        targetAmountSnapshotRepository.save(targetAmountSnapshot);
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {
