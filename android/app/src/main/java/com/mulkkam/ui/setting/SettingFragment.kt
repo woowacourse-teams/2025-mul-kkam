@@ -14,8 +14,8 @@ import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
-import com.mulkkam.ui.settinggoal.SettingGoalActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
+import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),
@@ -53,7 +53,7 @@ class SettingFragment :
             SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
             SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
             SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
-            SettingType.Normal.Goal -> startActivity(SettingGoalActivity.newIntent(requireContext()))
+            SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.Notification -> navigateToNotificationSetting()
         }
     }
@@ -102,7 +102,7 @@ class SettingFragment :
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
                 SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.Normal.MyCup),
-                SettingItem.NormalItem(getString(R.string.setting_goal_toolbar_title), SettingType.Normal.Goal),
+                SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.Normal.Goal),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
