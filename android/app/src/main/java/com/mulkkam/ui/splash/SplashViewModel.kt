@@ -13,7 +13,7 @@ class SplashViewModel : ViewModel() {
     fun updateEntryState() {
         val token = RepositoryInjection.tokenRepository.getAccessToken()
         if (token == null) {
-            _entryState.value = AppEntryState.UNAUTHENTICATED
+            _entryState.value = AppEntryState.UNAUTHORIZED
             return
         }
 
