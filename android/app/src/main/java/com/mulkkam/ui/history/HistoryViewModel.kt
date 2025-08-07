@@ -106,6 +106,10 @@ class HistoryViewModel : ViewModel() {
         }
     }
 
+    fun onDeleteSuccessObserved() {
+        _deleteSuccess.value = false
+    }
+
     companion object {
         private const val WEEK_LENGTH: Int = 7
     }
