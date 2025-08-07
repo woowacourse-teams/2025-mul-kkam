@@ -12,6 +12,7 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
+import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settinggoal.SettingGoalActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingwater.SettingWaterActivity
@@ -50,10 +51,7 @@ class SettingFragment :
     private fun handleSettingNormalClick(type: SettingType.Normal) {
         when (type) {
             SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
-            SettingType.Normal.BodyInfo -> {
-                // TODO: 신체 정보 설정 화면 이동
-            }
-
+            SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
             SettingType.Normal.MyCup -> startActivity(SettingWaterActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingGoalActivity.newIntent(requireContext()))
             SettingType.Normal.Notification -> navigateToNotificationSetting()
