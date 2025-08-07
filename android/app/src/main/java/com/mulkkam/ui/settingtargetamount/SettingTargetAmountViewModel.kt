@@ -24,18 +24,19 @@ class SettingTargetAmountViewModel : ViewModel() {
     private val _isTargetAmountValid = MutableLiveData<Boolean?>()
     val isTargetAmountValid: LiveData<Boolean?> get() = _isTargetAmountValid
 
-    var recommendedTargetAmount: Int? = null
-        private set
-    var nickname: String? = null
-        private set
+    private val _recommendedTargetAmount = MutableLiveData<Int>()
+    val recommendedTargetAmount: LiveData<Int> get() = _recommendedTargetAmount
+
+    private val _nickname = MutableLiveData<String>()
+    val nickname: LiveData<String> get() = _nickname
 
     init {
         viewModelScope.launch {
             val recommendedTargetAmountResult = intakeRepository.getIntakeAmountRecommended()
             val nicknameResult = membersRepository.getMembersNickname()
             runCatching {
-                recommendedTargetAmount = recommendedTargetAmountResult.getOrError()
-                nickname = nicknameResult.getOrError()
+                _recommendedTargetAmount.value = recommendedTargetAmountResult.getOrError()
+                _nickname.value = nicknameResult.getOrError()
                 _onRecommendationReady.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리

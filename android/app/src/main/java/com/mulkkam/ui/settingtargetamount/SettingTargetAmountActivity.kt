@@ -67,17 +67,17 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         binding.tvRecommendedTargetAmount.text =
             getString(
                 R.string.target_amount_recommended_water_goal,
-                viewModel.nickname,
-                viewModel.recommendedTargetAmount,
+                viewModel.nickname.value,
+                viewModel.recommendedTargetAmount.value,
             ).getAppearanceSpannable(
                 this,
                 R.style.title2,
-                viewModel.nickname ?: "",
+                viewModel.nickname.value ?: "",
                 String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
             ).getColoredSpannable(
                 this,
                 R.color.primary_200,
-                viewModel.nickname ?: "",
+                viewModel.nickname.value ?: "",
                 String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
             )
     }
