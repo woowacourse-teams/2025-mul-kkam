@@ -89,7 +89,6 @@
         android:layout_height="38dp"
         android:layout_margin="24dp"
         android:background="@drawable/selector_common_button_enabled"
-        android:backgroundTint="@color/gray_200"
         android:enabled="false"
         android:gravity="center"
         android:text="@string/onboarding_complete"
