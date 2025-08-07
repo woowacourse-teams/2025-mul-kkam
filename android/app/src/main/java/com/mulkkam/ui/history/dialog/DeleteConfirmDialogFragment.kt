@@ -1,27 +1,17 @@
 package com.mulkkam.ui.history.dialog
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.setFragmentResult
 import com.mulkkam.databinding.FragmentDeleteConfirmDialogBinding
+import com.mulkkam.ui.binding.BindingDialogFragment
 
-class DeleteConfirmDialogFragment : DialogFragment() {
-    private var _binding: FragmentDeleteConfirmDialogBinding? = null
-    private val binding get() = _binding!!
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View {
-        _binding = FragmentDeleteConfirmDialogBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
+class DeleteConfirmDialogFragment :
+    BindingDialogFragment<FragmentDeleteConfirmDialogBinding>(
+        FragmentDeleteConfirmDialogBinding::inflate,
+    ) {
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -50,11 +40,6 @@ class DeleteConfirmDialogFragment : DialogFragment() {
             (resources.displayMetrics.widthPixels * DIALOG_WIDTH_RATIO).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT,
         )
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 
     companion object {
