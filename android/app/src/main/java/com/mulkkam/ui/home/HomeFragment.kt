@@ -10,7 +10,7 @@ import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.MembersProgressInfo
+import com.mulkkam.domain.model.TodayProgressInfo
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.main.Refreshable
@@ -45,6 +45,58 @@ class HomeFragment :
         }
     }
 
+    private fun updateDailyProgressInfo(progressInfo: TodayProgressInfo) {
+        updateDailyIntakeSummary(progressInfo.targetAmount, progressInfo.totalAmount)
+        updateStreakMessage(progressInfo.nickname, progressInfo.streak)
+        updateCharacterComment(progressInfo.comment)
+    }
+
+    private fun updateDailyIntakeSummary(
+        targetAmount: Int,
+        totalAmount: Int,
+    ) {
+        val formattedIntake = String.format(Locale.US, "%,dml", totalAmount)
+
+        @ColorRes val summaryColorResId =
+            if (targetAmount > totalAmount) {
+                R.color.gray_200
+            } else {
+                R.color.primary_200
+            }
+
+        binding.tvDailyIntakeSummary.text =
+            getString(
+                R.string.home_daily_intake_summary,
+                totalAmount,
+                targetAmount,
+            ).getColoredSpannable(
+                requireContext(),
+                summaryColorResId,
+                formattedIntake,
+            )
+    }
+
+    private fun updateStreakMessage(
+        nickname: String,
+        streak: Int,
+    ) {
+        binding.tvStreak.text =
+            getString(
+                R.string.home_water_streak_message,
+                nickname,
+                streak,
+            ).getColoredSpannable(
+                requireContext(),
+                R.color.primary_200,
+                nickname,
+                streak.toString(),
+            )
+    }
+
+    private fun updateCharacterComment(comment: String) {
+        binding.tvHomeCharacterChat.text = comment
+    }
+
     private fun updateDrinkMenu(cups: Cups) {
         binding.fabHomeDrink.setMenuItems(
             items =
@@ -70,52 +122,6 @@ class HomeFragment :
             setBackgroundPaintColor(R.color.white)
             setCornerRadius(PROGRESS_BAR_RADIUS)
         }
-    }
-
-    private fun updateDailyProgressInfo(progressInfo: MembersProgressInfo) {
-        updateDailyIntakeSummary(progressInfo)
-        updateStreakMessage(progressInfo)
-        updateCharacterComment(progressInfo.comment)
-    }
-
-    private fun updateDailyIntakeSummary(progressInfo: MembersProgressInfo) {
-        val formattedIntake = String.format(Locale.US, "%,dml", progressInfo.totalAmount)
-
-        @ColorRes val summaryColorResId =
-            if (progressInfo.targetAmount > progressInfo.totalAmount) {
-                R.color.gray_200
-            } else {
-                R.color.primary_200
-            }
-
-        binding.tvDailyIntakeSummary.text =
-            getString(
-                R.string.home_daily_intake_summary,
-                progressInfo.totalAmount,
-                progressInfo.targetAmount,
-            ).getColoredSpannable(
-                requireContext(),
-                summaryColorResId,
-                formattedIntake,
-            )
-    }
-
-    private fun updateStreakMessage(progressInfo: MembersProgressInfo) {
-        binding.tvStreak.text =
-            getString(
-                R.string.home_water_streak_message,
-                progressInfo.nickname,
-                progressInfo.streak,
-            ).getColoredSpannable(
-                requireContext(),
-                R.color.primary_200,
-                progressInfo.nickname,
-                progressInfo.streak.toString(),
-            )
-    }
-
-    private fun updateCharacterComment(comment: String) {
-        binding.tvHomeCharacterChat.text = comment
     }
 
     private fun createLinearGradient(width: Float): LinearGradient =

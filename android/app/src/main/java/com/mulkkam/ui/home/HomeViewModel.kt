@@ -6,14 +6,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.MembersProgressInfo
+import com.mulkkam.domain.model.TodayProgressInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
-    private val _todayProgressInfo = MutableLiveData<MembersProgressInfo>()
-    val todayProgressInfo: LiveData<MembersProgressInfo> get() = _todayProgressInfo
+    private val _todayProgressInfo = MutableLiveData<TodayProgressInfo>()
+    val todayProgressInfo: LiveData<TodayProgressInfo> get() = _todayProgressInfo
 
     private val _cups: MutableLiveData<Cups> = MutableLiveData()
     val cups: LiveData<Cups> get() = _cups
@@ -61,7 +61,7 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 val intakeHistoryResult = result.getOrError()
                 _todayProgressInfo.value =
-                    todayProgressInfo.value?.updateIntakeResult(cup.amount, intakeHistoryResult.achievementRate)
+                    todayProgressInfo.value?.updateProgressInfo(cup.amount, intakeHistoryResult.achievementRate)
                 _characterChat.value = intakeHistoryResult.comment
             }.onFailure {
                 // TODO: 에러 처리

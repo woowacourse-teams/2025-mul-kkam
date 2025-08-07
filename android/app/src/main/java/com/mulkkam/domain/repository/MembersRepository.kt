@@ -3,8 +3,8 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.Gender
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.model.MemberInfo
-import com.mulkkam.domain.model.MembersProgressInfo
 import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.TodayProgressInfo
 import java.time.LocalDate
 
 interface MembersRepository {
@@ -25,5 +25,5 @@ interface MembersRepository {
 
     suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean>
 
-    suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<MembersProgressInfo>
+    suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo>
 }

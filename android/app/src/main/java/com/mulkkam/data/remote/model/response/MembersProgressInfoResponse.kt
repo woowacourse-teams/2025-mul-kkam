@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response
 
-import com.mulkkam.domain.model.MembersProgressInfo
+import com.mulkkam.domain.model.TodayProgressInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -20,8 +20,8 @@ data class MembersProgressInfoResponse(
     val comment: String,
 )
 
-fun MembersProgressInfoResponse.toDomain(): MembersProgressInfo =
-    MembersProgressInfo(
+fun MembersProgressInfoResponse.toDomain(): TodayProgressInfo =
+    TodayProgressInfo(
         nickname = memberNickname,
         streak = streak,
         achievementRate = achievementRate.toFloat(),
