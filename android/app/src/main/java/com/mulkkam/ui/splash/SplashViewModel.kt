@@ -13,10 +13,16 @@ class SplashViewModel : ViewModel() {
     val authState: LiveData<AppAuthState> = _authState
 
     fun updateAuthState() {
-        val token = RepositoryInjection.tokenRepository.getAccessToken()
-        if (token == null) {
-            _authState.value = AppAuthState.UNAUTHORIZED
-            return
+        viewModelScope.launch {
+            runCatching {
+                val result = RepositoryInjection.tokenRepository.getAccessToken()
+                result.getOrError()
+            }.onSuccess { token ->
+                if (token == null) {
+                    _authState.value = AppAuthState.UNAUTHORIZED
+                    return@onSuccess
+                }
+            }
         }
 
         updateAuthStateWithOnboarding()
