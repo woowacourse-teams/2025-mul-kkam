@@ -1,5 +1,7 @@
 package com.mulkkam.ui.onboarding
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -107,5 +109,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     companion object {
         private const val PROGRESS_DEFAULT: Int = 0
         private const val OFFSET_STEP_ORDINAL: Int = 1
+
+        fun newIntent(context: Context): Intent = Intent(context, OnboardingActivity::class.java)
     }
 }
