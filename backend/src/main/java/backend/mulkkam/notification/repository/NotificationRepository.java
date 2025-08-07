@@ -20,7 +20,12 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
       AND n.member = :member
     ORDER BY n.id DESC
     """)
-    List<Notification> findByCursor(Member member, Long lastId, LocalDateTime limitStartDateTime, Pageable pageable);
+    List<Notification> findByCursor(
+            Member member,
+            Long lastId,
+            LocalDateTime limitStartDateTime,
+            Pageable pageable
+    );
 
     @Query("""
     SELECT n
@@ -29,5 +34,9 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
       AND n.member = :member
     ORDER BY n.id DESC
     """)
-    List<Notification> findLatest(Member member, LocalDateTime limitStartDateTime, Pageable pageable);
+    List<Notification> findLatest(
+            Member member,
+            LocalDateTime limitStartDateTime,
+            Pageable pageable
+    );
 }
