@@ -13,7 +13,6 @@ data class CupUiModel(
     val rank: Int,
     val intakeType: IntakeType,
     val emoji: String,
-    val isRepresentative: Boolean,
 ) : Parcelable {
     companion object {
         val EMPTY_CUP_UI_MODEL =
@@ -24,7 +23,6 @@ data class CupUiModel(
                 rank = 0,
                 intakeType = IntakeType.UNKNOWN,
                 emoji = "",
-                isRepresentative = false,
             )
     }
 }
@@ -37,7 +35,6 @@ fun Cup.toUi(): CupUiModel =
         rank = rank,
         intakeType = intakeType,
         emoji = emoji,
-        isRepresentative = isRepresentative,
     )
 
 fun CupUiModel.toDomain(): Cup =
