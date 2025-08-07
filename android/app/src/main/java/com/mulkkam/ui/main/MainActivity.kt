@@ -16,7 +16,6 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
-import com.mulkkam.di.LoggingInjection.logger
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
@@ -50,7 +49,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         setupDoubleBackToExit()
         initObservers()
         loadDeviceId()
-        logger.debug(message = loadDeviceId())
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)

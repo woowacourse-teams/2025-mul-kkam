@@ -3,7 +3,6 @@ package com.mulkkam.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.LoggingInjection.logger
 import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
@@ -59,9 +58,7 @@ class MainViewModel : ViewModel() {
                         deviceId = deviceId,
                     ).getOrError()
             }.onSuccess {
-                logger.debug(message = "Device info saved successfully")
-            }.onFailure {
-                logger.debug(message = "Failed to save device info: ${it.message}")
+                tokenRepository.deleteFcmToken()
             }
         }
     }
