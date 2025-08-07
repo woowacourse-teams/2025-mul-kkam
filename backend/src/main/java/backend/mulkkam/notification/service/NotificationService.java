@@ -48,11 +48,11 @@ public class NotificationService {
         Member member = getMemberById(memberId);
 
         validateSizeRange(getNotificationsRequest);
-        int size = getNotificationsRequest.size();
 
         LocalDateTime clientTime = getNotificationsRequest.clientTime();
-
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
+
+        int size = getNotificationsRequest.size();
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = getNotificationsRequest.lastId();
