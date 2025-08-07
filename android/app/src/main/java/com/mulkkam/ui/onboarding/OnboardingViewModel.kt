@@ -4,9 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.Gender
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
+import kotlinx.coroutines.launch
 
 class OnboardingViewModel : ViewModel() {
     private val _onboardingState = MutableLiveData<OnboardingStep>()
@@ -19,7 +23,8 @@ class OnboardingViewModel : ViewModel() {
     val onCompleteOnboarding: SingleLiveData<Unit>
         get() = _onCompleteOnboarding
 
-    private var onboardingInfo: OnboardingInfo = OnboardingInfo()
+    var onboardingInfo: OnboardingInfo = OnboardingInfo()
+        private set
 
     fun updateOnboardingState(state: OnboardingStep) {
         _onboardingState.value = state
@@ -46,10 +51,26 @@ class OnboardingViewModel : ViewModel() {
     }
 
     fun completeOnboarding() {
-        // TODO: 회원가입 API 호출
-        runCatching {
-            _onCompleteOnboarding.setValue(Unit)
+        viewModelScope.launch {
+            val result = RepositoryInjection.membersRepository.postMembers(onboardingInfo)
+            runCatching {
+                result.getOrError()
+                _onCompleteOnboarding.setValue(Unit)
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
+    }
+
+    fun updateTermsAgreementState(
+        isMarketingNotificationAgreed: Boolean,
+        isNightNotificationAgreed: Boolean,
+    ) {
+        onboardingInfo =
+            onboardingInfo.copy(
+                isMarketingNotificationAgreed = isMarketingNotificationAgreed,
+                isNightNotificationAgreed = isNightNotificationAgreed,
+            )
     }
 
     fun updateNickname(nickname: String) {

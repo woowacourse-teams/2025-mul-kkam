@@ -2,6 +2,7 @@ package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.MembersRequest
 import com.mulkkam.data.remote.model.response.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.MembersCheckOnboardingResponse
 import com.mulkkam.data.remote.model.response.MembersResponse
@@ -13,6 +14,11 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MembersService {
+    @POST("/members")
+    suspend fun postMembers(
+        @Body member: MembersRequest,
+    ): Result<Unit>
+
     @GET("/members/nickname/validation")
     suspend fun getMembersNicknameValidation(
         @Query("nickname") nickname: String,

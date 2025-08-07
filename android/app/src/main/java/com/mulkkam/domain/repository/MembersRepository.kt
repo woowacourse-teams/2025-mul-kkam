@@ -3,8 +3,11 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.Gender
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.model.MemberInfo
+import com.mulkkam.domain.model.OnboardingInfo
 
 interface MembersRepository {
+    suspend fun postMembers(onboardingInfo: OnboardingInfo): MulKkamResult<Unit>
+
     suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit>
 
     suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit>

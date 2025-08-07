@@ -33,4 +33,10 @@ interface IntakeService {
 
     @GET("/intake/amount/recommended")
     suspend fun getIntakeAmountRecommended(): Result<IntakeTargetAmountResponse>
+
+    @GET("/intake/amount/target/recommended")
+    suspend fun getIntakeAmountTargetRecommended(
+        @Query("gender") gender: String?,
+        @Query("weight") weight: Double?,
+    ): Result<IntakeTargetAmountResponse>
 }

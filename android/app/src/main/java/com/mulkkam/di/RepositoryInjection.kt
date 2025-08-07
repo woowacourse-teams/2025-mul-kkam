@@ -5,6 +5,7 @@ import com.mulkkam.data.repository.CupsRepositoryImpl
 import com.mulkkam.data.repository.HealthRepositoryImpl
 import com.mulkkam.data.repository.IntakeRepositoryImpl
 import com.mulkkam.data.repository.MembersRepositoryImpl
+import com.mulkkam.data.repository.NicknameRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
 import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection.authService
@@ -12,11 +13,13 @@ import com.mulkkam.di.ServiceInjection.cupsService
 import com.mulkkam.di.ServiceInjection.healthService
 import com.mulkkam.di.ServiceInjection.intakeService
 import com.mulkkam.di.ServiceInjection.membersService
+import com.mulkkam.di.ServiceInjection.nicknameService
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.HealthRepository
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.domain.repository.MembersRepository
+import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.domain.repository.TokenRepository
 
 object RepositoryInjection {
@@ -42,5 +45,9 @@ object RepositoryInjection {
 
     val membersRepository: MembersRepository by lazy {
         MembersRepositoryImpl(membersService)
+    }
+
+    val nicknameRepository: NicknameRepository by lazy {
+        NicknameRepositoryImpl(nicknameService)
     }
 }

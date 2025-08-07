@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
+    android:clickable="true"
     tools:context=".ui.onboarding.targetamount.TargetAmountFragment">
 
     <TextView
@@ -89,7 +90,6 @@
         android:layout_height="38dp"
         android:layout_margin="24dp"
         android:background="@drawable/selector_common_button_enabled"
-        android:backgroundTint="@color/gray_200"
         android:enabled="false"
         android:gravity="center"
         android:text="@string/onboarding_complete"
