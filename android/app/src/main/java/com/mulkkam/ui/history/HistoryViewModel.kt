@@ -36,6 +36,9 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date > LocalDate.now()
         }
 
+    private val _deleteSuccess = MutableLiveData<Boolean>()
+    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+
     init {
         loadIntakeHistories()
     }
@@ -92,10 +95,15 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
-//        viewModelScope.launch {
-//            RepositoryInjection.intakeRepository.deleteIntakeHistory(history)
-//            loadIntakeHistories()
-//        }
+        viewModelScope.launch {
+            val result = RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id)
+            runCatching {
+                result.getOrError()
+                _deleteSuccess.value = true
+            }.onFailure {
+                // TODO : 에러 처리
+            }
+        }
     }
 
     companion object {
