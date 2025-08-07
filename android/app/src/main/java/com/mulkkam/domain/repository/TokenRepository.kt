@@ -1,15 +1,17 @@
 package com.mulkkam.domain.repository
 
+import com.mulkkam.domain.MulKkamResult
+
 interface TokenRepository {
-    fun getAccessToken(): String?
+    suspend fun getAccessToken(): MulKkamResult<String?>
 
-    fun getFcmToken(): String?
+    suspend fun getFcmToken(): MulKkamResult<String?>
 
-    fun saveAccessToken(token: String)
+    suspend fun saveAccessToken(token: String): MulKkamResult<Unit>
 
-    fun deleteAccessToken()
+    suspend fun deleteAccessToken(): MulKkamResult<Unit>
 
-    fun saveFcmToken(token: String)
+    suspend fun saveFcmToken(token: String): MulKkamResult<Unit>
 
-    fun deleteFcmToken()
+    suspend fun deleteFcmToken(): MulKkamResult<Unit>
 }

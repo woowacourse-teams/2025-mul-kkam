@@ -1,28 +1,40 @@
 package com.mulkkam.data.repository
 
 import com.mulkkam.data.preference.TokenPreference
+import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.repository.TokenRepository
+import com.mulkkam.domain.toMulKkamResult
 
 class TokenRepositoryImpl(
     private val tokenPreference: TokenPreference,
 ) : TokenRepository {
-    override fun getAccessToken(): String? = tokenPreference.accessToken
+    override suspend fun getAccessToken(): MulKkamResult<String?> =
+        runCatching {
+            tokenPreference.accessToken
+        }.toMulKkamResult()
 
-    override fun getFcmToken(): String? = tokenPreference.fcmToken
+    override suspend fun getFcmToken(): MulKkamResult<String?> =
+        runCatching {
+            tokenPreference.fcmToken
+        }.toMulKkamResult()
 
-    override fun saveAccessToken(token: String) {
-        tokenPreference.saveAccessToken(token)
-    }
+    override suspend fun saveAccessToken(token: String): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.saveAccessToken(token)
+        }.toMulKkamResult()
 
-    override fun deleteAccessToken() {
-        tokenPreference.deleteAccessToken()
-    }
+    override suspend fun deleteAccessToken(): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.deleteAccessToken()
+        }.toMulKkamResult()
 
-    override fun saveFcmToken(token: String) {
-        tokenPreference.saveFcmToken(token)
-    }
+    override suspend fun saveFcmToken(token: String): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.saveFcmToken(token)
+        }.toMulKkamResult()
 
-    override fun deleteFcmToken() {
-        tokenPreference.deleteFcmToken()
-    }
+    override suspend fun deleteFcmToken(): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.deleteFcmToken()
+        }.toMulKkamResult()
 }
