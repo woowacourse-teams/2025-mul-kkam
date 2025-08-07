@@ -1,9 +1,11 @@
 package com.mulkkam.ui.onboarding.dialog
 
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.toDrawable
 import com.mulkkam.databinding.FragmentCompleteDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
 import com.mulkkam.ui.main.MainActivity
@@ -17,15 +19,17 @@ class CompleteDialogFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-        setWindowWidth()
+        setWindowOptions()
         initClickListener()
     }
 
-    private fun setWindowWidth() {
+    private fun setWindowOptions() {
         dialog?.window?.setLayout(
             (resources.displayMetrics.widthPixels * DIALOG_WIDTH_RATIO).toInt(),
             ViewGroup.LayoutParams.WRAP_CONTENT,
         )
+
+        dialog?.window?.setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
     }
 
     private fun initClickListener() {
