@@ -52,6 +52,14 @@ public class IntakeHistory {
         this.streak = streak;
     }
 
+    public boolean isOwnedBy(Member comparedMember) {
+        return this.member.equals(comparedMember);
+    }
+
+    public boolean isCreatedAt(LocalDate comparedDate) {
+        return this.historyDate.equals(comparedDate);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {

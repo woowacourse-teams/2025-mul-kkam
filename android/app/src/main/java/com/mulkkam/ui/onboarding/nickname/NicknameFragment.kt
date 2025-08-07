@@ -48,18 +48,23 @@ class NicknameFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
-                parentViewModel.updateNickname(etInputNickname.text.toString())
+                parentViewModel.updateNickname(getTrimmedNickname())
                 parentViewModel.moveToNextStep()
             }
 
             tvCheckDuplicate.setOnClickListener {
-                viewModel.checkNicknameDuplicate()
+                viewModel.checkNicknameDuplicate(getTrimmedNickname())
             }
         }
     }
 
+    private fun getTrimmedNickname(): String =
+        binding.etInputNickname.text
+            .toString()
+            .trim()
+
     private fun initObservers() {
-        viewModel.nicknameValidationState.observe(viewLifecycleOwner) { isValid ->
+        viewModel.isValidNickname.observe(viewLifecycleOwner) { isValid ->
             if (isValid == null) {
                 clearNicknameValidationUI()
                 return@observe
@@ -92,9 +97,9 @@ class NicknameFragment :
             )
         val messageResId =
             if (isValid) {
-                R.string.nickname_valid
+                R.string.setting_nickname_valid
             } else {
-                R.string.setting_profile_warning_duplicated_nickname
+                R.string.setting_nickname_warning_duplicated_nickname
             }
 
         with(binding) {

@@ -1,7 +1,7 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.Cups
 import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.Cups
 
 interface CupsRepository {
     suspend fun getCups(): MulKkamResult<Cups>
@@ -10,4 +10,6 @@ interface CupsRepository {
         cupAmount: Int,
         cupNickname: String,
     ): MulKkamResult<Unit>
+
+    suspend fun putCupsRank(cups: Cups): MulKkamResult<Cups>
 }

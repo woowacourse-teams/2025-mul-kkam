@@ -72,7 +72,7 @@
 
             <include
                 android:id="@+id/include_chart_mon"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -80,7 +80,7 @@
 
             <include
                 android:id="@+id/include_chart_tue"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -88,7 +88,7 @@
 
             <include
                 android:id="@+id/include_chart_wed"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -96,7 +96,7 @@
 
             <include
                 android:id="@+id/include_chart_thu"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -104,7 +104,7 @@
 
             <include
                 android:id="@+id/include_chart_fri"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -112,7 +112,7 @@
 
             <include
                 android:id="@+id/include_chart_sat"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1"
@@ -120,7 +120,7 @@
 
             <include
                 android:id="@+id/include_chart_sun"
-                layout="@layout/history_water_intake_chart"
+                layout="@layout/layout_history_water_intake_chart"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_columnWeight="1" />

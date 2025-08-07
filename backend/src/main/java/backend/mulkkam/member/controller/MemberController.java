@@ -1,6 +1,5 @@
 package backend.mulkkam.member.controller;
 
-import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class MemberController {
 
     private final MemberService memberService;
-    private final KakaoAuthService kakaoAuthService;
 
     @GetMapping("/{memberId}")
     public ResponseEntity<MemberResponse> get(@PathVariable Long memberId) {
