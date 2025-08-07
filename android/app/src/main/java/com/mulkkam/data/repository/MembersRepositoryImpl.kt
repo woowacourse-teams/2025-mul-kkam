@@ -52,8 +52,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembers(): MulKkamResult<MemberInfo> {
-        // TODO: 서버 경로 변경 시 인자 제거
-        val result = membersService.getMembers(1)
+        val result = membersService.getMembers()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
