@@ -7,7 +7,6 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
-import androidx.appcompat.app.AlertDialog
 import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.toColorInt
 import androidx.core.view.ViewCompat
@@ -52,9 +51,6 @@ class HistoryFragment :
             binding.includeChartSun,
         )
     }
-    private val historyAdapter: HistoryAdapter by lazy {
-        HistoryAdapter()
-    }
     private var historyToDelete: IntakeHistory? = null
 
     override fun onViewCreated(
@@ -70,36 +66,6 @@ class HistoryFragment :
         initDialogResultListener()
     }
 
-    private fun initHighlight() {
-        binding.tvViewSubLabel.text =
-            getColoredSpannable(
-                R.color.primary_200,
-                getString(R.string.history_view_sub_label_prefix) + " " + getString(R.string.history_view_sub_label_suffix),
-                getString(R.string.history_view_sub_label_suffix),
-            )
-    }
-
-    private fun getColoredSpannable(
-        @ColorRes colorResId: Int,
-        fullText: String,
-        vararg highlightedText: String,
-    ): SpannableString {
-        val color = requireContext().getColor(colorResId)
-        val spannable = SpannableString(fullText)
-
-        highlightedText.forEach { target ->
-            var startIndex = fullText.indexOf(target)
-            spannable.setSpan(
-                ForegroundColorSpan(color),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
-        }
-
-        return spannable
-    }
-
     private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
             adapter = historyAdapter
@@ -108,7 +74,10 @@ class HistoryFragment :
         historyAdapter.onItemLongClickListener =
             HistoryViewHolder.OnItemLongClickListener { history ->
                 this.historyToDelete = history
-                DeleteConfirmDialogFragment().show(childFragmentManager, DeleteConfirmDialogFragment.TAG)
+                DeleteConfirmDialogFragment().show(
+                    childFragmentManager,
+                    DeleteConfirmDialogFragment.TAG,
+                )
             }
     }
 
