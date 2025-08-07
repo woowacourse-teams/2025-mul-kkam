@@ -49,8 +49,8 @@ class SettingCupFragment :
         viewModel.editType.observe(this) { editType ->
             editType?.let { showTitle(it) }
         }
-        viewModel.success.observe(this) { success ->
-            if (success) dismiss()
+        viewModel.saveSuccess.observe(this) {
+            dismiss()
         }
     }
 

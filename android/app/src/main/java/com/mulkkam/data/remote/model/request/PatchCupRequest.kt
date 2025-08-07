@@ -1,0 +1,25 @@
+package com.mulkkam.data.remote.model.request
+
+import com.mulkkam.domain.model.Cup
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class PatchCupRequest(
+    @SerialName("cupNickname")
+    val cupNickname: String,
+    @SerialName("cupAmount")
+    val cupAmount: Int,
+    @SerialName("intakeType")
+    val intakeType: String,
+    @SerialName("emoji")
+    val emoji: String,
+)
+
+fun Cup.toPatchCupRequest(): PatchCupRequest =
+    PatchCupRequest(
+        cupNickname = nickname,
+        cupAmount = amount,
+        intakeType = intakeType.name,
+        emoji = emoji,
+    )
