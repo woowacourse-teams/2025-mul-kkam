@@ -3,7 +3,11 @@ package com.mulkkam.ui.onboarding.targetamount
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.Gender
 import com.mulkkam.domain.model.TargetAmount
+import kotlinx.coroutines.launch
 
 class TargetAmountViewModel : ViewModel() {
     private var _targetAmount = MutableLiveData<TargetAmount>()
@@ -16,9 +20,20 @@ class TargetAmountViewModel : ViewModel() {
     private val _isTargetAmountValid = MutableLiveData<Boolean?>()
     val isTargetAmountValid: LiveData<Boolean?> get() = _isTargetAmountValid
 
-    init {
-        // TODO: 추천 음용량 조회 API 호출 후 갱신 필요
-        _recommendedTargetAmount.value = 1800
+    fun getRecommendedTargetAmount(
+        gender: Gender?,
+        weight: Int?,
+    ) {
+        viewModelScope.launch {
+            val result = RepositoryInjection.intakeRepository.getIntakeAmountTargetRecommended(gender, weight)
+            runCatching {
+                result.data?.let {
+                    _recommendedTargetAmount.value = it
+                }
+            }.onFailure {
+                // TODO: 에러 처리
+            }
+        }
     }
 
     fun updateTargetAmount(newTargetAmount: Int?) {

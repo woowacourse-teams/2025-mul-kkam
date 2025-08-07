@@ -15,6 +15,8 @@ import com.mulkkam.databinding.FragmentTargetAmountBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.getColoredSpannable
+import java.util.Locale
 
 class TargetAmountFragment :
     BindingFragment<FragmentTargetAmountBinding>(
@@ -31,10 +33,19 @@ class TargetAmountFragment :
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
+
+        initRecommendation()
         initTextAppearance()
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+    }
+
+    private fun initRecommendation() {
+        viewModel.getRecommendedTargetAmount(
+            parentViewModel.onboardingInfo.gender,
+            parentViewModel.onboardingInfo.weight,
+        )
     }
 
     private fun initTextAppearance() {
@@ -60,11 +71,26 @@ class TargetAmountFragment :
     private fun initObservers() {
         viewModel.recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
             binding.etInputGoal.setText(recommendedTargetAmount.toString())
+            updateRecommendedTargetHighlight(recommendedTargetAmount)
         }
 
         viewModel.isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
             updateTargetAmountValidationUI(isValid)
         }
+    }
+
+    private fun updateRecommendedTargetHighlight(recommendedTargetAmount: Int) {
+        val nickname = parentViewModel.onboardingInfo.nickname.orEmpty()
+        val formattedAmount = String.format(Locale.US, "%,dml", recommendedTargetAmount)
+        val context = requireContext()
+
+        binding.tvRecommendedTargetAmount.text =
+            getString(
+                R.string.target_amount_recommended_water_goal,
+                nickname,
+                recommendedTargetAmount,
+            ).getAppearanceSpannable(context, R.style.title2, nickname, formattedAmount)
+                .getColoredSpannable(context, R.color.primary_200, nickname, formattedAmount)
     }
 
     private fun updateTargetAmountValidationUI(isValid: Boolean?) {

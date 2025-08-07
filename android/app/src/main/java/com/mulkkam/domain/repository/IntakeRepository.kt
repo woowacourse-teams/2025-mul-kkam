@@ -1,5 +1,6 @@
 package com.mulkkam.domain.repository
 
+import com.mulkkam.domain.Gender
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.model.IntakeHistoryResult
@@ -22,4 +23,9 @@ interface IntakeRepository {
     suspend fun getIntakeTarget(): MulKkamResult<Int>
 
     suspend fun getIntakeAmountRecommended(): MulKkamResult<Int>
+
+    suspend fun getIntakeAmountTargetRecommended(
+        gender: Gender?,
+        weight: Int?,
+    ): MulKkamResult<Int>
 }

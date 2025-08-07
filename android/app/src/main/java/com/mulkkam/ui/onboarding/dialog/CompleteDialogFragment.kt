@@ -6,14 +6,20 @@ import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
+import androidx.fragment.app.activityViewModels
+import com.mulkkam.R
 import com.mulkkam.databinding.FragmentCompleteDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
 import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.onboarding.OnboardingViewModel
+import com.mulkkam.ui.util.getColoredSpannable
 
 class CompleteDialogFragment :
     BindingDialogFragment<FragmentCompleteDialogBinding>(
         FragmentCompleteDialogBinding::inflate,
     ) {
+    private val parentViewModel: OnboardingViewModel by activityViewModels()
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -21,6 +27,14 @@ class CompleteDialogFragment :
         super.onViewCreated(view, savedInstanceState)
         setWindowOptions()
         initClickListener()
+
+        binding.tvGreeting.text =
+            getString(R.string.onboarding_complete_greeting, parentViewModel.onboardingInfo.nickname)
+                .getColoredSpannable(
+                    requireContext(),
+                    R.color.primary_200,
+                    parentViewModel.onboardingInfo.nickname ?: "",
+                )
     }
 
     private fun setWindowOptions() {

@@ -14,7 +14,7 @@ class NicknameViewModel : ViewModel() {
     fun checkNicknameDuplicate(nickname: String) {
         viewModelScope.launch {
             val result =
-                RepositoryInjection.membersRepository.getMembersNicknameValidation(nickname)
+                RepositoryInjection.nicknameRepository.getNicknameValidation(nickname)
             runCatching {
                 result.getOrError()
                 _isValidNickname.value = true

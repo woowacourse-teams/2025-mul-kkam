@@ -12,6 +12,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -19,6 +20,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEM
 
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class OauthAccount {
 
@@ -37,7 +39,21 @@ public class OauthAccount {
     @Column(nullable = false)
     private OauthProvider oauthProvider;
 
-    public OauthAccount(Member member, String oauthId, OauthProvider oauthProvider) {
+    public OauthAccount(
+            Long id,
+            String oauthId,
+            OauthProvider oauthProvider
+    ) {
+        this.id = id;
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
+    }
+
+    public OauthAccount(
+            Member member,
+            String oauthId,
+            OauthProvider oauthProvider
+    ) {
         this.member = member;
         this.oauthId = oauthId;
         this.oauthProvider = oauthProvider;
@@ -47,7 +63,8 @@ public class OauthAccount {
             String oauthId,
             OauthProvider oauthProvider
     ) {
-        this(null, oauthId, oauthProvider);
+        this.oauthId = oauthId;
+        this.oauthProvider = oauthProvider;
     }
 
     public void modifyMember(Member member) {
@@ -55,5 +72,9 @@ public class OauthAccount {
             throw new CommonException(MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT);
         }
         this.member = member;
+    }
+
+    public boolean finishedOnboarding() {
+        return this.member != null;
     }
 }

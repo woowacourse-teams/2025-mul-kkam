@@ -4,17 +4,26 @@ import android.animation.Animator
 import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import com.mulkkam.databinding.ActivitySplashBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
+import com.mulkkam.ui.model.AppAuthState.UNAUTHORIZED
+import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
+import com.mulkkam.ui.onboarding.OnboardingActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBinding::inflate) {
+    private val viewModel: SplashViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.lottieSplashCircle.resumeAnimation()
         initAnimatorUpdateListener()
         initAnimatorListener()
+        initObservers()
     }
 
     private fun initAnimatorUpdateListener() {
@@ -32,9 +41,7 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationCancel(p0: Animator) = Unit
 
                 override fun onAnimationEnd(p0: Animator) {
-                    // TODO: 추후 자동 로그인 기능 등이 추가되면 로티가 끝남과 로그인 여부를 동시에 검증하고 이동
-                    val intent = MainActivity.newIntent(this@SplashActivity)
-                    startActivity(intent)
+                    viewModel.updateAuthState()
                 }
 
                 override fun onAnimationRepeat(p0: Animator) = Unit
@@ -42,6 +49,20 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationStart(p0: Animator) = Unit
             },
         )
+    }
+
+    private fun initObservers() {
+        viewModel.authState.observe(this@SplashActivity) { authState ->
+            val intent =
+                when (authState) {
+                    UNAUTHORIZED -> LoginActivity.newIntent(this@SplashActivity)
+                    UNONBOARDED -> OnboardingActivity.newIntent(this@SplashActivity)
+                    ACTIVE_USER -> MainActivity.newIntent(this@SplashActivity)
+                }
+
+            startActivity(intent)
+            finish()
+        }
     }
 
     companion object {

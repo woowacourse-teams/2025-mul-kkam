@@ -7,6 +7,6 @@ import kotlinx.serialization.Serializable
 data class AuthResponse(
     @SerialName("accessToken")
     val accessToken: String,
-    @SerialName("onboardingCompleted")
+    @SerialName("finishedOnboarding")
     val onboardingCompleted: Boolean,
 )

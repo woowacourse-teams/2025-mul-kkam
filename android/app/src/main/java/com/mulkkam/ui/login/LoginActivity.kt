@@ -1,5 +1,7 @@
 package com.mulkkam.ui.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -10,8 +12,12 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
+import com.mulkkam.domain.MulKkamError
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
+import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
+import com.mulkkam.ui.onboarding.OnboardingActivity
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
@@ -19,6 +25,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initClickListeners()
+        initObservers()
     }
 
     private fun initClickListeners() {
@@ -63,17 +70,27 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         token?.let {
             showToast(R.string.login_kakao_success)
             viewModel.loginWithKakao(it.accessToken)
-            navigateToNextScreen()
         }
     }
 
-    private fun navigateToNextScreen() {
-        val intent = MainActivity.newIntent(this)
-        startActivity(intent)
-        finish()
+    private fun initObservers() {
+        viewModel.authState.observe(this) { authState ->
+            val intent =
+                when (authState) {
+                    UNONBOARDED -> OnboardingActivity.newIntent(this@LoginActivity)
+                    ACTIVE_USER -> MainActivity.newIntent(this@LoginActivity)
+                    else -> throw MulKkamError.NotFoundError.Member
+                }
+
+            startActivity(intent)
+        }
     }
 
     private fun showToast(message: Int) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, LoginActivity::class.java)
     }
 }

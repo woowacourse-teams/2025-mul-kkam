@@ -80,16 +80,16 @@ public class IntakeHistoryDetailRepositoryTest {
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));
 
             // when
-            List<IntakeHistoryDetail> firstDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
-                    member.getId(),
+            List<IntakeHistoryDetail> firstDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    member,
                     date,
                     date
             );
-            List<IntakeHistoryDetail> secondDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
-                    member.getId(),
+            List<IntakeHistoryDetail> secondDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    member,
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(member.getId(),
+            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(member,
                     date,
                     date.plusDays(1));
 

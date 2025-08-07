@@ -23,6 +23,7 @@ public class KakaoAuthService {
     private final OauthJwtTokenHandler jwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
 
+    @Transactional
     public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
@@ -31,6 +32,6 @@ public class KakaoAuthService {
                 .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
 
         String token = jwtTokenHandler.createToken(oauthAccount);
-        return new OauthLoginResponse(token);
+        return new OauthLoginResponse(token, oauthAccount.finishedOnboarding());
     }
 }
