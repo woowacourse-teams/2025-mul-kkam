@@ -21,9 +21,13 @@ class HomeViewModel : ViewModel() {
     private val _characterChat: MutableLiveData<String> = MutableLiveData()
     val characterChat: LiveData<String> get() = _characterChat
 
+    private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
+    val alarmCount: LiveData<Int> get() = _alarmCount
+
     init {
         loadTodayProgressInfo()
         loadCups()
+        loadAlarmCount()
     }
 
     fun loadTodayProgressInfo() {
@@ -43,6 +47,19 @@ class HomeViewModel : ViewModel() {
             val result = RepositoryInjection.cupsRepository.getCups()
             runCatching {
                 _cups.value = result.getOrError()
+            }.onFailure {
+                // TODO: 에러 처리
+            }
+        }
+    }
+
+    fun loadAlarmCount() {
+        viewModelScope.launch {
+            // TODO: 알림 개수 조회 API 연결
+            // val result = RepositoryInjection.alarmRepository.getAlarmCount()
+            runCatching {
+                // val count = result.getOrError()
+                _alarmCount.value = 2
             }.onFailure {
                 // TODO: 에러 처리
             }

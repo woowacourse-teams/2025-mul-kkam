@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
+import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
@@ -37,11 +38,18 @@ class HomeFragment :
             binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
             updateDailyProgressInfo(progressInfo)
         }
+
         viewModel.cups.observe(viewLifecycleOwner) { cups ->
             updateDrinkMenu(cups)
         }
+
         viewModel.characterChat.observe(viewLifecycleOwner) { chat ->
             binding.tvHomeCharacterChat.text = chat ?: return@observe
+        }
+
+        viewModel.alarmCount.observe(viewLifecycleOwner) { alarmCount ->
+            binding.tvAlarmCount.text = alarmCount.toString()
+            binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
         }
     }
 
@@ -154,5 +162,6 @@ class HomeFragment :
         private const val PROGRESS_BAR_RADIUS: Float = 12f
         private const val MANUAL_DRINK_IMAGE: String =
             "https://github-production-user-asset-6210df.s3.amazonaws.com/127238018/474919237-4e25a9f8-ab08-46e4-bd01-578d2de907df.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250806%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250806T085526Z&X-Amz-Expires=300&X-Amz-Signature=2c41117c496fdf0a94dd9062232cc396e7e44f58048958a92185c836d1caf5d4&X-Amz-SignedHeaders=host"
+        private const val ALARM_COUNT_MIN: Int = 0
     }
 }

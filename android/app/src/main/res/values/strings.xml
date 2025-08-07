@@ -5,6 +5,8 @@
     <string name="main_history">기록</string>
     <string name="main_setting">설정</string>
     <string name="main_main_back_press_exit_message">뒤로가기 버튼을 한 번 더 누르면 종료됩니다</string>
+    <string name="main_alarm_permission_granted">알림 권한이 설정되었습니다</string>
+    <string name="main_alarm_permission_denied">알림 권한이 거부되었습니다</string>
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>

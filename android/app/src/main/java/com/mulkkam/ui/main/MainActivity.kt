@@ -1,12 +1,17 @@
 package com.mulkkam.ui.main
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -49,6 +54,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         setupDoubleBackToExit()
         initObservers()
         loadDeviceId()
+        requestNotificationPermission()
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
@@ -151,7 +157,56 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        if (hasNotificationPermission()) return
+
+        val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, POST_NOTIFICATIONS)
+        if (!shouldShowRationale) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(POST_NOTIFICATIONS),
+                REQUEST_CODE_NOTIFICATION_PERMISSION,
+            )
+        }
+    }
+
+    private fun hasNotificationPermission(): Boolean =
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> true
+            else -> checkSelfPermission(POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+
+        when (requestCode) {
+            REQUEST_CODE_NOTIFICATION_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Toast
+                        .makeText(
+                            this,
+                            R.string.main_alarm_permission_granted,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                } else {
+                    Toast
+                        .makeText(
+                            this,
+                            R.string.main_alarm_permission_denied,
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                }
+            }
+        }
+    }
+
     companion object {
+        private const val REQUEST_CODE_NOTIFICATION_PERMISSION: Int = 1001
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
         private val HEALTH_CONNECT_PERMISSIONS =
             setOf(
