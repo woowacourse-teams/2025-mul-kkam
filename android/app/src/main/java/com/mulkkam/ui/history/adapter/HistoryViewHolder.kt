@@ -52,7 +52,7 @@ class HistoryViewHolder(
 
         fun from(
             parent: ViewGroup,
-            onItemLongClickListener: OnItemLongClickListener?,
+            onItemLongClickListener: OnItemLongClickListener,
         ): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)

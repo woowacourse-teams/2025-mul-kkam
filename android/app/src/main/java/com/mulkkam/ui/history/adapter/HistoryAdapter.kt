@@ -7,7 +7,7 @@ import com.mulkkam.ui.history.adapter.HistoryViewHolder.OnItemLongClickListener
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()
-    var onItemLongClickListener: OnItemLongClickListener? = null
+    lateinit var onItemLongClickListener: OnItemLongClickListener
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
