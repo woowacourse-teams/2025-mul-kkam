@@ -11,7 +11,6 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface MembersService {
@@ -33,10 +32,8 @@ interface MembersService {
         @Body nickname: MemberNicknameRequest,
     ): Result<Unit>
 
-    @GET("/members/{memberId}")
-    suspend fun getMembers(
-        @Path("memberId") memberId: Int,
-    ): Result<MembersResponse>
+    @GET("/members")
+    suspend fun getMembers(): Result<MembersResponse>
 
     @POST("/members/physical-attributes")
     suspend fun postMembersPhysicalAttributes(
