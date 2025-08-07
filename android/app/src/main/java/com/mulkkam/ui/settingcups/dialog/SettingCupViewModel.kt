@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -66,5 +67,9 @@ class SettingCupViewModel : ViewModel() {
                 // TODO: 에러 처리
             }
         }
+    }
+
+    fun updateIntakeType(intakeType: IntakeType) {
+        _cup.value = cup.value?.copy(intakeType = intakeType)
     }
 }

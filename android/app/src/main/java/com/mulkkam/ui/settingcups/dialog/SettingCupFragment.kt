@@ -6,7 +6,6 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
-import com.mulkkam.di.LoggingInjection.logger
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
@@ -22,22 +21,6 @@ class SettingCupFragment :
     private val viewModel: SettingCupViewModel by viewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
-    val IntakeType.label: String
-        get() =
-            when (this) {
-                IntakeType.WATER -> "물"
-                IntakeType.COFFEE -> "커피"
-                IntakeType.UNKNOWN -> "기타"
-            }
-
-    val IntakeType.colorHex: String
-        get() =
-            when (this) {
-                IntakeType.WATER -> "#90E0EF"
-                IntakeType.COFFEE -> "#C68760"
-                IntakeType.UNKNOWN -> "#999999"
-            }
-
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -48,21 +31,7 @@ class SettingCupFragment :
         initClickListeners()
         initObservers()
         initInputListeners()
-
-        val intakeAdapter =
-            MulKkamChipGroupAdapter<IntakeType>(
-                context = requireContext(),
-                labelProvider = { it.label },
-                colorProvider = { it.colorHex },
-                isMultiSelect = false,
-                requireSelection = true,
-                onItemSelected = { selectedList ->
-                    logger.debug(message = "Selected items: $selectedList")
-                },
-            )
-
-        binding.mcgIntakeType.setAdapter(intakeAdapter)
-        binding.mcgIntakeType.setItems(listOf(IntakeType.WATER, IntakeType.COFFEE))
+        initChips()
     }
 
     private fun initClickListeners() {
@@ -124,6 +93,43 @@ class SettingCupFragment :
             viewModel.updateAmount(amount)
         }
     }
+
+    private fun initChips() {
+        val intakeAdapter =
+            MulKkamChipGroupAdapter<IntakeType>(
+                context = requireContext(),
+                labelProvider = { it.toLabel() },
+                colorProvider = { it.toColorHex() },
+                isMultiSelect = false,
+                requireSelection = true,
+                onItemSelected = { selectedList ->
+                    viewModel.updateIntakeType(selectedList.firstOrNull() ?: IntakeType.UNKNOWN)
+                },
+            )
+
+        binding.mcgIntakeType.setAdapter(intakeAdapter)
+        binding.mcgIntakeType.setItems(
+            listOf(
+                IntakeType.WATER,
+                IntakeType.COFFEE,
+            ),
+        )
+    }
+
+    // TODO: 추후 서버에서 받아오는 IntakeType 반영
+    private fun IntakeType.toLabel(): String =
+        when (this) {
+            IntakeType.WATER -> "물"
+            IntakeType.COFFEE -> "커피"
+            IntakeType.UNKNOWN -> ""
+        }
+
+    private fun IntakeType.toColorHex(): String =
+        when (this) {
+            IntakeType.WATER -> "#90E0EF"
+            IntakeType.COFFEE -> "#C68760"
+            IntakeType.UNKNOWN -> ""
+        }
 
     companion object {
         const val TAG: String = "SETTING_WATER_CUP_FRAGMENT"
