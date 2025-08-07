@@ -37,8 +37,8 @@ public class MemberService {
 
     private final OauthAccountRepository oauthAccountRepository;
     private final IntakeHistoryRepository intakeHistoryRepository;
-    private final IntakeDetailRepository intakeDetailRepository;
     private final MemberRepository memberRepository;
+    private final IntakeDetailRepository intakeDetailRepository;
 
     public MemberResponse getMemberById(long id) {
         Member member = getById(id);
