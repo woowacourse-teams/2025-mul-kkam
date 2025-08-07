@@ -60,6 +60,10 @@ public class IntakeHistory {
         return this.historyDate.equals(comparedDate);
     }
 
+    public void modifyTargetAmount(Amount targetAmount) {
+        this.targetAmount = targetAmount;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {
