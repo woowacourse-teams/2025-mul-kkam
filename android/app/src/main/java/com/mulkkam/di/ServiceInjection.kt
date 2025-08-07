@@ -6,6 +6,7 @@ import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
+import com.mulkkam.data.remote.service.NotificationService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
 
@@ -21,4 +22,6 @@ object ServiceInjection {
     val nicknameService: NicknameService = retrofit.create(NicknameService::class.java)
 
     val healthService: HealthService by lazy { HealthService(healthConnectClient) }
+
+    val notificationService: NotificationService = retrofit.create(NotificationService::class.java)
 }
