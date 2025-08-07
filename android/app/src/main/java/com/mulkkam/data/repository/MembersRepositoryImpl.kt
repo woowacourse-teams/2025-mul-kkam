@@ -11,7 +11,10 @@ import com.mulkkam.domain.Gender
 import com.mulkkam.domain.MulKkamResult
 import com.mulkkam.domain.model.MemberInfo
 import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.TodayProgressInfo
 import com.mulkkam.domain.repository.MembersRepository
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class MembersRepositoryImpl(
     private val membersService: MembersService,
@@ -78,6 +81,14 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersCheckOnboarding()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.finishedOnboarding) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
+        val result = membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }

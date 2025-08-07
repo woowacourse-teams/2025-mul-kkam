@@ -10,6 +10,7 @@
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
+
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
@@ -69,11 +70,9 @@
 
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
-    <string name="setting_section_permission">권한 설정</string>
     <string name="setting_section_notification">푸시 알림 설정</string>
 
     <string name="setting_item_body_info">신체 정보 설정</string>
-    <string name="setting_item_health_connect">헬스 커넥트 연동 허용</string>
     <string name="setting_item_notification">시스템 알림 설정</string>
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>

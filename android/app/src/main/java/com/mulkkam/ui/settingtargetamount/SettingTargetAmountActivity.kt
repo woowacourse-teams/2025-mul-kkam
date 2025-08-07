@@ -17,7 +17,6 @@ import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.util.getAppearanceSpannable
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
-import kotlin.String
 
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
     private val viewModel: SettingTargetAmountViewModel by viewModels()
@@ -73,12 +72,12 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 this,
                 R.style.title2,
                 viewModel.nickname.value ?: "",
-                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
+                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount.value),
             ).getColoredSpannable(
                 this,
                 R.color.primary_200,
                 viewModel.nickname.value ?: "",
-                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount),
+                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount.value),
             )
     }
 

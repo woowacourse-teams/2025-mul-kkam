@@ -7,6 +7,7 @@ import com.mulkkam.data.remote.service.DevicesService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
+import com.mulkkam.data.remote.service.NotificationService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
 
@@ -24,4 +25,6 @@ object ServiceInjection {
     val healthService: HealthService = HealthService(healthConnectClient)
 
     val devicesService: DevicesService = retrofit.create(DevicesService::class.java)
+
+    val notificationService: NotificationService = retrofit.create(NotificationService::class.java)
 }

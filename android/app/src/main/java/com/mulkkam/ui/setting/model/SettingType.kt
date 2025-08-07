@@ -14,8 +14,6 @@ sealed interface SettingType {
     }
 
     sealed interface Switch : SettingType {
-        data object HealthConnect : Switch
-
         data object Marketing : Switch
 
         data object Night : Switch
