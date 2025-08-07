@@ -1,5 +1,13 @@
 package backend.mulkkam.member.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.Mockito.when;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -10,7 +18,6 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -18,14 +25,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
@@ -46,8 +45,6 @@ public class MemberServiceUnitTest {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when
             MemberResponse result = memberService.get(member);
@@ -75,7 +72,6 @@ public class MemberServiceUnitTest {
                     .gender(null)
                     .build();
             Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             Gender gender = Gender.FEMALE;
             Double weight = 50.2;
@@ -112,8 +108,6 @@ public class MemberServiceUnitTest {
                     .builder()
                     .memberNickname(new MemberNickname("msv0b"))
                     .build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             String modifyNickname = "msv0a";
             MemberNicknameModifyRequest memberNicknameModifyRequest = new MemberNicknameModifyRequest(
@@ -144,7 +138,6 @@ public class MemberServiceUnitTest {
                     .builder()
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
-            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
             when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
 
             // when & then
@@ -166,7 +159,6 @@ public class MemberServiceUnitTest {
                     .memberNickname(new MemberNickname(oldNickname))
                     .build();
 
-            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
             when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
 
             // when & then
@@ -187,7 +179,6 @@ public class MemberServiceUnitTest {
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
                     .build();
-            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
             assertThatThrownBy(() -> memberService.validateDuplicateNickname(
@@ -210,8 +201,6 @@ public class MemberServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .build();
-            Long memberId = 1L;
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             String expected = member.getMemberNickname().value();
 
