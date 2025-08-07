@@ -2,6 +2,7 @@ package com.mulkkam.ui.settingcups.dialog
 
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -58,10 +59,12 @@ class SettingCupFragment :
             editType?.let { showTitle(it) }
         }
         viewModel.saveSuccess.observe(this) {
+            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
             settingCupsViewModel.loadCups()
             dismiss()
         }
         viewModel.deleteSuccess.observe(this) {
+            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
             settingCupsViewModel.loadCups()
             dismiss()
         }
