@@ -60,11 +60,11 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settingwater.SettingWaterActivity"
+            android:name=".ui.settingcups.SettingCupsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settinggoal.SettingGoalActivity"
+            android:name=".ui.settingtargetamount.SettingTargetAmountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

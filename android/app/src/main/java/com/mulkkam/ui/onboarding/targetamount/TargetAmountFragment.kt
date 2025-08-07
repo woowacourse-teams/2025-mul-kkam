@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -60,6 +61,23 @@ class TargetAmountFragment :
         viewModel.recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
             binding.etInputGoal.setText(recommendedTargetAmount.toString())
         }
+
+        viewModel.isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
+            updateTargetAmountValidationUI(isValid)
+        }
+    }
+
+    private fun updateTargetAmountValidationUI(isValid: Boolean?) {
+        val editTextColorRes = if (isValid != false) R.color.gray_400 else R.color.secondary_200
+
+        with(binding) {
+            tvComplete.isEnabled = isValid == true
+
+            tvTargetAmountWarningMessage.isVisible = isValid == false
+
+            etInputGoal.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
+        }
     }
 
     private fun initTargetAmountInputWatcher() {
@@ -68,19 +86,12 @@ class TargetAmountFragment :
 
             debounceRunnable =
                 Runnable {
-                    val nickname =
+                    val targetAmount =
                         binding.etInputGoal.text
                             .toString()
                             .trim()
-                    // TODO: 목표 음용량 검증 로직 필요 ( 0 ~ 9999 )
-                    val isValid = nickname.isNotEmpty()
-                    val colorResId = if (isValid) R.color.primary_200 else R.color.gray_200
-                    val color = getColor(requireContext(), colorResId)
-
-                    with(binding.tvComplete) {
-                        isEnabled = isValid
-                        backgroundTintList = ColorStateList.valueOf(color)
-                    }
+                            .toIntOrNull()
+                    viewModel.updateTargetAmount(targetAmount)
                 }.apply { debounceHandler.postDelayed(this, 300L) }
         }
     }

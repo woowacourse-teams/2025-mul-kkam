@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CupResponse(
     @SerialName("id")
-    val id: Int,
+    val id: Long,
     @SerialName("cupNickname")
     val cupNickname: String,
     @SerialName("cupAmount")

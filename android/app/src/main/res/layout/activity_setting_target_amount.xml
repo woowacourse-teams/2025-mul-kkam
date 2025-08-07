@@ -2,46 +2,89 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".ui.onboarding.targetamount.TargetAmountFragment">
+    tools:context=".ui.settingtargetamount.SettingTargetAmountActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_setting_goal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:contentInsetStart="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/white"
+            android:importantForAccessibility="no"
+            android:padding="12dp"
+            android:src="@drawable/ic_setting_prev" />
+
+        <TextView
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/setting_target_amount_toolbar_title"
+            android:textAppearance="@style/title2"
+            android:textColor="@color/gray_400" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/view_toolbar_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/gray_100"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tb_setting_goal" />
 
     <TextView
-        android:id="@+id/tv_view_label"
+        android:id="@+id/tv_goal_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="26dp"
-        android:text="@string/target_amount_input_hint"
-        android:textAppearance="@style/body2"
+        android:layout_marginTop="24dp"
+        android:text="@string/setting_target_amount_edit_goal_label"
+        android:textAppearance="@style/title2"
+        android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/view_toolbar_divider" />
 
     <EditText
         android:id="@+id/et_input_goal"
         android:layout_width="0dp"
         android:layout_height="42dp"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:backgroundTint="@color/gray_400"
         android:hint="@string/setting_target_amount_hint_input_goal"
         android:inputType="number"
+        android:paddingHorizontal="12dp"
         android:paddingVertical="10dp"
-        android:paddingStart="14dp"
-        android:paddingEnd="42dp"
         android:textAppearance="@style/body3"
+        android:textColor="@color/gray_400"
+        android:textColorHint="@color/gray_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
+        app:layout_constraintTop_toBottomOf="@id/tv_goal_label" />
 
     <TextView
+        android:id="@+id/tv_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="14dp"
+        android:layout_marginEnd="12dp"
         android:text="@string/setting_target_amount_unit_ml"
         android:textAppearance="@style/title2"
+        android:textColor="@color/gray_400"
         app:layout_constraintBottom_toBottomOf="@id/et_input_goal"
         app:layout_constraintEnd_toEndOf="@id/et_input_goal"
         app:layout_constraintTop_toTopOf="@id/et_input_goal" />
@@ -55,10 +98,9 @@
         android:text="@string/setting_target_amount_warning_too_much"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@id/et_input_goal"
         app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
-
 
     <TextView
         android:id="@+id/tv_recommended_target_amount"
@@ -83,20 +125,22 @@
         app:layout_constraintStart_toStartOf="@id/tv_recommended_target_amount"
         app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount" />
 
+
     <TextView
-        android:id="@+id/tv_complete"
-        android:layout_width="match_parent"
-        android:layout_height="38dp"
-        android:layout_margin="24dp"
+        android:id="@+id/tv_save_goal"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginBottom="24dp"
         android:background="@drawable/selector_common_button_enabled"
         android:backgroundTint="@color/gray_200"
         android:enabled="false"
         android:gravity="center"
-        android:text="@string/onboarding_complete"
+        android:paddingVertical="8dp"
+        android:text="@string/setting_save"
         android:textAppearance="@style/title2"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

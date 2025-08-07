@@ -52,3 +52,25 @@ fun String.getColoredSpannable(
 
     return spannable
 }
+
+fun SpannableString.getColoredSpannable(
+    context: Context,
+    @ColorRes colorResId: Int,
+    vararg highlightedText: String,
+): SpannableString {
+    val color = context.getColor(colorResId)
+
+    highlightedText.forEach { target ->
+        val startIndex = this.indexOf(target)
+        if (startIndex != -1) {
+            this.setSpan(
+                ForegroundColorSpan(color),
+                startIndex,
+                startIndex + target.length,
+                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+            )
+        }
+    }
+
+    return this
+}
