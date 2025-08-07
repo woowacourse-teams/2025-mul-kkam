@@ -1,6 +1,9 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
