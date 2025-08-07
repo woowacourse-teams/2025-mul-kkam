@@ -6,17 +6,20 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,6 +33,9 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     MemberRepository memberRepository;
+
+    @Autowired
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -79,6 +85,29 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     () -> intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
+        }
+
+        @DisplayName("스냅샷이 저장된다")
+        @Test
+        void success_whenAmountIsModified() {
+            // given
+            int originTargetAmount = 2_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(new Amount(originTargetAmount))
+                    .build();
+            memberRepository.save(member);
+
+            int newTargetAmount = 1_000;
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
+                    newTargetAmount);
+
+            // when
+            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
+                    member.getId(), LocalDate.now());
+
+            // then
+            assertThat(targetAmountSnapshot.get().getTargetAmount().value()).isEqualTo(newTargetAmount);
         }
     }
 

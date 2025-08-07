@@ -12,6 +12,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
@@ -19,6 +20,7 @@ import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -26,6 +28,7 @@ import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -49,6 +52,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    @Autowired
+    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("음용량을 저장할 때에")
     @Nested
@@ -96,7 +102,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when & then
-
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_AMOUNT.name());
@@ -334,6 +339,37 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(responseOfTheDay.achievementRate()).isCloseTo(
                     100, within(0.01)
             );
+        }
+
+        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @Test
+        void success_ifNotExistsIntakeHistoryFindSnapshot() {
+            // given
+            int targetAmountOfMember = 1_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .targetAmount(new Amount(targetAmountOfMember))
+                    .build();
+            memberRepository.save(member);
+
+            TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
+                    .withMember(member)
+                    .updatedAt(LocalDate.of(2025, 7, 10))
+                    .targetAmount(new Amount(5_555))
+                    .build();
+            targetAmountSnapshotRepository.save(targetAmountSnapshot);
+
+            LocalDate startDate = LocalDate.of(2025, 7, 12);
+            LocalDate endDate = LocalDate.of(2025, 7, 12);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
+            List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, member);
+
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistorySummaryResponses.size()).isEqualTo(1);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().targetAmount()).isEqualTo(5555);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().achievementRate()).isEqualTo(0.0);
+            });
         }
     }
 
