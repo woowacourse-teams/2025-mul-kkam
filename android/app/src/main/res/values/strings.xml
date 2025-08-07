@@ -10,6 +10,7 @@
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
+
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
