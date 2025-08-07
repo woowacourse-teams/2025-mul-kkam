@@ -27,14 +27,7 @@ class CompleteDialogFragment :
         super.onViewCreated(view, savedInstanceState)
         setWindowOptions()
         initClickListener()
-
-        binding.tvGreeting.text =
-            getString(R.string.onboarding_complete_greeting, parentViewModel.onboardingInfo.nickname)
-                .getColoredSpannable(
-                    requireContext(),
-                    R.color.primary_200,
-                    parentViewModel.onboardingInfo.nickname ?: "",
-                )
+        initGreetingHighlight()
     }
 
     private fun setWindowOptions() {
@@ -54,6 +47,18 @@ class CompleteDialogFragment :
                 }
             startActivity(intent)
         }
+    }
+
+    private fun initGreetingHighlight() {
+        binding.tvGreeting.text =
+            getString(
+                R.string.onboarding_complete_greeting,
+                parentViewModel.onboardingInfo.nickname,
+            ).getColoredSpannable(
+                requireContext(),
+                R.color.primary_200,
+                parentViewModel.onboardingInfo.nickname ?: "",
+            )
     }
 
     companion object {
