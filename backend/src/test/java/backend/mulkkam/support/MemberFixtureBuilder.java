@@ -22,6 +22,8 @@ public class MemberFixtureBuilder {
         this.weight = 50.2;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
         this.targetAmount = new Amount(1_000);
+        this.isMarketingNotificationAgreed = false;
+        this.isNightNotificationAgreed = false;
     }
 
     public static MemberFixtureBuilder builder() {

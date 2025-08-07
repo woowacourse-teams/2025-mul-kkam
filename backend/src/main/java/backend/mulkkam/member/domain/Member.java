@@ -45,8 +45,13 @@ public class Member {
     @Column(nullable = false)
     private boolean isNightNotificationAgreed;
 
-    public Member(MemberNickname memberNickname, PhysicalAttributes physicalAttributes, Amount targetAmount,
-                  boolean isMarketingNotificationAgreed, boolean isNightNotificationAgreed) {
+    public Member(
+            MemberNickname memberNickname,
+            PhysicalAttributes physicalAttributes,
+            Amount targetAmount,
+            boolean isMarketingNotificationAgreed,
+            boolean isNightNotificationAgreed
+    ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
