@@ -2,7 +2,6 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -10,8 +9,8 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.NotificationFixtureBuilder;
@@ -20,7 +19,6 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +35,6 @@ class NotificationServiceUnitTest {
 
     private static final int DAY_LIMIT = 7;
     private Member mockMember;
-    private final Long mockMemberId = 1L;
 
     @Mock
     NotificationRepository notificationRepository;
@@ -51,7 +48,6 @@ class NotificationServiceUnitTest {
     @BeforeEach
     void setUP() {
         mockMember = mock(Member.class);
-        given(memberRepository.findById(mockMemberId)).willReturn(Optional.of(mockMember));
     }
 
     @DisplayName("알림 조회 기능을 사용할 때")
@@ -86,7 +82,7 @@ class NotificationServiceUnitTest {
                     ));
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMemberId);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -106,7 +102,8 @@ class NotificationServiceUnitTest {
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
             Long lastId = 6L;
-            when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
+            when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime,
+                    Pageable.ofSize(defaultSize + 1)))
                     .thenReturn(createNotifications(
                             LocalDate.of(2025, 8, 9),
                             LocalDate.of(2025, 8, 8),
@@ -118,7 +115,7 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMemberId);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -130,19 +127,19 @@ class NotificationServiceUnitTest {
             // given
             Long lastId = 6L;
             List<Notification> notifications = createNotifications(
-                            LocalDate.of(2025, 8, 9),
-                            LocalDate.of(2025, 8, 8),
-                            LocalDate.of(2025, 8, 7),
-                            LocalDate.of(2025, 8, 6),
-                            LocalDate.of(2025, 8, 5)
-                    );
+                    LocalDate.of(2025, 8, 9),
+                    LocalDate.of(2025, 8, 8),
+                    LocalDate.of(2025, 8, 7),
+                    LocalDate.of(2025, 8, 6),
+                    LocalDate.of(2025, 8, 5)
+            );
             when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
                     .thenReturn(notifications);
 
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMemberId);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size())
@@ -172,7 +169,7 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMemberId);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
@@ -192,7 +189,7 @@ class NotificationServiceUnitTest {
 
             // when & then
             AssertionsForClassTypes.assertThatThrownBy(
-                            () -> notificationService.getNotificationsAfter(request, mockMemberId))
+                            () -> notificationService.getNotificationsAfter(request, mockMember))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }

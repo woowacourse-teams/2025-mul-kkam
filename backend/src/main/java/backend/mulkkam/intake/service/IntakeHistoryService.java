@@ -1,5 +1,10 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
@@ -27,11 +32,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
-
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -44,12 +44,10 @@ public class IntakeHistoryService {
     @Transactional
     public CreateIntakeHistoryResponse create(
             IntakeDetailCreateRequest intakeDetailCreateRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
         LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
-        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
-                        memberId,
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
                         intakeDateTime.toLocalDate()
                 )
                 .orElseGet(() -> {
@@ -67,7 +65,7 @@ public class IntakeHistoryService {
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(
                 intakeDetailCreateRequest.dateTime().toLocalDate(),
-                memberId
+                member
         );
 
         if (intakeHistoryDetails.isEmpty()) {
@@ -91,11 +89,10 @@ public class IntakeHistoryService {
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
-        List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
-                memberId,
+        List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                member,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
         );
@@ -113,9 +110,8 @@ public class IntakeHistoryService {
     @Transactional
     public void deleteDetailHistory(
             Long intakeHistoryDetailId,
-            Long memberId
+            Member member
     ) {
-        Member member = getMember(memberId);
         IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
                 intakeHistoryDetailId);
 
@@ -144,10 +140,10 @@ public class IntakeHistoryService {
 
     private List<IntakeHistoryDetail> findIntakeHistoriesOfDate(
             LocalDate date,
-            Long memberId
+            Member member
     ) {
-        return intakeHistoryDetailRepository.findAllByMemberIdAndDateRange(
-                memberId,
+        return intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                member,
                 date,
                 date
         );
@@ -162,8 +158,8 @@ public class IntakeHistoryService {
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
-        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
-                member.getId(), todayDate.minusDays(1));
+        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                member, todayDate.minusDays(1));
         return yesterdayIntakeHistory.map(IntakeHistory::getStreak).orElse(0);
     }
 

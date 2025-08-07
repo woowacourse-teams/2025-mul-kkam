@@ -10,13 +10,17 @@ public record CreateMemberRequest(
         String memberNickname,
         Double weight,
         Gender gender,
-        int targetIntakeAmount
+        int targetIntakeAmount,
+        boolean isMarketingNotificationAgreed,
+        boolean isNightNotificationAgreed
 ) {
     public Member toMember() {
         return new Member(
                 new MemberNickname(memberNickname),
                 new PhysicalAttributes(gender, weight),
-                new Amount(targetIntakeAmount)
+                new Amount(targetIntakeAmount),
+                isMarketingNotificationAgreed,
+                isMarketingNotificationAgreed
         );
     }
 }

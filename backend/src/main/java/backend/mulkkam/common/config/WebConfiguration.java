@@ -1,10 +1,13 @@
 package backend.mulkkam.common.config;
 
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
+import backend.mulkkam.common.resolver.OauthAccountResolver;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -13,6 +16,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class WebConfiguration implements WebMvcConfigurer {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final OauthAccountResolver oauthAccountResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -20,6 +24,11 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .allowedOrigins("https://mulkkam.stoplight.io")
                 .allowedMethods("*")
                 .allowCredentials(true);
+    }
+
+    @Override
+    public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
+        resolvers.add(oauthAccountResolver);
     }
 
     @Bean
