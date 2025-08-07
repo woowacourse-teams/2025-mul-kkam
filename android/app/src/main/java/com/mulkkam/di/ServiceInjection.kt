@@ -3,6 +3,7 @@ package com.mulkkam.di
 import com.mulkkam.data.local.service.HealthService
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
+import com.mulkkam.data.remote.service.DevicesService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
@@ -20,5 +21,7 @@ object ServiceInjection {
 
     val nicknameService: NicknameService = retrofit.create(NicknameService::class.java)
 
-    val healthService: HealthService by lazy { HealthService(healthConnectClient) }
+    val healthService: HealthService = HealthService(healthConnectClient)
+
+    val devicesService: DevicesService = retrofit.create(DevicesService::class.java)
 }

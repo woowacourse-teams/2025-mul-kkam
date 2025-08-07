@@ -1,14 +1,5 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -18,6 +9,7 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -41,6 +33,15 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
@@ -57,6 +58,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
+
+    @Autowired
+    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -380,6 +384,38 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(50.0);
                 softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(1000);
                 softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(500);
+            });
+        }
+
+        @DisplayName("오늘의 기록이 존재하지 않는 경우 멤버의 목표 음용량을 조회한다")
+        @Test
+        void success_withoutIntakeHistory() {
+            // given
+            String nickname = "체체";
+            int rawTargetAmount = 1_000;
+
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname(nickname))
+                    .targetAmount(new Amount(rawTargetAmount))
+                    .build();
+            memberRepository.save(member);
+
+            LocalDate date = LocalDate.of(2025, 3, 25);
+
+            // when
+            ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
+                    member,
+                    date.plusDays(1)
+            );
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(progressInfoResponse.memberNickname()).isEqualTo(nickname);
+                softly.assertThat(progressInfoResponse.streak()).isEqualTo(0);
+                softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(0);
+                softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(rawTargetAmount);
+                softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(0);
             });
         }
     }
