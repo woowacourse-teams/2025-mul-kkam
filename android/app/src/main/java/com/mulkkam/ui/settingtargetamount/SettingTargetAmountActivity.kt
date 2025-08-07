@@ -83,12 +83,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun updateTargetAmountValidationUI(isValid: Boolean?) {
-        val buttonColorRes = if (isValid == true) R.color.primary_200 else R.color.gray_200
         val editTextColorRes = if (isValid != false) R.color.gray_400 else R.color.secondary_200
 
         with(binding) {
             tvSaveGoal.isEnabled = isValid == true
-            tvSaveGoal.backgroundTintList = ColorStateList.valueOf(getColor(buttonColorRes))
 
             tvTargetAmountWarningMessage.isVisible = isValid == false
 

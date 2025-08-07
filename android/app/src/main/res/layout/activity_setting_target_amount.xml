@@ -132,7 +132,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_common_rectangle_8dp"
+        android:background="@drawable/selector_common_button_enabled"
         android:backgroundTint="@color/gray_200"
         android:enabled="false"
         android:gravity="center"
