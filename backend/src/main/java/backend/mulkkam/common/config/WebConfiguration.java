@@ -1,6 +1,7 @@
 package backend.mulkkam.common.config;
 
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
+import backend.mulkkam.common.resolver.MemberResolver;
 import backend.mulkkam.common.resolver.OauthAccountResolver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OauthAccountResolver oauthAccountResolver;
+    private final MemberResolver memberResolver;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
@@ -29,6 +31,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(oauthAccountResolver);
+        resolvers.add(memberResolver);
     }
 
     @Bean
