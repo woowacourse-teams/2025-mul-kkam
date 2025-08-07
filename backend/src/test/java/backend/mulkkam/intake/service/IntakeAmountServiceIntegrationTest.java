@@ -1,5 +1,11 @@
 package backend.mulkkam.intake.service;
 
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -26,23 +32,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
-    IntakeAmountService intakeAmountService;
+    private IntakeAmountService intakeAmountService;
 
     @Autowired
-    MemberRepository memberRepository;
+    private MemberRepository memberRepository;
+
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
-    TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @DisplayName("하루 섭취 목표 음용량을 수정할 때에")
     @Nested
@@ -126,6 +128,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     .builder()
                     .targetAmount(new Amount(memberTargetAmount))
                     .build();
+
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -150,6 +153,37 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
                 softly.assertThat(findMember).isPresent();
                 softly.assertThat(findMember.get().getTargetAmount().value()).isEqualTo(memberTargetAmount);
+            });
+        }
+
+        @DisplayName("오늘의 기록이 있다면 금일 목표 음용량도 변경한다")
+        @Test
+        void success_changeTodayTargetAmount() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .targetAmount(new Amount(1500))
+                    .build();
+            memberRepository.save(member);
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .targetIntakeAmount(new Amount(1500))
+                    .build();
+
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(1000);
+
+            // when
+            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                    member, LocalDate.now());
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(findIntakeHistory).isPresent();
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
             });
         }
     }

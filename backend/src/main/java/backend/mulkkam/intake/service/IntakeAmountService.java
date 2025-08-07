@@ -39,9 +39,13 @@ public class IntakeAmountService {
             Member member,
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        member.updateTargetAmount(intakeTargetAmountModifyRequest.toAmount());
-        updateTargetAmountSnapshot(member);
+        Amount updateAmount = intakeTargetAmountModifyRequest.toAmount();
+        member.updateTargetAmount(updateAmount);
         memberRepository.save(member);
+
+        updateTargetAmountSnapshot(member);
+        intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
+                .ifPresent(intakeHistory -> intakeHistory.modifyTargetAmount(updateAmount));
     }
 
     @Transactional
@@ -51,7 +55,7 @@ public class IntakeAmountService {
     ) {
         IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
-        intakeHistory.modifyTargetAmount(new Amount(modifyIntakeTargetAmountByRecommendRequest.amount()));
+        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
     }
 
     public IntakeRecommendedAmountResponse getRecommended(Member member) {
