@@ -1,7 +1,5 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
@@ -29,28 +27,25 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyTarget(
-            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest,
-            Long memberId
+            Member member,
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        Member member = getMember(memberId);
         Amount updateAmount = intakeTargetAmountModifyRequest.toAmount();
 
         member.updateTargetAmount(updateAmount);
+        memberRepository.save(member);
 
-        intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId, LocalDate.now())
+        intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
                 .ifPresent(intakeHistory -> intakeHistory.modifyTargetAmount(updateAmount));
     }
 
-    public IntakeRecommendedAmountResponse getRecommended(Long memberId) {
-        Member member = getMember(memberId);
-
+    public IntakeRecommendedAmountResponse getRecommended(Member member) {
         PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
         return new IntakeRecommendedAmountResponse(recommendedTargetAmount.amount());
     }
 
-    public IntakeTargetAmountResponse getTarget(Long memberId) {
-        Member member = getMember(memberId);
+    public IntakeTargetAmountResponse getTarget(Member member) {
         return new IntakeTargetAmountResponse(member.getTargetAmount());
     }
 
@@ -60,10 +55,5 @@ public class IntakeAmountService {
         PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
         return new RecommendedIntakeAmountResponse(recommendedTargetAmount.amount());
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }

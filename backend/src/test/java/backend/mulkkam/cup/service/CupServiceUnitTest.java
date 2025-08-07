@@ -47,7 +47,6 @@ class CupServiceUnitTest {
     @InjectMocks
     private CupService cupService;
 
-
     @DisplayName("컵을 생성할 때")
     @Nested
     class Create {
@@ -65,8 +64,6 @@ class CupServiceUnitTest {
                     "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
 
             Cup savedCup = CupFixtureBuilder
                     .withMember(member)
@@ -78,7 +75,7 @@ class CupServiceUnitTest {
             // when
             CupResponse cupResponse = cupService.create(
                     registerCupRequest,
-                    member.getId()
+                    member
             );
 
             // then
@@ -99,13 +96,11 @@ class CupServiceUnitTest {
                     "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
 
             // when & then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member.getId()
+                    member
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
@@ -121,14 +116,14 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             // when & then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member.getId()
+                    member
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
@@ -145,8 +140,6 @@ class CupServiceUnitTest {
                     "emoji"
             );
             Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId()))
-                    .willReturn(Optional.of(member));
 
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
@@ -173,7 +166,7 @@ class CupServiceUnitTest {
             // then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member.getId()
+                    member
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_COUNT.name());
@@ -203,10 +196,10 @@ class CupServiceUnitTest {
                     .build();
             List<Cup> cups = List.of(cup2, cup1);
 
-            when(cupRepository.findAllByMemberIdOrderByCupRankAsc(member.getId())).thenReturn(cups);
+            when(cupRepository.findAllByMemberOrderByCupRankAsc(member)).thenReturn(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readCupsByMemberId(member.getId());
+            CupsResponse cupsResponse = cupService.readCupsByMemberId(member);
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
@@ -248,11 +241,11 @@ class CupServiceUnitTest {
         @Test
         void success_withLowerPriorityCups() {
             // given
-            when(cupRepository.findByIdAndMemberId(firstCup.getId(), member.getId())).thenReturn(Optional.of(firstCup));
-            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(secondCup, thirdCup));
+            when(cupRepository.findByIdAndMember(firstCup.getId(), member)).thenReturn(Optional.of(firstCup));
+            when(cupRepository.findAllByMember(member)).thenReturn(List.of(secondCup, thirdCup));
 
             // when
-            cupService.delete(firstCup.getId(), member.getId());
+            cupService.delete(firstCup.getId(), member);
 
             // then
             assertSoftly(softly -> {
@@ -265,11 +258,11 @@ class CupServiceUnitTest {
         @Test
         void success_withoutLowerPriorityCups() {
             // given
-            when(cupRepository.findByIdAndMemberId(thirdCup.getId(), member.getId())).thenReturn(Optional.of(thirdCup));
-            when(cupRepository.findAllByMemberId(member.getId())).thenReturn(List.of(firstCup, secondCup));
+            when(cupRepository.findByIdAndMember(thirdCup.getId(), member)).thenReturn(Optional.of(thirdCup));
+            when(cupRepository.findAllByMember(member)).thenReturn(List.of(firstCup, secondCup));
 
             // when
-            cupService.delete(thirdCup.getId(), member.getId());
+            cupService.delete(thirdCup.getId(), member);
 
             // then
             assertSoftly(softly -> {
@@ -287,8 +280,9 @@ class CupServiceUnitTest {
         @Test
         void success_withValidData() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
@@ -318,7 +312,7 @@ class CupServiceUnitTest {
             // when
             cupService.update(
                     cup.getId(),
-                    member.getId(),
+                    member,
                     updateCupRequest
             );
 
@@ -335,7 +329,9 @@ class CupServiceUnitTest {
         @Test
         void success_whenCertainCupChanges() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .buildWithId(1L);
 
             String beforeCupNickName1 = "변경 전1";
             Integer beforeCupAmount1 = 300;
@@ -346,7 +342,7 @@ class CupServiceUnitTest {
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
                     .intakeType(beforeIntakeType1)
-                    .build();
+                    .buildWithId(1L);
 
             String beforeCupNickName2 = "변경 전2";
             Integer beforeCupAmount2 = 500;
@@ -357,9 +353,8 @@ class CupServiceUnitTest {
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
                     .intakeType(beforeIntakeType2)
-                    .build();
+                    .buildWithId(2L);
 
-            given(memberRepository.findById(member.getId())).willReturn(Optional.of(member));
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
 
             String afterCupNickName = "변경 후";
@@ -377,7 +372,7 @@ class CupServiceUnitTest {
             // when
             cupService.update(
                     cup1.getId(),
-                    member.getId(),
+                    member,
                     updateCupRequest
             );
 
@@ -398,11 +393,11 @@ class CupServiceUnitTest {
             Member member1 = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("멤버1"))
-                    .build();
+                    .buildWithId(1L);
             Member member2 = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("멤버2"))
-                    .build();
+                    .buildWithId(2L);
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
@@ -411,7 +406,7 @@ class CupServiceUnitTest {
                     .withMember(member1)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount))
-                    .build();
+                    .buildWithId(1L);
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
@@ -422,15 +417,13 @@ class CupServiceUnitTest {
                     IntakeType.WATER,
                     "emoji"
             );
-            given(memberRepository.findById(member2.getId()))
-                    .willReturn(Optional.of(member2));
             given(cupRepository.findById(cup.getId()))
                     .willReturn(Optional.of(cup));
 
             // when & then
             assertThatThrownBy(() -> cupService.update(
                     cup.getId(),
-                    member2.getId(),
+                    member2,
                     updateCupRequest
             ))
                     .isInstanceOf(CommonException.class)

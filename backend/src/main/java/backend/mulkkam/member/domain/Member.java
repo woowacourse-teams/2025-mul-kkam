@@ -11,10 +11,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import java.util.Objects;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Member {
@@ -37,14 +39,24 @@ public class Member {
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
     private Amount targetAmount;
 
+    @Column(nullable = false)
+    private boolean isMarketingNotificationAgreed;
+
+    @Column(nullable = false)
+    private boolean isNightNotificationAgreed;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
-            Amount targetAmount
+            Amount targetAmount,
+            boolean isMarketingNotificationAgreed,
+            boolean isNightNotificationAgreed
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {

@@ -8,6 +8,7 @@ import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.IntakeHistoryResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -32,11 +33,10 @@ class IntakeRepositoryImpl(
     override suspend fun postIntakeHistory(
         dateTime: LocalDateTime,
         amount: Int,
-    ): MulKkamResult<Unit> {
-        val result =
-            intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
+    ): MulKkamResult<IntakeHistoryResult> {
+        val result = intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
         return result.fold(
-            onSuccess = { MulKkamResult() },
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
@@ -53,6 +53,14 @@ class IntakeRepositoryImpl(
 
     override suspend fun getIntakeTarget(): MulKkamResult<Int> {
         val result = intakeService.getIntakeTarget()
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.amount) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun getIntakeAmountRecommended(): MulKkamResult<Int> {
+        val result = intakeService.getIntakeAmountRecommended()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
