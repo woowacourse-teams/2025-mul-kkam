@@ -12,4 +12,6 @@ interface CupsRepository {
     suspend fun putCupsRank(cups: Cups): MulKkamResult<Cups>
 
     suspend fun patchCup(cup: Cup): MulKkamResult<Unit>
+
+    suspend fun deleteCup(id: Long): MulKkamResult<Unit>
 }

@@ -32,6 +32,7 @@ class SettingCupFragment :
         initObservers()
         initInputListeners()
         initChips()
+        initDeleteButton()
     }
 
     private fun initClickListeners() {
@@ -39,6 +40,10 @@ class SettingCupFragment :
 
         binding.tvSave.setOnClickListener {
             viewModel.saveCup()
+        }
+
+        binding.tvDelete.setOnClickListener {
+            viewModel.deleteCup()
         }
     }
 
@@ -130,6 +135,13 @@ class SettingCupFragment :
             IntakeType.COFFEE -> "#C68760"
             IntakeType.UNKNOWN -> ""
         }
+
+    private fun initDeleteButton() {
+        when (cup == null) {
+            true -> binding.tvDelete.visibility = View.GONE
+            false -> binding.tvDelete.visibility = View.VISIBLE
+        }
+    }
 
     companion object {
         const val TAG: String = "SETTING_WATER_CUP_FRAGMENT"

@@ -6,6 +6,7 @@ import com.mulkkam.data.remote.model.request.PatchCupRequest
 import com.mulkkam.data.remote.model.response.CupsRankResponse
 import com.mulkkam.data.remote.model.response.CupsResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -30,5 +31,10 @@ interface CupsService {
     suspend fun patchCup(
         @Path("cupId") cupId: Long,
         @Body patchCupRequest: PatchCupRequest,
+    ): Result<Unit>
+
+    @DELETE("/cups/{id}")
+    suspend fun deleteCup(
+        @Path("id") id: Long,
     ): Result<Unit>
 }

@@ -24,6 +24,9 @@ class SettingCupViewModel : ViewModel() {
     private var _saveSuccess: MutableSingleLiveData<Unit> = MutableSingleLiveData()
     val saveSuccess: SingleLiveData<Unit> get() = _saveSuccess
 
+    private var _deleteSuccess: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val deleteSuccess: SingleLiveData<Unit> get() = _deleteSuccess
+
     fun initCup(cup: CupUiModel?) {
         if (cup == null) {
             _editType.value = SettingWaterCupEditType.ADD
@@ -88,6 +91,21 @@ class SettingCupViewModel : ViewModel() {
             runCatching {
                 result.getOrError()
                 _saveSuccess.postValue(Unit)
+            }.onFailure {
+                // TODO: 에러 처리
+            }
+        }
+    }
+
+    fun deleteCup() {
+        viewModelScope.launch {
+            val result =
+                cupsRepository.deleteCup(
+                    id = cup.value?.id ?: return@launch,
+                )
+            runCatching {
+                result.getOrError()
+                _deleteSuccess.postValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }

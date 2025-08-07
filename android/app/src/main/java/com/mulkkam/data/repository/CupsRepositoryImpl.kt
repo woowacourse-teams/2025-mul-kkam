@@ -52,4 +52,12 @@ class CupsRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun deleteCup(id: Long): MulKkamResult<Unit> {
+        val result = cupsService.deleteCup(id)
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
