@@ -22,7 +22,7 @@ import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
-import com.mulkkam.ui.history.adapter.OnItemLongClickListener
+import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.getColoredSpannable
@@ -37,8 +37,7 @@ class HistoryFragment :
     BindingFragment<FragmentHistoryBinding>(
         FragmentHistoryBinding::inflate,
     ),
-    Refreshable,
-    OnItemLongClickListener {
+    Refreshable {
     private val viewModel: HistoryViewModel by viewModels()
     private val historyAdapter: HistoryAdapter by lazy { HistoryAdapter() }
     private var selectedChartBinding: LayoutHistoryWaterIntakeChartBinding? = null
@@ -52,6 +51,9 @@ class HistoryFragment :
             binding.includeChartSat,
             binding.includeChartSun,
         )
+    }
+    private val historyAdapter: HistoryAdapter by lazy {
+        HistoryAdapter()
     }
     private var historyToDelete: IntakeHistory? = null
 
@@ -103,12 +105,11 @@ class HistoryFragment :
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        historyAdapter.onItemLongClickListener = this
-    }
-
-    override fun onItemLongClick(history: IntakeHistory) {
-        this.historyToDelete = history
-        DeleteConfirmDialogFragment().show(childFragmentManager, DeleteConfirmDialogFragment.TAG)
+        historyAdapter.onItemLongClickListener =
+            HistoryViewHolder.OnItemLongClickListener { history ->
+                this.historyToDelete = history
+                DeleteConfirmDialogFragment().show(childFragmentManager, DeleteConfirmDialogFragment.TAG)
+            }
     }
 
     private fun initDialogResultListener() {

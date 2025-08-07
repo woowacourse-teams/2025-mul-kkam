@@ -28,7 +28,10 @@ class DeleteConfirmDialogFragment : DialogFragment() {
     ) {
         super.onViewCreated(view, savedInstanceState)
         binding.btnDeleteConfirm.setOnClickListener {
-            setFragmentResult("REQUEST_KEY", bundleOf("BUNDLE_KEY_CONFIRM" to true))
+            setFragmentResult(
+                REQUEST_KEY,
+                bundleOf(BUNDLE_KEY_CONFIRM to true),
+            )
             dismiss()
         }
         binding.btnDeleteCancel.setOnClickListener {
