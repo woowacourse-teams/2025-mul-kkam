@@ -35,10 +35,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MemberService {
 
-    private final MemberRepository memberRepository;
     private final OauthAccountRepository oauthAccountRepository;
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final IntakeDetailRepository intakeDetailRepository;
+    private final MemberRepository memberRepository;
 
     public MemberResponse getMemberById(long id) {
         Member member = getById(id);
@@ -127,4 +127,3 @@ public class MemberService {
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
     }
 }
-
