@@ -8,7 +8,9 @@ import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -84,5 +86,14 @@ public class MemberController {
     public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(OauthAccount oauthAccount) {
         OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(oauthAccount);
         return ResponseEntity.ok(onboardingStatusResponse);
+    }
+
+    @GetMapping("/progress-info")
+    public ResponseEntity<ProgressInfoResponse> getProgressInfo(
+            Member member,
+            @RequestParam LocalDate date
+    ) {
+        ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(member, date);
+        return ResponseEntity.ok().body(progressInfoResponse);
     }
 }

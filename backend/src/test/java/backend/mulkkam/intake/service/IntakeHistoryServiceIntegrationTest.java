@@ -81,7 +81,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // then
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(savedMember.getId());
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories).hasSize(1);
                 softly.assertThat(intakeHistories.getFirst().getHistoryDate()).isEqualTo(DATE);
@@ -121,7 +121,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // when
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
             // then
             assertSoftly(softly -> {
@@ -150,7 +150,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryService.create(intakeDetailCreateRequest, member);
 
             // when
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberId(member.getId());
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
             // then
             assertSoftly(softly -> {

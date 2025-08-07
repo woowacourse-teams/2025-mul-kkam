@@ -8,10 +8,10 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Long> {
-    List<IntakeHistory> findAllByMemberId(Long memberId);
+    List<IntakeHistory> findAllByMember(Member member);
 
-    List<IntakeHistory> findAllByMemberIdAndHistoryDateBetween(
-            Long memberId,
+    List<IntakeHistory> findAllByMemberAndHistoryDateBetween(
+            Member member,
             LocalDate dateAfter,
             LocalDate dateBefore
     );

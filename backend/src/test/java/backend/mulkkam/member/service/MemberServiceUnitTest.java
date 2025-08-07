@@ -96,7 +96,7 @@ public class MemberServiceUnitTest {
         }
     }
 
-    @DisplayName("멤버의 닉네임을 수정하려고 할 때에")
+    @DisplayName("멤버의 닉네임을 수정할 때")
     @Nested
     class ModifyNickname {
 
@@ -122,11 +122,6 @@ public class MemberServiceUnitTest {
             // then
             assertThat(member.getMemberNickname().value()).isEqualTo(modifyNickname);
         }
-    }
-
-    @DisplayName("멤버의 닉네임을 수정할 때")
-    @Nested
-    class modifyNickname {
 
         @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
         @Test
