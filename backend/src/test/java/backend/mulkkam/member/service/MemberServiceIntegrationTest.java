@@ -46,8 +46,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
+
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
+    
     @Autowired
     private IntakeDetailRepository intakeDetailRepository;
 
