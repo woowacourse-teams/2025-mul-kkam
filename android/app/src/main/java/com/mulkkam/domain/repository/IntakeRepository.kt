@@ -28,4 +28,6 @@ interface IntakeRepository {
         gender: Gender?,
         weight: Int?,
     ): MulKkamResult<Int>
+
+    suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit>
 }
