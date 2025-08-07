@@ -20,11 +20,9 @@ class SettingCupsAdapter(
         fromPosition: Int,
         toPosition: Int,
     ) {
-        if (fromPosition in mutableItems.indices && toPosition in mutableItems.indices) {
-            val movedItem = mutableItems.removeAt(fromPosition)
-            mutableItems.add(toPosition, movedItem)
-            notifyItemMoved(fromPosition, toPosition)
-        }
+        val movedItem = mutableItems.removeAt(fromPosition)
+        mutableItems.add(toPosition, movedItem)
+        notifyItemMoved(fromPosition, toPosition)
     }
 
     override fun onItemDrop() {
