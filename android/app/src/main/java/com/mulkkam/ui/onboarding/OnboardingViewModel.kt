@@ -53,6 +53,17 @@ class OnboardingViewModel : ViewModel() {
         }
     }
 
+    fun updateTermsAgreementState(
+        isMarketingNotificationAgreed: Boolean,
+        isNightNotificationAgreed: Boolean,
+    ) {
+        onboardingInfo =
+            onboardingInfo.copy(
+                isMarketingNotificationAgreed = isMarketingNotificationAgreed,
+                isNightNotificationAgreed = isNightNotificationAgreed,
+            )
+    }
+
     fun updateNickname(nickname: String) {
         onboardingInfo = onboardingInfo.copy(nickname = nickname)
     }

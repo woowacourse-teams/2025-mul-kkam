@@ -54,6 +54,10 @@ class TermsFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
+                parentViewModel.updateTermsAgreementState(
+                    viewModel.isMarketingNotificationAgreed.value == true,
+                    viewModel.isNightNotificationAgreed.value == true,
+                )
                 parentViewModel.moveToNextStep()
             }
 
