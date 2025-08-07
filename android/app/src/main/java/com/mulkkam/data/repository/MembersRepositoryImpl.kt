@@ -63,4 +63,12 @@ class MembersRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean> {
+        val result = membersService.getMembersCheckOnboarding()
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.finishedOnboarding) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
