@@ -132,21 +132,6 @@ class SettingCupFragment :
         )
     }
 
-    // TODO: 추후 서버에서 받아오는 IntakeType 반영
-    private fun IntakeType.toLabel(): String =
-        when (this) {
-            IntakeType.WATER -> "물"
-            IntakeType.COFFEE -> "커피"
-            IntakeType.UNKNOWN -> ""
-        }
-
-    private fun IntakeType.toColorHex(): String =
-        when (this) {
-            IntakeType.WATER -> "#90E0EF"
-            IntakeType.COFFEE -> "#C68760"
-            IntakeType.UNKNOWN -> ""
-        }
-
     private fun initDeleteButton() {
         when (cup == null) {
             true -> binding.tvDelete.visibility = View.GONE

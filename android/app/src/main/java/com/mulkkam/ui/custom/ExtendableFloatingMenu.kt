@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
-import com.mulkkam.databinding.LayoutHomeFloatingMenuBinding
+import com.mulkkam.databinding.LayoutExpandableFloatingMenuBinding
 import com.mulkkam.util.extensions.loadUrl
 
 class ExtendableFloatingMenu
@@ -13,7 +13,7 @@ class ExtendableFloatingMenu
         context: Context,
         attrs: AttributeSet? = null,
     ) : LinearLayout(context, attrs) {
-        private val binding = LayoutHomeFloatingMenuBinding.inflate(LayoutInflater.from(context), this, true)
+        private val binding = LayoutExpandableFloatingMenuBinding.inflate(LayoutInflater.from(context), this, true)
 
         fun setLabel(text: String) {
             binding.tvLabel.text = text

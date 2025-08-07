@@ -13,6 +13,7 @@ import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.domain.model.Cups
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
+import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
@@ -52,8 +53,11 @@ class HomeFragment :
                     ExtendableFloatingMenuItem(cup.nickname, cup.emoji, cup)
                 } + ExtendableFloatingMenuItem(getString(R.string.home_drink_manual), MANUAL_DRINK_IMAGE),
             onItemClick = {
-                // TODO: null 시 수동 입력 기능 추가
-                viewModel.addWaterIntake(it.data?.id ?: return@setMenuItems)
+                if (it.data == null) {
+                    showManualDrinkBottomSheetDialog()
+                } else {
+                    viewModel.addWaterIntakeByCup(it.data.id)
+                }
             },
         )
     }
@@ -110,6 +114,13 @@ class HomeFragment :
             ),
             Shader.TileMode.CLAMP,
         )
+
+    private fun showManualDrinkBottomSheetDialog() {
+        if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return
+        ManualDrinkFragment
+            .newInstance()
+            .show(childFragmentManager, ManualDrinkFragment.TAG)
+    }
 
     override fun onReselected() {
         viewModel.loadTodayIntakeHistorySummary()

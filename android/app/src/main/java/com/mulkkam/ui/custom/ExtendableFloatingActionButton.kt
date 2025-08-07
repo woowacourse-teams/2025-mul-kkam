@@ -13,7 +13,7 @@ import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.mulkkam.R
-import com.mulkkam.databinding.LayoutHomeFloatingActionButtonBinding
+import com.mulkkam.databinding.LayoutExpandableFloatingActionButtonBinding
 
 class ExtendableFloatingActionButton
     @JvmOverloads
@@ -21,7 +21,7 @@ class ExtendableFloatingActionButton
         context: Context,
         attrs: AttributeSet? = null,
     ) : FrameLayout(context, attrs) {
-        private val binding = LayoutHomeFloatingActionButtonBinding.inflate(LayoutInflater.from(context), this, true)
+        private val binding = LayoutExpandableFloatingActionButtonBinding.inflate(LayoutInflater.from(context), this, true)
         private var isOpen = false
         private val animationDuration = 200L
 

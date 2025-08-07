@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.domain.model.Cups
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -20,6 +22,9 @@ class HomeViewModel : ViewModel() {
 
     private val _characterChat: MutableLiveData<String> = MutableLiveData()
     val characterChat: LiveData<String> get() = _characterChat
+
+    private val _drinkSuccess: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val drinkSuccess: SingleLiveData<Unit> get() = _drinkSuccess
 
     init {
         loadTodayIntakeHistorySummary()
@@ -50,20 +55,24 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    fun addWaterIntake(cupId: Long) {
+    fun addWaterIntakeByCup(cupId: Long) {
         val cup = cups.value?.findCupById(cupId) ?: return
+        addWaterIntake(cup.amount)
+    }
 
+    fun addWaterIntake(amount: Int) {
         viewModelScope.launch {
             val result =
                 RepositoryInjection.intakeRepository.postIntakeHistory(
                     LocalDateTime.now(),
-                    cup.amount,
+                    amount,
                 )
             runCatching {
                 val intakeHistoryResult = result.getOrError()
                 _todayIntakeHistorySummary.value =
-                    todayIntakeHistorySummary.value?.updateIntakeResult(cup.amount, intakeHistoryResult.achievementRate)
+                    todayIntakeHistorySummary.value?.updateIntakeResult(amount, intakeHistoryResult.achievementRate)
                 _characterChat.value = intakeHistoryResult.comment
+                _drinkSuccess.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }
