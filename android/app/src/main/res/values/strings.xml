@@ -51,6 +51,10 @@
     <string name="setting_cups_intake_type_water">물</string>
     <string name="setting_cups_intake_type_coffee">커피</string>
     <string name="setting_cups_intake_type_unknown">알 수 없음</string>
+    <string name="setting_cup_intake_type">액체 타입</string>
+    <string name="setting_cup_delete">컵 삭제하기</string>
+    <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
+    <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
 
     <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
     <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
