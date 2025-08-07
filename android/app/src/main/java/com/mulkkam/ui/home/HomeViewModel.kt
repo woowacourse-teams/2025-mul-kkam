@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.Cups
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.Cups
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -15,7 +15,11 @@ class HomeViewModel : ViewModel() {
     private val _todayIntakeHistorySummary = MutableLiveData<IntakeHistorySummary>()
     val todayIntakeHistorySummary: LiveData<IntakeHistorySummary> get() = _todayIntakeHistorySummary
 
-    var cups: Cups? = null
+    private val _cups: MutableLiveData<Cups> = MutableLiveData()
+    val cups: LiveData<Cups> get() = _cups
+
+    private val _characterChat: MutableLiveData<String> = MutableLiveData()
+    val characterChat: LiveData<String> get() = _characterChat
 
     init {
         loadTodayIntakeHistorySummary()
@@ -25,43 +29,48 @@ class HomeViewModel : ViewModel() {
     fun loadTodayIntakeHistorySummary() {
         viewModelScope.launch {
             val today = LocalDate.now()
-            val summary =
-                RepositoryInjection.intakeRepository.getIntakeHistory(today, today).getByIndex(FIRST_INDEX)
-
-            _todayIntakeHistorySummary.value = summary
+            val result = RepositoryInjection.intakeRepository.getIntakeHistory(today, today)
+            runCatching {
+                val summary = result.getOrError().getByIndex(FIRST_INDEX)
+                _todayIntakeHistorySummary.value = summary
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
     fun loadCups() {
         viewModelScope.launch {
-            cups = RepositoryInjection.cupsRepository.getCups()
+            val result = RepositoryInjection.cupsRepository.getCups()
+            runCatching {
+                _cups.value = result.getOrError()
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
-    fun addWaterIntake(cupRank: Int) {
-        // TODO: 현재 cupRank가 2부터 들어가있음
-        val cup = cups?.cups?.find { it.rank == cupRank }
-        val cupAmount = cup?.amount
+    fun addWaterIntake(cupId: Int) {
+        val cup = cups.value?.findCupById(cupId) ?: return
 
         viewModelScope.launch {
-            RepositoryInjection.intakeRepository.postIntakeHistory(
-                LocalDateTime.now(),
-                cupAmount ?: DEFAULT_INTAKE_AMOUNT,
-            )
-
-            _todayIntakeHistorySummary.value =
-                _todayIntakeHistorySummary.value?.copy(
-                    totalIntakeAmount =
-                        (
-                            _todayIntakeHistorySummary.value?.totalIntakeAmount
-                                ?: DEFAULT_INTAKE_AMOUNT
-                        ) + (cupAmount ?: DEFAULT_INTAKE_AMOUNT),
+            val result =
+                RepositoryInjection.intakeRepository.postIntakeHistory(
+                    LocalDateTime.now(),
+                    cup.amount,
                 )
+            runCatching {
+                val intakeHistoryResult = result.getOrError()
+                _todayIntakeHistorySummary.value =
+                    todayIntakeHistorySummary.value?.updateIntakeResult(cup.amount, intakeHistoryResult.achievementRate)
+                _characterChat.value = intakeHistoryResult.comment
+            }.onFailure {
+                // TODO: 에러 처리
+            }
         }
     }
 
     companion object {
         private const val FIRST_INDEX: Int = 0
-        private const val DEFAULT_INTAKE_AMOUNT: Int = 0
     }
 }

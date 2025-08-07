@@ -17,8 +17,7 @@ public class FcmService {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    public void sendMessageByToken(SendMessageByFcmTokenRequest sendFcmTokenMessageRequest)
-            throws FirebaseMessagingException {
+    public void sendMessageByToken(SendMessageByFcmTokenRequest sendFcmTokenMessageRequest) throws FirebaseMessagingException {
         firebaseMessaging.send(Message.builder()
                 .setNotification(Notification.builder()
                         .setTitle(sendFcmTokenMessageRequest.title())
@@ -29,8 +28,7 @@ public class FcmService {
                 .build());
     }
 
-    public void sendMessageByTopic(SendMessageByFcmTopicRequest sendFcmTopicMessageRequest)
-            throws FirebaseMessagingException {
+    public void sendMessageByTopic(SendMessageByFcmTopicRequest sendFcmTopicMessageRequest) throws FirebaseMessagingException {
         firebaseMessaging.send(Message.builder()
                 .setNotification(Notification.builder()
                         .setTitle(sendFcmTopicMessageRequest.title())

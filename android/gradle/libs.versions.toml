@@ -1,11 +1,12 @@
 [versions]
+coreTesting = "2.2.0"
 glide = "4.16.0"
 lottie = "6.6.7"
 minSdk = "28"
 targetSdk = "36"
 versionCode = "2"
 versionName = "1.0.1"
-agp = "8.5.2"
+agp = "8.9.3"
 kotlin = "2.2.0"
 coreKtx = "1.15.0"
 appcompat = "1.7.1"
@@ -18,17 +19,22 @@ kotlinx-serialization-json = "1.8.1"
 retrofit2-kotlinx-serialization-converter = "1.0.0"
 kotlinx-coroutines-android = "1.3.9"
 kotlinx-coroutines-test = "1.7.3"
-espressoCore = "3.6.1"
-androidx-test-ext-junit = "1.2.1"
 junit-jupiter = "5.12.0"
 kotest-runner-junit5 = "5.9.1"
-mannodermaus-junit5 = "1.7.0"
 android-junit5 = "1.12.0.0"
 ktlint = "13.0.0"
 fragment-ktx = "1.8.8"
 google-services = "4.4.3"
 firebase-bom = "34.0.0"
 kakaoV2User = "2.21.4"
+workManager = "2.10.3"
+healthConnect = "1.2.0-alpha01"
+mockk = "1.14.0"
+assertj-core = "3.27.3"
+timber = "5.0.1"
+firebase-crashlytics = "3.0.5"
+androidsvg = "1.4"
+kapt = "2.2.0"
 
 [libraries]
 # AndroidX 및 UI
@@ -51,24 +57,35 @@ kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines-test" }
 
 # 테스트
-androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
-androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 junit-jupiter = { group = "org.junit.jupiter", name = "junit-jupiter", version.ref = "junit-jupiter" }
 kotest-runner-junit5 = { group = "io.kotest", name = "kotest-runner-junit5", version.ref = "kotest-runner-junit5" }
-mannodermaus-junit5-core = { group = "de.mannodermaus.junit5", name = "android-test-core", version.ref = "mannodermaus-junit5" }
-mannodermaus-junit5-runner = { group = "de.mannodermaus.junit5", name = "android-test-runner", version.ref = "mannodermaus-junit5" }
+assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "assertj-core" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvg" }
 
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
 
-# 구글 서비스
+# 파이어베이스
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase-bom" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics-ndk" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
+
+# 로깅
+timber = { module = "com.jakewharton.timber:timber", version.ref = "timber" }
+
+# 헬스 커넥트 연결
+androidx-health-connect = { module = "androidx.health.connect:connect-client", version.ref = "healthConnect" }
+
+# 워크매니저
+androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version.ref = "workManager" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -77,3 +94,6 @@ android-junit5 = { id = "de.mannodermaus.android-junit5", version.ref = "android
 kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 google-services = { id = "com.google.gms.google-services", version.ref = "google-services" }
+kotlin-parcelize = { id = "kotlin-parcelize" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }

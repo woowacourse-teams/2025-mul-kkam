@@ -1,7 +1,13 @@
+server:
+  port: 8080
+
 spring:
+  application:
+    name: mulkkam
+
   profiles:
-    active: local
     include: private
+    active: local
 
 management:
   endpoints:

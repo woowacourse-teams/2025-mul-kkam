@@ -10,9 +10,9 @@ public interface CupRepository extends JpaRepository<Cup, Long> {
 
     int countByMemberId(Long memberId);
 
-    Optional<Cup> findByIdAndMember(Long id, Member member);
-
     List<Cup> findAllByMember(Member member);
 
     List<Cup> findAllByMemberOrderByCupRankAsc(Member member);
+
+    Optional<Cup> findByIdAndMember(Long id, Member member);
 }

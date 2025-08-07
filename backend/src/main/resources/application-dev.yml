@@ -35,3 +35,7 @@ security:
 fcm:
   base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
   project-id: ${FCM_PROJECT_ID}
+
+open-weather:
+  api:
+    key: ${OPEN_WEATHER_API_KEY}

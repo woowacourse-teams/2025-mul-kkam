@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.controller;
 
-import backend.mulkkam.cup.dto.request.CupNicknameAndAmountModifyRequest;
-import backend.mulkkam.cup.dto.request.CupRegisterRequest;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
@@ -28,16 +28,16 @@ public class CupController {
 
     @GetMapping
     public ResponseEntity<CupsResponse> read(Member member) {
-        return ResponseEntity.ok().body(cupService.readCupsByMember(member));
+        return ResponseEntity.ok().body(cupService.readCupsByMemberId(member));
     }
 
     @PostMapping
     public ResponseEntity<Void> create(
             Member member,
-            @RequestBody CupRegisterRequest cupRegisterRequest
+            @RequestBody CreateCupRequest registerCupRequest
     ) {
         cupService.create(
-                cupRegisterRequest,
+                registerCupRequest,
                 member
         );
         return ResponseEntity.ok().build();
@@ -48,20 +48,20 @@ public class CupController {
             Member member,
             @RequestBody UpdateCupRanksRequest request
     ) {
-        CupsRanksResponse response = cupService.updateRanks(member, request);
+        CupsRanksResponse response = cupService.updateRanks(request, member);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
             Member member,
-            @RequestBody CupNicknameAndAmountModifyRequest cupNicknameAndAmountModifyRequest,
+            @RequestBody UpdateCupRequest updateCupRequest,
             @PathVariable Long cupId
     ) {
-        cupService.modifyNicknameAndAmount(
+        cupService.update(
                 cupId,
                 member,
-                cupNicknameAndAmountModifyRequest
+                updateCupRequest
         );
         return ResponseEntity.ok().build();
     }
@@ -71,7 +71,7 @@ public class CupController {
             Member member,
             @PathVariable("id") Long id
     ) {
-        cupService.delete(member, 1L);
+        cupService.delete(id, member);
         return ResponseEntity.noContent().build();
     }
 }
