@@ -117,10 +117,7 @@ public class MemberService {
         Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
                 date);
         if (foundIntakeHistory.isEmpty()) {
-            Optional<Integer> latestTargetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(
-                    member.getId(), date);
-            return latestTargetAmount.map(integer -> new ProgressInfoResponse(member, integer))
-                    .orElseGet(() -> new ProgressInfoResponse(member));
+            return new ProgressInfoResponse(member);
         }
 
         List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberAndDateRange(
