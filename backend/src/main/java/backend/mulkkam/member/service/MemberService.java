@@ -8,7 +8,6 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
@@ -94,28 +93,25 @@ public class MemberService {
         oauthAccount.modifyMember(member);
     }
 
-    public ProgressInfoResponse getProgressInfo(LocalDate date, Long memberId) {
+    public ProgressInfoResponse getProgressInfo(
+            LocalDate date,
+            Long memberId
+    ) {
         Member member = getById(memberId);
-        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId, date);
-        if (intakeHistory.isPresent()) {
-            List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
-                    memberId,
-                    date,
-                    date
-            );
-            Amount totalAmount = calculateTotalIntakeAmount(details);
-            AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.get().getTargetAmount());
-
-            return new ProgressInfoResponse(
-                    member.getMemberNickname().value(),
-                    intakeHistory.get().getStreak(),
-                    achievementRate.value(),
-                    intakeHistory.get().getTargetAmount().value(),
-                    totalAmount.value(),
-                    CommentOfAchievementRate.findCommentByAchievementRate(achievementRate)
-            );
+        Optional<IntakeHistory> intakeHistoryOptional = intakeHistoryRepository.findByMemberIdAndHistoryDate(memberId,
+                date);
+        if (intakeHistoryOptional.isEmpty()) {
+            return new ProgressInfoResponse(member);
         }
-        return new ProgressInfoResponse(member, CommentOfAchievementRate.VERY_LOW.getComment());
+        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberIdAndDateRange(
+                memberId,
+                date,
+                date
+        );
+        IntakeHistory intakeHistory = intakeHistoryOptional.get();
+        Amount totalAmount = calculateTotalIntakeAmount(details);
+        AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
+        return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
 
     private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
