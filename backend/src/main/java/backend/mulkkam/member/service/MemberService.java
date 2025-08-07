@@ -64,6 +64,12 @@ public class MemberService {
         }
     }
 
+    public void validateDuplicateNickname(String nickname) {
+        if (memberRepository.existsByMemberNicknameValue(nickname)) {
+            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
+        }
+    }
+
     @Transactional
     public void modifyNickname(
             MemberNicknameModifyRequest memberNicknameModifyRequest,
