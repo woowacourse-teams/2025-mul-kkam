@@ -40,7 +40,7 @@ public class IntakeAmountService {
     }
 
     @Transactional
-    public void modifyTargetByRecommended(
+    public void modifyDailyTargetBySuggested(
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest,
             Long memberId
     ) {

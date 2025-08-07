@@ -51,9 +51,9 @@ public class IntakeAmountController {
     }
 
     @PatchMapping("/target/suggested")
-    public ResponseEntity<Void> modifyTargetByRecommended(
+    public ResponseEntity<Void> modifyTargetBySuggested(
             @RequestBody ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest) {
-        intakeAmountService.modifyTargetByRecommended(modifyIntakeTargetAmountByRecommendRequest, 1L);
+        intakeAmountService.modifyDailyTargetBySuggested(modifyIntakeTargetAmountByRecommendRequest, 1L);
         return ResponseEntity.ok().build();
     }
 }

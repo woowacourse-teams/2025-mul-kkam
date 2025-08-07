@@ -124,7 +124,8 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
                             1000
                     );
             // when
-            intakeAmountService.modifyTargetByRecommended(modifyIntakeTargetAmountByRecommendRequest, member.getId());
+            intakeAmountService.modifyDailyTargetBySuggested(modifyIntakeTargetAmountByRecommendRequest,
+                    member.getId());
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberIdAndHistoryDate(
                     member.getId(),
                     LocalDate.now());
