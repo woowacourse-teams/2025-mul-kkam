@@ -4,7 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.membersRepository
+import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.ui.model.AppAuthState
 import kotlinx.coroutines.launch
 
@@ -15,24 +16,25 @@ class SplashViewModel : ViewModel() {
     fun updateAuthState() {
         viewModelScope.launch {
             runCatching {
-                val result = RepositoryInjection.tokenRepository.getAccessToken()
-                result.getOrError()
+                tokenRepository.getAccessToken().getOrError()
             }.onSuccess { token ->
                 if (token == null) {
                     _authState.value = AppAuthState.UNAUTHORIZED
                     return@onSuccess
+                } else {
+                    updateAuthStateWithOnboarding()
                 }
+            }.onFailure {
+                _authState.value = AppAuthState.UNAUTHORIZED
             }
         }
-
-        updateAuthStateWithOnboarding()
     }
 
     private fun updateAuthStateWithOnboarding() {
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembersCheckOnboarding()
             runCatching {
-                val hasCompletedOnboarding = result.getOrError()
+                membersRepository.getMembersCheckOnboarding().getOrError()
+            }.onSuccess { hasCompletedOnboarding ->
                 _authState.value =
                     when {
                         hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
