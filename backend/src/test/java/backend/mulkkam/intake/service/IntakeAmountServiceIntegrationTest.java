@@ -1,5 +1,10 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
