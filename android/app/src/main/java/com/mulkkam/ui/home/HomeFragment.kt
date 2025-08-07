@@ -117,11 +117,11 @@ class HomeFragment :
                         data = cup,
                     )
                 } +
-                        ExtendableFloatingMenuItem(
-                            label = getString(R.string.home_drink_manual),
-                            icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
-                            data = null,
-                        ),
+                    ExtendableFloatingMenuItem(
+                        label = getString(R.string.home_drink_manual),
+                        icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
+                        data = null,
+                    ),
             onItemClick = {
                 if (it.data == null) {
                     showManualDrinkBottomSheetDialog()
