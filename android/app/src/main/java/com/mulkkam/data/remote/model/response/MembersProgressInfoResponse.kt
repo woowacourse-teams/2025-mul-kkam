@@ -24,7 +24,7 @@ fun MembersProgressInfoResponse.toDomain(): MembersProgressInfo =
     MembersProgressInfo(
         nickname = memberNickname,
         streak = streak,
-        achievementRate = achievementRate,
+        achievementRate = achievementRate.toFloat(),
         targetAmount = targetAmount,
         totalAmount = totalAmount,
         comment = comment,

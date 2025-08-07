@@ -9,8 +9,8 @@ import androidx.core.graphics.toColorInt
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
-import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.MembersProgressInfo
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.main.Refreshable
@@ -33,9 +33,9 @@ class HomeFragment :
     }
 
     private fun initObservers() {
-        viewModel.todayIntakeHistorySummary.observe(viewLifecycleOwner) { summary ->
-            binding.pbHomeWaterProgress.setProgress(summary.achievementRate)
-            updateDailyIntakeSummary(summary)
+        viewModel.todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
+            binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
+            updateDailyProgressInfo(progressInfo)
         }
         viewModel.cups.observe(viewLifecycleOwner) { cups ->
             updateDrinkMenu(cups)
@@ -50,7 +50,11 @@ class HomeFragment :
             items =
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(cup.nickname, cup.emoji, cup)
-                } + ExtendableFloatingMenuItem(getString(R.string.home_drink_manual), MANUAL_DRINK_IMAGE),
+                } +
+                    ExtendableFloatingMenuItem(
+                        getString(R.string.home_drink_manual),
+                        MANUAL_DRINK_IMAGE,
+                    ),
             onItemClick = {
                 // TODO: null 시 수동 입력 기능 추가
                 viewModel.addWaterIntake(it.data?.id ?: return@setMenuItems)
@@ -68,26 +72,50 @@ class HomeFragment :
         }
     }
 
-    private fun updateDailyIntakeSummary(intakeHistorySummary: IntakeHistorySummary) {
-        val formattedIntake =
-            String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
+    private fun updateDailyProgressInfo(progressInfo: MembersProgressInfo) {
+        updateDailyIntakeSummary(progressInfo)
+        updateStreakMessage(progressInfo)
+        updateCharacterComment(progressInfo.comment)
+    }
+
+    private fun updateDailyIntakeSummary(progressInfo: MembersProgressInfo) {
+        val formattedIntake = String.format(Locale.US, "%,dml", progressInfo.totalAmount)
 
         @ColorRes val summaryColorResId =
-            if (intakeHistorySummary.targetAmount > intakeHistorySummary.totalIntakeAmount) {
+            if (progressInfo.targetAmount > progressInfo.totalAmount) {
                 R.color.gray_200
             } else {
                 R.color.primary_200
             }
+
         binding.tvDailyIntakeSummary.text =
             getString(
                 R.string.home_daily_intake_summary,
-                intakeHistorySummary.totalIntakeAmount,
-                intakeHistorySummary.targetAmount,
+                progressInfo.totalAmount,
+                progressInfo.targetAmount,
             ).getColoredSpannable(
                 requireContext(),
                 summaryColorResId,
                 formattedIntake,
             )
+    }
+
+    private fun updateStreakMessage(progressInfo: MembersProgressInfo) {
+        binding.tvStreak.text =
+            getString(
+                R.string.home_water_streak_message,
+                progressInfo.nickname,
+                progressInfo.streak,
+            ).getColoredSpannable(
+                requireContext(),
+                R.color.primary_200,
+                progressInfo.nickname,
+                progressInfo.streak.toString(),
+            )
+    }
+
+    private fun updateCharacterComment(comment: String) {
+        binding.tvHomeCharacterChat.text = comment
     }
 
     private fun createLinearGradient(width: Float): LinearGradient =
@@ -112,7 +140,7 @@ class HomeFragment :
         )
 
     override fun onReselected() {
-        viewModel.loadTodayIntakeHistorySummary()
+        viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
     }
 
