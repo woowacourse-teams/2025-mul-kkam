@@ -21,6 +21,8 @@ import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
+import com.mulkkam.ui.history.adapter.HistoryViewHolder
+import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.getColoredSpannable
 import java.time.DayOfWeek
@@ -49,6 +51,7 @@ class HistoryFragment :
             binding.includeChartSun,
         )
     }
+    private var historyToDelete: IntakeHistory? = null
 
     override fun onViewCreated(
         view: View,
@@ -60,12 +63,36 @@ class HistoryFragment :
         initCustomChartOptions()
         initObservers()
         initClickListeners()
+        initDialogResultListener()
     }
 
     private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
+        }
+        historyAdapter.onItemLongClickListener =
+            HistoryViewHolder.Handler { history ->
+                this.historyToDelete = history
+                DeleteConfirmDialogFragment().show(
+                    childFragmentManager,
+                    DeleteConfirmDialogFragment.TAG,
+                )
+            }
+    }
+
+    private fun initDialogResultListener() {
+        childFragmentManager.setFragmentResultListener(
+            DeleteConfirmDialogFragment.REQUEST_KEY,
+            viewLifecycleOwner,
+        ) { requestKey, bundle ->
+            val isConfirmed = bundle.getBoolean(DeleteConfirmDialogFragment.BUNDLE_KEY_CONFIRM)
+            if (isConfirmed) {
+                historyToDelete?.let {
+                    viewModel.deleteIntakeHistory(it)
+                }
+                historyToDelete = null
+            }
         }
     }
 

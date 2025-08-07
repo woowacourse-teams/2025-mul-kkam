@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
 import kotlinx.coroutines.launch
@@ -88,6 +89,13 @@ class HistoryViewModel : ViewModel() {
         val newBaseDate =
             weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
         loadIntakeHistories(newBaseDate)
+    }
+
+    fun deleteIntakeHistory(history: IntakeHistory) {
+//        viewModelScope.launch {
+//            RepositoryInjection.intakeRepository.deleteIntakeHistory(history)
+//            loadIntakeHistories()
+//        }
     }
 
     companion object {

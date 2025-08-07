@@ -4,6 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/selector_history_item_press"
+    android:clickable="true"
     android:paddingVertical="10dp">
 
     <TextView
@@ -14,7 +16,7 @@
         android:textAppearance="@style/title2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="12:00" />
+        tools:text="오후 12시 1분" />
 
     <TextView
         android:id="@+id/tv_intake_amount"
