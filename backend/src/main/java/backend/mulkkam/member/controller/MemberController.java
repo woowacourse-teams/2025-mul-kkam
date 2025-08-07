@@ -74,7 +74,7 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<MemberNicknameResponse> create(
+    public ResponseEntity<Void> create(
             OauthAccount oauthAccount,
             @RequestBody CreateMemberRequest createMemberRequest
     ) {

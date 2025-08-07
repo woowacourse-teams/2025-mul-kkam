@@ -19,6 +19,7 @@ import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
@@ -39,6 +40,7 @@ public class IntakeHistoryService {
 
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
+    private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @Transactional
@@ -91,22 +93,25 @@ public class IntakeHistoryService {
             DateRangeRequest dateRangeRequest,
             Member member
     ) {
+        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
                 member,
                 dateRangeRequest.from(),
                 dateRangeRequest.to()
         );
-        return details.stream()
-                .collect(Collectors.groupingBy(
-                        IntakeHistoryDetail::getIntakeHistory,
-                        LinkedHashMap::new,
-                        Collectors.toList()
-                ))
-                .entrySet().stream()
-                .map(entry -> toIntakeHistorySummaryResponse(entry.getKey(), entry.getValue()))
+        return dates.stream()
+                .map(date -> {
+                    List<IntakeHistoryDetail> detailsOfDate = details.stream()
+                            .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
+                            .toList();
+                    if (detailsOfDate.isEmpty()) {
+                        return createDefaultResponse(date, member);
+                    }
+                    IntakeHistory intakeHistory = detailsOfDate.getFirst().getIntakeHistory();
+                    return toIntakeHistorySummaryResponse(intakeHistory, detailsOfDate);
+                })
                 .toList();
     }
-
     @Transactional
     public void deleteDetailHistory(
             Long intakeHistoryDetailId,
@@ -133,10 +138,6 @@ public class IntakeHistoryService {
         }
     }
 
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
-    }
 
     private List<IntakeHistoryDetail> findIntakeHistoriesOfDate(
             LocalDate date,
@@ -208,5 +209,15 @@ public class IntakeHistoryService {
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
         return intakeHistoryDetailRepository.findWithHistoryAndMemberById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY_DETAIL));
+    }
+
+    private IntakeHistorySummaryResponse createDefaultResponse(LocalDate date, Member member) {
+        Optional<Integer> targetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate
+                (
+                        member.getId(),
+                        date
+                );
+        return targetAmount.map(integer -> new IntakeHistorySummaryResponse(date, integer))
+                .orElseGet(() -> new IntakeHistorySummaryResponse(date));
     }
 }
