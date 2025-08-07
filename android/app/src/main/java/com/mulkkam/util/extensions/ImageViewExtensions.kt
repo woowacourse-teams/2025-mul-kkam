@@ -18,9 +18,9 @@ fun ImageView.loadUrl(
             Glide
                 .with(context)
                 .`as`(PictureDrawable::class.java)
+                .load(url)
                 .listener(SvgSoftwareLayerSetter())
                 .transition(DrawableTransitionOptions.withCrossFade())
-                .load(url)
 
         placeholderRes?.let { request.placeholder(it) }
         errorRes?.let { request.error(it) }

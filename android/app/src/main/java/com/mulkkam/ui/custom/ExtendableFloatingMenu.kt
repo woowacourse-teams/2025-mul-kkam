@@ -19,7 +19,10 @@ class ExtendableFloatingMenu
             binding.tvLabel.text = text
         }
 
-        fun setIcon(iconUrl: String) {
-            binding.ivIcon.loadUrl(iconUrl)
+        fun setIcon(icon: ExtendableFloatingMenuIcon) {
+            when (icon) {
+                is ExtendableFloatingMenuIcon.Url -> binding.ivIcon.loadUrl(icon.url)
+                is ExtendableFloatingMenuIcon.Resource -> binding.ivIcon.setImageResource(icon.resId)
+            }
         }
     }

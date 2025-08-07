@@ -25,6 +25,21 @@ class ExtendableFloatingActionButton
         private var isOpen = false
         private val animationDuration = 200L
 
+        private val outsideTouchView by lazy {
+            View(context).apply {
+                layoutParams =
+                    LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                    )
+                isClickable = true
+                isFocusable = true
+                setOnClickListener {
+                    closeMenu()
+                }
+            }
+        }
+
         init {
             binding.fabDrink.setOnClickListener { toggleMenu() }
         }
@@ -39,7 +54,7 @@ class ExtendableFloatingActionButton
                 val menuView =
                     ExtendableFloatingMenu(context).apply {
                         setLabel(item.label)
-                        setIcon(item.iconUrl)
+                        setIcon(item.icon)
                         setOnClickListener {
                             onItemClick(item)
                             closeMenu()
@@ -57,6 +72,10 @@ class ExtendableFloatingActionButton
         }
 
         private fun openMenu() {
+            if (outsideTouchView.parent == null) {
+                addView(outsideTouchView, 0) // 맨 아래에 추가
+            }
+
             val animators = mutableListOf<Animator>()
             binding.fabDrink.setImageDrawable(getDrawable(context, R.drawable.ic_home_close))
             binding.llMenu.childrenReversed().forEachIndexed { index, view ->
@@ -74,9 +93,7 @@ class ExtendableFloatingActionButton
             isOpen = true
         }
 
-        private fun ViewGroup.childrenReversed(): List<View> = this.children.toList().asReversed()
-
-        private fun closeMenu() {
+        fun closeMenu() {
             val animators = mutableListOf<Animator>()
             binding.fabDrink.setImageDrawable(getDrawable(context, R.drawable.ic_home_drink))
             binding.llMenu.childrenReversed().forEach { view ->
@@ -92,9 +109,12 @@ class ExtendableFloatingActionButton
             }
             postDelayed({
                 binding.llMenu.childrenReversed().forEach { it.isVisible = false }
+                removeView(outsideTouchView)
             }, animationDuration)
             isOpen = false
         }
+
+        private fun ViewGroup.childrenReversed(): List<View> = this.children.toList().asReversed()
 
         private fun Float.dpToPx(): Float = this * resources.displayMetrics.density
     }
