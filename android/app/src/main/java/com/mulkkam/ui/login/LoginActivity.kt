@@ -1,5 +1,7 @@
 package com.mulkkam.ui.login
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
@@ -75,5 +77,9 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
 
     private fun showToast(message: Int) {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, LoginActivity::class.java)
     }
 }
