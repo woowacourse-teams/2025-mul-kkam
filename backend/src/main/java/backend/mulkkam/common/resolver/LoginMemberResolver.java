@@ -4,7 +4,6 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
-import backend.mulkkam.member.domain.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -16,7 +15,7 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 @Component
 @RequiredArgsConstructor
-public class MemberResolver implements HandlerMethodArgumentResolver {
+public class LoginMemberResolver implements HandlerMethodArgumentResolver {
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;
     private final OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -24,14 +23,14 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(Member.class);
+        return parameter.getParameterType().equals(LoginMemberResolver.class);
     }
 
     @Override
-    public Member resolveArgument(MethodParameter parameter,
-                                  ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
-                                  WebDataBinderFactory binderFactory
+    public LoginMember resolveArgument(MethodParameter parameter,
+                                       ModelAndViewContainer mavContainer,
+                                       NativeWebRequest webRequest,
+                                       WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
@@ -41,6 +40,6 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
         OauthAccount oauthAccount = oauthAccountRepository.findByIdWithMember(oauthAccountId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
 
-        return oauthAccount.getMember();
+        return new LoginMember(oauthAccount.getMember());
     }
 }

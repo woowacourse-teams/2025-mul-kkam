@@ -1,10 +1,15 @@
 package backend.mulkkam.common.resolver;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
+
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -25,13 +30,8 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
-
 @ExtendWith(MockitoExtension.class)
-class MemberResolverTest {
+class LoginMemberResolverTest {
 
     @Mock
     OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -43,7 +43,7 @@ class MemberResolverTest {
     OauthAccountRepository oauthAccountRepository;
 
     @InjectMocks
-    MemberResolver memberResolver;
+    LoginMemberResolver loginMemberResolver;
 
     @DisplayName("resolveArgument 를 할 때")
     @Nested
@@ -60,37 +60,22 @@ class MemberResolverTest {
             NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             long memberId = 1L;
-            Member member = new Member(
-                    memberId,
-                    new MemberNickname("히로"),
-                    new PhysicalAttributes(Gender.FEMALE, 70.0),
-                    new Amount(1_000),
-                    true,
-                    false
-            );
+            Member member = new Member(memberId, new MemberNickname("히로"), new PhysicalAttributes(Gender.FEMALE, 70.0),
+                    new Amount(1_000), true, false);
 
             long oauthAccountId = memberId;
             OauthAccount oauthAccount = new OauthAccount(oauthAccountId, member, "tempid", OauthProvider.KAKAO);
 
             given(authenticationHeaderHandler.extractToken(servletRequest)).willReturn(token);
             given(oauthJwtTokenHandler.getSubject(token)).willReturn(member.getId());
-            given(oauthAccountRepository.findByIdWithMember(member.getId())).willReturn(
-                    Optional.of(oauthAccount));
+            given(oauthAccountRepository.findByIdWithMember(member.getId())).willReturn(Optional.of(oauthAccount));
 
             // when
-            Member result = memberResolver.resolveArgument(
-                    mock(MethodParameter.class),
-                    mock(ModelAndViewContainer.class),
-                    webRequest,
-                    mock(WebDataBinderFactory.class)
-            );
+            LoginMember loginMember = loginMemberResolver.resolveArgument(mock(MethodParameter.class),
+                    mock(ModelAndViewContainer.class), webRequest, mock(WebDataBinderFactory.class));
 
             // then
-            assertSoftly(softAssertions -> {
-                assertThat(result).isInstanceOf(Member.class);
-                assertThat(result.getId()).isEqualTo(memberId);
-            });
+            assertThat(loginMember.id()).isEqualTo(memberId);
         }
     }
 }
-
