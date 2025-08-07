@@ -10,7 +10,6 @@ import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -27,7 +26,6 @@ public class IntakeAmountService {
 
     private final MemberRepository memberRepository;
     private final IntakeHistoryRepository intakeHistoryRepository;
-    private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @Transactional
     public void modifyTarget(
