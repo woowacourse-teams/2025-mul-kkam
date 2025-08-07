@@ -17,7 +17,7 @@ public record CreateTopicNotificationRequest(
         LocalDateTime createdAt,
         Amount recommendedTargetAmount
 ) {
-    public SendMessageByFcmTopicRequest toFcmTopic() {
+    public SendMessageByFcmTopicRequest toSendMessageByFcmTopicRequest() {
         return new SendMessageByFcmTopicRequest(
                 title,
                 body,

@@ -68,7 +68,7 @@ public class NotificationService {
 
     @Transactional
     public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toFcmTopic();
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
         try {
             fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
         } catch (FirebaseMessagingException e) {
