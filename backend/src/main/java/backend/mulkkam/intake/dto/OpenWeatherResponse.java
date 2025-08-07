@@ -20,7 +20,7 @@ public record OpenWeatherResponse(
             LocalDateTime dateTime
     ) {
         public record TemperatureInfo(
-                @JsonProperty("temperature")
+                @JsonProperty("temp")
                 double temperature
         ) {
         }
