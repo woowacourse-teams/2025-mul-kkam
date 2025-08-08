@@ -2,7 +2,7 @@ package backend.mulkkam.common.exception.errorCode;
 
 import org.springframework.http.HttpStatus;
 
-public enum InterServerErrorCode implements ErrorCode {
+public enum InternalServerErrorErrorCode implements ErrorCode {
 
     INTER_SERVER_ERROR_CODE,
     ;
