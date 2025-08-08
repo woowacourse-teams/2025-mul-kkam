@@ -4,6 +4,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notifications")
 public class NotificationController {
 
+    private final ActivityService activityService;
     private final NotificationService notificationService;
 
     @GetMapping
@@ -37,7 +39,7 @@ public class NotificationController {
             Member member,
             @RequestBody CreateActivityNotification createActivityNotification
     ) {
-        notificationService.createActivityNotification(createActivityNotification, member);
+        activityService.createActivityNotification(createActivityNotification, member);
         return ResponseEntity.ok().build();
     }
 }
