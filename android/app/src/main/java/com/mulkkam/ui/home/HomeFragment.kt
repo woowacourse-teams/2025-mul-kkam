@@ -7,13 +7,15 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
 import com.mulkkam.domain.model.TodayProgressInfo
 import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.ui.custom.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
+import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.getColoredSpannable
@@ -22,7 +24,7 @@ import java.util.Locale
 class HomeFragment :
     BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
     Refreshable {
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
 
     override fun onViewCreated(
         view: View,
@@ -36,22 +38,24 @@ class HomeFragment :
     }
 
     private fun initObservers() {
-        viewModel.todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
-            binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
-            updateDailyProgressInfo(progressInfo)
-        }
+        with(viewModel) {
+            todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
+                binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
+                updateDailyProgressInfo(progressInfo)
+            }
 
-        viewModel.cups.observe(viewLifecycleOwner) { cups ->
-            updateDrinkMenu(cups)
-        }
+            cups.observe(viewLifecycleOwner) { cups ->
+                updateDrinkMenu(cups)
+            }
 
-        viewModel.characterChat.observe(viewLifecycleOwner) { chat ->
-            binding.tvHomeCharacterChat.text = chat ?: return@observe
-        }
+            characterChat.observe(viewLifecycleOwner) { chat ->
+                binding.tvHomeCharacterChat.text = chat ?: return@observe
+            }
 
-        viewModel.alarmCount.observe(viewLifecycleOwner) { alarmCount ->
-            binding.tvAlarmCount.text = alarmCount.toString()
-            binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            alarmCount.observe(viewLifecycleOwner) { alarmCount ->
+                binding.tvAlarmCount.text = alarmCount.toString()
+                binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            }
         }
     }
 
@@ -111,15 +115,23 @@ class HomeFragment :
         binding.fabHomeDrink.setMenuItems(
             items =
                 cups.cups.map { cup ->
-                    ExtendableFloatingMenuItem(cup.nickname, cup.emoji, cup)
+                    ExtendableFloatingMenuItem(
+                        label = cup.nickname,
+                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
+                        data = cup,
+                    )
                 } +
                     ExtendableFloatingMenuItem(
-                        getString(R.string.home_drink_manual),
-                        MANUAL_DRINK_IMAGE,
+                        label = getString(R.string.home_drink_manual),
+                        icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
+                        data = null,
                     ),
             onItemClick = {
-                // TODO: null 시 수동 입력 기능 추가
-                viewModel.addWaterIntake(it.data?.id ?: return@setMenuItems)
+                if (it.data == null) {
+                    showManualDrinkBottomSheetDialog()
+                } else {
+                    viewModel.addWaterIntakeByCup(it.data.id)
+                }
             },
         )
     }
@@ -162,9 +174,17 @@ class HomeFragment :
         }
     }
 
+    private fun showManualDrinkBottomSheetDialog() {
+        if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return
+        ManualDrinkFragment
+            .newInstance()
+            .show(childFragmentManager, ManualDrinkFragment.TAG)
+    }
+
     override fun onReselected() {
         viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
+        binding.fabHomeDrink.closeMenu()
     }
 
     override fun onResume() {
@@ -174,8 +194,6 @@ class HomeFragment :
 
     companion object {
         private const val PROGRESS_BAR_RADIUS: Float = 12f
-        private const val MANUAL_DRINK_IMAGE: String =
-            "https://github-production-user-asset-6210df.s3.amazonaws.com/127238018/474919237-4e25a9f8-ab08-46e4-bd01-578d2de907df.svg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAVCODYLSA53PQK4ZA%2F20250806%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20250806T085526Z&X-Amz-Expires=300&X-Amz-Signature=2c41117c496fdf0a94dd9062232cc396e7e44f58048958a92185c836d1caf5d4&X-Amz-SignedHeaders=host"
         private const val ALARM_COUNT_MIN: Int = 0
     }
 }
