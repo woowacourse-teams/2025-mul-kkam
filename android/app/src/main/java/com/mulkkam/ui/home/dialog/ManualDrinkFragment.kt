@@ -29,19 +29,21 @@ class ManualDrinkFragment :
     }
 
     private fun initClickListeners() {
-        binding.ivClose.setOnClickListener { dismiss() }
+        with(binding) {
+            ivClose.setOnClickListener { dismiss() }
 
-        binding.tvSave.setOnClickListener {
-            viewModel.addWaterIntake(
-                binding.etAmount.text
-                    .toString()
-                    .toIntOrNull() ?: return@setOnClickListener,
-            )
+            tvSave.setOnClickListener {
+                viewModel.addWaterIntake(
+                    binding.etAmount.text
+                        .toString()
+                        .toIntOrNull() ?: return@setOnClickListener,
+                )
+            }
         }
     }
 
     private fun initObservers() {
-        viewModel.drinkSuccess.observe(this) {
+        viewModel.drinkSuccess.observe(viewLifecycleOwner) {
             Toast.makeText(requireContext(), requireContext().getString(R.string.manual_drink_success), Toast.LENGTH_SHORT).show()
             dismiss()
         }

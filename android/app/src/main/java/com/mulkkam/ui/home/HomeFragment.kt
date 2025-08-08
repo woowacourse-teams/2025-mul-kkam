@@ -7,7 +7,7 @@ import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
@@ -23,7 +23,7 @@ import java.util.Locale
 class HomeFragment :
     BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
     Refreshable {
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: HomeViewModel by activityViewModels()
 
     override fun onViewCreated(
         view: View,
@@ -36,22 +36,24 @@ class HomeFragment :
     }
 
     private fun initObservers() {
-        viewModel.todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
-            binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
-            updateDailyProgressInfo(progressInfo)
-        }
+        with(viewModel) {
+            todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
+                binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
+                updateDailyProgressInfo(progressInfo)
+            }
 
-        viewModel.cups.observe(viewLifecycleOwner) { cups ->
-            updateDrinkMenu(cups)
-        }
+            cups.observe(viewLifecycleOwner) { cups ->
+                updateDrinkMenu(cups)
+            }
 
-        viewModel.characterChat.observe(viewLifecycleOwner) { chat ->
-            binding.tvHomeCharacterChat.text = chat ?: return@observe
-        }
+            characterChat.observe(viewLifecycleOwner) { chat ->
+                binding.tvHomeCharacterChat.text = chat ?: return@observe
+            }
 
-        viewModel.alarmCount.observe(viewLifecycleOwner) { alarmCount ->
-            binding.tvAlarmCount.text = alarmCount.toString()
-            binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            alarmCount.observe(viewLifecycleOwner) { alarmCount ->
+                binding.tvAlarmCount.text = alarmCount.toString()
+                binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            }
         }
     }
 

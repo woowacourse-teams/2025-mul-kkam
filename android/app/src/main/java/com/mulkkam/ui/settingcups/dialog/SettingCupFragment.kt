@@ -5,7 +5,6 @@ import android.view.View
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.IntakeType
@@ -21,7 +20,7 @@ class SettingCupFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: SettingCupViewModel by viewModels()
+    private val viewModel: SettingCupViewModel by activityViewModels()
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
@@ -40,33 +39,37 @@ class SettingCupFragment :
     }
 
     private fun initClickListeners() {
-        binding.ivClose.setOnClickListener { dismiss() }
+        with(binding) {
+            ivClose.setOnClickListener { dismiss() }
 
-        binding.tvSave.setOnClickListener {
-            viewModel.saveCup()
-        }
+            tvSave.setOnClickListener {
+                viewModel.saveCup()
+            }
 
-        binding.tvDelete.setOnClickListener {
-            viewModel.deleteCup()
+            tvDelete.setOnClickListener {
+                viewModel.deleteCup()
+            }
         }
     }
 
     private fun initObservers() {
-        viewModel.cup.observe(this) { cup ->
-            cup?.let { showCupInfo(it) }
-        }
-        viewModel.editType.observe(this) { editType ->
-            editType?.let { showTitle(it) }
-        }
-        viewModel.saveSuccess.observe(this) {
-            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
-            settingCupsViewModel.loadCups()
-            dismiss()
-        }
-        viewModel.deleteSuccess.observe(this) {
-            Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
-            settingCupsViewModel.loadCups()
-            dismiss()
+        with(viewModel) {
+            cup.observe(viewLifecycleOwner) { cup ->
+                cup?.let { showCupInfo(it) }
+            }
+            editType.observe(viewLifecycleOwner) { editType ->
+                editType?.let { showTitle(it) }
+            }
+            saveSuccess.observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
+                settingCupsViewModel.loadCups()
+                dismiss()
+            }
+            deleteSuccess.observe(viewLifecycleOwner) {
+                Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
+                settingCupsViewModel.loadCups()
+                dismiss()
+            }
         }
     }
 
