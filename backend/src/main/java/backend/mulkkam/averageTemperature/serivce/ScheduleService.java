@@ -16,7 +16,7 @@ public class ScheduleService {
         weatherService.saveTomorrowAverageTemperature();
     }
 
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 0 8 * * *")
     public void notifyAdditionalWaterIntakeByWeather() {
         weatherService.notifyAdditionalIntakeByStoredWeather();
     }
