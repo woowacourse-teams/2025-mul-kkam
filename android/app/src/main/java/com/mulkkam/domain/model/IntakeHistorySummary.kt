@@ -1,4 +1,4 @@
-package com.mulkkam.domain
+package com.mulkkam.domain.model
 
 import java.time.LocalDate
 

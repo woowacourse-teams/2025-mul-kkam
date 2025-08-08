@@ -16,9 +16,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
-import com.mulkkam.domain.IntakeHistory
-import com.mulkkam.domain.IntakeHistorySummaries
-import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.IntakeHistory
+import com.mulkkam.domain.model.IntakeHistorySummaries
+import com.mulkkam.domain.model.IntakeHistorySummary
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder

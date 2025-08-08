@@ -8,7 +8,7 @@ import com.mulkkam.data.remote.model.error.ResponseError.NicknameError
 import com.mulkkam.data.remote.model.error.ResponseError.NotFoundError
 import com.mulkkam.data.remote.model.error.ResponseError.SettingCupsError
 import com.mulkkam.data.remote.model.error.ResponseError.Unknown
-import com.mulkkam.domain.MulKkamError
+import com.mulkkam.domain.model.MulKkamError
 import java.net.ConnectException
 
 sealed class ResponseError(

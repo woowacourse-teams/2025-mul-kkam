@@ -8,9 +8,9 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentBioInfoBinding
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.Gender.FEMALE
-import com.mulkkam.domain.Gender.MALE
+import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.Gender.FEMALE
+import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
