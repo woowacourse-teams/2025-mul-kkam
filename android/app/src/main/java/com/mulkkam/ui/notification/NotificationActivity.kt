@@ -21,11 +21,18 @@ class NotificationActivity :
         binding.rvNotification.adapter = adapter
 
         initObservers()
+        initClickListeners()
     }
 
     private fun initObservers() {
         viewModel.notifications.observe(this) {
             adapter.changeItems(it)
+        }
+    }
+
+    private fun initClickListeners() {
+        binding.ivBack.setOnClickListener {
+            finish()
         }
     }
 
