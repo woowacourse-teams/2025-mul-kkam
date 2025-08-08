@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response
 
-import com.mulkkam.domain.Gender
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.MemberInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

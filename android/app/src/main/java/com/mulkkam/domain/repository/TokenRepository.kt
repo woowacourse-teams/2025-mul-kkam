@@ -1,6 +1,6 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.MulKkamResult
 
 interface TokenRepository {
     suspend fun getAccessToken(): MulKkamResult<String?>

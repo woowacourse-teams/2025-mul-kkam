@@ -1,9 +1,9 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.IntakeHistorySummaries
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.IntakeHistoryResult
+import com.mulkkam.domain.model.IntakeHistorySummaries
+import com.mulkkam.domain.model.MulKkamResult
 import java.time.LocalDate
 import java.time.LocalDateTime
 

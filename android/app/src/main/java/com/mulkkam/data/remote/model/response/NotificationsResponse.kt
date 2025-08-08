@@ -1,8 +1,8 @@
 package com.mulkkam.data.remote.model.response
 
 import com.mulkkam.data.remote.model.response.NotificationsResponse.ReadNotificationResponse
-import com.mulkkam.domain.Alarm
 import com.mulkkam.domain.model.Notification
+import com.mulkkam.domain.model.NotificationType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime
@@ -38,7 +38,7 @@ fun ReadNotificationResponse.toDomain(): Notification =
     Notification(
         id = id,
         title = title,
-        type = Alarm.from(type),
+        type = NotificationType.from(type),
         createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
         recommendedTargetAmount = recommendedTargetAmount ?: 0,
         isRead = isRead,

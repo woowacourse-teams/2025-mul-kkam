@@ -1,4 +1,4 @@
-package com.mulkkam.domain
+package com.mulkkam.domain.model
 
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러

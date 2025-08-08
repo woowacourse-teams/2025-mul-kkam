@@ -1,9 +1,9 @@
 package com.mulkkam.data.repository
 
 import com.mulkkam.data.preference.TokenPreference
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.MulKkamResult
+import com.mulkkam.domain.model.toMulKkamResult
 import com.mulkkam.domain.repository.TokenRepository
-import com.mulkkam.domain.toMulKkamResult
 
 class TokenRepositoryImpl(
     private val tokenPreference: TokenPreference,

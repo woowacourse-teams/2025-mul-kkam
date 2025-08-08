@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.Gender
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch

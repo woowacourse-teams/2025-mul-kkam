@@ -8,8 +8,8 @@ import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemHomeNotificationBinding
-import com.mulkkam.domain.Alarm.SUGGESTION
 import com.mulkkam.domain.model.Notification
+import com.mulkkam.domain.model.NotificationType.SUGGESTION
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

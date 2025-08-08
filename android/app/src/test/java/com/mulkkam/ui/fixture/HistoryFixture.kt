@@ -1,7 +1,7 @@
 package com.mulkkam.ui.fixture
 
-import com.mulkkam.domain.IntakeHistory
-import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.IntakeHistory
+import com.mulkkam.domain.model.IntakeHistorySummary
 import java.time.LocalDate
 import java.time.LocalTime
 

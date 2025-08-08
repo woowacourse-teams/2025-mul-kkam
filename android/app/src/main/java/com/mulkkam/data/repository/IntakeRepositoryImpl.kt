@@ -6,10 +6,10 @@ import com.mulkkam.data.remote.model.request.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.IntakeService
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.IntakeHistorySummaries
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.IntakeHistoryResult
+import com.mulkkam.domain.model.IntakeHistorySummaries
+import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
