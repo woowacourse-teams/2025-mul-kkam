@@ -6,9 +6,11 @@ import com.mulkkam.data.remote.model.response.IntakeHistoryResultResponse
 import com.mulkkam.data.remote.model.response.IntakeHistorySummaryResponse
 import com.mulkkam.data.remote.model.response.IntakeTargetAmountResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface IntakeService {
@@ -43,5 +45,10 @@ interface IntakeService {
     @PATCH("/intake/amount/target/suggested")
     suspend fun patchIntakeAmountTargetSuggested(
         @Body intakeAmount: IntakeAmountRequest,
+    ): Result<Unit>
+
+    @DELETE("/intake/history/details/{id}")
+    suspend fun deleteIntakeHistoryDetails(
+        @Path("id") id: Int,
     ): Result<Unit>
 }

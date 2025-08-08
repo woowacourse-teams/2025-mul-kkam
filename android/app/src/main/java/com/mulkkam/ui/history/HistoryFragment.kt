@@ -145,6 +145,15 @@ class HistoryFragment :
         viewModel.isAfterToday.observe(viewLifecycleOwner) { shouldShowSummary ->
             binding.tvDailyIntakeSummary.isVisible = !shouldShowSummary
         }
+
+        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
+            if (isSuccess) {
+                val currentSelectedDate = viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
+                viewModel.loadIntakeHistories(currentSelectedDate)
+
+                viewModel.onDeleteSuccessObserved()
+            }
+        }
     }
 
     private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {

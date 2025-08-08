@@ -30,4 +30,6 @@ interface IntakeRepository {
     ): MulKkamResult<Int>
 
     suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit>
+
+    suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit>
 }
