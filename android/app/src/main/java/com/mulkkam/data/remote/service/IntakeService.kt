@@ -42,6 +42,11 @@ interface IntakeService {
         @Query("weight") weight: Double?,
     ): Result<IntakeTargetAmountResponse>
 
+    @PATCH("/intake/amount/target/suggested")
+    suspend fun patchIntakeAmountTargetSuggested(
+        @Body intakeAmount: IntakeAmountRequest,
+    ): Result<Unit>
+
     @DELETE("/intake/history/details/{id}")
     suspend fun deleteIntakeHistoryDetails(
         @Path("id") id: Int,

@@ -12,9 +12,9 @@ import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.Gender.FEMALE
-import com.mulkkam.domain.Gender.MALE
+import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.Gender.FEMALE
+import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
 import com.mulkkam.util.extensions.isHealthConnectAvailable

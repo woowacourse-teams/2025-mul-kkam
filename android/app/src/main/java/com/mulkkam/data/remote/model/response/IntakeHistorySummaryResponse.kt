@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response
 
-import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.IntakeHistorySummary
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDate

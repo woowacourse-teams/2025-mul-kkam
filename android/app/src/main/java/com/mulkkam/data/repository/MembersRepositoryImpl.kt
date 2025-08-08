@@ -7,9 +7,9 @@ import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
 import com.mulkkam.data.remote.model.request.toData
 import com.mulkkam.data.remote.model.response.toDomain
 import com.mulkkam.data.remote.service.MembersService
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.MemberInfo
+import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.TodayProgressInfo
 import com.mulkkam.domain.repository.MembersRepository

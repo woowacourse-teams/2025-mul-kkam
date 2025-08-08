@@ -17,6 +17,7 @@ import com.mulkkam.ui.custom.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
 
@@ -33,6 +34,7 @@ class HomeFragment :
 
         initObservers()
         initCustomChartOptions()
+        initClickListeners()
     }
 
     private fun initObservers() {
@@ -165,6 +167,13 @@ class HomeFragment :
             Shader.TileMode.CLAMP,
         )
 
+    private fun initClickListeners() {
+        binding.ivHomeNotification.setOnClickListener {
+            val intent = NotificationActivity.newIntent(requireContext())
+            startActivity(intent)
+        }
+    }
+
     private fun showManualDrinkBottomSheetDialog() {
         if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return
         ManualDrinkFragment
@@ -176,6 +185,11 @@ class HomeFragment :
         viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
         binding.fabHomeDrink.closeMenu()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTodayProgressInfo()
     }
 
     companion object {
