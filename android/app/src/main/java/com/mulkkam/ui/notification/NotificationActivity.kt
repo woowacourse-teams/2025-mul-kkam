@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.viewModels
+import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
@@ -14,8 +15,8 @@ class NotificationActivity :
         ActivityNotificationBinding::inflate,
     ) {
     private val adapter: NotificationAdapter by lazy {
-        NotificationAdapter {
-            viewModel.applySuggestion(it)
+        NotificationAdapter { amount, onComplete ->
+            viewModel.applySuggestion(amount, onComplete)
         }
     }
     private val viewModel: NotificationViewModel by viewModels()
@@ -35,7 +36,7 @@ class NotificationActivity :
         }
 
         viewModel.onApplySuggestion.observe(this) {
-            Toast.makeText(this, "목표량에 반영되었어요", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.home_notification_apply_success, Toast.LENGTH_SHORT).show()
         }
     }
 

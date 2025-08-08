@@ -23,12 +23,12 @@ class NotificationViewModel : ViewModel() {
         loadNotifications()
     }
 
-    fun loadNotifications() {
+    private fun loadNotifications() {
         viewModelScope.launch {
             val result =
                 notificationRepository.getNotifications(
                     LocalDateTime.now(),
-                    100,
+                    NOTIFICATION_SIZE,
                 )
             runCatching {
                 _notifications.value = result.getOrError()
@@ -38,15 +38,24 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun applySuggestion(amount: Int) {
+    fun applySuggestion(
+        amount: Int,
+        onComplete: (isSuccess: Boolean) -> Unit,
+    ) {
         viewModelScope.launch {
             val result = intakeRepository.patchIntakeAmountTargetSuggested(amount)
             runCatching {
                 result.getOrError()
                 _onApplySuggestion.setValue(Unit)
+                onComplete(true)
             }.onFailure {
                 // TODO: 에러 처리
+                onComplete(false)
             }
         }
+    }
+
+    companion object {
+        private const val NOTIFICATION_SIZE: Int = 100
     }
 }

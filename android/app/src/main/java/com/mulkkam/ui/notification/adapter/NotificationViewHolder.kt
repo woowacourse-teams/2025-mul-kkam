@@ -2,6 +2,7 @@ package com.mulkkam.ui.notification.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.content.ContextCompat.getString
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -31,7 +32,7 @@ class NotificationViewHolder(
 
             tvSuggestion.isVisible = notification.type == SUGGESTION
             tvSuggestion.setOnClickListener {
-                handler.onApply(notification.recommendedTargetAmount)
+                handler.onApply(notification.recommendedTargetAmount, ::onCompleteApply)
             }
         }
     }
@@ -42,16 +43,47 @@ class NotificationViewHolder(
         val context = binding.root.context
 
         return when {
-            duration.toMinutes() < ONE_MINUTE -> getString(context, R.string.home_notification_just_now)
-            duration.toHours() < ONE_HOUR -> getString(context, R.string.home_notification_minutes_ago).format(duration.toMinutes())
-            duration.toDays() < ONE_DAY -> getString(context, R.string.home_notification_hours_ago).format(duration.toHours())
-            duration.toDays() < TWO_DAYS -> getString(context, R.string.home_notification_one_day_ago)
+            duration.toMinutes() < ONE_MINUTE ->
+                getString(
+                    context,
+                    R.string.home_notification_just_now,
+                )
+
+            duration.toHours() < ONE_HOUR ->
+                getString(
+                    context,
+                    R.string.home_notification_minutes_ago,
+                ).format(duration.toMinutes())
+
+            duration.toDays() < ONE_DAY ->
+                getString(
+                    context,
+                    R.string.home_notification_hours_ago,
+                ).format(duration.toHours())
+
+            duration.toDays() < TWO_DAYS ->
+                getString(
+                    context,
+                    R.string.home_notification_one_day_ago,
+                )
+
             else -> this.format(dateTimeFormatter)
         }
     }
 
+    private fun onCompleteApply(isSuccess: Boolean) {
+        if (isSuccess) {
+            binding.tvSuggestion.isVisible = false
+        } else {
+            Toast.makeText(binding.root.context, R.string.home_notification_apply_failed, Toast.LENGTH_SHORT).show()
+        }
+    }
+
     fun interface NotificationHandler {
-        fun onApply(amount: Int)
+        fun onApply(
+            amount: Int,
+            onComplete: (isSuccess: Boolean) -> Unit,
+        )
     }
 
     companion object {
