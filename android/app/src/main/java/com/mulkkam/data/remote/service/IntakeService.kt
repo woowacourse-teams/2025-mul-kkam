@@ -39,4 +39,9 @@ interface IntakeService {
         @Query("gender") gender: String?,
         @Query("weight") weight: Double?,
     ): Result<IntakeTargetAmountResponse>
+
+    @PATCH("/intake/amount/target/suggested")
+    suspend fun patchIntakeAmountTargetSuggested(
+        @Body intakeAmount: IntakeAmountRequest,
+    ): Result<Unit>
 }

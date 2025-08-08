@@ -84,6 +84,17 @@ class IntakeRepositoryImpl(
         )
     }
 
+    override suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit> {
+        val result =
+            intakeService.patchIntakeAmountTargetSuggested(
+                IntakeAmountRequest(amount),
+            )
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
     companion object {
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
