@@ -32,11 +32,12 @@ public record ProgressInfoResponse(
     }
 
     public ProgressInfoResponse(
-            Member member
+            Member member,
+            int streak
     ) {
         this(
                 member.getMemberNickname().value(),
-                0,
+                streak,
                 0.0,
                 member.getTargetAmount().value(),
                 0,

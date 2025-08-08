@@ -12,7 +12,7 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
-import com.mulkkam.domain.MulKkamError
+import com.mulkkam.domain.model.MulKkamError
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER

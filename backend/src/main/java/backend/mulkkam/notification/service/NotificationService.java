@@ -13,7 +13,6 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
@@ -66,17 +65,17 @@ public class NotificationService {
 
     @Transactional
     public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        List<Member> allMember = memberRepository.findAll();
+        for (Member member : allMember) {
+            Notification notification = createTopicNotificationRequest.toNotification(member);
+            notificationRepository.save(notification);
+        }
+
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
         try {
             fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
         } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
-            notificationRepository.save(notification);
         }
     }
 
@@ -85,12 +84,13 @@ public class NotificationService {
         Member member = createTokenNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
+        notificationRepository.save(createTokenNotificationRequest.toNotification());
+
         try {
             sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
         } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
         }
-        notificationRepository.save(createTokenNotificationRequest.toNotification());
     }
 
     private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
@@ -142,13 +142,5 @@ public class NotificationService {
         return notifications.stream()
                 .map(ReadNotificationResponse::new)
                 .collect(Collectors.toList());
-    }
-
-    public void createActivityNotification(
-            CreateActivityNotification createActivityNotification,
-            Member member
-    ) {
-        CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        createTokenNotification(createTokenNotificationRequest);
     }
 }

@@ -1,4 +1,4 @@
-package com.mulkkam.domain
+package com.mulkkam.domain.model
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError

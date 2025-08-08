@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/white"
     android:paddingHorizontal="24dp"
     android:paddingVertical="20dp">
@@ -20,8 +20,18 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:src="@drawable/ic_notification_sun" />
 
+    <View
+        android:id="@+id/view_unread_alarm"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_common_circle"
+        android:backgroundTint="@color/secondary_200"
+        app:layout_constraintEnd_toEndOf="@id/iv_notification_type"
+        app:layout_constraintTop_toTopOf="@id/iv_notification_type" />
+
     <TextView
-        android:id="@+id/tv_notification_description"
+        android:id="@+id/tv_notification_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
@@ -39,11 +49,12 @@
         android:layout_marginTop="4dp"
         android:textAppearance="@style/body5"
         android:textColor="@color/gray_200"
-        app:layout_constraintStart_toStartOf="@id/tv_notification_description"
-        app:layout_constraintTop_toBottomOf="@id/tv_notification_description"
+        app:layout_constraintStart_toStartOf="@id/tv_notification_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_notification_title"
         tools:text="23시간 전" />
 
     <TextView
+        android:id="@+id/tv_suggestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_notification_target_amount_button"

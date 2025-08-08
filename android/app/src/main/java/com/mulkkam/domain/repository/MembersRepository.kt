@@ -1,8 +1,8 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.MemberInfo
+import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.TodayProgressInfo
 import java.time.LocalDate

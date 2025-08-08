@@ -1,9 +1,9 @@
 package com.mulkkam.ui.history
 
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.IntakeHistorySummaries
-import com.mulkkam.domain.IntakeHistorySummary
-import com.mulkkam.domain.MulKkamResult
+import com.mulkkam.domain.model.IntakeHistorySummaries
+import com.mulkkam.domain.model.IntakeHistorySummary
+import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.fixture.FULL_INTAKE_HISTORY
 import com.mulkkam.ui.util.CoroutinesTestExtension
