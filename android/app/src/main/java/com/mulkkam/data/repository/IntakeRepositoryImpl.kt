@@ -84,6 +84,14 @@ class IntakeRepositoryImpl(
         )
     }
 
+    override suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit> {
+        val result = intakeService.deleteIntakeHistoryDetails(id)
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
     companion object {
         val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
