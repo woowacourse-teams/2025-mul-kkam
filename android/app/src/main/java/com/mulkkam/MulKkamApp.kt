@@ -6,10 +6,10 @@ import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
 import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.di.HealthConnectInjection
+import com.mulkkam.di.LoggingInjection
 import com.mulkkam.di.PreferenceInjection
 import com.mulkkam.di.WorkInjection
 import com.mulkkam.ui.service.NotificationService
-import com.mulkkam.util.logger.LoggingTree
 import timber.log.Timber
 
 class MulKkamApp : Application() {
@@ -39,9 +39,9 @@ class MulKkamApp : Application() {
 
     private fun initLogger() {
         if (BuildConfig.DEBUG) {
-            Timber.plant(Timber.DebugTree())
+            Timber.plant(LoggingInjection.debugTimberTree)
         } else {
-            Timber.plant(LoggingTree())
+            Timber.plant(LoggingInjection.releaseTimberTree)
         }
     }
 }

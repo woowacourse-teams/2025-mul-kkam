@@ -12,19 +12,35 @@ import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
 
 object ServiceInjection {
-    val intakeService: IntakeService = retrofit.create(IntakeService::class.java)
+    val intakeService: IntakeService by lazy {
+        retrofit.create(IntakeService::class.java)
+    }
 
-    val cupsService: CupsService = retrofit.create(CupsService::class.java)
+    val cupsService: CupsService by lazy {
+        retrofit.create(CupsService::class.java)
+    }
 
-    val authService: AuthService = retrofit.create(AuthService::class.java)
+    val authService: AuthService by lazy {
+        retrofit.create(AuthService::class.java)
+    }
 
-    val membersService: MembersService = retrofit.create(MembersService::class.java)
+    val membersService: MembersService by lazy {
+        retrofit.create(MembersService::class.java)
+    }
 
-    val nicknameService: NicknameService = retrofit.create(NicknameService::class.java)
+    val nicknameService: NicknameService by lazy {
+        retrofit.create(NicknameService::class.java)
+    }
 
-    val healthService: HealthService = HealthService(healthConnectClient)
+    val healthService: HealthService by lazy {
+        HealthService(healthConnectClient)
+    }
 
-    val devicesService: DevicesService = retrofit.create(DevicesService::class.java)
+    val devicesService: DevicesService by lazy {
+        retrofit.create(DevicesService::class.java)
+    }
 
-    val notificationService: NotificationsService = retrofit.create(NotificationsService::class.java)
+    val notificationService: NotificationsService by lazy {
+        retrofit.create(NotificationsService::class.java)
+    }
 }

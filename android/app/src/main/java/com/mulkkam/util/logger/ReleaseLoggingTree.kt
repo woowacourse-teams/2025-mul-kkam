@@ -2,9 +2,12 @@ package com.mulkkam.util.logger
 
 import android.util.Log
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.mulkkam.domain.logger.SensitiveInfoSanitizer
 import timber.log.Timber
 
-class LoggingTree : Timber.Tree() {
+class ReleaseLoggingTree(
+    private val sanitizer: SensitiveInfoSanitizer,
+) : Timber.Tree() {
     override fun log(
         priority: Int,
         tag: String?,
@@ -13,7 +16,8 @@ class LoggingTree : Timber.Tree() {
     ) {
         if (priority == Log.VERBOSE || priority == Log.DEBUG) return
 
-        FirebaseCrashlytics.getInstance().log(message)
+        val safeMessage = sanitizer.sanitize(message)
+        FirebaseCrashlytics.getInstance().log(safeMessage)
 
         if (priority == Log.ERROR && t != null) {
             FirebaseCrashlytics.getInstance().recordException(t)
