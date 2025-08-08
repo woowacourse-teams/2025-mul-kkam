@@ -66,17 +66,17 @@ public class NotificationService {
 
     @Transactional
     public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        List<Member> allMember = memberRepository.findAll();
+        for (Member member : allMember) {
+            Notification notification = createTopicNotificationRequest.toNotification(member);
+            notificationRepository.save(notification);
+        }
+
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
         try {
             fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
         } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
-            notificationRepository.save(notification);
         }
     }
 
@@ -85,12 +85,13 @@ public class NotificationService {
         Member member = createTokenNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
+        notificationRepository.save(createTokenNotificationRequest.toNotification());
+
         try {
             sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
         } catch (FirebaseMessagingException e) {
             throw new CommonException(SEND_MESSAGE_FAILED);
         }
-        notificationRepository.save(createTokenNotificationRequest.toNotification());
     }
 
     private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
