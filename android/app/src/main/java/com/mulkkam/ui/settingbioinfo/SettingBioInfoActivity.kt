@@ -8,8 +8,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.health.connect.client.HealthConnectClient
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
 import com.mulkkam.domain.Gender
@@ -71,23 +69,25 @@ class SettingBioInfoActivity :
     }
 
     private fun initObservers() {
-        viewModel.weight.observe(this) { weight ->
-            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
-        }
+        with(viewModel) {
+            weight.observe(this@SettingBioInfoActivity) { weight ->
+                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+            }
 
-        viewModel.gender.observe(this) { selectedGender ->
-            selectedGender?.let { changeGender(it) }
-        }
+            gender.observe(this@SettingBioInfoActivity) { selectedGender ->
+                selectedGender?.let { changeGender(it) }
+            }
 
-        viewModel.canSave.observe(this) { enabled ->
-            updateNextButtonEnabled(enabled)
-        }
+            canSave.observe(this@SettingBioInfoActivity) { enabled ->
+                updateNextButtonEnabled(enabled)
+            }
 
-        viewModel.onBioInfoChanged.observe(this) {
-            Toast
-                .makeText(this, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
-                .show()
-            finish()
+            onBioInfoChanged.observe(this@SettingBioInfoActivity) {
+                Toast
+                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
         }
     }
 
@@ -138,11 +138,6 @@ class SettingBioInfoActivity :
     }
 
     companion object {
-        private val HEALTH_CONNECT_PERMISSIONS =
-            setOf(
-                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
-            )
-
         fun newIntent(context: Context): Intent = Intent(context, SettingBioInfoActivity::class.java)
     }
 }

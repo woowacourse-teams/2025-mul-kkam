@@ -14,14 +14,15 @@ import retrofit2.Retrofit
 object NetworkInjection {
     private val contentType = "application/json".toMediaType()
 
-    private val interceptorClient =
+    private val interceptorClient by lazy {
         OkHttpClient()
             .newBuilder()
             .addInterceptor(AuthorizationInterceptor())
             .addInterceptor(NetworkLoggingInterceptor(logger))
             .build()
+    }
 
-    val retrofit: Retrofit =
+    val retrofit: Retrofit by lazy {
         Retrofit
             .Builder()
             .baseUrl(BuildConfig.BASE_URL)
@@ -29,4 +30,5 @@ object NetworkInjection {
             .addCallAdapterFactory(MulKkamCallAdapterFactory())
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
+    }
 }
