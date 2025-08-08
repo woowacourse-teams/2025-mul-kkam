@@ -26,7 +26,7 @@ data class NotificationsResponse(
         @SerialName("createdAt")
         val createdAt: String,
         @SerialName("recommendedTargetAmount")
-        val recommendedTargetAmount: Int,
+        val recommendedTargetAmount: Int?,
         @SerialName("isRead")
         val isRead: Boolean,
     )
@@ -40,6 +40,6 @@ fun ReadNotificationResponse.toDomain(): Notification =
         title = title,
         type = Alarm.from(type),
         createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
-        recommendedTargetAmount = recommendedTargetAmount,
+        recommendedTargetAmount = recommendedTargetAmount ?: 0,
         isRead = isRead,
     )
