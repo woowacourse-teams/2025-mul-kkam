@@ -21,7 +21,7 @@ object NetworkInjection {
             .addInterceptor(NetworkLoggingInterceptor(logger))
             .build()
 
-    val retrofit: Retrofit by lazy {
+    val retrofit: Retrofit =
         Retrofit
             .Builder()
             .baseUrl(BuildConfig.BASE_URL)
@@ -29,5 +29,4 @@ object NetworkInjection {
             .addCallAdapterFactory(MulKkamCallAdapterFactory())
             .addConverterFactory(Json.asConverterFactory(contentType))
             .build()
-    }
 }

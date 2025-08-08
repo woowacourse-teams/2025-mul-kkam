@@ -29,39 +29,21 @@ import com.mulkkam.domain.repository.NotificationRepository
 import com.mulkkam.domain.repository.TokenRepository
 
 object RepositoryInjection {
-    val intakeRepository: IntakeRepository by lazy {
-        IntakeRepositoryImpl(intakeService)
-    }
+    val intakeRepository: IntakeRepository = IntakeRepositoryImpl(intakeService)
 
-    val cupsRepository: CupsRepository by lazy {
-        CupsRepositoryImpl(cupsService)
-    }
+    val cupsRepository: CupsRepository = CupsRepositoryImpl(cupsService)
 
-    val tokenRepository: TokenRepository by lazy {
-        TokenRepositoryImpl(tokenPreference)
-    }
+    val tokenRepository: TokenRepository = TokenRepositoryImpl(tokenPreference)
 
-    val authRepository: AuthRepository by lazy {
-        AuthRepositoryImpl(authService)
-    }
+    val authRepository: AuthRepository = AuthRepositoryImpl(authService)
 
-    val healthRepository: HealthRepository by lazy {
-        HealthRepositoryImpl(healthService)
-    }
+    val healthRepository: HealthRepository = HealthRepositoryImpl(healthService)
 
-    val membersRepository: MembersRepository by lazy {
-        MembersRepositoryImpl(membersService)
-    }
+    val membersRepository: MembersRepository = MembersRepositoryImpl(membersService)
 
-    val nicknameRepository: NicknameRepository by lazy {
-        NicknameRepositoryImpl(nicknameService)
-    }
+    val nicknameRepository: NicknameRepository = NicknameRepositoryImpl(nicknameService)
 
-    val devicesRepository: DevicesRepository by lazy {
-        DevicesRepositoryImpl(devicesService)
-    }
+    val devicesRepository: DevicesRepository = DevicesRepositoryImpl(devicesService)
 
-    val notificationRepository: NotificationRepository by lazy {
-        NotificationRepositoryImpl(notificationService)
-    }
+    val notificationRepository: NotificationRepository = NotificationRepositoryImpl(notificationService)
 }
