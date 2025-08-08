@@ -13,7 +13,7 @@ data class NotificationsResponse(
     @SerialName("readNotificationResponses")
     val readNotificationResponses: List<ReadNotificationResponse>,
     @SerialName("nextCursor")
-    val nextCursor: Int,
+    val nextCursor: Int?,
 ) {
     @Serializable
     data class ReadNotificationResponse(

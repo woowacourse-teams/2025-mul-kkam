@@ -18,6 +18,8 @@ class NotificationActivity :
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        binding.rvNotification.adapter = adapter
+
         initObservers()
     }
 
