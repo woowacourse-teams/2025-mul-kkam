@@ -13,7 +13,6 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
@@ -143,13 +142,5 @@ public class NotificationService {
         return notifications.stream()
                 .map(ReadNotificationResponse::new)
                 .collect(Collectors.toList());
-    }
-
-    public void createActivityNotification(
-            CreateActivityNotification createActivityNotification,
-            Member member
-    ) {
-        CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        createTokenNotification(createTokenNotificationRequest);
     }
 }
