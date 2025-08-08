@@ -10,6 +10,11 @@
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
+    <string name="home_notification_just_now">방금 전</string>
+    <string name="home_notification_minutes_ago">%d분 전</string>
+    <string name="home_notification_hours_ago">%d시간 전</string>
+    <string name="home_notification_one_day_ago">하루 전</string>
+    <string name="home_notification_date_format">yyyy.MM.dd</string>
 
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
