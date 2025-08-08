@@ -44,6 +44,7 @@
         tools:text="23시간 전" />
 
     <TextView
+        android:id="@+id/tv_suggestion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/selector_notification_target_amount_button"

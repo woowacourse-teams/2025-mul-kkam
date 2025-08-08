@@ -15,6 +15,7 @@ import com.mulkkam.domain.model.TodayProgressInfo
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.getColoredSpannable
 import java.util.Locale
 
@@ -31,6 +32,7 @@ class HomeFragment :
 
         initObservers()
         initCustomChartOptions()
+        initClickListeners()
     }
 
     private fun initObservers() {
@@ -152,6 +154,13 @@ class HomeFragment :
             ),
             Shader.TileMode.CLAMP,
         )
+
+    private fun initClickListeners() {
+        binding.ivHomeNotification.setOnClickListener {
+            val intent = NotificationActivity.newIntent(requireContext())
+            startActivity(intent)
+        }
+    }
 
     override fun onReselected() {
         viewModel.loadTodayProgressInfo()

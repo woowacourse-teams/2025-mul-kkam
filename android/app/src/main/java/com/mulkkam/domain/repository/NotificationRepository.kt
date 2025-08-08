@@ -9,4 +9,6 @@ interface NotificationRepository {
         time: LocalDateTime,
         size: Int,
     ): MulKkamResult<List<Notification>>
+
+    suspend fun postActiveCaloriesBurned(kcal: Double): MulKkamResult<Unit>
 }
