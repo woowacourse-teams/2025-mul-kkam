@@ -11,12 +11,12 @@ public class ScheduleService {
 
     private final WeatherService weatherService;
 
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 0 19 * * *")
     public void saveTomorrowAverageTemperature() {
         weatherService.saveTomorrowAverageTemperature();
     }
 
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = "0 */2 * * * *")
     public void notifyAdditionalWaterIntakeByWeather() {
         weatherService.notifyAdditionalIntakeByStoredWeather();
     }
