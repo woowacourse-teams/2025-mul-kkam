@@ -99,11 +99,43 @@ class HistoryViewModel : ViewModel() {
             val result = RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id)
             runCatching {
                 result.getOrError()
+                updateLocalStateAfterDelete(history)
                 _deleteSuccess.value = true
             }.onFailure {
                 // TODO : 에러 처리
             }
         }
+    }
+
+    private fun updateLocalStateAfterDelete(history: IntakeHistory) {
+        val currentDailySummary = _dailyIntakeHistories.value ?: return
+        val updatedHistories = currentDailySummary.intakeHistories.filter { it.id != history.id }
+        val newTotalAmount = updatedHistories.sumOf { it.intakeAmount }
+        val newAchievementRate =
+            if (currentDailySummary.targetAmount > 0) {
+                (newTotalAmount.toFloat() / currentDailySummary.targetAmount * 100).coerceAtMost(100f)
+            } else {
+                0f
+            }
+
+        val newDailySummary =
+            currentDailySummary.copy(
+                intakeHistories = updatedHistories,
+                totalIntakeAmount = newTotalAmount,
+                achievementRate = newAchievementRate,
+            )
+        _dailyIntakeHistories.value = newDailySummary
+
+        val currentWeeklyList = _weeklyIntakeHistories.value?.intakeHistorySummaries ?: return
+        val newWeeklyList =
+            currentWeeklyList.map { weeklySummary ->
+                if (weeklySummary.date == currentDailySummary.date) {
+                    newDailySummary
+                } else {
+                    weeklySummary
+                }
+            }
+        _weeklyIntakeHistories.value = IntakeHistorySummaries(newWeeklyList)
     }
 
     fun onDeleteSuccessObserved() {

@@ -4,6 +4,7 @@ import android.content.res.ColorStateList
 import android.graphics.SweepGradient
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
@@ -148,8 +149,7 @@ class HistoryFragment :
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                val currentSelectedDate = viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
-                viewModel.loadIntakeHistories(currentSelectedDate)
+                Toast.makeText(requireContext(), "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
 
                 viewModel.onDeleteSuccessObserved()
             }
