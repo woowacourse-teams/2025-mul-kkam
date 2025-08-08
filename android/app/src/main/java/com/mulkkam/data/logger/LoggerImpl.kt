@@ -4,14 +4,18 @@ import android.os.Bundle
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
+import com.mulkkam.BuildConfig
 import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.logger.SensitiveInfoSanitizer
 import com.mulkkam.domain.model.LogEntry
 import com.mulkkam.domain.model.LogLevel
 import timber.log.Timber
 
-class LoggerImpl : Logger {
+class LoggerImpl(
+    private val sanitizer: SensitiveInfoSanitizer,
+) : Logger {
     override fun log(entry: LogEntry) {
-        val logMessage =
+        val rawMessage =
             buildString {
                 append("level: ${entry.level}, ")
                 append("event: ${entry.event}, ")
@@ -19,24 +23,29 @@ class LoggerImpl : Logger {
                 append(" | userId = ${entry.userId}")
             }
 
+        val safeMessage = sanitizer.sanitize(rawMessage)
+        val safePayloadMessage = sanitizer.sanitize(entry.message)
+
         when (entry.level) {
-            LogLevel.ERROR -> Timber.tag(DEFAULT_LOGGING_TAG).e(logMessage)
-            LogLevel.WARN -> Timber.tag(DEFAULT_LOGGING_TAG).w(logMessage)
-            LogLevel.INFO -> Timber.tag(DEFAULT_LOGGING_TAG).i(logMessage)
-            LogLevel.DEBUG -> Timber.tag(DEFAULT_LOGGING_TAG).d(logMessage)
+            LogLevel.ERROR -> Timber.tag(DEFAULT_LOGGING_TAG).e(safeMessage)
+            LogLevel.WARN -> Timber.tag(DEFAULT_LOGGING_TAG).w(safeMessage)
+            LogLevel.INFO -> Timber.tag(DEFAULT_LOGGING_TAG).i(safeMessage)
+            LogLevel.DEBUG -> Timber.tag(DEFAULT_LOGGING_TAG).d(safeMessage)
         }
 
-        Firebase.analytics.logEvent(
-            entry.event.name,
-            Bundle().apply {
-                putString("level", entry.level.name)
-                putString("message", entry.message)
-                entry.userId?.let { putString("userId", it) }
-            },
-        )
+        if (!BuildConfig.DEBUG) {
+            Firebase.analytics.logEvent(
+                entry.event.name,
+                Bundle().apply {
+                    putString("level", entry.level.name)
+                    putString("message", safePayloadMessage)
+                    entry.userId?.let { putString("userId", it) }
+                },
+            )
 
-        if (entry.level == LogLevel.ERROR) {
-            FirebaseCrashlytics.getInstance().recordException(Exception(logMessage))
+            if (entry.level == LogLevel.ERROR) {
+                FirebaseCrashlytics.getInstance().recordException(Exception(safeMessage))
+            }
         }
     }
 
