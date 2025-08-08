@@ -167,6 +167,11 @@ class HomeFragment :
         viewModel.loadCups()
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.loadTodayProgressInfo()
+    }
+
     companion object {
         private const val PROGRESS_BAR_RADIUS: Float = 12f
         private const val MANUAL_DRINK_IMAGE: String =
