@@ -3,6 +3,7 @@ package com.mulkkam.ui.notification
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.viewModels
 import com.mulkkam.databinding.ActivityNotificationBinding
 import com.mulkkam.ui.binding.BindingActivity
@@ -12,7 +13,11 @@ class NotificationActivity :
     BindingActivity<ActivityNotificationBinding>(
         ActivityNotificationBinding::inflate,
     ) {
-    private val adapter: NotificationAdapter by lazy { NotificationAdapter() }
+    private val adapter: NotificationAdapter by lazy {
+        NotificationAdapter {
+            viewModel.applySuggestion(it)
+        }
+    }
     private val viewModel: NotificationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,6 +32,10 @@ class NotificationActivity :
     private fun initObservers() {
         viewModel.notifications.observe(this) {
             adapter.changeItems(it)
+        }
+
+        viewModel.onApplySuggestion.observe(this) {
+            Toast.makeText(this, "목표량에 반영되었어요", Toast.LENGTH_SHORT).show()
         }
     }
 

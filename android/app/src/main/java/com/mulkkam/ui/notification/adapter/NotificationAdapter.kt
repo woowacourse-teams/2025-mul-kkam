@@ -3,14 +3,17 @@ package com.mulkkam.ui.notification.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.model.Notification
+import com.mulkkam.ui.notification.adapter.NotificationViewHolder.NotificationHandler
 
-class NotificationAdapter : RecyclerView.Adapter<NotificationViewHolder>() {
+class NotificationAdapter(
+    private val handler: NotificationHandler,
+) : RecyclerView.Adapter<NotificationViewHolder>() {
     private val notifications: MutableList<Notification> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): NotificationViewHolder = NotificationViewHolder.from(parent)
+    ): NotificationViewHolder = NotificationViewHolder.from(parent, handler)
 
     override fun onBindViewHolder(
         holder: NotificationViewHolder,

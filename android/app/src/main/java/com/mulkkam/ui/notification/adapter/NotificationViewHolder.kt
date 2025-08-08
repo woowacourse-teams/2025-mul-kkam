@@ -13,6 +13,7 @@ import com.mulkkam.domain.model.Notification
 
 class NotificationViewHolder(
     private val binding: ItemHomeNotificationBinding,
+    private val handler: NotificationHandler,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
         binding.tvNotificationDescription.text = notification.title
@@ -20,6 +21,10 @@ class NotificationViewHolder(
         binding.viewNotReadAlarm.isVisible = !notification.isRead
         if (!notification.isRead) {
             binding.root.backgroundTintList = binding.root.context.getColorStateList(R.color.primary_10)
+        }
+
+        binding.tvSuggestion.setOnClickListener {
+            handler.onApply(notification.recommendedTargetAmount)
         }
         when (notification.type) {
             SUGGESTION -> {
@@ -34,11 +39,18 @@ class NotificationViewHolder(
         }
     }
 
+    fun interface NotificationHandler {
+        fun onApply(amount: Int)
+    }
+
     companion object {
-        fun from(parent: ViewGroup): NotificationViewHolder {
+        fun from(
+            parent: ViewGroup,
+            handler: NotificationHandler,
+        ): NotificationViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemHomeNotificationBinding.inflate(inflater, parent, false)
-            return NotificationViewHolder(binding)
+            return NotificationViewHolder(binding, handler)
         }
     }
 }
