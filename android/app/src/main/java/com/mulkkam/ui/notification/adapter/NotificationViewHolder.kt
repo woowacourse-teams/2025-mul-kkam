@@ -18,36 +18,34 @@ class NotificationViewHolder(
     private val handler: NotificationHandler,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
-        binding.tvNotificationDescription.text = notification.title
-        binding.tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
-        binding.viewNotReadAlarm.isVisible = !notification.isRead
-        if (!notification.isRead) {
-            binding.root.backgroundTintList =
-                binding.root.context.getColorStateList(R.color.primary_10)
-        }
+        with(binding) {
+            tvNotificationTitle.text = notification.title
+            tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
+            viewUnreadAlarm.isVisible = !notification.isRead
+            root.backgroundTintList =
+                if (!notification.isRead) {
+                    root.context.getColorStateList(R.color.primary_10)
+                } else {
+                    root.context.getColorStateList(R.color.white)
+                }
 
-        binding.tvSuggestion.setOnClickListener {
-            handler.onApply(notification.recommendedTargetAmount)
-        }
-
-        if (notification.type == SUGGESTION) {
-            binding.tvSuggestion.isVisible = true
+            tvSuggestion.isVisible = notification.type == SUGGESTION
+            tvSuggestion.setOnClickListener {
+                handler.onApply(notification.recommendedTargetAmount)
+            }
         }
     }
 
     fun LocalDateTime.toRelativeTimeString(): String {
         val now = LocalDateTime.now()
         val duration = Duration.between(this, now)
+        val context = binding.root.context
 
         return when {
-            duration.toMinutes() < ONE_MINUTE -> getString(binding.root.context, R.string.home_notification_just_now)
-            duration.toHours() < ONE_HOUR ->
-                getString(
-                    binding.root.context,
-                    R.string.home_notification_minutes_ago,
-                ).format(duration.toMinutes())
-            duration.toDays() < ONE_DAY -> getString(binding.root.context, R.string.home_notification_hours_ago).format(duration.toHours())
-            duration.toDays() < TWO_DAYS -> getString(binding.root.context, R.string.home_notification_one_day_ago)
+            duration.toMinutes() < ONE_MINUTE -> getString(context, R.string.home_notification_just_now)
+            duration.toHours() < ONE_HOUR -> getString(context, R.string.home_notification_minutes_ago).format(duration.toMinutes())
+            duration.toDays() < ONE_DAY -> getString(context, R.string.home_notification_hours_ago).format(duration.toHours())
+            duration.toDays() < TWO_DAYS -> getString(context, R.string.home_notification_one_day_ago)
             else -> this.format(dateTimeFormatter)
         }
     }
