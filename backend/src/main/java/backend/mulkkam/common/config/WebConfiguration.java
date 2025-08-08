@@ -39,7 +39,8 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(apiPerformanceInterceptor);
+        registry.addInterceptor(apiPerformanceInterceptor)
+                .addPathPatterns("/**");
     }
 
     @Bean
