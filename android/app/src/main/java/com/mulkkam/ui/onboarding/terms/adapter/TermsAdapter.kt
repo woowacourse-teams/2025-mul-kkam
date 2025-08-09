@@ -3,6 +3,7 @@ package com.mulkkam.ui.onboarding.terms.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.ui.onboarding.terms.TermsAgreementUiModel
+import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementViewHolder.TermsAgreementHandler
 
 class TermsAdapter(
     private val termsAgreementHandler: TermsAgreementHandler,
