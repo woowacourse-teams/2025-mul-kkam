@@ -44,13 +44,12 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun loadIntakeHistories(baseDate: LocalDate = LocalDate.now()) {
-        val today = LocalDate.now()
         viewModelScope.launch {
             val weekDates = getWeekDates(baseDate)
             val result =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
-                    to = minOf(weekDates.last(), today),
+                    to = weekDates.last(),
                 )
             runCatching {
                 val summaries = result.getOrError()
@@ -71,16 +70,13 @@ class HistoryViewModel : ViewModel() {
         weekDates: List<LocalDate>,
         summaries: IntakeHistorySummaries,
     ) {
-        val completedWeekIntake =
-            weekDates.map { date ->
-                summaries.getByDateOrEmpty(date)
-            }
+        val today = LocalDate.now()
 
-        _weeklyIntakeHistories.value = IntakeHistorySummaries(completedWeekIntake)
-        if (weekDates.contains(LocalDate.now())) {
-            _dailyIntakeHistories.value = completedWeekIntake.find { it.date == LocalDate.now() }
+        _weeklyIntakeHistories.value = summaries
+        if (weekDates.contains(today)) {
+            _dailyIntakeHistories.value = summaries.getByDateOrEmpty(today)
         } else {
-            _dailyIntakeHistories.value = completedWeekIntake.first()
+            _dailyIntakeHistories.value = summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
         }
     }
 
@@ -111,7 +107,8 @@ class HistoryViewModel : ViewModel() {
     }
 
     companion object {
-        private const val INTAKE_AMOUNT_EMPTY = 0
+        private const val INTAKE_HISTORY_SUMMARIES_FIRST_INDEX: Int = 0
+        private const val INTAKE_AMOUNT_EMPTY: Int = 0
         private const val WEEK_LENGTH: Int = 7
     }
 }
