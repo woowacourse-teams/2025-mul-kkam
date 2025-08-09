@@ -46,7 +46,7 @@ class HomeFragment :
             }
 
             cups.observe(viewLifecycleOwner) { cups ->
-                updateDrinkMenu(cups)
+                updateDrinkOptions(cups)
             }
 
             characterChat.observe(viewLifecycleOwner) { chat ->
@@ -116,18 +116,19 @@ class HomeFragment :
         binding.tvHomeCharacterChat.text = comment
     }
 
-    private fun updateDrinkMenu(cups: Cups) {
+    private fun updateDrinkOptions(cups: Cups) {
         binding.fabHomeDrink.setMenuItems(
             items =
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(
-                        label = cup.nickname,
+                        buttonLabel = cup.nickname,
                         icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
+                        iconLabel = getString(R.string.expandable_floating_menu_intake_unit, cup.amount),
                         data = cup,
                     )
                 } +
                     ExtendableFloatingMenuItem(
-                        label = getString(R.string.home_drink_manual),
+                        buttonLabel = getString(R.string.home_drink_manual),
                         icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
                         data = null,
                     ),

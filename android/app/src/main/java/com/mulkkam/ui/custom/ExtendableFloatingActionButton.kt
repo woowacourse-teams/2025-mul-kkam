@@ -53,8 +53,9 @@ class ExtendableFloatingActionButton
             items.forEach { item ->
                 val menuView =
                     ExtendableFloatingMenu(context).apply {
-                        setLabel(item.label)
+                        setButtonLabel(item.buttonLabel)
                         setIcon(item.icon)
+                        setIconLabel(item.iconLabel ?: "")
                         setOnClickListener {
                             onItemClick(item)
                             closeMenu()
