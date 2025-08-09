@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
+import java.time.LocalDate
 
 @ExperimentalCoroutinesApi
 @ExtendWith(CoroutinesTestExtension::class)
@@ -62,7 +63,7 @@ class HistoryViewModelTest {
         val mockedHistory = FULL_INTAKE_HISTORY
 
         // when
-        historyViewModel.updateDailyIntakeHistories(mockedHistory)
+        historyViewModel.updateDailyIntakeHistories(mockedHistory, LocalDate.now())
         val actual = historyViewModel.dailyIntakeHistories.getOrAwaitValue()
 
         // then
