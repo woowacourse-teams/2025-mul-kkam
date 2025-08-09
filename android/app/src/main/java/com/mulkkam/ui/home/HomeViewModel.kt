@@ -94,8 +94,4 @@ class HomeViewModel : ViewModel() {
             }
         }
     }
-
-    companion object {
-        private const val FIRST_INDEX: Int = 0
-    }
 }
