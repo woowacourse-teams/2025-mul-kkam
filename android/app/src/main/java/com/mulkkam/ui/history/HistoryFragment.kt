@@ -19,6 +19,7 @@ import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
 import com.mulkkam.domain.model.IntakeHistory
 import com.mulkkam.domain.model.IntakeHistorySummaries
 import com.mulkkam.domain.model.IntakeHistorySummary
+import com.mulkkam.domain.model.WaterIntakeState
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
@@ -138,12 +139,9 @@ class HistoryFragment :
             binding.ibWeekNext.isVisible = canMoveToNext
         }
 
-        viewModel.isToday.observe(viewLifecycleOwner) { isTodaySelected ->
-            binding.tvTodayLabel.isVisible = isTodaySelected
-        }
-
-        viewModel.isPastEmptyRecord.observe(viewLifecycleOwner) { isPastEmptyRecord ->
-            updateCharacter(isPastEmptyRecord)
+        viewModel.waterIntakeState.observe(viewLifecycleOwner) { waterIntakeState ->
+            binding.tvTodayLabel.isVisible = waterIntakeState is WaterIntakeState.Present
+            updateCharacterImage(waterIntakeState)
         }
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
@@ -181,7 +179,7 @@ class HistoryFragment :
         chart.apply {
             updateGoalRate(chart, intakeHistorySummary)
             root.setOnClickListener {
-                viewModel.updateDailyIntakeHistories(intakeHistorySummary)
+                viewModel.updateDailyIntakeHistories(intakeHistorySummary, LocalDate.now())
             }
             tvDayOfWeek.text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.KOREAN)
@@ -270,18 +268,6 @@ class HistoryFragment :
             )
     }
 
-    private fun updateCharacter(isPastEmptyRecord: Boolean) {
-        val drawableRes =
-            if (isPastEmptyRecord) {
-                R.drawable.img_history_crying_character
-            } else {
-                R.drawable.img_history_character
-            }
-        binding.ivHistoryCharacter.setImageDrawable(
-            getDrawable(requireContext(), drawableRes),
-        )
-    }
-
     private fun updateIntakeHistories(intakeHistories: List<IntakeHistory>) {
         historyAdapter.changeItems(intakeHistories)
         binding.tvNoIntakeHistory.isVisible = intakeHistories.isEmpty()
@@ -332,6 +318,22 @@ class HistoryFragment :
                 0.15f,
                 0.70f,
                 1.0f,
+            ),
+        )
+    }
+
+    private fun updateCharacterImage(waterIntakeState: WaterIntakeState) {
+        val characterImage =
+            when (waterIntakeState) {
+                is WaterIntakeState.Past.NoRecord -> R.drawable.img_history_crying_character
+                is WaterIntakeState.Past.Full -> R.drawable.img_history_character
+                is WaterIntakeState.Present.Full -> R.drawable.img_history_character
+                else -> R.drawable.img_history_character
+            }
+        binding.ivHistoryCharacter.setImageDrawable(
+            getDrawable(
+                requireContext(),
+                characterImage,
             ),
         )
     }

@@ -9,6 +9,7 @@ import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.IntakeHistory
 import com.mulkkam.domain.model.IntakeHistorySummaries
 import com.mulkkam.domain.model.IntakeHistorySummary
+import com.mulkkam.domain.model.WaterIntakeState
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -26,15 +27,8 @@ class HistoryViewModel : ViewModel() {
             intakeHistories.lastDay < LocalDate.now()
         }
 
-    val isToday: LiveData<Boolean> =
-        dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.date == LocalDate.now()
-        }
-
-    val isPastEmptyRecord: LiveData<Boolean> =
-        dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.date < LocalDate.now() && intakeHistory.totalIntakeAmount == INTAKE_AMOUNT_EMPTY
-        }
+    private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
+    val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
     private val _deleteSuccess = MutableLiveData<Boolean>()
     val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
@@ -81,11 +75,15 @@ class HistoryViewModel : ViewModel() {
                 today in weekDates -> summaries.getByDateOrEmpty(today)
                 else -> summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
             }
-        updateDailyIntakeHistories(dailySummary)
+        updateDailyIntakeHistories(dailySummary, today)
     }
 
-    fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
-        _dailyIntakeHistories.value = dailyIntakeHistories
+    fun updateDailyIntakeHistories(
+        dailySummary: IntakeHistorySummary,
+        today: LocalDate,
+    ) {
+        _dailyIntakeHistories.value = dailySummary
+        _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)
     }
 
     fun moveWeek(offset: Long) {
@@ -112,7 +110,6 @@ class HistoryViewModel : ViewModel() {
 
     companion object {
         private const val INTAKE_HISTORY_SUMMARIES_FIRST_INDEX: Int = 0
-        private const val INTAKE_AMOUNT_EMPTY: Int = 0
         private const val WEEK_LENGTH: Int = 7
     }
 }
