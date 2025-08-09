@@ -61,7 +61,7 @@ class TermsFragment :
                 parentViewModel.moveToNextStep()
             }
 
-            cbAllCheck.setOnClickListener {
+            llAllCheck.setOnClickListener {
                 viewModel.checkAllAgreement()
             }
         }

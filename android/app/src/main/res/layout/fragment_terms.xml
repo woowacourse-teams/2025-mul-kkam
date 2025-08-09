@@ -18,28 +18,33 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <CheckBox
-        android:id="@+id/cb_all_check"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="28dp"
-        android:background="@drawable/selector_terms"
-        android:button="@null"
-        android:gravity="center"
-        android:padding="8dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_terms_label" />
-
-    <TextView
+    <LinearLayout
+        android:id="@+id/ll_all_check"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="4dp"
-        android:text="@string/terms_agree_all"
-        android:textAppearance="@style/title2"
-        app:layout_constraintBottom_toBottomOf="@id/cb_all_check"
-        app:layout_constraintStart_toEndOf="@id/cb_all_check"
-        app:layout_constraintTop_toTopOf="@id/cb_all_check" />
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:gravity="center_vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_terms_label">
+
+        <CheckBox
+            android:id="@+id/cb_all_check"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/selector_terms"
+            android:button="@null"
+            android:clickable="false"
+            android:gravity="center"
+            android:padding="8dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/terms_agree_all"
+            android:textAppearance="@style/title2" />
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_list"
@@ -51,7 +56,7 @@
         app:layout_constraintBottom_toTopOf="@id/tv_next"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/cb_all_check" />
+        app:layout_constraintTop_toBottomOf="@id/ll_all_check" />
 
     <TextView
         android:id="@+id/tv_next"
