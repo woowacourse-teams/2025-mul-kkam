@@ -16,6 +16,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.getAppearanceSpannable
 import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.util.extensions.applyImeMargin
 import java.util.Locale
 
 class TargetAmountFragment :
@@ -39,6 +40,7 @@ class TargetAmountFragment :
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        binding.tvComplete.applyImeMargin()
     }
 
     private fun initRecommendation() {

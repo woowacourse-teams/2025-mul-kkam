@@ -16,6 +16,7 @@ import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.util.getAppearanceSpannable
 import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.util.extensions.applyImeMargin
 import java.util.Locale
 
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
@@ -30,6 +31,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         initObservers()
         initGoalInputListener()
         initTargetAmountInputWatcher()
+        binding.tvSaveGoal.applyImeMargin()
     }
 
     private fun initClickListeners() {

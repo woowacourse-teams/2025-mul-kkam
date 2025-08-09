@@ -12,6 +12,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
 import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.util.extensions.applyImeMargin
 import kotlin.collections.find
 
 class TermsFragment :
@@ -37,6 +38,7 @@ class TermsFragment :
         initTermsAdapter()
         initClickListeners()
         initObservers()
+        binding.tvNext.applyImeMargin()
     }
 
     private fun initTextAppearance() {
