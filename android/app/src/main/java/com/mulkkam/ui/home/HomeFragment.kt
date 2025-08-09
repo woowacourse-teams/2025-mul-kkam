@@ -8,6 +8,7 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
@@ -55,6 +56,10 @@ class HomeFragment :
             alarmCount.observe(viewLifecycleOwner) { alarmCount ->
                 binding.tvAlarmCount.text = alarmCount.toString()
                 binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            }
+
+            drinkSuccess.observe(viewLifecycleOwner) {
+                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
             }
         }
     }

@@ -7,8 +7,6 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.Cups
 import com.mulkkam.domain.model.TodayProgressInfo
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -26,8 +24,8 @@ class HomeViewModel : ViewModel() {
     private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
     val alarmCount: LiveData<Int> get() = _alarmCount
 
-    private val _drinkSuccess: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val drinkSuccess: SingleLiveData<Unit> get() = _drinkSuccess
+    private val _drinkSuccess: MutableLiveData<Int> = MutableLiveData()
+    val drinkSuccess: LiveData<Int> get() = _drinkSuccess
 
     init {
         loadTodayProgressInfo()
@@ -88,7 +86,7 @@ class HomeViewModel : ViewModel() {
                 _todayProgressInfo.value =
                     todayProgressInfo.value?.updateProgressInfo(amount, intakeHistoryResult.achievementRate)
                 _characterChat.value = intakeHistoryResult.comment
-                _drinkSuccess.setValue(Unit)
+                _drinkSuccess.value = amount
             }.onFailure {
                 // TODO: 에러 처리
             }
