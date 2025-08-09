@@ -1,9 +1,27 @@
 package com.mulkkam.ui.fixture
 
 import com.mulkkam.domain.model.IntakeHistory
+import com.mulkkam.domain.model.IntakeHistorySummaries
 import com.mulkkam.domain.model.IntakeHistorySummary
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
+
+val WEEKLY_EMPTY_INTAKE_HISTORIES =
+    IntakeHistorySummaries(
+        List(7) {
+            IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
+                date =
+                    LocalDate
+                        .now()
+                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                        .plusDays(
+                            it.toLong(),
+                        ),
+            )
+        },
+    )
 
 val FULL_INTAKE_HISTORY =
     IntakeHistorySummary(
