@@ -15,6 +15,7 @@ import com.mulkkam.domain.model.Gender.FEMALE
 import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
+import com.mulkkam.ui.util.setSingleClickListener
 import com.mulkkam.util.extensions.isHealthConnectAvailable
 import com.mulkkam.util.extensions.navigateToHealthConnectStore
 
@@ -38,7 +39,7 @@ class SettingBioInfoActivity :
 
     private fun initClickListeners() {
         with(binding) {
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveBioInfo()
             }
 
@@ -58,7 +59,7 @@ class SettingBioInfoActivity :
                 finish()
             }
 
-            llHealthConnect.setOnClickListener {
+            llHealthConnect.setSingleClickListener {
                 if (isHealthConnectAvailable()) {
                     startActivity(healthConnectIntent)
                 } else {

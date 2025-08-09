@@ -12,6 +12,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
 import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.setSingleClickListener
 import kotlin.collections.find
 
 class TermsFragment :
@@ -54,7 +55,7 @@ class TermsFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            tvNext.setOnClickListener {
+            tvNext.setSingleClickListener {
                 parentViewModel.moveToNextStep()
             }
 

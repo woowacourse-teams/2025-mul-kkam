@@ -14,6 +14,7 @@ import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.util.setSingleClickListener
 import com.mulkkam.util.extensions.getParcelableCompat
 
 class SettingCupFragment :
@@ -40,13 +41,13 @@ class SettingCupFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSingleClickListener { dismiss() }
 
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveCup()
             }
 
-            tvDelete.setOnClickListener {
+            tvDelete.setSingleClickListener {
                 viewModel.deleteCup()
             }
         }

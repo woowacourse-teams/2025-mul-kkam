@@ -20,6 +20,7 @@ import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.setSingleClickListener
 import java.util.Locale
 
 class HomeFragment :
@@ -173,7 +174,7 @@ class HomeFragment :
         )
 
     private fun initClickListeners() {
-        binding.ivHomeNotification.setOnClickListener {
+        binding.ivHomeNotification.setSingleClickListener {
             val intent = NotificationActivity.newIntent(requireContext())
             startActivity(intent)
         }

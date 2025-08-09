@@ -8,6 +8,7 @@ import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
+import com.mulkkam.ui.util.setSingleClickListener
 
 class ManualDrinkFragment :
     BindingBottomSheetDialogFragment<FragmentManualDrinkBinding>(
@@ -28,13 +29,13 @@ class ManualDrinkFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSingleClickListener { dismiss() }
 
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.addWaterIntake(
                     binding.etAmount.text
                         .toString()
-                        .toIntOrNull() ?: return@setOnClickListener,
+                        .toIntOrNull() ?: return@setSingleClickListener,
                 )
             }
         }

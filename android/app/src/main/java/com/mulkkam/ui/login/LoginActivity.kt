@@ -18,6 +18,7 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.util.setSingleClickListener
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
@@ -29,7 +30,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun initClickListeners() {
-        binding.clKakaoLogin.setOnClickListener {
+        binding.clKakaoLogin.setSingleClickListener {
             loginWithKakao()
         }
     }

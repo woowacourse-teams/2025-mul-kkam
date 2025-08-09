@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentWeightBinding
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
+import com.mulkkam.ui.util.setSingleClickListener
 
 class OnboardingWeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
@@ -31,9 +32,9 @@ class OnboardingWeightFragment :
     }
 
     private fun initClickListeners() {
-        binding.ivWeightClose.setOnClickListener { dismiss() }
+        binding.ivWeightClose.setSingleClickListener { dismiss() }
 
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             parentViewModel.updateWeight(binding.npWeightChoose.value)
             dismiss()
         }

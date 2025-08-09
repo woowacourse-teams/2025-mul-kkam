@@ -16,6 +16,7 @@ import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.util.getAppearanceSpannable
 import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.setSingleClickListener
 import java.util.Locale
 
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
@@ -33,11 +34,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun initClickListeners() {
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setSingleClickListener {
             finish()
         }
 
-        binding.tvSaveGoal.setOnClickListener {
+        binding.tvSaveGoal.setSingleClickListener {
             viewModel.saveTargetAmount()
         }
     }
