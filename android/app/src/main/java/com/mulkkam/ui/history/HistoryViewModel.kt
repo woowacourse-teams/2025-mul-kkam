@@ -43,17 +43,22 @@ class HistoryViewModel : ViewModel() {
         loadIntakeHistories()
     }
 
-    fun loadIntakeHistories(baseDate: LocalDate = LocalDate.now()) {
+    fun loadIntakeHistories(
+        referenceDate: LocalDate = LocalDate.now(),
+        currentDate: LocalDate = LocalDate.now(),
+    ) {
         viewModelScope.launch {
-            val weekDates = getWeekDates(baseDate)
+            val weekDates = getWeekDates(referenceDate)
             val result =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
                     to = weekDates.last(),
                 )
             runCatching {
-                val summaries = result.getOrError()
-                updateIntakeSummary(weekDates, summaries)
+                result.getOrError()
+            }.onSuccess { summaries ->
+                _weeklyIntakeHistories.value = summaries
+                updateIntakeSummary(weekDates, summaries, currentDate)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -69,15 +74,14 @@ class HistoryViewModel : ViewModel() {
     private fun updateIntakeSummary(
         weekDates: List<LocalDate>,
         summaries: IntakeHistorySummaries,
+        today: LocalDate,
     ) {
-        val today = LocalDate.now()
-
-        _weeklyIntakeHistories.value = summaries
-        if (weekDates.contains(today)) {
-            _dailyIntakeHistories.value = summaries.getByDateOrEmpty(today)
-        } else {
-            _dailyIntakeHistories.value = summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
-        }
+        val dailySummary =
+            when {
+                today in weekDates -> summaries.getByDateOrEmpty(today)
+                else -> summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
+            }
+        updateDailyIntakeHistories(dailySummary)
     }
 
     fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
