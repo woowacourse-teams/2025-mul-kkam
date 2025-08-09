@@ -142,13 +142,14 @@ class HistoryFragment :
             binding.tvTodayLabel.isVisible = isTodaySelected
         }
 
-        viewModel.isAfterToday.observe(viewLifecycleOwner) { shouldShowSummary ->
-            binding.tvDailyIntakeSummary.isVisible = !shouldShowSummary
+        viewModel.isPastEmptyRecord.observe(viewLifecycleOwner) { isPastEmptyRecord ->
+            updateCharacter(isPastEmptyRecord)
         }
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                val currentSelectedDate = viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
+                val currentSelectedDate =
+                    viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
                 viewModel.loadIntakeHistories(currentSelectedDate)
 
                 viewModel.onDeleteSuccessObserved()
@@ -225,13 +226,10 @@ class HistoryFragment :
         updateDailyChartView(intakeHistorySummary)
         updateDailyChartLabel(intakeHistorySummary.date)
         updateDailyIntakeSummary(intakeHistorySummary)
-        updateCharacter(intakeHistorySummary.totalIntakeAmount)
     }
 
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.visibility =
-                if (intakeHistorySummary.totalIntakeAmount != INTAKE_AMOUNT_EMPTY) View.VISIBLE else View.INVISIBLE
             viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
         }
     }
@@ -253,7 +251,9 @@ class HistoryFragment :
             String.format(Locale.US, "%,dml", intakeHistorySummary.totalIntakeAmount)
 
         @ColorRes val summaryColorResId =
-            if (intakeHistorySummary.targetAmount > intakeHistorySummary.totalIntakeAmount) {
+            if (intakeHistorySummary.targetAmount > intakeHistorySummary.totalIntakeAmount ||
+                intakeHistorySummary.totalIntakeAmount == INTAKE_AMOUNT_EMPTY
+            ) {
                 R.color.gray_200
             } else {
                 R.color.primary_200
@@ -270,12 +270,12 @@ class HistoryFragment :
             )
     }
 
-    private fun updateCharacter(intakeAmount: Int) {
+    private fun updateCharacter(isPastEmptyRecord: Boolean) {
         val drawableRes =
-            if (intakeAmount != INTAKE_AMOUNT_EMPTY) {
-                R.drawable.img_history_character
-            } else {
+            if (isPastEmptyRecord) {
                 R.drawable.img_history_crying_character
+            } else {
+                R.drawable.img_history_character
             }
         binding.ivHistoryCharacter.setImageDrawable(
             getDrawable(requireContext(), drawableRes),

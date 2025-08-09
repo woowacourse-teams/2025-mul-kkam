@@ -31,9 +31,9 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date == LocalDate.now()
         }
 
-    val isAfterToday: LiveData<Boolean> =
+    val isPastEmptyRecord: LiveData<Boolean> =
         dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.date > LocalDate.now()
+            intakeHistory.date < LocalDate.now() && intakeHistory.totalIntakeAmount == INTAKE_AMOUNT_EMPTY
         }
 
     private val _deleteSuccess = MutableLiveData<Boolean>()
@@ -111,6 +111,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     companion object {
+        private const val INTAKE_AMOUNT_EMPTY = 0
         private const val WEEK_LENGTH: Int = 7
     }
 }
