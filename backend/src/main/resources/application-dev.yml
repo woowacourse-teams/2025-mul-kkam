@@ -39,3 +39,7 @@ fcm:
 open-weather:
   api:
     key: ${OPEN_WEATHER_API_KEY}
+
+app:
+  logging:
+    mask-auth: false

@@ -52,13 +52,15 @@ public class GlobalExceptionHandler {
             Exception e,
             HttpServletRequest request
     ) {
-        log.error("[SERVER_ERROR] code={}({} {}), message={} [{}] {}",
+        request.setAttribute("errorLoggedByGlobal", true);
+
+        String traceId = (String) request.getAttribute("traceId");
+        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
+                traceId,
                 INTER_SERVER_ERROR_CODE.name(),
                 INTER_SERVER_ERROR_CODE.getStatus(),
                 e.getClass().getSimpleName(),
-                e.getMessage(),
-                request.getMethod(),
-                request.getRequestURI()
+                e.getMessage()
         );
         log.debug("StackTrace: ", e);
     }
@@ -67,11 +69,13 @@ public class GlobalExceptionHandler {
             HttpServletRequest request,
             ErrorCode errorCode
     ) {
-        log.warn("[CLIENT_ERROR] code={}({}), [{}] {}",
+        request.setAttribute("errorLoggedByGlobal", true);
+
+        String traceId = (String) request.getAttribute("traceId");
+        log.warn("[CLIENT_ERROR] traceId = {}, code={}({})",
+                traceId,
                 errorCode.name(),
-                errorCode.getStatus(),
-                request.getMethod(),
-                request.getRequestURI()
+                errorCode.getStatus()
         );
     }
 }
