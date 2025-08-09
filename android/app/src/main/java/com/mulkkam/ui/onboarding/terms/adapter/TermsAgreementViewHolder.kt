@@ -14,11 +14,7 @@ class TermsAgreementViewHolder(
     private var termsAgreement: TermsAgreementUiModel? = null
 
     init {
-        binding.cbAgreement.setOnClickListener { checkBox ->
-            termsAgreement?.let {
-                termsAgreementHandler.checkAgreement(it)
-            }
-        }
+        initClickListener(termsAgreementHandler)
     }
 
     fun bind(termsAgreement: TermsAgreementUiModel) {
@@ -32,6 +28,18 @@ class TermsAgreementViewHolder(
         binding.tvLabel.text =
             binding.root.context.getString(termsAgreement.labelId, requirementLabel)
         binding.cbAgreement.isChecked = termsAgreement.isChecked
+    }
+
+    private fun initClickListener(handler: TermsAgreementHandler) {
+        binding.llAgreement.setOnClickListener {
+            termsAgreement?.let {
+                handler.checkAgreement(it)
+            }
+        }
+    }
+
+    fun interface TermsAgreementHandler {
+        fun checkAgreement(termsAgreement: TermsAgreementUiModel)
     }
 
     companion object {

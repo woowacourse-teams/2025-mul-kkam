@@ -12,6 +12,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
 import com.mulkkam.ui.util.getAppearanceSpannable
+import kotlin.collections.find
 
 class TermsFragment :
     BindingFragment<FragmentTermsBinding>(
@@ -54,14 +55,10 @@ class TermsFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setOnClickListener {
-                parentViewModel.updateTermsAgreementState(
-                    viewModel.isMarketingNotificationAgreed.value == true,
-                    viewModel.isNightNotificationAgreed.value == true,
-                )
                 parentViewModel.moveToNextStep()
             }
 
-            cbAllCheck.setOnClickListener {
+            llAllCheck.setOnClickListener {
                 viewModel.checkAllAgreement()
             }
         }
@@ -70,6 +67,11 @@ class TermsFragment :
     private fun initObservers() {
         viewModel.termsAgreements.observe(viewLifecycleOwner) {
             termsAdapter.submitList(it)
+
+            parentViewModel.updateTermsAgreementState(
+                it.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true,
+                it.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true,
+            )
         }
 
         viewModel.isAllChecked.observe(viewLifecycleOwner) {
