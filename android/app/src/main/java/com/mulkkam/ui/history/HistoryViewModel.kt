@@ -52,7 +52,7 @@ class HistoryViewModel : ViewModel() {
                 result.getOrError()
             }.onSuccess { summaries ->
                 _weeklyIntakeHistories.value = summaries
-                updateIntakeSummary(weekDates, summaries, currentDate)
+                selectDailySummary(weekDates, summaries, currentDate)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -65,7 +65,7 @@ class HistoryViewModel : ViewModel() {
         return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
-    private fun updateIntakeSummary(
+    private fun selectDailySummary(
         weekDates: List<LocalDate>,
         summaries: IntakeHistorySummaries,
         today: LocalDate,
