@@ -10,7 +10,7 @@ import java.time.temporal.TemporalAdjusters
 
 val WEEKLY_EMPTY_INTAKE_HISTORIES =
     IntakeHistorySummaries(
-        List(7) {
+        List(WEEK_LENGTH) {
             IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
                 date =
                     LocalDate
@@ -64,3 +64,5 @@ val HALF_INTAKE_HISTORY =
                 ),
             ),
     )
+
+private const val WEEK_LENGTH: Int = 7
