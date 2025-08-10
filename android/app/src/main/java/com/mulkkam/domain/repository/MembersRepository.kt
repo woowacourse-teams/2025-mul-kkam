@@ -1,5 +1,6 @@
 package com.mulkkam.domain.repository
 
+import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.MemberInfo
 import com.mulkkam.domain.model.MulKkamResult
@@ -20,7 +21,7 @@ interface MembersRepository {
 
     suspend fun postMembersPhysicalAttributes(
         gender: Gender,
-        weight: Int,
+        weight: BioWeight,
     ): MulKkamResult<Unit>
 
     suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean>

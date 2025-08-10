@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.util.MutableSingleLiveData
@@ -79,7 +80,7 @@ class OnboardingViewModel : ViewModel() {
 
     fun updateBioInfo(
         gender: Gender?,
-        weight: Int?,
+        weight: BioWeight?,
     ) {
         onboardingInfo = onboardingInfo.copy(gender = gender, weight = weight)
     }
