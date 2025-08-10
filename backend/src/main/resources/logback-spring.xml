@@ -1,6 +1,15 @@
 <configuration>
-    <property name="CONSOLE_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+    <!-- ================== -->
+    <!-- 공통 패턴 정의 -->
+    <property name="CONSOLE_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
+    <!-- 파일: 컬러 없이 분석 친화적 -->
+    <property name="FILE_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
 
+    <!-- ================== -->
+    <!-- DEV 환경 -->
+    <!-- ================== -->
     <springProfile name="dev">
         <property name="LOG_PATH" value="/app/logs"/>
 
@@ -12,7 +21,7 @@
                 <maxHistory>7</maxHistory>
             </rollingPolicy>
             <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                <pattern>${FILE_PATTERN}</pattern>
             </encoder>
             <filter class="ch.qos.logback.classic.filter.LevelFilter">
                 <level>INFO</level>
@@ -29,7 +38,7 @@
                 <maxHistory>7</maxHistory>
             </rollingPolicy>
             <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                <pattern>${FILE_PATTERN}</pattern>
             </encoder>
             <filter class="ch.qos.logback.classic.filter.LevelFilter">
                 <level>WARN</level>
@@ -46,7 +55,7 @@
                 <maxHistory>7</maxHistory>
             </rollingPolicy>
             <encoder>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n</pattern>
+                <pattern>${FILE_PATTERN}</pattern>
             </encoder>
             <filter class="ch.qos.logback.classic.filter.LevelFilter">
                 <level>ERROR</level>
@@ -55,11 +64,12 @@
             </filter>
         </appender>
 
-        <!-- 콘솔(운영에서도 보려면 유지) -->
+        <!-- 콘솔: 컬러 -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
                 <pattern>${CONSOLE_PATTERN}</pattern>
             </encoder>
+            <includeCallerData>true</includeCallerData>
         </appender>
 
         <root level="INFO">
@@ -70,6 +80,9 @@
         </root>
     </springProfile>
 
+    <!-- ================== -->
+    <!-- 비-DEV 환경 -->
+    <!-- ================== -->
     <springProfile name="!dev">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
