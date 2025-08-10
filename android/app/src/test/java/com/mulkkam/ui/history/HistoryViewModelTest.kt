@@ -79,7 +79,7 @@ class HistoryViewModelTest {
 
     @Test
     @DisplayName("음용 기록을 삭제한다")
-    fun `음용 기록을 삭제한다`() {
+    fun deleteIntakeHistory() {
         // given
         val capturedId = slot<Int>()
         coEvery {
@@ -99,7 +99,8 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `이번 주가 아닌지 판단한다`() {
+    @DisplayName("이번 주가 아닌지 판단한다")
+    fun decideNotCurrentWeek() {
         // given
         coEvery {
             fakeIntakeRepository.getIntakeHistory(
@@ -120,7 +121,8 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `이번 주인지 판단한다`() {
+    @DisplayName("이번 주인지 판단한다")
+    fun decideCurrentWeek() {
         // given
         coEvery {
             fakeIntakeRepository.getIntakeHistory(
@@ -141,7 +143,8 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `일주일 기록에 오늘 날짜가 있다면 오늘을 일간 기록으로 설정한다`() {
+    @DisplayName("주간 기록에 오늘이 포함되면 일간 기록은 오늘 날짜로 설정된다")
+    fun setDailySummaryToToday_WhenTodayInWeeklyRecords() {
         // given
         coEvery {
             fakeIntakeRepository.getIntakeHistory(
@@ -162,7 +165,8 @@ class HistoryViewModelTest {
     }
 
     @Test
-    fun `일주일 기록에 오늘 날짜가 없다면 월요일을 일간 기록으로 설정한다`() {
+    @DisplayName("주간 기록에 오늘이 없으면 일간 기록은 월요일로 설정된다")
+    fun setDailySummaryToMonday_WhenTodayNotInWeeklyRecords() {
         // given
         coEvery {
             fakeIntakeRepository.getIntakeHistory(
