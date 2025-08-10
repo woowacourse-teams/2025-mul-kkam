@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -187,19 +186,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         when (requestCode) {
             REQUEST_CODE_NOTIFICATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast
-                        .makeText(
-                            this,
-                            R.string.main_alarm_permission_granted,
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                    Snackbar.make(binding.root, R.string.main_alarm_permission_granted, Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Toast
-                        .makeText(
-                            this,
-                            R.string.main_alarm_permission_denied,
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                    Snackbar.make(binding.root, R.string.main_alarm_permission_denied, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }
