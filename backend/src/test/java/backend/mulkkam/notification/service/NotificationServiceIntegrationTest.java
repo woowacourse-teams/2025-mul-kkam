@@ -38,7 +38,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     private NotificationRepository notificationRepository;
 
     private Member savedMember;
-    private Long savedMemberId;
+
     @Autowired
     private MemberRepository memberRepository;
 
@@ -46,7 +46,6 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     void setUp() {
         Member member = MemberFixtureBuilder.builder().build();
         savedMember = memberRepository.save(member);
-        savedMemberId = savedMember.getId();
     }
 
     @DisplayName("알림 조회 기능을 사용할 때")
