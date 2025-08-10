@@ -25,6 +25,7 @@ import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -179,7 +180,7 @@ class HistoryFragment :
     ) {
         chart.apply {
             updateGoalRate(chart, intakeHistorySummary)
-            root.setOnClickListener {
+            root.setSingleClickListener {
                 viewModel.updateDailyIntakeHistories(intakeHistorySummary)
             }
             tvDayOfWeek.text =

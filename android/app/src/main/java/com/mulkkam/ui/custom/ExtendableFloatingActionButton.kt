@@ -14,6 +14,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.mulkkam.R
 import com.mulkkam.databinding.LayoutExpandableFloatingActionButtonBinding
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ExtendableFloatingActionButton
     @JvmOverloads
@@ -29,8 +30,8 @@ class ExtendableFloatingActionButton
             View(context).apply {
                 layoutParams =
                     LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        LayoutParams.MATCH_PARENT,
+                        LayoutParams.MATCH_PARENT,
                     )
                 isClickable = true
                 isFocusable = true
@@ -56,7 +57,7 @@ class ExtendableFloatingActionButton
                         setButtonLabel(item.buttonLabel)
                         setIcon(item.icon)
                         setIconLabel(item.iconLabel ?: "")
-                        setOnClickListener {
+                        setSingleClickListener {
                             onItemClick(item)
                             closeMenu()
                         }

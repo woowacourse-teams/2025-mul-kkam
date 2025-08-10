@@ -9,6 +9,7 @@ import com.mulkkam.domain.model.BioWeight.Companion.WEIGHT_MAX
 import com.mulkkam.domain.model.BioWeight.Companion.WEIGHT_MIN
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class OnboardingWeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
@@ -34,9 +35,9 @@ class OnboardingWeightFragment :
     }
 
     private fun initClickListeners() {
-        binding.ivWeightClose.setOnClickListener { dismiss() }
+        binding.ivWeightClose.setSingleClickListener { dismiss() }
 
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             parentViewModel.updateWeight(binding.npWeightChoose.value)
             dismiss()
         }

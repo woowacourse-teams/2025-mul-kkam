@@ -15,6 +15,7 @@ import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NicknameFragment :
     BindingFragment<FragmentNicknameBinding>(
@@ -49,12 +50,12 @@ class NicknameFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            tvNext.setOnClickListener {
+            tvNext.setSingleClickListener {
                 parentViewModel.updateNickname(getTrimmedNickname())
                 parentViewModel.moveToNextStep()
             }
 
-            tvCheckDuplicate.setOnClickListener {
+            tvCheckDuplicate.setSingleClickListener {
                 viewModel.checkNicknameDuplicate(getTrimmedNickname())
             }
         }

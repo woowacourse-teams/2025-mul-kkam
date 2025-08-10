@@ -9,6 +9,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NotificationActivity :
     BindingActivity<ActivityNotificationBinding>(
@@ -41,7 +42,7 @@ class NotificationActivity :
     }
 
     private fun initClickListeners() {
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setSingleClickListener {
             finish()
         }
     }
