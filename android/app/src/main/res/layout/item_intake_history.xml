@@ -3,10 +3,10 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="wrap_content"
     android:background="@drawable/selector_history_item_press"
     android:clickable="true"
-    android:paddingVertical="10dp">
+    android:paddingVertical="14dp">
 
     <TextView
         android:id="@+id/tv_intake_time"
