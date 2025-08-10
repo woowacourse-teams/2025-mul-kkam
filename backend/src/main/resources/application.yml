@@ -10,10 +10,13 @@ spring:
     active: local
 
 management:
-  server:
-    port: 8081
   endpoints:
     web:
       exposure:
-        include:
-          - health
+        include: health,metrics
+  metrics:
+    export:
+      cloudwatch:
+        namespace: Mulkkam/Dev
+        step: 1m
+        batchSize: 20
