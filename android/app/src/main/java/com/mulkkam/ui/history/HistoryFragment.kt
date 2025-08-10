@@ -4,7 +4,6 @@ import android.content.res.ColorStateList
 import android.graphics.SweepGradient
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
@@ -14,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
@@ -149,7 +149,7 @@ class HistoryFragment :
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                Toast.makeText(requireContext(), "기록이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, "기록이 삭제되었습니다.", Snackbar.LENGTH_SHORT).show()
 
                 viewModel.onDeleteSuccessObserved()
             }
