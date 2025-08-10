@@ -85,9 +85,9 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun moveWeek(offset: Long) {
-        val newBaseDate =
+        val newReferenceDate =
             weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
-        loadIntakeHistories(newBaseDate)
+        loadIntakeHistories(newReferenceDate)
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
