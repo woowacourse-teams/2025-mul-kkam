@@ -26,11 +26,6 @@ spring:
 logging:
   file:
     name: ${LOG_PATH}
-  level:
-    io.micrometer.registry.cloudwatch2: DEBUG
-    software.amazon.awssdk.request: DEBUG
-    software.amazon.awssdk.services.cloudwatch: DEBUG
-    org.springframework.boot.actuate.metrics: DEBUG
 
 security:
   jwt:
