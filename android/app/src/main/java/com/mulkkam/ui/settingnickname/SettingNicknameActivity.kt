@@ -64,8 +64,6 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             when (nicknameValidationState) {
                 VALID, INVALID -> {
                     updateNicknameValidationUI(nicknameValidationState)
-                    binding.tvSaveNickname.isEnabled = nicknameValidationState == VALID
-                    binding.btnCheckDuplicate.isEnabled = false
                 }
 
                 PENDING_SERVER_VALIDATION -> {
@@ -87,14 +85,21 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     }
 
     private fun updateNicknameValidationUI(nicknameValidationState: NicknameValidationState) {
+        val isValid = nicknameValidationState == VALID
         val color =
             getColor(
-                if (nicknameValidationState == VALID) R.color.primary_200 else R.color.secondary_200,
+                if (isValid) R.color.primary_200 else R.color.secondary_200,
             )
 
         with(binding) {
+            btnCheckDuplicate.isEnabled = false
+            tvSaveNickname.isEnabled = isValid
             tvNicknameValidationMessage.setTextColor(color)
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
+        }
+
+        if (isValid) {
+            binding.tvNicknameValidationMessage.text = getString(R.string.setting_nickname_valid)
         }
     }
 

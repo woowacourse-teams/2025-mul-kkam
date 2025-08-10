@@ -75,8 +75,6 @@ class NicknameFragment :
             when (nicknameValidationState) {
                 VALID, INVALID -> {
                     updateNicknameValidationUI(nicknameValidationState)
-                    binding.tvNext.isEnabled = nicknameValidationState == VALID
-                    binding.tvCheckDuplicate.isEnabled = false
                 }
 
                 PENDING_SERVER_VALIDATION -> {
@@ -91,15 +89,21 @@ class NicknameFragment :
     }
 
     private fun updateNicknameValidationUI(nicknameValidationState: NicknameValidationState) {
+        val isValid = nicknameValidationState == VALID
         val color =
             getColor(
                 requireContext(),
-                if (nicknameValidationState == VALID) R.color.primary_200 else R.color.secondary_200,
+                if (isValid) R.color.primary_200 else R.color.secondary_200,
             )
 
         with(binding) {
+            tvCheckDuplicate.isEnabled = false
+            tvNext.isEnabled = isValid
             tvNicknameValidationMessage.setTextColor(color)
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
+        }
+        if (isValid) {
+            binding.tvNicknameValidationMessage.text = getString(R.string.setting_nickname_valid)
         }
     }
 
