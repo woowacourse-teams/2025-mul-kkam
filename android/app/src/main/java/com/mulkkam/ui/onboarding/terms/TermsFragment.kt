@@ -11,8 +11,8 @@ import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
-import com.mulkkam.ui.util.getAppearanceSpannable
-import com.mulkkam.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import kotlin.collections.find
 
 class TermsFragment :

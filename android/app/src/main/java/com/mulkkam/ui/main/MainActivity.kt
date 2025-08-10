@@ -24,7 +24,7 @@ import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
-import com.mulkkam.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean

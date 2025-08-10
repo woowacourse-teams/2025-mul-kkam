@@ -1,4 +1,4 @@
-package com.mulkkam.util.glide
+package com.mulkkam.ui.util.glide
 
 import android.graphics.drawable.PictureDrawable
 import com.bumptech.glide.load.Options

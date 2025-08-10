@@ -1,4 +1,4 @@
-package com.mulkkam.util.extensions
+package com.mulkkam.ui.util.extensions
 
 import android.view.View
 import androidx.core.graphics.Insets

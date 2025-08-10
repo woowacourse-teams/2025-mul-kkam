@@ -15,8 +15,8 @@ import com.mulkkam.domain.model.Gender.FEMALE
 import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
-import com.mulkkam.util.extensions.isHealthConnectAvailable
-import com.mulkkam.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(

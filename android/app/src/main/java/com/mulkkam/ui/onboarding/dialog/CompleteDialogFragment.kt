@@ -12,7 +12,7 @@ import com.mulkkam.databinding.FragmentCompleteDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.extensions.getColoredSpannable
 
 class CompleteDialogFragment :
     BindingDialogFragment<FragmentCompleteDialogBinding>(
