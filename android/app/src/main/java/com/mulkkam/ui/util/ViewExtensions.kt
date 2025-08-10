@@ -7,12 +7,14 @@ fun View.setSingleClickListener(
     interval: Long = 1000L,
     listener: (View) -> Unit,
 ) {
-    var lastClickTime = 0L
     setOnClickListener {
         val currentTime = SystemClock.elapsedRealtime()
+        val lastClickTime = (getTag(SINGLE_CLICK_TAG_KEY) as? Long) ?: 0L
         if (currentTime - lastClickTime > interval) {
-            lastClickTime = currentTime
+            setTag(SINGLE_CLICK_TAG_KEY, currentTime)
             listener(it)
         }
     }
 }
+
+private const val SINGLE_CLICK_TAG_KEY = -10001
