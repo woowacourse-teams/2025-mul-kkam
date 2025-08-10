@@ -34,7 +34,6 @@
         android:paddingVertical="10dp"
         android:paddingStart="14dp"
         android:paddingEnd="42dp"
-        android:singleLine="true"
         android:textAppearance="@style/body3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
