@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadGateErrorCode.SEND_M
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -89,13 +90,14 @@ public class NotificationService {
         try {
             sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
         } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
+            throw new AlarmException(e);
         }
     }
 
-    private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
-                                          List<Device> devicesByMember)
-            throws FirebaseMessagingException {
+    private void sendNotificationByMember(
+            CreateTokenNotificationRequest createTokenNotificationRequest,
+            List<Device> devicesByMember
+    ) throws FirebaseMessagingException {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
