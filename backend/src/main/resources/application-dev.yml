@@ -56,8 +56,22 @@ cloud:
 
 management:
   metrics:
-    export:
-      cloudwatch:
-        namespace: Mulkkam/Dev
-        step: 1m
-        batchSize: 20
+    enable:
+      system.cpu.usage: false
+      process.cpu.usage: false
+      http.server.requests: false
+      tomcat.threads: false
+      executor: false
+
+      jvm.memory.used: true
+      jvm.memory.max: true
+      jvm.gc.pause: true
+      jvm.threads.live: true
+      hikaricp: true
+  cloudwatch:
+    metrics:
+      export:
+        cloudwatch:
+          namespace: Mulkkam/Dev
+          step: 1m
+          batchSize: 20
