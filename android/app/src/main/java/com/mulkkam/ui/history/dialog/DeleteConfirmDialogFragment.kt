@@ -7,7 +7,7 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.setFragmentResult
 import com.mulkkam.databinding.FragmentDeleteConfirmDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class DeleteConfirmDialogFragment :
     BindingDialogFragment<FragmentDeleteConfirmDialogBinding>(

@@ -3,7 +3,7 @@ package com.mulkkam.ui.setting.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mulkkam.databinding.ItemSettingNormalBinding
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NormalViewHolder private constructor(
     binding: ItemSettingNormalBinding,

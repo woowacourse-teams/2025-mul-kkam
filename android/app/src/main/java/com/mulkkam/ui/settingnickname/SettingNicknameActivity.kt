@@ -13,7 +13,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
     private val viewModel: SettingNicknameViewModel by viewModels()

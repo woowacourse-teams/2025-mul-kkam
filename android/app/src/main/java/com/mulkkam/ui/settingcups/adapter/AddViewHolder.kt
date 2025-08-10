@@ -3,7 +3,7 @@ package com.mulkkam.ui.settingcups.adapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mulkkam.databinding.ItemSettingCupsAddBinding
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class AddViewHolder(
     parent: ViewGroup,

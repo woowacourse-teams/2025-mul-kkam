@@ -12,7 +12,7 @@ import com.mulkkam.databinding.ActivityOnboardingBinding
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 import com.mulkkam.ui.onboarding.terms.TermsFragment
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOnboardingBinding::inflate) {
     private val viewModel: OnboardingViewModel by viewModels()

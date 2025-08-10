@@ -20,7 +20,7 @@ import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.extensions.getColoredSpannable
-import com.mulkkam.ui.util.setSingleClickListener
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
 class HomeFragment :
