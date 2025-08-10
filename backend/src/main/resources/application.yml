@@ -10,7 +10,11 @@ spring:
     active: local
 
 management:
+  metrics:
+    enable:
+      all: false
   endpoints:
     web:
       exposure:
-        include: health,metrics
+        include:
+          - health, metrics

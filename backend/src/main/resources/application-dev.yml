@@ -57,12 +57,6 @@ cloud:
 management:
   metrics:
     enable:
-      system.cpu.usage: false
-      process.cpu.usage: false
-      http.server.requests: false
-      tomcat.threads: false
-      executor: false
-
       jvm.memory.used: true
       jvm.memory.max: true
       jvm.gc.pause: true
@@ -71,7 +65,6 @@ management:
   cloudwatch:
     metrics:
       export:
-        cloudwatch:
-          namespace: Mulkkam/Dev
-          step: 1m
-          batchSize: 20
+        enabled: true
+        step: 1m
+        namespace: Mulkkam/Dev
