@@ -72,7 +72,7 @@ public class GlobalExceptionHandler {
         request.setAttribute("errorLoggedByGlobal", true);
 
         String traceId = (String) request.getAttribute("traceId");
-        log.warn("[CLIENT_ERROR] traceId = {}, code={}({})",
+        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
                 traceId,
                 errorCode.name(),
                 errorCode.getStatus()
