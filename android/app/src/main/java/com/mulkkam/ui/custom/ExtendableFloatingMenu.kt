@@ -5,7 +5,7 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.mulkkam.databinding.LayoutExpandableFloatingMenuBinding
-import com.mulkkam.util.extensions.loadUrl
+import com.mulkkam.ui.util.extensions.loadUrl
 
 class ExtendableFloatingMenu
     @JvmOverloads

@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
-import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 
 class BioInfoFragment :
     BindingFragment<FragmentBioInfoBinding>(

@@ -13,7 +13,8 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 
 class NicknameFragment :
     BindingFragment<FragmentNicknameBinding>(
@@ -34,6 +35,7 @@ class NicknameFragment :
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        binding.tvNext.applyImeMargin()
     }
 
     private fun initTextAppearance() {

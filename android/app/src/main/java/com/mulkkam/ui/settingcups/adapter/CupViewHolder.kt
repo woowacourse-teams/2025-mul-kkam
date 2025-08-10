@@ -8,7 +8,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.util.extensions.loadUrl
+import com.mulkkam.ui.util.extensions.loadUrl
 
 class CupViewHolder(
     parent: ViewGroup,
