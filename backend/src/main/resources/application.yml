@@ -14,14 +14,3 @@ management:
     web:
       exposure:
         include: health,metrics
-  metrics:
-    export:
-      cloudwatch:
-        namespace: Mulkkam/Dev
-        step: 1m
-        batchSize: 20
-
-cloud:
-  aws:
-    region:
-      static: ap-northeast-2

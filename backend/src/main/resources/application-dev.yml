@@ -26,6 +26,11 @@ spring:
 logging:
   file:
     name: ${LOG_PATH}
+  level:
+    io.micrometer.registry.cloudwatch2: DEBUG
+    software.amazon.awssdk.request: DEBUG
+    software.amazon.awssdk.services.cloudwatch: DEBUG
+    org.springframework.boot.actuate.metrics: DEBUG
 
 security:
   jwt:
@@ -43,3 +48,16 @@ open-weather:
 app:
   logging:
     mask-auth: false
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+
+management:
+  metrics:
+    export:
+      cloudwatch:
+        namespace: Mulkkam/Dev
+        step: 1m
+        batchSize: 20
