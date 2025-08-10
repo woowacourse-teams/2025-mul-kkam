@@ -46,9 +46,10 @@
     <TextView
         android:id="@+id/tv_complete"
         android:layout_width="0dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="18dp"
+        android:paddingVertical="10dp"
         android:layout_marginBottom="28dp"
         android:background="@drawable/bg_common_rectangle_8dp"
         android:backgroundTint="@color/primary_100"

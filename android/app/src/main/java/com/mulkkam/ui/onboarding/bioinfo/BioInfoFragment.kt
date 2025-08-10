@@ -14,6 +14,7 @@ import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.getAppearanceSpannable
 import com.mulkkam.ui.util.setSingleClickListener
 
@@ -69,7 +70,7 @@ class BioInfoFragment :
 
     private fun initObservers() {
         viewModel.weight.observe(viewLifecycleOwner) { weight ->
-            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight.value)
         }
 
         viewModel.gender.observe(viewLifecycleOwner) { selectedGender ->

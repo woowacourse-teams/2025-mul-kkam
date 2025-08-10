@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender
 
 class BioInfoViewModel : ViewModel() {
@@ -11,8 +12,8 @@ class BioInfoViewModel : ViewModel() {
     val gender: LiveData<Gender>
         get() = _gender
 
-    private val _weight = MutableLiveData<Int>()
-    val weight: MutableLiveData<Int>
+    private val _weight = MutableLiveData<BioWeight>()
+    val weight: MutableLiveData<BioWeight>
         get() = _weight
 
     val canNext =
@@ -26,7 +27,7 @@ class BioInfoViewModel : ViewModel() {
         }
 
     fun updateWeight(value: Int) {
-        _weight.value = value
+        _weight.value = BioWeight(value)
     }
 
     fun updateGender(gender: Gender) {
