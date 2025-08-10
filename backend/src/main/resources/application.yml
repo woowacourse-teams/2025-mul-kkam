@@ -20,3 +20,8 @@ management:
         namespace: Mulkkam/Dev
         step: 1m
         batchSize: 20
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
