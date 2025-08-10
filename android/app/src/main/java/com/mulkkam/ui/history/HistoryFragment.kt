@@ -150,8 +150,6 @@ class HistoryFragment :
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
                 Snackbar.make(binding.root, "기록이 삭제되었습니다.", Snackbar.LENGTH_SHORT).show()
-
-                viewModel.onDeleteSuccessObserved()
             }
         }
     }

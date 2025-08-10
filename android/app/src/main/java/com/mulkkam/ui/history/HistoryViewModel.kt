@@ -9,6 +9,8 @@ import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.IntakeHistory
 import com.mulkkam.domain.IntakeHistorySummaries
 import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -36,8 +38,8 @@ class HistoryViewModel : ViewModel() {
             intakeHistory.date > LocalDate.now()
         }
 
-    private val _deleteSuccess = MutableLiveData<Boolean>()
-    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+    private val _deleteSuccess = MutableSingleLiveData<Boolean>()
+    val deleteSuccess: SingleLiveData<Boolean> get() = _deleteSuccess
 
     init {
         loadIntakeHistories()
@@ -100,7 +102,7 @@ class HistoryViewModel : ViewModel() {
             runCatching {
                 result.getOrError()
                 updateIntakeHistoriesAfterDeletion(history)
-                _deleteSuccess.value = true
+                _deleteSuccess.setValue(true)
             }.onFailure {
                 // TODO : 에러 처리
             }
@@ -124,10 +126,6 @@ class HistoryViewModel : ViewModel() {
                 }
             }
         _weeklyIntakeHistories.value = IntakeHistorySummaries(newWeeklyList)
-    }
-
-    fun onDeleteSuccessObserved() {
-        _deleteSuccess.value = false
     }
 
     companion object {
