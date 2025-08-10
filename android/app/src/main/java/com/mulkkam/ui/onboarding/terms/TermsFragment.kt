@@ -1,9 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
@@ -81,18 +79,7 @@ class TermsFragment :
         }
 
         viewModel.canNext.observe(viewLifecycleOwner) {
-            updateNextButtonEnabled(it)
-        }
-    }
-
-    private fun updateNextButtonEnabled(enabled: Boolean) {
-        binding.tvNext.isEnabled = enabled
-        if (enabled) {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
-        } else {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
+            binding.tvNext.isEnabled = it
         }
     }
 }
