@@ -13,6 +13,7 @@ import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(ActivitySettingCupsBinding::inflate) {
     private val viewModel: SettingCupsViewModel by viewModels()
@@ -69,7 +70,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     }
 
     private fun initClickListener() {
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setSingleClickListener {
             finish()
         }
     }

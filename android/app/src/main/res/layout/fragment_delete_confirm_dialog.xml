@@ -49,7 +49,7 @@
         <TextView
             android:id="@+id/btn_delete_confirm"
             android:layout_width="0dp"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
             android:layout_marginTop="18dp"
             android:layout_marginEnd="6dp"
@@ -57,6 +57,7 @@
             android:background="@drawable/bg_common_rectangle_8dp"
             android:backgroundTint="@color/primary_100"
             android:gravity="center"
+            android:paddingVertical="10dp"
             android:text="@string/history_delete_confirm"
             android:textAppearance="@style/body4"
             android:textColor="@color/white"
@@ -80,6 +81,5 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_delete_confirm"
             app:layout_constraintTop_toTopOf="@id/btn_delete_confirm" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

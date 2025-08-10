@@ -1,4 +1,4 @@
-package com.mulkkam.util.glide
+package com.mulkkam.ui.util.glide
 
 import android.content.Context
 import android.graphics.drawable.PictureDrawable

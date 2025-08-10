@@ -22,7 +22,8 @@ class SplashViewModel : ViewModel() {
                     return@launch
                 }
             }.onFailure {
-                // TODO: 에러 처리
+                _authState.value = AppAuthState.UNAUTHORIZED
+                return@launch
             }
             updateAuthStateWithOnboarding()
         }
@@ -38,7 +39,7 @@ class SplashViewModel : ViewModel() {
                     else -> AppAuthState.UNONBOARDED
                 }
         }.onFailure {
-            // TODO: 에러 처리
+            _authState.value = AppAuthState.UNAUTHORIZED
         }
     }
 }

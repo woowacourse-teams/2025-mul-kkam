@@ -26,3 +26,7 @@ spring:
     console:
       enabled: true
       path: /h2-console
+
+app:
+  logging:
+    mask-auth: true

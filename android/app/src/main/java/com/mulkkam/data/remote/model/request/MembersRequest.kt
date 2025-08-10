@@ -23,7 +23,7 @@ data class MembersRequest(
 fun OnboardingInfo.toData(): MembersRequest =
     MembersRequest(
         memberNickname = nickname ?: "",
-        weight = weight?.toDouble(),
+        weight = weight?.value?.toDouble(),
         gender = gender?.name,
         targetIntakeAmount = targetAmount ?: 1600,
         isMarketingNotificationAgreed = isMarketingNotificationAgreed,

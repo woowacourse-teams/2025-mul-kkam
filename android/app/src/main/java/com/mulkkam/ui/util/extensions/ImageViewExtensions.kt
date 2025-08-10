@@ -1,10 +1,10 @@
-package com.mulkkam.util.extensions
+package com.mulkkam.ui.util.extensions
 
 import android.graphics.drawable.PictureDrawable
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.mulkkam.util.glide.SvgSoftwareLayerSetter
+import com.mulkkam.ui.util.glide.SvgSoftwareLayerSetter
 
 private val svgRegex = Regex("(?i)\\.svg(\\?.*)?$")
 

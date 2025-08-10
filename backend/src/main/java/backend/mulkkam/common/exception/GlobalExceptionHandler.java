@@ -1,5 +1,9 @@
 package backend.mulkkam.common.exception;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_ENUM_VALUE;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_METHOD_ARGUMENT;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
+
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -7,10 +11,6 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_ENUM_VALUE;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_METHOD_ARGUMENT;
-import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
 
 @Slf4j
 @RestControllerAdvice
@@ -21,21 +21,21 @@ public class GlobalExceptionHandler {
             HttpMessageNotReadableException e,
             HttpServletRequest request
     ) {
-        logException(e, request, INVALID_ENUM_VALUE);
+        logCommonException(request, INVALID_ENUM_VALUE);
         return ErrorResponse.from(INVALID_ENUM_VALUE);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ErrorResponse<FailureBody> handleInvalidMethodArgument(MethodArgumentNotValidException e,
                                                                   HttpServletRequest request) {
-        logException(e, request, INVALID_METHOD_ARGUMENT);
+        logCommonException(request, INVALID_METHOD_ARGUMENT);
         return ErrorResponse.from(INVALID_METHOD_ARGUMENT);
     }
 
     @ExceptionHandler(CommonException.class)
     public ErrorResponse<FailureBody> handleCommonException(CommonException e,
                                                             HttpServletRequest request) {
-        logException(e, request, e.getErrorCode());
+        logCommonException(request, e.getErrorCode());
         return ErrorResponse.from(e.getErrorCode());
     }
 
@@ -44,23 +44,38 @@ public class GlobalExceptionHandler {
             Exception e,
             HttpServletRequest request
     ) {
-        logException(e, request, INTER_SERVER_ERROR_CODE);
+        logInternalServerErrorException(e, request);
         return ErrorResponse.from(INTER_SERVER_ERROR_CODE);
     }
 
-    private void logException(
+    private void logInternalServerErrorException(
             Exception e,
+            HttpServletRequest request
+    ) {
+        request.setAttribute("errorLoggedByGlobal", true);
+
+        String traceId = (String) request.getAttribute("traceId");
+        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
+                traceId,
+                INTER_SERVER_ERROR_CODE.name(),
+                INTER_SERVER_ERROR_CODE.getStatus(),
+                e.getClass().getSimpleName(),
+                e.getMessage()
+        );
+        log.debug("StackTrace: ", e);
+    }
+
+    private void logCommonException(
             HttpServletRequest request,
             ErrorCode errorCode
     ) {
-        log.error("[Exception] code={}, status={}, exception={}, message={}, uri={}, method={}",
+        request.setAttribute("errorLoggedByGlobal", true);
+
+        String traceId = (String) request.getAttribute("traceId");
+        log.warn("[CLIENT_ERROR] traceId = {}, code={}({})",
+                traceId,
                 errorCode.name(),
-                errorCode.getStatus(),
-                e.getClass().getSimpleName(),
-                e.getMessage(),
-                request.getRequestURI(),
-                request.getMethod()
+                errorCode.getStatus()
         );
-        log.debug("StackTrace: ", e);
     }
 }

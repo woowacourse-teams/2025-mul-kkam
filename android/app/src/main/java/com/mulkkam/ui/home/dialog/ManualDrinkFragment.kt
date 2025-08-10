@@ -2,14 +2,13 @@ package com.mulkkam.ui.home.dialog
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
-import com.mulkkam.R
 import com.mulkkam.databinding.FragmentManualDrinkBinding
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ManualDrinkFragment :
     BindingBottomSheetDialogFragment<FragmentManualDrinkBinding>(
@@ -30,13 +29,13 @@ class ManualDrinkFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSingleClickListener { dismiss() }
 
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.addWaterIntake(
                     binding.etAmount.text
                         .toString()
-                        .toIntOrNull() ?: return@setOnClickListener,
+                        .toIntOrNull() ?: return@setSingleClickListener,
                 )
             }
         }
@@ -44,7 +43,6 @@ class ManualDrinkFragment :
 
     private fun initObservers() {
         viewModel.drinkSuccess.observe(viewLifecycleOwner) {
-            Toast.makeText(requireContext(), requireContext().getString(R.string.manual_drink_success), Toast.LENGTH_SHORT).show()
             dismiss()
         }
     }

@@ -8,6 +8,7 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
@@ -18,7 +19,8 @@ import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
-import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
 class HomeFragment :
@@ -45,7 +47,7 @@ class HomeFragment :
             }
 
             cups.observe(viewLifecycleOwner) { cups ->
-                updateDrinkMenu(cups)
+                updateDrinkOptions(cups)
             }
 
             characterChat.observe(viewLifecycleOwner) { chat ->
@@ -55,6 +57,10 @@ class HomeFragment :
             alarmCount.observe(viewLifecycleOwner) { alarmCount ->
                 binding.tvAlarmCount.text = alarmCount.toString()
                 binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            }
+
+            drinkSuccess.observe(viewLifecycleOwner) {
+                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
             }
         }
     }
@@ -111,18 +117,19 @@ class HomeFragment :
         binding.tvHomeCharacterChat.text = comment
     }
 
-    private fun updateDrinkMenu(cups: Cups) {
+    private fun updateDrinkOptions(cups: Cups) {
         binding.fabHomeDrink.setMenuItems(
             items =
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(
-                        label = cup.nickname,
+                        buttonLabel = cup.nickname,
                         icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
+                        iconLabel = getString(R.string.expandable_floating_menu_intake_unit, cup.amount),
                         data = cup,
                     )
                 } +
                     ExtendableFloatingMenuItem(
-                        label = getString(R.string.home_drink_manual),
+                        buttonLabel = getString(R.string.home_drink_manual),
                         icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
                         data = null,
                     ),
@@ -168,7 +175,7 @@ class HomeFragment :
         )
 
     private fun initClickListeners() {
-        binding.ivHomeNotification.setOnClickListener {
+        binding.ivHomeNotification.setSingleClickListener {
             val intent = NotificationActivity.newIntent(requireContext())
             startActivity(intent)
         }
