@@ -85,7 +85,6 @@
     <string name="setting_item_night">야간 알림 허용</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
-    <string name="login_kakao_success">카카오 로그인 성공</string>
 
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
