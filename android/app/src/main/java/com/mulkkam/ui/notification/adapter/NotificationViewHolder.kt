@@ -10,6 +10,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ItemHomeNotificationBinding
 import com.mulkkam.domain.model.Notification
 import com.mulkkam.domain.model.NotificationType.SUGGESTION
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.Duration
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -31,7 +32,7 @@ class NotificationViewHolder(
                 }
 
             tvSuggestion.isVisible = notification.type == SUGGESTION
-            tvSuggestion.setOnClickListener {
+            tvSuggestion.setSingleClickListener {
                 handler.onApply(notification.recommendedTargetAmount, ::onCompleteApply)
             }
         }

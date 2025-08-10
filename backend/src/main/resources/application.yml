@@ -13,5 +13,10 @@ management:
   endpoints:
     web:
       exposure:
-        include:
-          - health
+        include: health,metrics
+  metrics:
+    export:
+      cloudwatch:
+        namespace: Mulkkam/Dev
+        step: 1m
+        batchSize: 20

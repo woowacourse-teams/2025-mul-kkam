@@ -10,7 +10,6 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
-import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
 import com.mulkkam.domain.model.MulKkamError
 import com.mulkkam.ui.binding.BindingActivity
@@ -18,6 +17,7 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
@@ -29,7 +29,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun initClickListeners() {
-        binding.clKakaoLogin.setOnClickListener {
+        binding.clKakaoLogin.setSingleClickListener {
             loginWithKakao()
         }
     }
@@ -68,7 +68,6 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
 
     private fun handleKakaoLoginResult(token: OAuthToken?) {
         token?.let {
-            showToast(R.string.login_kakao_success)
             viewModel.loginWithKakao(it.accessToken)
         }
     }

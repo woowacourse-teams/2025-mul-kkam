@@ -1,11 +1,10 @@
 package com.mulkkam.ui.history
 
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.IntakeHistorySummaries
-import com.mulkkam.domain.model.IntakeHistorySummary
 import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.fixture.FULL_INTAKE_HISTORY
+import com.mulkkam.ui.fixture.WEEKLY_EMPTY_INTAKE_HISTORIES
 import com.mulkkam.ui.util.CoroutinesTestExtension
 import com.mulkkam.ui.util.InstantTaskExecutorExtension
 import com.mulkkam.ui.util.getOrAwaitValue
@@ -19,9 +18,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
 
 @ExperimentalCoroutinesApi
 @ExtendWith(CoroutinesTestExtension::class)
@@ -48,19 +45,8 @@ class HistoryViewModelTest {
                 any(),
                 any(),
             )
-        } returns MulKkamResult(data = IntakeHistorySummaries(emptyList()))
-        val monday = LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-        val expected =
-            IntakeHistorySummaries(
-                List(7) {
-                    IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(
-                        date =
-                            monday.plusDays(
-                                it.toLong(),
-                            ),
-                    )
-                },
-            )
+        } returns MulKkamResult(data = WEEKLY_EMPTY_INTAKE_HISTORIES)
+        val expected = WEEKLY_EMPTY_INTAKE_HISTORIES
 
         // when
         historyViewModel.loadIntakeHistories()
@@ -77,7 +63,7 @@ class HistoryViewModelTest {
         val mockedHistory = FULL_INTAKE_HISTORY
 
         // when
-        historyViewModel.updateDailyIntakeHistories(mockedHistory)
+        historyViewModel.updateDailyIntakeHistories(mockedHistory, LocalDate.now())
         val actual = historyViewModel.dailyIntakeHistories.getOrAwaitValue()
 
         // then

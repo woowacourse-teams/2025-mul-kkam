@@ -15,8 +15,9 @@ import com.mulkkam.domain.model.Gender.FEMALE
 import com.mulkkam.domain.model.Gender.MALE
 import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
-import com.mulkkam.util.extensions.isHealthConnectAvailable
-import com.mulkkam.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(
@@ -38,7 +39,7 @@ class SettingBioInfoActivity :
 
     private fun initClickListeners() {
         with(binding) {
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveBioInfo()
             }
 
@@ -58,7 +59,7 @@ class SettingBioInfoActivity :
                 finish()
             }
 
-            llHealthConnect.setOnClickListener {
+            llHealthConnect.setSingleClickListener {
                 if (isHealthConnectAvailable()) {
                     startActivity(healthConnectIntent)
                 } else {
@@ -71,7 +72,7 @@ class SettingBioInfoActivity :
     private fun initObservers() {
         with(viewModel) {
             weight.observe(this@SettingBioInfoActivity) { weight ->
-                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight?.value)
             }
 
             gender.observe(this@SettingBioInfoActivity) { selectedGender ->

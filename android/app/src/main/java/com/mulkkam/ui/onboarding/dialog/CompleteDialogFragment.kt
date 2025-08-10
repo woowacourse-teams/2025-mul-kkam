@@ -12,7 +12,8 @@ import com.mulkkam.databinding.FragmentCompleteDialogBinding
 import com.mulkkam.ui.binding.BindingDialogFragment
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class CompleteDialogFragment :
     BindingDialogFragment<FragmentCompleteDialogBinding>(
@@ -40,7 +41,7 @@ class CompleteDialogFragment :
     }
 
     private fun initClickListener() {
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             val intent =
                 MainActivity.newIntent(requireContext()).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK

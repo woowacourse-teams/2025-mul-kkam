@@ -12,6 +12,8 @@ import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
     private val viewModel: SettingNicknameViewModel by viewModels()
@@ -25,19 +27,20 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        binding.tvSaveNickname.applyImeMargin()
     }
 
     private fun initClickListeners() {
         with(binding) {
-            btnCheckDuplicate.setOnClickListener {
+            btnCheckDuplicate.setSingleClickListener {
                 viewModel.checkNicknameDuplicate(getTrimmedNickname())
             }
 
-            ivBack.setOnClickListener {
+            ivBack.setSingleClickListener {
                 finish()
             }
 
-            tvSaveNickname.setOnClickListener {
+            tvSaveNickname.setSingleClickListener {
                 viewModel.saveNickname(getTrimmedNickname())
             }
         }
