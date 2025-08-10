@@ -1,8 +1,10 @@
 name: backend-cd.yml
 
 on:
-  push:
-    branches: ["develop"]
+  #  push:
+  #    branches: ["develop"]
+  pull_request:
+    types: [ opened, reopened, synchronize, ready_for_review ]
     paths:
       - "backend/**"
 
