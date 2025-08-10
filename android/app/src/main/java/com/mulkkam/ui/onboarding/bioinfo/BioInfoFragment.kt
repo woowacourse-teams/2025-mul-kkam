@@ -68,7 +68,7 @@ class BioInfoFragment :
 
     private fun initObservers() {
         viewModel.weight.observe(viewLifecycleOwner) { weight ->
-            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight.value)
         }
 
         viewModel.gender.observe(viewLifecycleOwner) { selectedGender ->
