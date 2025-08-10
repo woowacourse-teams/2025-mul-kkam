@@ -14,8 +14,8 @@ import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingNicknameViewModel : ViewModel() {
-    private val _currentNickname = MutableLiveData<String?>()
-    val currentNickname: LiveData<String?>
+    private val _currentNickname = MutableLiveData<Nickname?>()
+    val currentNickname: LiveData<Nickname?>
         get() = _currentNickname
 
     private val _nicknameValidationState: MutableLiveData<NicknameValidationState> = MutableLiveData()
@@ -34,7 +34,7 @@ class SettingNicknameViewModel : ViewModel() {
         viewModelScope.launch {
             val result = RepositoryInjection.membersRepository.getMembersNickname()
             runCatching {
-                _currentNickname.value = result.getOrError()
+                _currentNickname.value = Nickname(result.getOrError())
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -51,7 +51,6 @@ class SettingNicknameViewModel : ViewModel() {
         }
     }
 
-    // 서버로부터 닉네임 검증
     fun checkNicknameUsability(nickname: String) {
         viewModelScope.launch {
             val result =
@@ -59,9 +58,13 @@ class SettingNicknameViewModel : ViewModel() {
             runCatching {
                 result.getOrError()
                 _nicknameValidationState.value = NicknameValidationState.VALID
-            }.onFailure {
+            }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID
-                _onNicknameValidationError.setValue(it as NicknameError)
+                if (error !is NicknameError) {
+                    // TODO: 서버 에러일 경우 ? 닉네임 에러가 아닐 경우 ?
+                    return@onFailure
+                }
+                _onNicknameValidationError.setValue(error)
             }
         }
     }

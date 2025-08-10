@@ -29,7 +29,6 @@ class NicknameViewModel : ViewModel() {
         }
     }
 
-    // 서버로부터 닉네임 검증
     fun checkNicknameUsability(nickname: String) {
         viewModelScope.launch {
             val result =
@@ -37,9 +36,13 @@ class NicknameViewModel : ViewModel() {
             runCatching {
                 result.getOrError()
                 _nicknameValidationState.value = NicknameValidationState.VALID
-            }.onFailure {
+            }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID
-                _onNicknameValidationError.setValue(it as NicknameError)
+                if (error !is NicknameError) {
+                    // TODO: 서버 에러일 경우 ? 닉네임 에러가 아닐 경우 ?
+                    return@onFailure
+                }
+                _onNicknameValidationError.setValue(error)
             }
         }
     }

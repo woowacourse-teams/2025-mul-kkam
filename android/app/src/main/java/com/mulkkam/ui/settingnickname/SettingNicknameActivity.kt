@@ -57,7 +57,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun initObservers() {
         viewModel.currentNickname.observe(this) {
-            binding.etInputNickname.setText(it)
+            binding.etInputNickname.setText(it?.name)
         }
 
         viewModel.nicknameValidationState.observe(this) { nicknameValidationState ->
