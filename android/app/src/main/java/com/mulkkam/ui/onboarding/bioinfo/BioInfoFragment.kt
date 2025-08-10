@@ -76,7 +76,7 @@ class BioInfoFragment :
         }
 
         viewModel.canNext.observe(viewLifecycleOwner) { enabled ->
-            updateNextButtonEnabled(enabled)
+            binding.tvNext.isEnabled = enabled
         }
     }
 
@@ -110,14 +110,6 @@ class BioInfoFragment :
                         R.color.gray_200,
                     ),
                 )
-        }
-    }
-
-    private fun updateNextButtonEnabled(enabled: Boolean) {
-        binding.tvNext.isEnabled = enabled
-        if (enabled) {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
         }
     }
 }
