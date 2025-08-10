@@ -25,7 +25,7 @@ spring:
 
 logging:
   file:
-    name: ${LOG_PATH}
+    name: '/home/ubuntu/mulkkam/logs'
 
 security:
   jwt:
@@ -42,4 +42,4 @@ open-weather:
 
 app:
   logging:
-    mask-auth: false
+    mask-auth: true
