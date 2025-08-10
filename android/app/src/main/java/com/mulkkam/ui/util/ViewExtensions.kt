@@ -1,5 +1,6 @@
 package com.mulkkam.ui.util
 
+import android.os.SystemClock
 import android.view.View
 
 fun View.setSingleClickListener(
@@ -8,7 +9,7 @@ fun View.setSingleClickListener(
 ) {
     var lastClickTime = 0L
     setOnClickListener {
-        val currentTime = System.currentTimeMillis()
+        val currentTime = SystemClock.elapsedRealtime()
         if (currentTime - lastClickTime > interval) {
             lastClickTime = currentTime
             listener(it)
