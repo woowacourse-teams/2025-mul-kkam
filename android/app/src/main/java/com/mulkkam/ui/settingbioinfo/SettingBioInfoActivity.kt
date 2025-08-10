@@ -129,12 +129,6 @@ class SettingBioInfoActivity :
 
     private fun updateNextButtonEnabled(enabled: Boolean) {
         binding.tvSave.isEnabled = enabled
-        if (enabled) {
-            binding.tvSave.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(R.color.primary_200),
-                )
-        }
     }
 
     companion object {
