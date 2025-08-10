@@ -14,6 +14,14 @@ sealed class MulKkamError : Throwable() {
         object DuplicateNickname : NicknameError() {
             private fun readResolve(): Any = DuplicateNickname
         }
+
+        object InvalidLength : NicknameError() {
+            private fun readResolve(): Any = InvalidLength
+        }
+
+        object InvalidCharacters : NicknameError() {
+            private fun readResolve(): Any = InvalidCharacters
+        }
     }
 
     // 컵 설정 관련 에러
