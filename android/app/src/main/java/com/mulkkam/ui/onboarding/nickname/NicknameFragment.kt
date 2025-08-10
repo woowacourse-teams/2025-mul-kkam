@@ -72,7 +72,8 @@ class NicknameFragment :
                 return@observe
             }
             updateNicknameValidationUI(isValid)
-            updateNextButtonEnabled(isValid)
+            binding.tvNext.isEnabled = isValid
+            binding.tvCheckDuplicate.isEnabled = false
         }
     }
 
@@ -84,10 +85,7 @@ class NicknameFragment :
                 )
             tvNicknameValidationMessage.text = ""
             tvNext.isEnabled = false
-            tvNext.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(requireContext(), R.color.gray_200),
-                )
+            tvCheckDuplicate.isEnabled = true
         }
     }
 
@@ -108,17 +106,6 @@ class NicknameFragment :
             tvNicknameValidationMessage.text = getString(messageResId)
             tvNicknameValidationMessage.setTextColor(color)
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
-        }
-    }
-
-    private fun updateNextButtonEnabled(enabled: Boolean) {
-        binding.tvNext.isEnabled = enabled
-        if (enabled) {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
-        } else {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
         }
     }
 
