@@ -2,7 +2,7 @@
     <!-- ================== -->
     <!-- 공통 패턴 정의 -->
     <property name="CONSOLE_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
+              value="%magenta([%d{yyyy-MM-dd HH:mm:ss}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
     <!-- 파일: 컬러 없이 분석 친화적 -->
     <property name="FILE_PATTERN"
               value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
