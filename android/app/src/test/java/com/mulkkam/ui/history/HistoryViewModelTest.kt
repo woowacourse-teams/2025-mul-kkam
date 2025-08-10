@@ -160,7 +160,7 @@ class HistoryViewModelTest {
         )
         val actual = historyViewModel.dailyIntakeHistories.getOrAwaitValue().date
 
-        // given
+        // then
         assertThat(actual).isEqualTo(today)
     }
 
