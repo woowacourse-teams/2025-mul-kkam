@@ -39,7 +39,6 @@ public class IntakeHistoryController {
         return ResponseEntity.ok().body(dailyResponses);
     }
 
-
     @PostMapping
     public ResponseEntity<CreateIntakeHistoryResponse> create(
             Member member,
