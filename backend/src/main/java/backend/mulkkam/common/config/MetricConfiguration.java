@@ -12,19 +12,26 @@ public class MetricConfiguration {
         return MeterFilter.denyUnless(id -> {
             String name = id.getName();
 
-            // 1) Heap 사용량(Used/Max) - area=heap만 허용
-            if (name.equals("jvm.memory.used") || name.equals("jvm.memory.max")) {
-                return "heap".equals(id.getTag("area"));
+            // Heap (area=heap만)
+            if (name.equals("jvm.memory.used") && "heap".equals(id.getTag("area"))) {
+                return true;
             }
-            // 2) GC Pause
+            if (name.equals("jvm.memory.max") && "heap".equals(id.getTag("area"))) {
+                return true;
+            }
+
+            // GC Pause / Threads
             if (name.equals("jvm.gc.pause")) {
                 return true;
             }
-            // 3) 스레드 개수
             if (name.equals("jvm.threads.live")) {
                 return true;
             }
 
+            // HikariCP 커넥션 풀 상태
+            if (name.contains("hikaricp")) {
+                return true; // 총계 시계열
+            }
             return false;
         });
     }
