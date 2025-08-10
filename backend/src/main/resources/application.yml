@@ -17,4 +17,5 @@ management:
     web:
       exposure:
         include:
-          - health, metrics
+          - health
+
