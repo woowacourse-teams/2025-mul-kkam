@@ -11,7 +11,12 @@ import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
+import com.mulkkam.domain.model.MulKkamError.NicknameError
 import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.model.NicknameValidationState
+import com.mulkkam.ui.model.NicknameValidationState.INVALID
+import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationState.VALID
 import com.mulkkam.ui.util.extensions.applyImeMargin
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
@@ -32,7 +37,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun initClickListeners() {
         with(binding) {
             btnCheckDuplicate.setOnClickListener {
-                viewModel.checkNicknameDuplicate(getTrimmedNickname())
+                viewModel.checkNicknameUsability(getTrimmedNickname())
             }
 
             ivBack.setOnClickListener {
@@ -55,13 +60,22 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             binding.etInputNickname.setText(it)
         }
 
-        viewModel.isValidNickname.observe(this) { isValid ->
-            if (isValid == null) {
-                clearNicknameValidationUI()
-                return@observe
+        viewModel.nicknameValidationState.observe(this) { nicknameValidationState ->
+            when (nicknameValidationState) {
+                VALID, INVALID -> {
+                    updateNicknameValidationUI(nicknameValidationState)
+                    binding.tvSaveNickname.isEnabled = nicknameValidationState == VALID
+                    binding.btnCheckDuplicate.isEnabled = false
+                }
+
+                PENDING_SERVER_VALIDATION -> {
+                    clearNicknameValidationUI()
+                }
             }
-            updateNicknameValidationUI(isValid)
-            updateSaveButtonEnabled(isValid)
+        }
+
+        viewModel.onNicknameValidationError.observe(this) {
+            binding.tvNicknameValidationMessage.text = getString(it.toMessageRes())
         }
 
         viewModel.onNicknameChanged.observe(this) {
@@ -69,6 +83,18 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                 .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
                 .show()
             finish()
+        }
+    }
+
+    private fun updateNicknameValidationUI(nicknameValidationState: NicknameValidationState) {
+        val color =
+            getColor(
+                if (nicknameValidationState == VALID) R.color.primary_200 else R.color.secondary_200,
+            )
+
+        with(binding) {
+            tvNicknameValidationMessage.setTextColor(color)
+            etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
         }
     }
 
@@ -80,40 +106,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                 )
             tvNicknameValidationMessage.text = ""
             tvSaveNickname.isEnabled = false
-            tvSaveNickname.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(R.color.gray_200),
-                )
-        }
-    }
-
-    private fun updateNicknameValidationUI(isValid: Boolean) {
-        val color =
-            getColor(
-                if (isValid) R.color.primary_200 else R.color.secondary_200,
-            )
-        val messageResId =
-            if (isValid) {
-                R.string.setting_nickname_valid
-            } else {
-                R.string.setting_nickname_warning_duplicated_nickname
-            }
-
-        with(binding) {
-            tvNicknameValidationMessage.text = getString(messageResId)
-            tvNicknameValidationMessage.setTextColor(color)
-            etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
-        }
-    }
-
-    private fun updateSaveButtonEnabled(enabled: Boolean) {
-        binding.tvSaveNickname.isEnabled = enabled
-        if (enabled) {
-            binding.tvSaveNickname.backgroundTintList =
-                ColorStateList.valueOf(getColor(R.color.primary_200))
-        } else {
-            binding.tvSaveNickname.backgroundTintList =
-                ColorStateList.valueOf(getColor(R.color.gray_200))
+            btnCheckDuplicate.isEnabled = true
         }
     }
 
@@ -123,18 +116,24 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
             debounceRunnable =
                 Runnable {
-                    val isValid = getTrimmedNickname().isNotEmpty()
-                    val colorResId = if (isValid) R.color.primary_200 else R.color.gray_200
-                    val color = getColor(colorResId)
+                    val nickname =
+                        binding.etInputNickname.text
+                            .toString()
+                            .trim()
 
-                    with(binding.btnCheckDuplicate) {
-                        isEnabled = isValid
-                        backgroundTintList = ColorStateList.valueOf(color)
-                    }
-                    viewModel.clearNicknameValidationState()
+                    viewModel.validateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
+
+    fun NicknameError.toMessageRes(): Int =
+        when (this) {
+            NicknameError.InvalidLength -> R.string.nickname_invalid_length
+            NicknameError.InvalidCharacters -> R.string.nickname_invalid_characters
+            NicknameError.DuplicateNickname -> R.string.nickname_duplicated
+            NicknameError.InvalidNickname -> R.string.nickname_invalid
+            NicknameError.SameAsBefore -> R.string.nickname_same_as_before
+        }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingNicknameActivity::class.java)
