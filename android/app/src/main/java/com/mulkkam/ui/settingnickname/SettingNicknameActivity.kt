@@ -18,6 +18,7 @@ import com.mulkkam.ui.model.NicknameValidationState.INVALID
 import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION
 import com.mulkkam.ui.model.NicknameValidationState.VALID
 import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
     private val viewModel: SettingNicknameViewModel by viewModels()
@@ -36,15 +37,15 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun initClickListeners() {
         with(binding) {
-            btnCheckDuplicate.setOnClickListener {
+            btnCheckDuplicate.setSingleClickListener {
                 viewModel.checkNicknameUsability(getTrimmedNickname())
             }
 
-            ivBack.setOnClickListener {
+            ivBack.setSingleClickListener {
                 finish()
             }
 
-            tvSaveNickname.setOnClickListener {
+            tvSaveNickname.setSingleClickListener {
                 viewModel.saveNickname(getTrimmedNickname())
             }
         }

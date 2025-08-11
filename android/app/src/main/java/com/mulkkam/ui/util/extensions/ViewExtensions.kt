@@ -1,5 +1,6 @@
 package com.mulkkam.ui.util.extensions
 
+import android.os.SystemClock
 import android.view.View
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
@@ -31,7 +32,9 @@ fun View.applyImeMargin(extraBottomSpace: Int = 0) {
                 insets: WindowInsetsCompat,
                 running: MutableList<WindowInsetsAnimationCompat>,
             ): WindowInsetsCompat {
-                val imeAnim = running.firstOrNull { it.typeMask and WindowInsetsCompat.Type.ime() != 0 } ?: return insets
+                val imeAnim =
+                    running.firstOrNull { it.typeMask and WindowInsetsCompat.Type.ime() != 0 }
+                        ?: return insets
                 val fraction = imeAnim.interpolatedFraction.coerceIn(0f, 1f)
                 translationY = startTranslationY + (endTranslationY - startTranslationY) * fraction
                 return insets
@@ -44,3 +47,19 @@ private fun isImeAnimating(insets: WindowInsetsCompat): Boolean {
     val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
     return ime != Insets.NONE
 }
+
+fun View.setSingleClickListener(
+    interval: Long = 1000L,
+    listener: (View) -> Unit,
+) {
+    setOnClickListener {
+        val currentTime = SystemClock.elapsedRealtime()
+        val lastClickTime = (getTag(SINGLE_CLICK_TAG_KEY) as? Long) ?: 0L
+        if (currentTime - lastClickTime > interval) {
+            setTag(SINGLE_CLICK_TAG_KEY, currentTime)
+            listener(it)
+        }
+    }
+}
+
+private const val SINGLE_CLICK_TAG_KEY = -10001

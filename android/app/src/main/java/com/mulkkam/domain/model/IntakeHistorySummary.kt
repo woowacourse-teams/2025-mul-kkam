@@ -1,5 +1,6 @@
 package com.mulkkam.domain.model
 
+import com.mulkkam.domain.model.WaterIntakeState
 import java.time.LocalDate
 
 data class IntakeHistorySummary(
@@ -11,7 +12,24 @@ data class IntakeHistorySummary(
 ) {
     fun dayOfWeekIndex(): Int = date.dayOfWeek.value + DAY_OF_WEEK_OFFSET
 
+    fun determineWaterIntakeState(today: LocalDate): WaterIntakeState {
+        val isToday = date == today
+        val isPast = date < today
+        val isFull = totalIntakeAmount == targetAmount && totalIntakeAmount != INTAKE_AMOUNT_EMPTY
+        val isEmpty = totalIntakeAmount == INTAKE_AMOUNT_EMPTY
+
+        return when {
+            isToday && isFull -> WaterIntakeState.Present.Full
+            isToday -> WaterIntakeState.Present.NotFull
+            isPast && isFull -> WaterIntakeState.Past.Full
+            isPast && isEmpty -> WaterIntakeState.Past.NoRecord
+            isPast -> WaterIntakeState.Past.Partial
+            else -> WaterIntakeState.Future
+        }
+    }
+
     companion object {
+        private const val INTAKE_AMOUNT_EMPTY: Int = 0
         private const val DAY_OF_WEEK_OFFSET: Int = -1
 
         val EMPTY_DAILY_WATER_INTAKE: IntakeHistorySummary =

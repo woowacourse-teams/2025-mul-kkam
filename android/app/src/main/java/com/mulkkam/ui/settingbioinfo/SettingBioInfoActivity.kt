@@ -17,6 +17,7 @@ import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(
@@ -38,7 +39,7 @@ class SettingBioInfoActivity :
 
     private fun initClickListeners() {
         with(binding) {
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveBioInfo()
             }
 
@@ -58,7 +59,7 @@ class SettingBioInfoActivity :
                 finish()
             }
 
-            llHealthConnect.setOnClickListener {
+            llHealthConnect.setSingleClickListener {
                 if (isHealthConnectAvailable()) {
                     startActivity(healthConnectIntent)
                 } else {
