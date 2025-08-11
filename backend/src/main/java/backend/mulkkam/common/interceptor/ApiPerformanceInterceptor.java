@@ -21,7 +21,6 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
     private static final int RESPONSE_TIME_THRESHOLD = 3_000;
     private static final Logger API_PERF = LoggerFactory.getLogger("API_PERF");
 
-
     @Override
     public boolean preHandle(
             HttpServletRequest request,
@@ -59,8 +58,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
                     kv("method_type", request.getMethod()),
                     kv("uri", uri),
                     kv("response_time", responseTime),
-                    kv("status", response.getStatus()),
-                    kv("threshold_ms", RESPONSE_TIME_THRESHOLD)
+                    kv("status", response.getStatus())
             );
             log.warn("[API Performance]: traceId = {}, {} {} - {}ms [Status: {}]",
                     traceId,

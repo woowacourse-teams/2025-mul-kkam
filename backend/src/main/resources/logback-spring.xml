@@ -68,7 +68,8 @@
         </appender>
 
         <!-- API 성능 전용: JSON으로 콘솔 출력 -->
-        <appender name="API_PERF_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <appender name="API_PERF_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/api-perf/api-perf.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>7</maxHistory>
