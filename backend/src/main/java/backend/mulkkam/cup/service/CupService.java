@@ -159,7 +159,7 @@ public class CupService {
     }
 
     private void validateCupOwnership(Member member, Cup cup) {
-        if (!member.getId().equals(cup.getMember().getId())) {
+        if (!cup.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
     }
