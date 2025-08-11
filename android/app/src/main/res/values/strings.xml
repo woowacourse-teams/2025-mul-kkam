@@ -85,7 +85,6 @@
     <string name="setting_item_night">야간 알림 허용</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
-    <string name="login_kakao_success">카카오 로그인 성공</string>
 
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
@@ -124,11 +123,13 @@
     <string name="target_amount_recommended_description">입력해 주신 성별, 몸무게 정보를 바탕으로 계산했어요.</string>
 
     <string name="history_delete_dialog_label">해당 기록을 삭제하시겠어요?</string>
-    <string name="history_delete_dialog_sub_label">삭제된 기록은 복구가 불가능합니다.</string>
+    <string name="history_delete_dialog_sub_label">삭제된 기록은 복구되지 않습니다.</string>
     <string name="history_delete_confirm">확인</string>
     <string name="history_delete_cancel">취소</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
     <string name="manual_drink_label">직접 입력</string>
     <string name="manual_drink_perform">마시기</string>
+
+    <string name="expandable_floating_menu_intake_unit">%,dml</string>
 </resources>

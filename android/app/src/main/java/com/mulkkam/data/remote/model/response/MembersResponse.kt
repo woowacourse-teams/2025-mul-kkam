@@ -1,5 +1,6 @@
 package com.mulkkam.data.remote.model.response
 
+import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.MemberInfo
 import kotlinx.serialization.SerialName
@@ -22,7 +23,7 @@ data class MembersResponse(
 fun MembersResponse.toDomain(): MemberInfo =
     MemberInfo(
         nickname = nickname,
-        weight = weight?.toInt(),
+        weight = weight?.toInt()?.let { BioWeight(it) },
         gender = gender?.let { Gender.from(it) },
         targetAmount = targetAmount,
     )

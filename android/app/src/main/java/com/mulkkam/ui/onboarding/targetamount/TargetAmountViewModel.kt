@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.TargetAmount
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class TargetAmountViewModel : ViewModel() {
 
     fun getRecommendedTargetAmount(
         gender: Gender?,
-        weight: Int?,
+        weight: BioWeight?,
     ) {
         viewModelScope.launch {
             val result = RepositoryInjection.intakeRepository.getIntakeAmountTargetRecommended(gender, weight)

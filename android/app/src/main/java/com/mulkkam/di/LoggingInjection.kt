@@ -13,7 +13,7 @@ object LoggingInjection {
         SensitiveInfoSanitizerImpl()
     }
 
-    val logger: Logger by lazy {
+    val mulKkamLogger: Logger by lazy {
         LoggerImpl(sanitizer)
     }
 

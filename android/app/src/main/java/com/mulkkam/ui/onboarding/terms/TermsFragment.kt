@@ -11,7 +11,9 @@ import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
-import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import kotlin.collections.find
 
 class TermsFragment :
@@ -37,6 +39,7 @@ class TermsFragment :
         initTermsAdapter()
         initClickListeners()
         initObservers()
+        binding.tvNext.applyImeMargin()
     }
 
     private fun initTextAppearance() {
@@ -54,7 +57,7 @@ class TermsFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            tvNext.setOnClickListener {
+            tvNext.setSingleClickListener {
                 parentViewModel.moveToNextStep()
             }
 

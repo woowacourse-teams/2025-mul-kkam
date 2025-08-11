@@ -1,4 +1,4 @@
-package com.mulkkam.ui.util
+package com.mulkkam.ui.util.extensions
 
 import android.content.Context
 import android.text.SpannableString
