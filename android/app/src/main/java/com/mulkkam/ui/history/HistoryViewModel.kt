@@ -3,7 +3,6 @@ package com.mulkkam.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.intake.IntakeHistory
@@ -16,16 +15,14 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
 class HistoryViewModel : ViewModel() {
-    private val _weeklyIntakeHistories = MutableLiveData<IntakeHistorySummaries>()
+    private val _weeklyIntakeHistories: MutableLiveData<IntakeHistorySummaries> = MutableLiveData()
     val weeklyIntakeHistories: LiveData<IntakeHistorySummaries> get() = _weeklyIntakeHistories
 
-    private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
+    private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData()
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
-    val isNotCurrentWeek: LiveData<Boolean> =
-        weeklyIntakeHistories.map { intakeHistories ->
-            intakeHistories.lastDay < LocalDate.now()
-        }
+    private val _isNotCurrentWeek: MutableLiveData<Boolean> = MutableLiveData()
+    val isNotCurrentWeek: LiveData<Boolean> get() = _isNotCurrentWeek
 
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
@@ -52,6 +49,7 @@ class HistoryViewModel : ViewModel() {
                 result.getOrError()
             }.onSuccess { summaries ->
                 _weeklyIntakeHistories.value = summaries
+                _isNotCurrentWeek.value = summaries.lastDay < currentDate
                 selectDailySummary(weekDates, summaries, currentDate)
             }.onFailure {
                 // TODO: 에러 처리
@@ -87,9 +85,9 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun moveWeek(offset: Long) {
-        val newBaseDate =
+        val newReferenceDate =
             weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
-        loadIntakeHistories(newBaseDate)
+        loadIntakeHistories(newReferenceDate)
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
