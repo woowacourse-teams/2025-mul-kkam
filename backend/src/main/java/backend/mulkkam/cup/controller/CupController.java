@@ -28,7 +28,7 @@ public class CupController {
 
     @GetMapping
     public ResponseEntity<CupsResponse> read(Member member) {
-        return ResponseEntity.ok().body(cupService.readCupsByMemberId(member));
+        return ResponseEntity.ok(cupService.readCupsByMemberId(member));
     }
 
     @PostMapping
