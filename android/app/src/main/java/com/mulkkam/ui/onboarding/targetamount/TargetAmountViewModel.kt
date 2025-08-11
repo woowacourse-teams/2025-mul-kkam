@@ -5,9 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.BioWeight
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.TargetAmount
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.intake.TargetAmount
 import kotlinx.coroutines.launch
 
 class TargetAmountViewModel : ViewModel() {

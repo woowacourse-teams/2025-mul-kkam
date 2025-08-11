@@ -2,15 +2,15 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
-import com.mulkkam.data.remote.model.request.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
-import com.mulkkam.data.remote.model.response.toDomain
+import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryRequest
+import com.mulkkam.data.remote.model.response.intake.toDomain
 import com.mulkkam.data.remote.service.IntakeService
-import com.mulkkam.domain.model.BioWeight
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.IntakeHistoryResult
-import com.mulkkam.domain.model.IntakeHistorySummaries
-import com.mulkkam.domain.model.MulKkamResult
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -25,8 +25,8 @@ class IntakeRepositoryImpl(
     ): MulKkamResult<IntakeHistorySummaries> {
         val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
         return result.fold(
-            onSuccess = {
-                MulKkamResult(data = IntakeHistorySummaries(it.map { it.toDomain() }))
+            onSuccess = { intakeHistorySummary ->
+                MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
             },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )

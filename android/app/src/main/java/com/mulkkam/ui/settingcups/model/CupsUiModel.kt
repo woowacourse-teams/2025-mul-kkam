@@ -1,6 +1,6 @@
 package com.mulkkam.ui.settingcups.model
 
-import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.cups.Cups
 
 data class CupsUiModel(
     val cups: List<CupUiModel>,
