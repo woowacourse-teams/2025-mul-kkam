@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.floatingactionbutton
 
 data class ExtendableFloatingMenuItem<T>(
     val buttonLabel: String,

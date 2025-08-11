@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.progress
 
 import android.content.Context
 import android.graphics.Canvas

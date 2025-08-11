@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.floatingactionbutton
 
 import androidx.annotation.DrawableRes
 

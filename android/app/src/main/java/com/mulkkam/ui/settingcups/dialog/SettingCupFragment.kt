@@ -8,7 +8,7 @@ import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.intake.IntakeType
-import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
+import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.progress
 
 import android.animation.ValueAnimator
 import android.content.Context

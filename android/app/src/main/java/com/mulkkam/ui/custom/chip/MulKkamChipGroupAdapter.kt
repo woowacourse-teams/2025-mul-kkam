@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.chip
 
 import android.content.Context
 import androidx.core.graphics.toColorInt
