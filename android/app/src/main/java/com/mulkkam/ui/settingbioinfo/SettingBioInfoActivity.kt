@@ -10,11 +10,11 @@ import androidx.activity.viewModels
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.Gender.FEMALE
-import com.mulkkam.domain.model.Gender.MALE
-import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.bio.Gender.FEMALE
+import com.mulkkam.domain.model.bio.Gender.MALE
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
+import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.setSingleClickListener

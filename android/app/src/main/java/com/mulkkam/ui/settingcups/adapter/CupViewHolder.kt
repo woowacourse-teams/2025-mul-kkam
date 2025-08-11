@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
-import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.util.extensions.loadUrl
 import com.mulkkam.ui.util.extensions.setSingleClickListener

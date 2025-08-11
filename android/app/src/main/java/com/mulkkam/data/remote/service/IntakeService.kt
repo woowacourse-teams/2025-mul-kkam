@@ -1,10 +1,10 @@
 package com.mulkkam.data.remote.service
 
-import com.mulkkam.data.remote.model.request.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.IntakeHistoryRequest
-import com.mulkkam.data.remote.model.response.IntakeHistoryResultResponse
-import com.mulkkam.data.remote.model.response.IntakeHistorySummaryResponse
-import com.mulkkam.data.remote.model.response.IntakeTargetAmountResponse
+import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryRequest
+import com.mulkkam.data.remote.model.response.intake.IntakeHistoryResultResponse
+import com.mulkkam.data.remote.model.response.intake.IntakeHistorySummaryResponse
+import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
