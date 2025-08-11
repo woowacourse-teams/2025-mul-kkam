@@ -7,6 +7,7 @@ import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.member.domain.Member;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -46,7 +47,7 @@ public class CupController {
     @PutMapping("/ranks")
     public ResponseEntity<CupsRanksResponse> updateRanks(
             Member member,
-            @RequestBody UpdateCupRanksRequest request
+            @Valid @RequestBody UpdateCupRanksRequest request
     ) {
         CupsRanksResponse response = cupService.updateRanks(request, member);
         return ResponseEntity.ok(response);

@@ -1,10 +1,11 @@
 package backend.mulkkam.cup.dto;
 
 import backend.mulkkam.cup.domain.Cup;
+import jakarta.validation.constraints.NotNull;
 
 public record CupRankDto(
         Long id,
-        Integer rank
+        @NotNull Integer rank
 ) {
 
     public CupRankDto(Cup cup) {
