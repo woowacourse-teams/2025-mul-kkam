@@ -118,7 +118,10 @@ public class CupService {
         validateAllCupsByMember(cups, allByMember);
     }
 
-    private void validateAllCupsByMember(List<Cup> cups, List<Cup> allByMember) {
+    private void validateAllCupsByMember(
+            List<Cup> cups,
+            List<Cup> allByMember
+    ) {
         Set<Long> memberCupIds = allByMember.stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
