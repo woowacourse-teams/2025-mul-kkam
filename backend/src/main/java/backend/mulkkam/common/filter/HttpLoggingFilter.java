@@ -1,5 +1,6 @@
 package backend.mulkkam.common.filter;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -126,26 +127,42 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         Map<String, Object> logMap = new LinkedHashMap<>();
         logMap.put("type", "RESPONSE");
         logMap.put("trace_id", traceId);
-        logMap.put("status", status);
+        logMap.put("status", status.value());
         logMap.put("auth", auth);
 
-        log.info("{}", logMap);
+        try {
+            log.info("{}", objectMapper.writeValueAsString(logMap));
+        } catch (Exception e) {
+            log.warn("Failed to serialize logMap to JSON", e);
+            log.info("{}", logMap);
+        }
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
-        try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
-            if (body.isEmpty()) {
-                body = "NONE";
-            }
+        byte[] bytes = responseWrapper.getContentAsByteArray();
 
-            Map<String, Object> logMap = new LinkedHashMap<>();
-            logMap.put("response_body", body);
-            log.info("↓\n {}", logMap);
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("type", "RESPONSE_BODY");
+
+        try {
+            if (bytes.length == 0) {
+                logMap.put("response_body", "NONE");
+            } else {
+                JsonNode node = objectMapper.readTree(bytes);
+                logMap.put("response_body", node);
+            }
         } catch (IOException e) {
-            Map<String, Object> logMap = new LinkedHashMap<>();
-            logMap.put("response_body", responseWrapper.getContentType() + "NOT JSON");
-            log.info("↓\n {}", logMap);
+            String contentType = responseWrapper.getContentType();
+            logMap.put("non_json", true);
+            logMap.put("content_type", contentType == null ? "unknown" : contentType);
+            logMap.put("body_text", new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
+        }
+
+        try {
+            log.info("{}", objectMapper.writeValueAsString(logMap));
+        } catch (Exception ex) {
+            log.warn("Failed to serialize logMap to JSON", ex);
+            log.info("{}", logMap);
         }
     }
 }

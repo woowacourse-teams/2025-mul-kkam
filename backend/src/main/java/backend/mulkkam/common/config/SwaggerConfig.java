@@ -2,6 +2,8 @@ package backend.mulkkam.common.config;
 
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -14,6 +16,19 @@ public class SwaggerConfig {
 
         Info info = new Info().title(title).description(description).version("1.0.0");
 
-        return new OpenAPI().info(info);
+        String schemeName = "Authorization";
+        SecurityScheme securityScheme = new SecurityScheme()
+                .name(schemeName)
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .in(SecurityScheme.In.HEADER);
+
+        SecurityRequirement securityRequirement = new SecurityRequirement().addList(schemeName);
+
+        return new OpenAPI()
+                .info(info)
+                .addSecurityItem(securityRequirement)
+                .schemaRequirement(schemeName, securityScheme);
     }
 }

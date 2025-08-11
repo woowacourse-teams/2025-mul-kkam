@@ -5,9 +5,11 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
 
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -15,8 +17,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private ObjectMapper objectMapper;
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse<FailureBody> handleInvalidEnum(
@@ -66,7 +71,12 @@ public class GlobalExceptionHandler {
         logMap.put("error_class", e.getClass().getSimpleName());
         logMap.put("error_message", e.getMessage());
 
-        log.error("{}", logMap);
+        try {
+            log.error("{}", objectMapper.writeValueAsString(logMap));
+        } catch (Exception ex) {
+            log.warn("Failed to serialize logMap to JSON", ex);
+            log.error("{}", logMap);
+        }
         log.debug("StackTrace: ", e);
     }
 
@@ -84,6 +94,11 @@ public class GlobalExceptionHandler {
         logMap.put("error_code", errorCode.name());
         logMap.put("status", errorCode.getStatus());
 
-        log.info("{}", logMap);
+        try {
+            log.info("{}", objectMapper.writeValueAsString(logMap));
+        } catch (Exception e) {
+            log.warn("Failed to serialize logMap to JSON", e);
+            log.info("{}", logMap);
+        }
     }
 }
