@@ -14,50 +14,52 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const androidTeam = ['junseo511', 'devfeijoa', 'hwannow']
-            const backendTeam = ['CheChe903', 'Jin409', '2Jin1031', 'minSsan']
-      
-            const pr = context.payload.pull_request
-            const author = pr.user.login
-            const labels = pr.labels.map(l => l.name)
-      
-            const pick = new Set()
-            if (labels.includes('AN')) androidTeam.forEach(u => { if (u !== author) pick.add(u) })
-            if (labels.includes('BE')) backendTeam.forEach(u => { if (u !== author) pick.add(u) })
-      
-            const alreadyRequested = pr.requested_reviewers.map(r => r.login)
-            const alreadyAssigned = (pr.requested_reviewers || []).map(r => r.login)
-            const current = new Set([...alreadyRequested, ...alreadyAssigned])
-      
-            const eligible = []
-            for (const u of pick) {
-              if (current.has(u)) continue
-              try {
-                await github.rest.repos.checkCollaborator({
-                  owner: context.repo.owner,
-                  repo: context.repo.repo,
-                  username: u
-                })
-                eligible.push(u)
-              } catch {}
+            const androidTeam = ['junseo511', 'devfeijoa', 'hwannow'];
+            const backendTeam = ['CheChe903', 'Jin409', '2Jin1031', 'minSsan'];
+
+            const author = context.payload.pull_request.user.login;
+            const labels = context.payload.pull_request.labels.map(label => label.name);
+
+            const reviewersSet = new Set();
+
+            if (labels.includes('AN')) {
+              androidTeam.forEach(user => {
+                if (user !== author) reviewersSet.add(user);
+              });
             }
-      
-            if (eligible.length) {
+
+            if (labels.includes('BE')) {
+              backendTeam.forEach(user => {
+                if (user !== author) reviewersSet.add(user);
+              });
+
+
+
+
+
+
+
+
+            }
+
+            const reviewers = Array.from(reviewersSet);
+
+            if (reviewers.length > 0) {
               await github.rest.pulls.requestReviewers({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                pull_number: pr.number,
-                reviewers: eligible
-              })
-              core.info(`Requested reviewers: ${eligible.join(', ')}`)
-            } else {
-              core.info('No eligible reviewers to request.')
+                pull_number: context.payload.pull_request.number,
+                reviewers
+              });
+
+
+
             }
-      
+
             await github.rest.issues.addAssignees({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: pr.number,
+              issue_number: context.payload.pull_request.number,
               assignees: [author]
-            })
+            });
             
