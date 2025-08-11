@@ -51,7 +51,7 @@ class SettingNicknameViewModel : ViewModel() {
         }
     }
 
-    fun checkNicknameUsability(nickname: String) {
+    fun checkNicknameAvailability(nickname: String) {
         viewModelScope.launch {
             val result =
                 nicknameRepository.getNicknameValidation(nickname)

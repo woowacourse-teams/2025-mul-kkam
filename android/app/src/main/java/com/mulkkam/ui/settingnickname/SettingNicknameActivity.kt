@@ -11,12 +11,12 @@ import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
-import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.model.NicknameValidationState.INVALID
 import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION
 import com.mulkkam.ui.model.NicknameValidationState.VALID
+import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
@@ -38,7 +38,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun initClickListeners() {
         with(binding) {
             btnCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameUsability(getTrimmedNickname())
+                viewModel.checkNicknameAvailability(getTrimmedNickname())
             }
 
             ivBack.setSingleClickListener {

@@ -61,7 +61,7 @@ class NicknameFragment :
             }
 
             tvCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameUsability(getTrimmedNickname())
+                viewModel.checkNicknameAvailability(getTrimmedNickname())
             }
         }
     }
