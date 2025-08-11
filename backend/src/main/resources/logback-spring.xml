@@ -1,11 +1,14 @@
 <configuration>
     <!-- ================== -->
     <!-- 공통 패턴 정의 -->
+    <!-- 콘솔: Asia/Seoul -->
     <property name="CONSOLE_PATTERN"
-              value="%magenta([%d{yyyy-MM-dd HH:mm:ss}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
-    <!-- 파일: 컬러 없이 분석 친화적 -->
+              value="%magenta([%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
+
+    <!-- 파일: 컬러 없음, Asia/Seoul -->
     <property name="FILE_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
+              value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
+
 
     <!-- ================== -->
     <!-- DEV 환경 -->

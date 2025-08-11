@@ -1,5 +1,7 @@
 package com.mulkkam.domain.model
 
+import com.mulkkam.domain.model.result.MulKkamError
+
 @JvmInline
 value class Nickname(
     val name: String,

@@ -6,13 +6,13 @@ import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import com.mulkkam.databinding.ActivitySplashBinding
-import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.AppAuthState.UNAUTHORIZED
 import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.util.binding.BindingActivity
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBinding::inflate) {

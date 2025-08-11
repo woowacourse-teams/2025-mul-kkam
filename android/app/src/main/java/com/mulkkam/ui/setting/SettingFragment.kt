@@ -7,7 +7,6 @@ import android.view.View
 import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingBinding
-import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.adapter.SettingItem
@@ -16,6 +15,7 @@ import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
+import com.mulkkam.ui.util.binding.BindingFragment
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),

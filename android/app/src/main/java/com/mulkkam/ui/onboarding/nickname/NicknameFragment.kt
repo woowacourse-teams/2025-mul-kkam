@@ -11,13 +11,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
-import com.mulkkam.domain.model.MulKkamError.NicknameError
-import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.model.NicknameValidationState.INVALID
 import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION
 import com.mulkkam.ui.model.NicknameValidationState.VALID
 import com.mulkkam.ui.onboarding.OnboardingViewModel
+import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener

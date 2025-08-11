@@ -5,9 +5,15 @@ import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.NotificationType;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDateTime;
 
-public record CreateActivityNotification(double burnCalorie) {
+@Schema(description = "활동 기반 알림 생성 요청")
+public record CreateActivityNotification(
+        @Schema(description = "칼로리 소모량 (kcal)", example = "250.5", minimum = "0")
+        double burnCalorie
+) {
 
     public CreateTokenNotificationRequest toFcmToken(Member member) {
         return new CreateTokenNotificationRequest(

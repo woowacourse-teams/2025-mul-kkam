@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
-import com.mulkkam.domain.model.MulKkamError.NicknameError
 import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch

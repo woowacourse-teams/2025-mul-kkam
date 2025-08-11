@@ -55,7 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/iv_close" />
 
-    <com.mulkkam.ui.custom.MulKkamChipGroup
+    <com.mulkkam.ui.custom.chip.MulKkamChipGroup
         android:id="@+id/mcg_intake_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

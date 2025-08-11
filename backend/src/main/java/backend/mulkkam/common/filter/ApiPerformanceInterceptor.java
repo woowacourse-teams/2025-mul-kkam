@@ -1,20 +1,25 @@
 package backend.mulkkam.common.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class ApiPerformanceInterceptor implements HandlerInterceptor {
 
     private static final String START_TIME_ATTRIBUTE = "startTime";
     private static final String REQUEST_URI_ATTRIBUTE = "requestUri";
     private static final int RESPONSE_TIME_THRESHOLD = 3_000;
+
+    private final ObjectMapper objectMapper;
 
     @Override
     public boolean preHandle(
@@ -43,17 +48,28 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         if (startTime != null) {
             long responseTime = System.currentTimeMillis() - startTime;
 
-            Map<String, Object> logMap = new HashMap<>();
-            logMap.put("methodType", request.getMethod());
-            logMap.put("URI", requestUri);
-            logMap.put("responseTime", responseTime + "ms");
+            Map<String, Object> logMap = new LinkedHashMap<>();
+            logMap.put("type", "API_Performance");
+            logMap.put("method_type", request.getMethod());
+            logMap.put("uri", requestUri);
+            logMap.put("response_time", responseTime);
             logMap.put("status", response.getStatus());
 
-            if (responseTime > RESPONSE_TIME_THRESHOLD) {
-                log.warn("\n[API Performance]: {}", logMap);
-                return;
+            try {
+                String jsonLog = objectMapper.writeValueAsString(logMap);
+                if (responseTime > RESPONSE_TIME_THRESHOLD) {
+                    log.warn("{}", jsonLog);
+                } else {
+                    log.info("{}", jsonLog);
+                }
+            } catch (Exception e) {
+                log.warn("Failed to serialize logMap to JSON", e);
+                if (responseTime > RESPONSE_TIME_THRESHOLD) {
+                    log.warn("{}", logMap);
+                } else {
+                    log.info("{}", logMap);
+                }
             }
-            log.info("\n[API Performance]: {}", logMap);
         }
     }
 }

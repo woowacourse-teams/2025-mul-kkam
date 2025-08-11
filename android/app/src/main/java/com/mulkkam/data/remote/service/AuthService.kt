@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.service
 
-import com.mulkkam.data.remote.model.request.AuthRequest
-import com.mulkkam.data.remote.model.response.AuthResponse
+import com.mulkkam.data.remote.model.request.auth.AuthRequest
+import com.mulkkam.data.remote.model.response.auth.AuthResponse
 import retrofit2.http.Body
 import retrofit2.http.POST
 

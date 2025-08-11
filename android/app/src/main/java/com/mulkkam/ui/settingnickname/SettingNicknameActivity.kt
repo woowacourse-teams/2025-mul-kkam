@@ -11,8 +11,8 @@ import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
-import com.mulkkam.domain.model.MulKkamError.NicknameError
-import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.model.NicknameValidationState.INVALID
 import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION

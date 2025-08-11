@@ -1,8 +1,8 @@
 name: backend-cd.yml
 
 on:
-    push:
-      branches: ["develop"]
+  push:
+    branches: [ "develop" ]
     paths:
       - "backend/**"
 
@@ -66,6 +66,7 @@ jobs:
           echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
           echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
           echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
+          echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
           echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
           echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
