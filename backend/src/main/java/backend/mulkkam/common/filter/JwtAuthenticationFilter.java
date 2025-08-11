@@ -21,7 +21,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpEndpoint.of("/swagger-ui", HttpMethod.GET),
             HttpEndpoint.of("/v3/api-docs", HttpMethod.GET),
             HttpEndpoint.of("/nickname/validation", HttpMethod.GET),
-            HttpEndpoint.of("/actuator", HttpMethod.GET),
+            HttpEndpoint.of("/actuator/health", HttpMethod.GET),
             HttpEndpoint.of("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST)
     );
 
