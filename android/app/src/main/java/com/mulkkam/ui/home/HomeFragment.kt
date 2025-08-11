@@ -13,12 +13,12 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.Cups
 import com.mulkkam.domain.model.TodayProgressInfo
-import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.custom.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
+import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale

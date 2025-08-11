@@ -11,9 +11,9 @@ import com.mulkkam.databinding.FragmentBioInfoBinding
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.Gender.FEMALE
 import com.mulkkam.domain.model.Gender.MALE
-import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
+import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 

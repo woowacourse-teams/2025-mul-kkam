@@ -20,11 +20,11 @@ import com.mulkkam.domain.model.IntakeHistory
 import com.mulkkam.domain.model.IntakeHistorySummaries
 import com.mulkkam.domain.model.IntakeHistorySummary
 import com.mulkkam.domain.model.WaterIntakeState
-import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.DayOfWeek

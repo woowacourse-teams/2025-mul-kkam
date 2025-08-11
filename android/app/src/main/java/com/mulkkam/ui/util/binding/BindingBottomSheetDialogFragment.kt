@@ -1,15 +1,15 @@
-package com.mulkkam.ui.binding
+package com.mulkkam.ui.util.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.fragment.app.DialogFragment
 import androidx.viewbinding.ViewBinding
+import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-open class BindingDialogFragment<BINDING : ViewBinding>(
+open class BindingBottomSheetDialogFragment<BINDING : ViewBinding>(
     private val bindingInflater: (LayoutInflater, ViewGroup?, Boolean) -> BINDING,
-) : DialogFragment() {
+) : BottomSheetDialogFragment() {
     private var _binding: BINDING? = null
     val binding: BINDING get() = _binding!!
 
@@ -22,8 +22,8 @@ open class BindingDialogFragment<BINDING : ViewBinding>(
         return binding.root
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onDestroyView() {
+        super.onDestroyView()
         _binding = null
     }
 }

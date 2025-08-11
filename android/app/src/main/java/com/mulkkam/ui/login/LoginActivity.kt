@@ -12,11 +12,11 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.databinding.ActivityLoginBinding
 import com.mulkkam.domain.model.MulKkamError
-import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {

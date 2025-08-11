@@ -1,4 +1,4 @@
-package com.mulkkam.ui.binding
+package com.mulkkam.ui.util.binding
 
 import android.os.Bundle
 import android.view.LayoutInflater
