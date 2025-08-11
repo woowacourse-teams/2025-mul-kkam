@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentManualDrinkBinding
-import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment

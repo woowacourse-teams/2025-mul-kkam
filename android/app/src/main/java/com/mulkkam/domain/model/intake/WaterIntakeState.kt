@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.intake
 
 sealed interface WaterIntakeState {
     sealed interface Past : WaterIntakeState {

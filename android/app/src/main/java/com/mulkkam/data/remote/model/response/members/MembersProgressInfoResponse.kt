@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response.members
 
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.members.TodayProgressInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

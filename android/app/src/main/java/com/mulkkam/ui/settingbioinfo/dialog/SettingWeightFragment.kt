@@ -4,9 +4,9 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentWeightBinding
-import com.mulkkam.domain.model.BioWeight.Companion.WEIGHT_DEFAULT
-import com.mulkkam.domain.model.BioWeight.Companion.WEIGHT_MAX
-import com.mulkkam.domain.model.BioWeight.Companion.WEIGHT_MIN
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_MAX
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_MIN
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoViewModel
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.util.extensions.setSingleClickListener

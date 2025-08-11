@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.interceptor
 
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.domain.model.LogEvent
+import com.mulkkam.domain.model.logger.LogEvent
 import okhttp3.Interceptor
 import okhttp3.Response
 import okio.Buffer

@@ -4,7 +4,7 @@ import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.auth.AuthRequest
 import com.mulkkam.data.remote.service.AuthService
-import com.mulkkam.domain.model.MulKkamResult
+import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.AuthRepository
 
 class AuthRepositoryImpl(

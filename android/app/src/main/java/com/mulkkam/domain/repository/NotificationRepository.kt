@@ -1,7 +1,7 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.model.MulKkamResult
-import com.mulkkam.domain.model.Notification
+import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDateTime
 
 interface NotificationRepository {

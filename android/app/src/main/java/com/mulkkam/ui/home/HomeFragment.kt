@@ -11,8 +11,8 @@ import androidx.fragment.app.activityViewModels
 import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
-import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment

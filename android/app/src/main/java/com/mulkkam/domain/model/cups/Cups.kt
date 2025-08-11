@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.cups
 
 data class Cups(
     val cups: List<Cup>,

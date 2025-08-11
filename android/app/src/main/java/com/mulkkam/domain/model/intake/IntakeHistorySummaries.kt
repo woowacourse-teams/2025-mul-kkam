@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.intake
 
 import java.time.LocalDate
 
@@ -13,10 +13,10 @@ data class IntakeHistorySummaries(
 
     fun getByDateOrEmpty(targetDate: LocalDate): IntakeHistorySummary =
         intakeHistorySummaries.find { it.date == targetDate }
-            ?: IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE.copy(date = targetDate)
+            ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE.copy(date = targetDate)
 
     fun getByIndex(index: Int): IntakeHistorySummary =
-        intakeHistorySummaries.getOrNull(index) ?: IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
+        intakeHistorySummaries.getOrNull(index) ?: IntakeHistorySummary.EMPTY_DAILY_WATER_INTAKE
 
     fun getDateByWeekOffset(offset: Long): LocalDate = firstDay.plusWeeks(offset)
 }

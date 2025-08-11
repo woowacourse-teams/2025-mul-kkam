@@ -5,8 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.members.TodayProgressInfo
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime

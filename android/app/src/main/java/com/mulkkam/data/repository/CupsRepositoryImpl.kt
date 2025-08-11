@@ -7,9 +7,9 @@ import com.mulkkam.data.remote.model.request.cups.toNewCupRequest
 import com.mulkkam.data.remote.model.request.cups.toPatchCupRequest
 import com.mulkkam.data.remote.model.response.cups.toDomain
 import com.mulkkam.data.remote.service.CupsService
-import com.mulkkam.domain.model.Cup
-import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.MulKkamResult
+import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 
 class CupsRepositoryImpl(

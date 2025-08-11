@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response.notification
 
-import com.mulkkam.domain.model.Notification
+import com.mulkkam.domain.model.notification.Notification
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

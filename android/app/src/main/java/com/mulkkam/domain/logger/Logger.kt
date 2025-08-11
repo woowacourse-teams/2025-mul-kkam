@@ -1,8 +1,8 @@
 package com.mulkkam.domain.logger
 
-import com.mulkkam.domain.model.LogEntry
-import com.mulkkam.domain.model.LogEvent
-import com.mulkkam.domain.model.LogLevel
+import com.mulkkam.domain.model.logger.LogEntry
+import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.model.logger.LogLevel
 
 /**
  * MulKkam 애플리케이션 전역 로깅 인터페이스.

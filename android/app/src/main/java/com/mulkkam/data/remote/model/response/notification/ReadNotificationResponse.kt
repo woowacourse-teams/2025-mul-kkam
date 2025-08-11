@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.model.response.notification
 
-import com.mulkkam.domain.model.Notification
-import com.mulkkam.domain.model.NotificationType
+import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime

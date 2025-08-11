@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response.cups
 
-import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.cups.Cups
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

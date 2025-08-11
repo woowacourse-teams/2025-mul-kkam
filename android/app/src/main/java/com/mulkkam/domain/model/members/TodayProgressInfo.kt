@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.members
 
 data class TodayProgressInfo(
     val nickname: String,

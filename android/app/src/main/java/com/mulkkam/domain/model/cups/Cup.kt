@@ -1,4 +1,6 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.cups
+
+import com.mulkkam.domain.model.intake.IntakeType
 
 data class Cup(
     val id: Long,

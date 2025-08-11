@@ -2,7 +2,7 @@ package com.mulkkam.ui.history.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mulkkam.domain.model.IntakeHistory
+import com.mulkkam.domain.model.intake.IntakeHistory
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()

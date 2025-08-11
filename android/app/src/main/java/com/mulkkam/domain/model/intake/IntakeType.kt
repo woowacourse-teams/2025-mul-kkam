@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.intake
 
 enum class IntakeType {
     WATER,

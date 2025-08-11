@@ -6,10 +6,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.IntakeHistory
-import com.mulkkam.domain.model.IntakeHistorySummaries
-import com.mulkkam.domain.model.IntakeHistorySummary
-import com.mulkkam.domain.model.WaterIntakeState
+import com.mulkkam.domain.model.intake.IntakeHistory
+import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.intake.IntakeHistorySummary
+import com.mulkkam.domain.model.intake.WaterIntakeState
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate

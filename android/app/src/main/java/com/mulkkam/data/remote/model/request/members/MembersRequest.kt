@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.request.members
 
-import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.members.OnboardingInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

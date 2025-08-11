@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.logger
 
 import java.time.Instant
 import java.time.format.DateTimeFormatter

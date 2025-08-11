@@ -1,6 +1,5 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.notification
 
-import com.mulkkam.domain.model.NotificationType
 import java.time.LocalDateTime
 
 data class Notification(
