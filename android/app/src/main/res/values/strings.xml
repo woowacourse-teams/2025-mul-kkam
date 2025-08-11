@@ -104,8 +104,8 @@
 
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
     <string name="nickname_input_hint_highlight">닉네임</string>
-    <string name="nickname_invalid_length">이름은 2자 이상, 10자 이하만 가능합니다</string>
-    <string name="nickname_invalid_characters">특수 문자는 불가능합니다</string>
+    <string name="nickname_invalid_length">닉네임은 2자 이상, 10자 이하만 가능합니다</string>
+    <string name="nickname_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
     <string name="nickname_duplicated">중복된 닉네임입니다</string>
     <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
     <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>"
