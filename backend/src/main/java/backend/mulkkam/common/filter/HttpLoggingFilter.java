@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -61,7 +63,15 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[REQUEST] traceId = {}, {} {} token = {}", traceId, methodType, uri, auth);
+
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("type", "REQUEST");
+        logMap.put("trace_id", traceId);
+        logMap.put("method_type", methodType);
+        logMap.put("uri", uri);
+        logMap.put("auth", auth);
+
+        log.info("{}", logMap);
     }
 
     private String buildDecodedRequestUri(HttpServletRequest request) {
@@ -112,7 +122,14 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] traceId = {}, ({}) token = {}", traceId, status, auth);
+
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("type", "RESPONSE");
+        logMap.put("trace_id", traceId);
+        logMap.put("status", status);
+        logMap.put("auth", auth);
+
+        log.info("{}", logMap);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
@@ -121,9 +138,14 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             if (body.isEmpty()) {
                 body = "NONE";
             }
-            log.info("↓\nResponseBody: {}", body);
+
+            Map<String, Object> logMap = new LinkedHashMap<>();
+            logMap.put("response_body", body);
+            log.info("↓\n {}", logMap);
         } catch (IOException e) {
-            log.info("↓\nResponseBody: {}", responseWrapper.getContentType() + "NOT JSON");
+            Map<String, Object> logMap = new LinkedHashMap<>();
+            logMap.put("response_body", responseWrapper.getContentType() + "NOT JSON");
+            log.info("↓\n {}", logMap);
         }
     }
 }
