@@ -14,7 +14,6 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.model.NicknameValidationState.INVALID
 import com.mulkkam.ui.model.NicknameValidationState.PENDING_SERVER_VALIDATION
 import com.mulkkam.ui.model.NicknameValidationState.VALID
@@ -76,8 +75,12 @@ class NicknameFragment :
     private fun initObservers() {
         viewModel.nicknameValidationState.observe(viewLifecycleOwner) { nicknameValidationState ->
             when (nicknameValidationState) {
-                VALID, INVALID -> {
-                    updateNicknameValidationUI(nicknameValidationState)
+                VALID -> {
+                    showNicknameValidState()
+                }
+
+                INVALID -> {
+                    showNicknameInvalidState()
                 }
 
                 PENDING_SERVER_VALIDATION -> {
@@ -94,22 +97,34 @@ class NicknameFragment :
         }
     }
 
-    private fun updateNicknameValidationUI(nicknameValidationState: NicknameValidationState) {
-        val isValid = nicknameValidationState == VALID
+    private fun showNicknameValidState() {
         val color =
             getColor(
                 requireContext(),
-                if (isValid) R.color.primary_200 else R.color.secondary_200,
+                R.color.primary_200,
             )
 
         with(binding) {
             tvCheckDuplicate.isEnabled = false
-            tvNext.isEnabled = isValid
+            tvNext.isEnabled = true
             tvNicknameValidationMessage.setTextColor(color)
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
+            tvNicknameValidationMessage.text = getString(R.string.setting_nickname_valid)
         }
-        if (isValid) {
-            binding.tvNicknameValidationMessage.text = getString(R.string.setting_nickname_valid)
+    }
+
+    private fun showNicknameInvalidState() {
+        val color =
+            getColor(
+                requireContext(),
+                R.color.secondary_200,
+            )
+
+        with(binding) {
+            tvCheckDuplicate.isEnabled = false
+            tvNext.isEnabled = false
+            tvNicknameValidationMessage.setTextColor(color)
+            etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
         }
     }
 
