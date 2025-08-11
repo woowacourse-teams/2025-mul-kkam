@@ -9,6 +9,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
@@ -74,8 +75,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
         }
 
-        viewModel.onNicknameValidationError.observe(this) {
-            binding.tvNicknameValidationMessage.text = it.toMessageRes()
+        viewModel.onNicknameValidationError.observe(this) { error ->
+            if (error !is NicknameError) {
+                Snackbar.make(binding.root, "네트워크 연결을 확인해 주세요", Snackbar.LENGTH_SHORT).show()
+            }
+            binding.tvNicknameValidationMessage.text = (error as NicknameError).toMessageRes()
         }
 
         viewModel.onNicknameChanged.observe(this) {

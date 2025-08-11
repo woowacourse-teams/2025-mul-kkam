@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
 import com.mulkkam.domain.model.Nickname
-import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch
@@ -16,9 +17,9 @@ class NicknameViewModel : ViewModel() {
     val nicknameValidationState: MutableLiveData<NicknameValidationState>
         get() = _nicknameValidationState
 
-    private val _onNicknameValidationError: MutableSingleLiveData<NicknameError> =
+    private val _onNicknameValidationError: MutableSingleLiveData<MulKkamError> =
         MutableSingleLiveData()
-    val onNicknameValidationError: MutableSingleLiveData<NicknameError>
+    val onNicknameValidationError: MutableSingleLiveData<MulKkamError>
         get() = _onNicknameValidationError
 
     fun validateNickname(nickname: String) {
@@ -28,7 +29,7 @@ class NicknameViewModel : ViewModel() {
             _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationState.INVALID
-            _onNicknameValidationError.setValue(error as NicknameError)
+            _onNicknameValidationError.setValue(error.toMulKkamError())
         }
     }
 
@@ -40,11 +41,7 @@ class NicknameViewModel : ViewModel() {
                 _nicknameValidationState.value = NicknameValidationState.VALID
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID
-                if (error !is NicknameError) {
-                    // TODO: 서버 에러일 경우 ? 닉네임 에러가 아닐 경우 ?
-                    return@onFailure
-                }
-                _onNicknameValidationError.setValue(error)
+                _onNicknameValidationError.setValue(error.toMulKkamError())
             }
         }
     }

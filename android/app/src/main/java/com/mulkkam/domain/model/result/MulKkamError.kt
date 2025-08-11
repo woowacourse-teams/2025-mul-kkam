@@ -94,3 +94,9 @@ sealed class MulKkamError : Throwable() {
         private fun readResolve(): Any = Unknown
     }
 }
+
+fun Throwable.toMulKkamError(): MulKkamError =
+    when (this) {
+        is MulKkamError -> throw this
+        else -> throw MulKkamError.Unknown
+    }

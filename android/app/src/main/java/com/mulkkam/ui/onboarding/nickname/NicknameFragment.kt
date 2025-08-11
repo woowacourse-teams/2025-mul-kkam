@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
@@ -85,8 +86,11 @@ class NicknameFragment :
             }
         }
 
-        viewModel.onNicknameValidationError.observe(viewLifecycleOwner) {
-            binding.tvNicknameValidationMessage.text = it.toMessageRes()
+        viewModel.onNicknameValidationError.observe(viewLifecycleOwner) { error ->
+            if (error !is NicknameError) {
+                Snackbar.make(binding.root, "네트워크 연결을 확인해 주세요", Snackbar.LENGTH_SHORT).show()
+            }
+            binding.tvNicknameValidationMessage.text = (error as NicknameError).toMessageRes()
         }
     }
 
