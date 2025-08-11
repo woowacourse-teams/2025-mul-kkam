@@ -46,7 +46,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             Map<String, Object> logMap = new HashMap<>();
             logMap.put("methodType", request.getMethod());
             logMap.put("URI", requestUri);
-            logMap.put("responseTime", responseTime);
+            logMap.put("responseTime", responseTime + "ms");
             logMap.put("status", response.getStatus());
 
             if (responseTime > RESPONSE_TIME_THRESHOLD) {
