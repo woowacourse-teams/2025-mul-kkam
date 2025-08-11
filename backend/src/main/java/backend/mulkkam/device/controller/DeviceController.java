@@ -24,12 +24,7 @@ public class DeviceController {
 
     private final DeviceService deviceService;
 
-    @Operation(
-            summary = "사용자의 디바이스 정보 등록",
-            description = "사용자의 디바이스를 등록합니다. 주어진 디바이스에 이미 토큰 값이 할당되어 있는 경우, 새로운 토큰 값으로 덮어 씌웁니다."
-    )
-    @ApiResponse(responseCode = "200", description = "등록 성공")
-    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = backend.mulkkam.common.exception.FailureBody.class)))
+    @Operation(summary = "사용자의 디바이스 정보 등록", description = "사용자의 디바이스를 등록합니다. 주어진 디바이스에 이미 토큰 값이 할당되어 있는 경우, 새로운 토큰 값으로 덮어 씌웁니다.") @ApiResponse(responseCode = "200", description = "등록 성공") @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = backend.mulkkam.common.exception.FailureBody.class)))
     @PostMapping
     public ResponseEntity<Void> register(
             @Parameter(hidden = true)
