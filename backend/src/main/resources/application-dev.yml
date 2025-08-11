@@ -51,7 +51,7 @@ management:
       jvm.memory.used: true
       jvm.memory.max: true
       jvm.gc.pause: true
-      jvm.threads.live: true
+      jvm.threads: true
       hikaricp: true
   cloudwatch:
     metrics:
