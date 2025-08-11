@@ -2,10 +2,10 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
-import com.mulkkam.data.remote.model.request.MemberNicknameRequest
-import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
-import com.mulkkam.data.remote.model.request.toData
-import com.mulkkam.data.remote.model.response.toDomain
+import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
+import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.toData
+import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.domain.model.BioWeight
 import com.mulkkam.domain.model.Gender

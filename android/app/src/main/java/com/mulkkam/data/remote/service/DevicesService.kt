@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.service
 
-import com.mulkkam.data.remote.model.request.DeviceRequest
+import com.mulkkam.data.remote.model.request.device.DeviceRequest
 import retrofit2.http.Body
 import retrofit2.http.POST
 

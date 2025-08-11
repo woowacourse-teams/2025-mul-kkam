@@ -2,8 +2,9 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
-import com.mulkkam.data.remote.model.request.ActiveCaloriesBurnedRequest
-import com.mulkkam.data.remote.model.response.toDomain
+import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRequest
+import com.mulkkam.data.remote.model.response.cups.toDomain
+import com.mulkkam.data.remote.model.response.notification.toDomain
 import com.mulkkam.data.remote.service.NotificationsService
 import com.mulkkam.domain.model.MulKkamResult
 import com.mulkkam.domain.model.Notification
