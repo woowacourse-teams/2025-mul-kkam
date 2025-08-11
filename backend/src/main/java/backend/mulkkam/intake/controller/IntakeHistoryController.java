@@ -13,6 +13,7 @@ import java.util.List;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,6 +40,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = IntakeHistorySummaryResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 날짜 범위", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "404", description = "기간 내 음수 기록 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping
     public ResponseEntity<List<IntakeHistorySummaryResponse>> readSummaryOfIntakeHistories(
             @Parameter(hidden = true)
@@ -61,6 +63,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "404", description = "컵을 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping
     public ResponseEntity<CreateIntakeHistoryResponse> create(
             @Parameter(hidden = true)
@@ -79,6 +82,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "404", description = "기록을 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "금일 외 기록 삭제 불가", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @DeleteMapping("/details/{id}") // TODO: POST 메서드와 endpoint 통일하기 ({id} 만 있어도 될듯?)
     public ResponseEntity<Void> deleteDetailHistory(
             @Parameter(hidden = true)
