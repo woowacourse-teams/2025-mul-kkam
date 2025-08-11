@@ -10,4 +10,6 @@ data class OnboardingInfo(
     val targetAmount: Int? = null,
     val isMarketingNotificationAgreed: Boolean = false,
     val isNightNotificationAgreed: Boolean = false,
-)
+) {
+    fun hasBioInfo(): Boolean = weight != null && gender != null
+}
