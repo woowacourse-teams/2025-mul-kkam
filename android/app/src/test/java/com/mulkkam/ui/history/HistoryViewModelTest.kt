@@ -78,7 +78,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    @DisplayName("음용 기록을 삭제한다")
+    @DisplayName("특정 id를 가진 음용 기록을 삭제한다")
     fun deleteIntakeHistory() {
         // given
         val capturedId = slot<Int>()
@@ -99,7 +99,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    @DisplayName("이번 주가 아닌지 판단한다")
+    @DisplayName("주간 기록에 오늘 날짜가 포함되어 있지 않다면 이번 주가 아닌지 판단한다")
     fun decideNotCurrentWeek() {
         // given
         coEvery {
@@ -121,7 +121,7 @@ class HistoryViewModelTest {
     }
 
     @Test
-    @DisplayName("이번 주인지 판단한다")
+    @DisplayName("주간 기록에 오늘 날짜가 포함되어 있다면 이번 주인지 판단한다")
     fun decideCurrentWeek() {
         // given
         coEvery {
