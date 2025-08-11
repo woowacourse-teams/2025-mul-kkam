@@ -10,13 +10,12 @@ spring:
     active: local
 
 management:
+  metrics:
+    enable:
+      all: false
   endpoints:
     web:
       exposure:
-        include: health,metrics
-  metrics:
-    export:
-      cloudwatch:
-        namespace: Mulkkam/Dev
-        step: 1m
-        batchSize: 20
+        include:
+          - health
+
