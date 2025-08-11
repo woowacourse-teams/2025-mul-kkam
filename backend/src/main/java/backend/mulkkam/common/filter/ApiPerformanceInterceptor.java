@@ -52,7 +52,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             logMap.put("type", "API_Performance");
             logMap.put("method_type", request.getMethod());
             logMap.put("uri", requestUri);
-            logMap.put("response_time", responseTime + "ms");
+            logMap.put("response_time", responseTime);
             logMap.put("status", response.getStatus());
 
             try {
