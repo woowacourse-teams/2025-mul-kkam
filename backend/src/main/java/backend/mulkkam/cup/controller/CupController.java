@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.controller;
 
+import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
