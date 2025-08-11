@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
@@ -116,6 +117,10 @@ public class CupService {
 
         if (!memberCupIds.containsAll(cupIds)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
+        }
+
+        if (!memberCupIds.equals(cupIds)) {
+            throw new CommonException(NOT_ALL_MEMBER_CUPS_INCLUDED);
         }
     }
 
