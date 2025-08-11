@@ -23,9 +23,9 @@ class NicknameViewModel : ViewModel() {
         runCatching {
             Nickname(nickname)
             _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
-        }.onFailure {
+        }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationState.INVALID
-            _onNicknameValidationError.setValue(it as NicknameError)
+            _onNicknameValidationError.setValue(error as NicknameError)
         }
     }
 
