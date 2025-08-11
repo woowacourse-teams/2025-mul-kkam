@@ -42,6 +42,11 @@ public class CupService {
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
 
+    public CupsResponse readSortedCupsByMemberId(Member member) {
+        List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
+        return new CupsResponse(cups);
+    }
+
     @Transactional
     public CupResponse create(
             CreateCupRequest registerCupRequest,
@@ -80,6 +85,40 @@ public class CupService {
                         .map(CupRankDto::new)
                         .toList()
         );
+    }
+
+    @Transactional
+    public void update(
+            Long id,
+            Member member,
+            UpdateCupRequest updateCupRequest
+    ) {
+        Cup cup = getCup(id);
+
+        validateCupOwnership(member, cup);
+        cup.update(
+                new CupNickname(updateCupRequest.cupNickname()),
+                new CupAmount(updateCupRequest.cupAmount()),
+                updateCupRequest.intakeType(),
+                updateCupRequest.emoji()
+        );
+        cupRepository.save(cup);
+    }
+
+    @Transactional
+    public void delete(
+            Long cupId,
+            Member member
+    ) {
+        Cup targetCup = cupRepository.findByIdAndMember(cupId, member)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
+
+        cupRepository.delete(targetCup);
+
+        cupRepository.findAllByMember(member)
+                .stream()
+                .filter(cup -> cup.isLowerPriorityThan(targetCup))
+                .forEach(Cup::promoteRank);
     }
 
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {
@@ -133,45 +172,6 @@ public class CupService {
         if (!memberCupIds.equals(cupIds)) {
             throw new CommonException(NOT_ALL_MEMBER_CUPS_INCLUDED);
         }
-    }
-
-    @Transactional
-    public void delete(
-            Long cupId,
-            Member member
-    ) {
-        Cup targetCup = cupRepository.findByIdAndMember(cupId, member)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
-
-        cupRepository.delete(targetCup);
-
-        cupRepository.findAllByMember(member)
-                .stream()
-                .filter(cup -> cup.isLowerPriorityThan(targetCup))
-                .forEach(Cup::promoteRank);
-    }
-
-    public CupsResponse readSortedCupsByMemberId(Member member) {
-        List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
-        return new CupsResponse(cups);
-    }
-
-    @Transactional
-    public void update(
-            Long id,
-            Member member,
-            UpdateCupRequest updateCupRequest
-    ) {
-        Cup cup = getCup(id);
-
-        validateCupOwnership(member, cup);
-        cup.update(
-                new CupNickname(updateCupRequest.cupNickname()),
-                new CupAmount(updateCupRequest.cupAmount()),
-                updateCupRequest.intakeType(),
-                updateCupRequest.emoji()
-        );
-        cupRepository.save(cup);
     }
 
     private void validateCupOwnership(Member member, Cup cup) {
