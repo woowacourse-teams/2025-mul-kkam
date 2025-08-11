@@ -11,6 +11,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
+import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.model.NicknameValidationState.INVALID
@@ -85,7 +86,7 @@ class NicknameFragment :
         }
 
         viewModel.onNicknameValidationError.observe(viewLifecycleOwner) {
-            binding.tvNicknameValidationMessage.text = getString(it.toMessageRes())
+            binding.tvNicknameValidationMessage.text = it.toMessageRes()
         }
     }
 
@@ -136,12 +137,18 @@ class NicknameFragment :
         }
     }
 
-    fun NicknameError.toMessageRes(): Int =
+    fun NicknameError.toMessageRes(): String =
         when (this) {
-            NicknameError.InvalidLength -> R.string.nickname_invalid_length
-            NicknameError.InvalidCharacters -> R.string.nickname_invalid_characters
-            NicknameError.DuplicateNickname -> R.string.nickname_duplicated
-            NicknameError.InvalidNickname -> R.string.nickname_invalid
-            NicknameError.SameAsBefore -> R.string.nickname_same_as_before
+            NicknameError.InvalidLength ->
+                getString(
+                    R.string.nickname_invalid_length,
+                    Nickname.NICKNAME_LENGTH_MIN,
+                    Nickname.NICKNAME_LENGTH_MAX,
+                )
+
+            NicknameError.InvalidCharacters -> getString(R.string.nickname_invalid_characters)
+            NicknameError.DuplicateNickname -> getString(R.string.nickname_duplicated)
+            NicknameError.InvalidNickname -> getString(R.string.nickname_invalid)
+            NicknameError.SameAsBefore -> getString(R.string.nickname_same_as_before)
         }
 }

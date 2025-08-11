@@ -16,7 +16,7 @@ value class Nickname(
     }
 
     companion object {
-        private const val NICKNAME_LENGTH_MIN: Int = 2
-        private const val NICKNAME_LENGTH_MAX: Int = 10
+        const val NICKNAME_LENGTH_MIN: Int = 2
+        const val NICKNAME_LENGTH_MAX: Int = 10
     }
 }
