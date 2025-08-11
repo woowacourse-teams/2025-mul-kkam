@@ -22,7 +22,6 @@ import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +39,6 @@ public class CupService {
     private static final int MAX_CUP_COUNT = 3;
 
     private final CupRepository cupRepository;
-    private final MemberRepository memberRepository;
 
     public CupsResponse readSortedCupsByMemberId(Member member) {
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
