@@ -1,10 +1,8 @@
-package backend.mulkkam.common.filter;
+package backend.mulkkam.common.interceptor;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -47,29 +45,21 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
 
         if (startTime != null) {
             long responseTime = System.currentTimeMillis() - startTime;
-
-            Map<String, Object> logMap = new LinkedHashMap<>();
-            logMap.put("type", "API_Performance");
-            logMap.put("method_type", request.getMethod());
-            logMap.put("uri", requestUri);
-            logMap.put("response_time", responseTime);
-            logMap.put("status", response.getStatus());
-
-            try {
-                String jsonLog = objectMapper.writeValueAsString(logMap);
-                if (responseTime > RESPONSE_TIME_THRESHOLD) {
-                    log.warn("{}", jsonLog);
-                } else {
-                    log.info("{}", jsonLog);
-                }
-            } catch (Exception e) {
-                log.warn("Failed to serialize logMap to JSON", e);
-                if (responseTime > RESPONSE_TIME_THRESHOLD) {
-                    log.warn("{}", logMap);
-                } else {
-                    log.info("{}", logMap);
-                }
+            if (responseTime > RESPONSE_TIME_THRESHOLD) {
+                log.warn("[API Performance]: {} {} - {}ms [Status: {}]",
+                        request.getMethod(),
+                        requestUri,
+                        responseTime,
+                        response.getStatus()
+                );
+                return;
             }
+            log.info("[API Performance]: {} {} - {}ms [Status: {}]",
+                    request.getMethod(),
+                    requestUri,
+                    responseTime,
+                    response.getStatus()
+            );
         }
     }
 }
