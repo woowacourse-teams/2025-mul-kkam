@@ -32,14 +32,6 @@ jobs:
               backendTeam.forEach(user => {
                 if (user !== author) reviewersSet.add(user);
               });
-
-
-
-
-
-
-
-
             }
 
             const reviewers = Array.from(reviewersSet);
@@ -51,9 +43,6 @@ jobs:
                 pull_number: context.payload.pull_request.number,
                 reviewers
               });
-
-
-
             }
 
             await github.rest.issues.addAssignees({
@@ -62,4 +51,3 @@ jobs:
               issue_number: context.payload.pull_request.number,
               assignees: [author]
             });
-            
