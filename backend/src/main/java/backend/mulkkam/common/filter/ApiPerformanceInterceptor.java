@@ -2,7 +2,7 @@ package backend.mulkkam.common.filter;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -43,17 +43,18 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         if (startTime != null) {
             long responseTime = System.currentTimeMillis() - startTime;
 
-            Map<String, Object> logMap = new HashMap<>();
+            Map<String, Object> logMap = new LinkedHashMap<>();
+            logMap.put("type", "API_Performance");
             logMap.put("methodType", request.getMethod());
             logMap.put("URI", requestUri);
             logMap.put("responseTime", responseTime + "ms");
             logMap.put("status", response.getStatus());
 
             if (responseTime > RESPONSE_TIME_THRESHOLD) {
-                log.warn("\n[API Performance]: {}", logMap);
+                log.warn("\n{}", logMap);
                 return;
             }
-            log.info("\n[API Performance]: {}", logMap);
+            log.info("\n{}", logMap);
         }
     }
 }
