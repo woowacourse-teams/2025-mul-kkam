@@ -101,22 +101,31 @@ public class CupService {
         if (cups.size() != cupIds.size()) {
             throw new CommonException(NOT_FOUND_CUP);
         }
-        validateCupsOwnership(cupIds, member);
+        validateCupsOwnership(cups, member);
         return cups;
     }
 
     private void validateCupsOwnership(
-            Set<Long> cupIds,
+            List<Cup> cups,
             Member member
     ) {
-        Set<Long> memberCupIds = cupRepository.findAllByMember(member)
-                .stream()
+        for (Cup cup : cups) {
+            validateCupOwnership(member, cup);
+        }
+
+        List<Cup> allByMember = cupRepository.findAllByMember(member);
+
+        validateAllCupsByMember(cups, allByMember);
+    }
+
+    private void validateAllCupsByMember(List<Cup> cups, List<Cup> allByMember) {
+        Set<Long> memberCupIds = allByMember.stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
 
-        if (!memberCupIds.containsAll(cupIds)) {
-            throw new CommonException(NOT_PERMITTED_FOR_CUP);
-        }
+        Set<Long> cupIds = cups.stream()
+                .map(Cup::getId)
+                .collect(Collectors.toSet());
 
         if (!memberCupIds.equals(cupIds)) {
             throw new CommonException(NOT_ALL_MEMBER_CUPS_INCLUDED);
