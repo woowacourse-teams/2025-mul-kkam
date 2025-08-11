@@ -101,6 +101,7 @@
 
                 <mdc>
                     <includeMdcKeyName>traceId</includeMdcKeyName>
+                    <includeMdcKeyName>type</includeMdcKeyName>
                     <includeMdcKeyName>spanId</includeMdcKeyName>
                     <includeMdcKeyName>memberId</includeMdcKeyName>
                 </mdc>
@@ -108,8 +109,6 @@
                 <arguments>
                     <includeNonStructuredArguments>false</includeNonStructuredArguments>
                 </arguments>
-
-                <globalCustomFields>{"type":"API_Performance"}</globalCustomFields>
 
             </providers>
         </encoder>

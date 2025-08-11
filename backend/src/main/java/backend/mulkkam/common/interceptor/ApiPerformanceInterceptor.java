@@ -55,6 +55,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",
                     kv("traceId", traceId),
+                    kv("type", "API_Performance"),
                     kv("method_type", request.getMethod()),
                     kv("uri", uri),
                     kv("response_time", responseTime),
@@ -72,6 +73,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         }
         API_PERF.info("perf",
                 kv("traceId", traceId),
+                kv("type", "API_Performance"),
                 kv("method_type", request.getMethod()),
                 kv("uri", uri),
                 kv("response_time", responseTime),
