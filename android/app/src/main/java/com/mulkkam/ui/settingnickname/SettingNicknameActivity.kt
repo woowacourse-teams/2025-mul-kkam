@@ -77,9 +77,10 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
         viewModel.onNicknameValidationError.observe(this) { error ->
             if (error !is NicknameError) {
-                Snackbar.make(binding.root, "네트워크 연결을 확인해 주세요", Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
+                return@observe
             }
-            binding.tvNicknameValidationMessage.text = (error as NicknameError).toMessageRes()
+            binding.tvNicknameValidationMessage.text = error.toMessageRes()
         }
 
         viewModel.onNicknameChanged.observe(this) {

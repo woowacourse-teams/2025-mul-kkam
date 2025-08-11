@@ -1,5 +1,7 @@
 package com.mulkkam.domain.model.result
 
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError : MulKkamError() {
@@ -94,9 +96,3 @@ sealed class MulKkamError : Throwable() {
         private fun readResolve(): Any = Unknown
     }
 }
-
-fun Throwable.toMulKkamError(): MulKkamError =
-    when (this) {
-        is MulKkamError -> throw this
-        else -> throw MulKkamError.Unknown
-    }

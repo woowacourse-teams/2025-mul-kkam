@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch
@@ -29,7 +29,7 @@ class NicknameViewModel : ViewModel() {
             _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationState.INVALID
-            _onNicknameValidationError.setValue(error.toMulKkamError())
+            _onNicknameValidationError.setValue(error as? NicknameError ?: MulKkamError.Unknown)
         }
     }
 
@@ -41,7 +41,11 @@ class NicknameViewModel : ViewModel() {
                 _nicknameValidationState.value = NicknameValidationState.VALID
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID
-                _onNicknameValidationError.setValue(error.toMulKkamError())
+                if (error !is NicknameError) {
+                    _onNicknameValidationError.setValue(MulKkamError.NetworkUnavailable)
+                    return@onFailure
+                }
+                _onNicknameValidationError.setValue(error)
             }
         }
     }

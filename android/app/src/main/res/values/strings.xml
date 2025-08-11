@@ -108,7 +108,7 @@
     <string name="nickname_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
     <string name="nickname_duplicated">중복된 닉네임입니다</string>
     <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
-    <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>"
+    <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>
@@ -137,4 +137,6 @@
     <string name="manual_drink_perform">마시기</string>
 
     <string name="expandable_floating_menu_intake_unit">%,dml</string>
+
+    <string name="network_error">네트워크 연결 상태를 확인해 주세요</string>
 </resources>
