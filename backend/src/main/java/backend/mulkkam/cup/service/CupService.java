@@ -109,12 +109,12 @@ public class CupService {
             Set<Long> cupIds,
             Member member
     ) {
-        Set<Long> membersCupIds = cupRepository.findAllByMember(member)
+        Set<Long> memberCupIds = cupRepository.findAllByMember(member)
                 .stream()
                 .map(Cup::getId)
                 .collect(Collectors.toSet());
 
-        if (!membersCupIds.containsAll(cupIds)) {
+        if (!memberCupIds.containsAll(cupIds)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
     }
