@@ -11,17 +11,20 @@ import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch
 
 class NicknameViewModel : ViewModel() {
-    private val _nicknameValidationState: MutableLiveData<NicknameValidationState> = MutableLiveData()
+    private val _nicknameValidationState: MutableLiveData<NicknameValidationState> =
+        MutableLiveData()
     val nicknameValidationState: MutableLiveData<NicknameValidationState>
         get() = _nicknameValidationState
 
-    private val _onNicknameValidationError: MutableSingleLiveData<NicknameError> = MutableSingleLiveData()
+    private val _onNicknameValidationError: MutableSingleLiveData<NicknameError> =
+        MutableSingleLiveData()
     val onNicknameValidationError: MutableSingleLiveData<NicknameError>
         get() = _onNicknameValidationError
 
     fun validateNickname(nickname: String) {
         runCatching {
             Nickname(nickname)
+        }.onSuccess {
             _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationState.INVALID
@@ -31,10 +34,9 @@ class NicknameViewModel : ViewModel() {
 
     fun checkNicknameAvailability(nickname: String) {
         viewModelScope.launch {
-            val result =
-                nicknameRepository.getNicknameValidation(nickname)
             runCatching {
-                result.getOrError()
+                nicknameRepository.getNicknameValidation(nickname).getOrError()
+            }.onSuccess {
                 _nicknameValidationState.value = NicknameValidationState.VALID
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID

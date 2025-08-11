@@ -18,11 +18,13 @@ class SettingNicknameViewModel : ViewModel() {
     val currentNickname: LiveData<Nickname?>
         get() = _currentNickname
 
-    private val _nicknameValidationState: MutableLiveData<NicknameValidationState> = MutableLiveData()
+    private val _nicknameValidationState: MutableLiveData<NicknameValidationState> =
+        MutableLiveData()
     val nicknameValidationState: MutableLiveData<NicknameValidationState>
         get() = _nicknameValidationState
 
-    private val _onNicknameValidationError: MutableSingleLiveData<NicknameError> = MutableSingleLiveData()
+    private val _onNicknameValidationError: MutableSingleLiveData<NicknameError> =
+        MutableSingleLiveData()
     val onNicknameValidationError: MutableSingleLiveData<NicknameError>
         get() = _onNicknameValidationError
 
@@ -32,9 +34,10 @@ class SettingNicknameViewModel : ViewModel() {
 
     init {
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembersNickname()
             runCatching {
-                _currentNickname.value = Nickname(result.getOrError())
+                RepositoryInjection.membersRepository.getMembersNickname().getOrError()
+            }.onSuccess { nickname ->
+                _currentNickname.value = Nickname(nickname)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -44,6 +47,7 @@ class SettingNicknameViewModel : ViewModel() {
     fun validateNickname(nickname: String) {
         runCatching {
             Nickname(nickname)
+        }.onSuccess {
             _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationState.INVALID
@@ -53,10 +57,9 @@ class SettingNicknameViewModel : ViewModel() {
 
     fun checkNicknameAvailability(nickname: String) {
         viewModelScope.launch {
-            val result =
-                nicknameRepository.getNicknameValidation(nickname)
             runCatching {
-                result.getOrError()
+                nicknameRepository.getNicknameValidation(nickname).getOrError()
+            }.onSuccess {
                 _nicknameValidationState.value = NicknameValidationState.VALID
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationState.INVALID
@@ -71,9 +74,9 @@ class SettingNicknameViewModel : ViewModel() {
 
     fun saveNickname(nickname: String) {
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.patchMembersNickname(nickname)
             runCatching {
-                result.getOrError()
+                RepositoryInjection.membersRepository.patchMembersNickname(nickname).getOrError()
+            }.onSuccess {
                 _onNicknameChanged.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
