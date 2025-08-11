@@ -6,6 +6,8 @@ import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErro
 
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -55,13 +57,16 @@ public class GlobalExceptionHandler {
         request.setAttribute("errorLoggedByGlobal", true);
 
         String traceId = (String) request.getAttribute("traceId");
-        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
-                traceId,
-                INTER_SERVER_ERROR_CODE.name(),
-                INTER_SERVER_ERROR_CODE.getStatus(),
-                e.getClass().getSimpleName(),
-                e.getMessage()
-        );
+
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("type", "SERVER_ERROR");
+        logMap.put("trace_id", traceId);
+        logMap.put("error_code", INTER_SERVER_ERROR_CODE.name());
+        logMap.put("status", INTER_SERVER_ERROR_CODE.getStatus());
+        logMap.put("error_class", e.getClass().getSimpleName());
+        logMap.put("error_message", e.getMessage());
+
+        log.error("{}", logMap);
         log.debug("StackTrace: ", e);
     }
 
@@ -72,10 +77,13 @@ public class GlobalExceptionHandler {
         request.setAttribute("errorLoggedByGlobal", true);
 
         String traceId = (String) request.getAttribute("traceId");
-        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
-                traceId,
-                errorCode.name(),
-                errorCode.getStatus()
-        );
+
+        Map<String, Object> logMap = new LinkedHashMap<>();
+        logMap.put("type", "CLIENT_ERROR");
+        logMap.put("trace_id", traceId);
+        logMap.put("error_code", errorCode.name());
+        logMap.put("status", errorCode.getStatus());
+
+        log.info("{}", logMap);
     }
 }
