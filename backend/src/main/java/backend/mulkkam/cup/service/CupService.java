@@ -1,11 +1,10 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
@@ -172,10 +171,5 @@ public class CupService {
     private Cup getCup(final Long id) {
         return cupRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
-    }
-
-    private Member getMember(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
