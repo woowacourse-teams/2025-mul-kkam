@@ -28,7 +28,7 @@
         android:gravity="center"
         android:text="@string/onboarding_skip"
         android:textAppearance="@style/body2"
-        android:textColor="@color/gray_200"
+        android:textColor="@color/gray_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
