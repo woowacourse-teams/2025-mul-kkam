@@ -67,6 +67,37 @@
             </filter>
         </appender>
 
+        <!-- API 성능 전용: JSON으로 콘솔 출력 -->
+        <appender name="API_PERF_JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp>
+                        <timeZone>Asia/Seoul</timeZone>
+                        <fieldName>@timestamp</fieldName>
+                        <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS z</pattern>
+                    </timestamp>
+
+                    <level/>
+
+                    <mdc>
+                        <includeMdcKeyName>traceId</includeMdcKeyName>
+                        <includeMdcKeyName>type</includeMdcKeyName>
+                        <includeMdcKeyName>spanId</includeMdcKeyName>
+                        <includeMdcKeyName>memberId</includeMdcKeyName>
+                    </mdc>
+
+                    <arguments>
+                        <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                    </arguments>
+
+                </providers>
+            </encoder>
+        </appender>
+
         <!-- 콘솔: 컬러 -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
@@ -83,36 +114,6 @@
         </root>
     </springProfile>
 
-    <!-- API 성능 전용: JSON으로 콘솔 출력 -->
-    <appender name="API_PERF_JSON" class="ch.qos.logback.core.ConsoleAppender">
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
-            <maxHistory>7</maxHistory>
-        </rollingPolicy>
-        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
-            <providers>
-                <timestamp>
-                    <timeZone>Asia/Seoul</timeZone>
-                    <fieldName>@timestamp</fieldName>
-                    <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS z</pattern>
-                </timestamp>
-
-                <level/>
-
-                <mdc>
-                    <includeMdcKeyName>traceId</includeMdcKeyName>
-                    <includeMdcKeyName>type</includeMdcKeyName>
-                    <includeMdcKeyName>spanId</includeMdcKeyName>
-                    <includeMdcKeyName>memberId</includeMdcKeyName>
-                </mdc>
-
-                <arguments>
-                    <includeNonStructuredArguments>false</includeNonStructuredArguments>
-                </arguments>
-
-            </providers>
-        </encoder>
-    </appender>
     <logger name="API_PERF" level="INFO" additivity="false">
         <appender-ref ref="API_PERF_JSON"/>
     </logger>
