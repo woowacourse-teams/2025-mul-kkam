@@ -27,7 +27,8 @@ public class AuthController {
     @Operation(summary = "카카오 로그인", description = "카카오 액세스 토큰으로 로그인 처리 후, 애플리케이션 토큰과 온보딩 여부를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공 응답")
     @ApiResponse(responseCode = "400", description = "잘못된 카카오 액세스 토큰", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "잘못된 액세스 토큰", summary = "Kakao API 호출 실패", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")}))
+            @ExampleObject(name = "잘못된 액세스 토큰", summary = "Kakao API 호출 실패", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
+    }))
     @PostMapping("/kakao")
     public OauthLoginResponse signInWithKakao(
             @RequestBody

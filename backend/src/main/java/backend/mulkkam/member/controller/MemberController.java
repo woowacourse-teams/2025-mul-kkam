@@ -52,7 +52,9 @@ public class MemberController {
 
     @Operation(summary = "신체 정보 수정", description = "회원의 신체 정보(성별, 체중)를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "수정 성공")
-    @ApiResponse(responseCode = "400", description = "잘못된 신체 정보", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 신체 정보", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "잘못된 신체 정보", summary = "형식/범위 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
+    }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping("/physical-attributes")
     public ResponseEntity<Void> modifyPhysicalAttributes(
@@ -70,14 +72,14 @@ public class MemberController {
     @Operation(summary = "닉네임 중복 검사", description = "사용하려는 닉네임의 중복 여부를 검사합니다.")
     @ApiResponse(responseCode = "200", description = "사용 가능한 닉네임")
     @ApiResponse(responseCode = "400", description = "이전과 동일한 닉네임", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "이전과 동일", summary = "닉네임 미변경", value = "{\\\"code\\\":\\\"SAME_AS_BEFORE_NICKNAME\\\"}")
+            @ExampleObject(name = "이전과 동일", summary = "닉네임 미변경", value = "{\"code\":\"SAME_AS_BEFORE_NICKNAME\"}")
     }))
     @ApiResponse(responseCode = "400", description = "잘못된 닉네임 형식", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "형식 오류", summary = "길이 제약 위반", value = "{\\\"code\\\":\\\"INVALID_MEMBER_NICKNAME\\\"}")
+            @ExampleObject(name = "형식 오류", summary = "길이 제약 위반", value = "{\"code\":\"INVALID_MEMBER_NICKNAME\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "409", description = "중복된 닉네임", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\\\"code\\\":\\\"DUPLICATE_MEMBER_NICKNAME\\\"}")
+            @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\"code\":\"DUPLICATE_MEMBER_NICKNAME\"}")
     }))
     @GetMapping("/nickname/validation")
     public ResponseEntity<Void> checkForDuplicates(
@@ -96,11 +98,11 @@ public class MemberController {
     @Operation(summary = "닉네임 수정", description = "회원의 닉네임을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "수정 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 닉네임 형식", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "형식 오류", summary = "길이 제약 위반", value = "{\\\"code\\\":\\\"INVALID_MEMBER_NICKNAME\\\"}")
+            @ExampleObject(name = "형식 오류", summary = "길이 제약 위반", value = "{\"code\":\"INVALID_MEMBER_NICKNAME\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "409", description = "중복된 닉네임", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\\\"code\\\":\\\"DUPLICATE_MEMBER_NICKNAME\\\"}")
+            @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\"code\":\"DUPLICATE_MEMBER_NICKNAME\"}")
     }))
     @PatchMapping("/nickname")
     public ResponseEntity<Void> modifyNickname(
@@ -128,7 +130,7 @@ public class MemberController {
     @Operation(summary = "온보딩 정보 생성", description = "OAuth 인증이 완료된 회원의 온보딩 정보를 생성합니다.")
     @ApiResponse(responseCode = "200", description = "온보딩 정보 생성 성공")
     @ApiResponse(responseCode = "400", description = "이미 온보딩된 계정", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "이미 온보딩", summary = "OauthAccount에 Member 이미 연결", value = "{\\\"code\\\":\\\"MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT\\\"}")
+            @ExampleObject(name = "이미 온보딩", summary = "OauthAccount에 Member 이미 연결", value = "{\"code\":\"MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT\"}")
     }))
     @PostMapping
     public ResponseEntity<Void> create(
