@@ -27,8 +27,8 @@ public class CupController {
     private final CupService cupService;
 
     @GetMapping
-    public ResponseEntity<CupsResponse> read(Member member) {
-        return ResponseEntity.ok(cupService.readCupsByMemberId(member));
+    public ResponseEntity<CupsResponse> readAllSorted(Member member) {
+        return ResponseEntity.ok(cupService.readSortedCupsByMemberId(member));
     }
 
     @PostMapping

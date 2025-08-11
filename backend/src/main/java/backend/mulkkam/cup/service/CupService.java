@@ -135,7 +135,7 @@ public class CupService {
                 .forEach(Cup::promoteRank);
     }
 
-    public CupsResponse readCupsByMemberId(Member member) {
+    public CupsResponse readSortedCupsByMemberId(Member member) {
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
         return new CupsResponse(cups);
     }
