@@ -8,7 +8,6 @@ public record CupRankDto(
         @Schema(description = "컵 id", example = "1")
         Long id,
         @Schema(description = "컵 순위", example = "2")
-        Integer rank
         @NotNull Integer rank
 ) {
 
