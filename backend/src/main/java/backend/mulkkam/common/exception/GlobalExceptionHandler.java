@@ -5,10 +5,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
 
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -20,8 +17,6 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
-
-    private ObjectMapper objectMapper;
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ErrorResponse<FailureBody> handleInvalidEnum(
@@ -63,20 +58,13 @@ public class GlobalExceptionHandler {
 
         String traceId = (String) request.getAttribute("traceId");
 
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("type", "SERVER_ERROR");
-        logMap.put("trace_id", traceId);
-        logMap.put("error_code", INTER_SERVER_ERROR_CODE.name());
-        logMap.put("status", INTER_SERVER_ERROR_CODE.getStatus());
-        logMap.put("error_class", e.getClass().getSimpleName());
-        logMap.put("error_message", e.getMessage());
-
-        try {
-            log.error("{}", objectMapper.writeValueAsString(logMap));
-        } catch (Exception ex) {
-            log.warn("Failed to serialize logMap to JSON", ex);
-            log.error("{}", logMap);
-        }
+        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
+                traceId,
+                INTER_SERVER_ERROR_CODE.name(),
+                INTER_SERVER_ERROR_CODE.getStatus(),
+                e.getClass().getSimpleName(),
+                e.getMessage()
+        );
         log.debug("StackTrace: ", e);
     }
 
@@ -88,17 +76,10 @@ public class GlobalExceptionHandler {
 
         String traceId = (String) request.getAttribute("traceId");
 
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("type", "CLIENT_ERROR");
-        logMap.put("trace_id", traceId);
-        logMap.put("error_code", errorCode.name());
-        logMap.put("status", errorCode.getStatus());
-
-        try {
-            log.info("{}", objectMapper.writeValueAsString(logMap));
-        } catch (Exception e) {
-            log.warn("Failed to serialize logMap to JSON", e);
-            log.info("{}", logMap);
-        }
+        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
+                traceId,
+                errorCode.name(),
+                errorCode.getStatus()
+        );
     }
 }

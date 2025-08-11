@@ -1,6 +1,5 @@
 package backend.mulkkam.common.filter;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -9,8 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,15 +61,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("type", "REQUEST");
-        logMap.put("trace_id", traceId);
-        logMap.put("method_type", methodType);
-        logMap.put("uri", uri);
-        logMap.put("auth", auth);
-
-        log.info("{}", logMap);
+        log.info("[REQUEST] traceId = {}, {} {} token = {}", traceId, methodType, uri, auth);
     }
 
     private String buildDecodedRequestUri(HttpServletRequest request) {
@@ -123,46 +112,18 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("type", "RESPONSE");
-        logMap.put("trace_id", traceId);
-        logMap.put("status", status.value());
-        logMap.put("auth", auth);
-
-        try {
-            log.info("{}", objectMapper.writeValueAsString(logMap));
-        } catch (Exception e) {
-            log.warn("Failed to serialize logMap to JSON", e);
-            log.info("{}", logMap);
-        }
+        log.info("[RESPONSE] traceId = {}, ({}) token = {}", traceId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
-        byte[] bytes = responseWrapper.getContentAsByteArray();
-
-        Map<String, Object> logMap = new LinkedHashMap<>();
-        logMap.put("type", "RESPONSE_BODY");
-
         try {
-            if (bytes.length == 0) {
-                logMap.put("response_body", "NONE");
-            } else {
-                JsonNode node = objectMapper.readTree(bytes);
-                logMap.put("response_body", node);
+            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+            if (body.isEmpty()) {
+                body = "NONE";
             }
+            log.info("↓\nResponseBody: {}", body);
         } catch (IOException e) {
-            String contentType = responseWrapper.getContentType();
-            logMap.put("non_json", true);
-            logMap.put("content_type", contentType == null ? "unknown" : contentType);
-            logMap.put("body_text", new String(bytes, java.nio.charset.StandardCharsets.UTF_8));
-        }
-
-        try {
-            log.info("{}", objectMapper.writeValueAsString(logMap));
-        } catch (Exception ex) {
-            log.warn("Failed to serialize logMap to JSON", ex);
-            log.info("{}", logMap);
+            log.info("↓\nResponseBody: {}", responseWrapper.getContentType() + "NOT JSON");
         }
     }
 }
