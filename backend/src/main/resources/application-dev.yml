@@ -53,6 +53,8 @@ management:
       jvm.gc.pause: true
       jvm.threads: true
       hikaricp: true
+      http.server: true
+
   cloudwatch:
     metrics:
       export:
