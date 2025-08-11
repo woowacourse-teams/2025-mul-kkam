@@ -54,6 +54,7 @@ management:
       jvm.threads: true
       hikaricp: true
       http.server: true
+      process.cpu: true
 
   cloudwatch:
     metrics:
