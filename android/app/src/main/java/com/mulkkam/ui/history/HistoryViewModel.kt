@@ -9,6 +9,7 @@ import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.IntakeHistory
 import com.mulkkam.domain.model.IntakeHistorySummaries
 import com.mulkkam.domain.model.IntakeHistorySummary
+import com.mulkkam.domain.model.WaterIntakeState
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -26,15 +27,8 @@ class HistoryViewModel : ViewModel() {
             intakeHistories.lastDay < LocalDate.now()
         }
 
-    val isToday: LiveData<Boolean> =
-        dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.date == LocalDate.now()
-        }
-
-    val isAfterToday: LiveData<Boolean> =
-        dailyIntakeHistories.map { intakeHistory ->
-            intakeHistory.date > LocalDate.now()
-        }
+    private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
+    val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
     private val _deleteSuccess = MutableLiveData<Boolean>()
     val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
@@ -43,18 +37,22 @@ class HistoryViewModel : ViewModel() {
         loadIntakeHistories()
     }
 
-    fun loadIntakeHistories(baseDate: LocalDate = LocalDate.now()) {
-        val today = LocalDate.now()
+    fun loadIntakeHistories(
+        referenceDate: LocalDate = LocalDate.now(),
+        currentDate: LocalDate = LocalDate.now(),
+    ) {
         viewModelScope.launch {
-            val weekDates = getWeekDates(baseDate)
+            val weekDates = getWeekDates(referenceDate)
             val result =
                 RepositoryInjection.intakeRepository.getIntakeHistory(
                     from = weekDates.first(),
-                    to = minOf(weekDates.last(), today),
+                    to = weekDates.last(),
                 )
             runCatching {
-                val summaries = result.getOrError()
-                updateIntakeSummary(weekDates, summaries)
+                result.getOrError()
+            }.onSuccess { summaries ->
+                _weeklyIntakeHistories.value = summaries
+                selectDailySummary(weekDates, summaries, currentDate)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -67,25 +65,25 @@ class HistoryViewModel : ViewModel() {
         return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
     }
 
-    private fun updateIntakeSummary(
+    private fun selectDailySummary(
         weekDates: List<LocalDate>,
         summaries: IntakeHistorySummaries,
+        today: LocalDate,
     ) {
-        val completedWeekIntake =
-            weekDates.map { date ->
-                summaries.getByDateOrEmpty(date)
+        val dailySummary =
+            when {
+                today in weekDates -> summaries.getByDateOrEmpty(today)
+                else -> summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
             }
-
-        _weeklyIntakeHistories.value = IntakeHistorySummaries(completedWeekIntake)
-        if (weekDates.contains(LocalDate.now())) {
-            _dailyIntakeHistories.value = completedWeekIntake.find { it.date == LocalDate.now() }
-        } else {
-            _dailyIntakeHistories.value = completedWeekIntake.first()
-        }
+        updateDailyIntakeHistories(dailySummary, today)
     }
 
-    fun updateDailyIntakeHistories(dailyIntakeHistories: IntakeHistorySummary) {
-        _dailyIntakeHistories.value = dailyIntakeHistories
+    fun updateDailyIntakeHistories(
+        dailySummary: IntakeHistorySummary,
+        today: LocalDate,
+    ) {
+        _dailyIntakeHistories.value = dailySummary
+        _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)
     }
 
     fun moveWeek(offset: Long) {
@@ -111,6 +109,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     companion object {
+        private const val INTAKE_HISTORY_SUMMARIES_FIRST_INDEX: Int = 0
         private const val WEEK_LENGTH: Int = 7
     }
 }

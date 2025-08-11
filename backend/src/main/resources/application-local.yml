@@ -29,4 +29,4 @@ spring:
 
 app:
   logging:
-    mask-auth: true
+    mask-auth: false

@@ -5,8 +5,10 @@ import backend.mulkkam.common.filter.HttpLoggingFilter;
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
 import backend.mulkkam.common.resolver.MemberResolver;
 import backend.mulkkam.common.resolver.OauthAccountResolver;
+import io.micrometer.core.instrument.MeterRegistry;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -61,5 +63,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         filterBean.setFilter(httpLoggingFilter);
         filterBean.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return filterBean;
+    }
+
+    @Bean
+    ApplicationRunner probe(MeterRegistry r) {
+        return args -> System.out.println("MeterRegistry=" + r.getClass().getName());
     }
 }

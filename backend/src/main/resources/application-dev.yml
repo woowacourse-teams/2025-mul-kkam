@@ -23,10 +23,6 @@ spring:
     locations: classpath:db/migration
     clean-disabled: true
 
-logging:
-  file:
-    name: ${LOG_PATH}
-
 security:
   jwt:
     secret-key: ${JWT_SECRET}
@@ -42,7 +38,7 @@ open-weather:
 
 app:
   logging:
-    mask-auth: false
+    mask-auth: true
 
 cloud:
   aws:

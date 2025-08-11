@@ -17,6 +17,7 @@ import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
 class TargetAmountFragment :
@@ -60,7 +61,7 @@ class TargetAmountFragment :
     }
 
     private fun initClickListeners() {
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             val targetAmount =
                 binding.etInputGoal.text
                     .toString()
