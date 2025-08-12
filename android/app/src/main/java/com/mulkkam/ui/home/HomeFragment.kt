@@ -8,13 +8,13 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
@@ -60,7 +60,11 @@ class HomeFragment :
             }
 
             drinkSuccess.observe(viewLifecycleOwner) {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_success, it), R.drawable.ic_terms_all_check_on)
+                    .apply {
+                        setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -200,6 +204,7 @@ class HomeFragment :
     }
 
     companion object {
+        private const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -80f
         private const val PROGRESS_BAR_RADIUS: Float = 12f
         private const val ALARM_COUNT_MIN: Int = 0
     }
