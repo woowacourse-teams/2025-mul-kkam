@@ -131,8 +131,6 @@ class CupControllerTest {
     @Nested
     class UpdateRanks {
 
-        private List<Long> memberCupIds;
-
             @BeforeEach
         void setUp() {
             List<Cup> cups = List.of(
@@ -149,10 +147,7 @@ class CupControllerTest {
                             .cupRank(new CupRank(3))
                             .build()
             );
-            memberCupIds = cupRepository.saveAll(cups).stream()
-                        .map(Cup::getId)
-                        .sorted()
-                        .toList();
+            cupRepository.saveAll(cups);
         }
 
         @DisplayName("요청하는 데이터가 올바르게 들어왔을 때 컵의 랭크들을 수정한다")
@@ -165,20 +160,20 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": 1
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 3,
                                           "rank": 3
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1), memberCupIds.get(2))))
+                                    """))
                     .andDo(print())
                     .andExpect(status().isOk());
         }
@@ -193,16 +188,16 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": 1
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1))))
+                                    """))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -221,20 +216,20 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": null
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 3,
                                           "rank": 3
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1), memberCupIds.get(2))))
+                                    """))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(INVALID_METHOD_ARGUMENT.name()));
@@ -250,11 +245,11 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": 1
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         },
                                         {
@@ -263,7 +258,7 @@ class CupControllerTest {
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1))))
+                                    """))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -298,20 +293,20 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": 1
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 4,
                                           "rank": 3
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1), savedOtherCupId)))
+                                    """))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -330,20 +325,20 @@ class CupControllerTest {
                                     {
                                       "cups": [
                                         {
-                                          "id": %d,
+                                          "id": 1,
                                           "rank": 2
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 2,
                                           "rank": 2
                                         },
                                         {
-                                          "id": %d,
+                                          "id": 3,
                                           "rank": 3
                                         }
                                       ]
                                     }
-                                    """.formatted(memberCupIds.get(0), memberCupIds.get(1), memberCupIds.get(2))))
+                                    """))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
