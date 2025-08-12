@@ -2,7 +2,7 @@ package com.mulkkam.ui.notification.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.mulkkam.domain.model.Notification
+import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.notification.adapter.NotificationViewHolder.NotificationHandler
 
 class NotificationAdapter(

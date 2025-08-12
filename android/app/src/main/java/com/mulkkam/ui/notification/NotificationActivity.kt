@@ -7,8 +7,8 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
-import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
+import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NotificationActivity :

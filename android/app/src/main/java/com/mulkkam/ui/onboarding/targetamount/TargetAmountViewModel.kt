@@ -5,20 +5,20 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.BioWeight
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.TargetAmount
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.intake.TargetAmount
 import kotlinx.coroutines.launch
 
 class TargetAmountViewModel : ViewModel() {
-    private var _targetAmount = MutableLiveData<TargetAmount>()
+    private var _targetAmount: MutableLiveData<TargetAmount> = MutableLiveData()
     val targetAmount: LiveData<TargetAmount> get() = _targetAmount
 
-    private val _recommendedTargetAmount = MutableLiveData<Int>()
+    private val _recommendedTargetAmount: MutableLiveData<Int> = MutableLiveData()
     val recommendedTargetAmount: MutableLiveData<Int>
         get() = _recommendedTargetAmount
 
-    private val _isTargetAmountValid = MutableLiveData<Boolean?>()
+    private val _isTargetAmountValid: MutableLiveData<Boolean?> = MutableLiveData()
     val isTargetAmountValid: LiveData<Boolean?> get() = _isTargetAmountValid
 
     fun getRecommendedTargetAmount(
@@ -26,7 +26,11 @@ class TargetAmountViewModel : ViewModel() {
         weight: BioWeight?,
     ) {
         viewModelScope.launch {
-            val result = RepositoryInjection.intakeRepository.getIntakeAmountTargetRecommended(gender, weight)
+            val result =
+                RepositoryInjection.intakeRepository.getIntakeAmountTargetRecommended(
+                    gender,
+                    weight,
+                )
             runCatching {
                 result.data?.let {
                     _recommendedTargetAmount.value = it

@@ -63,6 +63,8 @@
         android:layout_marginTop="6dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:imeOptions="actionDone|flagNoEnterAction"
+        android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
         android:textAppearance="@style/body2"
@@ -83,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_nickname" />
 
-    <com.mulkkam.ui.custom.MulKkamChipGroup
+    <com.mulkkam.ui.custom.chip.MulKkamChipGroup
         android:id="@+id/mcg_intake_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -114,7 +116,9 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:imeOptions="actionDone|flagNoEnterAction"
         android:inputType="number"
+        android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
         android:textAppearance="@style/body2"

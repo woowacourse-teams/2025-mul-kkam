@@ -9,8 +9,8 @@ import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.mulkkam.BuildConfig
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.logger.SensitiveInfoSanitizer
-import com.mulkkam.domain.model.LogEntry
-import com.mulkkam.domain.model.LogLevel
+import com.mulkkam.domain.model.logger.LogEntry
+import com.mulkkam.domain.model.logger.LogLevel
 import timber.log.Timber
 
 class LoggerImpl(
