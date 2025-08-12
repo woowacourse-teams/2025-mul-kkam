@@ -8,13 +8,13 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
@@ -67,7 +67,7 @@ class HomeFragment :
             MulKkamUiState.Loading -> Unit
             MulKkamUiState.Empty -> Unit
             is MulKkamUiState.Failure -> {
-                Snackbar.make(binding.root, getString(R.string.home_network_error), Snackbar.LENGTH_SHORT).show()
+                CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
             }
         }
     }
@@ -235,7 +235,9 @@ class HomeFragment :
             }
 
             is MulKkamUiState.Failure -> {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_network_error), Snackbar.LENGTH_SHORT).show()
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_network_error), R.drawable.ic_alert_circle)
+                    .show()
             }
 
             MulKkamUiState.Empty -> Unit
