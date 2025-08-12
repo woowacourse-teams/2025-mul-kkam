@@ -6,7 +6,6 @@ import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLI
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,14 +13,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -119,16 +117,18 @@ class CupControllerTest {
             CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", "☕");
 
             // when & then
-            mockMvc.perform(post("/cups")
+            String json = mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(createCupRequest)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_FOUND_INTAKE_TYPE.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_INTAKE_TYPE.name());
+            });
         }
     }
 
@@ -197,16 +197,18 @@ class CupControllerTest {
             ));
 
             // when & then
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_ALL_MEMBER_CUPS_INCLUDED.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_ALL_MEMBER_CUPS_INCLUDED.name());
+            });
         }
 
         @DisplayName("랭크에서 하나가 null이 들어왔을 때 예외가 발생한다")
@@ -220,13 +222,19 @@ class CupControllerTest {
             ));
 
             // when & then
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
-                    .andExpect(jsonPath("$.code").value(INVALID_METHOD_ARGUMENT.name()));
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_METHOD_ARGUMENT.name());
+            });
         }
 
         @DisplayName("존재하지 않는 컵일 때 예외가 발생한다")
@@ -240,16 +248,18 @@ class CupControllerTest {
             ));
 
             // when & then
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_FOUND_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
+            });
         }
 
         @DisplayName("멤버에 해당하는 컵이 아닐 때 예외가 발생한다")
@@ -277,16 +287,18 @@ class CupControllerTest {
             ));
 
             // when & then
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_PERMITTED_FOR_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_CUP.name());
+            });
         }
 
         @DisplayName("요청애 랭크가 중복적으로 들어왔을 때 예외를 발생시킨다")
@@ -300,16 +312,18 @@ class CupControllerTest {
             ));
 
             // when & then
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(DUPLICATED_CUP_RANKS.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(DUPLICATED_CUP_RANKS.name());
+            });
         }
     }
 
@@ -350,16 +364,18 @@ class CupControllerTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, "example");
 
             // when & then
-            mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
+            String json = mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(updateCupRequest)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_FOUND_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
+            });
         }
 
         @DisplayName("멤버에 해당하는 컵이 아니라면 예외가 발생한다")
@@ -385,16 +401,18 @@ class CupControllerTest {
             UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, "example");
 
             // when & then
-            mockMvc.perform(patch("/cups/" + savedOtherCupId)
+            String json = mockMvc.perform(patch("/cups/" + savedOtherCupId)
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(updateCupRequest)))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_PERMITTED_FOR_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_CUP.name());
+            });
         }
     }
 
@@ -425,14 +443,16 @@ class CupControllerTest {
         @DisplayName("존재하지 않는 컵 ID로 요청하면 예외가 발생한다")
         @Test
         void error_notFoundCup() throws Exception {
-            mockMvc.perform(delete("/cups/" + Long.MAX_VALUE)
+            String json = mockMvc.perform(delete("/cups/" + Long.MAX_VALUE)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_FOUND_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
+            });
         }
 
         @DisplayName("멤버의 컵이 아닌 ID로 요청하면 예외가 발생한다")
@@ -456,14 +476,16 @@ class CupControllerTest {
             Long savedOtherCupId = savedOtherCup.getId();
 
             // when & then
-            mockMvc.perform(delete("/cups/" + savedOtherCupId)
+            String json = mockMvc.perform(delete("/cups/" + savedOtherCupId)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andDo(print())
-                    .andExpect(result ->
-                            assertThat(result.getResolvedException())
-                                    .isInstanceOf(CommonException.class)
-                                    .hasMessage(NOT_FOUND_CUP.name())
-                    );
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
+            });
         }
     }
 }
