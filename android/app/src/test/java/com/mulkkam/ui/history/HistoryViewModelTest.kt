@@ -89,7 +89,7 @@ class HistoryViewModelTest {
 
         // when
         historyViewModel.deleteIntakeHistory(expected)
-        val actual = historyViewModel.deleteSuccess.getOrAwaitValue()
+        val actual = historyViewModel.deleteSuccess.getValue()
 
         // then
         assertThat(actual).isTrue
