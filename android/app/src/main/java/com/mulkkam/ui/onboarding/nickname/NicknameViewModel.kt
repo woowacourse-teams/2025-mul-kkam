@@ -7,14 +7,14 @@ import com.mulkkam.di.RepositoryInjection.nicknameRepository
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-import com.mulkkam.ui.model.NicknameValidationState
+import com.mulkkam.ui.model.`NicknameValidationUiState`
 import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch
 
 class NicknameViewModel : ViewModel() {
-    private val _nicknameValidationState: MutableLiveData<NicknameValidationState> =
+    private val _nicknameValidationState: MutableLiveData<NicknameValidationUiState> =
         MutableLiveData()
-    val nicknameValidationState: MutableLiveData<NicknameValidationState>
+    val nicknameValidationState: MutableLiveData<NicknameValidationUiState>
         get() = _nicknameValidationState
 
     private val _onNicknameValidationError: MutableSingleLiveData<MulKkamError> =
@@ -26,9 +26,9 @@ class NicknameViewModel : ViewModel() {
         runCatching {
             Nickname(nickname)
         }.onSuccess {
-            _nicknameValidationState.value = NicknameValidationState.PENDING_SERVER_VALIDATION
+            _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
-            _nicknameValidationState.value = NicknameValidationState.INVALID
+            _nicknameValidationState.value = NicknameValidationUiState.INVALID
             _onNicknameValidationError.setValue(error as? NicknameError ?: MulKkamError.Unknown)
         }
     }
@@ -38,9 +38,9 @@ class NicknameViewModel : ViewModel() {
             runCatching {
                 nicknameRepository.getNicknameValidation(nickname).getOrError()
             }.onSuccess {
-                _nicknameValidationState.value = NicknameValidationState.VALID
+                _nicknameValidationState.value = NicknameValidationUiState.VALID
             }.onFailure { error ->
-                _nicknameValidationState.value = NicknameValidationState.INVALID
+                _nicknameValidationState.value = NicknameValidationUiState.INVALID
                 if (error !is NicknameError) {
                     _onNicknameValidationError.setValue(MulKkamError.NetworkUnavailable)
                     return@onFailure
