@@ -9,4 +9,7 @@ enum class NicknameValidationUiState {
 
     /** 로컬 또는 서버 검증 실패 → 이동 불가능 */
     INVALID,
+
+    /** 이전 닉네임과 같은 닉네임으로 변경 → 초기화 */
+    SAME_AS_BEFORE,
 }

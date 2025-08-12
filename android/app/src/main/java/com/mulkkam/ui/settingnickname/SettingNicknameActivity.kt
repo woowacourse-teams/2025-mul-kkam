@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
@@ -18,6 +19,7 @@ import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationUiState.SAME_AS_BEFORE
 import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -60,9 +62,13 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             .trim()
 
     private fun initObservers() {
-        viewModel.nickname.observe(this) { nickname ->
-            if (binding.etInputNickname.text.toString() == nickname?.name) return@observe
-            binding.etInputNickname.setText(nickname?.name)
+        viewModel.originalNickname.observe(this) { currentNickname ->
+            binding.etInputNickname.setText(currentNickname?.name)
+        }
+
+        viewModel.newNickname.observe(this) { nickname ->
+            if (binding.etInputNickname.text.toString() == nickname.name) return@observe
+            binding.etInputNickname.setText(nickname.name)
         }
 
         viewModel.nicknameValidationState.observe(this) { state ->
@@ -87,6 +93,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     }
 
     private fun updateNicknameUI(state: NicknameValidationUiState) {
+        Log.d("hwannow_log", "$state")
         when (state) {
             VALID ->
                 applyNicknameUI(
@@ -110,6 +117,14 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     message = null,
                     isNextEnabled = false,
                     isCheckDuplicateEnabled = true,
+                )
+
+            SAME_AS_BEFORE ->
+                applyNicknameUI(
+                    colorRes = R.color.gray_400,
+                    message = null,
+                    isNextEnabled = false,
+                    isCheckDuplicateEnabled = false,
                 )
         }
     }

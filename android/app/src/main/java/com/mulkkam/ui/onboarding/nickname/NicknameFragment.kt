@@ -18,6 +18,7 @@ import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationUiState.SAME_AS_BEFORE
 import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -119,6 +120,8 @@ class NicknameFragment :
                     isNextEnabled = false,
                     isCheckDuplicateEnabled = true,
                 )
+
+            SAME_AS_BEFORE -> { }
         }
     }
 
