@@ -16,6 +16,7 @@ import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -63,7 +64,7 @@ class HomeFragment :
                 CustomSnackBar
                     .make(binding.root, getString(R.string.manual_drink_success, it), R.drawable.ic_terms_all_check_on)
                     .apply {
-                        setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
         }
@@ -204,7 +205,6 @@ class HomeFragment :
     }
 
     companion object {
-        private const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         private const val PROGRESS_BAR_RADIUS: Float = 12f
         private const val ALARM_COUNT_MIN: Int = 0
     }
