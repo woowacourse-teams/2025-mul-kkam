@@ -8,14 +8,15 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -60,7 +61,11 @@ class HomeFragment :
             }
 
             drinkSuccess.observe(viewLifecycleOwner) {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_success, it), R.drawable.ic_terms_all_check_on)
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }

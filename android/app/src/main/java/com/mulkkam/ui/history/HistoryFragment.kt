@@ -369,7 +369,7 @@ class HistoryFragment :
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
 
-        private const val INTAKE_AMOUNT_EMPTY = 0
-        private const val ACHIEVEMENT_RATE_FULL = 100f
+        private const val INTAKE_AMOUNT_EMPTY: Int = 0
+        private const val ACHIEVEMENT_RATE_FULL: Float = 100f
     }
 }
