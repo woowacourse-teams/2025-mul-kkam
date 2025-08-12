@@ -1,12 +1,12 @@
 package com.mulkkam.data.remote.service
 
-import com.mulkkam.data.remote.model.request.MemberNicknameRequest
-import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
-import com.mulkkam.data.remote.model.request.MembersRequest
-import com.mulkkam.data.remote.model.response.MemberNicknameResponse
-import com.mulkkam.data.remote.model.response.MembersCheckOnboardingResponse
-import com.mulkkam.data.remote.model.response.MembersProgressInfoResponse
-import com.mulkkam.data.remote.model.response.MembersResponse
+import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
+import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.MembersRequest
+import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
+import com.mulkkam.data.remote.model.response.members.MembersCheckOnboardingResponse
+import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
+import com.mulkkam.data.remote.model.response.members.MembersResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.PATCH

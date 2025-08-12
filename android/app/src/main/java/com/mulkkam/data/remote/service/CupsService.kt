@@ -1,10 +1,10 @@
 package com.mulkkam.data.remote.service
 
-import com.mulkkam.data.remote.model.request.AddCupRequest
-import com.mulkkam.data.remote.model.request.CupsRankRequest
-import com.mulkkam.data.remote.model.request.PatchCupRequest
-import com.mulkkam.data.remote.model.response.CupsRankResponse
-import com.mulkkam.data.remote.model.response.CupsResponse
+import com.mulkkam.data.remote.model.request.cups.CupsRankRequest
+import com.mulkkam.data.remote.model.request.cups.NewCupRequest
+import com.mulkkam.data.remote.model.request.cups.PatchCupRequest
+import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
+import com.mulkkam.data.remote.model.response.cups.CupsResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -19,7 +19,7 @@ interface CupsService {
 
     @POST("/cups")
     suspend fun postCup(
-        @Body addCupRequest: AddCupRequest,
+        @Body newCupRequest: NewCupRequest,
     ): Result<Unit>
 
     @PUT("/cups/ranks")

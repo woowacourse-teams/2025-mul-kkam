@@ -6,9 +6,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.BioWeight
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch

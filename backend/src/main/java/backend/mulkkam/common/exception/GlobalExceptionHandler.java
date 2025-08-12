@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErro
 
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -55,6 +57,7 @@ public class GlobalExceptionHandler {
         request.setAttribute("errorLoggedByGlobal", true);
 
         String traceId = (String) request.getAttribute("traceId");
+
         log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
                 traceId,
                 INTER_SERVER_ERROR_CODE.name(),
@@ -72,7 +75,8 @@ public class GlobalExceptionHandler {
         request.setAttribute("errorLoggedByGlobal", true);
 
         String traceId = (String) request.getAttribute("traceId");
-        log.warn("[CLIENT_ERROR] traceId = {}, code={}({})",
+
+        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
                 traceId,
                 errorCode.name(),
                 errorCode.getStatus()
