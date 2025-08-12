@@ -9,15 +9,15 @@ import com.mulkkam.di.RepositoryInjection.nicknameRepository
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-import com.mulkkam.ui.model.`NicknameValidationUiState`
+import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingNicknameViewModel : ViewModel() {
-    private val _currentNickname = MutableLiveData<Nickname?>()
-    val currentNickname: LiveData<Nickname?>
-        get() = _currentNickname
+    private val _nickname = MutableLiveData<Nickname?>()
+    val nickname: LiveData<Nickname?>
+        get() = _nickname
 
     private val _nicknameValidationState: MutableLiveData<NicknameValidationUiState> =
         MutableLiveData()
@@ -38,16 +38,16 @@ class SettingNicknameViewModel : ViewModel() {
             runCatching {
                 RepositoryInjection.membersRepository.getMembersNickname().getOrError()
             }.onSuccess { nickname ->
-                _currentNickname.value = Nickname(nickname)
+                _nickname.value = Nickname(nickname)
             }.onFailure {
                 // TODO: 에러 처리
             }
         }
     }
 
-    fun validateNickname(nickname: String) {
+    fun updateNickname(nickname: String) {
         runCatching {
-            Nickname(nickname)
+            _nickname.value = Nickname(nickname)
         }.onSuccess {
             _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->

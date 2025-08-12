@@ -85,6 +85,11 @@ class NicknameFragment :
             }
             binding.tvNicknameValidationMessage.text = (error as? NicknameError)?.toMessageRes()
         }
+
+        viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
+            if (binding.etInputNickname.text.toString() == nickname.name) return@observe
+            binding.etInputNickname.setText(nickname.name)
+        }
     }
 
     private fun updateNicknameUI(state: NicknameValidationUiState) {
@@ -146,7 +151,7 @@ class NicknameFragment :
                             .toString()
                             .trim()
 
-                    viewModel.validateNickname(nickname)
+                    viewModel.updateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }

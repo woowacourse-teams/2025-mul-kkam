@@ -60,8 +60,9 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             .trim()
 
     private fun initObservers() {
-        viewModel.currentNickname.observe(this) {
-            binding.etInputNickname.setText(it?.name)
+        viewModel.nickname.observe(this) { nickname ->
+            if (binding.etInputNickname.text.toString() == nickname?.name) return@observe
+            binding.etInputNickname.setText(nickname?.name)
         }
 
         viewModel.nicknameValidationState.observe(this) { state ->
@@ -143,7 +144,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                             .toString()
                             .trim()
 
-                    viewModel.validateNickname(nickname)
+                    viewModel.updateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
