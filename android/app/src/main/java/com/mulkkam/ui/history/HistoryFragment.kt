@@ -33,7 +33,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 import java.util.Locale
-import kotlin.io.root
 import kotlin.math.min
 
 class HistoryFragment :
@@ -155,7 +154,7 @@ class HistoryFragment :
                         getString(R.string.history_delete_success),
                         Snackbar.LENGTH_SHORT,
                     ).show()
-                 }
+            }
         }
     }
 

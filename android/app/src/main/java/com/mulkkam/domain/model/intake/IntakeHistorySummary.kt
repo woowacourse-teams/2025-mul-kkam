@@ -27,6 +27,23 @@ data class IntakeHistorySummary(
         }
     }
 
+    fun afterDeleteHistory(history: IntakeHistory): IntakeHistorySummary {
+        val updatedHistories = this.intakeHistories.filter { it.id != history.id }
+        val newTotalAmount = updatedHistories.sumOf { it.intakeAmount }
+        val newAchievementRate =
+            if (this.targetAmount > 0) {
+                (newTotalAmount.toFloat() / this.targetAmount * 100).coerceAtMost(100f)
+            } else {
+                0f
+            }
+
+        return this.copy(
+            intakeHistories = updatedHistories,
+            totalIntakeAmount = newTotalAmount,
+            achievementRate = newAchievementRate,
+        )
+    }
+
     companion object {
         private const val INTAKE_AMOUNT_EMPTY: Int = 0
         private const val DAY_OF_WEEK_OFFSET: Int = -1
