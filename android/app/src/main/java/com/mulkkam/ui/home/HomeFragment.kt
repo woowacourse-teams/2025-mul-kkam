@@ -52,9 +52,8 @@ class HomeFragment :
                 updateDrinkOptions(cups)
             }
 
-            alarmCount.observe(viewLifecycleOwner) { alarmCount ->
-                binding.tvAlarmCount.text = alarmCount.toString()
-                binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
+            alarmCountUiState.observe(viewLifecycleOwner) { alarmCountUiState ->
+                handleAlarmCount(alarmCountUiState ?: return@observe)
             }
 
             drinkUiState.observe(viewLifecycleOwner) {
@@ -184,6 +183,20 @@ class HomeFragment :
         ManualDrinkFragment
             .newInstance()
             .show(childFragmentManager, ManualDrinkFragment.TAG)
+    }
+
+    private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Int>) {
+        when (alarmCountUiState) {
+            is MulKkamUiState.Success<Int> -> showAlarmCount(alarmCountUiState.data)
+            MulKkamUiState.Empty -> showAlarmCount(ALARM_COUNT_MIN)
+            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> Unit
+        }
+    }
+
+    private fun showAlarmCount(count: Int) {
+        binding.tvAlarmCount.text = count.toString()
+        binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
 
     private fun handleDrinkResult(it: MulKkamUiState<Int>) {

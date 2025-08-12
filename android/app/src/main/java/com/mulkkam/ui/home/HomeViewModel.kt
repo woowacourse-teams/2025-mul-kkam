@@ -21,8 +21,8 @@ class HomeViewModel : ViewModel() {
     private val _cups: MutableLiveData<Cups> = MutableLiveData()
     val cups: LiveData<Cups> get() = _cups
 
-    private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
-    val alarmCount: LiveData<Int> get() = _alarmCount
+    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData()
+    val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
     private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData()
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
@@ -62,9 +62,10 @@ class HomeViewModel : ViewModel() {
             // val result = RepositoryInjection.alarmRepository.getAlarmCount()
             runCatching {
                 // val count = result.getOrError()
-                _alarmCount.value = 2
+                _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
                 // TODO: 에러 처리
+                _alarmCountUiState.value = MulKkamUiState.Empty
             }
         }
     }
