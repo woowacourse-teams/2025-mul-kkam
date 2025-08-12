@@ -14,7 +14,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.android.material.snackbar.Snackbar
@@ -31,14 +30,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         get() = binding.bnvMain.isVisible.not()
 
     private val viewModel: MainViewModel by viewModels()
-
-    // TODO: 온보딩으로 로직 이동
-    private val requestPermissionsLauncher =
-        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
-            if (results.containsAll(HEALTH_CONNECT_PERMISSIONS)) {
-                viewModel.updateHealthPermissionStatus(true)
-            }
-        }
 
     private var backPressedTime: Long = 0L
 
@@ -138,10 +129,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         viewModel.isHealthPermissionGranted.observe(this) { isGranted ->
             if (isGranted) {
                 viewModel.scheduleCalorieCheck()
-            } else {
-                requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
             }
         }
+
         viewModel.fcmToken.observe(this) { token ->
             token?.let {
                 viewModel.saveDeviceInfo(loadDeviceId())

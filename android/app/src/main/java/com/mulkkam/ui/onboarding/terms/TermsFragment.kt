@@ -1,18 +1,24 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.content.res.ColorStateList
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.core.content.ContextCompat.getColor
+import androidx.annotation.StringRes
+import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
+import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementViewHolder.TermsAgreementHandler
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import kotlin.collections.find
 
@@ -20,14 +26,49 @@ class TermsFragment :
     BindingFragment<FragmentTermsBinding>(
         FragmentTermsBinding::inflate,
     ) {
-    private val termsAdapter: TermsAdapter by lazy {
-        TermsAdapter {
-            viewModel.updateCheckState(it)
-        }
-    }
-
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: TermsViewModel by viewModels()
+
+    private val termsAdapter: TermsAdapter by lazy {
+        TermsAdapter(termsHandler)
+    }
+
+    private val requestPermissionsLauncher =
+        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
+            viewModel.updateHealthPermissionStatus(
+                results.containsAll(HEALTH_CONNECT_PERMISSIONS),
+            )
+        }
+
+    private val termsHandler =
+        object : TermsAgreementHandler {
+            override fun checkAgreement(termsAgreement: TermsAgreementUiModel) {
+                when (termsAgreement.labelId) {
+                    R.string.terms_agree_health_connect -> viewModel.requestHealthPermission()
+                    else -> viewModel.toggleCheckState(termsAgreement)
+                }
+            }
+
+            override fun loadToTermsPage(termsAgreement: TermsAgreementUiModel) {
+                when (termsAgreement.labelId) {
+                    R.string.terms_agree_health_connect -> requireContext().navigateToHealthConnectStore()
+                    else -> openTermsLink(termsAgreement.uri)
+                }
+            }
+        }
+
+    private fun openTermsLink(
+        @StringRes uri: Int,
+    ) {
+        val intent =
+            Intent(
+                Intent.ACTION_VIEW,
+                requireContext()
+                    .getString(uri)
+                    .toUri(),
+            )
+        requireContext().startActivity(intent)
+    }
 
     override fun onViewCreated(
         view: View,
@@ -68,32 +109,38 @@ class TermsFragment :
     }
 
     private fun initObservers() {
-        viewModel.termsAgreements.observe(viewLifecycleOwner) {
-            termsAdapter.submitList(it)
+        with(viewModel) {
+            termsAgreements.observe(viewLifecycleOwner) {
+                termsAdapter.submitList(it)
 
-            parentViewModel.updateTermsAgreementState(
-                it.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true,
-                it.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true,
-            )
-        }
+                parentViewModel.updateTermsAgreementState(
+                    it.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true,
+                    it.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true,
+                )
+            }
 
-        viewModel.isAllChecked.observe(viewLifecycleOwner) {
-            binding.cbAllCheck.isChecked = it
-        }
+            isAllChecked.observe(viewLifecycleOwner) {
+                binding.cbAllCheck.isChecked = it
+            }
 
-        viewModel.canNext.observe(viewLifecycleOwner) {
-            updateNextButtonEnabled(it)
+            canNext.observe(viewLifecycleOwner) {
+                updateNextButtonEnabled(it)
+            }
+
+            tryHealthPermission.observe(viewLifecycleOwner) {
+                requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
+            }
         }
     }
 
     private fun updateNextButtonEnabled(enabled: Boolean) {
         binding.tvNext.isEnabled = enabled
-        if (enabled) {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
-        } else {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
-        }
+    }
+
+    companion object {
+        private val HEALTH_CONNECT_PERMISSIONS =
+            setOf(
+                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+            )
     }
 }

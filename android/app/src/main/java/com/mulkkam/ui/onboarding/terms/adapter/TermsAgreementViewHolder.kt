@@ -1,11 +1,8 @@
 package com.mulkkam.ui.onboarding.terms.adapter
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat.getString
-import androidx.core.content.ContextCompat.startActivity
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemTermsAgreementBinding
@@ -46,21 +43,16 @@ class TermsAgreementViewHolder(
         }
 
         binding.ivDescriptionPage.setOnClickListener {
-            if (termsAgreement == null) return@setOnClickListener
-
-            val intent =
-                Intent(
-                    Intent.ACTION_VIEW,
-                    binding.root.context
-                        .getString(termsAgreement!!.uri)
-                        .toUri(),
-                )
-            binding.root.context.startActivity(intent)
+            termsAgreement?.let {
+                handler.loadToTermsPage(it)
+            }
         }
     }
 
-    fun interface TermsAgreementHandler {
+    interface TermsAgreementHandler {
         fun checkAgreement(termsAgreement: TermsAgreementUiModel)
+
+        fun loadToTermsPage(termsAgreement: TermsAgreementUiModel)
     }
 
     companion object {
