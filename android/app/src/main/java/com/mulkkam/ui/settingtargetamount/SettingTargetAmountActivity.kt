@@ -14,6 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
+import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -48,6 +49,24 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun initObservers() {
+        viewModel.previousTargetAmount.observe(this) {
+            binding.etInputGoal.setText(it.toString())
+        }
+
+        viewModel.targetAmount.observe(this) { targetAmount ->
+            if (binding.etInputGoal.text
+                    .toString()
+                    .toIntOrNull() == targetAmount.amount
+            ) {
+                return@observe
+            }
+            binding.etInputGoal.setText(targetAmount.amount.toString())
+        }
+
+        viewModel.isTargetAmountValid.observe(this) { isValid ->
+            updateTargetAmountValidationUI(isValid)
+        }
+
         viewModel.onSaveTargetAmount.observe(this) {
             Toast
                 .makeText(
@@ -60,14 +79,6 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
         viewModel.onRecommendationReady.observe(this) {
             updateRecommendedTargetAmount()
-        }
-
-        viewModel.isTargetAmountValid.observe(this) { isValid ->
-            updateTargetAmountValidationUI(isValid)
-        }
-
-        viewModel.previousTargetAmount.observe(this) {
-            binding.etInputGoal.setText(it.toString())
         }
 
         viewModel.onTargetAmountValidationError.observe(this) { error ->
@@ -162,10 +173,19 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             }.apply { debounceHandler.postDelayed(this, 300L) }
     }
 
-    fun TargetAmountError.toMessageRes(): String =
+    private fun TargetAmountError.toMessageRes(): String =
         when (this) {
-            TargetAmountError.BelowMinimum -> getString(R.string.setting_target_amount_warning_too_)
-            TargetAmountError.AboveMaximum -> getString(R.string.setting_target_amount_warning_too_much)
+            TargetAmountError.BelowMinimum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_low,
+                    TargetAmount.TARGET_AMOUNT_MIN,
+                )
+
+            TargetAmountError.AboveMaximum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_high,
+                    TargetAmount.TARGET_AMOUNT_MAX,
+                )
         }
 
     companion object {
