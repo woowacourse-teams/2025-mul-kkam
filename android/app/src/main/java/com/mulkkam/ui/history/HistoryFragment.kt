@@ -13,7 +13,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
@@ -21,6 +20,7 @@ import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
@@ -148,11 +148,11 @@ class HistoryFragment :
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                Snackbar
+                CustomSnackBar
                     .make(
                         binding.root,
                         getString(R.string.history_delete_success),
-                        Snackbar.LENGTH_SHORT,
+                        R.drawable.ic_terms_all_check_on,
                     ).show()
             }
         }
