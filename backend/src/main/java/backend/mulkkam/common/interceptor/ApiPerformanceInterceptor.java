@@ -49,19 +49,16 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
 
         long responseTime = System.currentTimeMillis() - startTime;
         String uri = (String) request.getAttribute(REQUEST_URI_ATTRIBUTE);
-        String traceId = (String) request.getAttribute("traceId");
 
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",
-                    kv("traceId", traceId),
                     kv("type", "API_Performance"),
                     kv("method_type", request.getMethod()),
                     kv("uri", uri),
                     kv("response_time", responseTime),
                     kv("status", response.getStatus())
             );
-            log.warn("[API Performance]: traceId = {}, {} {} - {}ms [Status: {}]",
-                    traceId,
+            log.warn("[API Performance]: {} {} - {}ms [Status: {}]",
                     request.getMethod(),
                     uri,
                     responseTime,
@@ -70,15 +67,13 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             return;
         }
         API_PERF.info("perf",
-                kv("traceId", traceId),
                 kv("type", "API_Performance"),
                 kv("method_type", request.getMethod()),
                 kv("uri", uri),
                 kv("response_time", responseTime),
                 kv("status", response.getStatus())
         );
-        log.info("[API Performance]: traceId = {}, {} {} - {}ms [Status: {}]",
-                traceId,
+        log.info("[API Performance]: {} {} - {}ms [Status: {}]",
                 request.getMethod(),
                 uri,
                 responseTime,
