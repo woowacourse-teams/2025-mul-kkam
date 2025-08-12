@@ -57,6 +57,7 @@ class TermsViewModel : ViewModel() {
             listOf(
                 TermsAgreementUiModel(R.string.terms_agree_service, true),
                 TermsAgreementUiModel(R.string.terms_agree_privacy, true),
+                TermsAgreementUiModel(R.string.terms_agree_health_connect, false),
                 TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
                 TermsAgreementUiModel(R.string.terms_agree_marketing, false),
             )
