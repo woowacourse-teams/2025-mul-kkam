@@ -38,6 +38,7 @@ class HomeViewModel : ViewModel() {
     fun loadTodayProgressInfo() {
         viewModelScope.launch {
             runCatching {
+                _todayProgressInfoUiState.value = MulKkamUiState.Loading
                 RepositoryInjection.membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
             }.onSuccess { todayProgressInfoUiState ->
                 _todayProgressInfoUiState.value = MulKkamUiState.Success<TodayProgressInfo>(todayProgressInfoUiState)
@@ -50,6 +51,7 @@ class HomeViewModel : ViewModel() {
     fun loadCups() {
         viewModelScope.launch {
             runCatching {
+                _cupsUiState.value = MulKkamUiState.Loading
                 RepositoryInjection.cupsRepository.getCups().getOrError()
             }.onSuccess { cupsUiState ->
                 _cupsUiState.value = MulKkamUiState.Success<Cups>(cupsUiState)
@@ -62,9 +64,10 @@ class HomeViewModel : ViewModel() {
     fun loadAlarmCount() {
         viewModelScope.launch {
             // TODO: 알림 개수 조회 API 연결
-            // val result = RepositoryInjection.alarmRepository.getAlarmCount()
+            // RepositoryInjection.alarmRepository.getAlarmCount().getOrError()
             runCatching {
-                // val count = result.getOrError()
+                _cupsUiState.value = MulKkamUiState.Loading
+            }.onSuccess {
                 _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
                 _alarmCountUiState.value = MulKkamUiState.Empty
