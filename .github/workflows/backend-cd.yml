@@ -1,7 +1,7 @@
 name: backend-cd.yml
 
 on:
-  push:
+  pull_request:
     branches: [ "develop" ]
     paths:
       - "backend/**"
@@ -24,7 +24,7 @@ jobs:
         working-directory: ./backend
 
       - name: Build project
-        run: ./gradlew clean build -x test
+        run: ./gradlew -Duser.timezone=Asia/Seoul clean build -x test
         working-directory: ./backend
 
       - name: Set up Docker Buildx
