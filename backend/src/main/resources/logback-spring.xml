@@ -1,4 +1,6 @@
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <!-- ================== -->
     <!-- 공통 패턴 정의 -->
     <!-- 콘솔: Asia/Seoul -->
@@ -95,14 +97,6 @@
             </encoder>
         </appender>
 
-        <!-- 콘솔: 컬러 -->
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${CONSOLE_PATTERN}</pattern>
-            </encoder>
-            <includeCallerData>true</includeCallerData>
-        </appender>
-
         <logger name="API_PERF" level="INFO" additivity="false">
             <appender-ref ref="API_PERF_JSON"/>
         </logger>
@@ -119,22 +113,9 @@
     <!-- 비-DEV 환경 -->
     <!-- ================== -->
     <springProfile name="!dev">
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${CONSOLE_PATTERN}</pattern>
-            </encoder>
-        </appender>
-
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
-
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-        <encoder>
-            <pattern>${CONSOLE_PATTERN}</pattern>
-        </encoder>
-        <includeCallerData>true</includeCallerData>
-    </appender>
 
 </configuration>
