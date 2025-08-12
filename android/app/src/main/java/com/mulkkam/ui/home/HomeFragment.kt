@@ -43,15 +43,12 @@ class HomeFragment :
         with(viewModel) {
             todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
                 binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
+                binding.tvHomeCharacterChat.text = progressInfo.comment
                 updateDailyProgressInfo(progressInfo)
             }
 
             cups.observe(viewLifecycleOwner) { cups ->
                 updateDrinkOptions(cups)
-            }
-
-            characterChat.observe(viewLifecycleOwner) { chat ->
-                binding.tvHomeCharacterChat.text = chat ?: return@observe
             }
 
             alarmCount.observe(viewLifecycleOwner) { alarmCount ->

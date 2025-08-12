@@ -7,19 +7,17 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
+import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
-    private val _todayProgressInfo = MutableLiveData<TodayProgressInfo>()
+    private val _todayProgressInfo = MutableLiveData<TodayProgressInfo>(EMPTY_TODAY_PROGRESS_INFO)
     val todayProgressInfo: LiveData<TodayProgressInfo> get() = _todayProgressInfo
 
     private val _cups: MutableLiveData<Cups> = MutableLiveData()
     val cups: LiveData<Cups> get() = _cups
-
-    private val _characterChat: MutableLiveData<String> = MutableLiveData()
-    val characterChat: LiveData<String> get() = _characterChat
 
     private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
     val alarmCount: LiveData<Int> get() = _alarmCount
@@ -84,8 +82,11 @@ class HomeViewModel : ViewModel() {
             runCatching {
                 val intakeHistoryResult = result.getOrError()
                 _todayProgressInfo.value =
-                    todayProgressInfo.value?.updateProgressInfo(amount, intakeHistoryResult.achievementRate)
-                _characterChat.value = intakeHistoryResult.comment
+                    todayProgressInfo.value?.updateProgressInfo(
+                        amountDelta = amount,
+                        achievementRate = intakeHistoryResult.achievementRate,
+                        comment = intakeHistoryResult.comment,
+                    )
                 _drinkSuccess.value = amount
             }.onFailure {
                 // TODO: 에러 처리
