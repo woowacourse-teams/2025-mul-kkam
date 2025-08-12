@@ -17,8 +17,8 @@ class CustomSnackBar private constructor(
         snackBar.show()
     }
 
-    fun setTranslationY(offsetY: Float) {
-        snackBar.view.translationY = offsetY * density
+    fun setTranslationY(verticalOffsetDp: Float) {
+        snackBar.view.translationY = verticalOffsetDp * density
     }
 
     companion object {
