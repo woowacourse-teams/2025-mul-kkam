@@ -127,6 +127,7 @@
     <string name="history_delete_dialog_sub_label">삭제된 기록은 복구되지 않습니다.</string>
     <string name="history_delete_confirm">확인</string>
     <string name="history_delete_cancel">취소</string>
+    <string name="history_delete_success">기록이 삭제되었습니다.</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
     <string name="manual_drink_label">직접 입력</string>
