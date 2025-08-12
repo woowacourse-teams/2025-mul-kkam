@@ -9,6 +9,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -352,101 +353,101 @@ class CupControllerTest {
         }
     }
 
-//    @DisplayName("컵을 수정한다")
-//    @Nested
-//    class ModifyNicknameAndAmount {
-//
-//        private Long savedCupId;
-//
-//        @BeforeEach
-//        void setUp() {
-//            Cup cup = CupFixtureBuilder.withMember(savedMember)
-//                    .cupNickname(new CupNickname("c0c0m0b"))
-//                    .build();
-//            Cup savedCup = cupRepository.save(cup);
-//            savedCupId = savedCup.getId();
-//        }
-//
-//        @DisplayName("올바른 데이터로 요청하면 컵을 수정한다")
-//        @Test
-//        void success_validInput() throws Exception {
-//            mockMvc.perform(patch("/cups/" + savedCupId)
-//                            .contentType(APPLICATION_JSON)
-//                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-//                            .content("""
-//                                    {
-//                                      "cupNickname" : "c0c0m0a",
-//                                      "cupAmount" : 100,
-//                                      "intakeType": "WATER",
-//                                      "emoji": "https://example.com"
-//                                    }
-//                                    """))
-//                    .andDo(print())
-//                    .andExpect(status().isOk());
-//        }
-//
-//        @DisplayName("존재하지 않는 컵의 ID로 요청하면 예외가 발생한다")
-//        @Test
-//        void error_notFoundCup() throws Exception {
-//            mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
-//                            .contentType(APPLICATION_JSON)
-//                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-//                            .content("""
-//                                    {
-//                                      "cupNickname" : "c0c0m0a",
-//                                      "cupAmount" : 100,
-//                                      "intakeType": "WATER",
-//                                      "emoji": "https://example.com"
-//                                    }
-//                                    """))
-//                    .andDo(print())
-//                    .andExpect(result ->
-//                            assertThat(result.getResolvedException())
-//                                    .isInstanceOf(CommonException.class)
-//                                    .hasMessage(NOT_FOUND_CUP.name())
-//                    );
-//        }
-//
-//        @DisplayName("멤버에 해당하는 컵이 아니라면 예외가 발생한다")
-//        @Test
-//        void error_notPermittedForCup() throws Exception {
-//            // given
-//            Member otherMember = MemberFixtureBuilder
-//                    .builder()
-//                    .memberNickname(new MemberNickname("other"))
-//                    .build();
-//            Member savedOtherMember = memberRepository.save(otherMember);
-//
-//            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-//            oauthAccountRepository.save(oauthAccount);
-//
-//            Cup otherCup = CupFixtureBuilder.withMember(savedOtherMember)
-//                    .cupNickname(new CupNickname("otherCup"))
-//                    .build();
-//
-//            Cup savedOtherCup = cupRepository.save(otherCup);
-//            Long savedOtherCupId = savedOtherCup.getId();
-//
-//            // when & then
-//            mockMvc.perform(patch("/cups/" + savedOtherCupId)
-//                            .contentType(APPLICATION_JSON)
-//                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-//                            .content("""
-//                                    {
-//                                      "cupNickname" : "c0c0m0a",
-//                                      "cupAmount" : 100,
-//                                      "intakeType": "WATER",
-//                                      "emoji": "https://example.com"
-//                                    }
-//                                    """))
-//                    .andDo(print())
-//                    .andExpect(result ->
-//                            assertThat(result.getResolvedException())
-//                                    .isInstanceOf(CommonException.class)
-//                                    .hasMessage(NOT_PERMITTED_FOR_CUP.name())
-//                    );
-//        }
-//    }
+    @DisplayName("컵을 수정한다")
+    @Nested
+    class ModifyNicknameAndAmount {
+
+        private Long savedCupId;
+
+        @BeforeEach
+        void setUp() {
+            Cup cup = CupFixtureBuilder.withMember(savedMember)
+                    .cupNickname(new CupNickname("c0c0m0b"))
+                    .build();
+            Cup savedCup = cupRepository.save(cup);
+            savedCupId = savedCup.getId();
+        }
+
+        @DisplayName("올바른 데이터로 요청하면 컵을 수정한다")
+        @Test
+        void success_validInput() throws Exception {
+            mockMvc.perform(patch("/cups/" + savedCupId)
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .content("""
+                                    {
+                                      "cupNickname" : "c0c0m0a",
+                                      "cupAmount" : 100,
+                                      "intakeType": "WATER",
+                                      "emoji": "example"
+                                    }
+                                    """))
+                    .andDo(print())
+                    .andExpect(status().isOk());
+        }
+
+        @DisplayName("존재하지 않는 컵의 ID로 요청하면 예외가 발생한다")
+        @Test
+        void error_notFoundCup() throws Exception {
+            mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .content("""
+                                    {
+                                      "cupNickname" : "c0c0m0a",
+                                      "cupAmount" : 100,
+                                      "intakeType": "WATER",
+                                      "emoji": "example"
+                                    }
+                                    """))
+                    .andDo(print())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(CommonException.class)
+                                    .hasMessage(NOT_FOUND_CUP.name())
+                    );
+        }
+
+        @DisplayName("멤버에 해당하는 컵이 아니라면 예외가 발생한다")
+        @Test
+        void error_notPermittedForCup() throws Exception {
+            // given
+            Member otherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("other"))
+                    .build();
+            Member savedOtherMember = memberRepository.save(otherMember);
+
+            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            Cup otherCup = CupFixtureBuilder.withMember(savedOtherMember)
+                    .cupNickname(new CupNickname("otherCup"))
+                    .build();
+
+            Cup savedOtherCup = cupRepository.save(otherCup);
+            Long savedOtherCupId = savedOtherCup.getId();
+
+            // when & then
+            mockMvc.perform(patch("/cups/" + savedOtherCupId)
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .content("""
+                                    {
+                                      "cupNickname" : "c0c0m0a",
+                                      "cupAmount" : 100,
+                                      "intakeType": "WATER",
+                                      "emoji": "example"
+                                    }
+                                    """))
+                    .andDo(print())
+                    .andExpect(result ->
+                            assertThat(result.getResolvedException())
+                                    .isInstanceOf(CommonException.class)
+                                    .hasMessage(NOT_PERMITTED_FOR_CUP.name())
+                    );
+        }
+    }
 
     @DisplayName("컵을 삭제한다")
     @Nested
