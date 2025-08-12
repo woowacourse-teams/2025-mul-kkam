@@ -204,7 +204,7 @@ class HomeFragment :
     }
 
     companion object {
-        private const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -80f
+        private const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         private const val PROGRESS_BAR_RADIUS: Float = 12f
         private const val ALARM_COUNT_MIN: Int = 0
     }
