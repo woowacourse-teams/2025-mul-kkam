@@ -25,6 +25,7 @@ import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -127,8 +128,8 @@ class HistoryFragment :
     }
 
     private fun initObservers() {
-        viewModel.weeklyIntakeHistories.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
-            bindWeeklyChartData(weeklyIntakeHistories)
+        viewModel.weeklyIntakeHistoriesUiState.observe(viewLifecycleOwner) { weeklyIntakeHistoriesUiState ->
+            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState ?: return@observe)
         }
 
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
@@ -155,6 +156,15 @@ class HistoryFragment :
                         R.drawable.ic_terms_all_check_on,
                     ).show()
             }
+        }
+    }
+
+    private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
+        when (weeklyIntakeHistoriesUiState) {
+            is MulKkamUiState.Success<IntakeHistorySummaries> -> bindWeeklyChartData(weeklyIntakeHistoriesUiState.data)
+            MulKkamUiState.Empty -> TODO()
+            MulKkamUiState.Loading -> TODO()
+            is MulKkamUiState.Failure -> TODO()
         }
     }
 
