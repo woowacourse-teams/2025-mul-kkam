@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.domain;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -24,6 +25,7 @@ public class AccountRefreshToken {
     @ManyToOne
     private OauthAccount account;
 
+    @Column(nullable = false)
     private String refreshToken;
 
     public AccountRefreshToken(OauthAccount account, String refreshToken) {
