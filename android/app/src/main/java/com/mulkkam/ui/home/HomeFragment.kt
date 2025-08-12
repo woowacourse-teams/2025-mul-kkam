@@ -8,15 +8,17 @@ import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
@@ -41,28 +43,39 @@ class HomeFragment :
 
     private fun initObservers() {
         with(viewModel) {
-            todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
-                binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
-                updateDailyProgressInfo(progressInfo)
+            todayProgressInfoUiState.observe(viewLifecycleOwner) { todayProgressInfoUiState ->
+                handleTodayProgressInfo(todayProgressInfoUiState ?: return@observe)
             }
 
-            cups.observe(viewLifecycleOwner) { cups ->
-                updateDrinkOptions(cups)
+            cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
+                handleCupsUiState(cupsUiState)
             }
 
-            characterChat.observe(viewLifecycleOwner) { chat ->
-                binding.tvHomeCharacterChat.text = chat ?: return@observe
+            alarmCountUiState.observe(viewLifecycleOwner) { alarmCountUiState ->
+                handleAlarmCount(alarmCountUiState ?: return@observe)
             }
 
-            alarmCount.observe(viewLifecycleOwner) { alarmCount ->
-                binding.tvAlarmCount.text = alarmCount.toString()
-                binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
-            }
-
-            drinkSuccess.observe(viewLifecycleOwner) {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
+            drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
+                handleDrinkResult(drinkUiState ?: return@observe)
             }
         }
+    }
+
+    private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
+        when (todayProgressInfoMulKkamUiState) {
+            is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
+            MulKkamUiState.Loading -> Unit
+            MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
+            }
+        }
+    }
+
+    private fun showTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState.Success<TodayProgressInfo>) {
+        binding.pbHomeWaterProgress.setProgress(todayProgressInfoMulKkamUiState.data.achievementRate)
+        binding.tvHomeCharacterChat.text = todayProgressInfoMulKkamUiState.data.comment
+        updateDailyProgressInfo(todayProgressInfoMulKkamUiState.data)
     }
 
     private fun updateDailyProgressInfo(progressInfo: TodayProgressInfo) {
@@ -115,6 +128,15 @@ class HomeFragment :
 
     private fun updateCharacterComment(comment: String) {
         binding.tvHomeCharacterChat.text = comment
+    }
+
+    private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
+        when (cupsUiState) {
+            is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
+            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> Unit
+        }
     }
 
     private fun updateDrinkOptions(cups: Cups) {
@@ -186,6 +208,41 @@ class HomeFragment :
         ManualDrinkFragment
             .newInstance()
             .show(childFragmentManager, ManualDrinkFragment.TAG)
+    }
+
+    private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Int>) {
+        when (alarmCountUiState) {
+            is MulKkamUiState.Success<Int> -> showAlarmCount(alarmCountUiState.data)
+            MulKkamUiState.Empty -> showAlarmCount(ALARM_COUNT_MIN)
+            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> Unit
+        }
+    }
+
+    private fun showAlarmCount(count: Int) {
+        binding.tvAlarmCount.text = count.toString()
+        binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
+    }
+
+    private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
+        when (drinkUiState) {
+            is MulKkamUiState.Success<Int> -> {
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_success, drinkUiState.data), R.drawable.ic_terms_all_check_on)
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
+            }
+
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_network_error), R.drawable.ic_alert_circle)
+                    .show()
+            }
+
+            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Loading -> Unit
+        }
     }
 
     override fun onReselected() {

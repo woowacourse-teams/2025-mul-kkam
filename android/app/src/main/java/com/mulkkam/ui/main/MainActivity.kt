@@ -16,9 +16,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
@@ -53,7 +53,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun handleNotificationEvent() {
         intent?.let {
-            val action = NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
+            val action =
+                NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
 
             // TODO: 푸시 알림 클릭 시 처리 로직 추가
             when (action) {
@@ -116,7 +117,14 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 override fun handleOnBackPressed() {
                     if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
                         backPressedTime = System.currentTimeMillis()
-                        Snackbar.make(binding.root, R.string.main_main_back_press_exit_message, Snackbar.LENGTH_SHORT).show()
+                        CustomSnackBar
+                            .make(
+                                binding.root,
+                                getString(R.string.main_main_back_press_exit_message),
+                                R.drawable.ic_info_circle,
+                            ).apply {
+                                setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
+                            }.show()
                     } else {
                         finishAffinity()
                     }
@@ -150,7 +158,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
         if (hasNotificationPermission()) return
 
-        val shouldShowRationale = ActivityCompat.shouldShowRequestPermissionRationale(this, POST_NOTIFICATIONS)
+        val shouldShowRationale =
+            ActivityCompat.shouldShowRequestPermissionRationale(this, POST_NOTIFICATIONS)
         if (!shouldShowRationale) {
             ActivityCompat.requestPermissions(
                 this,
@@ -176,15 +185,26 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         when (requestCode) {
             REQUEST_CODE_NOTIFICATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar.make(binding.root, R.string.main_alarm_permission_granted, Snackbar.LENGTH_SHORT).show()
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.main_alarm_permission_granted),
+                            R.drawable.ic_info_circle,
+                        ).show()
                 } else {
-                    Snackbar.make(binding.root, R.string.main_alarm_permission_denied, Snackbar.LENGTH_SHORT).show()
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.main_alarm_permission_denied),
+                            R.drawable.ic_info_circle,
+                        ).show()
                 }
             }
         }
     }
 
     companion object {
+        const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         private const val REQUEST_CODE_NOTIFICATION_PERMISSION: Int = 1001
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
         private val HEALTH_CONNECT_PERMISSIONS =

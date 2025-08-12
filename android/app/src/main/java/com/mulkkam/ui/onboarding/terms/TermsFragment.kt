@@ -1,7 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.content.Intent
 import android.os.Bundle
+import android.content.Intent
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
@@ -124,17 +124,13 @@ class TermsFragment :
             }
 
             canNext.observe(viewLifecycleOwner) {
-                updateNextButtonEnabled(it)
+                binding.tvNext.isEnabled = it
             }
 
             tryHealthPermission.observe(viewLifecycleOwner) {
                 requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
             }
         }
-    }
-
-    private fun updateNextButtonEnabled(enabled: Boolean) {
-        binding.tvNext.isEnabled = enabled
     }
 
     companion object {

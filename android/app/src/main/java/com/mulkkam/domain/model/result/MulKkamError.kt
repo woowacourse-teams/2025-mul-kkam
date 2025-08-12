@@ -1,5 +1,7 @@
 package com.mulkkam.domain.model.result
 
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError : MulKkamError() {
@@ -13,6 +15,14 @@ sealed class MulKkamError : Throwable() {
 
         data object DuplicateNickname : NicknameError() {
             private fun readResolve(): Any = DuplicateNickname
+        }
+
+        object InvalidLength : NicknameError() {
+            private fun readResolve(): Any = InvalidLength
+        }
+
+        object InvalidCharacters : NicknameError() {
+            private fun readResolve(): Any = InvalidCharacters
         }
     }
 
