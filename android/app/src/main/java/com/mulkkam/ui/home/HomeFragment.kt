@@ -16,6 +16,7 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
@@ -226,12 +227,11 @@ class HomeFragment :
     private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
         when (drinkUiState) {
             is MulKkamUiState.Success<Int> -> {
-                Snackbar
-                    .make(
-                        binding.root,
-                        getString(R.string.manual_drink_success, drinkUiState.data),
-                        Snackbar.LENGTH_SHORT,
-                    ).show()
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.manual_drink_success, drinkUiState.data), R.drawable.ic_terms_all_check_on)
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
 
             is MulKkamUiState.Failure -> {
