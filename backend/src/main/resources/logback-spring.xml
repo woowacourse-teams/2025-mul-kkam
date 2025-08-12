@@ -67,7 +67,7 @@
             </filter>
         </appender>
 
-        <!-- API 성능 전용: JSON으로 콘솔 출력 -->
+        <!-- API 성능 전용 -->
         <appender name="API_PERF_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/api-perf/api-perf.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -106,6 +106,10 @@
             </encoder>
             <includeCallerData>true</includeCallerData>
         </appender>
+        
+        <logger name="API_PERF" level="INFO" additivity="false">
+            <appender-ref ref="API_PERF_JSON"/>
+        </logger>
 
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
@@ -114,10 +118,6 @@
             <appender-ref ref="ERROR_FILE"/>
         </root>
     </springProfile>
-
-    <logger name="API_PERF" level="INFO" additivity="false">
-        <appender-ref ref="API_PERF_JSON"/>
-    </logger>
 
     <!-- ================== -->
     <!-- 비-DEV 환경 -->
