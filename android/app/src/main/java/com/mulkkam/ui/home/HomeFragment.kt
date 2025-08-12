@@ -56,8 +56,8 @@ class HomeFragment :
                 handleAlarmCount(alarmCountUiState ?: return@observe)
             }
 
-            drinkUiState.observe(viewLifecycleOwner) {
-                handleDrinkResult(it ?: return@observe)
+            drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
+                handleDrinkResult(drinkUiState ?: return@observe)
             }
         }
     }
@@ -199,10 +199,15 @@ class HomeFragment :
         binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
 
-    private fun handleDrinkResult(it: MulKkamUiState<Int>) {
-        when (it) {
+    private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
+        when (drinkUiState) {
             is MulKkamUiState.Success<Int> -> {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it.data), Snackbar.LENGTH_SHORT).show()
+                Snackbar
+                    .make(
+                        binding.root,
+                        getString(R.string.manual_drink_success, drinkUiState.data),
+                        Snackbar.LENGTH_SHORT,
+                    ).show()
             }
 
             is MulKkamUiState.Failure -> {
