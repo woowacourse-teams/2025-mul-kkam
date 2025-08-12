@@ -75,6 +75,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 is TargetAmountError -> {
                     binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
                 }
+
                 else -> Unit
             }
         }

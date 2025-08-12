@@ -12,6 +12,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTargetAmountBinding
+import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -81,13 +82,35 @@ class TargetAmountFragment :
     }
 
     private fun initObservers() {
-        viewModel.recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
-            binding.etInputGoal.setText(recommendedTargetAmount.toString())
-            updateRecommendedTargetHighlight(recommendedTargetAmount)
-        }
+        with(viewModel) {
+            recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
+                binding.etInputGoal.setText(recommendedTargetAmount.toString())
+                updateRecommendedTargetHighlight(recommendedTargetAmount)
+            }
 
-        viewModel.isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
-            updateTargetAmountValidationUI(isValid)
+            isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
+                updateTargetAmountValidationUI(isValid)
+            }
+
+            targetAmount.observe(viewLifecycleOwner) { targetAmount ->
+                if (binding.etInputGoal.text
+                        .toString()
+                        .toIntOrNull() == targetAmount.amount
+                ) {
+                    return@observe
+                }
+                binding.etInputGoal.setText(targetAmount.amount.toString())
+            }
+
+            onTargetAmountValidationError.observe(viewLifecycleOwner) { error ->
+                when (error) {
+                    is TargetAmountError -> {
+                        binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+                    }
+
+                    else -> Unit
+                }
+            }
         }
     }
 
@@ -118,6 +141,12 @@ class TargetAmountFragment :
         }
     }
 
+    fun TargetAmountError.toMessageRes(): String =
+        when (this) {
+            TargetAmountError.BelowMinimum -> getString(R.string.setting_target_amount_warning_too_)
+            TargetAmountError.AboveMaximum -> getString(R.string.setting_target_amount_warning_too_much)
+        }
+
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged {
             debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
@@ -128,7 +157,7 @@ class TargetAmountFragment :
                         binding.etInputGoal.text
                             .toString()
                             .trim()
-                            .toIntOrNull()
+                            .toIntOrNull() ?: 0
                     viewModel.updateTargetAmount(targetAmount)
                 }.apply { debounceHandler.postDelayed(this, 300L) }
         }

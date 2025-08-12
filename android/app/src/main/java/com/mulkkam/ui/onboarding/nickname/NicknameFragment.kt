@@ -76,22 +76,27 @@ class NicknameFragment :
             .trim()
 
     private fun initObservers() {
-        viewModel.nicknameValidationState.observe(viewLifecycleOwner) { state ->
-            updateNicknameUI(state)
-        }
-
-        viewModel.onNicknameValidationError.observe(viewLifecycleOwner) { error ->
-            when (error) {
-                is NicknameError ->
-                    binding.tvNicknameValidationMessage.text = error.toMessageRes()
-                else ->
-                    Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
+        with(viewModel) {
+            nicknameValidationState.observe(viewLifecycleOwner) { state ->
+                updateNicknameUI(state)
             }
-        }
 
-        viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
-            if (binding.etInputNickname.text.toString() == nickname.name) return@observe
-            binding.etInputNickname.setText(nickname.name)
+            onNicknameValidationError.observe(viewLifecycleOwner) { error ->
+                when (error) {
+                    is NicknameError ->
+                        binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
+                    else ->
+                        Snackbar
+                            .make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT)
+                            .show()
+                }
+            }
+
+            nickname.observe(viewLifecycleOwner) { nickname ->
+                if (binding.etInputNickname.text.toString() == nickname.name) return@observe
+                binding.etInputNickname.setText(nickname.name)
+            }
         }
     }
 
