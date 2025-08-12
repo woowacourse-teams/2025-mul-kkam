@@ -14,6 +14,7 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
+import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
@@ -150,6 +151,12 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 viewModel.updateTargetAmount(targetAmount)
             }.apply { debounceHandler.postDelayed(this, 300L) }
     }
+
+    fun TargetAmountError.toMessageRes(): String =
+        when (this) {
+            TargetAmountError.BelowMinimum -> getString(R.string.setting_target_amount_warning_too_)
+            TargetAmountError.AboveMaximum -> getString(R.string.setting_target_amount_warning_too_much)
+        }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)

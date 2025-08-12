@@ -72,6 +72,7 @@
     <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
     <string name="setting_target_amount_hint_input_goal">목표량을 입력해주세요</string>
     <string name="setting_target_amount_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_target_amount_warning_too_">최소 200ml 이상 마셔야 됨 ㅇㅇ</string>
     <string name="setting_target_amount_unit_ml">ml</string>
     <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
