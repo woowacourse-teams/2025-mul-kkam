@@ -24,7 +24,7 @@ jobs:
         working-directory: ./backend
 
       - name: Build project
-        run: ./gradlew -Duser.timezone=Asia/Seoul clean build -x test
+        run: ./gradlew clean build -x test
         working-directory: ./backend
 
       - name: Set up Docker Buildx
