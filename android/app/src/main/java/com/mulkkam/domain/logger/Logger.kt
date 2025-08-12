@@ -1,8 +1,8 @@
 package com.mulkkam.domain.logger
 
-import com.mulkkam.domain.model.LogEntry
-import com.mulkkam.domain.model.LogEvent
-import com.mulkkam.domain.model.LogLevel
+import com.mulkkam.domain.model.logger.LogEntry
+import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.model.logger.LogLevel
 
 /**
  * MulKkam 애플리케이션 전역 로깅 인터페이스.
@@ -35,13 +35,6 @@ import com.mulkkam.domain.model.LogLevel
  * logger.debug(LogEvent.USER_ACTION, "결제 버튼 클릭")
  * ```
  *
- * ---
- * ## 구현체 예시
- * - Firebase + Timber 기반: `FirebaseTimberLogger`
- * - 로컬 파일 저장 기반: `FileLogger`
- *
- * UI, Data 계층에서는 이 인터페이스만 참조하며,
- * 실제 구현체는 DI를 통해 주입받아야 함.
  */
 
 interface Logger {

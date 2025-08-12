@@ -10,6 +10,13 @@
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
+    <string name="home_notification_apply_failed">목표량 반영에 실패했어요</string>
+    <string name="home_notification_apply_success">목표량에 반영되었어요</string>
+    <string name="home_notification_just_now">방금 전</string>
+    <string name="home_notification_minutes_ago">%d분 전</string>
+    <string name="home_notification_hours_ago">%d시간 전</string>
+    <string name="home_notification_one_day_ago">하루 전</string>
+    <string name="home_notification_date_format">yyyy.MM.dd</string>
 
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
@@ -78,7 +85,6 @@
     <string name="setting_item_night">야간 알림 허용</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
-    <string name="login_kakao_success">카카오 로그인 성공</string>
 
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
@@ -115,10 +121,17 @@
     <string name="target_amount_input_hint_highlight">물 목표 섭취량</string>
     <string name="target_amount_recommended_water_goal">%s 님의\n하루 물 권장 섭취량은\n%,dml 입니다</string>
     <string name="target_amount_recommended_description">입력해 주신 성별, 몸무게 정보를 바탕으로 계산했어요.</string>
+    <string name="target_amount_recommended_description_default">입력해 주신 성별, 몸무게 정보가 비어 있어, 표준 남성 기준으로 계산해 보았어요.</string>
 
     <string name="history_delete_dialog_label">해당 기록을 삭제하시겠어요?</string>
-    <string name="history_delete_dialog_sub_label">삭제된 기록은 복구가 불가능합니다.</string>
+    <string name="history_delete_dialog_sub_label">삭제된 기록은 복구되지 않습니다.</string>
     <string name="history_delete_confirm">확인</string>
     <string name="history_delete_cancel">취소</string>
     <string name="history_delete_success">기록이 삭제되었습니다.</string>
+
+    <string name="manual_drink_success">%,dml 섭취 완료!</string>
+    <string name="manual_drink_label">직접 입력</string>
+    <string name="manual_drink_perform">마시기</string>
+
+    <string name="expandable_floating_menu_intake_unit">%,dml</string>
 </resources>

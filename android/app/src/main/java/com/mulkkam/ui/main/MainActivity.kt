@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
@@ -21,11 +20,11 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
-import com.mulkkam.ui.binding.BindingActivity
-import com.mulkkam.ui.model.MainTab
+import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
-import com.mulkkam.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -187,19 +186,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         when (requestCode) {
             REQUEST_CODE_NOTIFICATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Toast
-                        .makeText(
-                            this,
-                            R.string.main_alarm_permission_granted,
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                    Snackbar.make(binding.root, R.string.main_alarm_permission_granted, Snackbar.LENGTH_SHORT).show()
                 } else {
-                    Toast
-                        .makeText(
-                            this,
-                            R.string.main_alarm_permission_denied,
-                            Toast.LENGTH_SHORT,
-                        ).show()
+                    Snackbar.make(binding.root, R.string.main_alarm_permission_denied, Snackbar.LENGTH_SHORT).show()
                 }
             }
         }

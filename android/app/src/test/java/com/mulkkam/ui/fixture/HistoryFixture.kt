@@ -1,9 +1,26 @@
 package com.mulkkam.ui.fixture
 
-import com.mulkkam.domain.IntakeHistory
-import com.mulkkam.domain.IntakeHistorySummary
+import com.mulkkam.domain.model.intake.IntakeHistory
+import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.intake.IntakeHistorySummary
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.TemporalAdjusters
+
+fun getWeeklyIntakeHistories(referenceDate: LocalDate): IntakeHistorySummaries =
+    IntakeHistorySummaries(
+        List(WEEK_LENGTH) {
+            FULL_INTAKE_HISTORY.copy(
+                date =
+                    referenceDate
+                        .with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                        .plusDays(
+                            it.toLong(),
+                        ),
+            )
+        },
+    )
 
 val FULL_INTAKE_HISTORY =
     IntakeHistorySummary(
@@ -31,18 +48,4 @@ val FULL_INTAKE_HISTORY =
             ),
     )
 
-val HALF_INTAKE_HISTORY =
-    IntakeHistorySummary(
-        date = LocalDate.now(),
-        totalIntakeAmount = 1200,
-        targetAmount = 600,
-        achievementRate = 50f,
-        intakeHistories =
-            listOf(
-                IntakeHistory(
-                    id = 1,
-                    dateTime = LocalTime.of(10, 0),
-                    intakeAmount = 600,
-                ),
-            ),
-    )
+private const val WEEK_LENGTH: Int = 7

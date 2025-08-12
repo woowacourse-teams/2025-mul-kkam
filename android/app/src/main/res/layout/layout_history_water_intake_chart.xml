@@ -7,7 +7,7 @@
     android:background="@drawable/bg_common_rectangle_4dp"
     android:backgroundTint="@color/gray_10">
 
-    <com.mulkkam.ui.custom.GradientDonutChartView
+    <com.mulkkam.ui.custom.progress.GradientDonutChartView
         android:id="@+id/pc_water_intake"
         android:layout_width="0dp"
         android:layout_height="0dp"

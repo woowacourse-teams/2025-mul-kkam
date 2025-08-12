@@ -1,9 +1,10 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.IntakeHistorySummaries
-import com.mulkkam.domain.MulKkamResult
-import com.mulkkam.domain.model.IntakeHistoryResult
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDate
 import java.time.LocalDateTime
 
@@ -26,8 +27,10 @@ interface IntakeRepository {
 
     suspend fun getIntakeAmountTargetRecommended(
         gender: Gender?,
-        weight: Int?,
+        weight: BioWeight?,
     ): MulKkamResult<Int>
+
+    suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit>
 
     suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit>
 }

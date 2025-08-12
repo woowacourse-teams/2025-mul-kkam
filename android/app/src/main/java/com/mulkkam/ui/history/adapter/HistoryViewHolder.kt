@@ -5,7 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemIntakeHistoryBinding
-import com.mulkkam.domain.IntakeHistory
+import com.mulkkam.domain.model.intake.IntakeHistory
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 

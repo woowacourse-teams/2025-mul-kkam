@@ -8,13 +8,14 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentBioInfoBinding
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.Gender.FEMALE
-import com.mulkkam.domain.Gender.MALE
-import com.mulkkam.ui.binding.BindingFragment
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.bio.Gender.FEMALE
+import com.mulkkam.domain.model.bio.Gender.MALE
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
-import com.mulkkam.ui.util.getAppearanceSpannable
+import com.mulkkam.ui.util.binding.BindingFragment
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class BioInfoFragment :
     BindingFragment<FragmentBioInfoBinding>(
@@ -47,7 +48,7 @@ class BioInfoFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            tvNext.setOnClickListener {
+            tvNext.setSingleClickListener {
                 parentViewModel.updateBioInfo(viewModel.gender.value, viewModel.weight.value)
                 parentViewModel.moveToNextStep()
             }
@@ -68,7 +69,7 @@ class BioInfoFragment :
 
     private fun initObservers() {
         viewModel.weight.observe(viewLifecycleOwner) { weight ->
-            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+            binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight.value)
         }
 
         viewModel.gender.observe(viewLifecycleOwner) { selectedGender ->

@@ -10,16 +10,6 @@ class TermsViewModel : ViewModel() {
     private val _termsAgreements = MutableLiveData<List<TermsAgreementUiModel>>()
     val termsAgreements: LiveData<List<TermsAgreementUiModel>> get() = _termsAgreements
 
-    val isMarketingNotificationAgreed: LiveData<Boolean> =
-        termsAgreements.map {
-            it.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true
-        }
-
-    val isNightNotificationAgreed: LiveData<Boolean> =
-        termsAgreements.map {
-            it.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true
-        }
-
     val isAllChecked: LiveData<Boolean> =
         termsAgreements.map {
             it.all { agreement -> agreement.isChecked }

@@ -13,7 +13,6 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
@@ -64,45 +63,6 @@ public class NotificationService {
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
 
-    @Transactional
-    public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        try {
-            fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
-        } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
-            notificationRepository.save(notification);
-        }
-    }
-
-    @Transactional
-    public void createTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
-        Member member = createTokenNotificationRequest.member();
-        List<Device> devicesByMember = deviceRepository.findAllByMember(member);
-
-        try {
-            sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
-        } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-        notificationRepository.save(createTokenNotificationRequest.toNotification());
-    }
-
-    private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
-                                          List<Device> devicesByMember)
-            throws FirebaseMessagingException {
-        for (Device device : devicesByMember) {
-            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
-            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
-        }
-    }
-
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
         if (getNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
@@ -121,16 +81,6 @@ public class NotificationService {
         return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
     }
 
-    private Long getNextCursor(
-            boolean hasNext,
-            List<Notification> notifications
-    ) {
-        if (hasNext) {
-            return notifications.getLast().getId();
-        }
-        return null;
-    }
-
     private List<ReadNotificationResponse> toReadNotificationResponses(
             boolean hasNext,
             List<Notification> notifications
@@ -144,11 +94,53 @@ public class NotificationService {
                 .collect(Collectors.toList());
     }
 
-    public void createActivityNotification(
-            CreateActivityNotification createActivityNotification,
-            Member member
+    @Transactional
+    public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        List<Member> allMember = memberRepository.findAll();
+        for (Member member : allMember) {
+            Notification notification = createTopicNotificationRequest.toNotification(member);
+            notificationRepository.save(notification);
+        }
+
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
+        try {
+            fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+        } catch (FirebaseMessagingException e) {
+            throw new CommonException(SEND_MESSAGE_FAILED);
+        }
+    }
+
+    @Transactional
+    public void createTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
+        Member member = createTokenNotificationRequest.member();
+        List<Device> devicesByMember = deviceRepository.findAllByMember(member);
+
+        notificationRepository.save(createTokenNotificationRequest.toNotification());
+
+        try {
+            sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
+        } catch (FirebaseMessagingException e) {
+            throw new CommonException(SEND_MESSAGE_FAILED);
+        }
+    }
+
+    private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
+                                          List<Device> devicesByMember)
+            throws FirebaseMessagingException {
+        for (Device device : devicesByMember) {
+            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
+                    device.getToken());
+            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+        }
+    }
+
+    private Long getNextCursor(
+            boolean hasNext,
+            List<Notification> notifications
     ) {
-        CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        createTokenNotification(createTokenNotificationRequest);
+        if (hasNext) {
+            return notifications.getLast().getId();
+        }
+        return null;
     }
 }

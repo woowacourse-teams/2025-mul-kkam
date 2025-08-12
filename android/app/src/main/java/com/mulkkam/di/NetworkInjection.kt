@@ -5,7 +5,7 @@ import com.mulkkam.BuildConfig
 import com.mulkkam.data.remote.adapter.MulKkamCallAdapterFactory
 import com.mulkkam.data.remote.interceptor.AuthorizationInterceptor
 import com.mulkkam.data.remote.interceptor.NetworkLoggingInterceptor
-import com.mulkkam.di.LoggingInjection.logger
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -14,12 +14,13 @@ import retrofit2.Retrofit
 object NetworkInjection {
     private val contentType = "application/json".toMediaType()
 
-    private val interceptorClient =
+    private val interceptorClient by lazy {
         OkHttpClient()
             .newBuilder()
             .addInterceptor(AuthorizationInterceptor())
-            .addInterceptor(NetworkLoggingInterceptor(logger))
+            .addInterceptor(NetworkLoggingInterceptor(mulKkamLogger))
             .build()
+    }
 
     val retrofit: Retrofit by lazy {
         Retrofit

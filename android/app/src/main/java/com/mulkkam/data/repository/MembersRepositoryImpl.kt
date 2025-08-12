@@ -2,16 +2,17 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
-import com.mulkkam.data.remote.model.request.MemberNicknameRequest
-import com.mulkkam.data.remote.model.request.MembersPhysicalAtrributesRequest
-import com.mulkkam.data.remote.model.request.toData
-import com.mulkkam.data.remote.model.response.toDomain
+import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
+import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.toData
+import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.service.MembersService
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.MulKkamResult
-import com.mulkkam.domain.model.MemberInfo
-import com.mulkkam.domain.model.OnboardingInfo
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.OnboardingInfo
+import com.mulkkam.domain.model.members.TodayProgressInfo
+import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -61,13 +62,13 @@ class MembersRepositoryImpl(
 
     override suspend fun postMembersPhysicalAttributes(
         gender: Gender,
-        weight: Int,
+        weight: BioWeight,
     ): MulKkamResult<Unit> {
         val result =
             membersService.postMembersPhysicalAttributes(
                 MembersPhysicalAtrributesRequest(
                     gender.name,
-                    weight.toDouble(),
+                    weight.value.toDouble(),
                 ),
             )
         return result.fold(

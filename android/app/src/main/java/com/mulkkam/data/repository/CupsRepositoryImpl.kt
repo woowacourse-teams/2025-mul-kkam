@@ -2,14 +2,14 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
-import com.mulkkam.data.remote.model.request.toAddCupRequest
-import com.mulkkam.data.remote.model.request.toData
-import com.mulkkam.data.remote.model.request.toPatchCupRequest
-import com.mulkkam.data.remote.model.response.toDomain
+import com.mulkkam.data.remote.model.request.cups.toData
+import com.mulkkam.data.remote.model.request.cups.toNewCupRequest
+import com.mulkkam.data.remote.model.request.cups.toPatchCupRequest
+import com.mulkkam.data.remote.model.response.cups.toDomain
 import com.mulkkam.data.remote.service.CupsService
-import com.mulkkam.domain.MulKkamResult
-import com.mulkkam.domain.model.Cup
-import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 
 class CupsRepositoryImpl(
@@ -25,7 +25,7 @@ class CupsRepositoryImpl(
 
     override suspend fun postCup(cup: Cup): MulKkamResult<Unit> {
         val result =
-            cupsService.postCup(cup.toAddCupRequest())
+            cupsService.postCup(cup.toNewCupRequest())
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },

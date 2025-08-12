@@ -6,7 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.Gender
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
@@ -16,8 +17,8 @@ class SettingBioInfoViewModel : ViewModel() {
     val gender: LiveData<Gender?>
         get() = _gender
 
-    private val _weight = MutableLiveData<Int?>()
-    val weight: MutableLiveData<Int?>
+    private val _weight = MutableLiveData<BioWeight?>()
+    val weight: MutableLiveData<BioWeight?>
         get() = _weight
 
     private val _onBioInfoChanged = MutableSingleLiveData<Unit>()
@@ -52,7 +53,7 @@ class SettingBioInfoViewModel : ViewModel() {
     }
 
     fun updateWeight(value: Int) {
-        _weight.value = value
+        _weight.value = BioWeight(value)
     }
 
     fun updateGender(gender: Gender) {

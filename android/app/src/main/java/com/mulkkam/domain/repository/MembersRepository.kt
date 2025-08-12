@@ -1,10 +1,11 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.Gender
-import com.mulkkam.domain.MulKkamResult
-import com.mulkkam.domain.model.MemberInfo
-import com.mulkkam.domain.model.OnboardingInfo
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.OnboardingInfo
+import com.mulkkam.domain.model.members.TodayProgressInfo
+import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDate
 
 interface MembersRepository {
@@ -20,7 +21,7 @@ interface MembersRepository {
 
     suspend fun postMembersPhysicalAttributes(
         gender: Gender,
-        weight: Int,
+        weight: BioWeight,
     ): MulKkamResult<Unit>
 
     suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean>

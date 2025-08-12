@@ -1,5 +1,8 @@
 package backend.mulkkam.member.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
@@ -27,9 +30,6 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -117,7 +117,8 @@ public class MemberService {
         Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
                 date);
         if (foundIntakeHistory.isEmpty()) {
-            return new ProgressInfoResponse(member);
+            int streak = findStreak(member, date);
+            return new ProgressInfoResponse(member, streak);
         }
 
         List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberAndDateRange(
@@ -137,5 +138,11 @@ public class MemberService {
                 .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
                 .sum();
         return new Amount(total);
+    }
+
+    private int findStreak(Member member, LocalDate todayDate) {
+        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
+                member, todayDate.minusDays(1));
+        return yesterdayIntakeHistory.map(intakeHistory -> intakeHistory.getStreak() + 1).orElse(1);
     }
 }

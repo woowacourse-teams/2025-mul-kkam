@@ -7,12 +7,13 @@ import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.databinding.ActivitySettingCupsBinding
-import com.mulkkam.ui.binding.BindingActivity
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(ActivitySettingCupsBinding::inflate) {
     private val viewModel: SettingCupsViewModel by viewModels()
@@ -69,7 +70,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     }
 
     private fun initClickListener() {
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setSingleClickListener {
             finish()
         }
     }

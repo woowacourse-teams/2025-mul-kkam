@@ -1,0 +1,135 @@
+<configuration>
+    <!-- ================== -->
+    <!-- 공통 패턴 정의 -->
+    <!-- 콘솔: Asia/Seoul -->
+    <property name="CONSOLE_PATTERN"
+              value="%magenta([%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
+
+    <!-- 파일: 컬러 없음, Asia/Seoul -->
+    <property name="FILE_PATTERN"
+              value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
+
+
+    <!-- ================== -->
+    <!-- DEV 환경 -->
+    <!-- ================== -->
+    <springProfile name="dev">
+        <property name="LOG_PATH" value="/app/logs"/>
+
+        <!-- INFO -->
+        <appender name="INFO_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/info/info.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/info/info.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>INFO</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+
+        <!-- WARN -->
+        <appender name="WARN_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/warn/warn.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/warn/warn.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>WARN</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+
+        <!-- ERROR -->
+        <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/error/error.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/error/error.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder>
+                <pattern>${FILE_PATTERN}</pattern>
+            </encoder>
+            <filter class="ch.qos.logback.classic.filter.LevelFilter">
+                <level>ERROR</level>
+                <onMatch>ACCEPT</onMatch>
+                <onMismatch>DENY</onMismatch>
+            </filter>
+        </appender>
+
+        <!-- API 성능 전용: JSON으로 콘솔 출력 -->
+        <appender name="API_PERF_JSON" class="ch.qos.logback.core.ConsoleAppender">
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp>
+                        <timeZone>Asia/Seoul</timeZone>
+                        <fieldName>@timestamp</fieldName>
+                        <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS z</pattern>
+                    </timestamp>
+
+                    <level/>
+
+                    <mdc>
+                        <includeMdcKeyName>traceId</includeMdcKeyName>
+                        <includeMdcKeyName>type</includeMdcKeyName>
+                        <includeMdcKeyName>spanId</includeMdcKeyName>
+                        <includeMdcKeyName>memberId</includeMdcKeyName>
+                    </mdc>
+
+                    <arguments>
+                        <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                    </arguments>
+
+                </providers>
+            </encoder>
+        </appender>
+
+        <!-- 콘솔: 컬러 -->
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_PATTERN}</pattern>
+            </encoder>
+            <includeCallerData>true</includeCallerData>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="INFO_FILE"/>
+            <appender-ref ref="WARN_FILE"/>
+            <appender-ref ref="ERROR_FILE"/>
+        </root>
+    </springProfile>
+
+    <logger name="API_PERF" level="INFO" additivity="false">
+        <appender-ref ref="API_PERF_JSON"/>
+    </logger>
+
+    <!-- ================== -->
+    <!-- 비-DEV 환경 -->
+    <!-- ================== -->
+    <springProfile name="!dev">
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+</configuration>

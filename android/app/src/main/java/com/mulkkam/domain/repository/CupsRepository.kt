@@ -1,8 +1,8 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.MulKkamResult
-import com.mulkkam.domain.model.Cup
-import com.mulkkam.domain.model.Cups
+import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.result.MulKkamResult
 
 interface CupsRepository {
     suspend fun getCups(): MulKkamResult<Cups>

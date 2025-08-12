@@ -12,10 +12,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTargetAmountBinding
-import com.mulkkam.ui.binding.BindingFragment
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.util.getAppearanceSpannable
-import com.mulkkam.ui.util.getColoredSpannable
+import com.mulkkam.ui.util.binding.BindingFragment
+import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
 class TargetAmountFragment :
@@ -39,6 +41,7 @@ class TargetAmountFragment :
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        binding.tvComplete.applyImeMargin()
     }
 
     private fun initRecommendation() {
@@ -46,6 +49,15 @@ class TargetAmountFragment :
             parentViewModel.onboardingInfo.gender,
             parentViewModel.onboardingInfo.weight,
         )
+
+        binding.tvRecommendedTargetAmountDescription.text =
+            getString(
+                if (parentViewModel.onboardingInfo.hasBioInfo()) {
+                    R.string.target_amount_recommended_description
+                } else {
+                    R.string.target_amount_recommended_description_default
+                },
+            )
     }
 
     private fun initTextAppearance() {
@@ -58,7 +70,7 @@ class TargetAmountFragment :
     }
 
     private fun initClickListeners() {
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             val targetAmount =
                 binding.etInputGoal.text
                     .toString()
