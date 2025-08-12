@@ -15,10 +15,10 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-import com.mulkkam.ui.model.`NicknameValidationUiState`
-import com.mulkkam.ui.model.`NicknameValidationUiState`.INVALID
-import com.mulkkam.ui.model.`NicknameValidationUiState`.PENDING_SERVER_VALIDATION
-import com.mulkkam.ui.model.`NicknameValidationUiState`.VALID
+import com.mulkkam.ui.model.NicknameValidationUiState
+import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
+import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -70,11 +70,12 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
 
         viewModel.onNicknameValidationError.observe(this) { error ->
-            if (error !is NicknameError) {
-                Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
-                return@observe
+            when (error) {
+                is NicknameError ->
+                    binding.tvNicknameValidationMessage.text = error.toMessageRes()
+                else ->
+                    Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
             }
-            binding.tvNicknameValidationMessage.text = error.toMessageRes()
         }
 
         viewModel.onNicknameChanged.observe(this) {

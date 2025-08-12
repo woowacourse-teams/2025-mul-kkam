@@ -16,9 +16,9 @@ import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.model.NicknameValidationUiState
-import com.mulkkam.ui.model.`NicknameValidationUiState`.INVALID
-import com.mulkkam.ui.model.`NicknameValidationUiState`.PENDING_SERVER_VALIDATION
-import com.mulkkam.ui.model.`NicknameValidationUiState`.VALID
+import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
+import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -80,10 +80,12 @@ class NicknameFragment :
         }
 
         viewModel.onNicknameValidationError.observe(viewLifecycleOwner) { error ->
-            if (error !is NicknameError) {
-                Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
+            when (error) {
+                is NicknameError ->
+                    binding.tvNicknameValidationMessage.text = error.toMessageRes()
+                else ->
+                    Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
             }
-            binding.tvNicknameValidationMessage.text = (error as? NicknameError)?.toMessageRes()
         }
 
         viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
