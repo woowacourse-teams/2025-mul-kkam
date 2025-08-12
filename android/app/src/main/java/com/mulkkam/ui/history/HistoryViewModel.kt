@@ -3,35 +3,34 @@ package com.mulkkam.ui.history
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
 class HistoryViewModel : ViewModel() {
-    private val _weeklyIntakeHistories = MutableLiveData<IntakeHistorySummaries>()
+    private val _weeklyIntakeHistories: MutableLiveData<IntakeHistorySummaries> = MutableLiveData()
     val weeklyIntakeHistories: LiveData<IntakeHistorySummaries> get() = _weeklyIntakeHistories
 
-    private val _dailyIntakeHistories = MutableLiveData<IntakeHistorySummary>()
+    private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData()
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
-    val isNotCurrentWeek: LiveData<Boolean> =
-        weeklyIntakeHistories.map { intakeHistories ->
-            intakeHistories.lastDay < LocalDate.now()
-        }
+    private val _isNotCurrentWeek: MutableLiveData<Boolean> = MutableLiveData()
+    val isNotCurrentWeek: LiveData<Boolean> get() = _isNotCurrentWeek
 
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
-    private val _deleteSuccess = MutableLiveData<Boolean>()
-    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+    private val _deleteSuccess = MutableSingleLiveData<Boolean>()
+    val deleteSuccess: SingleLiveData<Boolean> get() = _deleteSuccess
 
     init {
         loadIntakeHistories()
@@ -52,6 +51,7 @@ class HistoryViewModel : ViewModel() {
                 result.getOrError()
             }.onSuccess { summaries ->
                 _weeklyIntakeHistories.value = summaries
+                _isNotCurrentWeek.value = summaries.lastDay < currentDate
                 selectDailySummary(weekDates, summaries, currentDate)
             }.onFailure {
                 // TODO: 에러 처리
@@ -87,9 +87,9 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun moveWeek(offset: Long) {
-        val newBaseDate =
+        val newReferenceDate =
             weeklyIntakeHistories.value?.getDateByWeekOffset(offset) ?: LocalDate.now()
-        loadIntakeHistories(newBaseDate)
+        loadIntakeHistories(newReferenceDate)
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
@@ -97,15 +97,29 @@ class HistoryViewModel : ViewModel() {
             val result = RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id)
             runCatching {
                 result.getOrError()
-                _deleteSuccess.value = true
+                updateIntakeHistoriesAfterDeletion(history)
+                _deleteSuccess.setValue(true)
             }.onFailure {
                 // TODO : 에러 처리
             }
         }
     }
 
-    fun onDeleteSuccessObserved() {
-        _deleteSuccess.value = false
+    private fun updateIntakeHistoriesAfterDeletion(history: IntakeHistory) {
+        val newDailySummary = _dailyIntakeHistories.value?.afterDeleteHistory(history) ?: return
+
+        _dailyIntakeHistories.value = newDailySummary
+
+        val currentWeeklyList = _weeklyIntakeHistories.value?.intakeHistorySummaries ?: return
+        val newWeeklyList =
+            currentWeeklyList.map { weeklySummary ->
+                if (weeklySummary.date == newDailySummary.date) {
+                    newDailySummary
+                } else {
+                    weeklySummary
+                }
+            }
+        _weeklyIntakeHistories.value = IntakeHistorySummaries(newWeeklyList)
     }
 
     companion object {

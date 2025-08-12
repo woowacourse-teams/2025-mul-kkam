@@ -81,7 +81,7 @@ class SegmentedProgressBarView(
         private const val PROCESS_MIN_VALUE: Int = 0
         private const val PROCESS_OFFSET: Int = 1
 
-        private const val SEGMENT_SPACING_DEFAULT: Float = 16f
+        private const val SEGMENT_SPACING_DEFAULT: Float = 8f
 
         private const val CORNER_RADIUS_DEFAULT: Float = 8f
     }

@@ -49,6 +49,15 @@ class TargetAmountFragment :
             parentViewModel.onboardingInfo.gender,
             parentViewModel.onboardingInfo.weight,
         )
+
+        binding.tvRecommendedTargetAmountDescription.text =
+            getString(
+                if (parentViewModel.onboardingInfo.hasBioInfo()) {
+                    R.string.target_amount_recommended_description
+                } else {
+                    R.string.target_amount_recommended_description_default
+                },
+            )
     }
 
     private fun initTextAppearance() {
