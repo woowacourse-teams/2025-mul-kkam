@@ -42,7 +42,7 @@ class ManualDrinkFragment :
     }
 
     private fun initObservers() {
-        viewModel.drinkSuccess.observe(viewLifecycleOwner) {
+        viewModel.drinkUiState.observe(viewLifecycleOwner) {
             dismiss()
         }
     }

@@ -8,6 +8,8 @@ import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -22,8 +24,8 @@ class HomeViewModel : ViewModel() {
     private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
     val alarmCount: LiveData<Int> get() = _alarmCount
 
-    private val _drinkSuccess: MutableLiveData<Int> = MutableLiveData()
-    val drinkSuccess: LiveData<Int> get() = _drinkSuccess
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData()
+    val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {
         loadTodayProgressInfo()
@@ -74,6 +76,7 @@ class HomeViewModel : ViewModel() {
 
     fun addWaterIntake(amount: Int) {
         viewModelScope.launch {
+            _drinkUiState.value = MulKkamUiState.Loading
             val result =
                 RepositoryInjection.intakeRepository.postIntakeHistory(
                     LocalDateTime.now(),
@@ -87,9 +90,9 @@ class HomeViewModel : ViewModel() {
                         achievementRate = intakeHistoryResult.achievementRate,
                         comment = intakeHistoryResult.comment,
                     )
-                _drinkSuccess.value = amount
+                _drinkUiState.value = MulKkamUiState.Success<Int>(amount)
             }.onFailure {
-                // TODO: 에러 처리
+                _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

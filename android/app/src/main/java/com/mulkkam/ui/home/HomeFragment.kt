@@ -17,6 +17,7 @@ import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
@@ -56,8 +57,8 @@ class HomeFragment :
                 binding.tvAlarmCount.isVisible = alarmCount != ALARM_COUNT_MIN
             }
 
-            drinkSuccess.observe(viewLifecycleOwner) {
-                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it), Snackbar.LENGTH_SHORT).show()
+            drinkUiState.observe(viewLifecycleOwner) {
+                handleDrinkResult(it ?: return@observe)
             }
         }
     }
@@ -183,6 +184,21 @@ class HomeFragment :
         ManualDrinkFragment
             .newInstance()
             .show(childFragmentManager, ManualDrinkFragment.TAG)
+    }
+
+    private fun handleDrinkResult(it: MulKkamUiState<Int>) {
+        when (it) {
+            is MulKkamUiState.Success<Int> -> {
+                Snackbar.make(binding.root, getString(R.string.manual_drink_success, it.data), Snackbar.LENGTH_SHORT).show()
+            }
+
+            is MulKkamUiState.Failure -> {
+                Snackbar.make(binding.root, getString(R.string.manual_drink_network_error), Snackbar.LENGTH_SHORT).show()
+            }
+
+            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Loading -> Unit
+        }
     }
 
     override fun onReselected() {
