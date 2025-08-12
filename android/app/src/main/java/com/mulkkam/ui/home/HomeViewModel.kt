@@ -83,25 +83,22 @@ class HomeViewModel : ViewModel() {
 
     fun addWaterIntake(amount: Int) {
         viewModelScope.launch {
-            _drinkUiState.value = MulKkamUiState.Loading
-            val result =
-                RepositoryInjection.intakeRepository.postIntakeHistory(
-                    LocalDateTime.now(),
-                    amount,
-                )
             runCatching {
-                val intakeHistoryResult = result.getOrError()
-                val todayProgressInfoUiState =
-                    todayProgressInfoUiState.value as? MulKkamUiState.Success<TodayProgressInfo> ?: return@runCatching
+                _drinkUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.intakeRepository
+                    .postIntakeHistory(LocalDateTime.now(), amount)
+                    .getOrError()
+            }.onSuccess { intakeHistory ->
+                val current = (todayProgressInfoUiState.value as? MulKkamUiState.Success<TodayProgressInfo>)?.data ?: return@launch
                 _todayProgressInfoUiState.value =
-                    MulKkamUiState.Success<TodayProgressInfo>(
-                        todayProgressInfoUiState.data.updateProgressInfo(
+                    MulKkamUiState.Success(
+                        current.updateProgressInfo(
                             amountDelta = amount,
-                            achievementRate = intakeHistoryResult.achievementRate,
-                            comment = intakeHistoryResult.comment,
+                            achievementRate = intakeHistory.achievementRate,
+                            comment = intakeHistory.comment,
                         ),
                     )
-                _drinkUiState.value = MulKkamUiState.Success<Int>(amount)
+                _drinkUiState.value = MulKkamUiState.Success(amount)
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
