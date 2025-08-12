@@ -42,10 +42,8 @@ class HomeFragment :
 
     private fun initObservers() {
         with(viewModel) {
-            todayProgressInfo.observe(viewLifecycleOwner) { progressInfo ->
-                binding.pbHomeWaterProgress.setProgress(progressInfo.achievementRate)
-                binding.tvHomeCharacterChat.text = progressInfo.comment
-                updateDailyProgressInfo(progressInfo)
+            todayProgressInfoUiState.observe(viewLifecycleOwner) { todayProgressInfoUiState ->
+                handleTodayProgressInfo(todayProgressInfoUiState ?: return@observe)
             }
 
             cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
@@ -60,6 +58,23 @@ class HomeFragment :
                 handleDrinkResult(drinkUiState ?: return@observe)
             }
         }
+    }
+
+    private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
+        when (todayProgressInfoMulKkamUiState) {
+            is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
+            MulKkamUiState.Loading -> Unit
+            MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure -> {
+                Snackbar.make(binding.root, getString(R.string.home_network_error), Snackbar.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun showTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState.Success<TodayProgressInfo>) {
+        binding.pbHomeWaterProgress.setProgress(todayProgressInfoMulKkamUiState.data.achievementRate)
+        binding.tvHomeCharacterChat.text = todayProgressInfoMulKkamUiState.data.comment
+        updateDailyProgressInfo(todayProgressInfoMulKkamUiState.data)
     }
 
     private fun updateDailyProgressInfo(progressInfo: TodayProgressInfo) {

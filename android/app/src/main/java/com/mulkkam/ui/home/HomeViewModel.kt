@@ -16,8 +16,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
-    private val _todayProgressInfo: MutableLiveData<TodayProgressInfo> = MutableLiveData(EMPTY_TODAY_PROGRESS_INFO)
-    val todayProgressInfo: LiveData<TodayProgressInfo> get() = _todayProgressInfo
+    private val _todayProgressInfoUiState: MutableLiveData<MulKkamUiState<TodayProgressInfo>> =
+        MutableLiveData(MulKkamUiState.Success<TodayProgressInfo>(EMPTY_TODAY_PROGRESS_INFO))
+    val todayProgressInfoUiState: LiveData<MulKkamUiState<TodayProgressInfo>> get() = _todayProgressInfoUiState
 
     private val _cupsUiState: MutableLiveData<MulKkamUiState<Cups>> = MutableLiveData(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
     val cupsUiState: LiveData<MulKkamUiState<Cups>> get() = _cupsUiState
@@ -36,12 +37,12 @@ class HomeViewModel : ViewModel() {
 
     fun loadTodayProgressInfo() {
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembersProgressInfo(LocalDate.now())
             runCatching {
-                val progressInfo = result.getOrError()
-                _todayProgressInfo.value = progressInfo
+                RepositoryInjection.membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
+            }.onSuccess { todayProgressInfoUiState ->
+                _todayProgressInfoUiState.value = MulKkamUiState.Success<TodayProgressInfo>(todayProgressInfoUiState)
             }.onFailure {
-                // TODO: 에러 처리
+                _todayProgressInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -87,11 +88,15 @@ class HomeViewModel : ViewModel() {
                 )
             runCatching {
                 val intakeHistoryResult = result.getOrError()
-                _todayProgressInfo.value =
-                    todayProgressInfo.value?.updateProgressInfo(
-                        amountDelta = amount,
-                        achievementRate = intakeHistoryResult.achievementRate,
-                        comment = intakeHistoryResult.comment,
+                val todayProgressInfoUiState =
+                    todayProgressInfoUiState.value as? MulKkamUiState.Success<TodayProgressInfo> ?: return@runCatching
+                _todayProgressInfoUiState.value =
+                    MulKkamUiState.Success<TodayProgressInfo>(
+                        todayProgressInfoUiState.data.updateProgressInfo(
+                            amountDelta = amount,
+                            achievementRate = intakeHistoryResult.achievementRate,
+                            comment = intakeHistoryResult.comment,
+                        ),
                     )
                 _drinkUiState.value = MulKkamUiState.Success<Int>(amount)
             }.onFailure {

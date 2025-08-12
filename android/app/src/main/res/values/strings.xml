@@ -23,6 +23,7 @@
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
     <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
     <string name="home_drink_manual">직접 입력</string>
+    <string name="home_network_error">정보를 불러오는 데 실패했어요</string>
 
     <string name="history_view_label">기록</string>
     <string name="history_daily_chart_label">%s의 기록</string>
@@ -130,7 +131,7 @@
     <string name="history_delete_success">기록이 삭제되었습니다.</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
-    <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요.</string>
+    <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
     <string name="manual_drink_label">직접 입력</string>
     <string name="manual_drink_perform">마시기</string>
 
