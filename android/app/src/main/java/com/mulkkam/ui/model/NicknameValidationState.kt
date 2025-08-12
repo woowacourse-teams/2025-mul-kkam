@@ -1,6 +1,6 @@
 package com.mulkkam.ui.model
 
-enum class NicknameValidationState {
+enum class NicknameValidationUiState {
     /** 로컬 검증 통과 → 서버 검증 가능 상태 */
     PENDING_SERVER_VALIDATION,
 
