@@ -69,6 +69,15 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         viewModel.previousTargetAmount.observe(this) {
             binding.etInputGoal.setText(it.toString())
         }
+
+        viewModel.onTargetAmountValidationError.observe(this) { error ->
+            when (error) {
+                is TargetAmountError -> {
+                    binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+                }
+                else -> Unit
+            }
+        }
     }
 
     private fun updateRecommendedTargetAmount() {
@@ -147,7 +156,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
         debounceRunnable =
             Runnable {
-                val targetAmount = text.toIntOrNull()
+                val targetAmount = text.toIntOrNull() ?: 0
                 viewModel.updateTargetAmount(targetAmount)
             }.apply { debounceHandler.postDelayed(this, 300L) }
     }

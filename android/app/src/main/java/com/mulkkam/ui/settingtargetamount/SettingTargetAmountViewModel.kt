@@ -7,31 +7,38 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.intake.TargetAmount
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingTargetAmountViewModel : ViewModel() {
-    private var _targetAmount = MutableLiveData<TargetAmount>()
+    private var _targetAmount: MutableLiveData<TargetAmount> = MutableLiveData()
     val targetAmount: LiveData<TargetAmount> get() = _targetAmount
 
-    private val _previousTargetAmount = MutableLiveData<Int>()
+    private val _previousTargetAmount: MutableLiveData<Int> = MutableLiveData()
     val previousTargetAmount: LiveData<Int> get() = _previousTargetAmount
 
-    private val _onSaveTargetAmount = MutableSingleLiveData<Unit>()
-    val onSaveTargetAmount: SingleLiveData<Unit> get() = _onSaveTargetAmount
+    private val _isTargetAmountValid: MutableLiveData<Boolean> = MutableLiveData()
+    val isTargetAmountValid: LiveData<Boolean> get() = _isTargetAmountValid
 
-    private val _onRecommendationReady = MutableSingleLiveData<Unit>()
-    val onRecommendationReady: SingleLiveData<Unit> get() = _onRecommendationReady
-
-    private val _isTargetAmountValid = MutableLiveData<Boolean?>()
-    val isTargetAmountValid: LiveData<Boolean?> get() = _isTargetAmountValid
-
-    private val _recommendedTargetAmount = MutableLiveData<Int>()
+    private val _recommendedTargetAmount: MutableLiveData<Int> = MutableLiveData()
     val recommendedTargetAmount: LiveData<Int> get() = _recommendedTargetAmount
 
-    private val _nickname = MutableLiveData<String>()
+    private val _nickname: MutableLiveData<String> = MutableLiveData()
     val nickname: LiveData<String> get() = _nickname
+
+    private val _onRecommendationReady: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onRecommendationReady: SingleLiveData<Unit> get() = _onRecommendationReady
+
+    private val _onSaveTargetAmount: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onSaveTargetAmount: SingleLiveData<Unit> get() = _onSaveTargetAmount
+
+    private val _onTargetAmountValidationError: MutableSingleLiveData<MulKkamError> =
+        MutableSingleLiveData()
+    val onTargetAmountValidationError: MutableSingleLiveData<MulKkamError>
+        get() = _onTargetAmountValidationError
 
     init {
         viewModelScope.launch {
@@ -41,11 +48,13 @@ class SettingTargetAmountViewModel : ViewModel() {
     }
 
     private suspend fun loadTargetAmountRecommended() {
-        val recommendedTargetAmountResult = intakeRepository.getIntakeAmountRecommended()
-        val nicknameResult = membersRepository.getMembersNickname()
         runCatching {
-            _recommendedTargetAmount.value = recommendedTargetAmountResult.getOrError()
-            _nickname.value = nicknameResult.getOrError()
+            val recommendedTargetAmountResult =
+                intakeRepository.getIntakeAmountRecommended().getOrError()
+            val nicknameResult = membersRepository.getMembersNickname().getOrError()
+            _recommendedTargetAmount.value = recommendedTargetAmountResult
+            _nickname.value = nicknameResult
+        }.onSuccess {
             _onRecommendationReady.setValue(Unit)
         }.onFailure {
             // TODO: 에러 처리
@@ -53,33 +62,35 @@ class SettingTargetAmountViewModel : ViewModel() {
     }
 
     private suspend fun loadTargetAmount() {
-        val result = intakeRepository.getIntakeTarget()
         runCatching {
-            val amount = result.getOrError()
+            intakeRepository.getIntakeTarget().getOrError()
+        }.onSuccess { amount ->
             _previousTargetAmount.value = amount
         }.onFailure {
             // TODO: 에러 처리
         }
     }
 
-    fun updateTargetAmount(newTargetAmount: Int?) {
+    fun updateTargetAmount(newTargetAmount: Int) {
         runCatching {
-            newTargetAmount?.let {
-                _targetAmount.value = TargetAmount(newTargetAmount)
-                _isTargetAmountValid.value = true
-            } ?: run {
-                _isTargetAmountValid.value = null
-            }
-        }.onFailure {
+            _targetAmount.value = TargetAmount(newTargetAmount)
+        }.onSuccess {
+            _isTargetAmountValid.value = true
+        }.onFailure { error ->
             _isTargetAmountValid.value = false
+            _onTargetAmountValidationError.setValue(
+                error as? TargetAmountError ?: MulKkamError.Unknown,
+            )
         }
     }
 
     fun saveTargetAmount() {
         viewModelScope.launch {
-            val result = targetAmount.value?.let { intakeRepository.patchIntakeTarget(it.amount) }
             runCatching {
+                val result =
+                    targetAmount.value?.let { intakeRepository.patchIntakeTarget(it.amount) }
                 result?.getOrError()
+            }.onSuccess {
                 _onSaveTargetAmount.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
