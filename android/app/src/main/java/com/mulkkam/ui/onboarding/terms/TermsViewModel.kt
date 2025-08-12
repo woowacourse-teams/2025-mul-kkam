@@ -55,11 +55,30 @@ class TermsViewModel : ViewModel() {
     companion object {
         private val TERMS_AGREEMENTS: List<TermsAgreementUiModel> =
             listOf(
-                TermsAgreementUiModel(R.string.terms_agree_service, true),
-                TermsAgreementUiModel(R.string.terms_agree_privacy, true),
-                TermsAgreementUiModel(R.string.terms_agree_health_connect, false),
-                TermsAgreementUiModel(R.string.terms_agree_night_notification, false),
-                TermsAgreementUiModel(R.string.terms_agree_marketing, false),
+                TermsAgreementUiModel(
+                    labelId = R.string.terms_agree_service,
+                    isRequired = true,
+                    uri = R.string.terms_service,
+                ),
+                TermsAgreementUiModel(
+                    labelId = R.string.terms_agree_privacy,
+                    isRequired = true,
+                    uri = R.string.terms_privacy,
+                ),
+                TermsAgreementUiModel(
+                    labelId = R.string.terms_agree_health_connect,
+                    isRequired = false,
+                ),
+                TermsAgreementUiModel(
+                    labelId = R.string.terms_agree_night_notification,
+                    isRequired = false,
+                    uri = R.string.terms_night_notification,
+                ),
+                TermsAgreementUiModel(
+                    labelId = R.string.terms_agree_marketing,
+                    isRequired = false,
+                    uri = R.string.terms_marketing,
+                ),
             )
     }
 }
