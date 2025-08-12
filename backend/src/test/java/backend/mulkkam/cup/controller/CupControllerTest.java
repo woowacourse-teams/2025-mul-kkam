@@ -23,8 +23,13 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.CupRankDto;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
+import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
@@ -95,17 +100,14 @@ class CupControllerTest {
         @DisplayName("요청하는 컵 데이터가 올바르게 들어왔을 때 컵을 생성한다")
         @Test
         void success_validInput() throws Exception {
+            // given
+            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "WATER", "☕");
+
+            // when & then
             mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cupNickname": "머그컵",
-                                      "cupAmount": 350,
-                                      "intakeType": "WATER",
-                                      "emoji": "☕"
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(createCupRequest)))
                     .andDo(print())
                     .andExpect(status().isOk());
         }
@@ -113,17 +115,14 @@ class CupControllerTest {
         @DisplayName("음용 타입이 잘못 들어왔을 때 예외를 던진다")
         @Test
         void error_invalidIntakeType() throws Exception {
+            // given
+            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", "☕");
+
+            // when & then
             mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cupNickname": "머그컵",
-                                      "cupAmount": 350,
-                                      "intakeType": "CAR",
-                                      "emoji": "☕"
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(createCupRequest)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -159,27 +158,18 @@ class CupControllerTest {
         @DisplayName("요청하는 데이터가 올바르게 들어왔을 때 컵의 랭크들을 수정한다")
         @Test
         void success_validInput() throws Exception {
+            // given
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, 3),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 1)
+            ));
+
+            // when & then
             String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": 3
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 3,
-                                          "rank": 1
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
@@ -200,23 +190,17 @@ class CupControllerTest {
         @DisplayName("멤버의 모든 컵이 아닌 일부만을 데이터로 요청 보냈을 때 예외를 발생시킨다")
         @Test
         void error_notAllMemberCupsIncluded() throws Exception {
+            // given
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 2)
+            ));
+
+            // when & then
             mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": 1
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -228,27 +212,18 @@ class CupControllerTest {
         @DisplayName("랭크에서 하나가 null이 들어왔을 때 예외가 발생한다")
         @Test
         void error_rankIsNull() throws Exception {
+            // given
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, null),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(3L, 3)
+            ));
+
+            // when & then
             mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": null
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 3,
-                                          "rank": 3
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(status().isBadRequest())
                     .andExpect(jsonPath("$.code").value(INVALID_METHOD_ARGUMENT.name()));
@@ -257,27 +232,18 @@ class CupControllerTest {
         @DisplayName("존재하지 않는 컵일 때 예외가 발생한다")
         @Test
         void error_notFoundCup() throws Exception {
+            // given
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(4L, 3)
+            ));
+
+            // when & then
             mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": 1
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 4,
-                                          "rank": 3
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -302,30 +268,19 @@ class CupControllerTest {
             Cup otherCup = CupFixtureBuilder.withMember(savedOtherMember)
                     .cupNickname(new CupNickname("otherCup"))
                     .build();
-            Long savedOtherCupId = cupRepository.save(otherCup).getId();
+            cupRepository.save(otherCup);
+
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, 1),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(4L, 3)
+            ));
 
             // when & then
             mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": 1
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 4,
-                                          "rank": 3
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -337,27 +292,18 @@ class CupControllerTest {
         @DisplayName("요청애 랭크가 중복적으로 들어왔을 때 예외를 발생시킨다")
         @Test
         void error_duplicatedCupRanks() throws Exception {
+            // given
+            UpdateCupRanksRequest request = new UpdateCupRanksRequest(List.of(
+                    new CupRankDto(1L, 2),
+                    new CupRankDto(2L, 2),
+                    new CupRankDto(4L, 3)
+            ));
+
+            // when & then
             mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cups": [
-                                        {
-                                          "id": 1,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 2,
-                                          "rank": 2
-                                        },
-                                        {
-                                          "id": 3,
-                                          "rank": 3
-                                        }
-                                      ]
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -385,17 +331,14 @@ class CupControllerTest {
         @DisplayName("올바른 데이터로 요청하면 컵을 수정한다")
         @Test
         void success_validInput() throws Exception {
+            // given
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, "example");
+
+            // when & then
             mockMvc.perform(patch("/cups/" + savedCupId)
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cupNickname" : "c0c0m0a",
-                                      "cupAmount" : 100,
-                                      "intakeType": "WATER",
-                                      "emoji": "example"
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(updateCupRequest)))
                     .andDo(print())
                     .andExpect(status().isOk());
         }
@@ -403,17 +346,14 @@ class CupControllerTest {
         @DisplayName("존재하지 않는 컵의 ID로 요청하면 예외가 발생한다")
         @Test
         void error_notFoundCup() throws Exception {
+            // given
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, "example");
+
+            // when & then
             mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cupNickname" : "c0c0m0a",
-                                      "cupAmount" : 100,
-                                      "intakeType": "WATER",
-                                      "emoji": "example"
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(updateCupRequest)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
@@ -442,18 +382,13 @@ class CupControllerTest {
             Cup savedOtherCup = cupRepository.save(otherCup);
             Long savedOtherCupId = savedOtherCup.getId();
 
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, "example");
+
             // when & then
             mockMvc.perform(patch("/cups/" + savedOtherCupId)
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content("""
-                                    {
-                                      "cupNickname" : "c0c0m0a",
-                                      "cupAmount" : 100,
-                                      "intakeType": "WATER",
-                                      "emoji": "example"
-                                    }
-                                    """))
+                            .content(objectMapper.writeValueAsString(updateCupRequest)))
                     .andDo(print())
                     .andExpect(result ->
                             assertThat(result.getResolvedException())
