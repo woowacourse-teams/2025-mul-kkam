@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -143,19 +144,43 @@ class TargetAmountFragment :
     }
 
     private fun initTargetAmountInputWatcher() {
-        binding.etInputGoal.doAfterTextChanged {
-            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+        binding.etInputGoal.doAfterTextChanged { editable ->
+            val processedText = sanitizeLeadingZeros(editable.toString())
 
-            debounceRunnable =
-                Runnable {
-                    val targetAmount =
-                        binding.etInputGoal.text
-                            .toString()
-                            .trim()
-                            .toIntOrNull() ?: 0
-                    viewModel.updateTargetAmount(targetAmount)
-                }.apply { debounceHandler.postDelayed(this, 300L) }
+            if (processedText != editable.toString()) {
+                updateEditText(binding.etInputGoal, processedText)
+                return@doAfterTextChanged
+            }
+
+            debounceTargetAmountUpdate(processedText)
         }
+    }
+
+    private fun sanitizeLeadingZeros(input: String): String =
+        if (input.length > 1 && input.startsWith("0")) {
+            input.trimStart('0').ifEmpty { "0" }
+        } else {
+            input
+        }
+
+    private fun updateEditText(
+        editText: EditText,
+        newText: String,
+    ) {
+        editText.apply {
+            setText(newText)
+            setSelection(newText.length)
+        }
+    }
+
+    private fun debounceTargetAmountUpdate(text: String) {
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+
+        debounceRunnable =
+            Runnable {
+                val targetAmount = text.toIntOrNull() ?: 0
+                viewModel.updateTargetAmount(targetAmount)
+            }.apply { debounceHandler.postDelayed(this, 300L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =

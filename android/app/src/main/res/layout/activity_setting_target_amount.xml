@@ -98,7 +98,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginTop="7dp"
-        android:text="@string/setting_target_amount_warning_too_much"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
         android:visibility="gone"
