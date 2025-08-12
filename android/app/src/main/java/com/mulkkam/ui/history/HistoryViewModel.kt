@@ -9,6 +9,8 @@ import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -27,8 +29,8 @@ class HistoryViewModel : ViewModel() {
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
-    private val _deleteSuccess = MutableLiveData<Boolean>()
-    val deleteSuccess: LiveData<Boolean> get() = _deleteSuccess
+    private val _deleteSuccess = MutableSingleLiveData<Boolean>()
+    val deleteSuccess: SingleLiveData<Boolean> get() = _deleteSuccess
 
     init {
         loadIntakeHistories()
@@ -95,15 +97,29 @@ class HistoryViewModel : ViewModel() {
             val result = RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id)
             runCatching {
                 result.getOrError()
-                _deleteSuccess.value = true
+                updateIntakeHistoriesAfterDeletion(history)
+                _deleteSuccess.setValue(true)
             }.onFailure {
                 // TODO : 에러 처리
             }
         }
     }
 
-    fun onDeleteSuccessObserved() {
-        _deleteSuccess.value = false
+    private fun updateIntakeHistoriesAfterDeletion(history: IntakeHistory) {
+        val newDailySummary = _dailyIntakeHistories.value?.afterDeleteHistory(history) ?: return
+
+        _dailyIntakeHistories.value = newDailySummary
+
+        val currentWeeklyList = _weeklyIntakeHistories.value?.intakeHistorySummaries ?: return
+        val newWeeklyList =
+            currentWeeklyList.map { weeklySummary ->
+                if (weeklySummary.date == newDailySummary.date) {
+                    newDailySummary
+                } else {
+                    weeklySummary
+                }
+            }
+        _weeklyIntakeHistories.value = IntakeHistorySummaries(newWeeklyList)
     }
 
     companion object {

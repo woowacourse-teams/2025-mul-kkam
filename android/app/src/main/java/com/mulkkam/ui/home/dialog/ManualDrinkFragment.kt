@@ -23,7 +23,6 @@ class ManualDrinkFragment :
         super.onViewCreated(view, savedInstanceState)
 
         initClickListeners()
-        initObservers()
         initChips()
     }
 
@@ -37,13 +36,8 @@ class ManualDrinkFragment :
                         .toString()
                         .toIntOrNull() ?: return@setSingleClickListener,
                 )
+                dismiss()
             }
-        }
-    }
-
-    private fun initObservers() {
-        viewModel.drinkUiState.observe(viewLifecycleOwner) {
-            dismiss()
         }
     }
 

@@ -15,7 +15,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
-    private val _todayProgressInfo = MutableLiveData<TodayProgressInfo>(EMPTY_TODAY_PROGRESS_INFO)
+    private val _todayProgressInfo: MutableLiveData<TodayProgressInfo> = MutableLiveData(EMPTY_TODAY_PROGRESS_INFO)
     val todayProgressInfo: LiveData<TodayProgressInfo> get() = _todayProgressInfo
 
     private val _cups: MutableLiveData<Cups> = MutableLiveData()
