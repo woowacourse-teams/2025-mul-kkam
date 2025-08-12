@@ -121,7 +121,7 @@ class NicknameFragment :
                     isCheckDuplicateEnabled = true,
                 )
 
-            SAME_AS_BEFORE -> { }
+            SAME_AS_BEFORE -> Unit
         }
     }
 
