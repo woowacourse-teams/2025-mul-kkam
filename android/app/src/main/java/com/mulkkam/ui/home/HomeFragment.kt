@@ -48,8 +48,8 @@ class HomeFragment :
                 updateDailyProgressInfo(progressInfo)
             }
 
-            cups.observe(viewLifecycleOwner) { cups ->
-                updateDrinkOptions(cups)
+            cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
+                handleCupsUiState(cupsUiState)
             }
 
             alarmCountUiState.observe(viewLifecycleOwner) { alarmCountUiState ->
@@ -112,6 +112,15 @@ class HomeFragment :
 
     private fun updateCharacterComment(comment: String) {
         binding.tvHomeCharacterChat.text = comment
+    }
+
+    private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
+        when (cupsUiState) {
+            is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
+            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> Unit
+        }
     }
 
     private fun updateDrinkOptions(cups: Cups) {
