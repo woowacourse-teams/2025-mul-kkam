@@ -7,6 +7,7 @@ import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -24,6 +25,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -31,6 +33,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +66,9 @@ class CupControllerTest {
 
     @Autowired
     private DatabaseCleaner databaseCleaner;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     private Member savedMember;
 
@@ -153,7 +159,7 @@ class CupControllerTest {
         @DisplayName("요청하는 데이터가 올바르게 들어왔을 때 컵의 랭크들을 수정한다")
         @Test
         void success_validInput() throws Exception {
-            mockMvc.perform(put("/cups/ranks")
+            String json = mockMvc.perform(put("/cups/ranks")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content("""
@@ -161,7 +167,7 @@ class CupControllerTest {
                                       "cups": [
                                         {
                                           "id": 1,
-                                          "rank": 1
+                                          "rank": 3
                                         },
                                         {
                                           "id": 2,
@@ -169,13 +175,26 @@ class CupControllerTest {
                                         },
                                         {
                                           "id": 3,
-                                          "rank": 3
+                                          "rank": 1
                                         }
                                       ]
                                     }
                                     """))
                     .andDo(print())
-                    .andExpect(status().isOk());
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            CupsRanksResponse actual = objectMapper.readValue(json, CupsRanksResponse.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.cups().size()).isEqualTo(3);
+                softly.assertThat(actual.cups().get(0).rank())
+                        .isEqualTo(3);
+                softly.assertThat(actual.cups().get(1).rank())
+                        .isEqualTo(2);
+                softly.assertThat(actual.cups().get(2).rank())
+                        .isEqualTo(1);
+            });
         }
 
         @DisplayName("멤버의 모든 컵이 아닌 일부만을 데이터로 요청 보냈을 때 예외를 발생시킨다")
