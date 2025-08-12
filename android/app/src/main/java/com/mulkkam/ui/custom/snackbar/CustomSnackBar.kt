@@ -27,7 +27,7 @@ class CustomSnackBar private constructor(
             message: String,
             @DrawableRes iconRes: Int,
         ): CustomSnackBar {
-            val snackBar = Snackbar.make(view, "", Snackbar.LENGTH_LONG)
+            val snackBar = Snackbar.make(view, "", Snackbar.LENGTH_SHORT)
             val binding =
                 LayoutCustomSnackBarBinding.inflate(
                     LayoutInflater.from(view.context),
