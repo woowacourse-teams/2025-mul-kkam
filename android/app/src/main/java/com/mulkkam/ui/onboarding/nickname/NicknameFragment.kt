@@ -10,11 +10,11 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
@@ -84,8 +84,9 @@ class NicknameFragment :
             when (error) {
                 is NicknameError ->
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
                 else ->
-                    Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
+                    CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle).show()
             }
         }
 

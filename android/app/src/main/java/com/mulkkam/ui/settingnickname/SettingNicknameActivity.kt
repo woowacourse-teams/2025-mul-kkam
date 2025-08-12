@@ -11,11 +11,11 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.core.widget.doAfterTextChanged
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
@@ -79,8 +79,9 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             when (error) {
                 is NicknameError ->
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
                 else ->
-                    Snackbar.make(binding.root, R.string.network_error, Snackbar.LENGTH_SHORT).show()
+                    CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle).show()
             }
         }
 

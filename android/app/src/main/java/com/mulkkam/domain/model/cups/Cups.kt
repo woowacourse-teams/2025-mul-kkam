@@ -20,5 +20,6 @@ data class Cups(
 
     companion object {
         const val MAX_CUP_SIZE: Int = 3
+        val EMPTY_CUPS = Cups(emptyList())
     }
 }
