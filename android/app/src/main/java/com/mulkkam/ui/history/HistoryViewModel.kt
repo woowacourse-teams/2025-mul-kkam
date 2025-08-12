@@ -106,16 +106,14 @@ class HistoryViewModel : ViewModel() {
     }
 
     private fun updateIntakeHistoriesAfterDeletion(history: IntakeHistory) {
-        val currentDailySummary = _dailyIntakeHistories.value ?: return
-
-        val newDailySummary = currentDailySummary.afterDeleteHistory(history)
+        val newDailySummary = _dailyIntakeHistories.value?.afterDeleteHistory(history) ?: return
 
         _dailyIntakeHistories.value = newDailySummary
 
         val currentWeeklyList = _weeklyIntakeHistories.value?.intakeHistorySummaries ?: return
         val newWeeklyList =
             currentWeeklyList.map { weeklySummary ->
-                if (weeklySummary.date == currentDailySummary.date) {
+                if (weeklySummary.date == newDailySummary.date) {
                     newDailySummary
                 } else {
                     weeklySummary
