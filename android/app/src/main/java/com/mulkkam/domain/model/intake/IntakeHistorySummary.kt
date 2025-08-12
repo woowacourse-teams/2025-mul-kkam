@@ -31,10 +31,10 @@ data class IntakeHistorySummary(
         val updatedHistories = this.intakeHistories.filter { it.id != history.id }
         val newTotalAmount = updatedHistories.sumOf { it.intakeAmount }
         val newAchievementRate =
-            if (this.targetAmount > 0) {
-                (newTotalAmount.toFloat() / this.targetAmount * 100).coerceAtMost(100f)
+            if (this.targetAmount > INTAKE_AMOUNT_EMPTY) {
+                (newTotalAmount.toFloat() / this.targetAmount * ACHIEVEMENT_RATE).coerceAtMost(ACHIEVEMENT_RATE_FLOAT)
             } else {
-                0f
+                ZERO_FLOAT
             }
 
         return this.copy(
@@ -47,6 +47,9 @@ data class IntakeHistorySummary(
     companion object {
         private const val INTAKE_AMOUNT_EMPTY: Int = 0
         private const val DAY_OF_WEEK_OFFSET: Int = -1
+        private const val ACHIEVEMENT_RATE: Int = 100
+        private const val ACHIEVEMENT_RATE_FLOAT: Float = 100f
+        private const val ZERO_FLOAT: Float = 0f
 
         val EMPTY_DAILY_WATER_INTAKE: IntakeHistorySummary =
             IntakeHistorySummary(
