@@ -3,12 +3,11 @@
     <!-- 공통 패턴 정의 -->
     <!-- 콘솔: Asia/Seoul -->
     <property name="CONSOLE_PATTERN"
-              value="%magenta([%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
+              value="%magenta([%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([trace=%X{traceId}]) - %msg%n"/>
 
     <!-- 파일: 컬러 없음, Asia/Seoul -->
     <property name="FILE_PATTERN"
-              value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
-
+              value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative] [%thread] %-5level %green([trace=%X{traceId}]) - %msg%n"/>
 
     <!-- ================== -->
     <!-- DEV 환경 -->
@@ -67,8 +66,9 @@
             </filter>
         </appender>
 
-        <!-- API 성능 전용: JSON으로 콘솔 출력 -->
-        <appender name="API_PERF_JSON" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- API 성능 전용 -->
+        <appender name="API_PERF_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/api-perf/api-perf.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
                 <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
                 <maxHistory>7</maxHistory>
@@ -85,9 +85,6 @@
 
                     <mdc>
                         <includeMdcKeyName>traceId</includeMdcKeyName>
-                        <includeMdcKeyName>type</includeMdcKeyName>
-                        <includeMdcKeyName>spanId</includeMdcKeyName>
-                        <includeMdcKeyName>memberId</includeMdcKeyName>
                     </mdc>
 
                     <arguments>
@@ -106,6 +103,10 @@
             <includeCallerData>true</includeCallerData>
         </appender>
 
+        <logger name="API_PERF" level="INFO" additivity="false">
+            <appender-ref ref="API_PERF_JSON"/>
+        </logger>
+
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
             <appender-ref ref="INFO_FILE"/>
@@ -113,10 +114,6 @@
             <appender-ref ref="ERROR_FILE"/>
         </root>
     </springProfile>
-
-    <logger name="API_PERF" level="INFO" additivity="false">
-        <appender-ref ref="API_PERF_JSON"/>
-    </logger>
 
     <!-- ================== -->
     <!-- 비-DEV 환경 -->
@@ -132,4 +129,12 @@
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
+
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_PATTERN}</pattern>
+        </encoder>
+        <includeCallerData>true</includeCallerData>
+    </appender>
+
 </configuration>

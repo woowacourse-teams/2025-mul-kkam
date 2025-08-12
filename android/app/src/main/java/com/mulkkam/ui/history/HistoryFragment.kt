@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHistoryBinding
 import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
@@ -147,11 +148,12 @@ class HistoryFragment :
 
         viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
             if (isSuccess) {
-                val currentSelectedDate =
-                    viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
-                viewModel.loadIntakeHistories(currentSelectedDate)
-
-                viewModel.onDeleteSuccessObserved()
+                Snackbar
+                    .make(
+                        binding.root,
+                        getString(R.string.history_delete_success),
+                        Snackbar.LENGTH_SHORT,
+                    ).show()
             }
         }
     }
@@ -367,7 +369,7 @@ class HistoryFragment :
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
 
-        private const val INTAKE_AMOUNT_EMPTY = 0
-        private const val ACHIEVEMENT_RATE_FULL = 100f
+        private const val INTAKE_AMOUNT_EMPTY: Int = 0
+        private const val ACHIEVEMENT_RATE_FULL: Float = 100f
     }
 }

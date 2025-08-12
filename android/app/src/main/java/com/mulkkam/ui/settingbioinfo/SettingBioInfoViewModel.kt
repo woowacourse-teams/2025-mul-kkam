@@ -53,7 +53,13 @@ class SettingBioInfoViewModel : ViewModel() {
     }
 
     fun updateWeight(value: Int) {
-        _weight.value = BioWeight(value)
+        runCatching {
+            BioWeight(value)
+        }.onSuccess {
+            _weight.value = it
+        }.onFailure {
+            _weight.value = BioWeight()
+        }
     }
 
     fun updateGender(gender: Gender) {
