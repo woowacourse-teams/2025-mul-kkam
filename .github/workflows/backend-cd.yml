@@ -1,7 +1,7 @@
 name: backend-cd.yml
 
 on:
-  pull_request:
+  push:
     branches: [ "develop" ]
     paths:
       - "backend/**"
