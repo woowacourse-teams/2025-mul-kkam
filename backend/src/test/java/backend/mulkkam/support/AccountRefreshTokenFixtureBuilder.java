@@ -12,7 +12,7 @@ public class AccountRefreshTokenFixtureBuilder {
         this.oauthAccount = oauthAccount;
     }
 
-    public static AccountRefreshTokenFixtureBuilder withMember(OauthAccount oauthAccount) {
+    public static AccountRefreshTokenFixtureBuilder withOauthAccount(OauthAccount oauthAccount) {
         return new AccountRefreshTokenFixtureBuilder(oauthAccount);
     }
 

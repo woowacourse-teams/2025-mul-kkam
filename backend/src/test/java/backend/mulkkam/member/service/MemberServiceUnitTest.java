@@ -1,6 +1,5 @@
 package backend.mulkkam.member.service;
 
-import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -13,8 +12,6 @@ import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.OauthAccountFixtureBuilder;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -29,7 +26,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -216,53 +212,6 @@ public class MemberServiceUnitTest {
 
             // then
             assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
-        }
-    }
-
-    @DisplayName("멤버가 탈퇴할 때")
-    @Nested
-    class Delete {
-
-        @DisplayName("정상적으로 멤버가 삭제된다")
-        @Test
-        void success_deleteMember() {
-            // given
-            Member member = MemberFixtureBuilder.builder()
-                    .build();
-
-            OauthAccount oauthAccount = OauthAccountFixtureBuilder
-                    .withMember(member)
-                    .build();
-
-            when(oauthAccountRepository.findByMember(member))
-                    .thenReturn(Optional.of(oauthAccount));
-
-            // when
-            memberService.delete(member);
-
-            // then
-            verify(memberRepository).delete(member);
-        }
-
-        @DisplayName("정상적으로 토큰이 삭제된다")
-        @Test
-        void success_deleteRefreshToken() {
-            // given
-            Member member = MemberFixtureBuilder.builder()
-                    .build();
-
-            OauthAccount oauthAccount = OauthAccountFixtureBuilder
-                    .withMember(member)
-                    .build();
-
-            when(oauthAccountRepository.findByMember(member))
-                    .thenReturn(Optional.of(oauthAccount));
-
-            // when
-            memberService.delete(member);
-
-            // then
-            verify(accountRefreshTokenRepository).deleteByAccount(oauthAccount);
         }
     }
 }

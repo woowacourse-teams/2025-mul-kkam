@@ -1,14 +1,6 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -18,7 +10,6 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -28,10 +19,13 @@ import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
+import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.util.List;
@@ -41,6 +35,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -60,7 +63,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -417,6 +420,51 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(rawTargetAmount);
                 softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(0);
             });
+        }
+    }
+
+    @DisplayName("회원을 삭제할 때")
+    @Nested
+    class Delete {
+
+        @DisplayName("정상적으로 멤버가 삭제된다")
+        @Test
+        void success_deleteMember() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            memberRepository.save(member);
+
+            // when
+            memberService.delete(member);
+
+            // then
+            assertThat(memberRepository.findById(member.getId())).isEmpty();
+        }
+
+        @DisplayName("정상적으로 토큰이 삭제된다")
+        @Test
+        void success_deleteRefreshToken() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            memberRepository.save(member);
+
+            OauthAccount oauthAccount = OauthAccountFixtureBuilder
+                    .withMember(member)
+                    .build();
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
+                    .withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            // when
+            memberService.delete(member);
+
+            // then
+            assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
         }
     }
 }
