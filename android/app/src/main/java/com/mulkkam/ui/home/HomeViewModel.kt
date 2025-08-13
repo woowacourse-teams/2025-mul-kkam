@@ -23,10 +23,10 @@ class HomeViewModel : ViewModel() {
     private val _cupsUiState: MutableLiveData<MulKkamUiState<Cups>> = MutableLiveData(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
     val cupsUiState: LiveData<MulKkamUiState<Cups>> get() = _cupsUiState
 
-    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Loading)
+    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Empty)
     val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Loading)
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Empty)
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {
@@ -58,7 +58,7 @@ class HomeViewModel : ViewModel() {
             }.onSuccess { cupsUiState ->
                 _cupsUiState.value = MulKkamUiState.Success<Cups>(cupsUiState)
             }.onFailure {
-                _cupsUiState.value = MulKkamUiState.Empty
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -73,7 +73,7 @@ class HomeViewModel : ViewModel() {
             }.onSuccess {
                 _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
-                _alarmCountUiState.value = MulKkamUiState.Empty
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

@@ -20,7 +20,7 @@ class SettingNicknameViewModel : ViewModel() {
     val newNickname: LiveData<Nickname>
         get() = _newNickname
 
-    private val _originalNicknameUiState: MutableLiveData<MulKkamUiState<Nickname>> = MutableLiveData(MulKkamUiState.Loading)
+    private val _originalNicknameUiState: MutableLiveData<MulKkamUiState<Nickname>> = MutableLiveData(MulKkamUiState.Empty)
     val originalNicknameUiState: LiveData<MulKkamUiState<Nickname>>
         get() = _originalNicknameUiState
 
@@ -35,7 +35,7 @@ class SettingNicknameViewModel : ViewModel() {
         get() = _onNicknameValidationError
 
     private val _nicknameChangeUiState: MutableLiveData<MulKkamUiState<Unit>> =
-        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Loading)
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Empty)
     val nicknameChangeUiState: LiveData<MulKkamUiState<Unit>>
         get() = _nicknameChangeUiState
 
