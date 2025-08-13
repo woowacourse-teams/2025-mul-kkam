@@ -1,6 +1,9 @@
 package backend.mulkkam.auth.infrastructure;
 
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_TOKEN;
+
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.common.exception.CommonException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -70,8 +73,7 @@ public class OauthJwtTokenHandler {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
         } catch (NumberFormatException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new CommonException(INVALID_TOKEN);
         }
     }
 
@@ -79,8 +81,7 @@ public class OauthJwtTokenHandler {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new CommonException(INVALID_TOKEN);
         }
     }
 }

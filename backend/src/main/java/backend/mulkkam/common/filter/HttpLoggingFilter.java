@@ -40,14 +40,15 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
-        try {
-            printRequestUriAndHeaders(wrappingRequest);
+        printRequestUriAndHeaders(wrappingRequest);
 
+        try {
             filterChain.doFilter(wrappingRequest, wrappingResponse);
 
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
-                printResponseHeader(response);
+
+                printResponseHeader(request, response);
                 printResponseBody(wrappingResponse);
             }
             wrappingResponse.copyBodyToResponse();
@@ -110,19 +111,21 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     }
 
     private void printResponseHeader(
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
+        Long oauthId = (Long) request.getAttribute("oauth_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] ({}) token = {}", status, auth);
+        log.info("[RESPONSE] oauthId = {}, ({}) token = {}", oauthId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
         try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString().replaceAll("\n$", "");
             if (body.isEmpty()) {
                 body = "NONE";
             }
