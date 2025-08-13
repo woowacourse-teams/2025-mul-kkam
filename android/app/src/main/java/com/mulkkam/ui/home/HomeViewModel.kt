@@ -36,6 +36,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadTodayProgressInfo() {
+        if (todayProgressInfoUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _todayProgressInfoUiState.value = MulKkamUiState.Loading
@@ -49,6 +50,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadCups() {
+        if (cupsUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _cupsUiState.value = MulKkamUiState.Loading
@@ -62,11 +64,12 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadAlarmCount() {
+        if (alarmCountUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             // TODO: 알림 개수 조회 API 연결
             // RepositoryInjection.alarmRepository.getAlarmCount().getOrError()
             runCatching {
-                _cupsUiState.value = MulKkamUiState.Loading
+                _alarmCountUiState.value = MulKkamUiState.Loading
             }.onSuccess {
                 _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
@@ -82,6 +85,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun addWaterIntake(amount: Int) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _drinkUiState.value = MulKkamUiState.Loading

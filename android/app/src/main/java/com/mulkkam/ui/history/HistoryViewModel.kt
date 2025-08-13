@@ -42,6 +42,7 @@ class HistoryViewModel : ViewModel() {
         referenceDate: LocalDate = LocalDate.now(),
         currentDate: LocalDate = LocalDate.now(),
     ) {
+        if (weeklyIntakeHistoriesUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             val weekDates = getWeekDates(referenceDate)
             runCatching {
@@ -97,6 +98,7 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
+        if (deleteUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _deleteUiState.value = MulKkamUiState.Loading
