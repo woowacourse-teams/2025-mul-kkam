@@ -56,10 +56,7 @@ public class GlobalExceptionHandler {
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
 
-        String traceId = (String) request.getAttribute("traceId");
-
-        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
-                traceId,
+        log.error("[SERVER_ERROR] code={}({} {}), message={}",
                 INTER_SERVER_ERROR_CODE.name(),
                 INTER_SERVER_ERROR_CODE.getStatus(),
                 e.getClass().getSimpleName(),
@@ -74,10 +71,7 @@ public class GlobalExceptionHandler {
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
 
-        String traceId = (String) request.getAttribute("traceId");
-
-        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
-                traceId,
+        log.info("[CLIENT_ERROR] code={}({})",
                 errorCode.name(),
                 errorCode.getStatus()
         );
