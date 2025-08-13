@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.service;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
@@ -17,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -130,7 +132,39 @@ public class KakaoAuthServiceUnitTest {
             verify(accountRefreshTokenRepository).save(any());
         }
 
+        @DisplayName("이미 리프레시 토큰이 데이터베이스 상 존재하는 사용자라면 내용을 업데이트한다")
+        @Test
+        void success_alreadyExistingAccountRefreshToken() {
+            // given
+            String accessTokenForKakao = "kakao";
+            String oauthId = "temp";
+
+            when(kakaoRestClient.getUserInfo(accessTokenForKakao))
+                    .thenReturn(new KakaoUserInfo(oauthId));
+
+            OauthAccount existingOauthAccount =
+                    new OauthAccount(oauthId, OauthProvider.KAKAO);
+
+            when(oauthAccountRepository.findByOauthId(oauthId))
+                    .thenReturn(java.util.Optional.of(existingOauthAccount));
+
+            when(oauthJwtTokenHandler.createAccessToken(any())).thenReturn("AT");
+
+            String refreshToken = "RT";
+            when(oauthJwtTokenHandler.createRefreshToken(any())).thenReturn(refreshToken);
+
+            AccountRefreshToken existingAccountRefreshToken = mock(AccountRefreshToken.class);
+            when(accountRefreshTokenRepository.findByAccount(existingOauthAccount))
+                    .thenReturn(java.util.Optional.of(existingAccountRefreshToken));
+
+            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(accessTokenForKakao);
+
+            // when
+            kakaoAuthService.signIn(kakaoSigninRequest);
+
+            // then
+            verify(accountRefreshTokenRepository, never()).save(any());
+            verify(existingAccountRefreshToken).updateRefreshToken(refreshToken);
+        }
     }
-
-
 }
