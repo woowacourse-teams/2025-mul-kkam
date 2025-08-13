@@ -93,14 +93,14 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         );
     }
 
-    private static String extractOriginalUri(HttpServletRequest request) {
+    private String extractOriginalUri(HttpServletRequest request) {
         String uri = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
         if (uri == null) uri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
         if (uri == null) uri = request.getRequestURI();
         return uri;
     }
 
-    private static String normalizeRoutePath(HttpServletRequest request, String originalUri) {
+    private String normalizeRoutePath(HttpServletRequest request, String originalUri) {
         String route = (String) request.getAttribute(ROUTE_PATTERN_ATTRIBUTE);
         if (route == null) {
             Object best = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
