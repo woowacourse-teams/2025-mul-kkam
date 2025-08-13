@@ -143,5 +143,5 @@
 
     <string name="expandable_floating_menu_intake_unit">%,dml</string>
 
-    <string name="network_error">네트워크 연결 상태를 확인해 주세요</string>
+    <string name="network_error">네트워크 상태를 확인해 주세요</string>
 </resources>

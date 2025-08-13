@@ -13,11 +13,10 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingNicknameViewModel : ViewModel() {
-    private val _newNickname = MutableLiveData<Nickname>()
+    private val _newNickname: MutableLiveData<Nickname> = MutableLiveData<Nickname>()
     val newNickname: LiveData<Nickname>
         get() = _newNickname
 
@@ -35,13 +34,15 @@ class SettingNicknameViewModel : ViewModel() {
     val onNicknameValidationError: MutableSingleLiveData<MulKkamError>
         get() = _onNicknameValidationError
 
-    private val _onNicknameChanged = MutableSingleLiveData<Unit>()
-    val onNicknameChanged: SingleLiveData<Unit>
-        get() = _onNicknameChanged
+    private val _nicknameChangeUiState: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Loading)
+    val nicknameChangeUiState: LiveData<MulKkamUiState<Unit>>
+        get() = _nicknameChangeUiState
 
     init {
         viewModelScope.launch {
             runCatching {
+                _originalNicknameUiState.value = MulKkamUiState.Loading
                 membersRepository.getMembersNickname().getOrError()
             }.onSuccess { nickname ->
                 _originalNicknameUiState.value = MulKkamUiState.Success<Nickname>(Nickname(nickname))
@@ -90,11 +91,12 @@ class SettingNicknameViewModel : ViewModel() {
     fun saveNickname(nickname: String) {
         viewModelScope.launch {
             runCatching {
+                _nicknameChangeUiState.value = MulKkamUiState.Loading
                 membersRepository.patchMembersNickname(nickname).getOrError()
             }.onSuccess {
-                _onNicknameChanged.setValue(Unit)
+                _nicknameChangeUiState.value = MulKkamUiState.Success<Unit>(Unit)
             }.onFailure {
-                // TODO: 에러 처리
+                _nicknameChangeUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

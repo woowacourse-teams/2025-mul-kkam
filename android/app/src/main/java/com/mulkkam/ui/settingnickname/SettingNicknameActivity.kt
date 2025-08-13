@@ -85,11 +85,8 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
         }
 
-        viewModel.onNicknameChanged.observe(this) {
-            Toast
-                .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
-                .show()
-            finish()
+        viewModel.nicknameChangeUiState.observe(this) { nickNameChangeUiState ->
+            handleNicknameChangeUiState(nickNameChangeUiState)
         }
     }
 
@@ -161,6 +158,27 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             } ?: run {
                 tvNicknameValidationMessage.text = ""
             }
+        }
+    }
+
+    private fun handleNicknameChangeUiState(nickNameChangeUiState: MulKkamUiState<Unit>) {
+        when (nickNameChangeUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                Toast
+                    .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
+
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
