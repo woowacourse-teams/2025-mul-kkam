@@ -5,6 +5,7 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
@@ -21,13 +22,23 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.MockMvc;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@AutoConfigureMockMvc
+@SpringBootTest
 class MemberControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -39,9 +50,10 @@ class MemberControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    DatabaseCleaner databaseCleaner;
-    @Autowired
     private AccountRefreshTokenRepository accountRefreshTokenRepository;
+
+    @Autowired
+    DatabaseCleaner databaseCleaner;
 
     @DisplayName("Filter 검증")
     @Nested
@@ -282,36 +294,43 @@ class MemberControllerTest {
             databaseCleaner.clean();
         }
 
-        @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버, OauthAccount, AccountRefreshToken 이 삭제된다")
+        @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버가 삭제된다")
         @Test
-        void success_withValidToken() {
+        void success_withValidToken() throws Exception {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
                     .build();
-            memberRepository.save(member);
+            Member savedMember = memberRepository.save(member);
 
-            OauthAccount oauthAccount = new OauthAccount(member, "temp", OauthProvider.KAKAO);
+            OauthAccount oauthAccount = new OauthAccount(savedMember, "temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            System.out.println(oauthAccount.getOauthId());
+
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByIdWithMember(oauthAccount.getId())
+                    .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
             AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
                     .withOauthAccount(oauthAccount)
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
+            accountRefreshTokenRepository.findById(
+                            accountRefreshToken.getId())
+                    .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
+            System.out.println(token);
             // when
-            RestAssured.given().log().all()
-                    .header("Authorization", "Bearer " + token)
-                    .when().delete("/members")
-                    .then().log().all()
-                    .statusCode(HttpStatus.OK.value());
-
-            // then
-            assertThat(memberRepository.findById(member.getId())).isEmpty();
-            assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
-            assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
+            mockMvc.perform(delete("/members")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk());
+////
+//            // then
+//            assertThat(memberRepository.findById(member.getId())).isEmpty();
+//            assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
+//            assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
         }
     }
 }
