@@ -40,13 +40,13 @@
             android:id="@+id/tv_week_range"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/history_week_range"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400"
             app:layout_constraintBottom_toBottomOf="@id/ib_week_prev"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
+            app:layout_constraintTop_toTopOf="@id/ib_week_prev"
+            tools:text="@string/history_week_range" />
 
         <ImageButton
             android:id="@+id/ib_week_next"

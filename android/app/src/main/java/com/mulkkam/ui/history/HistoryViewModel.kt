@@ -8,6 +8,7 @@ import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
+import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -20,7 +21,7 @@ class HistoryViewModel : ViewModel() {
     private val _weeklyIntakeHistoriesUiState: MutableLiveData<MulKkamUiState<IntakeHistorySummaries>> = MutableLiveData()
     val weeklyIntakeHistoriesUiState: LiveData<MulKkamUiState<IntakeHistorySummaries>> get() = _weeklyIntakeHistoriesUiState
 
-    private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData()
+    private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData(EMPTY_DAILY_WATER_INTAKE)
     val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
 
     private val _isNotCurrentWeek: MutableLiveData<Boolean> = MutableLiveData()
