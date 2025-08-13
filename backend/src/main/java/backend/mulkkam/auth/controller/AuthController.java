@@ -4,6 +4,7 @@ import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
+import backend.mulkkam.auth.service.AuthTokenService;
 import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.common.exception.FailureBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final KakaoAuthService kakaoAuthService;
+    private final AuthTokenService authTokenService;
 
     @Operation(summary = "카카오 로그인", description = "카카오 액세스 토큰으로 로그인 처리 후, 애플리케이션 토큰과 온보딩 여부를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공 응답")
@@ -50,6 +52,6 @@ public class AuthController {
     }))
     @PostMapping("/token")
     public ReissueTokenResponse reissueToken(@RequestBody ReissueTokenRequest request) {
-        return new ReissueTokenResponse("example", "example");
+        return authTokenService.reissueToken(request);
     }
 }
