@@ -41,10 +41,6 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun updateHealthPermissionStatus(isGranted: Boolean) {
-        _isHealthPermissionGranted.value = isGranted
-    }
-
     fun scheduleCalorieCheck() {
         calorieScheduler.scheduleCalorieCheck(DEFAULT_CHECK_CALORIE_INTERVAL_HOURS)
     }

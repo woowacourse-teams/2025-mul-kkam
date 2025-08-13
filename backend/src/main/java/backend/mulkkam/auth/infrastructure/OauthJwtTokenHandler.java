@@ -10,10 +10,10 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import javax.annotation.PostConstruct;
 
 @Component
 public class OauthJwtTokenHandler {
@@ -21,8 +21,11 @@ public class OauthJwtTokenHandler {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${security.jwt.expire-length}")
-    private Long expireLengthInMilliseconds;
+    @Value("${security.jwt.access.expire-length}")
+    private Long accessExpireInMilliseconds;
+
+    @Value("${security.jwt.refresh.expire-length}")
+    private Long refreshExpireInMilliseconds;
 
     private JwtParser parser;
 
@@ -33,19 +36,36 @@ public class OauthJwtTokenHandler {
                 .build();
     }
 
-    public String createToken(OauthAccount account) {
-        Claims claims = Jwts.claims()
-                .subject(account.getId().toString())
-                .build();
+    public String createAccessToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + expireLengthInMilliseconds);
+        Date validity = new Date(now.getTime() + accessExpireInMilliseconds);
         return Jwts.builder()
                 .claims(claims)
                 .issuedAt(now)
                 .expiration(validity)
                 .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
                 .compact();
+    }
+
+    public String createRefreshToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshExpireInMilliseconds);
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(validity)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
+    }
+
+    private Claims generateClaims(OauthAccount account) {
+        return Jwts.claims()
+                .subject(account.getId().toString())
+                .build();
     }
 
     public Long getSubject(String token) {
