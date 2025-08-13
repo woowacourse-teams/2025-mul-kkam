@@ -1,8 +1,5 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
@@ -23,6 +20,7 @@ import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
+import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +28,10 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,6 +43,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final IntakeHistoryDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     public MemberResponse get(Member member) {
         return new MemberResponse(member);
@@ -130,6 +133,14 @@ public class MemberService {
         Amount totalAmount = calculateTotalIntakeAmount(details);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
+    }
+
+    public void delete(Member member) {
+        OauthAccount oauthAccount = oauthAccountRepository.findByMember(member)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
+        accountRefreshTokenRepository.deleteByAccount((oauthAccount));
+
+        memberRepository.delete(member);
     }
 
     private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
