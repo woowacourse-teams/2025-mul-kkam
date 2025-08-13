@@ -34,6 +34,7 @@
         android:paddingVertical="10dp"
         android:paddingStart="16dp"
         android:paddingEnd="42dp"
+        android:scrollHorizontally="true"
         android:textAppearance="@style/body2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
