@@ -11,6 +11,8 @@ sealed interface SettingType {
         data object Goal : Normal
 
         data object Notification : Normal
+
+        data object SystemNotification : Normal
     }
 
     sealed interface Switch : SettingType {
