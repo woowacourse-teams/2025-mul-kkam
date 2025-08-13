@@ -122,7 +122,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
         try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString().replaceAll("\n$", "");
             if (body.isEmpty()) {
                 body = "NONE";
             }
