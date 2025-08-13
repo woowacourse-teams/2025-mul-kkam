@@ -2,6 +2,7 @@ package backend.mulkkam.common.interceptor;
 
 import static net.logstash.logback.argument.StructuredArguments.kv;
 
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             HttpServletRequest request,
             HttpServletResponse response,
             Object handler
-    ) throws Exception {
+    ){
         long startTime = System.currentTimeMillis();
 
         request.setAttribute(START_TIME_ATTRIBUTE, startTime);
@@ -42,13 +43,16 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             Object handler,
             Exception exception
     ) {
+        String uri = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
+        if (uri == null) uri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+        if (uri == null) uri = request.getRequestURI();
+
         Long startTime = (Long) request.getAttribute(START_TIME_ATTRIBUTE);
         if (startTime == null) {
             return;
         }
 
         long responseTime = System.currentTimeMillis() - startTime;
-        String uri = (String) request.getAttribute(REQUEST_URI_ATTRIBUTE);
 
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",
