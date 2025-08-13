@@ -14,6 +14,7 @@ import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -105,13 +106,7 @@ class TargetAmountFragment :
             }
 
             onTargetAmountValidationError.observe(viewLifecycleOwner) { error ->
-                when (error) {
-                    is TargetAmountError -> {
-                        binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
-                    }
-
-                    else -> Unit
-                }
+                handleTargetAmountValidationError(error)
             }
         }
     }
@@ -140,6 +135,16 @@ class TargetAmountFragment :
 
             etInputGoal.backgroundTintList =
                 ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
+        }
+    }
+
+    private fun handleTargetAmountValidationError(error: MulKkamError) {
+        when (error) {
+            is TargetAmountError -> {
+                binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+            }
+
+            else -> Unit
         }
     }
 

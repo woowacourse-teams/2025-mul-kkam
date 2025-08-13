@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.NicknameValidationUiState
@@ -82,18 +83,7 @@ class NicknameFragment :
             }
 
             onNicknameValidationError.observe(viewLifecycleOwner) { error ->
-                when (error) {
-                    is NicknameError ->
-                        binding.tvNicknameValidationMessage.text = error.toMessageRes()
-
-                    else ->
-                        CustomSnackBar
-                            .make(
-                                binding.root,
-                                getString(R.string.network_error),
-                                R.drawable.ic_alert_circle,
-                            ).show()
-                }
+                handleNicknameValidationError(error)
             }
 
             nickname.observe(viewLifecycleOwner) { nickname ->
@@ -150,6 +140,21 @@ class NicknameFragment :
             } ?: run {
                 tvNicknameValidationMessage.text = ""
             }
+        }
+    }
+
+    private fun handleNicknameValidationError(error: MulKkamError) {
+        when (error) {
+            is NicknameError ->
+                binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
+            else ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
