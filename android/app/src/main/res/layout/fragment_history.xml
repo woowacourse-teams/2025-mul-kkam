@@ -12,12 +12,13 @@
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:background="@color/white"
+        app:liftOnScroll="false">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="4dp">
+        android:paddingBottom="8dp">
 
         <TextView
             android:id="@+id/tv_view_label"
