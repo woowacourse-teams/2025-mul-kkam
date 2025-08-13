@@ -10,12 +10,13 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
-import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
@@ -33,89 +34,85 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         super.onCreate(savedInstanceState)
         initClickListeners()
         initObservers()
-        initGoalInputListener()
         initTargetAmountInputWatcher()
         binding.tvSaveGoal.applyImeMargin()
     }
 
     private fun initClickListeners() {
-        binding.ivBack.setSingleClickListener {
-            finish()
-        }
-
-        binding.tvSaveGoal.setSingleClickListener {
-            viewModel.saveTargetAmount()
-        }
+        binding.ivBack.setSingleClickListener { finish() }
+        binding.tvSaveGoal.setSingleClickListener { viewModel.saveTargetAmount() }
     }
 
     private fun initObservers() {
-        viewModel.previousTargetAmount.observe(this) {
-            binding.etInputGoal.setText(it.toString())
+        viewModel.targetInfoUiState.observe(this) { targetInfoUiState ->
+            handleTargetInfoUiState(targetInfoUiState)
         }
 
-        viewModel.targetAmount.observe(this) { targetAmount ->
+        viewModel.targetAmountInput.observe(this) { targetAmount ->
             if (binding.etInputGoal.text
                     .toString()
-                    .toIntOrNull() == targetAmount.amount
+                    .toIntOrNull() == targetAmount?.amount
             ) {
                 return@observe
             }
-            binding.etInputGoal.setText(targetAmount.amount.toString())
+            binding.etInputGoal.setText(targetAmount?.amount.toString())
         }
 
-        viewModel.isTargetAmountValid.observe(this) { isValid ->
-            updateTargetAmountValidationUI(isValid)
+        viewModel.saveTargetAmountUiState.observe(this) { saveUiState ->
+            handleSaveUiState(saveUiState)
         }
 
-        viewModel.onSaveTargetAmount.observe(this) {
-            Toast
-                .makeText(
-                    this,
-                    R.string.setting_target_amount_complete_description,
-                    Toast.LENGTH_SHORT,
-                ).show()
-            finish()
+        viewModel.targetAmountValidityUiState.observe(this) { targetAmountValidityUiState ->
+            handleTargetAmountValidityUiState(targetAmountValidityUiState)
         }
+    }
 
-        viewModel.onRecommendationReady.observe(this) {
-            updateRecommendedTargetAmount()
-        }
-
-        viewModel.onTargetAmountValidationError.observe(this) { error ->
-            when (error) {
-                is TargetAmountError -> {
-                    binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+    private fun handleTargetInfoUiState(targetInfoUiState: MulKkamUiState<TargetAmountUiModel>) {
+        when (targetInfoUiState) {
+            is MulKkamUiState.Success -> {
+                updateSaveButtonAvailability(true)
+                showRecommendTargetAmount(targetInfoUiState.data)
+                if (binding.etInputGoal.text.isNullOrBlank() && !binding.etInputGoal.hasFocus()) {
+                    binding.etInputGoal.setText(targetInfoUiState.data.previousTargetAmount.toString())
                 }
+            }
 
-                else -> Unit
+            is MulKkamUiState.Loading -> updateSaveButtonAvailability(false)
+            is MulKkamUiState.Idle -> Unit
+
+            is MulKkamUiState.Failure -> {
+                Toast.makeText(this, R.string.load_info_error, Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun updateRecommendedTargetAmount() {
+    private fun showRecommendTargetAmount(targetAmountUiModel: TargetAmountUiModel) {
+        val nickname = targetAmountUiModel.nickname
+        val recommended = targetAmountUiModel.recommendedTargetAmount
         binding.tvRecommendedTargetAmount.text =
-            getString(
-                R.string.target_amount_recommended_water_goal,
-                viewModel.nickname.value,
-                viewModel.recommendedTargetAmount.value,
-            ).getAppearanceSpannable(
-                this,
-                R.style.title2,
-                viewModel.nickname.value ?: "",
-                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount.value),
-            ).getColoredSpannable(
-                this,
-                R.color.primary_200,
-                viewModel.nickname.value ?: "",
-                String.format(Locale.US, "%,dml", viewModel.recommendedTargetAmount.value),
-            )
+            getString(R.string.target_amount_recommended_water_goal, nickname, recommended)
+                .getAppearanceSpannable(
+                    this,
+                    R.style.title2,
+                    nickname,
+                    String.format(Locale.US, "%,dml", recommended),
+                ).getColoredSpannable(
+                    this,
+                    R.color.primary_200,
+                    nickname,
+                    String.format(Locale.US, "%,dml", recommended),
+                )
     }
 
-    private fun updateTargetAmountValidationUI(isValid: Boolean?) {
+    private fun updateSaveButtonAvailability(enabled: Boolean) {
+        binding.tvSaveGoal.isEnabled = enabled
+    }
+
+    private fun updateTargetAmountValidationUI(isValid: Boolean) {
         val editTextColorRes = if (isValid != false) R.color.gray_400 else R.color.secondary_200
 
         with(binding) {
-            tvSaveGoal.isEnabled = isValid == true
+            updateSaveButtonAvailability(isValid == true)
 
             tvTargetAmountWarningMessage.isVisible = isValid == false
 
@@ -124,12 +121,38 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         }
     }
 
-    private fun initGoalInputListener() {
-        binding.etInputGoal.addTextChangedListener {
-            val text = it?.toString() ?: ""
-            val number = text.toIntOrNull() ?: 0
+    private fun handleSaveUiState(saveUiState: MulKkamUiState<Unit>) {
+        when (saveUiState) {
+            is MulKkamUiState.Success -> {
+                updateSaveButtonAvailability(true)
+                Toast
+                    .makeText(this, R.string.setting_target_amount_complete_description, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
 
-            viewModel.updateTargetAmount(number)
+            is MulKkamUiState.Loading -> Unit
+
+            is MulKkamUiState.Idle -> Unit
+
+            is MulKkamUiState.Failure -> {
+                updateSaveButtonAvailability(true)
+                Toast.makeText(this, R.string.network_check_error, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun handleTargetAmountValidityUiState(targetAmountValidityUiState: MulKkamUiState<Unit>) {
+        when (targetAmountValidityUiState) {
+            is MulKkamUiState.Success<Unit> -> updateTargetAmountValidationUI(true)
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                if (targetAmountValidityUiState.error is TargetAmountError) {
+                    updateTargetAmountValidationUI(false)
+                    binding.tvTargetAmountWarningMessage.text = targetAmountValidityUiState.error.toMessageRes()
+                }
+            }
         }
     }
 

@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
@@ -16,6 +15,7 @@ import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
@@ -62,8 +62,8 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             .trim()
 
     private fun initObservers() {
-        viewModel.originalNickname.observe(this) { currentNickname ->
-            binding.etInputNickname.setText(currentNickname?.name)
+        viewModel.originalNicknameUiState.observe(this) { originalNicknameUiState ->
+            handleOriginalNicknameUiState(originalNicknameUiState)
         }
 
         viewModel.newNickname.observe(this) { nickname ->
@@ -81,20 +81,31 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
 
                 else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle).show()
+                    CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
             }
         }
 
-        viewModel.onNicknameChanged.observe(this) {
-            Toast
-                .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
-                .show()
-            finish()
+        viewModel.nicknameChangeUiState.observe(this) { nickNameChangeUiState ->
+            handleNicknameChangeUiState(nickNameChangeUiState)
+        }
+    }
+
+    private fun handleOriginalNicknameUiState(originalNicknameUiState: MulKkamUiState<Nickname>) {
+        when (originalNicknameUiState) {
+            is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.nickname_original_nickname_network_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
     private fun updateNicknameUI(state: NicknameValidationUiState) {
-        Log.d("hwannow_log", "$state")
         when (state) {
             VALID ->
                 applyNicknameUI(
@@ -147,6 +158,27 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             } ?: run {
                 tvNicknameValidationMessage.text = ""
             }
+        }
+    }
+
+    private fun handleNicknameChangeUiState(nickNameChangeUiState: MulKkamUiState<Unit>) {
+        when (nickNameChangeUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                Toast
+                    .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
+
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_check_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
