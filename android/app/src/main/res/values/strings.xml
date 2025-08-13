@@ -110,6 +110,7 @@
     <string name="nickname_duplicated">중복된 닉네임입니다</string>
     <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
     <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>
+    <string name="nickname_original_nickname_network_error">기존 정보를 불러오는 데 실패했어요</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>

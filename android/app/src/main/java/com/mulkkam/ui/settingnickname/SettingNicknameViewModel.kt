@@ -4,11 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
@@ -19,9 +21,9 @@ class SettingNicknameViewModel : ViewModel() {
     val newNickname: LiveData<Nickname>
         get() = _newNickname
 
-    private val _originalNickname: MutableLiveData<Nickname?> = MutableLiveData()
-    val originalNickname: LiveData<Nickname?>
-        get() = _originalNickname
+    private val _originalNicknameUiState: MutableLiveData<MulKkamUiState<Nickname>> = MutableLiveData(MulKkamUiState.Loading)
+    val originalNicknameUiState: LiveData<MulKkamUiState<Nickname>>
+        get() = _originalNicknameUiState
 
     private val _nicknameValidationState: MutableLiveData<NicknameValidationUiState> =
         MutableLiveData()
@@ -40,11 +42,11 @@ class SettingNicknameViewModel : ViewModel() {
     init {
         viewModelScope.launch {
             runCatching {
-                RepositoryInjection.membersRepository.getMembersNickname().getOrError()
+                membersRepository.getMembersNickname().getOrError()
             }.onSuccess { nickname ->
-                _originalNickname.value = Nickname(nickname)
+                _originalNicknameUiState.value = MulKkamUiState.Success<Nickname>(Nickname(nickname))
             }.onFailure {
-                // TODO: 에러 처리
+                _originalNicknameUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -54,10 +56,13 @@ class SettingNicknameViewModel : ViewModel() {
             _newNickname.value = Nickname(nickname)
         }.onSuccess {
             when (nickname) {
-                this.originalNickname.value?.name ->
+                (originalNicknameUiState.value as? MulKkamUiState.Success)?.data?.name -> {
                     _nicknameValidationState.value = NicknameValidationUiState.SAME_AS_BEFORE
-                else ->
+                }
+
+                else -> {
                     _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
+                }
             }
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationUiState.INVALID
@@ -85,7 +90,7 @@ class SettingNicknameViewModel : ViewModel() {
     fun saveNickname(nickname: String) {
         viewModelScope.launch {
             runCatching {
-                RepositoryInjection.membersRepository.patchMembersNickname(nickname).getOrError()
+                membersRepository.patchMembersNickname(nickname).getOrError()
             }.onSuccess {
                 _onNicknameChanged.setValue(Unit)
             }.onFailure {

@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
@@ -16,6 +15,7 @@ import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
 import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
@@ -62,8 +62,8 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             .trim()
 
     private fun initObservers() {
-        viewModel.originalNickname.observe(this) { currentNickname ->
-            binding.etInputNickname.setText(currentNickname?.name)
+        viewModel.originalNicknameUiState.observe(this) { originalNicknameUiState ->
+            handleOriginalNicknameUiState(originalNicknameUiState)
         }
 
         viewModel.newNickname.observe(this) { nickname ->
@@ -93,8 +93,22 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
     }
 
+    private fun handleOriginalNicknameUiState(originalNicknameUiState: MulKkamUiState<Nickname>) {
+        when (originalNicknameUiState) {
+            is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.nickname_original_nickname_network_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
+        }
+    }
+
     private fun updateNicknameUI(state: NicknameValidationUiState) {
-        Log.d("hwannow_log", "$state")
         when (state) {
             VALID ->
                 applyNicknameUI(
@@ -166,7 +180,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
     }
 
-    fun NicknameError.toMessageRes(): String =
+    private fun NicknameError.toMessageRes(): String =
         when (this) {
             NicknameError.InvalidLength ->
                 getString(
