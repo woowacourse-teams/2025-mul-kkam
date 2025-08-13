@@ -40,6 +40,12 @@ class SettingNicknameViewModel : ViewModel() {
         get() = _nicknameChangeUiState
 
     init {
+        loadOriginalNickname()
+    }
+
+    private fun loadOriginalNickname() {
+        if (originalNicknameUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
             runCatching {
                 _originalNicknameUiState.value = MulKkamUiState.Loading
@@ -89,6 +95,7 @@ class SettingNicknameViewModel : ViewModel() {
     }
 
     fun saveNickname(nickname: String) {
+        if (nicknameChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _nicknameChangeUiState.value = MulKkamUiState.Loading
