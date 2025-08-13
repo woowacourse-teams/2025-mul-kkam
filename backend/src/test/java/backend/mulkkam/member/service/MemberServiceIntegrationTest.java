@@ -435,6 +435,15 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
+            OauthAccount oauthAccount = OauthAccountFixtureBuilder
+                    .withMember(member)
+                    .build();
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder.withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
             // when
             memberService.delete(member);
 
@@ -455,8 +464,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             oauthAccountRepository.save(oauthAccount);
 
-            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
-                    .withOauthAccount(oauthAccount)
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder.withOauthAccount(oauthAccount)
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
@@ -464,7 +472,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberService.delete(member);
 
             // then
-            assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
+            assertSoftly(softly -> {
+                softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
+                softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
+            });
         }
     }
 }
