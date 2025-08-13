@@ -1,10 +1,7 @@
 package com.mulkkam.ui.home.dialog
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.EditorInfo
-import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentManualDrinkBinding
 import com.mulkkam.domain.model.intake.IntakeType
@@ -12,6 +9,7 @@ import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import com.mulkkam.util.extensions.setOnImeActionDoneListener
 
 class ManualDrinkFragment :
     BindingBottomSheetDialogFragment<FragmentManualDrinkBinding>(
@@ -46,18 +44,7 @@ class ManualDrinkFragment :
     }
 
     private fun initDoneListener() {
-        binding.etAmount.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(view)
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        binding.etAmount.setOnImeActionDoneListener((requireContext()))
     }
 
     private fun initChips() {

@@ -1,12 +1,10 @@
 package com.mulkkam.ui.onboarding.targetamount
 
-import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
@@ -24,6 +22,7 @@ import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import com.mulkkam.util.extensions.setOnImeActionDoneListener
 import java.util.Locale
 
 class TargetAmountFragment :
@@ -207,18 +206,6 @@ class TargetAmountFragment :
         }
 
     private fun initDoneListener() {
-        binding.etInputGoal.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(view)
-                binding.etInputGoal.clearFocus()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        binding.etInputGoal.setOnImeActionDoneListener(requireContext())
     }
 }

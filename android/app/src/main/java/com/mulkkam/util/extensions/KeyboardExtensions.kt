@@ -13,7 +13,7 @@ fun Context.hideKeyboard(view: View) {
 
 fun EditText.setOnImeActionDoneListener(context: Context) {
     setOnEditorActionListener { view, actionId, _ ->
-        if (actionId == EditorInfo.IME_ACTION_DONE) {
+        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
             context.hideKeyboard(view)
             view.clearFocus()
             true

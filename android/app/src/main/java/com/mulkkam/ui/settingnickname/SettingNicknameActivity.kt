@@ -6,8 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
@@ -26,6 +24,7 @@ import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import com.mulkkam.util.extensions.setOnImeActionDoneListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
     private val viewModel: SettingNicknameViewModel by viewModels()
@@ -84,7 +83,12 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
 
                 else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.network_check_error),
+                            R.drawable.ic_alert_circle,
+                        ).show()
             }
         }
 
@@ -95,7 +99,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun handleOriginalNicknameUiState(originalNicknameUiState: MulKkamUiState<Nickname>) {
         when (originalNicknameUiState) {
-            is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
+            is MulKkamUiState.Success<Nickname> ->
+                binding.etInputNickname.setText(
+                    originalNicknameUiState.data.name,
+                )
+
             is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure ->
@@ -217,19 +225,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
 
     private fun initDoneListener() {
-        binding.etInputNickname.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(view)
-                binding.etInputNickname.clearFocus()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        binding.etInputNickname.setOnImeActionDoneListener(this)
     }
 
     companion object {

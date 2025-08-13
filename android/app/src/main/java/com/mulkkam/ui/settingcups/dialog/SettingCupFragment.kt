@@ -1,9 +1,7 @@
 package com.mulkkam.ui.settingcups.dialog
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -18,6 +16,7 @@ import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import com.mulkkam.util.extensions.getParcelableCompat
+import com.mulkkam.util.extensions.setOnImeActionDoneListener
 
 class SettingCupFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
@@ -65,12 +64,22 @@ class SettingCupFragment :
                 editType?.let { showTitle(it) }
             }
             saveSuccess.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
+                Toast
+                    .makeText(
+                        requireContext(),
+                        requireContext().getString(R.string.setting_cup_save_result),
+                        Toast.LENGTH_SHORT,
+                    ).show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
             deleteSuccess.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
+                Toast
+                    .makeText(
+                        requireContext(),
+                        requireContext().getString(R.string.setting_cup_delete_result),
+                        Toast.LENGTH_SHORT,
+                    ).show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
@@ -118,20 +127,8 @@ class SettingCupFragment :
     }
 
     private fun initDoneListener() {
-        binding.etNickname.setOnEditorActionListener { view, actionId, _ ->
-            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
-                hideKeyboard(view)
-                binding.etNickname.clearFocus()
-                binding.etAmount.clearFocus()
-                return@setOnEditorActionListener true
-            }
-            return@setOnEditorActionListener false
-        }
-    }
-
-    private fun hideKeyboard(view: View) {
-        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(view.windowToken, 0)
+        binding.etNickname.setOnImeActionDoneListener(requireContext())
+        binding.etAmount.setOnImeActionDoneListener(requireContext())
     }
 
     private fun initChips() {
