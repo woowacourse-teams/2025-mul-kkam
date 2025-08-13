@@ -100,7 +100,6 @@ public class CupService {
                 updateCupRequest.intakeType(),
                 updateCupRequest.emoji()
         );
-        cupRepository.save(cup);
     }
 
     @Transactional
