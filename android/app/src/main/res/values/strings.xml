@@ -5,7 +5,7 @@
     <string name="main_history">기록</string>
     <string name="main_setting">설정</string>
     <string name="main_main_back_press_exit_message">뒤로가기 버튼을 한 번 더 누르면 종료됩니다</string>
-    <string name="main_alarm_permission_granted">알림 권한이 설정되었습니다</string>
+    <string name="main_alarm_permission_granted">알림 권한이 허용되었습니다</string>
     <string name="main_alarm_permission_denied">알림 권한이 거부되었습니다</string>
 
     <string name="home_notification">알림</string>
@@ -71,7 +71,8 @@
     <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
     <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
     <string name="setting_target_amount_hint_input_goal">목표량을 입력해주세요</string>
-    <string name="setting_target_amount_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_target_amount_warning_too_high">목표 섭취량은 %dml 이하로 설정해 주세요</string>
+    <string name="setting_target_amount_warning_too_low">목표 섭취량을 %dml 이상으로 설정해 주세요</string>
     <string name="setting_target_amount_unit_ml">ml</string>
     <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
@@ -97,6 +98,7 @@
     <string name="terms_agree_all">물깜 약관 전체동의</string>
     <string name="terms_agree_service">서비스 이용 약관 동의 %s</string>
     <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %s</string>
+    <string name="terms_agree_health_connect">헬스 커넥트 정보 연동 %s</string>
     <string name="terms_agree_night_notification">야간 알림 수신 동의 %s</string>
     <string name="terms_agree_marketing">마케팅 정보 수신 동의 %s</string>
     <string name="terms_required_suffix">(필수)</string>
@@ -104,6 +106,12 @@
 
     <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
     <string name="nickname_input_hint_highlight">닉네임</string>
+    <string name="nickname_invalid_length">닉네임은 %d자 이상, %d자 이하만 가능합니다</string>
+    <string name="nickname_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
+    <string name="nickname_duplicated">중복된 닉네임입니다</string>
+    <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
+    <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>
+    <string name="nickname_original_nickname_network_error">기존 정보를 불러오는 데 실패했어요</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>
@@ -130,8 +138,12 @@
     <string name="history_delete_success">기록이 삭제되었습니다.</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
+    <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
     <string name="manual_drink_label">직접 입력</string>
     <string name="manual_drink_perform">마시기</string>
 
     <string name="expandable_floating_menu_intake_unit">%,dml</string>
+
+    <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
+    <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
 </resources>

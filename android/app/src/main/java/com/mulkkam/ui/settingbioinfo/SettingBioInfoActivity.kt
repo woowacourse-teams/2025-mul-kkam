@@ -13,6 +13,8 @@ import com.mulkkam.databinding.ActivitySettingBioInfoBinding
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.bio.Gender.FEMALE
 import com.mulkkam.domain.model.bio.Gender.MALE
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
@@ -83,11 +85,8 @@ class SettingBioInfoActivity :
                 updateNextButtonEnabled(enabled)
             }
 
-            onBioInfoChanged.observe(this@SettingBioInfoActivity) {
-                Toast
-                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
-                    .show()
-                finish()
+            bioInfoChangeUiState.observe(this@SettingBioInfoActivity) { bioInfoChangeUiState ->
+                handleBioInfoChangeUiState(bioInfoChangeUiState)
             }
         }
     }
@@ -130,11 +129,22 @@ class SettingBioInfoActivity :
 
     private fun updateNextButtonEnabled(enabled: Boolean) {
         binding.tvSave.isEnabled = enabled
-        if (enabled) {
-            binding.tvSave.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(R.color.primary_200),
-                )
+    }
+
+    private fun handleBioInfoChangeUiState(bioInfoChangeUiState: MulKkamUiState<Unit>) {
+        when (bioInfoChangeUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                Toast
+                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
+
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle)
+            }
         }
     }
 

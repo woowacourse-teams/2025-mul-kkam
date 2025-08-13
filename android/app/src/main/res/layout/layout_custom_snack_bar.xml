@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="24dp"
+    android:background="@drawable/bg_common_rectangle_4dp"
+    android:backgroundTint="@color/gray_alert"
+    android:paddingVertical="6dp"
+    android:paddingStart="8dp"
+    android:paddingEnd="16dp">
+
+    <ImageView
+        android:id="@+id/iv_snack_bar_icon"
+        android:layout_width="40dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_terms_all_check_on" />
+
+    <TextView
+        android:id="@+id/tv_snack_bar_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:textAppearance="@style/body2"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_snack_bar_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="500ml 섭취 완료!" />
+</androidx.constraintlayout.widget.ConstraintLayout>
