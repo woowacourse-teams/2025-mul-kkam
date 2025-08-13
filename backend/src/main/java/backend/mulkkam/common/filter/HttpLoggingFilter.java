@@ -40,9 +40,10 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
+        printRequestUriAndHeaders(wrappingRequest);
+
         try {
             filterChain.doFilter(wrappingRequest, wrappingResponse);
-            printRequestUriAndHeaders(wrappingRequest);
 
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
