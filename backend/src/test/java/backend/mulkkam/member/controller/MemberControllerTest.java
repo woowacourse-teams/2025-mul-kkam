@@ -1,13 +1,19 @@
 package backend.mulkkam.member.controller;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
+import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.BeforeEach;
@@ -30,7 +36,12 @@ class MemberControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     DatabaseCleaner databaseCleaner;
+    @Autowired
+    private AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @DisplayName("Filter 검증")
     @Nested
@@ -259,6 +270,48 @@ class MemberControllerTest {
 
             // then
             assertThat(response.finishedOnboarding()).isFalse();
+        }
+    }
+
+    @DisplayName("회원 탈퇴 시")
+    @Nested
+    class Delete {
+
+        @BeforeEach
+        void setUp() {
+            databaseCleaner.clean();
+        }
+
+        @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버, OauthAccount, AccountRefreshToken 이 삭제된다")
+        @Test
+        void success_withValidToken() {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            memberRepository.save(member);
+
+            OauthAccount oauthAccount = new OauthAccount(member, "temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
+                    .withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+            // when
+            RestAssured.given().log().all()
+                    .header("Authorization", "Bearer " + token)
+                    .when().delete("/members")
+                    .then().log().all()
+                    .statusCode(HttpStatus.OK.value());
+
+            // then
+            assertThat(memberRepository.findById(member.getId())).isEmpty();
+            assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
+            assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
         }
     }
 }
