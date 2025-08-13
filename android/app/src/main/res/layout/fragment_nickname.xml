@@ -27,6 +27,7 @@
         android:background="@drawable/bg_common_rectangle_stroke_8dp"
         android:hint="@string/setting_nickname_hint_input_nickname"
         android:imeOptions="actionDone|flagNoEnterAction"
+        android:inputType="text"
         android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
