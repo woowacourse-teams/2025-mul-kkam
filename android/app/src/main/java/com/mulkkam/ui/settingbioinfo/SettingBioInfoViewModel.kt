@@ -21,7 +21,7 @@ class SettingBioInfoViewModel : ViewModel() {
     val weight: MutableLiveData<BioWeight?>
         get() = _weight
 
-    private val _bioInfoChangeUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Empty)
+    private val _bioInfoChangeUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val bioInfoChangeUiState: LiveData<MulKkamUiState<Unit>>
         get() = _bioInfoChangeUiState
 

@@ -94,7 +94,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         when (originalNicknameUiState) {
             is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
             is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure ->
                 CustomSnackBar
                     .make(
@@ -171,7 +171,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
 
             is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure ->
                 CustomSnackBar
                     .make(

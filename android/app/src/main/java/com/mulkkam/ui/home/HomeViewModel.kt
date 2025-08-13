@@ -23,10 +23,10 @@ class HomeViewModel : ViewModel() {
     private val _cupsUiState: MutableLiveData<MulKkamUiState<Cups>> = MutableLiveData(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
     val cupsUiState: LiveData<MulKkamUiState<Cups>> get() = _cupsUiState
 
-    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Empty)
+    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Empty)
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {

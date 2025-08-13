@@ -163,7 +163,7 @@ class HistoryFragment :
         when (weeklyIntakeHistoriesUiState) {
             is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
             is MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
-            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 binding.includeHistoryShimmer.root.visibility = View.GONE
                 CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()

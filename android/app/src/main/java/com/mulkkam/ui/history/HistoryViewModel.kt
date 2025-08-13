@@ -19,7 +19,7 @@ import java.time.temporal.TemporalAdjusters
 
 class HistoryViewModel : ViewModel() {
     private val _weeklyIntakeHistoriesUiState: MutableLiveData<MulKkamUiState<IntakeHistorySummaries>> =
-        MutableLiveData(MulKkamUiState.Empty)
+        MutableLiveData(MulKkamUiState.Idle)
     val weeklyIntakeHistoriesUiState: LiveData<MulKkamUiState<IntakeHistorySummaries>> get() = _weeklyIntakeHistoriesUiState
 
     private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData(EMPTY_DAILY_WATER_INTAKE)
@@ -31,7 +31,7 @@ class HistoryViewModel : ViewModel() {
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
-    private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Empty)
+    private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val deleteUiState: LiveData<MulKkamUiState<Unit>> get() = _deleteUiState
 
     init {

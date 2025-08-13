@@ -141,7 +141,7 @@ class SettingBioInfoActivity :
             }
 
             is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle)
             }

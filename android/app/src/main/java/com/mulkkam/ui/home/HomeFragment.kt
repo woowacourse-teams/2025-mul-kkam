@@ -65,7 +65,7 @@ class HomeFragment :
         when (todayProgressInfoMulKkamUiState) {
             is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
             MulKkamUiState.Loading -> Unit
-            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
             }
@@ -133,7 +133,7 @@ class HomeFragment :
     private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
         when (cupsUiState) {
             is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
-            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Idle -> Unit
             MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
@@ -213,7 +213,7 @@ class HomeFragment :
     private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Int>) {
         when (alarmCountUiState) {
             is MulKkamUiState.Success<Int> -> showAlarmCount(alarmCountUiState.data)
-            MulKkamUiState.Empty -> showAlarmCount(ALARM_COUNT_MIN)
+            MulKkamUiState.Idle -> showAlarmCount(ALARM_COUNT_MIN)
             MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
@@ -240,7 +240,7 @@ class HomeFragment :
                     .show()
             }
 
-            MulKkamUiState.Empty -> Unit
+            MulKkamUiState.Idle -> Unit
             MulKkamUiState.Loading -> Unit
         }
     }
