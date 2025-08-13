@@ -467,9 +467,6 @@ class CupControllerTest {
                     .build();
             Member savedOtherMember = memberRepository.save(otherMember);
 
-            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             Cup otherCup = CupFixtureBuilder.withMember(savedOtherMember)
                     .cupNickname(new CupNickname("otherCup"))
                     .build();
