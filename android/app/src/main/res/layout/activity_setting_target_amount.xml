@@ -72,7 +72,6 @@
         android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
-        android:scrollHorizontally="true"
         android:textAppearance="@style/body2"
         android:textColor="@color/gray_400"
         android:textColorHint="@color/gray_300"
