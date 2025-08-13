@@ -19,6 +19,7 @@ public enum BadRequestErrorCode implements ErrorCode {
     INVALID_PAGE_SIZE_RANGE,
     INVALID_METHOD_ARGUMENT,
     INVALID_DATE_FOR_DELETE_INTAKE_HISTORY,
+    INVALID_MEMBER_WEIGHT,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;
