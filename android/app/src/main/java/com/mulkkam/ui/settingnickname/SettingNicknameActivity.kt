@@ -6,6 +6,8 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.widget.doAfterTextChanged
@@ -27,6 +29,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        initDoneListener()
         binding.tvSaveNickname.applyImeMargin()
     }
 
@@ -135,6 +138,22 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     viewModel.clearNicknameValidationState()
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
+    }
+
+    private fun initDoneListener() {
+        binding.etInputNickname.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(view)
+                binding.etInputNickname.clearFocus()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     companion object {

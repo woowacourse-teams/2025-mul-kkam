@@ -1,7 +1,9 @@
 package com.mulkkam.ui.settingcups.dialog
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
@@ -35,6 +37,7 @@ class SettingCupFragment :
         initClickListeners()
         initObservers()
         initInputListeners()
+        initDoneListener()
         initChips()
         initDeleteButton()
     }
@@ -112,6 +115,23 @@ class SettingCupFragment :
 
             viewModel.updateAmount(amount)
         }
+    }
+
+    private fun initDoneListener() {
+        binding.etNickname.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(view)
+                binding.etNickname.clearFocus()
+                binding.etAmount.clearFocus()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private fun initChips() {

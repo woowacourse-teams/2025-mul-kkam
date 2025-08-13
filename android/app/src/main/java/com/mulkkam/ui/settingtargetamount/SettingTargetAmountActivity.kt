@@ -6,6 +6,8 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -32,6 +34,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         initObservers()
         initGoalInputListener()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvSaveGoal.applyImeMargin()
     }
 
@@ -124,6 +127,22 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                     viewModel.updateTargetAmount(targetAmount)
                 }.apply { debounceHandler.postDelayed(this, 300L) }
         }
+    }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(view)
+                binding.etInputGoal.clearFocus()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     companion object {

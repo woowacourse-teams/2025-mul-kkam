@@ -1,10 +1,12 @@
 package com.mulkkam.ui.onboarding.nickname
 
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
@@ -36,6 +38,7 @@ class NicknameFragment :
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        initDoneListener()
         binding.tvNext.applyImeMargin()
     }
 
@@ -144,5 +147,21 @@ class NicknameFragment :
                     viewModel.clearNicknameValidationState()
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
+    }
+
+    private fun initDoneListener() {
+        binding.etInputNickname.setOnEditorActionListener { view, actionId, _ ->
+            if (actionId == android.view.inputmethod.EditorInfo.IME_ACTION_DONE) {
+                hideKeyboard(view)
+                binding.etInputNickname.clearFocus()
+                return@setOnEditorActionListener true
+            }
+            return@setOnEditorActionListener false
+        }
+    }
+
+    private fun hideKeyboard(view: View) {
+        val imm = requireActivity().getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
     }
 }
