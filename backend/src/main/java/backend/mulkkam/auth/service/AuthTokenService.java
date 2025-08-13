@@ -25,6 +25,11 @@ public class AuthTokenService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
+    public void logout(OauthAccount account) {
+        accountRefreshTokenRepository.deleteByAccount(account);
+    }
+
+    @Transactional
     public ReissueTokenResponse reissueToken(ReissueTokenRequest request) {
         String refreshToken = request.refreshToken();
         OauthAccount account = getAccountByToken(refreshToken);

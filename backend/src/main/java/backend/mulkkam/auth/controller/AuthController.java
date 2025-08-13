@@ -63,6 +63,7 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "인증 실패")
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(@Parameter(hidden = true) OauthAccount oauthAccount) {
+        authTokenService.logout(oauthAccount);
         return ResponseEntity.noContent().build();
     }
 }
