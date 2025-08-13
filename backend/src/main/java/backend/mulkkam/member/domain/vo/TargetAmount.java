@@ -9,7 +9,7 @@ public record TargetAmount(
 ) {
 
     private static final int MIN_TARGET_AMOUNT = 200;
-    private static final int MAX_TARGET_AMOUNT = 10_000;
+    private static final int MAX_TARGET_AMOUNT = 5_000;
 
     public TargetAmount {
         if (value > MAX_TARGET_AMOUNT || value < MIN_TARGET_AMOUNT) {

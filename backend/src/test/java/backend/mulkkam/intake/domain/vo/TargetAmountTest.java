@@ -13,13 +13,14 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class TargetAmountTest {
 
-    @Nested
+
     @DisplayName("생성자 검증 시에")
+    @Nested
     class NewTargetAmount {
 
-        @DisplayName("올바른 음수량을 입력할 수 있다.")
+        @DisplayName("올바른 음용량을 입력할 수 있다.")
         @ParameterizedTest
-        @ValueSource(ints = {200, 1_000, 2_000, 10_000})
+        @ValueSource(ints = {200, 1_000, 2_000, 5_000})
         void success_validValue(int input) {
             // given
 
@@ -29,9 +30,9 @@ class TargetAmountTest {
             }).doesNotThrowAnyException();
         }
 
-        @DisplayName("범위를 벗어난 음수량은 입력할 수 없다.")
+        @DisplayName("범위를 벗어난 음용량은 입력할 수 없다.")
         @ParameterizedTest
-        @ValueSource(ints = {-1, 0, 199, 10_001})
+        @ValueSource(ints = {-1, 0, 199, 5_001})
         void error_invalidValue(int input) {
             // given
 

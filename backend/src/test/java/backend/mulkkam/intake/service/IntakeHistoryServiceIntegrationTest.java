@@ -355,7 +355,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
                     .withMember(member)
                     .updatedAt(LocalDate.of(2025, 7, 10))
-                    .targetAmount(new TargetAmount(5_555))
+                    .targetAmount(new TargetAmount(4_999))
                     .build();
             targetAmountSnapshotRepository.save(targetAmountSnapshot);
 
@@ -368,7 +368,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistorySummaryResponses.size()).isEqualTo(1);
-                softly.assertThat(intakeHistorySummaryResponses.getFirst().targetAmount()).isEqualTo(5555);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().targetAmount()).isEqualTo(4_999);
                 softly.assertThat(intakeHistorySummaryResponses.getFirst().achievementRate()).isEqualTo(0.0);
             });
         }

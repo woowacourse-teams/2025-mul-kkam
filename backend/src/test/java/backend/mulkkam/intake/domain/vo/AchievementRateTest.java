@@ -37,7 +37,7 @@ class AchievementRateTest {
         void success_withValueOver100() {
             // given
             TargetAmount targetIntakeAmount = new TargetAmount(1_000);
-            TargetAmount totalIntakeAmount = new TargetAmount(10_000);
+            TargetAmount totalIntakeAmount = new TargetAmount(5_000);
 
             // when
             AchievementRate achievementRate = new AchievementRate(
