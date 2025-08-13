@@ -210,6 +210,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         private val HEALTH_CONNECT_PERMISSIONS =
             setOf(
                 HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+                HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
             )
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
