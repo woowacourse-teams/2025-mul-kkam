@@ -150,9 +150,9 @@ public class CupService {
             validateCupOwnership(member, cup);
         }
 
-        List<Cup> allByMember = cupRepository.findAllByMember(member);
+        List<Cup> cupsByMember = cupRepository.findAllByMember(member);
 
-        validateAllCupsByMember(cups, allByMember);
+        validateAllCupsByMember(cups, cupsByMember);
     }
 
     private void validateAllCupsByMember(
