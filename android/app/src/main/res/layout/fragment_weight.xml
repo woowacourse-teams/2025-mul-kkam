@@ -71,7 +71,7 @@
         android:layout_marginTop="34dp"
         android:layout_marginBottom="24dp"
         android:background="@drawable/bg_common_rectangle_8dp"
-        android:backgroundTint="@color/selector_save_background"
+        android:backgroundTint="@color/primary_200"
         android:gravity="center"
         android:paddingVertical="12dp"
         android:text="@string/weight_complete"

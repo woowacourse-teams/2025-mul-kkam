@@ -83,7 +83,7 @@ class IntakeAmountControllerTest {
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
-        token = oauthJwtTokenHandler.createToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
     @DisplayName("목표 음용량을 추천받는다")
@@ -117,7 +117,7 @@ class IntakeAmountControllerTest {
             memberRepository.save(member);
             OauthAccount oauthAccount = new OauthAccount(member, "testId2", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
-            token = oauthJwtTokenHandler.createToken(oauthAccount);
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             String json = mockMvc.perform(get("/intake/amount/recommended")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))

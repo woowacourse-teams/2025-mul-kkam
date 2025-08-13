@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -13,6 +14,8 @@ import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
+import com.mulkkam.domain.model.intake.TargetAmount
+import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
@@ -46,6 +49,24 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun initObservers() {
+        viewModel.previousTargetAmount.observe(this) {
+            binding.etInputGoal.setText(it.toString())
+        }
+
+        viewModel.targetAmount.observe(this) { targetAmount ->
+            if (binding.etInputGoal.text
+                    .toString()
+                    .toIntOrNull() == targetAmount.amount
+            ) {
+                return@observe
+            }
+            binding.etInputGoal.setText(targetAmount.amount.toString())
+        }
+
+        viewModel.isTargetAmountValid.observe(this) { isValid ->
+            updateTargetAmountValidationUI(isValid)
+        }
+
         viewModel.onSaveTargetAmount.observe(this) {
             Toast
                 .makeText(
@@ -60,12 +81,14 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             updateRecommendedTargetAmount()
         }
 
-        viewModel.isTargetAmountValid.observe(this) { isValid ->
-            updateTargetAmountValidationUI(isValid)
-        }
+        viewModel.onTargetAmountValidationError.observe(this) { error ->
+            when (error) {
+                is TargetAmountError -> {
+                    binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+                }
 
-        viewModel.previousTargetAmount.observe(this) {
-            binding.etInputGoal.setText(it.toString())
+                else -> Unit
+            }
         }
     }
 
@@ -111,20 +134,59 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
     }
 
     private fun initTargetAmountInputWatcher() {
-        binding.etInputGoal.doAfterTextChanged {
-            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+        binding.etInputGoal.doAfterTextChanged { editable ->
+            val processedText = sanitizeLeadingZeros(editable.toString())
 
-            debounceRunnable =
-                Runnable {
-                    val targetAmount =
-                        binding.etInputGoal.text
-                            .toString()
-                            .trim()
-                            .toIntOrNull()
-                    viewModel.updateTargetAmount(targetAmount)
-                }.apply { debounceHandler.postDelayed(this, 300L) }
+            if (processedText != editable.toString()) {
+                updateEditText(binding.etInputGoal, processedText)
+                return@doAfterTextChanged
+            }
+
+            debounceTargetAmountUpdate(processedText)
         }
     }
+
+    private fun sanitizeLeadingZeros(input: String): String =
+        if (input.length > 1 && input.startsWith("0")) {
+            input.trimStart('0').ifEmpty { "0" }
+        } else {
+            input
+        }
+
+    private fun updateEditText(
+        editText: EditText,
+        newText: String,
+    ) {
+        editText.apply {
+            setText(newText)
+            setSelection(newText.length)
+        }
+    }
+
+    private fun debounceTargetAmountUpdate(text: String) {
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+
+        debounceRunnable =
+            Runnable {
+                val targetAmount = text.toIntOrNull() ?: 0
+                viewModel.updateTargetAmount(targetAmount)
+            }.apply { debounceHandler.postDelayed(this, 300L) }
+    }
+
+    private fun TargetAmountError.toMessageRes(): String =
+        when (this) {
+            TargetAmountError.BelowMinimum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_low,
+                    TargetAmount.TARGET_AMOUNT_MIN,
+                )
+
+            TargetAmountError.AboveMaximum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_high,
+                    TargetAmount.TARGET_AMOUNT_MAX,
+                )
+        }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)

@@ -90,7 +90,7 @@ class IntakeHistoryControllerTest {
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
-        token = oauthJwtTokenHandler.createToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
     @DisplayName("Filter 검증")

@@ -6,4 +6,5 @@ data class TermsAgreementUiModel(
     @StringRes val labelId: Int,
     val isRequired: Boolean,
     val isChecked: Boolean = false,
+    @StringRes val uri: Int = 0,
 )
