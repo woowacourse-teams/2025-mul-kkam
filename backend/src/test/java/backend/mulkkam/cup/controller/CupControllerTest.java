@@ -136,7 +136,7 @@ class CupControllerTest {
     @Nested
     class UpdateRanks {
 
-            @BeforeEach
+        @BeforeEach
         void setUp() {
             List<Cup> cups = List.of(
                     CupFixtureBuilder.withMember(savedMember)
