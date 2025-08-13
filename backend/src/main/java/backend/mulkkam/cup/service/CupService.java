@@ -87,11 +87,11 @@ public class CupService {
 
     @Transactional
     public void update(
-            Long id,
+            Long cupId,
             Member member,
             UpdateCupRequest updateCupRequest
     ) {
-        Cup cup = getCup(id);
+        Cup cup = getCup(cupId);
 
         validateCupOwnership(member, cup);
         cup.update(
