@@ -58,6 +58,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
 
         String originalUri = extractOriginalUri(request);
         String logUri = normalizeRoutePath(request, originalUri);
+        Long oauthId = (Long) request.getAttribute("oauth_id");
 
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",
@@ -67,7 +68,8 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
                     kv("response_time", responseTime),
                     kv("status", response.getStatus())
             );
-            log.warn("[API Performance]: {} {} - {}ms [Status: {}]",
+            log.warn("[API Performance] oauthId = {}, {} {} - {}ms [Status: {}]",
+                    oauthId,
                     request.getMethod(),
                     originalUri,
                     responseTime,
@@ -82,7 +84,8 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
                 kv("response_time", responseTime),
                 kv("status", response.getStatus())
         );
-        log.info("[API Performance]: {} {} - {}ms [Status: {}]",
+        log.info("[API Performance]: oauthId = {}, {} {} - {}ms [Status: {}]",
+                oauthId,
                 request.getMethod(),
                 originalUri,
                 responseTime,
