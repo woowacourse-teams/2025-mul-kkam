@@ -32,7 +32,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
 
             // when
-            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
             Long actual = oauthJwtTokenHandler.getSubject(token);
 
             // then
@@ -50,7 +50,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
-            String token = oauthJwtTokenHandler.createToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             // when
             Long actual = oauthJwtTokenHandler.getSubject(token);
