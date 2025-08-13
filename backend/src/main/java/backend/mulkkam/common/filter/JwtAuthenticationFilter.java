@@ -5,12 +5,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -36,7 +37,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
-            oauthJwtTokenHandler.getSubject(token);
+            Long subject = oauthJwtTokenHandler.getSubject(token);
+            request.setAttribute("subject", subject);
             filterChain.doFilter(request, response);
         } catch (IllegalArgumentException e) { // TODO: CommonException 변경
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
