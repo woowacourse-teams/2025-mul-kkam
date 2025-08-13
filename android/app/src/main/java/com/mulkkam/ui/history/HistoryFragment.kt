@@ -25,6 +25,7 @@ import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -127,8 +128,8 @@ class HistoryFragment :
     }
 
     private fun initObservers() {
-        viewModel.weeklyIntakeHistories.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
-            bindWeeklyChartData(weeklyIntakeHistories)
+        viewModel.weeklyIntakeHistoriesUiState.observe(viewLifecycleOwner) { weeklyIntakeHistoriesUiState ->
+            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState ?: return@observe)
         }
 
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
@@ -146,8 +147,8 @@ class HistoryFragment :
             updateCharacterImage(waterIntakeState)
         }
 
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
+        viewModel.deleteUiState.observe(viewLifecycleOwner) { deleteUiState ->
+            if (deleteUiState is MulKkamUiState.Success) {
                 CustomSnackBar
                     .make(
                         binding.root,
@@ -158,7 +159,19 @@ class HistoryFragment :
         }
     }
 
-    private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
+    private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
+        when (weeklyIntakeHistoriesUiState) {
+            is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
+            is MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
+            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure -> {
+                binding.includeHistoryShimmer.root.visibility = View.GONE
+                CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
+            }
+        }
+    }
+
+    private fun updateWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
         weeklyCharts.forEachIndexed { index, chart ->
             val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
@@ -173,6 +186,8 @@ class HistoryFragment :
                 weeklyIntakeHistories.firstDay.format(formatter),
                 weeklyIntakeHistories.lastDay.format(formatter),
             )
+
+        binding.includeHistoryShimmer.root.visibility = View.GONE
     }
 
     private fun updateWeeklyChart(
