@@ -10,6 +10,7 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.DatabaseCleaner;
@@ -58,6 +59,7 @@ class MemberControllerTest {
         member = MemberFixtureBuilder
                 .builder()
                 .isNightNotificationAgreed(true)
+                .isMarketingNotificationAgreed(true)
                 .build();
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -89,6 +91,28 @@ class MemberControllerTest {
             // then
             assertSoftly(softly ->
                     softly.assertThat(foundMember.isNightNotificationAgreed()).isFalse()
+            );
+        }
+
+        @DisplayName("야간 알림을 수정한다.")
+        @Test
+        void success_whenModifyIsMarketingNotificationAgreed() throws Exception {
+            // given
+            ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest = new ModifyIsMarketingNotificationAgreedRequest(
+                    false);
+
+            // when
+            mockMvc.perform(patch("/members/notification/marketing")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly ->
+                    softly.assertThat(foundMember.isMarketingNotificationAgreed()).isFalse()
             );
         }
     }
