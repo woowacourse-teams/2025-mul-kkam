@@ -35,8 +35,8 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
         request.setAttribute(START_TIME_ATTRIBUTE, startTime);
         request.setAttribute(REQUEST_URI_ATTRIBUTE, request.getRequestURI());
 
-        Object best = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-        if (best instanceof String s) {
+        Object bestMatchingPattern = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+        if (bestMatchingPattern instanceof String s) {
             request.setAttribute(ROUTE_PATTERN_ATTRIBUTE, s);
         }
 
@@ -50,34 +50,14 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
             Object handler,
             Exception exception
     ) {
-        String uri = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
-        if (uri == null) uri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
-        if (uri == null) uri = request.getRequestURI();
-
         Long startTime = (Long) request.getAttribute(START_TIME_ATTRIBUTE);
         if (startTime == null) {
             return;
         }
-
         long responseTime = System.currentTimeMillis() - startTime;
 
-        String originalUri = uri;
-        if (originalUri == null) originalUri = request.getRequestURI();
-
-        String route = (String) request.getAttribute(ROUTE_PATTERN_ATTRIBUTE);
-        if (route == null) {
-            Object best = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-            route = (best instanceof String s) ? s : originalUri;
-        }
-
-        // "/a/{id}/b/{x}" -> "/a/b"
-        StringBuilder sb = new StringBuilder();
-        for (String seg : route.split("/")) {
-            if (seg.isEmpty()) continue;
-            if (seg.startsWith("{") && seg.endsWith("}")) continue;
-            sb.append('/').append(seg);
-        }
-        String logUri = (sb.isEmpty()) ? "/" : sb.toString();
+        String originalUri = extractOriginalUri(request);
+        String logUri = normalizeRoutePath(request, originalUri);
 
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",
@@ -108,5 +88,32 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
                 responseTime,
                 response.getStatus()
         );
+    }
+
+    private static String extractOriginalUri(HttpServletRequest request) {
+        String uri = (String) request.getAttribute(RequestDispatcher.ERROR_REQUEST_URI);
+        if (uri == null) uri = (String) request.getAttribute(RequestDispatcher.FORWARD_REQUEST_URI);
+        if (uri == null) uri = request.getRequestURI();
+        return uri;
+    }
+
+    private static String normalizeRoutePath(HttpServletRequest request, String originalUri) {
+        String route = (String) request.getAttribute(ROUTE_PATTERN_ATTRIBUTE);
+        if (route == null) {
+            Object best = request.getAttribute(HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
+            route = (best instanceof String s) ? s : originalUri;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (String seg : route.split("/")) {
+            if (seg.isEmpty()) continue;
+            if (seg.startsWith("{") && seg.endsWith("}")) continue;
+            sb.append('/').append(seg);
+        }
+
+        if (sb.isEmpty()) {
+            return "/";
+        }
+        return sb.toString();
     }
 }
