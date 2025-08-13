@@ -147,8 +147,8 @@ class HistoryFragment :
             updateCharacterImage(waterIntakeState)
         }
 
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
+        viewModel.deleteUiState.observe(viewLifecycleOwner) { deleteUiState ->
+            if (deleteUiState is MulKkamUiState.Success) {
                 CustomSnackBar
                     .make(
                         binding.root,
@@ -161,14 +161,14 @@ class HistoryFragment :
 
     private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
         when (weeklyIntakeHistoriesUiState) {
-            is MulKkamUiState.Success<IntakeHistorySummaries> -> bindWeeklyChartData(weeklyIntakeHistoriesUiState.data)
-            MulKkamUiState.Empty -> TODO()
-            MulKkamUiState.Loading -> TODO()
-            is MulKkamUiState.Failure -> TODO()
+            is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
+            MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
+            MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Failure -> binding.includeHistoryShimmer.root.visibility = View.GONE
         }
     }
 
-    private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
+    private fun updateWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
         weeklyCharts.forEachIndexed { index, chart ->
             val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
@@ -183,6 +183,8 @@ class HistoryFragment :
                 weeklyIntakeHistories.firstDay.format(formatter),
                 weeklyIntakeHistories.lastDay.format(formatter),
             )
+
+        binding.includeHistoryShimmer.root.visibility = View.GONE
     }
 
     private fun updateWeeklyChart(

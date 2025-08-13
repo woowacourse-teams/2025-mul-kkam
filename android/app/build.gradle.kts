@@ -123,4 +123,7 @@ dependencies {
 
     // 워크 매니저
     implementation(libs.androidx.work.runtime.ktx)
+
+    // 스켈레톤
+    implementation(libs.shimmer)
 }

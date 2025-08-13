@@ -11,8 +11,6 @@ import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -31,8 +29,8 @@ class HistoryViewModel : ViewModel() {
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
-    private val _deleteSuccess = MutableSingleLiveData<Boolean>()
-    val deleteSuccess: SingleLiveData<Boolean> get() = _deleteSuccess
+    private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>()
+    val deleteUiState: LiveData<MulKkamUiState<Unit>> get() = _deleteUiState
 
     init {
         loadIntakeHistories()
@@ -98,13 +96,14 @@ class HistoryViewModel : ViewModel() {
 
     fun deleteIntakeHistory(history: IntakeHistory) {
         viewModelScope.launch {
-            val result = RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id)
             runCatching {
-                result.getOrError()
+                _deleteUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id).getOrError()
+            }.onSuccess {
+                _deleteUiState.value = MulKkamUiState.Success(Unit)
                 updateIntakeHistoriesAfterDeletion(history)
-                _deleteSuccess.setValue(true)
             }.onFailure {
-                // TODO : 에러 처리
+                _deleteUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

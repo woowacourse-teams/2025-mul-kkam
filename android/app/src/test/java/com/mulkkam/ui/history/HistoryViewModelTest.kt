@@ -90,10 +90,10 @@ class HistoryViewModelTest {
 
         // when
         historyViewModel.deleteIntakeHistory(expected)
-        val actual = historyViewModel.deleteSuccess.getValue()
+        val actual = historyViewModel.deleteUiState.getOrAwaitValue() as? MulKkamUiState.Success
 
         // then
-        assertThat(actual).isTrue
+        assertThat(actual).isInstanceOf(MulKkamUiState.Success::class.java)
         assertThat(capturedId.captured).isEqualTo(expected.id)
 
         coVerify(exactly = 1) { fakeIntakeRepository.deleteIntakeHistoryDetails(any()) }
