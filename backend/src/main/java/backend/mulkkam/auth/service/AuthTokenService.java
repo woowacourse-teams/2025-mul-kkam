@@ -8,11 +8,12 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_REFRESH_TOKEN;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TOKEN;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 
 @AllArgsConstructor
@@ -39,9 +40,17 @@ public class AuthTokenService {
     }
 
     private OauthAccount getAccountByToken(String refreshToken) {
-        Long accountId = oauthJwtTokenHandler.getSubject(refreshToken);
+        Long accountId = getAccountId(refreshToken);
         return accountRepository.findById(accountId)
                 .orElseThrow(() -> new CommonException(UNAUTHORIZED));
+    }
+
+    private Long getAccountId(String refreshToken) {
+        try {
+            return oauthJwtTokenHandler.getSubject(refreshToken);
+        } catch (InvalidTokenException e) {
+            throw new CommonException(INVALID_TOKEN);
+        }
     }
 
     private AccountRefreshToken loadRefreshToken(OauthAccount account) {
@@ -51,7 +60,7 @@ public class AuthTokenService {
 
     private void validateRequestToken(AccountRefreshToken saved, String refreshToken) {
         if (!saved.isMatchWith(refreshToken)) {
-            throw new CommonException(INVALID_REFRESH_TOKEN);
+            throw new CommonException(INVALID_TOKEN);
         }
     }
 }
