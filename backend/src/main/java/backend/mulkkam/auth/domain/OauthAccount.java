@@ -15,6 +15,8 @@ import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
 
@@ -30,6 +32,7 @@ public class OauthAccount {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = true)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Member member;
 
     @Column(nullable = false)

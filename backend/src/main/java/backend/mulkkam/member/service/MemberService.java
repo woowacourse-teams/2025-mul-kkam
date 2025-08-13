@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -137,11 +136,6 @@ public class MemberService {
 
     @Transactional
     public void delete(Member member) {
-        OauthAccount oauthAccount = oauthAccountRepository.findByMember(member)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
-        accountRefreshTokenRepository.deleteByAccount(oauthAccount);
-        oauthAccountRepository.delete(oauthAccount);
-
         memberRepository.delete(member);
     }
 
