@@ -11,6 +11,7 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -23,10 +24,10 @@ class HomeViewModel : ViewModel() {
     private val _cupsUiState: MutableLiveData<MulKkamUiState<Cups>> = MutableLiveData(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
     val cupsUiState: LiveData<MulKkamUiState<Cups>> get() = _cupsUiState
 
-    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData()
+    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData()
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {
@@ -36,6 +37,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadTodayProgressInfo() {
+        if (todayProgressInfoUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _todayProgressInfoUiState.value = MulKkamUiState.Loading
@@ -49,6 +51,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadCups() {
+        if (cupsUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _cupsUiState.value = MulKkamUiState.Loading
@@ -56,32 +59,34 @@ class HomeViewModel : ViewModel() {
             }.onSuccess { cupsUiState ->
                 _cupsUiState.value = MulKkamUiState.Success<Cups>(cupsUiState)
             }.onFailure {
-                _cupsUiState.value = MulKkamUiState.Empty
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun loadAlarmCount() {
+        if (alarmCountUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             // TODO: 알림 개수 조회 API 연결
             // RepositoryInjection.alarmRepository.getAlarmCount().getOrError()
             runCatching {
-                _cupsUiState.value = MulKkamUiState.Loading
+                _alarmCountUiState.value = MulKkamUiState.Loading
             }.onSuccess {
                 _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
-                _alarmCountUiState.value = MulKkamUiState.Empty
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun addWaterIntakeByCup(cupId: Long) {
-        val cups = (cupsUiState.value as? MulKkamUiState.Success<Cups>)?.data ?: return
+        val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
         addWaterIntake(cup.amount)
     }
 
     fun addWaterIntake(amount: Int) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _drinkUiState.value = MulKkamUiState.Loading
@@ -89,7 +94,7 @@ class HomeViewModel : ViewModel() {
                     .postIntakeHistory(LocalDateTime.now(), amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                val current = (todayProgressInfoUiState.value as? MulKkamUiState.Success<TodayProgressInfo>)?.data ?: return@launch
+                val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch
                 _todayProgressInfoUiState.value =
                     MulKkamUiState.Success(
                         current.updateProgressInfo(

@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.NicknameValidationUiState
@@ -76,23 +77,19 @@ class NicknameFragment :
             .trim()
 
     private fun initObservers() {
-        viewModel.nicknameValidationState.observe(viewLifecycleOwner) { state ->
-            updateNicknameUI(state)
-        }
-
-        viewModel.onNicknameValidationError.observe(viewLifecycleOwner) { error ->
-            when (error) {
-                is NicknameError ->
-                    binding.tvNicknameValidationMessage.text = error.toMessageRes()
-
-                else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle).show()
+        with(viewModel) {
+            nicknameValidationState.observe(viewLifecycleOwner) { state ->
+                updateNicknameUI(state)
             }
-        }
 
-        viewModel.nickname.observe(viewLifecycleOwner) { nickname ->
-            if (binding.etInputNickname.text.toString() == nickname.name) return@observe
-            binding.etInputNickname.setText(nickname.name)
+            onNicknameValidationError.observe(viewLifecycleOwner) { error ->
+                handleNicknameValidationError(error)
+            }
+
+            nickname.observe(viewLifecycleOwner) { nickname ->
+                if (binding.etInputNickname.text.toString() == nickname.name) return@observe
+                binding.etInputNickname.setText(nickname.name)
+            }
         }
     }
 
@@ -146,6 +143,21 @@ class NicknameFragment :
         }
     }
 
+    private fun handleNicknameValidationError(error: MulKkamError) {
+        when (error) {
+            is NicknameError ->
+                binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
+            else ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_check_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
+        }
+    }
+
     private fun initNicknameInputWatcher() {
         binding.etInputNickname.doAfterTextChanged {
             debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
@@ -162,7 +174,7 @@ class NicknameFragment :
         }
     }
 
-    fun NicknameError.toMessageRes(): String =
+    private fun NicknameError.toMessageRes(): String =
         when (this) {
             NicknameError.InvalidLength ->
                 getString(

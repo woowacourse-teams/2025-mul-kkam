@@ -46,8 +46,12 @@ sealed class MulKkamError : Throwable() {
     }
 
     sealed class TargetAmountError : MulKkamError() {
-        data object InvalidTargetAmount : TargetAmountError() {
-            private fun readResolve(): Any = InvalidTargetAmount
+        data object BelowMinimum : TargetAmountError() {
+            private fun readResolve(): Any = BelowMinimum
+        }
+
+        data object AboveMaximum : TargetAmountError() {
+            private fun readResolve(): Any = AboveMaximum
         }
     }
 
