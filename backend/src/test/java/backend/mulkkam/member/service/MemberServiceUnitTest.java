@@ -1,5 +1,6 @@
 package backend.mulkkam.member.service;
 
+import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -9,7 +10,6 @@ import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
-import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import org.junit.jupiter.api.DisplayName;
