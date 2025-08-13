@@ -36,6 +36,10 @@ public class AccountRefreshToken {
         this(null, account, refreshToken);
     }
 
+    public boolean isMatchWith(String otherToken) {
+        return refreshToken.equals(otherToken);
+    }
+
     public void reissueToken(String newRefreshToken) {
         this.refreshToken = newRefreshToken;
     }

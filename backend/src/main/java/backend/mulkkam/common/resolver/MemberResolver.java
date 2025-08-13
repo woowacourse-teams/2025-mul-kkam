@@ -1,10 +1,7 @@
 package backend.mulkkam.common.resolver;
 
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
 import backend.mulkkam.member.domain.Member;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +12,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-
 @Component
 @RequiredArgsConstructor
 public class MemberResolver implements HandlerMethodArgumentResolver {
 
-    private final AuthenticationHeaderHandler authenticationHeaderHandler;
-    private final OauthJwtTokenHandler oauthJwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
 
     @Override
@@ -38,11 +31,10 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-        String token = authenticationHeaderHandler.extractToken(request);
-        Long oauthAccountId = oauthJwtTokenHandler.getSubject(token);
+        Long accountId = (Long) request.getAttribute("subject");
 
-        OauthAccount oauthAccount = oauthAccountRepository.findByIdWithMember(oauthAccountId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+        OauthAccount oauthAccount = oauthAccountRepository.findByIdWithMember(accountId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
 
         return oauthAccount.getMember();
     }
