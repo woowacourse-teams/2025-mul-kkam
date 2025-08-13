@@ -9,6 +9,11 @@ public record OauthLoginResponse(
         )
         String accessToken,
         @Schema(
+                description = "애플리케이션 리프레시 토큰 - 액세스 토큰 재발급이 필요한 경우 사용됩니다.",
+                example = "v7dm1Q...abc"
+        )
+        String refreshToken,
+        @Schema(
                 description = "온보딩 진행 여부",
                 example = "false"
         )
