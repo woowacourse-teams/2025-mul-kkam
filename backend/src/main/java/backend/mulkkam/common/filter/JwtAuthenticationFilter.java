@@ -2,17 +2,20 @@ package backend.mulkkam.common.filter;
 
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -20,6 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
             HttpEndpoint.exact("/auth/kakao", HttpMethod.POST),
+            HttpEndpoint.exact("/auth/token/reissue", HttpMethod.POST),
             HttpEndpoint.prefix("/swagger-ui", HttpMethod.GET),
             HttpEndpoint.prefix("/v3/api-docs", HttpMethod.GET),
             HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
@@ -38,9 +42,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
-            Long oauthId = oauthJwtTokenHandler.getSubject(token);
-            request.setAttribute("oauth_id", oauthId);
-            filterChain.doFilter(request, response); // TODO 2025. 8. 13. 09:41: 질문) try 밖으로 뺴야 할 지 말아야 할지 -> controller 예외가 어디서 잡히는 지 먼저 테스트
+            Long subject = oauthJwtTokenHandler.getSubject(token);
+            request.setAttribute("subject", subject);
+            request.setAttribute("oauth_id", subject);
+            filterChain.doFilter(request, response);
+        } catch (InvalidTokenException e) {
+            request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
+            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.UNAUTHORIZED);
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         } catch (CommonException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, e.getErrorCode().getStatus().value());
