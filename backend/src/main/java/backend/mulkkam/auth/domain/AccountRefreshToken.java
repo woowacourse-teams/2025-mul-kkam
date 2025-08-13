@@ -36,7 +36,7 @@ public class AccountRefreshToken {
         return refreshToken.equals(otherToken);
     }
 
-    public void reissueToken(String refreshToken) {
-        this.refreshToken = refreshToken;
+    public void reissueToken(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
     }
 }

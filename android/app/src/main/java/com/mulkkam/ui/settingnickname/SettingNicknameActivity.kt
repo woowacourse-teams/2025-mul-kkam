@@ -166,7 +166,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
     }
 
-    fun NicknameError.toMessageRes(): String =
+    private fun NicknameError.toMessageRes(): String =
         when (this) {
             NicknameError.InvalidLength ->
                 getString(
