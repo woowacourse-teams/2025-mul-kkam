@@ -418,7 +418,7 @@ class CupControllerTest {
         }
     }
 
-    @DisplayName("컵을 삭제한다")
+    @DisplayName("컵을 삭제할 때")
     @Nested
     class Delete {
 
