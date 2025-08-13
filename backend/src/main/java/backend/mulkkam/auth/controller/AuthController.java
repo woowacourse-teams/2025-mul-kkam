@@ -1,7 +1,9 @@
 package backend.mulkkam.auth.controller;
 
 import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
+import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.common.exception.FailureBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,5 +37,19 @@ public class AuthController {
             KakaoSigninRequest kakaoSigninRequest
     ) {
         return kakaoAuthService.signIn(kakaoSigninRequest);
+    }
+
+    @Operation(summary = "액세스 토큰 재발급", description = "액세스 토큰 만료 시 새로운 액세스 토큰과 리프레시 토큰을 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "성공 응답")
+    @ApiResponse(responseCode = "400", description = "사용 불가능한 리프레시 토큰이 입력된 경우",  content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "재로그인 조치 필요", summary = "이미 사용된 리프레시 토큰으로 요청한 경우 - 리프레시 토큰 탈취 가능성이 있음", value = "{\"code\":\"INVALID_REFRESH_TOKEN\"}")
+    }))
+    @ApiResponse(responseCode = "401", description = "인증 절차를 통과할 수 없는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "리프레시 토큰 만료 - 재로그인 조치 필요", summary = "리프레시 토큰이 만료되어 재로그인이 필요한 경우", value = "{\"code\":\"UNAUTHORIZED\"}"),
+            @ExampleObject(name = "존재하지 않는 회원 정보 - 회원가입 필요", summary = "존재하지 않는 회원의 토큰이 입력된 경우", value = "{\"code\":\"UNAUTHORIZED\"}")
+    }))
+    @PostMapping("/token")
+    public ReissueTokenResponse reissueToken(@RequestBody ReissueTokenRequest request) {
+        return new ReissueTokenResponse("example", "example");
     }
 }
