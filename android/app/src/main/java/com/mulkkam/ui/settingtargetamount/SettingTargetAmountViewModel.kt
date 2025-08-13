@@ -7,93 +7,90 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.intake.TargetAmount
-import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
+import com.mulkkam.domain.model.intake.TargetAmount.Companion.EMPTY_TARGET_AMOUNT
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class SettingTargetAmountViewModel : ViewModel() {
-    private var _targetAmount: MutableLiveData<TargetAmount> = MutableLiveData()
-    val targetAmount: LiveData<TargetAmount> get() = _targetAmount
+    private val _targetInfoUiState: MutableLiveData<MulKkamUiState<TargetAmountUiModel>> =
+        MutableLiveData<MulKkamUiState<TargetAmountUiModel>>(MulKkamUiState.Idle)
+    val targetInfoUiState: LiveData<MulKkamUiState<TargetAmountUiModel>> get() = _targetInfoUiState
 
-    private val _previousTargetAmount: MutableLiveData<Int> = MutableLiveData()
-    val previousTargetAmount: LiveData<Int> get() = _previousTargetAmount
+    private val _targetAmountInput: MutableLiveData<TargetAmount> = MutableLiveData<TargetAmount>(EMPTY_TARGET_AMOUNT)
+    val targetAmountInput: LiveData<TargetAmount> get() = _targetAmountInput
 
-    private val _isTargetAmountValid: MutableLiveData<Boolean> = MutableLiveData()
-    val isTargetAmountValid: LiveData<Boolean> get() = _isTargetAmountValid
+    private val _saveTargetAmountUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val saveTargetAmountUiState: LiveData<MulKkamUiState<Unit>> get() = _saveTargetAmountUiState
 
-    private val _recommendedTargetAmount: MutableLiveData<Int> = MutableLiveData()
-    val recommendedTargetAmount: LiveData<Int> get() = _recommendedTargetAmount
-
-    private val _nickname: MutableLiveData<String> = MutableLiveData()
-    val nickname: LiveData<String> get() = _nickname
-
-    private val _onRecommendationReady: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val onRecommendationReady: SingleLiveData<Unit> get() = _onRecommendationReady
-
-    private val _onSaveTargetAmount: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val onSaveTargetAmount: SingleLiveData<Unit> get() = _onSaveTargetAmount
-
-    private val _onTargetAmountValidationError: MutableSingleLiveData<MulKkamError> =
-        MutableSingleLiveData()
-    val onTargetAmountValidationError: MutableSingleLiveData<MulKkamError>
-        get() = _onTargetAmountValidationError
+    private val _targetAmountValidityUiState: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val targetAmountValidityUiState: LiveData<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState
 
     init {
+        loadInitialTargetInfo()
+    }
+
+    private fun loadInitialTargetInfo() {
+        if (_targetInfoUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
-            loadTargetAmountRecommended()
-            loadTargetAmount()
-        }
-    }
+            _targetInfoUiState.value = MulKkamUiState.Loading
+            runCatching {
+                val recommendedDeferred = async { intakeRepository.getIntakeAmountRecommended().getOrError() }
+                val nicknameDeferred = async { membersRepository.getMembersNickname().getOrError() }
+                val previousDeferred = async { intakeRepository.getIntakeTarget().getOrError() }
 
-    private suspend fun loadTargetAmountRecommended() {
-        runCatching {
-            val recommendedTargetAmountResult =
-                intakeRepository.getIntakeAmountRecommended().getOrError()
-            val nicknameResult = membersRepository.getMembersNickname().getOrError()
-            _recommendedTargetAmount.value = recommendedTargetAmountResult
-            _nickname.value = nicknameResult
-        }.onSuccess {
-            _onRecommendationReady.setValue(Unit)
-        }.onFailure {
-            // TODO: 에러 처리
-        }
-    }
+                val recommended = recommendedDeferred.await()
+                val nickname = nicknameDeferred.await()
+                val previous = previousDeferred.await()
 
-    private suspend fun loadTargetAmount() {
-        runCatching {
-            intakeRepository.getIntakeTarget().getOrError()
-        }.onSuccess { amount ->
-            _previousTargetAmount.value = amount
-        }.onFailure {
-            // TODO: 에러 처리
+                TargetAmountUiModel(
+                    nickname = nickname,
+                    recommendedTargetAmount = recommended,
+                    previousTargetAmount = previous,
+                )
+            }.onSuccess { targetAmountUiModel ->
+                _targetInfoUiState.value = MulKkamUiState.Success(targetAmountUiModel)
+                _targetAmountInput.value = TargetAmount(targetAmountUiModel.previousTargetAmount)
+            }.onFailure {
+                _targetInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
         }
     }
 
     fun updateTargetAmount(newTargetAmount: Int) {
         runCatching {
-            _targetAmount.value = TargetAmount(newTargetAmount)
+            _targetAmountInput.value = TargetAmount(newTargetAmount)
         }.onSuccess {
-            _isTargetAmountValid.value = true
+            _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
         }.onFailure { error ->
-            _isTargetAmountValid.value = false
-            _onTargetAmountValidationError.setValue(
-                error as? TargetAmountError ?: MulKkamError.Unknown,
-            )
+            _targetAmountValidityUiState.value = MulKkamUiState.Failure(error.toMulKkamError())
         }
     }
 
     fun saveTargetAmount() {
+        val amount = _targetAmountInput.value ?: return
+        if (_saveTargetAmountUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
+            _saveTargetAmountUiState.value = MulKkamUiState.Loading
             runCatching {
-                val result =
-                    targetAmount.value?.let { intakeRepository.patchIntakeTarget(it.amount) }
-                result?.getOrError()
+                intakeRepository.patchIntakeTarget(amount.amount).getOrError()
             }.onSuccess {
-                _onSaveTargetAmount.setValue(Unit)
+                _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)
+
+                targetInfoUiState.value?.toSuccessDataOrNull()?.let { current ->
+                    _targetInfoUiState.value =
+                        MulKkamUiState.Success(
+                            current.copy(previousTargetAmount = amount.amount),
+                        )
+                }
             }.onFailure {
-                // TODO: 에러 처리
+                _saveTargetAmountUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

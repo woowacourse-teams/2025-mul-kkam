@@ -152,7 +152,7 @@ class NicknameFragment :
                 CustomSnackBar
                     .make(
                         binding.root,
-                        getString(R.string.network_error),
+                        getString(R.string.network_check_error),
                         R.drawable.ic_alert_circle,
                     ).show()
         }
