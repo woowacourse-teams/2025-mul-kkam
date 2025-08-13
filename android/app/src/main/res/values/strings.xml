@@ -98,6 +98,7 @@
     <string name="terms_agree_all">물깜 약관 전체동의</string>
     <string name="terms_agree_service">서비스 이용 약관 동의 %s</string>
     <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %s</string>
+    <string name="terms_agree_health_connect">헬스 커넥트 정보 연동 %s</string>
     <string name="terms_agree_night_notification">야간 알림 수신 동의 %s</string>
     <string name="terms_agree_marketing">마케팅 정보 수신 동의 %s</string>
     <string name="terms_required_suffix">(필수)</string>
