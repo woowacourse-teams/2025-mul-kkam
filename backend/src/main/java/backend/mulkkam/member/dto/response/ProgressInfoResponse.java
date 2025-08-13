@@ -3,7 +3,7 @@ package backend.mulkkam.member.dto.response;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -32,7 +32,7 @@ public record ProgressInfoResponse(
             Member member,
             IntakeHistory intakeHistory,
             AchievementRate achievementRate,
-            Amount totalAmount
+            TargetAmount totalAmount
     ) {
         this(
                 member.getMemberNickname().value(),

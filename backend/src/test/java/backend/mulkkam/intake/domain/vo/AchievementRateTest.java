@@ -1,11 +1,12 @@
 package backend.mulkkam.intake.domain.vo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 
 class AchievementRateTest {
 
@@ -17,8 +18,8 @@ class AchievementRateTest {
         @Test
         void success_withValidAmount() {
             // given
-            Amount targetIntakeAmount = new Amount(1_000);
-            Amount totalIntakeAmount = new Amount(100);
+            TargetAmount targetIntakeAmount = new TargetAmount(1_000);
+            TargetAmount totalIntakeAmount = new TargetAmount(200);
 
             // when
             AchievementRate achievementRate = new AchievementRate(
@@ -28,15 +29,15 @@ class AchievementRateTest {
 
             // then
             assertThat(achievementRate.value())
-                    .isCloseTo(10.0, within(0.1));
+                    .isCloseTo(20.0, within(0.1));
         }
 
         @DisplayName("100이 넘는 경우 100을 반환한다")
         @Test
         void success_withValueOver100() {
             // given
-            Amount targetIntakeAmount = new Amount(1_000);
-            Amount totalIntakeAmount = new Amount(1_000_000);
+            TargetAmount targetIntakeAmount = new TargetAmount(1_000);
+            TargetAmount totalIntakeAmount = new TargetAmount(10_000);
 
             // when
             AchievementRate achievementRate = new AchievementRate(

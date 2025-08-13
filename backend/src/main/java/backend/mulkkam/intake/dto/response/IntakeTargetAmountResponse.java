@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.dto.response;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "현재 목표 음수량 응답")
@@ -9,7 +9,7 @@ public record IntakeTargetAmountResponse(
         int amount
 ) {
 
-    public IntakeTargetAmountResponse(Amount amount) {
+    public IntakeTargetAmountResponse(TargetAmount amount) {
         this(amount.value());
     }
 }

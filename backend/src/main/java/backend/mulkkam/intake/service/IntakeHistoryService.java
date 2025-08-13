@@ -10,7 +10,7 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
@@ -73,7 +73,7 @@ public class IntakeHistoryService {
                     CommentOfAchievementRate.VERY_LOW.getComment()
             );
         }
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        TargetAmount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 intakeHistory.getTargetAmount()
@@ -148,12 +148,12 @@ public class IntakeHistoryService {
         );
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+    private TargetAmount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
         int total = intakeHistoryDetails
                 .stream()
                 .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
                 .sum();
-        return new Amount(total);
+        return new TargetAmount(total);
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
@@ -169,9 +169,9 @@ public class IntakeHistoryService {
         List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
         List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
+        TargetAmount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
 
-        Amount targetAmountOfTheDay = intakeHistory.getTargetAmount();
+        TargetAmount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 targetAmountOfTheDay

@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class IntakeAmountControllerTest {
+class IntakeTargetAmountControllerTest {
 
     @DisplayName("Filter 검증")
     @Nested

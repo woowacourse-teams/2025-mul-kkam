@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +13,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
@@ -23,6 +23,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -104,7 +105,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_AMOUNT.name());
+                    .hasMessage(INVALID_INTAKE_AMOUNT.name());
         }
 
         @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
@@ -291,7 +292,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int targetAmountOfMember = 1_500;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(targetAmountOfMember))
+                    .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -301,22 +302,22 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
                     .date(LocalDate.of(2025, 10, 20))
-                    .targetIntakeAmount(new Amount(targetAmountOfMember))
+                    .targetIntakeAmount(new TargetAmount(targetAmountOfMember))
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             intakeHistoryRepository.save(intakeHistory);
@@ -347,14 +348,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(targetAmountOfMember))
+                    .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             memberRepository.save(member);
 
             TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
                     .withMember(member)
                     .updatedAt(LocalDate.of(2025, 7, 10))
-                    .targetAmount(new Amount(5_555))
+                    .targetAmount(new TargetAmount(5_555))
                     .build();
             targetAmountSnapshotRepository.save(targetAmountSnapshot);
 

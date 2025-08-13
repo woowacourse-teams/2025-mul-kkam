@@ -10,7 +10,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -93,14 +93,12 @@ public class MemberService {
     ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
-
         oauthAccount.modifyMember(member);
-        oauthAccountRepository.save(oauthAccount);
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
                 member,
                 LocalDate.now(),
-                new Amount(createMemberRequest.targetIntakeAmount())
+                new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
     }
@@ -127,17 +125,17 @@ public class MemberService {
                 date
         );
         IntakeHistory intakeHistory = foundIntakeHistory.get();
-        Amount totalAmount = calculateTotalIntakeAmount(details);
+        TargetAmount totalAmount = calculateTotalIntakeAmount(details);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+    private TargetAmount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
         int total = intakeHistoryDetails
                 .stream()
                 .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
                 .sum();
-        return new Amount(total);
+        return new TargetAmount(total);
     }
 
     private int findStreak(Member member, LocalDate todayDate) {

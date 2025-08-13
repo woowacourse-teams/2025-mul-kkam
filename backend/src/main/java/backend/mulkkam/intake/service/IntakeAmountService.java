@@ -3,7 +3,7 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
@@ -39,7 +39,7 @@ public class IntakeAmountService {
             Member member,
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        Amount updateAmount = intakeTargetAmountModifyRequest.toAmount();
+        TargetAmount updateAmount = intakeTargetAmountModifyRequest.toAmount();
         member.updateTargetAmount(updateAmount);
         memberRepository.save(member);
 

@@ -1,7 +1,7 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -15,13 +15,14 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
@@ -285,7 +286,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getWeight()).isEqualTo(weight);
                 softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getGender()).isEqualTo(gender);
                 softly.assertThat(savedMembers.getFirst().getTargetAmount())
-                        .isEqualTo(new Amount(rawTargetIntakeAmount));
+                        .isEqualTo(new TargetAmount(rawTargetIntakeAmount));
             });
         }
 
@@ -339,7 +340,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         // when & then
         assertThatThrownBy(() -> memberService.create(oauthAccount, createMemberRequest))
                 .isInstanceOf(CommonException.class)
-                .hasMessage(INVALID_AMOUNT.name());
+                .hasMessage(INVALID_TARGET_AMOUNT.name());
     }
 
     @DisplayName("멤버의 진행 상황을 조회할 때")
@@ -359,7 +360,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.of(2025, 7, 15))
                     .streak(42)
                     .build();
@@ -367,7 +368,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
             intakeDetailRepository.save(intakeHistoryDetail);
 
@@ -397,7 +398,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
-                    .targetAmount(new Amount(rawTargetAmount))
+                    .targetAmount(new TargetAmount(rawTargetAmount))
                     .build();
             memberRepository.save(member);
 

@@ -5,7 +5,7 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -64,7 +64,7 @@ class MemberResolverTest {
                     memberId,
                     new MemberNickname("히로"),
                     new PhysicalAttributes(Gender.FEMALE, 70.0),
-                    new Amount(1_000),
+                    new TargetAmount(1_000),
                     true,
                     false
             );

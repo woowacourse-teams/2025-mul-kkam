@@ -29,6 +29,9 @@ public class PhysicalAttributes {
     }
 
     private void validateWeightRange(Double weight) {
+        if (weight == null) {
+            return;
+        }
         if (weight > MAX_WEIGHT || weight < MIN_WEIGHT) {
             throw new CommonException(INVALID_MEMBER_WEIGHT);
         }
