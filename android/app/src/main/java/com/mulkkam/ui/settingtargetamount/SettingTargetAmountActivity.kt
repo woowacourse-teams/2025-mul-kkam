@@ -62,27 +62,13 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             handleSaveUiState(saveUiState)
         }
 
-        viewModel.isTargetAmountValid.observe(this) { isValid ->
-            updateTargetAmountValidationUI(isValid)
-        }
-
-        viewModel.onTargetAmountValidationError.observe(this) { error ->
-            when (error) {
-                is TargetAmountError -> {
-                    binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
-                }
-
-                else -> Unit
-            }
+        viewModel.targetAmountValidityUiState.observe(this) { targetAmountValidityUiState ->
+            handleTargetAmountValidityUiState(targetAmountValidityUiState)
         }
     }
 
     private fun handleTargetInfoUiState(targetInfoUiState: MulKkamUiState<TargetAmountUiModel>) {
         when (targetInfoUiState) {
-            is MulKkamUiState.Loading -> {
-                updateSaveButtonAvailability(false)
-            }
-
             is MulKkamUiState.Success -> {
                 updateSaveButtonAvailability(true)
                 showRecommendTargetAmount(targetInfoUiState.data)
@@ -91,12 +77,12 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 }
             }
 
+            is MulKkamUiState.Loading -> updateSaveButtonAvailability(false)
+            is MulKkamUiState.Idle -> Unit
+
             is MulKkamUiState.Failure -> {
-                updateSaveButtonAvailability(false)
                 Toast.makeText(this, R.string.load_info_error, Toast.LENGTH_SHORT).show()
             }
-
-            is MulKkamUiState.Idle -> Unit
         }
     }
 
@@ -126,7 +112,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         val editTextColorRes = if (isValid != false) R.color.gray_400 else R.color.secondary_200
 
         with(binding) {
-            tvSaveGoal.isEnabled = isValid == true
+            updateSaveButtonAvailability(isValid == true)
 
             tvTargetAmountWarningMessage.isVisible = isValid == false
 
@@ -137,7 +123,6 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
     private fun handleSaveUiState(saveUiState: MulKkamUiState<Unit>) {
         when (saveUiState) {
-            is MulKkamUiState.Loading -> updateSaveButtonAvailability(false)
             is MulKkamUiState.Success -> {
                 updateSaveButtonAvailability(true)
                 Toast
@@ -146,12 +131,28 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 finish()
             }
 
+            is MulKkamUiState.Loading -> Unit
+
+            is MulKkamUiState.Idle -> Unit
+
             is MulKkamUiState.Failure -> {
                 updateSaveButtonAvailability(true)
                 Toast.makeText(this, R.string.network_check_error, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
 
+    private fun handleTargetAmountValidityUiState(targetAmountValidityUiState: MulKkamUiState<Unit>) {
+        when (targetAmountValidityUiState) {
+            is MulKkamUiState.Success<Unit> -> updateTargetAmountValidationUI(true)
+            is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                if (targetAmountValidityUiState.error is TargetAmountError) {
+                    updateTargetAmountValidationUI(false)
+                    binding.tvTargetAmountWarningMessage.text = targetAmountValidityUiState.error.toMessageRes()
+                }
+            }
         }
     }
 

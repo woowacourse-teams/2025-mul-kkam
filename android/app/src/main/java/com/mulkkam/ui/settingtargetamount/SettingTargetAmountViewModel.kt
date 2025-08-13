@@ -7,33 +7,28 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.intake.TargetAmount
-import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
+import com.mulkkam.domain.model.intake.TargetAmount.Companion.EMPTY_TARGET_AMOUNT
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
-import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class SettingTargetAmountViewModel : ViewModel() {
-    private val _targetInfoUiState = MutableLiveData<MulKkamUiState<TargetAmountUiModel>>(MulKkamUiState.Idle)
+    private val _targetInfoUiState: MutableLiveData<MulKkamUiState<TargetAmountUiModel>> =
+        MutableLiveData<MulKkamUiState<TargetAmountUiModel>>(MulKkamUiState.Idle)
     val targetInfoUiState: LiveData<MulKkamUiState<TargetAmountUiModel>> get() = _targetInfoUiState
 
-    private val _targetAmountInput = MutableLiveData<TargetAmount>()
+    private val _targetAmountInput: MutableLiveData<TargetAmount> = MutableLiveData<TargetAmount>(EMPTY_TARGET_AMOUNT)
     val targetAmountInput: LiveData<TargetAmount> get() = _targetAmountInput
 
-    private val _saveTargetAmountUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    private val _saveTargetAmountUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val saveTargetAmountUiState: LiveData<MulKkamUiState<Unit>> get() = _saveTargetAmountUiState
 
-    private val _isTargetAmountValid: MutableLiveData<Boolean> = MutableLiveData()
-    val isTargetAmountValid: LiveData<Boolean> get() = _isTargetAmountValid
-
-    private val _onTargetAmountValidationError: MutableSingleLiveData<MulKkamError> =
-        MutableSingleLiveData()
-    val onTargetAmountValidationError: MutableSingleLiveData<MulKkamError>
-        get() = _onTargetAmountValidationError
+    private val _targetAmountValidityUiState: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val targetAmountValidityUiState: LiveData<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState
 
     init {
         loadInitialTargetInfo()
@@ -71,12 +66,9 @@ class SettingTargetAmountViewModel : ViewModel() {
         runCatching {
             _targetAmountInput.value = TargetAmount(newTargetAmount)
         }.onSuccess {
-            _isTargetAmountValid.value = true
+            _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
         }.onFailure { error ->
-            _isTargetAmountValid.value = false
-            _onTargetAmountValidationError.setValue(
-                error as? TargetAmountError ?: MulKkamError.Unknown,
-            )
+            _targetAmountValidityUiState.value = MulKkamUiState.Failure(error.toMulKkamError())
         }
     }
 
