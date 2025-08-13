@@ -190,14 +190,18 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                             binding.root,
                             getString(R.string.main_alarm_permission_granted),
                             R.drawable.ic_info_circle,
-                        ).show()
+                        ).apply {
+                            setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
+                        }.show()
                 } else {
                     CustomSnackBar
                         .make(
                             binding.root,
                             getString(R.string.main_alarm_permission_denied),
                             R.drawable.ic_info_circle,
-                        ).show()
+                        ).apply {
+                            setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
+                        }.show()
                 }
             }
         }
