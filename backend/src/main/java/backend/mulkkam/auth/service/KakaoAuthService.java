@@ -2,8 +2,8 @@ package backend.mulkkam.auth.service;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.KakaoSigninRequest;
-import backend.mulkkam.auth.dto.OauthLoginResponse;
+import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.auth.infrastructure.KakaoRestClient;

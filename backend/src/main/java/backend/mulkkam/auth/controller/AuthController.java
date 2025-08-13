@@ -1,7 +1,7 @@
 package backend.mulkkam.auth.controller;
 
-import backend.mulkkam.auth.dto.KakaoSigninRequest;
-import backend.mulkkam.auth.dto.OauthLoginResponse;
+import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.common.exception.FailureBody;
 import io.swagger.v3.oas.annotations.Operation;
