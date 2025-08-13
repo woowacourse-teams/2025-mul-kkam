@@ -10,9 +10,9 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,20 +32,30 @@ public class KakaoAuthService {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();
-        OauthAccount oauthAccount = getOauthAccount(oauthId);
+        OauthAccount oauthAccount = oauthAccountRepository.findByOauthId(oauthId)
+                .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
 
         String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
         String refreshToken = jwtTokenHandler.createRefreshToken(oauthAccount);
 
-        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken);
-        accountRefreshTokenRepository.save(accountRefreshToken);
+        updateAccountRefreshToken(oauthAccount, refreshToken);
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
     }
 
-    @NotNull
-    private OauthAccount getOauthAccount(String oauthId) {
-        return oauthAccountRepository.findByOauthId(oauthId)
-                .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
+    private void updateAccountRefreshToken(
+            OauthAccount oauthAccount,
+            String refreshToken
+    ) {
+        Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
+                oauthAccount);
+
+        if (foundAccountRefreshToken.isPresent()) {
+            foundAccountRefreshToken.get().updateRefreshToken(refreshToken);
+            return;
+        }
+
+        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken);
+        accountRefreshTokenRepository.save(accountRefreshToken);
     }
 }

@@ -35,4 +35,8 @@ public class AccountRefreshToken {
     public void reissueToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }
+
+    public void updateRefreshToken(String newRefreshToken) {
+        this.refreshToken = newRefreshToken;
+    }
 }
