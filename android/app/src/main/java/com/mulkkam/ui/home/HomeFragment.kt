@@ -67,7 +67,11 @@ class HomeFragment :
             MulKkamUiState.Loading -> Unit
             MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar.make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle).show()
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -237,7 +241,9 @@ class HomeFragment :
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
                     .make(binding.root, getString(R.string.manual_drink_network_error), R.drawable.ic_alert_circle)
-                    .show()
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
 
             MulKkamUiState.Idle -> Unit
