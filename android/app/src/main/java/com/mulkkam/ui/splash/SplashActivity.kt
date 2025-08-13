@@ -8,9 +8,10 @@ import androidx.activity.viewModels
 import com.mulkkam.databinding.ActivitySplashBinding
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
-import com.mulkkam.ui.model.AppAuthState.UNAUTHORIZED
-import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.UserAuthState
+import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
+import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
 import com.mulkkam.ui.util.binding.BindingActivity
 
@@ -41,7 +42,6 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationCancel(p0: Animator) = Unit
 
                 override fun onAnimationEnd(p0: Animator) {
-                    viewModel.updateAuthState()
                 }
 
                 override fun onAnimationRepeat(p0: Animator) = Unit
@@ -52,14 +52,20 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
     }
 
     private fun initObservers() {
-        viewModel.authState.observe(this@SplashActivity) { authState ->
+        viewModel.authUiState.observe(this) { authUiState ->
             val intent =
-                when (authState) {
-                    UNAUTHORIZED -> LoginActivity.newIntent(this@SplashActivity)
-                    UNONBOARDED -> OnboardingActivity.newIntent(this@SplashActivity)
-                    ACTIVE_USER -> MainActivity.newIntent(this@SplashActivity)
-                }
+                when (authUiState) {
+                    is MulKkamUiState.Success<UserAuthState> -> {
+                        when (authUiState.data) {
+                            UNONBOARDED -> OnboardingActivity.newIntent(this)
+                            ACTIVE_USER -> MainActivity.newIntent(this)
+                        }
+                    }
 
+                    is MulKkamUiState.Loading -> return@observe
+                    is MulKkamUiState.Idle -> return@observe
+                    is MulKkamUiState.Failure -> LoginActivity.newIntent(this)
+                }
             startActivity(intent)
             finish()
         }
