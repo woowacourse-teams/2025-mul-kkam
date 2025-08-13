@@ -19,12 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
-            HttpEndpoint.of("/auth", HttpMethod.POST),
-            HttpEndpoint.of("/swagger-ui", HttpMethod.GET),
-            HttpEndpoint.of("/v3/api-docs", HttpMethod.GET),
-            HttpEndpoint.of("/nickname/validation", HttpMethod.GET),
-            HttpEndpoint.of("/actuator", HttpMethod.GET),
-            HttpEndpoint.of("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST)
+            HttpEndpoint.exact("/auth/kakao", HttpMethod.POST),
+            HttpEndpoint.prefix("/swagger-ui", HttpMethod.GET),
+            HttpEndpoint.prefix("/v3/api-docs", HttpMethod.GET),
+            HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
+            HttpEndpoint.prefix("/actuator", HttpMethod.GET),
+            HttpEndpoint.prefix("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST)
     );
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;
@@ -56,17 +56,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .anyMatch(endpoint -> endpoint.isMatchedWith(requestURI, method));
     }
 
+    private enum MatchType {
+        EXACT,
+        PREFIX,
+        ;
+    }
+
     private record HttpEndpoint(
-            String pathPrefix,
-            List<HttpMethod> methods
+            String pattern,
+            List<HttpMethod> methods,
+            MatchType type
     ) {
-        public static HttpEndpoint of(String pathPrefix, HttpMethod... methods) {
-            return new HttpEndpoint(pathPrefix, List.of(methods));
+        static HttpEndpoint exact(String path, HttpMethod... methods) {
+            return new HttpEndpoint(path, List.of(methods), MatchType.EXACT);
         }
 
-        public boolean isMatchedWith(String uri, String method) {
-            return uri.startsWith(pathPrefix)
-                    && methods.stream().anyMatch(target -> target.name().equalsIgnoreCase(method));
+        static HttpEndpoint prefix(String prefix, HttpMethod... methods) {
+            return new HttpEndpoint(prefix, List.of(methods), MatchType.PREFIX);
+        }
+
+        boolean isMatchedWith(String uri, String method) {
+            if (methods.stream().noneMatch(m -> m.name().equalsIgnoreCase(method))) {
+                return false;
+            }
+            return switch (type) {
+                case EXACT -> uri.equals(pattern);
+                case PREFIX -> uri.startsWith(pattern);
+            };
         }
     }
 }
