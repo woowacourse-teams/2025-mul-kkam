@@ -353,10 +353,11 @@ class IntakeAmountControllerTest {
         }
     }
 
-    @DisplayName("멤버의 목표 음용량을 얻는다")
+    @DisplayName("멤버의 목표 음용량을 얻을 때에")
     @Nested
     class GetTarget {
 
+        @DisplayName("멤버의 음용량을 통해 값을 얻는다")
         @Test
         void success_isValidData() throws Exception {
             String json = mockMvc.perform(get("/intake/amount/target")
