@@ -162,8 +162,8 @@ class HistoryFragment :
     private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
         when (weeklyIntakeHistoriesUiState) {
             is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
-            MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
-            MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
+            is MulKkamUiState.Empty -> Unit
             is MulKkamUiState.Failure -> binding.includeHistoryShimmer.root.visibility = View.GONE
         }
     }
