@@ -51,7 +51,7 @@ public class KakaoAuthService {
                 oauthAccount);
 
         if (foundAccountRefreshToken.isPresent()) {
-            foundAccountRefreshToken.get().updateRefreshToken(refreshToken);
+            foundAccountRefreshToken.get().reissueToken(refreshToken);
             return;
         }
 

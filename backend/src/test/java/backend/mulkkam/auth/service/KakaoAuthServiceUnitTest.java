@@ -164,7 +164,7 @@ public class KakaoAuthServiceUnitTest {
 
             // then
             verify(accountRefreshTokenRepository, never()).save(any());
-            verify(existingAccountRefreshToken).updateRefreshToken(refreshToken);
+            verify(existingAccountRefreshToken).reissueToken(refreshToken);
         }
     }
 }
