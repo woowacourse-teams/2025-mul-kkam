@@ -55,8 +55,10 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long oauthId = (Long) request.getAttribute("oauth_id");
 
-        log.error("[SERVER_ERROR] code={}({} {}), message={}",
+        log.error("[SERVER_ERROR] oauthId = {}, code={}({} {}), message={}",
+                oauthId,
                 INTER_SERVER_ERROR_CODE.name(),
                 INTER_SERVER_ERROR_CODE.getStatus(),
                 e.getClass().getSimpleName(),
@@ -70,8 +72,10 @@ public class GlobalExceptionHandler {
             ErrorCode errorCode
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long oauthId = (Long) request.getAttribute("oauth_id");
 
-        log.info("[CLIENT_ERROR] code={}({})",
+        log.info("[CLIENT_ERROR] oauthId = {}, code={}({})",
+                oauthId,
                 errorCode.name(),
                 errorCode.getStatus()
         );

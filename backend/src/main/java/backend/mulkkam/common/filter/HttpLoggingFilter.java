@@ -48,7 +48,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
 
-                printResponseHeader(response);
+                printResponseHeader(request, response);
                 printResponseBody(wrappingResponse);
             }
             wrappingResponse.copyBodyToResponse();
@@ -65,11 +65,10 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         String methodType = request.getMethod();
         String uri = buildDecodedRequestUri(request);
         String auth = request.getHeader("Authorization");
-        Long oauthId = (Long) request.getAttribute("oauth_id");
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[REQUEST] oauthId = {}, {} {} token = {}", oauthId, methodType, uri, auth);
+        log.info("[REQUEST] {} {} token = {}", methodType, uri, auth);
     }
 
     private String buildDecodedRequestUri(HttpServletRequest request) {
@@ -112,14 +111,16 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     }
 
     private void printResponseHeader(
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
+        Long oauthId = (Long) request.getAttribute("oauth_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] ({}) token = {}", status, auth);
+        log.info("[RESPONSE] oauthId = {}, ({}) token = {}", oauthId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
