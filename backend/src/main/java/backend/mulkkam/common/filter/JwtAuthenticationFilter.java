@@ -34,13 +34,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws ServletException, IOException {
+    ) throws IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
             Long subject = oauthJwtTokenHandler.getSubject(token);
             request.setAttribute("subject", subject);
             filterChain.doFilter(request, response);
-        } catch (IllegalArgumentException e) { // TODO: CommonException 변경
+        } catch (Exception e) {
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
         }
     }

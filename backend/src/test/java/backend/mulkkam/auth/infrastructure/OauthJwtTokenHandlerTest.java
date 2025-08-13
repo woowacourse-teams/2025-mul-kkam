@@ -3,6 +3,7 @@ package backend.mulkkam.auth.infrastructure;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -67,7 +68,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> oauthJwtTokenHandler.getSubject(invalidToken))
-                    .isInstanceOf(IllegalArgumentException.class); // TODO: Custom Exception으로 변경 후 반영
+                    .isInstanceOf(InvalidTokenException.class);
         }
     }
 }
