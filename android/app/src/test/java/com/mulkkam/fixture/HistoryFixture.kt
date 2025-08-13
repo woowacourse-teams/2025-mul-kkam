@@ -1,4 +1,4 @@
-package com.mulkkam.ui.fixture
+package com.mulkkam.fixture
 
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
