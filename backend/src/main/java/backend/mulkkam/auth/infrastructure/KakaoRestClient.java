@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.infrastructure;
 
+import backend.mulkkam.auth.service.KakaoClient;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -7,7 +8,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 
 @Component
-public class KakaoRestClient {
+public class KakaoRestClient implements KakaoClient {
 
     private static final String URL = "https://kapi.kakao.com/v2";
 
@@ -23,6 +24,7 @@ public class KakaoRestClient {
                 .build();
     }
 
+    @Override
     public KakaoUserInfo getUserInfo(String accessToken) {
         return restClient.post()
                 .uri(uriBuilder -> uriBuilder

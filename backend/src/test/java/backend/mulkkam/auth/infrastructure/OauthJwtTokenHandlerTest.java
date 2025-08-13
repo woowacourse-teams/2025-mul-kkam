@@ -1,16 +1,18 @@
 package backend.mulkkam.auth.infrastructure;
 
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_TOKEN;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
@@ -67,7 +69,8 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> oauthJwtTokenHandler.getSubject(invalidToken))
-                    .isInstanceOf(IllegalArgumentException.class); // TODO: Custom Exception으로 변경 후 반영
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_TOKEN.name());
         }
     }
 }

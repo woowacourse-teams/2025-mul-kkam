@@ -23,7 +23,6 @@
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
     <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
     <string name="home_drink_manual">직접 입력</string>
-    <string name="home_network_error">정보를 불러오는 데 실패했어요</string>
 
     <string name="history_view_label">기록</string>
     <string name="history_daily_chart_label">%s의 기록</string>
@@ -72,7 +71,8 @@
     <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
     <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
     <string name="setting_target_amount_hint_input_goal">목표량을 입력해주세요</string>
-    <string name="setting_target_amount_warning_too_much">이 물을 다 마시면 안 될 것 같아요 xOx</string>
+    <string name="setting_target_amount_warning_too_high">목표 섭취량은 %dml 이하로 설정해 주세요</string>
+    <string name="setting_target_amount_warning_too_low">목표 섭취량을 %dml 이상으로 설정해 주세요</string>
     <string name="setting_target_amount_unit_ml">ml</string>
     <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
@@ -111,6 +111,7 @@
     <string name="nickname_duplicated">중복된 닉네임입니다</string>
     <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
     <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>
+    <string name="nickname_original_nickname_network_error">기존 정보를 불러오는 데 실패했어요</string>
 
     <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
     <string name="bio_info_input_hint_highlight">신체 정보</string>
@@ -143,5 +144,6 @@
 
     <string name="expandable_floating_menu_intake_unit">%,dml</string>
 
-    <string name="network_error">네트워크 연결 상태를 확인해 주세요</string>
+    <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
+    <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
 </resources>

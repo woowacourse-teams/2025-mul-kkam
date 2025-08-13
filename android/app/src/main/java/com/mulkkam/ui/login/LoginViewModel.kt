@@ -15,10 +15,13 @@ class LoginViewModel : ViewModel() {
     fun loginWithKakao(token: String) {
         viewModelScope
             .launch {
-                val result = RepositoryInjection.authRepository.postAuthKakao(token)
                 runCatching {
-                    val accessToken = result.getOrError()
+                    RepositoryInjection.authRepository.postAuthKakao(token).getOrError()
+                }.onSuccess { tokens ->
+                    val accessToken = tokens.accessToken
+                    val refreshToken = tokens.refreshToken
                     RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
+                    RepositoryInjection.tokenRepository.saveRefreshToken(refreshToken)
                 }.onFailure {
                     // TODO: 에러 처리
                 }

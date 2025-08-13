@@ -8,8 +8,8 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
 
 class SettingBioInfoViewModel : ViewModel() {
@@ -21,9 +21,9 @@ class SettingBioInfoViewModel : ViewModel() {
     val weight: MutableLiveData<BioWeight?>
         get() = _weight
 
-    private val _onBioInfoChanged = MutableSingleLiveData<Unit>()
-    val onBioInfoChanged: SingleLiveData<Unit>
-        get() = _onBioInfoChanged
+    private val _bioInfoChangeUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val bioInfoChangeUiState: LiveData<MulKkamUiState<Unit>>
+        get() = _bioInfoChangeUiState
 
     val canSave =
         MediatorLiveData<Boolean>().apply {
@@ -67,17 +67,19 @@ class SettingBioInfoViewModel : ViewModel() {
     }
 
     fun saveBioInfo() {
+        if (bioInfoChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result =
-                RepositoryInjection.membersRepository.postMembersPhysicalAttributes(
-                    gender = _gender.value ?: return@launch,
-                    weight = _weight.value ?: return@launch,
-                )
             runCatching {
-                result.getOrError()
-                _onBioInfoChanged.setValue(Unit)
+                _bioInfoChangeUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.membersRepository
+                    .postMembersPhysicalAttributes(
+                        gender = _gender.value ?: return@launch,
+                        weight = _weight.value ?: return@launch,
+                    ).getOrError()
+            }.onSuccess {
+                _bioInfoChangeUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
-                // TODO: 예외 처리
+                _bioInfoChangeUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
