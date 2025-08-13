@@ -202,6 +202,7 @@ class CupControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
+                    .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
@@ -253,6 +254,7 @@ class CupControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
+                    .andExpect(status().isNotFound())
                     .andReturn().getResponse().getContentAsString();
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
