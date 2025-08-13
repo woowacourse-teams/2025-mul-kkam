@@ -2,6 +2,7 @@ package com.mulkkam.ui.onboarding.terms.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat.getString
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemTermsAgreementBinding
@@ -19,15 +20,19 @@ class TermsAgreementViewHolder(
 
     fun bind(termsAgreement: TermsAgreementUiModel) {
         this.termsAgreement = termsAgreement
-        val requirementLabel =
-            if (termsAgreement.isRequired) {
-                binding.root.context.getString(R.string.terms_required_suffix)
-            } else {
-                binding.root.context.getString(R.string.terms_optional_suffix)
-            }
-        binding.tvLabel.text =
-            binding.root.context.getString(termsAgreement.labelId, requirementLabel)
-        binding.cbAgreement.isChecked = termsAgreement.isChecked
+
+        with(binding) {
+            val requirementLabel =
+                if (termsAgreement.isRequired) {
+                    root.context.getString(R.string.terms_required_suffix)
+                } else {
+                    root.context.getString(R.string.terms_optional_suffix)
+                }
+            tvLabel.text =
+                root.context.getString(termsAgreement.labelId, requirementLabel)
+
+            cbAgreement.isChecked = termsAgreement.isChecked
+        }
     }
 
     private fun initClickListener(handler: TermsAgreementHandler) {
@@ -36,10 +41,18 @@ class TermsAgreementViewHolder(
                 handler.checkAgreement(it)
             }
         }
+
+        binding.ivDescriptionPage.setOnClickListener {
+            termsAgreement?.let {
+                handler.loadToTermsPage(it)
+            }
+        }
     }
 
-    fun interface TermsAgreementHandler {
+    interface TermsAgreementHandler {
         fun checkAgreement(termsAgreement: TermsAgreementUiModel)
+
+        fun loadToTermsPage(termsAgreement: TermsAgreementUiModel)
     }
 
     companion object {

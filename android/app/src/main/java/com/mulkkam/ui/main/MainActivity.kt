@@ -14,10 +14,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.health.connect.client.PermissionController
 import androidx.health.connect.client.permission.HealthPermission
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
-import com.google.android.material.snackbar.Snackbar
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
@@ -32,14 +30,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         get() = binding.bnvMain.isVisible.not()
 
     private val viewModel: MainViewModel by viewModels()
-
-    // TODO: 온보딩으로 로직 이동
-    private val requestPermissionsLauncher =
-        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
-            if (results.containsAll(HEALTH_CONNECT_PERMISSIONS)) {
-                viewModel.updateHealthPermissionStatus(true)
-            }
-        }
 
     private var backPressedTime: Long = 0L
 
@@ -131,7 +121,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                             .make(
                                 binding.root,
                                 getString(R.string.main_main_back_press_exit_message),
-                                R.drawable.ic_alert_circle,
+                                R.drawable.ic_info_circle,
                             ).apply {
                                 setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
                             }.show()
@@ -147,10 +137,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         viewModel.isHealthPermissionGranted.observe(this) { isGranted ->
             if (isGranted) {
                 viewModel.scheduleCalorieCheck()
-            } else {
-                requestPermissionsLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
             }
         }
+
         viewModel.fcmToken.observe(this) { token ->
             token?.let {
                 viewModel.saveDeviceInfo(loadDeviceId())
@@ -196,18 +185,18 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         when (requestCode) {
             REQUEST_CODE_NOTIFICATION_PERMISSION -> {
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Snackbar
+                    CustomSnackBar
                         .make(
                             binding.root,
-                            R.string.main_alarm_permission_granted,
-                            Snackbar.LENGTH_SHORT,
+                            getString(R.string.main_alarm_permission_granted),
+                            R.drawable.ic_info_circle,
                         ).show()
                 } else {
-                    Snackbar
+                    CustomSnackBar
                         .make(
                             binding.root,
-                            R.string.main_alarm_permission_denied,
-                            Snackbar.LENGTH_SHORT,
+                            getString(R.string.main_alarm_permission_denied),
+                            R.drawable.ic_info_circle,
                         ).show()
                 }
             }

@@ -9,11 +9,25 @@ data class TodayProgressInfo(
     val comment: String,
 ) {
     fun updateProgressInfo(
-        amount: Int,
+        amountDelta: Int,
         achievementRate: Float,
+        comment: String,
     ): TodayProgressInfo =
         copy(
-            totalAmount = totalAmount + amount,
+            totalAmount = totalAmount + amountDelta,
             achievementRate = achievementRate,
+            comment = comment,
         )
+
+    companion object {
+        val EMPTY_TODAY_PROGRESS_INFO =
+            TodayProgressInfo(
+                nickname = "",
+                streak = 0,
+                achievementRate = 0.0f,
+                targetAmount = 0,
+                totalAmount = 0,
+                comment = "",
+            )
+    }
 }

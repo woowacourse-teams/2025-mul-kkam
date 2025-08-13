@@ -21,3 +21,9 @@ fun <T> Result<T>.toMulKkamResult(): MulKkamResult<T> =
         onSuccess = { MulKkamResult(data = it) },
         onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
     )
+
+fun Throwable.toMulKkamError(): MulKkamError =
+    when (this) {
+        is MulKkamError -> this
+        else -> MulKkamError.Unknown
+    }
