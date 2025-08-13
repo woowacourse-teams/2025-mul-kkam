@@ -38,12 +38,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
-            oauthJwtTokenHandler.getSubject(token);
+            Long oauthId = oauthJwtTokenHandler.getSubject(token);
+            request.setAttribute("oauth_id", oauthId);
             filterChain.doFilter(request, response); // TODO 2025. 8. 13. 09:41: 질문) try 밖으로 뺴야 할 지 말아야 할지 -> controller 예외가 어디서 잡히는 지 먼저 테스트
         } catch (CommonException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
             request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, e.getErrorCode().getStatus().value());
-
             response.sendError(e.getErrorCode().getStatus().value());
         }
     }

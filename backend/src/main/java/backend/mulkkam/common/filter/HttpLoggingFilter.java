@@ -41,12 +41,12 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
         try {
-            printRequestUriAndHeaders(wrappingRequest);
-
             filterChain.doFilter(wrappingRequest, wrappingResponse);
+            printRequestUriAndHeaders(wrappingRequest);
 
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
+
                 printResponseHeader(response);
                 printResponseBody(wrappingResponse);
             }
@@ -64,10 +64,11 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         String methodType = request.getMethod();
         String uri = buildDecodedRequestUri(request);
         String auth = request.getHeader("Authorization");
+        Long oauthId = (Long) request.getAttribute("oauth_id");
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[REQUEST] {} {} token = {}", methodType, uri, auth);
+        log.info("[REQUEST] oauthId = {}, {} {} token = {}", oauthId, methodType, uri, auth);
     }
 
     private String buildDecodedRequestUri(HttpServletRequest request) {
