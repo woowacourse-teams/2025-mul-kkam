@@ -44,7 +44,7 @@ public class CupController {
             @Parameter(hidden = true)
             Member member
     ) {
-        return ResponseEntity.ok(cupService.readSortedCupsByMemberId(member));
+        return ResponseEntity.ok(cupService.readSortedCupsByMember(member));
     }
 
     @Operation(summary = "새로운 컵 생성", description = "사용자가 새로운 커스텀 컵을 생성합니다.")

@@ -40,7 +40,7 @@ public class CupService {
 
     private final CupRepository cupRepository;
 
-    public CupsResponse readSortedCupsByMemberId(Member member) {
+    public CupsResponse readSortedCupsByMember(Member member) {
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
         return new CupsResponse(cups);
     }

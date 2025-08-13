@@ -199,7 +199,7 @@ class CupServiceUnitTest {
             when(cupRepository.findAllByMemberOrderByCupRankAsc(member)).thenReturn(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readSortedCupsByMemberId(member);
+            CupsResponse cupsResponse = cupService.readSortedCupsByMember(member);
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
