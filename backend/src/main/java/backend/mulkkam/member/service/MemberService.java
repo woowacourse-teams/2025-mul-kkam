@@ -135,6 +135,7 @@ public class MemberService {
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
 
+    @Transactional
     public void delete(Member member) {
         OauthAccount oauthAccount = oauthAccountRepository.findByMember(member)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
