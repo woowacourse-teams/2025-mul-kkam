@@ -7,6 +7,7 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import java.util.Date;
+import java.util.UUID;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,6 +63,7 @@ public class OauthJwtTokenHandler {
     private Claims generateClaims(OauthAccount account) {
         return Jwts.claims()
                 .subject(account.getId().toString())
+                .id(UUID.randomUUID().toString())
                 .build();
     }
 
