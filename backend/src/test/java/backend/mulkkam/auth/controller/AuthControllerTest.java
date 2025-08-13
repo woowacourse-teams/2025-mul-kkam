@@ -91,7 +91,7 @@ class AuthControllerTest {
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
             String requestContent = objectMapper.writeValueAsString(request);
 
-            String resultContent = mockMvc.perform(post("/auth/token")
+            String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestContent))
                     .andExpect(status().isOk())
@@ -117,7 +117,7 @@ class AuthControllerTest {
             ReissueTokenRequest request = new ReissueTokenRequest(invalidToken);
             String requestContent = objectMapper.writeValueAsString(request);
 
-            String resultContent = mockMvc.perform(post("/auth/token")
+            String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestContent))
                     .andExpect(status().is4xxClientError())
@@ -148,13 +148,13 @@ class AuthControllerTest {
 
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
 
-            mockMvc.perform(post("/auth/token")
+            mockMvc.perform(post("/auth/token/reissue")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             // when
-            String resultContent = mockMvc.perform(post("/auth/token")
+            String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().is4xxClientError())
@@ -184,7 +184,7 @@ class AuthControllerTest {
             // when
             ReissueTokenRequest request = new ReissueTokenRequest(expiredRefreshToken);
 
-            String resultContent = mockMvc.perform(post("/auth/token")
+            String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().is4xxClientError())
@@ -210,7 +210,7 @@ class AuthControllerTest {
             ReissueTokenRequest request = new ReissueTokenRequest(refreshToken);
             String requestContent = objectMapper.writeValueAsString(request);
 
-            String resultContent = mockMvc.perform(post("/auth/token")
+            String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(requestContent))
                     .andExpect(status().isUnauthorized())

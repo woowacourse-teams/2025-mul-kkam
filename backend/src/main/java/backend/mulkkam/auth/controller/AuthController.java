@@ -50,7 +50,7 @@ public class AuthController {
     @ApiResponse(responseCode = "401", description = "인증 절차를 통과할 수 없는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "존재하지 않는 회원 정보 - 회원가입 필요", summary = "존재하지 않는 회원의 토큰이 입력된 경우", value = "{\"code\":\"UNAUTHORIZED\"}")
     }))
-    @PostMapping("/token")
+    @PostMapping("/token/reissue")
     public ReissueTokenResponse reissueToken(@RequestBody ReissueTokenRequest request) {
         return authTokenService.reissueToken(request);
     }
