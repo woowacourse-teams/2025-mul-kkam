@@ -1,6 +1,4 @@
 package backend.mulkkam.member.dto.request;
 
-public record ModifyIsNightNotificationAgreedRequest(
-        boolean isNightNotificationAgreed
-) {
+public record ModifyIsNightNotificationAgreedRequest(boolean isNightNotificationAgreed) {
 }
