@@ -92,7 +92,10 @@ class TargetAmountFragment :
     }
 
     private fun updateRecommendedTargetHighlight(recommendedTargetAmount: Int) {
-        val nickname = parentViewModel.onboardingInfo.nickname.orEmpty()
+        val nickname =
+            parentViewModel.onboardingInfo.nickname
+                ?.name
+                .orEmpty()
         val formattedAmount = String.format(Locale.US, "%,dml", recommendedTargetAmount)
         val context = requireContext()
 

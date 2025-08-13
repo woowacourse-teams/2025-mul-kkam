@@ -13,7 +13,7 @@ import androidx.annotation.ColorRes
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
-import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.NicknameValidationUiState
