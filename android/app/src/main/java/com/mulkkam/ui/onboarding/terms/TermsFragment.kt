@@ -1,7 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.os.Bundle
 import android.content.Intent
+import android.os.Bundle
 import android.view.View
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
