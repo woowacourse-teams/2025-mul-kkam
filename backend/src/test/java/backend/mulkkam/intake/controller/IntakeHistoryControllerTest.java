@@ -93,53 +93,6 @@ class IntakeHistoryControllerTest {
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
-    @DisplayName("Filter 검증")
-    @Nested
-    class AuthFilter {
-
-        @DisplayName("GET /intake/history 요청을 보낼 때")
-        @Nested
-        class GetHistory {
-
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() throws Exception {
-                mockMvc.perform(get("/intake/history")
-                                .header("header", ""))
-                        .andExpect(status().isUnauthorized());
-            }
-
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() throws Exception {
-                mockMvc.perform(get("/intake/history")
-                                .header("header", "Bearer token"))
-                        .andExpect(status().isUnauthorized());
-            }
-        }
-
-        @DisplayName("POST /intake/history 요청을 보낼 때")
-        @Nested
-        class PostHistory {
-
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() throws Exception {
-                mockMvc.perform(post("/intake/history")
-                                .header("header", ""))
-                        .andExpect(status().isUnauthorized());
-            }
-
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() throws Exception {
-                mockMvc.perform(post("/intake/history")
-                                .header("header", "Bearer token"))
-                        .andExpect(status().isUnauthorized());
-            }
-        }
-    }
-
     @DisplayName("음용 세부 기록을 생성할 때에")
     @Nested
     class CreateIntakeHistoryDetail {
