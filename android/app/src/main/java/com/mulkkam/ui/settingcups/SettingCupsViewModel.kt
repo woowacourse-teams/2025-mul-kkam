@@ -6,6 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
@@ -13,21 +15,23 @@ import com.mulkkam.ui.settingcups.model.toUi
 import kotlinx.coroutines.launch
 
 class SettingCupsViewModel : ViewModel() {
-    private var _cups: MutableLiveData<CupsUiModel> = MutableLiveData()
-    val cups: LiveData<CupsUiModel> get() = _cups
+    private var _cupsUiState: MutableLiveData<MulKkamUiState<CupsUiModel>> = MutableLiveData(MulKkamUiState.Idle)
+    val cupsUiState: LiveData<MulKkamUiState<CupsUiModel>> get() = _cupsUiState
 
     init {
         loadCups()
     }
 
     fun loadCups() {
+        if (cupsUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                _cupsUiState.value = MulKkamUiState.Loading
                 cupsRepository.getCups().getOrError()
             }.onSuccess { cups ->
-                _cups.value = cups.toUi()
+                _cupsUiState.value = MulKkamUiState.Success<CupsUiModel>(cups.toUi())
             }.onFailure {
-                // TODO: 예외 처리
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -43,11 +47,10 @@ class SettingCupsViewModel : ViewModel() {
                 cupsRepository.putCupsRank(reorderedCups).getOrError()
             }.onSuccess { cups ->
                 if (reorderedCups != cups) {
-                    _cups.value = cups.toUi()
+                    _cupsUiState.value = MulKkamUiState.Success<CupsUiModel>(cups.toUi())
                 }
             }.onFailure {
-                _cups.value = cups.value
-                // TODO: 예외 처리
+                _cupsUiState.value = cupsUiState.value
             }
         }
     }

@@ -81,7 +81,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
 
                 else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_error), R.drawable.ic_alert_circle).show()
+                    CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
             }
         }
 
@@ -176,7 +176,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                 CustomSnackBar
                     .make(
                         binding.root,
-                        getString(R.string.network_error),
+                        getString(R.string.network_check_error),
                         R.drawable.ic_alert_circle,
                     ).show()
         }

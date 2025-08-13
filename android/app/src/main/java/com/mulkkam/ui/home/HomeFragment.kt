@@ -67,7 +67,7 @@ class HomeFragment :
             MulKkamUiState.Loading -> Unit
             MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
+                CustomSnackBar.make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle).show()
             }
         }
     }
