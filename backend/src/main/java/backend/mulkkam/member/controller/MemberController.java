@@ -6,13 +6,12 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
-import java.time.LocalDate;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,6 +19,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -165,5 +165,14 @@ public class MemberController {
     ) {
         ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(member, date);
         return ResponseEntity.ok().body(progressInfoResponse);
+    }
+
+    @PatchMapping("/notification/night")
+    public ResponseEntity<Void> modifyIsNightNotificationAgreed(
+            Member member,
+            @RequestBody ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
+    ) {
+        memberService.modifyIsNightNotificationAgreed(member, modifyIsNightNotificationAgreedRequest);
+        return ResponseEntity.ok().build();
     }
 }
