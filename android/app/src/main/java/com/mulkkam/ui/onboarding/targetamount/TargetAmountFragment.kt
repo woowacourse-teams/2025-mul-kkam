@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import android.widget.EditText
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -205,17 +205,6 @@ class TargetAmountFragment :
                     TargetAmount.TARGET_AMOUNT_MAX,
                 )
         }
-            debounceRunnable =
-                Runnable {
-                    val targetAmount =
-                        binding.etInputGoal.text
-                            .toString()
-                            .trim()
-                            .toIntOrNull()
-                    viewModel.updateTargetAmount(targetAmount)
-                }.apply { debounceHandler.postDelayed(this, 300L) }
-        }
-    }
 
     private fun initDoneListener() {
         binding.etInputGoal.setOnEditorActionListener { view, actionId, _ ->
