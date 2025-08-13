@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".ui.settingnotification.SettingNotificationActivity"
+>
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tb_setting_profile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:contentInsetStart="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:backgroundTint="@color/white"
+            android:importantForAccessibility="no"
+            android:padding="12dp"
+            android:src="@drawable/ic_setting_prev" />
+
+        <TextView
+            android:id="@+id/tv_toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/setting_push_notification"
+            android:textAppearance="@style/title2"
+            android:textColor="@color/gray_400" />
+    </androidx.appcompat.widget.Toolbar>
+
+    <View
+        android:id="@+id/view_toolbar_divider"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:background="@color/gray_100"
+        app:layout_constraintTop_toBottomOf="@id/tb_setting_profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_system_notification"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="@string/setting_item_notification"
+        android:textAppearance="@style/body2"
+        app:layout_constraintTop_toBottomOf="@id/view_toolbar_divider"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Switch
+        android:id="@+id/switch_marketing"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_item_marketing"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/tv_system_notification"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Switch
+        android:id="@+id/switch_night"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="@string/setting_item_night"
+        android:paddingHorizontal="16dp"
+        app:layout_constraintTop_toBottomOf="@id/switch_marketing"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,7 @@ import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
+import com.mulkkam.ui.settingnotification.SettingNotificationActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 
@@ -43,7 +44,7 @@ class SettingFragment :
                     item: SettingItem.SwitchItem,
                     isChecked: Boolean,
                 ) {
-                    handleSwitchChange(item.type, isChecked)
+//                    handleSwitchChange(item.type, isChecked)
                 }
             },
         )
@@ -54,7 +55,8 @@ class SettingFragment :
             SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
             SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
-            SettingType.Normal.Notification -> navigateToNotificationSetting()
+            SettingType.Normal.Notification -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
+            SettingType.Normal.SystemNotification -> navigateToNotificationSetting()
         }
     }
 
@@ -74,21 +76,6 @@ class SettingFragment :
         }
     }
 
-    private fun handleSwitchChange(
-        type: SettingType.Switch,
-        isChecked: Boolean,
-    ) {
-        when (type) {
-            SettingType.Switch.Marketing -> {
-                // TODO: 마케팅 수신 허용 상태 저장
-            }
-
-            SettingType.Switch.Night -> {
-                // TODO: 야간 알림 허용 상태 저장
-            }
-        }
-    }
-
     private fun initSettingItems() {
         val settingItems =
             listOf(
@@ -101,9 +88,10 @@ class SettingFragment :
                 SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.Normal.Goal),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
-                SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.Notification),
-                SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
-                SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
+                SettingItem.NormalItem(getString(R.string.setting_push_notification), SettingType.Normal.Notification),
+                SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.SystemNotification),
+//                SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
+//                SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
             )
         settingAdapter.submitList(settingItems)
     }

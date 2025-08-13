@@ -78,7 +78,9 @@
 
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
-    <string name="setting_section_notification">푸시 알림 설정</string>
+    <string name="setting_section_notification">알림 설정</string>
+
+    <string name="setting_push_notification">푸쉬 알림 설정</string>
 
     <string name="setting_item_body_info">신체 정보 설정</string>
     <string name="setting_item_notification">시스템 알림 설정</string>
