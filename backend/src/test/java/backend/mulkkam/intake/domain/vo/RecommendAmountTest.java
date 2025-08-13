@@ -18,8 +18,6 @@ class RecommendAmountTest {
         @ParameterizedTest
         @ValueSource(ints = {200, 1_000, 2_000, 5_000})
         void success_validValue(int input) {
-            // given
-
             // when & then
             assertThatCode(() -> {
                 new RecommendAmount(input);
@@ -30,8 +28,6 @@ class RecommendAmountTest {
         @ParameterizedTest
         @ValueSource(ints = {5_001, 6_000, 10_000})
         void success_greaterThanMaxValue(int input) {
-            // given
-
             // when
             RecommendAmount recommendAmount = new RecommendAmount(input);
 
@@ -43,8 +39,6 @@ class RecommendAmountTest {
         @ParameterizedTest
         @ValueSource(ints = {199, 100, 50, 1, -40})
         void success_lessThanMinValue(int input) {
-            // given
-
             // when
             RecommendAmount recommendAmount = new RecommendAmount(input);
 

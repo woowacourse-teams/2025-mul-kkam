@@ -20,8 +20,6 @@ class PhysicalAttributesTest {
         @ParameterizedTest
         @ValueSource(doubles = {10.0, 50.0, 100.0, 250.0})
         void success_validValue(double input) {
-            // given
-
             // when & then
             assertThatCode(() -> {
                 new PhysicalAttributes(null, input);
@@ -32,8 +30,6 @@ class PhysicalAttributesTest {
         @ParameterizedTest
         @ValueSource(doubles = {-1.0, 0.0, 9.0, 251.0, 1_000.0})
         void error_invalidValue(double input) {
-            // given
-
             // when & then
             assertThatThrownBy(() -> new PhysicalAttributes(null, input))
                     .isInstanceOf(CommonException.class)

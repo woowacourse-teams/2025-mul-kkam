@@ -9,7 +9,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
@@ -20,6 +19,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -250,7 +250,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("사용자의 신체적 속성으로 추천 음용량을 조회하려고 할 때")
     @Nested
-    class GetRecommendedTargetTargetAmount {
+    class GetRecommendedTargetAmount {
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
