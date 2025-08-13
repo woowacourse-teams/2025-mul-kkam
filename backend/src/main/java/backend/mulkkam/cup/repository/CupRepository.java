@@ -15,6 +15,4 @@ public interface CupRepository extends JpaRepository<Cup, Long> {
     List<Cup> findAllByMemberOrderByCupRankAsc(Member member);
 
     Optional<Cup> findByIdAndMember(Long id, Member member);
-
-    void deleteByMember(Member member);
 }
