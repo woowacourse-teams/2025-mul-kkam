@@ -44,7 +44,7 @@ class HomeFragment :
     private fun initObservers() {
         with(viewModel) {
             todayProgressInfoUiState.observe(viewLifecycleOwner) { todayProgressInfoUiState ->
-                handleTodayProgressInfo(todayProgressInfoUiState ?: return@observe)
+                handleTodayProgressInfo(todayProgressInfoUiState)
             }
 
             cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
@@ -52,11 +52,11 @@ class HomeFragment :
             }
 
             alarmCountUiState.observe(viewLifecycleOwner) { alarmCountUiState ->
-                handleAlarmCount(alarmCountUiState ?: return@observe)
+                handleAlarmCount(alarmCountUiState)
             }
 
             drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
-                handleDrinkResult(drinkUiState ?: return@observe)
+                handleDrinkResult(drinkUiState)
             }
         }
     }

@@ -129,7 +129,7 @@ class HistoryFragment :
 
     private fun initObservers() {
         viewModel.weeklyIntakeHistoriesUiState.observe(viewLifecycleOwner) { weeklyIntakeHistoriesUiState ->
-            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState ?: return@observe)
+            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState)
         }
 
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
