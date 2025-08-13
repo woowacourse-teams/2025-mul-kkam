@@ -8,7 +8,7 @@ public class OauthAccountFixtureBuilder {
 
     private final Member member;
     private String oauthId = "temp";
-    private OauthProvider oauthProvider;
+    private OauthProvider oauthProvider = OauthProvider.KAKAO;
 
     private OauthAccountFixtureBuilder(Member member) {
         this.member = member;

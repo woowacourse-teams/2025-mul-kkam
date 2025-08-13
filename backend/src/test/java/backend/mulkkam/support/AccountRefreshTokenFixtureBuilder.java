@@ -6,7 +6,7 @@ import backend.mulkkam.auth.domain.OauthAccount;
 public class AccountRefreshTokenFixtureBuilder {
 
     private final OauthAccount oauthAccount;
-    private String refreshToken;
+    private String refreshToken = "refreshToken";
 
     private AccountRefreshTokenFixtureBuilder(OauthAccount oauthAccount) {
         this.oauthAccount = oauthAccount;
