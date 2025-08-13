@@ -20,7 +20,6 @@ import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
-import backend.mulkkam.member.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -42,7 +41,6 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final IntakeHistoryDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
-    private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     public MemberResponse get(Member member) {
         return new MemberResponse(member);
