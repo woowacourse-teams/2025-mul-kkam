@@ -11,6 +11,7 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.util.MutableSingleLiveData
 import kotlinx.coroutines.launch
@@ -63,7 +64,7 @@ class SettingNicknameViewModel : ViewModel() {
             _newNickname.value = Nickname(nickname)
         }.onSuccess {
             when (nickname) {
-                (originalNicknameUiState.value as? MulKkamUiState.Success)?.data?.name -> {
+                originalNicknameUiState.value?.toSuccessDataOrNull()?.name -> {
                     _nicknameValidationState.value = NicknameValidationUiState.SAME_AS_BEFORE
                 }
 

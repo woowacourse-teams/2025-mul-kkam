@@ -11,6 +11,7 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -79,7 +80,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun addWaterIntakeByCup(cupId: Long) {
-        val cups = (cupsUiState.value as? MulKkamUiState.Success<Cups>)?.data ?: return
+        val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
         addWaterIntake(cup.amount)
     }
@@ -93,7 +94,7 @@ class HomeViewModel : ViewModel() {
                     .postIntakeHistory(LocalDateTime.now(), amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                val current = (todayProgressInfoUiState.value as? MulKkamUiState.Success<TodayProgressInfo>)?.data ?: return@launch
+                val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch
                 _todayProgressInfoUiState.value =
                     MulKkamUiState.Success(
                         current.updateProgressInfo(

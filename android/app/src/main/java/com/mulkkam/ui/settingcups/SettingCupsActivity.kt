@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingCupsBinding
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
