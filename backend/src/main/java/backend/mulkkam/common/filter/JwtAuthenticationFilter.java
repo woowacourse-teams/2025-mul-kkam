@@ -1,12 +1,16 @@
 package backend.mulkkam.common.filter;
 
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -34,19 +38,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    ) throws IOException {
+    ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
             Long subject = oauthJwtTokenHandler.getSubject(token);
             request.setAttribute("subject", subject);
+            request.setAttribute("oauth_id", subject);
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
+        } catch (InvalidTokenException e) {
+            request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
+            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.UNAUTHORIZED);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        } catch (CommonException e) {
+            request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
+            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, e.getErrorCode().getStatus().value());
+            response.sendError(e.getErrorCode().getStatus().value());
         }
     }
 
     @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+    protected boolean shouldNotFilter(HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
         return EXCLUDE_ENDPOINTS.stream()

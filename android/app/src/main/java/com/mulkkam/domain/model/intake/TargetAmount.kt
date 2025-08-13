@@ -15,5 +15,7 @@ value class TargetAmount(
     companion object {
         const val TARGET_AMOUNT_MIN: Int = 200
         const val TARGET_AMOUNT_MAX: Int = 5000
+
+        val EMPTY_TARGET_AMOUNT: TargetAmount = TargetAmount(TARGET_AMOUNT_MIN)
     }
 }
