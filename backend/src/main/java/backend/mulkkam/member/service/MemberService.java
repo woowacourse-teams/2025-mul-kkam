@@ -139,7 +139,8 @@ public class MemberService {
     public void delete(Member member) {
         OauthAccount oauthAccount = oauthAccountRepository.findByMember(member)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
-        accountRefreshTokenRepository.deleteByAccount((oauthAccount));
+        accountRefreshTokenRepository.deleteByAccount(oauthAccount);
+        oauthAccountRepository.delete(oauthAccount);
 
         memberRepository.delete(member);
     }
