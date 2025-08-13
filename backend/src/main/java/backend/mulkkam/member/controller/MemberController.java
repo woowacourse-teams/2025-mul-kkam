@@ -167,9 +167,13 @@ public class MemberController {
         return ResponseEntity.ok().body(progressInfoResponse);
     }
 
+    @Operation(summary = "사용자 야간 알림 수신 정보 수정", description = "야간 알림 수신 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "야간 알림 반영 성공")
     @PatchMapping("/notification/night")
     public ResponseEntity<Void> modifyIsNightNotificationAgreed(
+            @Parameter(hidden = true)
             Member member,
+            @Parameter(description = "boolean 값", required = true, example = "true")
             @RequestBody ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
         memberService.modifyIsNightNotificationAgreed(member, modifyIsNightNotificationAgreedRequest);
