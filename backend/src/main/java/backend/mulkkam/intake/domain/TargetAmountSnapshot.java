@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -34,19 +34,19 @@ public class TargetAmountSnapshot {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
 
     public TargetAmountSnapshot(
             Member member,
             LocalDate updatedAt,
-            Amount targetAmount
+            TargetAmount targetAmount
     ) {
         this.member = member;
         this.updatedAt = updatedAt;
         this.targetAmount = targetAmount;
     }
 
-    public void updateTargetAmount(Amount targetAmount) {
+    public void updateTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
     }
 }

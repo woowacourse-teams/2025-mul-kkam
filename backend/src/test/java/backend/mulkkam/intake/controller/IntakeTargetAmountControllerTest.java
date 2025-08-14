@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.controller;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
@@ -13,7 +13,6 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
@@ -21,6 +20,7 @@ import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
@@ -78,7 +78,7 @@ class IntakeAmountControllerTest {
         member = MemberFixtureBuilder
                 .builder()
                 .weight(70.0)
-                .targetAmount(new Amount(1500))
+                .targetAmount(new TargetAmount(1500))
                 .build();
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
@@ -206,7 +206,7 @@ class IntakeAmountControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 
@@ -226,7 +226,7 @@ class IntakeAmountControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
 
         }
@@ -241,7 +241,7 @@ class IntakeAmountControllerTest {
         void success_whenIsValidSuggestedAmount() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -279,7 +279,7 @@ class IntakeAmountControllerTest {
         void error_whenSuggestedAmountIsLessThanOrEqualToZero() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -298,7 +298,7 @@ class IntakeAmountControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 
@@ -307,7 +307,7 @@ class IntakeAmountControllerTest {
         void error_whenSuggestedAmountIsMoreThanOrEqualTo10000() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -325,7 +325,7 @@ class IntakeAmountControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 

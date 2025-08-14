@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class IntakeRecommendedAmountServiceIntegrationTest extends ServiceIntegrationTest {
+class IntakeRecommendedTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -22,7 +22,7 @@ class IntakeRecommendedAmountServiceIntegrationTest extends ServiceIntegrationTe
 
     @DisplayName("날씨에 따라 추가될 추천 음용량을 구하는 경우")
     @Nested
-    class CalculateExtraIntakeAmountBasedOnWeather {
+    class CalculateExtraIntakeTargetAmountBasedOnWeather {
 
         @DisplayName("평균 기온이 기준 기온보다 높은 경우 기준 날씨와의 격차를 통해 추가 음용량을 계산한다")
         @Test
