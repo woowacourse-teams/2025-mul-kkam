@@ -1,10 +1,7 @@
 package com.mulkkam.ui.setting
 
-import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
-import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingBinding
 import com.mulkkam.ui.main.Refreshable
@@ -14,13 +11,14 @@ import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
+import com.mulkkam.ui.settingnotification.SettingNotificationActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),
     Refreshable {
-    private val settingAdapter by lazy { handleSettingClick() }
+    private val adapter by lazy { handleSettingClick() }
 
     override fun onViewCreated(
         view: View,
@@ -28,7 +26,7 @@ class SettingFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.rvSettingOptions.adapter = settingAdapter
+        binding.rvSettingOptions.adapter = adapter
         initSettingItems()
     }
 
@@ -48,25 +46,9 @@ class SettingFragment :
             SettingType.ACCOUNT_INFO -> Unit // TODO
             SettingType.MY_CUP -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
-            SettingType.PUSH_NOTIFICATION -> Unit // TODO
-            SettingType.FEEDBACK -> navigateToNotificationSetting()
+            SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
+            SettingType.FEEDBACK -> Unit // TODO
             SettingType.TERMS -> Unit // TODO
-        }
-    }
-
-    private fun navigateToNotificationSetting() {
-        runCatching {
-            val intent =
-                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, requireContext().packageName)
-                }
-            startActivity(intent)
-        }.onFailure {
-            val intent =
-                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = "package:${requireContext().packageName}".toUri()
-                }
-            startActivity(intent)
         }
     }
 
@@ -89,6 +71,6 @@ class SettingFragment :
                 SettingItem.NormalItem(getString(R.string.setting_item_feedback), SettingType.FEEDBACK),
                 SettingItem.NormalItem(getString(R.string.setting_item_terms), SettingType.TERMS),
             )
-        settingAdapter.submitList(settingItems)
+        adapter.submitList(settingItems)
     }
 }

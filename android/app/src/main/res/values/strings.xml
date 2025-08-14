@@ -86,6 +86,7 @@
     <string name="setting_item_push_notification">푸시 알림 설정</string>
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>
+    <string name="setting_item_system_notification">시스템 알림 설정</string>
     <string name="setting_item_feedback">피드백 및 문의</string>
     <string name="setting_item_terms">서비스 운영 정책</string>
 
