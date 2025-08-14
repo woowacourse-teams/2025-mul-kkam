@@ -10,12 +10,12 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
@@ -127,7 +127,7 @@ public class MemberService {
                 date
         );
         IntakeHistory intakeHistory = foundIntakeHistory.get();
-        TargetAmount totalAmount = calculateTotalIntakeAmount(details);
+        int totalAmount = calculateTotalIntakeAmount(details);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
@@ -149,13 +149,11 @@ public class MemberService {
                 modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
-    private TargetAmount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
-        int total = intakeHistoryDetails
+    private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+        return intakeHistoryDetails
                 .stream()
                 .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
                 .sum();
-        return new TargetAmount(total);
     }
 
     private int findStreak(Member member, LocalDate todayDate) {

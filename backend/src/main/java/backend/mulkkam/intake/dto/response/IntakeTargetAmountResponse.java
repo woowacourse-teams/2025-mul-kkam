@@ -5,7 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "현재 목표 음수량 응답")
 public record IntakeTargetAmountResponse(
-        @Schema(description = "목표 음수량 (ml)", example = "2000", minimum = "1")
+        @Schema(description = "목표 음수량 (ml)", example = "5000", minimum = "200")
         int amount
 ) {
 

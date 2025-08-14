@@ -19,7 +19,7 @@ class AchievementRateTest {
         void success_withValidAmount() {
             // given
             TargetAmount targetIntakeAmount = new TargetAmount(1_000);
-            TargetAmount totalIntakeAmount = new TargetAmount(200);
+            int totalIntakeAmount = 200;
 
             // when
             AchievementRate achievementRate = new AchievementRate(
@@ -29,7 +29,7 @@ class AchievementRateTest {
 
             // then
             assertThat(achievementRate.value())
-                    .isCloseTo(10.0, within(0.1));
+                    .isCloseTo(20.0, within(0.1));
         }
 
         @DisplayName("100이 넘는 경우 100을 반환한다")
@@ -37,7 +37,7 @@ class AchievementRateTest {
         void success_withValueOver100() {
             // given
             TargetAmount targetIntakeAmount = new TargetAmount(1_000);
-            TargetAmount totalIntakeAmount = new TargetAmount(5_000);
+            int totalIntakeAmount = 5_000;
 
             // when
             AchievementRate achievementRate = new AchievementRate(

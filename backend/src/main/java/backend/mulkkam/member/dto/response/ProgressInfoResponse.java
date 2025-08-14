@@ -3,7 +3,6 @@ package backend.mulkkam.member.dto.response;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -18,7 +17,7 @@ public record ProgressInfoResponse(
         @Schema(description = "달성률 (%)", example = "75.5", minimum = "0.0", maximum = "100.0")
         double achievementRate,
 
-        @Schema(description = "목표 음수량 (ml)", example = "2000", minimum = "1")
+        @Schema(description = "목표 음수량 (ml)", example = "5000", minimum = "200")
         int targetAmount,
 
         @Schema(description = "총 섭취량 (ml)", example = "1500", minimum = "1")
@@ -32,14 +31,14 @@ public record ProgressInfoResponse(
             Member member,
             IntakeHistory intakeHistory,
             AchievementRate achievementRate,
-            TargetAmount totalAmount
+            int totalAmount
     ) {
         this(
                 member.getMemberNickname().value(),
                 intakeHistory.getStreak(),
                 achievementRate.value(),
                 intakeHistory.getTargetAmount().value(),
-                totalAmount.value(),
+                totalAmount,
                 CommentOfAchievementRate.findCommentByAchievementRate(achievementRate)
         );
     }
