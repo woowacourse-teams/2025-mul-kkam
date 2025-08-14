@@ -1,11 +1,11 @@
 package backend.mulkkam.intake.domain.vo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.within;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.within;
 
 class AchievementRateTest {
 
@@ -36,7 +36,7 @@ class AchievementRateTest {
         void success_withValueOver100() {
             // given
             Amount targetIntakeAmount = new Amount(1_000);
-            Amount totalIntakeAmount = new Amount(1_000_000);
+            Amount totalIntakeAmount = new Amount(9_999);
 
             // when
             AchievementRate achievementRate = new AchievementRate(
