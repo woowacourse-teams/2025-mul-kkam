@@ -23,6 +23,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -191,6 +192,14 @@ public class MemberController {
             @RequestBody ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreed
     ) {
         memberService.modifyIsMarketingNotificationAgreed(member, modifyIsMarketingNotificationAgreed);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
+    @ApiResponse(responseCode = "200", description = "탈퇴 성공")
+    @DeleteMapping
+    public ResponseEntity<Void> delete(Member member) {
+        memberService.delete(member);
         return ResponseEntity.ok().build();
     }
 }

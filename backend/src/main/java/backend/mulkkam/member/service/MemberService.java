@@ -1,11 +1,12 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -26,12 +27,16 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -43,6 +48,11 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final IntakeHistoryDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private final AccountRefreshTokenRepository accountRefreshTokenRepository;
+    private final CupRepository cupRepository;
+    private final DeviceRepository deviceRepository;
+    private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    private final NotificationRepository notificationRepository;
 
     public MemberResponse get(Member member) {
         return new MemberResponse(member);
@@ -149,6 +159,32 @@ public class MemberService {
     ) {
         member.modifyIsMarketingNotificationAgreed(
                 modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
+    }
+
+    @Transactional
+    public void delete(Member member) {
+        Optional<OauthAccount> foundOauthAccount = oauthAccountRepository.findByMember(member);
+
+        if (foundOauthAccount.isPresent()) {
+            OauthAccount oauthAccount = foundOauthAccount.get();
+            Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
+                    oauthAccount);
+            foundAccountRefreshToken.ifPresent(accountRefreshTokenRepository::delete);
+            oauthAccountRepository.delete(oauthAccount);
+        }
+
+        cupRepository.deleteByMember(member);
+        deviceRepository.deleteByMember(member);
+
+        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+        intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
+
+        intakeHistoryRepository.deleteByMember(member);
+
+        targetAmountSnapshotRepository.deleteByMember(member);
+        notificationRepository.deleteByMember(member);
+
+        memberRepository.delete(member);
     }
 
     private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {

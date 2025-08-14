@@ -17,4 +17,6 @@ public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Lo
     );
 
     Optional<IntakeHistory> findByMemberAndHistoryDate(Member member, LocalDate date);
+
+    void deleteByMember(Member member);
 }
