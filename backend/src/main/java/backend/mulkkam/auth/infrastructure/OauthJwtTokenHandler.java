@@ -30,7 +30,7 @@ public class OauthJwtTokenHandler {
                 .build();
     }
 
-    public String createToken(OauthAccount account) {
+    public String createToken1(OauthAccount account) {
         Claims claims = Jwts.claims()
                 .subject(account.getId().toString())
                 .build();

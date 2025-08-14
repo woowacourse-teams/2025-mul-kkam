@@ -31,7 +31,7 @@ public class KakaoAuthService {
         OauthAccount oauthAccount = oauthAccountRepository.findByOauthId(oauthId)
                 .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
 
-        String token = jwtTokenHandler.createToken(oauthAccount);
+        String token = jwtTokenHandler.createToken1(oauthAccount);
         return new OauthLoginResponse(token, oauthAccount.finishedOnboarding());
     }
 }
