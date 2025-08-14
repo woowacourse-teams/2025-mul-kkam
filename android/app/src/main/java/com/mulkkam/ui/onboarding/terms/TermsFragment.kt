@@ -20,7 +20,6 @@ import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.setSingleClickListener
-import kotlin.collections.find
 
 class TermsFragment :
     BindingFragment<FragmentTermsBinding>(
@@ -137,6 +136,7 @@ class TermsFragment :
         private val HEALTH_CONNECT_PERMISSIONS =
             setOf(
                 HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
+                HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
             )
     }
 }
