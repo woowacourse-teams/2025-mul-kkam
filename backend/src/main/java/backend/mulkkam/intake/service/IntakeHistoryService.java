@@ -120,6 +120,14 @@ public class IntakeHistoryService {
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
+
+        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                member, LocalDate.now(), LocalDate.now());
+        if (intakeHistoryDetails.isEmpty()) {
+            IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
+                    .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
+            intakeHistoryRepository.delete(intakeHistory);
+        }
     }
 
     private void validatePossibleToDelete(
@@ -210,6 +218,9 @@ public class IntakeHistoryService {
     }
 
     private IntakeHistorySummaryResponse createDefaultResponse(LocalDate date, Member member) {
+        if (date.equals(LocalDate.now())) {
+            return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
+        }
         Optional<Integer> targetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate
                 (
                         member.getId(),

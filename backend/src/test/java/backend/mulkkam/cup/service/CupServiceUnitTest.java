@@ -175,7 +175,7 @@ class CupServiceUnitTest {
 
     @DisplayName("컵을 읽을 때에")
     @Nested
-    class Read {
+    class ReadSortedCupsByMemberId {
 
         @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
@@ -199,7 +199,7 @@ class CupServiceUnitTest {
             when(cupRepository.findAllByMemberOrderByCupRankAsc(member)).thenReturn(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readCupsByMemberId(member);
+            CupsResponse cupsResponse = cupService.readSortedCupsByMember(member);
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
