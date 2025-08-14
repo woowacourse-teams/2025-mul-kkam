@@ -7,4 +7,6 @@ interface AuthRepository {
     suspend fun postAuthKakao(oauthAccessToken: String): MulKkamResult<AuthTokenInfo>
 
     suspend fun postAuthReissue(refreshToken: String): MulKkamResult<AuthTokenInfo>
+
+    suspend fun postAuthLogout(): MulKkamResult<Unit>
 }
