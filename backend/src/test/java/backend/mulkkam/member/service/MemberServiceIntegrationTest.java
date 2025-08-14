@@ -1,5 +1,6 @@
 package backend.mulkkam.member.service;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
@@ -11,14 +12,18 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
+import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -30,11 +35,18 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -61,7 +73,19 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+    private AccountRefreshTokenRepository accountRefreshTokenRepository;
+
+    @Autowired
+    private CupRepository cupRepository;
+
+    @Autowired
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    @Autowired
+    private NotificationRepository notificationRepository;
+
+    @Autowired
+    private DeviceRepository deviceRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -398,7 +422,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
-                    .targetAmount(new TargetAmount(rawTargetAmount))
+                    .targetAmount(new Amount(rawTargetAmount))
                     .build();
             memberRepository.save(member);
 
@@ -417,6 +441,114 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(0);
                 softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(rawTargetAmount);
                 softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(0);
+            });
+        }
+    }
+
+    @DisplayName("회원을 삭제할 때")
+    @Nested
+    class Delete {
+
+        @DisplayName("정상적으로 멤버가 삭제된다")
+        @Test
+        void success_deleteMember() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            memberRepository.save(member);
+
+            OauthAccount oauthAccount = OauthAccountFixtureBuilder
+                    .withMember(member)
+                    .build();
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder.withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            // when
+            memberService.delete(member);
+
+            // then
+            assertThat(memberRepository.findById(member.getId())).isEmpty();
+        }
+
+        @DisplayName("정상적으로 토큰이 삭제된다")
+        @Test
+        void success_deleteRefreshToken() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            memberRepository.save(member);
+
+            OauthAccount oauthAccount = OauthAccountFixtureBuilder
+                    .withMember(member)
+                    .build();
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder.withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            // when
+            memberService.delete(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
+                softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
+            });
+        }
+
+        @DisplayName("연관된 모든 엔티티가 제거된다")
+        @Test
+        void success_deleteAllRelatedEntities() {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .build();
+            memberRepository.save(member);
+
+            OauthAccount oauthAccount = OauthAccountFixtureBuilder
+                    .withMember(member)
+                    .build();
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder.withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            Cup cup = CupFixtureBuilder.withMember(member)
+                    .build();
+            cupRepository.save(cup);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+            Device device = new Device("token", "id", member);
+            deviceRepository.save(device);
+
+            Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(),
+                    new Amount(1_000), member);
+            notificationRepository.save(notification);
+
+            // when
+            memberService.delete(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
+                softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
+                softly.assertThat(cupRepository.findById(cup.getId())).isEmpty();
+                softly.assertThat(intakeHistoryRepository.findById(intakeHistory.getId())).isEmpty();
+                softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
+                softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();
+                softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
             });
         }
     }

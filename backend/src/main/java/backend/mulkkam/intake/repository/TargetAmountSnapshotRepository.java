@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.repository;
 
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
+import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -29,4 +30,6 @@ public interface TargetAmountSnapshotRepository extends JpaRepository<TargetAmou
             Long memberId,
             LocalDate updatedAt
     );
+
+    void deleteByMember(Member member);
 }
