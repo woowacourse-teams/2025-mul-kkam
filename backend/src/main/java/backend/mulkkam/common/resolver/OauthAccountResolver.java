@@ -2,6 +2,7 @@ package backend.mulkkam.common.resolver;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -10,6 +11,8 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @Component
 @RequiredArgsConstructor
@@ -32,8 +35,7 @@ public class OauthAccountResolver implements HandlerMethodArgumentResolver {
 
         Long accountId = (Long) request.getAttribute("subject");
 
-        // TODO: 추후 에러 코드로 반영
         return oauthAccountRepository.findById(accountId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
