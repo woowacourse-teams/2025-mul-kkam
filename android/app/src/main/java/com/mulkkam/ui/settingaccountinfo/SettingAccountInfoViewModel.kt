@@ -38,7 +38,7 @@ class SettingAccountInfoViewModel : ViewModel() {
         runCatching {
             tokenRepository.deleteAccessToken().getOrError()
             tokenRepository.deleteFcmToken().getOrError()
-            tokenRepository.deleteFcmToken().getOrError()
+            tokenRepository.deleteRefreshToken().getOrError()
         }.onSuccess {
             _onDeleteAccount.setValue(Unit)
         }.onFailure {
