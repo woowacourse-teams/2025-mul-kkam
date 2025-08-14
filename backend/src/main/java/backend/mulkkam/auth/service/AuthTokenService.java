@@ -13,7 +13,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TOKEN;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_ALREADY_USED;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_IS_EXPIRED;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 
 @AllArgsConstructor
@@ -23,6 +24,11 @@ public class AuthTokenService {
     private final OauthJwtTokenHandler oauthJwtTokenHandler;
     private final OauthAccountRepository accountRepository;
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
+
+    @Transactional
+    public void logout(OauthAccount account) {
+        accountRefreshTokenRepository.deleteByAccount(account);
+    }
 
     @Transactional
     public ReissueTokenResponse reissueToken(ReissueTokenRequest request) {
@@ -49,7 +55,7 @@ public class AuthTokenService {
         try {
             return oauthJwtTokenHandler.getSubject(refreshToken);
         } catch (InvalidTokenException e) {
-            throw new CommonException(INVALID_TOKEN);
+            throw new CommonException(REFRESH_TOKEN_IS_EXPIRED);
         }
     }
 
@@ -60,7 +66,7 @@ public class AuthTokenService {
 
     private void validateRequestToken(AccountRefreshToken saved, String refreshToken) {
         if (!saved.isMatchWith(refreshToken)) {
-            throw new CommonException(INVALID_TOKEN);
+            throw new CommonException(REFRESH_TOKEN_ALREADY_USED);
         }
     }
 }

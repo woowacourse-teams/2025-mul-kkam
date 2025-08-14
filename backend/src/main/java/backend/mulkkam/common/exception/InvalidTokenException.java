@@ -1,4 +1,4 @@
 package backend.mulkkam.common.exception;
 
-public class InvalidTokenException extends IllegalArgumentException {
+public class InvalidTokenException extends IllegalAccessException {
 }

@@ -27,7 +27,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
         @DisplayName("생성된 토큰에서 account id 값을 subject로 추출할 수 있다.")
         @Test
-        void success_withAccount() {
+        void success_withAccount() throws InvalidTokenException {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
@@ -47,7 +47,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
         @DisplayName("직접 생성한 토큰에 대해서는 OauthAccount 엔티티의 id 값을 올바르게 반환한다.")
         @Test
-        void success_createdToken() {
+        void success_createdToken() throws InvalidTokenException {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
