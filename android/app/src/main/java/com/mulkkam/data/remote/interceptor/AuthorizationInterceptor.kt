@@ -77,7 +77,7 @@ class AuthorizationInterceptor : Interceptor {
         runCatching {
             val rawBody = response.body.string()
             val json = JSONObject(rawBody)
-            json.optString(ERROR_BODY) == ResponseError.AccountError.UnAuthorized.code
+            json.optString(ERROR_BODY) == ResponseError.AccountError.Unauthorized.code
         }.getOrElse { false }
             .also { response.close() }
 

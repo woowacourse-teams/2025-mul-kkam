@@ -64,8 +64,8 @@ sealed class ResponseError(
             private fun readResolve(): Any = InvalidToken
         }
 
-        data object UnAuthorized : AccountError("Unauthorized") {
-            private fun readResolve(): Any = UnAuthorized
+        data object Unauthorized : AccountError("Unauthorized") {
+            private fun readResolve(): Any = Unauthorized
         }
     }
 
