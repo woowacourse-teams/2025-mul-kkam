@@ -42,6 +42,7 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationCancel(p0: Animator) = Unit
 
                 override fun onAnimationEnd(p0: Animator) {
+                    viewModel.updateSplashFinished()
                 }
 
                 override fun onAnimationRepeat(p0: Animator) = Unit
@@ -53,22 +54,29 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
 
     private fun initObservers() {
         viewModel.authUiState.observe(this) { authUiState ->
-            val intent =
-                when (authUiState) {
-                    is MulKkamUiState.Success<UserAuthState> -> {
-                        when (authUiState.data) {
-                            UNONBOARDED -> OnboardingActivity.newIntent(this)
-                            ACTIVE_USER -> MainActivity.newIntent(this)
-                        }
-                    }
-
-                    is MulKkamUiState.Loading -> return@observe
-                    is MulKkamUiState.Idle -> return@observe
-                    is MulKkamUiState.Failure -> LoginActivity.newIntent(this)
-                }
-            startActivity(intent)
-            finish()
+            navigateToNextScreen(authUiState)
         }
+        viewModel.onSplashFinished.observe(this) {
+            navigateToNextScreen(viewModel.authUiState.value ?: return@observe)
+        }
+    }
+
+    private fun navigateToNextScreen(authUiState: MulKkamUiState<UserAuthState>) {
+        val intent =
+            when (authUiState) {
+                is MulKkamUiState.Success<UserAuthState> -> {
+                    when (authUiState.data) {
+                        UNONBOARDED -> OnboardingActivity.newIntent(this)
+                        ACTIVE_USER -> MainActivity.newIntent(this)
+                    }
+                }
+
+                is MulKkamUiState.Loading -> return
+                is MulKkamUiState.Idle -> return
+                is MulKkamUiState.Failure -> LoginActivity.newIntent(this)
+            }
+        startActivity(intent)
+        finish()
     }
 
     companion object {

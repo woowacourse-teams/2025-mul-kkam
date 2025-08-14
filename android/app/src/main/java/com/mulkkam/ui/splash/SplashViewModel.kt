@@ -10,11 +10,16 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.UserAuthState
+import com.mulkkam.ui.util.MutableSingleLiveData
+import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
     private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> = MutableLiveData<MulKkamUiState<UserAuthState>>()
     val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
+
+    private val _onSplashFinished: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onSplashFinished: SingleLiveData<Unit> get() = _onSplashFinished
 
     init {
         updateAuthState()
@@ -39,15 +44,15 @@ class SplashViewModel : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 membersRepository.getMembersCheckOnboarding().getOrError()
-            }.onSuccess { hasCompletedOnboarding ->
-                _authUiState.value =
-                    when (hasCompletedOnboarding) {
-                        true -> MulKkamUiState.Success<UserAuthState>(UserAuthState.ACTIVE_USER)
-                        false -> MulKkamUiState.Success<UserAuthState>(UserAuthState.UNONBOARDED)
-                    }
+            }.onSuccess { userAuthState ->
+                _authUiState.value = MulKkamUiState.Success<UserAuthState>(userAuthState)
             }.onFailure {
                 _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
+    }
+
+    fun updateSplashFinished() {
+        _onSplashFinished.setValue(Unit)
     }
 }

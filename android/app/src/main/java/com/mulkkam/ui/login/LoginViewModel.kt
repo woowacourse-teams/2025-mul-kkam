@@ -38,12 +38,7 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 RepositoryInjection.membersRepository.getMembersCheckOnboarding().getOrError()
-            }.onSuccess { hasCompletedOnboarding ->
-                val userAuthState =
-                    when (hasCompletedOnboarding) {
-                        true -> UserAuthState.ACTIVE_USER
-                        false -> UserAuthState.UNONBOARDED
-                    }
+            }.onSuccess { userAuthState ->
                 _authUiState.value = MulKkamUiState.Success(userAuthState)
             }.onFailure {
                 _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
