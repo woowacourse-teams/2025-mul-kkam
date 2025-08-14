@@ -35,4 +35,6 @@ interface MembersRepository {
     suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit>
 
     suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo>
+
+    suspend fun deleteMembers(): MulKkamResult<Unit>
 }

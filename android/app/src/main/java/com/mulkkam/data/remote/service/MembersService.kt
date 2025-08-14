@@ -11,6 +11,7 @@ import com.mulkkam.data.remote.model.response.members.MembersProgressInfoRespons
 import com.mulkkam.data.remote.model.response.members.MembersResponse
 import com.mulkkam.data.remote.model.response.notification.NotificationAgreedResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -63,4 +64,7 @@ interface MembersService {
 
     @GET("/members/notifications/settings")
     suspend fun getMembersNotificationSettings(): Result<NotificationAgreedResponse>
+
+    @DELETE("/members")
+    suspend fun deleteMembers(): Result<Unit>
 }
