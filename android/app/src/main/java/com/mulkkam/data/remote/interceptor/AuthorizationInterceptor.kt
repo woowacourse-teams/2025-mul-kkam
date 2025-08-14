@@ -1,5 +1,6 @@
 package com.mulkkam.data.remote.interceptor
 
+import com.mulkkam.data.remote.model.error.ResponseError
 import com.mulkkam.data.remote.model.request.auth.AuthReissueRequest
 import com.mulkkam.di.PreferenceInjection
 import com.mulkkam.di.ServiceInjection.authService
@@ -68,7 +69,7 @@ class AuthorizationInterceptor : Interceptor {
 
         return try {
             val json = JSONObject(rawBody)
-            json.optString(ERROR_BODY) == ERROR_BODY_TOKEN_EXPIRED
+            json.optString(ERROR_BODY) == ResponseError.AccountError.UnAuthorized.code
         } catch (e: Exception) {
             false
         } finally {
@@ -81,6 +82,5 @@ class AuthorizationInterceptor : Interceptor {
         private const val HEADER_VALUE_AUTHORIZATION: String = "Bearer %s"
 
         private const val ERROR_BODY: String = "error"
-        private const val ERROR_BODY_TOKEN_EXPIRED: String = "Unauthorized"
     }
 }
