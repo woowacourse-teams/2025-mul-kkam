@@ -14,7 +14,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel : ViewModel() {
-    private val _onboardingState = MutableLiveData<OnboardingStep>()
+    private val _onboardingState: MutableLiveData<OnboardingStep> = MutableLiveData<OnboardingStep>()
     val onboardingState: LiveData<OnboardingStep> get() = _onboardingState
 
     val canSkip: LiveData<Boolean> =

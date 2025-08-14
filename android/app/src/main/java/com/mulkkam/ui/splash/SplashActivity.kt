@@ -18,6 +18,7 @@ import com.mulkkam.ui.util.binding.BindingActivity
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBinding::inflate) {
     private val viewModel: SplashViewModel by viewModels()
+    private var isSplashFinished: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,12 +43,15 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
                 override fun onAnimationCancel(p0: Animator) = Unit
 
                 override fun onAnimationEnd(p0: Animator) {
-                    viewModel.updateSplashFinished()
+                    isSplashFinished = true
+                    navigateToNextScreen(viewModel.authUiState.value ?: return)
                 }
 
                 override fun onAnimationRepeat(p0: Animator) = Unit
 
-                override fun onAnimationStart(p0: Animator) = Unit
+                override fun onAnimationStart(p0: Animator) {
+                    isSplashFinished = false
+                }
             },
         )
     }
@@ -56,12 +60,11 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
         viewModel.authUiState.observe(this) { authUiState ->
             navigateToNextScreen(authUiState)
         }
-        viewModel.onSplashFinished.observe(this) {
-            navigateToNextScreen(viewModel.authUiState.value ?: return@observe)
-        }
     }
 
     private fun navigateToNextScreen(authUiState: MulKkamUiState<UserAuthState>) {
+        if (isSplashFinished.not()) return
+
         val intent =
             when (authUiState) {
                 is MulKkamUiState.Success<UserAuthState> -> {

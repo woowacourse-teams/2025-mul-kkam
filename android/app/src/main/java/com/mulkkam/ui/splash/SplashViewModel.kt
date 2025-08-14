@@ -10,24 +10,22 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.UserAuthState
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
-    private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> = MutableLiveData<MulKkamUiState<UserAuthState>>()
+    private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> =
+        MutableLiveData<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
     val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
-
-    private val _onSplashFinished: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val onSplashFinished: SingleLiveData<Unit> get() = _onSplashFinished
 
     init {
         updateAuthState()
     }
 
     private fun updateAuthState() {
+        if (_authUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                _authUiState.value = MulKkamUiState.Loading
                 tokenRepository.getAccessToken().getOrError()
             }.onSuccess { accessToken ->
                 when (accessToken.isNullOrBlank().not()) {
@@ -50,9 +48,5 @@ class SplashViewModel : ViewModel() {
                 _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
-    }
-
-    fun updateSplashFinished() {
-        _onSplashFinished.setValue(Unit)
     }
 }
