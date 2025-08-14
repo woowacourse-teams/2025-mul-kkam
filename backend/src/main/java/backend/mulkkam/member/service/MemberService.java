@@ -28,6 +28,7 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -149,6 +150,7 @@ public class MemberService {
             ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
         member.modifyIsNightNotificationAgreed(modifyIsNightNotificationAgreedRequest.isNightNotificationAgreed());
+        memberRepository.save(member);
     }
 
     @Transactional
@@ -158,6 +160,7 @@ public class MemberService {
     ) {
         member.modifyIsMarketingNotificationAgreed(
                 modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
+        memberRepository.save(member);
     }
 
     @Transactional
@@ -184,6 +187,10 @@ public class MemberService {
         notificationRepository.deleteByMember(member);
 
         memberRepository.delete(member);
+    }
+
+    public NotificationSettingsResponse getNotificationSettings(Member member) {
+        return new NotificationSettingsResponse(member);
     }
 
     private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {

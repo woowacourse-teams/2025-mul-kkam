@@ -17,4 +17,7 @@ interface AuthService {
     suspend fun postAuthTokenReissue(
         @Body authReissueRequest: AuthReissueRequest,
     ): Result<AuthReissueResponse>
+
+    @POST("/auth/logout")
+    suspend fun postAuthLogout(): Result<Unit>
 }

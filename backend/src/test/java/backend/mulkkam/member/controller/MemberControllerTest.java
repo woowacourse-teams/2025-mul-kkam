@@ -1,5 +1,14 @@
 package backend.mulkkam.member.controller;
 
+import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
@@ -15,6 +24,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.CupFixtureBuilder;
@@ -32,14 +42,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
-
-import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -106,7 +108,7 @@ class MemberControllerTest {
                     false);
 
             // when
-            mockMvc.perform(patch("/members/notification/night")
+            mockMvc.perform(patch("/members/notifications/night")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
@@ -128,7 +130,7 @@ class MemberControllerTest {
                     false);
 
             // when
-            mockMvc.perform(patch("/members/notification/marketing")
+            mockMvc.perform(patch("/members/notifications/marketing")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
@@ -140,6 +142,29 @@ class MemberControllerTest {
             assertSoftly(softly ->
                     softly.assertThat(foundMember.isMarketingNotificationAgreed()).isFalse()
             );
+        }
+    }
+
+    @DisplayName("멤버의 정보를 조회할 때에")
+    @Nested
+    class Get {
+
+        @DisplayName("야간 알림과 마케팅 수신 동의 세팅을 가져온다.")
+        @Test
+        void success_whenModifyIsNightNotificationAgreed() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/members/notifications/settings")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            NotificationSettingsResponse actual = objectMapper.readValue(json, NotificationSettingsResponse.class);
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.isNightNotificationAgreed()).isTrue();
+                softly.assertThat(actual.isMarketingNotificationAgreed()).isTrue();
+            });
         }
     }
 

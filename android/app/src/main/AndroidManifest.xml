@@ -25,6 +25,7 @@
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
 
+
         <provider
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
@@ -59,6 +60,10 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="true"
@@ -122,6 +127,10 @@
                     android:scheme="kakao${kakaoKey}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.settingnotification.SettingNotificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
