@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ExtraIntakeAmountTest {
+class ExtraIntakeTargetAmountTest {
 
     @DisplayName("평균 기온을 통해 추천 추가 음용량을 계산할 때")
     @Nested

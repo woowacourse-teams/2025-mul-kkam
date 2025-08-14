@@ -7,13 +7,13 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
@@ -70,7 +70,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         member = MemberFixtureBuilder
                 .builder()
                 .weight(70.0)
-                .targetAmount(new Amount(1500))
+                .targetAmount(new TargetAmount(1500))
                 .build();
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
@@ -91,7 +91,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
             TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
                     .withMember(member)
-                    .targetAmount(new Amount(1000))
+                    .targetAmount(new TargetAmount(1000))
                     .updatedAt(LocalDate.of(2025, 6, 15))
                     .build();
             targetAmountSnapshotRepository.save(targetAmountSnapshot);
@@ -297,13 +297,13 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
             TargetAmountSnapshot targetAmountSnapshot1 = TargetAmountSnapshotFixtureBuilder
                     .withMember(member)
-                    .targetAmount(new Amount(1500))
+                    .targetAmount(new TargetAmount(1500))
                     .updatedAt(LocalDate.of(2025, 7, 13))
                     .build();
 
             TargetAmountSnapshot targetAmountSnapshot2 = TargetAmountSnapshotFixtureBuilder
                     .withMember(member)
-                    .targetAmount(new Amount(2000))
+                    .targetAmount(new TargetAmount(2000))
                     .updatedAt(LocalDate.of(2025, 7, 15))
                     .build();
 
@@ -343,7 +343,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         void deleteIntakeDetail_keepsHistory_whenNotAllDetailsDeleted() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(2000))
+                    .targetIntakeAmount(new TargetAmount(2000))
                     .date(LocalDate.now())
                     .build();
 
@@ -378,7 +378,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         void deleteIntakeDetail_deleteHistory_whenAllDetailsDeleted() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(2000))
+                    .targetIntakeAmount(new TargetAmount(2000))
                     .date(LocalDate.now())
                     .build();
 

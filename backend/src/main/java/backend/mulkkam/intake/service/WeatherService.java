@@ -9,7 +9,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
 import backend.mulkkam.member.domain.Member;
@@ -59,7 +59,8 @@ public class WeatherService {
 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
-            notificationService.createTokenNotification(toCreateNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
+            notificationService.createTokenNotification(
+                    toCreateNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
         }
     }
 
@@ -68,14 +69,16 @@ public class WeatherService {
             AverageTemperature averageTemperature,
             Member member
     ) {
-        ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(member.getId(), averageTemperature.getTemperature());
+        ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
+                member.getId(), averageTemperature.getTemperature());
         return new CreateTokenNotificationRequest(
                 "날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?", (int)(averageTemperature.getTemperature()), (int)(extraIntakeAmount.value())),
+                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?",
+                        (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
                 member,
                 Action.GO_NOTIFICATION,
                 NotificationType.SUGGESTION,
-                new Amount(member.getTargetAmount().value() + (int) (extraIntakeAmount.value())),
+                new TargetAmount(member.getTargetAmount().value() + (int) (extraIntakeAmount.value())),
                 todayDateTimeInSeoul
         );
     }

@@ -1,7 +1,7 @@
 package backend.mulkkam.support;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
 
@@ -9,7 +9,7 @@ public class IntakeHistoryFixtureBuilder {
 
     private final Member member;
     private LocalDate date = LocalDate.of(2025, 3, 19);
-    private Amount targetIntakeAmount = new Amount(1_000);
+    private TargetAmount targetIntakeAmount = new TargetAmount(1_000);
     private int streak = 5;
 
     private IntakeHistoryFixtureBuilder(Member member) {
@@ -20,7 +20,7 @@ public class IntakeHistoryFixtureBuilder {
         return new IntakeHistoryFixtureBuilder(member);
     }
 
-    public IntakeHistoryFixtureBuilder targetIntakeAmount(Amount targetIntakeAmount) {
+    public IntakeHistoryFixtureBuilder targetIntakeAmount(TargetAmount targetIntakeAmount) {
         this.targetIntakeAmount = targetIntakeAmount;
         return this;
     }

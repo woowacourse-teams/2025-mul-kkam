@@ -7,7 +7,6 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
@@ -15,6 +14,7 @@ import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
@@ -27,15 +27,19 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 class IntakeAmountControllerTest extends ControllerTest {
 
     @Autowired
@@ -63,7 +67,7 @@ class IntakeAmountControllerTest extends ControllerTest {
         member = MemberFixtureBuilder
                 .builder()
                 .weight(70.0)
-                .targetAmount(new Amount(1500))
+                .targetAmount(new TargetAmount(1500))
                 .build();
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
@@ -162,7 +166,8 @@ class IntakeAmountControllerTest extends ControllerTest {
         @DisplayName("멤버의 음용량이 수정된다")
         @Test
         void success_whenIsValidAmount() throws Exception {
-            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(2500);
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
+                    2500);
 
             mockMvc.perform(patch("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -180,7 +185,8 @@ class IntakeAmountControllerTest extends ControllerTest {
         @DisplayName("목표 음용량이 0 이하라면 400 에러가 발생한다")
         @Test
         void error_whenAmountIsLessThanOrEqualToZero() throws Exception {
-            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(0);
+            IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
+                    0);
 
             String json = mockMvc.perform(patch("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -191,7 +197,7 @@ class IntakeAmountControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 
@@ -211,7 +217,7 @@ class IntakeAmountControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
 
         }
@@ -226,7 +232,7 @@ class IntakeAmountControllerTest extends ControllerTest {
         void success_whenIsValidSuggestedAmount() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -264,7 +270,7 @@ class IntakeAmountControllerTest extends ControllerTest {
         void error_whenSuggestedAmountIsLessThanOrEqualToZero() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -283,7 +289,7 @@ class IntakeAmountControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 
@@ -292,7 +298,7 @@ class IntakeAmountControllerTest extends ControllerTest {
         void error_whenSuggestedAmountIsMoreThanOrEqualTo10000() throws Exception {
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetIntakeAmount(new Amount(1000))
+                    .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
 
@@ -310,7 +316,7 @@ class IntakeAmountControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_AMOUNT.name());
+                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
         }
 
@@ -326,7 +332,8 @@ class IntakeAmountControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(modifyIntakeTargetAmountByRecommendRequest)))
                     .andExpect(status().isOk());
 
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member,
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                    member,
                     LocalDate.now(), LocalDate.now());
             Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
 
