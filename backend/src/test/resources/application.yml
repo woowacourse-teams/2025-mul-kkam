@@ -10,7 +10,7 @@ spring:
     init:
       mode: never
   flyway:
-    locations: classpath:db/migration
+    locations: classpath:db/migration/common, classpath:db/migration/h2
 
   jpa:
     hibernate:

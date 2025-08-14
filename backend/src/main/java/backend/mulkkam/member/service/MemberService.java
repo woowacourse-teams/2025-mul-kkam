@@ -1,6 +1,5 @@
 package backend.mulkkam.member.service;
 
-import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -144,27 +143,6 @@ public class MemberService {
 
     @Transactional
     public void delete(Member member) {
-        Optional<OauthAccount> foundOauthAccount = oauthAccountRepository.findByMember(member);
-
-        if (foundOauthAccount.isPresent()) {
-            OauthAccount oauthAccount = foundOauthAccount.get();
-            Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
-                    oauthAccount);
-            foundAccountRefreshToken.ifPresent(accountRefreshTokenRepository::delete);
-            oauthAccountRepository.delete(oauthAccount);
-        }
-
-        cupRepository.deleteByMember(member);
-        deviceRepository.deleteByMember(member);
-
-        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
-        intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
-
-        intakeHistoryRepository.deleteByMember(member);
-
-        targetAmountSnapshotRepository.deleteByMember(member);
-        notificationRepository.deleteByMember(member);
-
         memberRepository.delete(member);
     }
 
