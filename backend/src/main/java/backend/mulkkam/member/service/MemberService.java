@@ -150,6 +150,7 @@ public class MemberService {
             ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
         member.modifyIsNightNotificationAgreed(modifyIsNightNotificationAgreedRequest.isNightNotificationAgreed());
+        memberRepository.save(member);
     }
 
     @Transactional
@@ -159,6 +160,7 @@ public class MemberService {
     ) {
         member.modifyIsMarketingNotificationAgreed(
                 modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
+        memberRepository.save(member);
     }
 
     @Transactional
