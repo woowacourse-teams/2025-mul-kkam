@@ -10,6 +10,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -32,21 +33,28 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response,
             FilterChain filterChain
-    )
-            throws ServletException, IOException {
+    ) throws ServletException, IOException {
         String traceId = generateTraceId();
-        request.setAttribute("traceId", traceId);
+        MDC.put("traceId", traceId);
+
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
+
         printRequestUriAndHeaders(wrappingRequest);
 
-        filterChain.doFilter(wrappingRequest, wrappingResponse);
-        Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
-        if (alreadyErrorLogging == null || !alreadyErrorLogging) {
-            printResponseHeader(traceId, response);
-            printResponseBody(wrappingResponse);
+        try {
+            filterChain.doFilter(wrappingRequest, wrappingResponse);
+
+            Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
+            if (alreadyErrorLogging == null || !alreadyErrorLogging) {
+
+                printResponseHeader(request, response);
+                printResponseBody(wrappingResponse);
+            }
+            wrappingResponse.copyBodyToResponse();
+        } finally {
+            MDC.clear();
         }
-        wrappingResponse.copyBodyToResponse();
     }
 
     private String generateTraceId() {
@@ -54,14 +62,13 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     }
 
     private void printRequestUriAndHeaders(ContentCachingRequestWrapper request) {
-        String traceId = (String) request.getAttribute("traceId");
         String methodType = request.getMethod();
         String uri = buildDecodedRequestUri(request);
         String auth = request.getHeader("Authorization");
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[REQUEST] traceId = {}, {} {} token = {}", traceId, methodType, uri, auth);
+        log.info("[REQUEST] {} {} token = {}", methodType, uri, auth);
     }
 
     private String buildDecodedRequestUri(HttpServletRequest request) {
@@ -104,20 +111,24 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     }
 
     private void printResponseHeader(
-            String traceId,
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
+        Long oauthId = (Long) request.getAttribute("oauth_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] traceId = {}, ({}) token = {}", traceId, status, auth);
+        log.info("[RESPONSE] oauthId = {}, ({}) token = {}", oauthId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
         try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray())
+                    .toPrettyString()
+                    .replaceAll("\\R\\s*\\}$", "}");
+            log.info("ResponseBody: {}", body);
             if (body.isEmpty()) {
                 body = "NONE";
             }

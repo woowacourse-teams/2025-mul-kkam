@@ -1,11 +1,10 @@
 <configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
     <!-- ================== -->
-    <!-- 공통 패턴 정의 -->
-    <property name="CONSOLE_PATTERN"
-              value="%magenta([%d{yyyy-MM-dd HH:mm:ss}:%-4relative]) %boldWhite([%thread]) %highlight(%-5level) %green([%C.%M:%yellow(%L)]) - %msg%n"/>
-    <!-- 파일: 컬러 없이 분석 친화적 -->
+    <!-- 파일: 컬러 없음, Asia/Seoul -->
     <property name="FILE_PATTERN"
-              value="[%d{yyyy-MM-dd HH:mm:ss}:%-4relative] [%thread] %-5level [%C.%M:%L] - %msg%n"/>
+              value="[%d{yyyy-MM-dd'T'HH:mm:ss.SSSX, Asia/Seoul}:%-4relative] [%thread] %-5level %green([trace=%X{traceId}]) - %msg%n"/>
 
     <!-- ================== -->
     <!-- DEV 환경 -->
@@ -64,13 +63,38 @@
             </filter>
         </appender>
 
-        <!-- 콘솔: 컬러 -->
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${CONSOLE_PATTERN}</pattern>
+        <!-- API 성능 전용 -->
+        <appender name="API_PERF_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
+            <file>${LOG_PATH}/api-perf/api-perf.log</file>
+            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+                <fileNamePattern>${LOG_PATH}/api-perf/api-perf.%d{yyyy-MM-dd}.log</fileNamePattern>
+                <maxHistory>7</maxHistory>
+            </rollingPolicy>
+            <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+                <providers>
+                    <timestamp>
+                        <timeZone>Asia/Seoul</timeZone>
+                        <fieldName>@timestamp</fieldName>
+                        <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS z</pattern>
+                    </timestamp>
+
+                    <level/>
+
+                    <mdc>
+                        <includeMdcKeyName>traceId</includeMdcKeyName>
+                    </mdc>
+
+                    <arguments>
+                        <includeNonStructuredArguments>false</includeNonStructuredArguments>
+                    </arguments>
+
+                </providers>
             </encoder>
-            <includeCallerData>true</includeCallerData>
         </appender>
+
+        <logger name="API_PERF" level="INFO" additivity="false">
+            <appender-ref ref="API_PERF_JSON"/>
+        </logger>
 
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
@@ -83,15 +107,11 @@
     <!-- ================== -->
     <!-- 비-DEV 환경 -->
     <!-- ================== -->
-    <springProfile name="!dev">
-        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
-            <encoder>
-                <pattern>${CONSOLE_PATTERN}</pattern>
-            </encoder>
-        </appender>
 
+    <springProfile name="!dev">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
+
 </configuration>

@@ -1,8 +1,8 @@
 package backend.mulkkam.common.config;
 
-import backend.mulkkam.common.filter.ApiPerformanceInterceptor;
 import backend.mulkkam.common.filter.HttpLoggingFilter;
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
+import backend.mulkkam.common.interceptor.ApiPerformanceInterceptor;
 import backend.mulkkam.common.resolver.MemberResolver;
 import backend.mulkkam.common.resolver.OauthAccountResolver;
 import java.util.List;

@@ -5,12 +5,22 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
+import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.NicknameValidationUiState
+import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
+import com.mulkkam.ui.model.NicknameValidationUiState.PENDING_SERVER_VALIDATION
+import com.mulkkam.ui.model.NicknameValidationUiState.SAME_AS_BEFORE
+import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -56,7 +66,7 @@ class NicknameFragment :
             }
 
             tvCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameDuplicate(getTrimmedNickname())
+                viewModel.checkNicknameAvailability(getTrimmedNickname())
             }
         }
     }
@@ -67,59 +77,84 @@ class NicknameFragment :
             .trim()
 
     private fun initObservers() {
-        viewModel.isValidNickname.observe(viewLifecycleOwner) { isValid ->
-            if (isValid == null) {
-                clearNicknameValidationUI()
-                return@observe
+        with(viewModel) {
+            nicknameValidationState.observe(viewLifecycleOwner) { state ->
+                updateNicknameUI(state)
             }
-            updateNicknameValidationUI(isValid)
-            updateNextButtonEnabled(isValid)
+
+            onNicknameValidationError.observe(viewLifecycleOwner) { error ->
+                handleNicknameValidationError(error)
+            }
+
+            nickname.observe(viewLifecycleOwner) { nickname ->
+                if (binding.etInputNickname.text.toString() == nickname.name) return@observe
+                binding.etInputNickname.setText(nickname.name)
+            }
         }
     }
 
-    private fun clearNicknameValidationUI() {
-        with(binding) {
-            etInputNickname.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(requireContext(), R.color.gray_400),
+    private fun updateNicknameUI(state: NicknameValidationUiState) {
+        when (state) {
+            VALID ->
+                applyNicknameUI(
+                    colorRes = R.color.primary_200,
+                    message = getString(R.string.setting_nickname_valid),
+                    isNextEnabled = true,
+                    isCheckDuplicateEnabled = false,
                 )
-            tvNicknameValidationMessage.text = ""
-            tvNext.isEnabled = false
-            tvNext.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(requireContext(), R.color.gray_200),
+
+            INVALID ->
+                applyNicknameUI(
+                    colorRes = R.color.secondary_200,
+                    message = "",
+                    isNextEnabled = false,
+                    isCheckDuplicateEnabled = false,
                 )
+
+            PENDING_SERVER_VALIDATION ->
+                applyNicknameUI(
+                    colorRes = R.color.gray_400,
+                    message = null,
+                    isNextEnabled = false,
+                    isCheckDuplicateEnabled = true,
+                )
+
+            SAME_AS_BEFORE -> Unit
         }
     }
 
-    private fun updateNicknameValidationUI(isValid: Boolean) {
-        val color =
-            getColor(
-                requireContext(),
-                if (isValid) R.color.primary_200 else R.color.secondary_200,
-            )
-        val messageResId =
-            if (isValid) {
-                R.string.setting_nickname_valid
-            } else {
-                R.string.setting_nickname_warning_duplicated_nickname
-            }
-
+    private fun applyNicknameUI(
+        @ColorRes colorRes: Int,
+        message: String?,
+        isNextEnabled: Boolean,
+        isCheckDuplicateEnabled: Boolean,
+    ) {
+        val color = getColor(requireContext(), colorRes)
         with(binding) {
-            tvNicknameValidationMessage.text = getString(messageResId)
-            tvNicknameValidationMessage.setTextColor(color)
+            tvNext.isEnabled = isNextEnabled
+            tvCheckDuplicate.isEnabled = isCheckDuplicateEnabled
             etInputNickname.backgroundTintList = ColorStateList.valueOf(color)
+            message?.let {
+                tvNicknameValidationMessage.text = it
+                tvNicknameValidationMessage.setTextColor(color)
+            } ?: run {
+                tvNicknameValidationMessage.text = ""
+            }
         }
     }
 
-    private fun updateNextButtonEnabled(enabled: Boolean) {
-        binding.tvNext.isEnabled = enabled
-        if (enabled) {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.primary_200))
-        } else {
-            binding.tvNext.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), R.color.gray_200))
+    private fun handleNicknameValidationError(error: MulKkamError) {
+        when (error) {
+            is NicknameError ->
+                binding.tvNicknameValidationMessage.text = error.toMessageRes()
+
+            else ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_check_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
@@ -133,16 +168,24 @@ class NicknameFragment :
                         binding.etInputNickname.text
                             .toString()
                             .trim()
-                    val isValid = nickname.isNotEmpty()
-                    val colorResId = if (isValid) R.color.primary_200 else R.color.gray_200
-                    val color = getColor(requireContext(), colorResId)
 
-                    with(binding.tvCheckDuplicate) {
-                        isEnabled = isValid
-                        backgroundTintList = ColorStateList.valueOf(color)
-                    }
-                    viewModel.clearNicknameValidationState()
+                    viewModel.updateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
+
+    private fun NicknameError.toMessageRes(): String =
+        when (this) {
+            NicknameError.InvalidLength ->
+                getString(
+                    R.string.nickname_invalid_length,
+                    Nickname.NICKNAME_LENGTH_MIN,
+                    Nickname.NICKNAME_LENGTH_MAX,
+                )
+
+            NicknameError.InvalidCharacters -> getString(R.string.nickname_invalid_characters)
+            NicknameError.DuplicateNickname -> getString(R.string.nickname_duplicated)
+            NicknameError.InvalidNickname -> getString(R.string.nickname_invalid)
+            NicknameError.SameAsBefore -> getString(R.string.nickname_same_as_before)
+        }
 }

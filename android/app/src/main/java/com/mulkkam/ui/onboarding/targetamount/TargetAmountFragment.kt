@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -12,6 +13,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTargetAmountBinding
+import com.mulkkam.domain.model.intake.TargetAmount
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -49,6 +53,15 @@ class TargetAmountFragment :
             parentViewModel.onboardingInfo.gender,
             parentViewModel.onboardingInfo.weight,
         )
+
+        binding.tvRecommendedTargetAmountDescription.text =
+            getString(
+                if (parentViewModel.onboardingInfo.hasBioInfo()) {
+                    R.string.target_amount_recommended_description
+                } else {
+                    R.string.target_amount_recommended_description_default
+                },
+            )
     }
 
     private fun initTextAppearance() {
@@ -72,13 +85,29 @@ class TargetAmountFragment :
     }
 
     private fun initObservers() {
-        viewModel.recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
-            binding.etInputGoal.setText(recommendedTargetAmount.toString())
-            updateRecommendedTargetHighlight(recommendedTargetAmount)
-        }
+        with(viewModel) {
+            targetAmount.observe(viewLifecycleOwner) { targetAmount ->
+                if (binding.etInputGoal.text
+                        .toString()
+                        .toIntOrNull() == targetAmount.amount
+                ) {
+                    return@observe
+                }
+                binding.etInputGoal.setText(targetAmount.amount.toString())
+            }
 
-        viewModel.isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
-            updateTargetAmountValidationUI(isValid)
+            recommendedTargetAmount.observe(viewLifecycleOwner) { recommendedTargetAmount ->
+                binding.etInputGoal.setText(recommendedTargetAmount.toString())
+                updateRecommendedTargetHighlight(recommendedTargetAmount)
+            }
+
+            isTargetAmountValid.observe(viewLifecycleOwner) { isValid ->
+                updateTargetAmountValidationUI(isValid)
+            }
+
+            onTargetAmountValidationError.observe(viewLifecycleOwner) { error ->
+                handleTargetAmountValidationError(error)
+            }
         }
     }
 
@@ -109,19 +138,68 @@ class TargetAmountFragment :
         }
     }
 
-    private fun initTargetAmountInputWatcher() {
-        binding.etInputGoal.doAfterTextChanged {
-            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+    private fun handleTargetAmountValidationError(error: MulKkamError) {
+        when (error) {
+            is TargetAmountError -> {
+                binding.tvTargetAmountWarningMessage.text = error.toMessageRes()
+            }
 
-            debounceRunnable =
-                Runnable {
-                    val targetAmount =
-                        binding.etInputGoal.text
-                            .toString()
-                            .trim()
-                            .toIntOrNull()
-                    viewModel.updateTargetAmount(targetAmount)
-                }.apply { debounceHandler.postDelayed(this, 300L) }
+            else -> Unit
         }
     }
+
+    private fun initTargetAmountInputWatcher() {
+        binding.etInputGoal.doAfterTextChanged { editable ->
+            val processedText = sanitizeLeadingZeros(editable.toString())
+
+            if (processedText != editable.toString()) {
+                updateEditText(binding.etInputGoal, processedText)
+                return@doAfterTextChanged
+            }
+
+            debounceTargetAmountUpdate(processedText)
+        }
+    }
+
+    private fun sanitizeLeadingZeros(input: String): String =
+        if (input.length > 1 && input.startsWith("0")) {
+            input.trimStart('0').ifEmpty { "0" }
+        } else {
+            input
+        }
+
+    private fun updateEditText(
+        editText: EditText,
+        newText: String,
+    ) {
+        editText.apply {
+            setText(newText)
+            setSelection(newText.length)
+        }
+    }
+
+    private fun debounceTargetAmountUpdate(text: String) {
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+
+        debounceRunnable =
+            Runnable {
+                val targetAmount = text.toIntOrNull() ?: 0
+                viewModel.updateTargetAmount(targetAmount)
+            }.apply { debounceHandler.postDelayed(this, 300L) }
+    }
+
+    private fun TargetAmountError.toMessageRes(): String =
+        when (this) {
+            TargetAmountError.BelowMinimum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_low,
+                    TargetAmount.TARGET_AMOUNT_MIN,
+                )
+
+            TargetAmountError.AboveMaximum ->
+                getString(
+                    R.string.setting_target_amount_warning_too_high,
+                    TargetAmount.TARGET_AMOUNT_MAX,
+                )
+        }
 }

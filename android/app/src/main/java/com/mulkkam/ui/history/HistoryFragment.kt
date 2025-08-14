@@ -20,10 +20,13 @@ import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -126,8 +129,8 @@ class HistoryFragment :
     }
 
     private fun initObservers() {
-        viewModel.weeklyIntakeHistories.observe(viewLifecycleOwner) { weeklyIntakeHistories ->
-            bindWeeklyChartData(weeklyIntakeHistories)
+        viewModel.weeklyIntakeHistoriesUiState.observe(viewLifecycleOwner) { weeklyIntakeHistoriesUiState ->
+            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState)
         }
 
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
@@ -145,18 +148,37 @@ class HistoryFragment :
             updateCharacterImage(waterIntakeState)
         }
 
-        viewModel.deleteSuccess.observe(viewLifecycleOwner) { isSuccess ->
-            if (isSuccess) {
-                val currentSelectedDate =
-                    viewModel.dailyIntakeHistories.value?.date ?: LocalDate.now()
-                viewModel.loadIntakeHistories(currentSelectedDate)
-
-                viewModel.onDeleteSuccessObserved()
+        viewModel.deleteUiState.observe(viewLifecycleOwner) { deleteUiState ->
+            if (deleteUiState is MulKkamUiState.Success) {
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.history_delete_success),
+                        R.drawable.ic_terms_all_check_on,
+                    ).apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
 
-    private fun bindWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
+    private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
+        when (weeklyIntakeHistoriesUiState) {
+            is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
+            is MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                binding.includeHistoryShimmer.root.visibility = View.GONE
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
+                    .apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
+            }
+        }
+    }
+
+    private fun updateWeeklyChartData(weeklyIntakeHistories: IntakeHistorySummaries) {
         weeklyCharts.forEachIndexed { index, chart ->
             val intake = weeklyIntakeHistories.getByIndex(index)
             updateWeeklyChart(chart, intake)
@@ -171,6 +193,8 @@ class HistoryFragment :
                 weeklyIntakeHistories.firstDay.format(formatter),
                 weeklyIntakeHistories.lastDay.format(formatter),
             )
+
+        binding.includeHistoryShimmer.root.visibility = View.GONE
     }
 
     private fun updateWeeklyChart(
@@ -367,7 +391,7 @@ class HistoryFragment :
         private const val DONUT_CHART_GRADIENT_STROKE: Float = 20f
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
 
-        private const val INTAKE_AMOUNT_EMPTY = 0
-        private const val ACHIEVEMENT_RATE_FULL = 100f
+        private const val INTAKE_AMOUNT_EMPTY: Int = 0
+        private const val ACHIEVEMENT_RATE_FULL: Float = 100f
     }
 }

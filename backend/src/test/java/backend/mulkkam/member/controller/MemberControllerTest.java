@@ -173,7 +173,7 @@ class MemberControllerTest {
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
-            String token = oauthJwtTokenHandler.createToken1(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             CreateMemberRequest createMemberRequest = new CreateMemberRequest(
                     "히로",
@@ -205,7 +205,7 @@ class MemberControllerTest {
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
-            String token = oauthJwtTokenHandler.createToken1(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             CreateMemberRequest createMemberRequest = new CreateMemberRequest(
                     "히로",
@@ -247,7 +247,7 @@ class MemberControllerTest {
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
-            String token = oauthJwtTokenHandler.createToken1(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             // when
             OnboardingStatusResponse response = RestAssured.given().log().all()

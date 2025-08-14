@@ -26,7 +26,10 @@ spring:
 security:
   jwt:
     secret-key: ${JWT_SECRET}
-    expire-length: ${ACCESS_TOKEN_EXPIRE}
+    access:
+      expire-length: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expire-length: ${REFRESH_TOKEN_EXPIRE}
 
 fcm:
   base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
@@ -51,8 +54,11 @@ management:
       jvm.memory.used: true
       jvm.memory.max: true
       jvm.gc.pause: true
-      jvm.threads.live: true
+      jvm.threads: true
       hikaricp: true
+      http.server: true
+      process.cpu: true
+
   cloudwatch:
     metrics:
       export:
