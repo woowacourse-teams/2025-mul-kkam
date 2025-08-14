@@ -89,7 +89,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
 
     private fun initObservers() {
         viewModel.targetAmountOnboardingUiState.observe(viewLifecycleOwner) { targetAmountInfoUiState ->
-            handleTargetAmountOnbaoardingUiState(targetAmountInfoUiState)
+            handleTargetAmountOnboardingUiState(targetAmountInfoUiState)
         }
 
         viewModel.targetAmountInput.observe(viewLifecycleOwner) { targetAmount ->
@@ -101,7 +101,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         }
     }
 
-    private fun handleTargetAmountOnbaoardingUiState(targetAmountInfoUiState: MulKkamUiState<TargetAmountOnboardingUiModel>) {
+    private fun handleTargetAmountOnboardingUiState(targetAmountInfoUiState: MulKkamUiState<TargetAmountOnboardingUiModel>) {
         when (targetAmountInfoUiState) {
             is MulKkamUiState.Success -> {
                 updateRecommendedTargetHighlight(
