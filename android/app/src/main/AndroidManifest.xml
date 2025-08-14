@@ -119,6 +119,10 @@
                     android:scheme="kakao${kakaoKey}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.settingnotification.SettingNotificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

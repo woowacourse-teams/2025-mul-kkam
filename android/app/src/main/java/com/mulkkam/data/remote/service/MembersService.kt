@@ -1,12 +1,15 @@
 package com.mulkkam.data.remote.service
 
+import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
 import com.mulkkam.data.remote.model.request.members.MembersRequest
+import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.members.MembersCheckOnboardingResponse
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.members.MembersResponse
+import com.mulkkam.data.remote.model.response.notification.NotificationAgreedResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -48,6 +51,19 @@ interface MembersService {
     suspend fun getMembersProgressInfo(
         @Query("date") date: String,
     ): Result<MembersProgressInfoResponse>
+
+    @PATCH("/members/notifications/night")
+    suspend fun patchMembersNotificationNight(
+        @Body nightNotificationAgreedRequest: NightNotificationAgreedRequest,
+    ): Result<Unit>
+
+    @PATCH("/members/notifications/marketing")
+    suspend fun patchMembersNotificationMarketing(
+        @Body marketingNotificationAgreedRequest: MarketingNotificationAgreedRequest,
+    ): Result<Unit>
+
+    @GET("/members/notifications/settings")
+    suspend fun getMembersNotificationSettings(): Result<NotificationAgreedResponse>
 
     @DELETE("/members")
     suspend fun deleteMembers(): Result<Unit>

@@ -3,6 +3,7 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -28,6 +29,12 @@ interface MembersRepository {
     suspend fun getMembersCheckOnboarding(): MulKkamResult<UserAuthState>
 
     suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo>
+
+    suspend fun patchMembersNotificationNight(isNightNotificationAgreed: Boolean): MulKkamResult<Unit>
+
+    suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit>
+
+    suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo>
 
     suspend fun deleteMembers(): MulKkamResult<Unit>
 }
