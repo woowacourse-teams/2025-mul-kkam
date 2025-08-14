@@ -53,10 +53,13 @@ class SettingFragment :
         when (type) {
             SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
             SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
+            SettingType.Normal.UserInfo -> {}
             SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.Notification -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.Normal.SystemNotification -> navigateToNotificationSetting()
+            SettingType.Normal.Feedback -> {}
+            SettingType.Normal.ServiceOperationPolicy -> {}
         }
     }
 
@@ -82,6 +85,7 @@ class SettingFragment :
                 SettingItem.TitleItem(getString(R.string.setting_section_account)),
                 SettingItem.NormalItem(getString(R.string.setting_nickname_edit_nickname_label), SettingType.Normal.Nickname),
                 SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
+                SettingItem.NormalItem(getString(R.string.setting_user_info), SettingType.Normal.UserInfo),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
                 SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.Normal.MyCup),
@@ -89,7 +93,11 @@ class SettingFragment :
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_push_notification), SettingType.Normal.Notification),
-                SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.SystemNotification),
+                SettingItem.DividerItem,
+                SettingItem.TitleItem(getString(R.string.setting_customer_service_center)),
+                SettingItem.NormalItem(getString(R.string.setting_feedback), SettingType.Normal.Feedback),
+                SettingItem.NormalItem(getString(R.string.setting_service_operation_policy), SettingType.Normal.ServiceOperationPolicy),
+//                SettingItem.NormalItem(getString(R.string.setting_item_notification), SettingType.Normal.SystemNotification),
 //                SettingItem.SwitchItem(getString(R.string.setting_item_marketing), false, SettingType.Switch.Marketing),
 //                SettingItem.SwitchItem(getString(R.string.setting_item_night), false, SettingType.Switch.Night),
             )

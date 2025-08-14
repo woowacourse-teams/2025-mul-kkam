@@ -1,11 +1,17 @@
-package com.mulkkam.ui.setting.adapter
+package com.mulkkam.ui.settingnotification
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.viewbinding.ViewBinding
-import com.mulkkam.ui.settingnotification.SwitchViewHolder
+import com.mulkkam.ui.setting.adapter.DividerViewHolder
+import com.mulkkam.ui.setting.adapter.NormalViewHolder
+import com.mulkkam.ui.setting.adapter.SettingDiffCallback
+import com.mulkkam.ui.setting.adapter.SettingItem
+import com.mulkkam.ui.setting.adapter.SettingViewHolder
+import com.mulkkam.ui.setting.adapter.SettingViewType
+import com.mulkkam.ui.setting.adapter.TitleViewHolder
 
-class SettingAdapter(
+class SettingNotificationAdapter(
     private val handler: Handler,
 ) : ListAdapter<SettingItem, SettingViewHolder<out SettingItem, out ViewBinding>>(SettingDiffCallback) {
     override fun onCreateViewHolder(

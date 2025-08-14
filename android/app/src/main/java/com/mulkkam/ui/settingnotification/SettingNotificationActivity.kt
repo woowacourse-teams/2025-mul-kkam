@@ -5,42 +5,57 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import androidx.core.net.toUri
+import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNotificationBinding
+import com.mulkkam.ui.setting.adapter.SettingAdapter
+import com.mulkkam.ui.setting.adapter.SettingItem
+import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
-class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationBinding>(ActivitySettingNotificationBinding::inflate) {
+class SettingNotificationActivity :
+    BindingActivity<ActivitySettingNotificationBinding>(
+        ActivitySettingNotificationBinding::inflate,
+    ) {
+    private val settingAdapter by lazy { handleSettingClick() }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        initClickListeners()
+        binding.rvSettingNotification.adapter = settingAdapter
+        binding.ivBack.setSingleClickListener { finish() }
+
+        initSettingItems()
     }
 
-    private fun initClickListeners() =
-        with(binding) {
-            // 뒤로가기
-            ivBack.setSingleClickListener { finish() }
+    private fun handleSettingClick() =
+        SettingAdapter(
+            object : SettingAdapter.Handler {
+                override fun onSettingNormalClick(item: SettingItem.NormalItem) {
+                    when (item.type) {
+                        SettingType.Normal.SystemNotification -> navigateToNotificationSetting()
+                        else -> {}
+                    }
+                }
 
-            // 시스템 알림 설정 이동
-            tvSystemNotification.setSingleClickListener {
-                navigateToSystemNotificationSetting()
-            }
+                override fun onSettingSwitchChanged(
+                    item: SettingItem.SwitchItem,
+                    isChecked: Boolean,
+                ) {
+                    when (item.type) {
+                        SettingType.Switch.Marketing -> {
+                            // TODO: 마케팅 허용 상태 ViewModel에 전달 or 서버로 전송
+                        }
 
-            // 마케팅 수신 허용 스위치
-            switchMarketing.setOnCheckedChangeListener { _, isChecked ->
-                saveMarketingPermission(isChecked)
-            }
+                        SettingType.Switch.Night -> {
+                            // TODO: 야간 알림 허용 상태 ViewModel에 전달 or 서버로 전송
+                        }
+                    }
+                }
+            },
+        )
 
-            // 야간 알림 허용 스위치
-            switchNight.setOnCheckedChangeListener { _, isChecked ->
-                saveNightPermission(isChecked)
-            }
-        }
-
-    /**
-     * OS 시스템 알림 설정 화면으로 이동
-     */
-    private fun navigateToSystemNotificationSetting() {
+    private fun navigateToNotificationSetting() {
         runCatching {
             val intent =
                 Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
@@ -56,12 +71,25 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
         }
     }
 
-    private fun saveMarketingPermission(allowed: Boolean) {
-        // TODO: 저장 로직 구현
-    }
-
-    private fun saveNightPermission(allowed: Boolean) {
-        // TODO: 저장 로직 구현
+    private fun initSettingItems() {
+        val items =
+            listOf(
+                SettingItem.SwitchItem(
+                    getString(R.string.setting_item_marketing),
+                    false,
+                    SettingType.Switch.Marketing,
+                ),
+                SettingItem.SwitchItem(
+                    getString(R.string.setting_item_night),
+                    false,
+                    SettingType.Switch.Night,
+                ),
+                SettingItem.NormalItem(
+                    getString(R.string.setting_item_notification),
+                    SettingType.Normal.SystemNotification,
+                ),
+            )
+        settingAdapter.submitList(items)
     }
 
     companion object {

@@ -13,6 +13,12 @@ sealed interface SettingType {
         data object Notification : Normal
 
         data object SystemNotification : Normal
+
+        data object Feedback : Normal
+
+        data object ServiceOperationPolicy : Normal
+
+        data object UserInfo : Normal
     }
 
     sealed interface Switch : SettingType {

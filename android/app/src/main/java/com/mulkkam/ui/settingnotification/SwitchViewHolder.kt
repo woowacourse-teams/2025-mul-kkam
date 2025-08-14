@@ -1,8 +1,10 @@
-package com.mulkkam.ui.setting.adapter
+package com.mulkkam.ui.settingnotification
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mulkkam.databinding.ItemSettingSwitchBinding
+import com.mulkkam.ui.setting.adapter.SettingItem
+import com.mulkkam.ui.setting.adapter.SettingViewHolder
 
 class SwitchViewHolder private constructor(
     binding: ItemSettingSwitchBinding,

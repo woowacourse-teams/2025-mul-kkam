@@ -79,13 +79,16 @@
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
     <string name="setting_section_notification">알림 설정</string>
-
-    <string name="setting_push_notification">푸쉬 알림 설정</string>
+    <string name="setting_customer_service_center">고객센터</string>
 
     <string name="setting_item_body_info">신체 정보 설정</string>
+    <string name="setting_user_info">회원 정보 설정</string>>
+    <string name="setting_push_notification">푸쉬 알림 설정</string>
     <string name="setting_item_notification">시스템 알림 설정</string>
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>
+    <string name="setting_feedback">피드백 및 문의</string>
+    <string name="setting_service_operation_policy">서비스 운영 정책</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 
