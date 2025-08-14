@@ -9,7 +9,10 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
+import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
@@ -61,10 +64,12 @@ class SettingCupFragment :
 
             nicknameValidity.observe(viewLifecycleOwner) { nicknameValidity ->
                 applyFieldColor(nicknameValidity, true)
+                showNicknameValidationMessage(nicknameValidity)
             }
 
             amountValidity.observe(viewLifecycleOwner) { amountValidity ->
                 applyFieldColor(amountValidity, false)
+                showAmountValidationMessage(amountValidity)
             }
 
             isSaveEnabled.observe(viewLifecycleOwner) { enabled ->
@@ -100,6 +105,68 @@ class SettingCupFragment :
             binding.etNickname.foregroundTintList = ColorStateList.valueOf(color)
         } else {
             binding.etAmount.foregroundTintList = ColorStateList.valueOf(color)
+        }
+    }
+
+    private fun showNicknameValidationMessage(state: MulKkamUiState<Unit>) {
+        when (state) {
+            is MulKkamUiState.Success,
+            is MulKkamUiState.Idle,
+            -> {
+                binding.tvNicknameValidationMessage.text = ""
+                binding.tvNicknameValidationMessage.visibility = View.GONE
+            }
+
+            is MulKkamUiState.Failure -> {
+                val message =
+                    when (state.error) {
+                        is MulKkamError.SettingCupsError.InvalidNicknameLength ->
+                            getString(
+                                R.string.nickname_invalid_length,
+                                CupName.CUP_NAME_LENGTH_MIN,
+                                CupName.CUP_NAME_LENGTH_MAX,
+                            )
+
+                        is MulKkamError.SettingCupsError.InvalidNicknameCharacters ->
+                            getString(R.string.nickname_invalid_characters)
+
+                        else -> ""
+                    }
+                if (message.isBlank()) {
+                    binding.tvNicknameValidationMessage.text = ""
+                    binding.tvNicknameValidationMessage.visibility = View.GONE
+                } else {
+                    binding.tvNicknameValidationMessage.text = message
+                    binding.tvNicknameValidationMessage.visibility = View.VISIBLE
+                }
+            }
+
+            is MulKkamUiState.Loading -> Unit
+        }
+    }
+
+    private fun showAmountValidationMessage(state: MulKkamUiState<Unit>) {
+        when (state) {
+            is MulKkamUiState.Success,
+            is MulKkamUiState.Idle,
+            -> {
+                binding.tvAmountValidationMessage.text = ""
+                binding.tvAmountValidationMessage.visibility = View.GONE
+            }
+
+            is MulKkamUiState.Failure -> {
+                val error = state.error
+                if (error is MulKkamError.SettingCupsError.InvalidAmount) {
+                    val msg = "용량은 ${CupCapacity.MIN_ML}ml 이상, ${CupCapacity.MAX_ML}ml 이하로 설정해 주세요"
+                    binding.tvAmountValidationMessage.text = msg
+                    binding.tvAmountValidationMessage.visibility = View.VISIBLE
+                } else {
+                    binding.tvAmountValidationMessage.text = ""
+                    binding.tvAmountValidationMessage.visibility = View.GONE
+                }
+            }
+
+            is MulKkamUiState.Loading -> Unit
         }
     }
 

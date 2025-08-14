@@ -8,10 +8,10 @@ value class CupName(
 ) {
     init {
         check(value.trim().length in CUP_NAME_LENGTH_MIN..CUP_NAME_LENGTH_MAX) {
-            throw MulKkamError.SettingCupsError.InvalidNickname
+            throw MulKkamError.SettingCupsError.InvalidNicknameLength
         }
         check(value.trim().all { it.isLetterOrDigit() }) {
-            throw MulKkamError.SettingCupsError.InvalidNickname
+            throw MulKkamError.SettingCupsError.InvalidNicknameCharacters
         }
     }
 

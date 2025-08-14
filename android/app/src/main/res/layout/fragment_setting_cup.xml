@@ -74,6 +74,20 @@
         app:layout_constraintTop_toBottomOf="@id/tv_nickname" />
 
     <TextView
+        android:id="@+id/tv_nickname_validation_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/label1"
+        android:textColor="@color/secondary_200"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_nickname"
+        app:layout_constraintTop_toBottomOf="@id/et_nickname"
+        tools:text="@string/setting_nickname_warning_duplicated_nickname"
+        tools:visibility="visible" />
+
+    <TextView
         android:id="@+id/tv_intake_type"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +97,7 @@
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_nickname" />
+        app:layout_constraintTop_toBottomOf="@id/tv_nickname_validation_message" />
 
     <com.mulkkam.ui.custom.chip.MulKkamChipGroup
         android:id="@+id/mcg_intake_type"
@@ -128,6 +142,20 @@
         app:layout_constraintTop_toBottomOf="@id/tv_amount" />
 
     <TextView
+        android:id="@+id/tv_amount_validation_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/label1"
+        android:textColor="@color/secondary_200"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_amount"
+        app:layout_constraintTop_toBottomOf="@id/et_amount"
+        tools:text="@string/setting_nickname_warning_duplicated_nickname"
+        tools:visibility="visible" />
+
+    <TextView
         android:id="@+id/tv_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -155,7 +183,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_amount"
+        app:layout_constraintTop_toBottomOf="@id/tv_amount_validation_message"
         app:layout_constraintVertical_bias="0.478" />
 
     <TextView
