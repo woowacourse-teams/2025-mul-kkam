@@ -11,7 +11,7 @@ sealed class SettingItem(
 
     data class NormalItem(
         val label: String,
-        val type: SettingType.Normal,
+        val type: SettingType,
     ) : SettingItem(SettingViewType.NORMAL)
 
     data object DividerItem : SettingItem(SettingViewType.DIVIDER)
