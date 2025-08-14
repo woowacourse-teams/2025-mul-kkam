@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo
+package com.mulkkam.ui.settingaccountinfo.dialog
 
 import android.graphics.Color
 import android.os.Bundle
@@ -11,6 +11,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentAccountDeleteDialogBinding
+import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
 import com.mulkkam.ui.util.binding.BindingDialogFragment
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener

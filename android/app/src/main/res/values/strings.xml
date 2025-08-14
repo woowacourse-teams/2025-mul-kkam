@@ -94,6 +94,7 @@
     <string name="setting_account_info_delete_comment">물깜 회원을 탈퇴하겠습니다</string>
     <string name="setting_account_info_delete_confirm">확인</string>
     <string name="setting_account_info_delete_cancel">취소</string>
+    <string name="setting_account_info_delete_success">회원 탈퇴가 완료되었습니다</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 
