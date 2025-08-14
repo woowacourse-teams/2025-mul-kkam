@@ -33,7 +33,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.security.Key;
 import java.util.Date;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TOKEN;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_ALREADY_USED;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_IS_EXPIRED;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -150,7 +151,7 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_IS_EXPIRED.name());
         }
 
         @DisplayName("이미 사용된 리프레시 토큰으로는 재발급 받을 수 없다.")
@@ -177,7 +178,7 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_ALREADY_USED.name());
         }
 
         @DisplayName("리프레시 토큰이 만료된 경우 재발급을 받을 수 없다.")
@@ -203,7 +204,7 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_IS_EXPIRED.name());
         }
 
         @DisplayName("존재하지 않는 회원 정보가 담긴 토큰으로는 재발급할 수 없다.")
