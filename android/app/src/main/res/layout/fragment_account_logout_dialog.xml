@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="로그아웃을 진행하겠어요?"
+        android:text="@string/setting_account_info_logout_label"
         android:textAppearance="@style/title1"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
@@ -40,14 +40,15 @@
         android:backgroundTint="@color/primary_100"
         android:gravity="center"
         android:paddingVertical="10dp"
-        android:text="@string/history_delete_confirm"
+        android:text="@string/setting_account_info_confirm"
         android:textAppearance="@style/body4"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/tv_logout_cancel"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_logout_confirm_label" />
+        app:layout_constraintTop_toBottomOf="@id/tv_logout_confirm_label"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/tv_logout_cancel"
@@ -58,7 +59,7 @@
         android:background="@drawable/bg_common_rectangle_8dp"
         android:gravity="center"
         android:paddingVertical="10dp"
-        android:text="@string/history_delete_cancel"
+        android:text="@string/setting_account_info_cancel"
         android:textAppearance="@style/body4"
         android:textColor="@color/gray_400"
         app:layout_constraintBottom_toBottomOf="@id/tv_logout_confirm"

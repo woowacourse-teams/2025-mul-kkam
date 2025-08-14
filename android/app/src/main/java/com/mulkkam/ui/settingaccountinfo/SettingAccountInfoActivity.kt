@@ -60,7 +60,7 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         }
 
         viewModel.onLogout.observe(this) {
-            Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, R.string.setting_account_info_logout_success, Toast.LENGTH_SHORT).show()
             moveToLogin()
         }
     }

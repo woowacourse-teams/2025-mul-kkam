@@ -92,9 +92,11 @@
     <string name="setting_account_info_delete_description">삭제된 기록은 복구되지 않습니다.\n정말로 탈퇴를 진행하시려면\n아래 문구를 그대로 입력해주세요.</string>
     <string name="setting_account_info_delete_description_highlight">삭제된 기록은 복구되지 않습니다.</string>
     <string name="setting_account_info_delete_comment">물깜 회원을 탈퇴하겠습니다</string>
-    <string name="setting_account_info_delete_confirm">확인</string>
-    <string name="setting_account_info_delete_cancel">취소</string>
     <string name="setting_account_info_delete_success">회원 탈퇴가 완료되었습니다</string>
+    <string name="setting_account_info_logout_label">로그아웃을 진행하겠어요?</string>
+    <string name="setting_account_info_logout_success">로그아웃 되었습니다</string>
+    <string name="setting_account_info_confirm">확인</string>
+    <string name="setting_account_info_cancel">취소</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 
