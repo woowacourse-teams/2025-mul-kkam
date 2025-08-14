@@ -65,8 +65,8 @@ class HomeFragment :
     private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
         when (todayProgressInfoMulKkamUiState) {
             is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
-            MulKkamUiState.Loading -> Unit
-            MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
                     .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
@@ -138,8 +138,8 @@ class HomeFragment :
     private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
         when (cupsUiState) {
             is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
     }
@@ -218,8 +218,8 @@ class HomeFragment :
     private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Int>) {
         when (alarmCountUiState) {
             is MulKkamUiState.Success<Int> -> showAlarmCount(alarmCountUiState.data)
-            MulKkamUiState.Idle -> showAlarmCount(ALARM_COUNT_MIN)
-            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> showAlarmCount(ALARM_COUNT_MIN)
+            is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
     }
@@ -239,6 +239,9 @@ class HomeFragment :
                     }.show()
             }
 
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
+
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
                     .make(binding.root, getString(R.string.manual_drink_network_error), R.drawable.ic_alert_circle)
@@ -246,9 +249,6 @@ class HomeFragment :
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
-
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
         }
     }
 
