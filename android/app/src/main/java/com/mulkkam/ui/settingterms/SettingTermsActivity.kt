@@ -13,6 +13,7 @@ import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.openTermsLink
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingTermsActivity : BindingActivity<ActivitySettingTermsBinding>(ActivitySettingTermsBinding::inflate) {
     private val viewModel: SettingTermsViewModel by viewModels()
@@ -47,6 +48,7 @@ class SettingTermsActivity : BindingActivity<ActivitySettingTermsBinding>(Activi
 
         initAdapter()
         initObservers()
+        initClickListeners()
     }
 
     private fun initAdapter() {
@@ -56,6 +58,12 @@ class SettingTermsActivity : BindingActivity<ActivitySettingTermsBinding>(Activi
     private fun initObservers() {
         viewModel.terms.observe(this) {
             termsAdapter.submitList(it)
+        }
+    }
+
+    private fun initClickListeners() {
+        binding.ivBack.setSingleClickListener {
+            finish()
         }
     }
 

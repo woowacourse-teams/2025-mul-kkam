@@ -37,6 +37,10 @@ class SettingFeedbackActivity : BindingActivity<ActivitySettingFeedbackBinding>(
                 )
             startActivity(intent)
         }
+
+        binding.ivBack.setSingleClickListener {
+            finish()
+        }
     }
 
     companion object {
