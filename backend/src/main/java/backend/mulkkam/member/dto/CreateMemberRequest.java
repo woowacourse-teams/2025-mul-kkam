@@ -1,6 +1,6 @@
 package backend.mulkkam.member.dto;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "온보딩 정보 생성 요청")
 public record CreateMemberRequest(
+
         @Schema(description = "닉네임", example = "밍곰", minLength = 2, maxLength = 10)
         String memberNickname,
 
@@ -31,7 +32,7 @@ public record CreateMemberRequest(
         return new Member(
                 new MemberNickname(memberNickname),
                 new PhysicalAttributes(gender, weight),
-                new Amount(targetIntakeAmount),
+                new TargetAmount(targetIntakeAmount),
                 isMarketingNotificationAgreed,
                 isMarketingNotificationAgreed
         );

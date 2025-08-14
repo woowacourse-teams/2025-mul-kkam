@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -35,7 +35,7 @@ public class IntakeHistory {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
 
     @Column(nullable = false)
     private int streak;
@@ -43,7 +43,7 @@ public class IntakeHistory {
     public IntakeHistory(
             Member member,
             LocalDate historyDate,
-            Amount targetAmount,
+            TargetAmount targetAmount,
             int streak
     ) {
         this.member = member;
@@ -60,7 +60,7 @@ public class IntakeHistory {
         return this.historyDate.equals(comparedDate);
     }
 
-    public void modifyTargetAmount(Amount targetAmount) {
+    public void modifyTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
     }
 

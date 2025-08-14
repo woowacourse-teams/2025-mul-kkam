@@ -5,42 +5,44 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.ui.model.AppAuthState
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.UserAuthState
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val _authState = MutableLiveData<AppAuthState>()
-    val authState: LiveData<AppAuthState> = _authState
+    private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> =
+        MutableLiveData<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
+    val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
 
     fun loginWithKakao(token: String) {
-        viewModelScope
-            .launch {
-                runCatching {
-                    RepositoryInjection.authRepository.postAuthKakao(token).getOrError()
-                }.onSuccess { tokens ->
-                    val accessToken = tokens.accessToken
-                    val refreshToken = tokens.refreshToken
-                    RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
-                    RepositoryInjection.tokenRepository.saveRefreshToken(refreshToken)
-                }.onFailure {
-                    // TODO: 에러 처리
-                }
+        viewModelScope.launch {
+            runCatching {
+                _authUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.authRepository.postAuthKakao(token).getOrError()
+            }.onSuccess { tokens ->
+                val accessToken = tokens.accessToken
+                val refreshToken = tokens.refreshToken
+
+                RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
+                RepositoryInjection.tokenRepository.saveRefreshToken(refreshToken)
 
                 updateAuthStateWithOnboarding()
+            }.onFailure {
+                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
+        }
     }
 
-    suspend fun updateAuthStateWithOnboarding() {
-        val result = RepositoryInjection.membersRepository.getMembersCheckOnboarding()
-        runCatching {
-            val hasCompletedOnboarding = result.getOrError()
-            _authState.value =
-                when {
-                    hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
-                    else -> AppAuthState.UNONBOARDED
-                }
-        }.onFailure {
-            // TODO: 에러 처리
+    private fun updateAuthStateWithOnboarding() {
+        viewModelScope.launch {
+            runCatching {
+                RepositoryInjection.membersRepository.getMembersCheckOnboarding().getOrError()
+            }.onSuccess { userAuthState ->
+                _authUiState.value = MulKkamUiState.Success(userAuthState)
+            }.onFailure {
+                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
         }
     }
 }

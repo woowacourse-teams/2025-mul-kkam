@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.service;
 
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -9,7 +9,6 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
@@ -20,19 +19,19 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDate;
-import java.util.Optional;
-
-class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
+class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private IntakeAmountService intakeAmountService;
@@ -56,7 +55,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(originTargetAmount))
+                    .targetAmount(new TargetAmount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -71,7 +70,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Optional<Member> foundMember = memberRepository.findById(member.getId());
             assertSoftly(softly -> {
                 softly.assertThat(foundMember).isPresent();
-                softly.assertThat(foundMember.get().getTargetAmount()).isEqualTo(new Amount(newTargetAmount));
+                softly.assertThat(foundMember.get().getTargetAmount()).isEqualTo(new TargetAmount(newTargetAmount));
             });
         }
 
@@ -81,7 +80,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(originTargetAmount))
+                    .targetAmount(new TargetAmount(originTargetAmount))
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -93,7 +92,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             assertThatThrownBy(
                     () -> intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_AMOUNT.name());
+                    .hasMessage(INVALID_TARGET_AMOUNT.name());
         }
 
         @DisplayName("스냅샷이 저장된다")
@@ -102,7 +101,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(originTargetAmount))
+                    .targetAmount(new TargetAmount(originTargetAmount))
                     .build();
             memberRepository.save(member);
 
@@ -126,7 +125,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int memberTargetAmount = 1_500;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new Amount(memberTargetAmount))
+                    .targetAmount(new TargetAmount(memberTargetAmount))
                     .build();
 
             memberRepository.save(member);
@@ -162,13 +161,13 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new Amount(1500))
+                    .targetAmount(new TargetAmount(1500))
                     .build();
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .date(LocalDate.now())
-                    .targetIntakeAmount(new Amount(1500))
+                    .targetIntakeAmount(new TargetAmount(1500))
                     .build();
 
             intakeHistoryRepository.save(intakeHistory);
@@ -237,7 +236,7 @@ class IntakeAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int expected = 1_000;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new Amount(expected))
+                    .targetAmount(new TargetAmount(expected))
                     .build();
             Member savedMember = memberRepository.save(member);
 

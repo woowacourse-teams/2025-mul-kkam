@@ -7,6 +7,7 @@ import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.infrastructure.KakaoRestClient;
+import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
@@ -14,6 +15,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,7 +33,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.security.Key;
 import java.util.Date;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TOKEN;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_ALREADY_USED;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_IS_EXPIRED;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -59,12 +62,45 @@ class AuthControllerTest {
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
 
+    @Autowired
+    private AccountRefreshTokenRepository accountRefreshTokenRepository;
+
     @MockitoBean
     private KakaoRestClient kakaoRestClient;
 
     @BeforeEach
     void setup() {
         when(kakaoRestClient.getUserInfo(oauthAccessToken)).thenReturn(userInfo);
+    }
+
+    @DisplayName("로그아웃 요청에서")
+    @Nested
+    class Logout {
+
+        @DisplayName("올바른 액세스 토큰을 가진 유저는 정상적으로 로그아웃 할 수 있다.")
+        @Test
+        void success_validAccessToken() throws Exception {
+            // given
+            OauthLoginResponse loginResponse = doLogin();
+            OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
+                    .orElseThrow();
+
+            // when
+            mockMvc.perform(post("/auth/logout")
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
+                    .andExpect(status().isNoContent());
+
+            // then
+            assertThat(accountRefreshTokenRepository.findByAccount(account)).isEmpty();
+        }
+
+        @DisplayName("액세스 토큰이 존재하지 않는 경우 401 에러가 발생한다.")
+        @Test
+        void error_notExistAccessToken() throws Exception {
+            // when & then
+            mockMvc.perform(post("/auth/logout"))
+                    .andExpect(status().isUnauthorized());
+        }
     }
 
     @DisplayName("액세스 토큰 재발급 요청에서")
@@ -75,25 +111,14 @@ class AuthControllerTest {
         @Test
         void success_afterLogin() throws Exception {
             // given
-            KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
-            String loginRequestContent = objectMapper.writeValueAsString(loginRequest);
-
-            String content = mockMvc.perform(post("/auth/kakao")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(loginRequestContent))
-                    .andExpect(status().isOk())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
-            OauthLoginResponse loginResponse = objectMapper.readValue(content, OauthLoginResponse.class);
+            OauthLoginResponse loginResponse = doLogin();
 
             // when
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
-            String requestContent = objectMapper.writeValueAsString(request);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestContent))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk())
                     .andReturn()
                     .getResponse()
@@ -115,11 +140,10 @@ class AuthControllerTest {
 
             // when
             ReissueTokenRequest request = new ReissueTokenRequest(invalidToken);
-            String requestContent = objectMapper.writeValueAsString(request);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(requestContent))
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().is4xxClientError())
                     .andReturn()
                     .getResponse()
@@ -127,24 +151,14 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_IS_EXPIRED.name());
         }
 
         @DisplayName("이미 사용된 리프레시 토큰으로는 재발급 받을 수 없다.")
         @Test
         void error_usedRefreshToken() throws Exception {
             // given
-            KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
-            String loginRequestContent = objectMapper.writeValueAsString(loginRequest);
-
-            String content = mockMvc.perform(post("/auth/kakao")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(loginRequestContent))
-                    .andExpect(status().isOk())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
-            OauthLoginResponse loginResponse = objectMapper.readValue(content, OauthLoginResponse.class);
+            OauthLoginResponse loginResponse = doLogin();
 
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
 
@@ -164,19 +178,14 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_ALREADY_USED.name());
         }
 
         @DisplayName("리프레시 토큰이 만료된 경우 재발급을 받을 수 없다.")
         @Test
         void error_expiredRefreshToken() throws Exception {
             // given
-            KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
-
-            mockMvc.perform(post("/auth/kakao")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(loginRequest)))
-                    .andExpect(status().isOk());
+            doLogin();
 
             OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId()).orElseThrow();
             String expiredRefreshToken = generateExpiredRefreshToken(account);
@@ -195,7 +204,7 @@ class AuthControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(INVALID_TOKEN.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_IS_EXPIRED.name());
         }
 
         @DisplayName("존재하지 않는 회원 정보가 담긴 토큰으로는 재발급할 수 없다.")
@@ -222,6 +231,19 @@ class AuthControllerTest {
             // then
             assertThat(response.getCode()).isEqualTo(UNAUTHORIZED.name());
         }
+    }
+
+    private OauthLoginResponse doLogin() throws Exception {
+        KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
+
+        String content = mockMvc.perform(post("/auth/kakao")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+        return objectMapper.readValue(content, OauthLoginResponse.class);
     }
 
     private String generateExpiredRefreshToken(OauthAccount account) {
