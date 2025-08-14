@@ -79,6 +79,9 @@
     <string name="setting_feedback_toolbar_title">피드백 및 문의</string>
 
     <string name="setting_terms_toolbar_title">서비스 운영 정책</string>
+    <string name="setting_terms_agree_service">서비스 이용 약관</string>
+    <string name="setting_terms_agree_privacy">개인정보 수집 및 이용 약관</string>
+    <string name="setting_terms_agree_health_connect">헬스 커넥트 약관</string>
 
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>

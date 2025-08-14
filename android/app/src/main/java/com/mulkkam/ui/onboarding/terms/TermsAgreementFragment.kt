@@ -13,7 +13,7 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
+import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementAdapter
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementViewHolder.TermsAgreementHandler
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
@@ -21,15 +21,15 @@ import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
-class TermsFragment :
+class TermsAgreementFragment :
     BindingFragment<FragmentTermsBinding>(
         FragmentTermsBinding::inflate,
     ) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
-    private val viewModel: TermsViewModel by viewModels()
+    private val viewModel: TermsAgreementViewModel by viewModels()
 
-    private val termsAdapter: TermsAdapter by lazy {
-        TermsAdapter(termsHandler)
+    private val termsAdapter: TermsAgreementAdapter by lazy {
+        TermsAgreementAdapter(termsHandler)
     }
 
     private val requestPermissionsLauncher =

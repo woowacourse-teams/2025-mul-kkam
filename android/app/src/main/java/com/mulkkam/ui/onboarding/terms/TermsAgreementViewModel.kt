@@ -8,7 +8,7 @@ import com.mulkkam.R
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 
-class TermsViewModel : ViewModel() {
+class TermsAgreementViewModel : ViewModel() {
     private val _termsAgreements = MutableLiveData<List<TermsAgreementUiModel>>()
     val termsAgreements: LiveData<List<TermsAgreementUiModel>> get() = _termsAgreements
 
