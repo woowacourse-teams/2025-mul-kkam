@@ -1,10 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
-
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -21,14 +17,19 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -43,53 +44,47 @@ public class IntakeHistoryService {
     @Transactional
     public CreateIntakeHistoryResponse create(
             IntakeDetailCreateRequest intakeDetailCreateRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
-        LocalDateTime intakeDateTime = intakeDetailCreateRequest.dateTime();
-        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
-                        intakeDateTime.toLocalDate()
-                )
+        LocalDate intakeDate = intakeDetailCreateRequest.dateTime().toLocalDate();
+        Member member = getMember(memberDetails.id());
+
+        IntakeHistory intakeHistory = findIntakeHistory(member, intakeDate);
+        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
+        intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
+
+        if (intakeHistoryDetails.isEmpty()) {
+            return new CreateIntakeHistoryResponse(0, CommentOfAchievementRate.VERY_LOW.getComment());
+        }
+
+        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
+
+        return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
+    }
+
+    private IntakeHistory findIntakeHistory(Member member, LocalDate intakeDate) {
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
                 .orElseGet(() -> {
-                    int streak = findStreak(member, intakeDetailCreateRequest.dateTime().toLocalDate());
+                    int streak = findStreak(member, intakeDate);
                     IntakeHistory newIntakeHistory = new IntakeHistory(
                             member,
-                            intakeDateTime.toLocalDate(),
+                            intakeDate,
                             member.getTargetAmount(),
                             streak
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
-        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
-        intakeHistoryDetailRepository.save(intakeHistoryDetail);
-
-        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(
-                intakeDetailCreateRequest.dateTime().toLocalDate(),
-                member
-        );
-
-        if (intakeHistoryDetails.isEmpty()) {
-            return new CreateIntakeHistoryResponse(
-                    0,
-                    CommentOfAchievementRate.VERY_LOW.getComment()
-            );
-        }
-        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
-        AchievementRate achievementRate = new AchievementRate(
-                totalIntakeAmount,
-                intakeHistory.getTargetAmount()
-        );
-        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
-
-        return new CreateIntakeHistoryResponse(
-                achievementRate.value(),
-                commentByAchievementRate
-        );
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
                 member,
@@ -113,10 +108,10 @@ public class IntakeHistoryService {
     @Transactional
     public void deleteDetailHistory(
             Long intakeHistoryDetailId,
-            Member member
+            MemberDetails memberDetails
     ) {
-        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
-                intakeHistoryDetailId);
+        Member member = getMember(memberDetails.id());
+        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(intakeHistoryDetailId);
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
@@ -164,9 +159,9 @@ public class IntakeHistoryService {
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
-        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
-                member, todayDate.minusDays(1));
-        return yesterdayIntakeHistory.map(intakeHistory -> intakeHistory.getStreak() + 1).orElse(1);
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, todayDate.minusDays(1))
+                .map(intakeHistory -> intakeHistory.getStreak() + 1)
+                .orElse(1);
     }
 
     private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
@@ -220,12 +215,13 @@ public class IntakeHistoryService {
         if (date.equals(LocalDate.now())) {
             return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
         }
-        Optional<Integer> targetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate
-                (
-                        member.getId(),
-                        date
-                );
-        return targetAmount.map(integer -> new IntakeHistorySummaryResponse(date, integer))
+        return targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(member.getId(), date)
+                .map(value -> new IntakeHistorySummaryResponse(date, value))
                 .orElseGet(() -> new IntakeHistorySummaryResponse(date));
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

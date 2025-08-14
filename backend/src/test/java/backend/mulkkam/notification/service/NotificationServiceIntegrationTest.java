@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -83,7 +84,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -111,7 +112,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -133,7 +134,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(notifications.size());
@@ -165,7 +166,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
@@ -192,7 +193,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, savedMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
 
             // then
             assertThat(response.nextCursor()).isNull();
@@ -205,7 +206,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, savedMember))
+            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }

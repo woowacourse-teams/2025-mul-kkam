@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
@@ -63,7 +64,7 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup savedCup = CupFixtureBuilder
                     .withMember(member)
@@ -71,11 +72,12 @@ class CupServiceUnitTest {
                     .build();
 
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
             CupResponse cupResponse = cupService.create(
                     registerCupRequest,
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -95,12 +97,14 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
+
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member
+                    new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
@@ -119,11 +123,12 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member
+                    new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
@@ -139,7 +144,7 @@ class CupServiceUnitTest {
                     "WATER",
                     "emoji"
             );
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
@@ -162,11 +167,12 @@ class CupServiceUnitTest {
 
             // when
             when(cupRepository.countByMemberId(member.getId())).thenReturn(cups.size());
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
-                    member
+                    new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_COUNT.name());
@@ -181,7 +187,7 @@ class CupServiceUnitTest {
         @Test
         void success_withExistedMemberId() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
+            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
                     .withMember(member)
@@ -197,9 +203,10 @@ class CupServiceUnitTest {
             List<Cup> cups = List.of(cup2, cup1);
 
             when(cupRepository.findAllByMemberOrderByCupRankAsc(member)).thenReturn(cups);
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
-            CupsResponse cupsResponse = cupService.readSortedCupsByMember(member);
+            CupsResponse cupsResponse = cupService.readSortedCupsByMember(new MemberDetails(member));
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
@@ -243,9 +250,10 @@ class CupServiceUnitTest {
             // given
             when(cupRepository.findByIdAndMember(firstCup.getId(), member)).thenReturn(Optional.of(firstCup));
             when(cupRepository.findAllByMember(member)).thenReturn(List.of(secondCup, thirdCup));
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
-            cupService.delete(firstCup.getId(), member);
+            cupService.delete(firstCup.getId(), new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -260,9 +268,10 @@ class CupServiceUnitTest {
             // given
             when(cupRepository.findByIdAndMember(thirdCup.getId(), member)).thenReturn(Optional.of(thirdCup));
             when(cupRepository.findAllByMember(member)).thenReturn(List.of(firstCup, secondCup));
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
-            cupService.delete(thirdCup.getId(), member);
+            cupService.delete(thirdCup.getId(), new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -296,6 +305,7 @@ class CupServiceUnitTest {
                     .build();
 
             given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
@@ -312,7 +322,7 @@ class CupServiceUnitTest {
             // when
             cupService.update(
                     cup.getId(),
-                    member,
+                    new MemberDetails(member),
                     updateCupRequest
             );
 
@@ -356,6 +366,7 @@ class CupServiceUnitTest {
                     .buildWithId(2L);
 
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
@@ -372,7 +383,7 @@ class CupServiceUnitTest {
             // when
             cupService.update(
                     cup1.getId(),
-                    member,
+                    new MemberDetails(member),
                     updateCupRequest
             );
 
@@ -398,6 +409,7 @@ class CupServiceUnitTest {
                     .builder()
                     .memberNickname(new MemberNickname("멤버2"))
                     .buildWithId(2L);
+            when(memberRepository.findById(member2.getId())).thenReturn(Optional.of(member2));
 
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
@@ -423,7 +435,7 @@ class CupServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> cupService.update(
                     cup.getId(),
-                    member2,
+                    new MemberDetails(member2),
                     updateCupRequest
             ))
                     .isInstanceOf(CommonException.class)

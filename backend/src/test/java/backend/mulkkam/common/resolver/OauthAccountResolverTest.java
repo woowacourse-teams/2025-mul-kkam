@@ -3,6 +3,7 @@ package backend.mulkkam.common.resolver;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -53,7 +54,7 @@ class OauthAccountResolverTest {
             given(oauthAccountRepository.findById(oauthAccount.getId())).willReturn(Optional.of(oauthAccount));
 
             // when
-            OauthAccount result = oauthAccountResolver.resolveArgument(
+            OauthAccountDetails result = oauthAccountResolver.resolveArgument(
                     mock(MethodParameter.class),
                     mock(ModelAndViewContainer.class),
                     webRequest,
@@ -62,8 +63,8 @@ class OauthAccountResolverTest {
 
             // then
             assertSoftly(softAssertions -> {
-                assertThat(result).isInstanceOf(OauthAccount.class);
-                assertThat(result.getId()).isEqualTo(oauthAccountId);
+                assertThat(result).isInstanceOf(OauthAccountDetails.class);
+                assertThat(result.id()).isEqualTo(oauthAccountId);
             });
         }
     }

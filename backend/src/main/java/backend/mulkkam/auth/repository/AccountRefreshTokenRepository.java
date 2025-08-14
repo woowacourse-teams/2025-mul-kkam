@@ -9,5 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AccountRefreshTokenRepository extends JpaRepository<AccountRefreshToken, Long> {
 
     Optional<AccountRefreshToken> findByAccount(OauthAccount account);
-    void deleteByAccount(OauthAccount account);
+    void deleteByAccountId(Long accountId);
 }

@@ -7,6 +7,7 @@ import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.InvalidTokenException;
 import lombok.AllArgsConstructor;
@@ -26,8 +27,8 @@ public class AuthTokenService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
-    public void logout(OauthAccount account) {
-        accountRefreshTokenRepository.deleteByAccount(account);
+    public void logout(OauthAccountDetails accountDetails) {
+        accountRefreshTokenRepository.deleteByAccountId(accountDetails.id());
     }
 
     @Transactional

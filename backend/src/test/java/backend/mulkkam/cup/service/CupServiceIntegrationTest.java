@@ -1,14 +1,6 @@
 package backend.mulkkam.cup.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
@@ -28,12 +20,22 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -66,7 +68,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CreateCupRequest cupRegisterRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
 
             // when
-            CupResponse cupResponse = cupService.create(cupRegisterRequest, member);
+            CupResponse cupResponse = cupService.create(cupRegisterRequest, new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -91,12 +93,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             cupRepository.save(secondCup);
             cupRepository.save(thirdCup);
 
-            cupService.delete(thirdCup.getId(), member);
+            cupService.delete(thirdCup.getId(), new MemberDetails(member));
 
             CreateCupRequest request = new CreateCupRequest("new", 100, "WATER", "emoji");
 
             // when
-            cupService.create(request, member);
+            cupService.create(request, new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -115,7 +117,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, member)).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
 
@@ -128,7 +130,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, member)).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
 
@@ -142,12 +145,13 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CreateCupRequest registerCupRequest3 = new CreateCupRequest("스타벅스4", 500, "WATER", "emoji");
 
             // when
-            cupService.create(registerCupRequest1, member);
-            cupService.create(registerCupRequest2, member);
-            cupService.create(registerCupRequest3, member);
+            cupService.create(registerCupRequest1, new MemberDetails(member));
+            cupService.create(registerCupRequest2, new MemberDetails(member));
+            cupService.create(registerCupRequest3, new MemberDetails(member));
 
             // then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, member)).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_COUNT.name());
         }
     }
@@ -170,7 +174,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             cupRepository.saveAll(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readSortedCupsByMember(member);
+            CupsResponse cupsResponse = cupService.readSortedCupsByMember(new MemberDetails(member));
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
@@ -203,19 +207,27 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer beforeCupAmount = 500;
             IntakeType beforeIntakeType = IntakeType.WATER;
 
-            Cup cup = CupFixtureBuilder.withMember(member).cupAmount(new CupAmount(beforeCupAmount))
-                    .cupNickname(new CupNickname(beforeCupNickName)).intakeType(beforeIntakeType).build();
+            Cup cup = CupFixtureBuilder
+                    .withMember(member)
+                    .cupAmount(new CupAmount(beforeCupAmount))
+                    .cupNickname(new CupNickname(beforeCupNickName))
+                    .intakeType(beforeIntakeType)
+                    .build();
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
 
             Cup savedCup = cupRepository.save(cup);
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest(afterCupNickName, afterCupAmount, afterIntakeType,
-                    "emoji");
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest(
+                    afterCupNickName,
+                    afterCupAmount,
+                    afterIntakeType,
+                    "emoji"
+            );
 
             // when
-            cupService.update(savedCup.getId(), member, updateCupRequest);
+            cupService.update(savedCup.getId(), new MemberDetails(member), updateCupRequest);
 
             Cup changedCup = cupRepository.findById(savedCup.getId()).orElseThrow();
 
@@ -237,26 +249,38 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer beforeCupAmount1 = 300;
             IntakeType beforeIntakeType1 = IntakeType.WATER;
 
-            Cup cup1 = CupFixtureBuilder.withMember(member).cupNickname(new CupNickname(beforeCupNickName1))
-                    .cupAmount(new CupAmount(beforeCupAmount1)).intakeType(beforeIntakeType1).build();
+            Cup cup1 = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname(beforeCupNickName1))
+                    .cupAmount(new CupAmount(beforeCupAmount1)).
+                    intakeType(beforeIntakeType1)
+                    .build();
 
             String beforeCupNickName2 = "변경 전2";
             Integer beforeCupAmount2 = 500;
             IntakeType beforeIntakeType2 = IntakeType.WATER;
 
-            Cup cup2 = CupFixtureBuilder.withMember(member).cupNickname(new CupNickname(beforeCupNickName2))
-                    .cupAmount(new CupAmount(beforeCupAmount2)).intakeType(beforeIntakeType2).build();
+            Cup cup2 = CupFixtureBuilder
+                    .withMember(member)
+                    .cupNickname(new CupNickname(beforeCupNickName2))
+                    .cupAmount(new CupAmount(beforeCupAmount2))
+                    .intakeType(beforeIntakeType2)
+                    .build();
 
             cupRepository.saveAll(List.of(cup1, cup2));
 
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest(afterCupNickName, afterCupAmount, afterIntakeType,
-                    "emoji");
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest(
+                    afterCupNickName,
+                    afterCupAmount,
+                    afterIntakeType,
+                    "emoji"
+            );
 
             // when
-            cupService.update(cup1.getId(), member, updateCupRequest);
+            cupService.update(cup1.getId(), new MemberDetails(member), updateCupRequest);
 
             Cup changedCup1 = cupRepository.findById(cup1.getId()).orElseThrow();
             Cup changedCup2 = cupRepository.findById(cup2.getId()).orElseThrow();
@@ -294,7 +318,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     "emoji");
 
             // when & then
-            assertThatThrownBy(() -> cupService.update(cup.getId(), member2, updateCupRequest)).isInstanceOf(
+            assertThatThrownBy(() -> cupService.update(cup.getId(), new MemberDetails(member2), updateCupRequest))
+                    .isInstanceOf(
                     CommonException.class).hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }
@@ -320,7 +345,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withLowerPriorityCups() {
             // when
-            cupService.delete(firstCup.getId(), member);
+            cupService.delete(firstCup.getId(), new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -337,7 +362,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withoutLowerPriorityCups() {
             // when
-            cupService.delete(thirdCup.getId(), member);
+            cupService.delete(thirdCup.getId(), new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -380,7 +405,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertSoftly(softly -> {
-                softly.assertThatCode(() -> cupService.updateRanks(request, member)).doesNotThrowAnyException();
+                softly.assertThatCode(() -> cupService.updateRanks(request, new MemberDetails(member))).doesNotThrowAnyException();
                 softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank())
                         .isEqualTo(new CupRank(3));
                 softly.assertThat(cupRepository.findById(secondCup.getId()).get().getCupRank())
@@ -398,8 +423,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, member)).isInstanceOf(
-                    CommonException.class).hasMessage(NOT_FOUND_CUP.name());
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_CUP.name());
         }
 
         @DisplayName("중복되는 컵 id가 존재하는 경우 예외가 발생한다.")
@@ -410,8 +436,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, member)).isInstanceOf(
-                    CommonException.class).hasMessage(DUPLICATED_CUP.name());
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_CUP.name());
         }
 
         @DisplayName("중복되는 컵 우선순위가 존재하는 경우 예외가 발생한다.")
@@ -422,8 +449,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, member)).isInstanceOf(
-                    CommonException.class).hasMessage(DUPLICATED_CUP_RANKS.name());
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_CUP_RANKS.name());
         }
 
         @DisplayName("다른 멤버의 컵을 수정하려는 경우 예외가 발생한다.")
@@ -445,7 +473,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, other)).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(other)))
+                    .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }

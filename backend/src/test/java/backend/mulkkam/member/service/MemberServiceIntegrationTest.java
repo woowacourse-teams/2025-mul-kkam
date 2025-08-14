@@ -1,19 +1,12 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -45,15 +38,25 @@ import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -100,7 +103,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when
-            MemberResponse result = memberService.get(member);
+            MemberResponse result = memberService.get(new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -138,7 +141,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             memberService.modifyPhysicalAttributes(
                     physicalAttributesModifyRequest,
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -174,7 +177,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             memberService.modifyNickname(
                     memberNicknameModifyRequest,
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -198,7 +201,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatCode(() -> memberService.validateDuplicateNickname(
                     newNickname,
-                    member
+                    new MemberDetails(member)
             )).doesNotThrowAnyException();
         }
 
@@ -224,7 +227,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     newNickname,
-                    member1
+                    new MemberDetails(member1)
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
@@ -244,7 +247,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> memberService.validateDuplicateNickname(
                     nickname,
-                    member
+                    new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
@@ -267,7 +270,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             String expected = member.getMemberNickname().value();
 
             // when
-            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member);
+            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(new MemberDetails(member));
 
             // then
             assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
@@ -299,7 +302,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
 
             // when
-            memberService.create(oauthAccount, createMemberRequest);
+            memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
 
             // then
             List<Member> savedMembers = memberRepository.findAll();
@@ -335,7 +338,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
 
             // when & then
-            assertThatThrownBy(() -> memberService.create(oauthAccount, createMemberRequest))
+            assertThatThrownBy(() -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_MEMBER_NICKNAME.name());
         }
@@ -362,7 +365,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         oauthAccountRepository.save(oauthAccount);
 
         // when & then
-        assertThatThrownBy(() -> memberService.create(oauthAccount, createMemberRequest))
+        assertThatThrownBy(() -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
                 .isInstanceOf(CommonException.class)
                 .hasMessage(INVALID_TARGET_AMOUNT.name());
     }
@@ -398,7 +401,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
-                    member,
+                    new MemberDetails(member),
                     LocalDate.of(2025, 7, 15)
             );
 
@@ -430,7 +433,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
-                    member,
+                    new MemberDetails(member),
                     date.plusDays(1)
             );
 
@@ -467,7 +470,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             accountRefreshTokenRepository.save(accountRefreshToken);
 
             // when
-            memberService.delete(member);
+            memberService.delete(new MemberDetails(member));
 
             // then
             assertThat(memberRepository.findById(member.getId())).isEmpty();
@@ -491,7 +494,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             accountRefreshTokenRepository.save(accountRefreshToken);
 
             // when
-            memberService.delete(member);
+            memberService.delete(new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -538,7 +541,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             notificationRepository.save(notification);
 
             // when
-            memberService.delete(member);
+            memberService.delete(new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {

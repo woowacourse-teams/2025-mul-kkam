@@ -17,11 +17,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     FROM Notification n
     WHERE n.id < :lastId
       AND n.createdAt >= :limitStartDateTime
-      AND n.member = :member
+      AND n.member.id = :memberId
     ORDER BY n.id DESC
     """)
     List<Notification> findByCursor(
-            Member member,
+            Long memberId,
             Long lastId,
             LocalDateTime limitStartDateTime,
             Pageable pageable
@@ -31,11 +31,11 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     SELECT n
     FROM Notification n
     WHERE n.createdAt >= :limitStartDateTime
-      AND n.member = :member
+      AND n.member.id = :memberId
     ORDER BY n.id DESC
     """)
     List<Notification> findLatest(
-            Member member,
+            Long memberId,
             LocalDateTime limitStartDateTime,
             Pageable pageable
     );
