@@ -100,6 +100,10 @@ public class Cup {
         cupRank = cupRank.demote();
     }
 
+    public boolean isOwnedBy(Member member) {
+        return this.member.equals(member);
+    }
+
     public void modifyNicknameAndAmount(
             CupNickname nickname,
             CupAmount cupAmount

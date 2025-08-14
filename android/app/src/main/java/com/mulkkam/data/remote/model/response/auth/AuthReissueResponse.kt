@@ -5,16 +5,14 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class AuthResponse(
+class AuthReissueResponse(
     @SerialName("accessToken")
     val accessToken: String,
     @SerialName("refreshToken")
     val refreshToken: String,
-    @SerialName("finishedOnboarding")
-    val onboardingCompleted: Boolean,
 )
 
-fun AuthResponse.toDomain() =
+fun AuthReissueResponse.toDomain() =
     AuthTokenInfo(
         accessToken = accessToken,
         refreshToken = refreshToken,

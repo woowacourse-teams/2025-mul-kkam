@@ -1,6 +1,6 @@
 package com.mulkkam.domain.model.auth
 
-data class Tokens(
+data class AuthTokenInfo(
     val accessToken: String,
     val refreshToken: String,
 )

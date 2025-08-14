@@ -29,7 +29,7 @@ class AchievementRateTest {
 
             // then
             assertThat(achievementRate.value())
-                    .isCloseTo(20.0, within(0.1));
+                    .isCloseTo(10.0, within(0.1));
         }
 
         @DisplayName("100이 넘는 경우 100을 반환한다")

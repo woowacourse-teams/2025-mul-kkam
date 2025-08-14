@@ -19,6 +19,8 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
@@ -130,6 +132,24 @@ public class MemberService {
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
 
+    @Transactional
+    public void modifyIsNightNotificationAgreed(
+            Member member,
+            ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
+    ) {
+        member.modifyIsNightNotificationAgreed(modifyIsNightNotificationAgreedRequest.isNightNotificationAgreed());
+    }
+
+    @Transactional
+    public void modifyIsMarketingNotificationAgreed(
+            Member member,
+            ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest
+    ) {
+        member.modifyIsMarketingNotificationAgreed(
+                modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
+    }
+
+    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
     private TargetAmount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
         int total = intakeHistoryDetails
                 .stream()

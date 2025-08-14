@@ -1,7 +1,10 @@
 package backend.mulkkam.auth.controller;
 
-import backend.mulkkam.auth.dto.KakaoSigninRequest;
-import backend.mulkkam.auth.dto.OauthLoginResponse;
+import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
+import backend.mulkkam.auth.dto.response.OauthLoginResponse;
+import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
+import backend.mulkkam.auth.service.AuthTokenService;
 import backend.mulkkam.auth.service.KakaoAuthService;
 import backend.mulkkam.common.exception.FailureBody;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final KakaoAuthService kakaoAuthService;
+    private final AuthTokenService authTokenService;
 
     @Operation(summary = "카카오 로그인", description = "카카오 액세스 토큰으로 로그인 처리 후, 애플리케이션 토큰과 온보딩 여부를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공 응답")
@@ -35,5 +39,19 @@ public class AuthController {
             KakaoSigninRequest kakaoSigninRequest
     ) {
         return kakaoAuthService.signIn(kakaoSigninRequest);
+    }
+
+    @Operation(summary = "액세스 토큰 재발급", description = "액세스 토큰 만료 시 새로운 액세스 토큰과 리프레시 토큰을 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "성공 응답")
+    @ApiResponse(responseCode = "400", description = "사용 불가능한 리프레시 토큰이 입력된 경우",  content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "리프레시 토큰 만료 / 유효하지 않음 - 재로그인 조치 필요", summary = "리프레시가 유효하지 않아 재로그인이 필요한 경우", value = "{\"code\":\"INVALID_TOKEN\"}"),
+            @ExampleObject(name = "이미 사용된 리프레시 토큰으로 요청한 경우 - 재로그인 조치 필요", summary = "리프레시 토큰 탈취 가능성이 있는 경우", value = "{\"code\":\"INVALID_TOKEN\"}")
+    }))
+    @ApiResponse(responseCode = "401", description = "인증 절차를 통과할 수 없는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 회원 정보 - 회원가입 필요", summary = "존재하지 않는 회원의 토큰이 입력된 경우", value = "{\"code\":\"UNAUTHORIZED\"}")
+    }))
+    @PostMapping("/token/reissue")
+    public ReissueTokenResponse reissueToken(@RequestBody ReissueTokenRequest request) {
+        return authTokenService.reissueToken(request);
     }
 }

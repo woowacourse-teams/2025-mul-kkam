@@ -82,6 +82,14 @@ public class Member {
         return this.memberNickname.equals(memberNickname);
     }
 
+    public void modifyIsNightNotificationAgreed(boolean isNightNotificationAgreed) {
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
+    }
+
+    public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

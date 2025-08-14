@@ -63,6 +63,10 @@ sealed class ResponseError(
         object InvalidToken : AccountError("INVALID_TOKEN") {
             private fun readResolve(): Any = InvalidToken
         }
+
+        data object Unauthorized : AccountError("Unauthorized") {
+            private fun readResolve(): Any = Unauthorized
+        }
     }
 
     // 기록 관련 에러
