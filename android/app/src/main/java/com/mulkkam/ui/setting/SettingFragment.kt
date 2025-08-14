@@ -41,16 +41,16 @@ class SettingFragment :
             },
         )
 
-    private fun handleSettingNormalClick(type: SettingType.Normal) {
+    private fun handleSettingNormalClick(type: SettingType) {
         when (type) {
-            SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
-            SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
-            SettingType.Normal.AccountInfo -> Unit // TODO
-            SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
-            SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
-            SettingType.Normal.PushNotification -> Unit // TODO
-            SettingType.Normal.Feedback -> navigateToNotificationSetting()
-            SettingType.Normal.Terms -> Unit // TODO
+            SettingType.NICKNAME -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
+            SettingType.BODY_INFO -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
+            SettingType.ACCOUNT_INFO -> Unit // TODO
+            SettingType.MY_CUP -> startActivity(SettingCupsActivity.newIntent(requireContext()))
+            SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
+            SettingType.PUSH_NOTIFICATION -> Unit // TODO
+            SettingType.FEEDBACK -> navigateToNotificationSetting()
+            SettingType.TERMS -> Unit // TODO
         }
     }
 
@@ -74,20 +74,20 @@ class SettingFragment :
         val settingItems =
             listOf(
                 SettingItem.TitleItem(getString(R.string.setting_section_account)),
-                SettingItem.NormalItem(getString(R.string.setting_nickname_edit_nickname_label), SettingType.Normal.Nickname),
-                SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
-                SettingItem.NormalItem("회원 정보 설정", SettingType.Normal.AccountInfo),
+                SettingItem.NormalItem(getString(R.string.setting_nickname_edit_nickname_label), SettingType.NICKNAME),
+                SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.BODY_INFO),
+                SettingItem.NormalItem(getString(R.string.setting_item_account_info), SettingType.ACCOUNT_INFO),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
-                SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.Normal.MyCup),
-                SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.Normal.Goal),
+                SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.MY_CUP),
+                SettingItem.NormalItem(getString(R.string.setting_target_amount_toolbar_title), SettingType.GOAL),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
-                SettingItem.NormalItem(getString(R.string.setting_item_push_notification), SettingType.Normal.PushNotification),
+                SettingItem.NormalItem(getString(R.string.setting_item_push_notification), SettingType.PUSH_NOTIFICATION),
                 SettingItem.DividerItem,
-                SettingItem.TitleItem("고객센터"),
-                SettingItem.NormalItem("피드백 및 문의", SettingType.Normal.Feedback),
-                SettingItem.NormalItem("서비스 운영 정책", SettingType.Normal.Terms),
+                SettingItem.TitleItem(getString(R.string.setting_section_service_center)),
+                SettingItem.NormalItem(getString(R.string.setting_item_feedback), SettingType.FEEDBACK),
+                SettingItem.NormalItem(getString(R.string.setting_item_terms), SettingType.TERMS),
             )
         settingAdapter.submitList(settingItems)
     }
