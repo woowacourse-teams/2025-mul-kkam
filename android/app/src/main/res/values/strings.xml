@@ -85,7 +85,9 @@
     <string name="setting_item_marketing">마케팅 수신 허용</string>
     <string name="setting_item_night">야간 알림 허용</string>
 
-    <string name="setting_user_info">회원 정보 설정</string>
+    <string name="setting_account_info">회원 정보 설정</string>
+    <string name="setting_account_info_logout">로그아웃</string>
+    <string name="setting_account_info_delete_account">회원 탈퇴</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 

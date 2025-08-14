@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.settinguserinfo.SettingUserInfoActivity">
+    tools:context=".ui.settingaccountinfo.SettingAccountInfoActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/tb_setting_goal"
@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/setting_user_info"
+            android:text="@string/setting_account_info"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -46,6 +46,7 @@
         app:layout_constraintTop_toBottomOf="@id/tb_setting_goal" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_user_info"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
