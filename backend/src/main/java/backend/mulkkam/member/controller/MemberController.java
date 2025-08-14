@@ -11,6 +11,7 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -171,7 +172,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 야간 알림 수신 정보 수정", description = "야간 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "야간 알림 반영 성공")
-    @PatchMapping("/notification/night")
+    @PatchMapping("/notifications/night")
     public ResponseEntity<Void> modifyIsNightNotificationAgreed(
             @Parameter(hidden = true)
             Member member,
@@ -184,7 +185,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 마케팅 알림 수신 정보 수정", description = "마케팅 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "마케팅 알림 반영 성공")
-    @PatchMapping("/notification/marketing")
+    @PatchMapping("/notifications/marketing")
     public ResponseEntity<Void> modifyIsMarketingNotificationAgreed(
             @Parameter(hidden = true)
             Member member,
@@ -193,6 +194,17 @@ public class MemberController {
     ) {
         memberService.modifyIsMarketingNotificationAgreed(member, modifyIsMarketingNotificationAgreed);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 알림 수신 정보 조회", description = "야간/마케팅 알림 수신 여부를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "알림 수신 여부 조회 성공")
+    @GetMapping("/notifications/settings")
+    public ResponseEntity<NotificationSettingsResponse> getNotificationSettings(
+            @Parameter(hidden = true)
+            Member member
+    ) {
+        NotificationSettingsResponse response = memberService.getNotificationSettings(member);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
