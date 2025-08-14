@@ -4,14 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
 import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
@@ -22,10 +24,13 @@ import com.mulkkam.ui.util.extensions.setSingleClickListener
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
 
+    private var backPressedTime: Long = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         initClickListeners()
         initObservers()
+        setupDoubleBackToExit()
     }
 
     private fun initClickListeners() {
@@ -85,11 +90,30 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         }
     }
 
-    private fun showToast(message: Int) {
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun setupDoubleBackToExit() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
+                        backPressedTime = System.currentTimeMillis()
+                        CustomSnackBar
+                            .make(
+                                binding.root,
+                                getString(R.string.main_main_back_press_exit_message),
+                                R.drawable.ic_info_circle,
+                            ).show()
+                    } else {
+                        finishAffinity()
+                    }
+                }
+            },
+        )
     }
 
     companion object {
+        private const val BACK_PRESS_THRESHOLD: Long = 2000L
+
         fun newIntent(context: Context): Intent = Intent(context, LoginActivity::class.java)
     }
 }

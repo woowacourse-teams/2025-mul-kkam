@@ -1,16 +1,18 @@
 package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.util.Date;
-
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class OauthJwtTokenHandler {
@@ -62,6 +64,7 @@ public class OauthJwtTokenHandler {
     private Claims generateClaims(OauthAccount account) {
         return Jwts.claims()
                 .subject(account.getId().toString())
+                .id(UUID.randomUUID().toString())
                 .build();
     }
 
@@ -70,8 +73,7 @@ public class OauthJwtTokenHandler {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
         } catch (NumberFormatException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new InvalidTokenException();
         }
     }
 
@@ -79,8 +81,7 @@ public class OauthJwtTokenHandler {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new InvalidTokenException();
         }
     }
 }

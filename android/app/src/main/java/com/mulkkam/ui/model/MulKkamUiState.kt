@@ -7,11 +7,13 @@ sealed class MulKkamUiState<out T> {
         val data: T,
     ) : MulKkamUiState<T>()
 
-    data object Empty : MulKkamUiState<Nothing>()
+    data object Idle : MulKkamUiState<Nothing>()
 
     data object Loading : MulKkamUiState<Nothing>()
 
     data class Failure(
         val error: MulKkamError,
     ) : MulKkamUiState<Nothing>()
+
+    inline fun <reified T> MulKkamUiState<T>.toSuccessDataOrNull(): T? = (this as? Success<T>)?.data
 }

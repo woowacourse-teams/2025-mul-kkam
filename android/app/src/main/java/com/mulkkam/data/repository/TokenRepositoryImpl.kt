@@ -13,6 +13,11 @@ class TokenRepositoryImpl(
             tokenPreference.accessToken
         }.toMulKkamResult()
 
+    override suspend fun getRefreshToken(): MulKkamResult<String?> =
+        runCatching {
+            tokenPreference.refreshToken
+        }.toMulKkamResult()
+
     override suspend fun getFcmToken(): MulKkamResult<String?> =
         runCatching {
             tokenPreference.fcmToken
@@ -26,6 +31,16 @@ class TokenRepositoryImpl(
     override suspend fun deleteAccessToken(): MulKkamResult<Unit> =
         runCatching {
             tokenPreference.deleteAccessToken()
+        }.toMulKkamResult()
+
+    override suspend fun saveRefreshToken(token: String): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.saveRefreshToken(token)
+        }.toMulKkamResult()
+
+    override suspend fun deleteRefreshToken(): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.deleteRefreshToken()
         }.toMulKkamResult()
 
     override suspend fun saveFcmToken(token: String): MulKkamResult<Unit> =
