@@ -2,9 +2,12 @@ package com.mulkkam.ui.settingaccountinfo
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentAccountDeleteDialogBinding
@@ -18,6 +21,9 @@ class AccountDeleteDialogFragment :
     ) {
     private val parentViewModel: SettingAccountInfoViewModel by activityViewModels()
 
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -26,6 +32,7 @@ class AccountDeleteDialogFragment :
         initGreetingHighlight()
         setWindowOptions()
         initClickListeners()
+        initDeleteAccountConfirmInputWatcher()
     }
 
     private fun initGreetingHighlight() {
@@ -53,6 +60,23 @@ class AccountDeleteDialogFragment :
 
         binding.tvCancel.setSingleClickListener {
             dismiss()
+        }
+    }
+
+    private fun initDeleteAccountConfirmInputWatcher() {
+        binding.etDeleteAccountConfirm.doAfterTextChanged {
+            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+
+            debounceRunnable =
+                Runnable {
+                    val comment =
+                        binding.etDeleteAccountConfirm.text
+                            .toString()
+                            .trim()
+
+                    binding.tvConfirm.isEnabled =
+                        comment == getString(R.string.setting_account_info_delete_comment)
+                }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
 

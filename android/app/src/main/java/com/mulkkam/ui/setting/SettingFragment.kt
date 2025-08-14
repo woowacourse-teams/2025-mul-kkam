@@ -11,6 +11,7 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.adapter.SettingAdapter
 import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
+import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
@@ -45,7 +46,7 @@ class SettingFragment :
         when (type) {
             SettingType.Normal.Nickname -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
             SettingType.Normal.BodyInfo -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
-            SettingType.Normal.AccountInfo -> Unit // TODO
+            SettingType.Normal.AccountInfo -> startActivity(SettingAccountInfoActivity.newIntent(requireContext()))
             SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.PushNotification -> Unit // TODO
