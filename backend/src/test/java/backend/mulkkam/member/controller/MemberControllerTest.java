@@ -13,6 +13,8 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.CupFixtureBuilder;
@@ -20,6 +22,8 @@ import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,16 +31,18 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
 @SpringBootTest
+@AutoConfigureMockMvc
 class MemberControllerTest {
 
     @Autowired
@@ -52,19 +58,90 @@ class MemberControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private AccountRefreshTokenRepository accountRefreshTokenRepository;
+    private ObjectMapper objectMapper;
 
     @Autowired
-    private CupRepository cupRepository;
+    private DatabaseCleaner databaseCleaner;
 
     @Autowired
-    DatabaseCleaner databaseCleaner;
+    AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Autowired
-    private IntakeHistoryRepository intakeHistoryRepository;
+    CupRepository cupRepository;
 
     @Autowired
-    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    IntakeHistoryRepository intakeHistoryRepository;
+
+    @Autowired
+    IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    private Member member;
+    private String token;
+
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.clean();
+
+        member = MemberFixtureBuilder
+                .builder()
+                .isNightNotificationAgreed(true)
+                .isMarketingNotificationAgreed(true)
+                .build();
+        memberRepository.save(member);
+        OauthAccount oauthAccount = new OauthAccount(member, "test", KAKAO);
+        oauthAccountRepository.save(oauthAccount);
+
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+    }
+
+    @DisplayName("멤버의 정보를 수정할 때에")
+    @Nested
+    class Modify {
+
+        @DisplayName("야간 알림을 수정한다.")
+        @Test
+        void success_whenModifyIsNightNotificationAgreed() throws Exception {
+            // given
+            ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest = new ModifyIsNightNotificationAgreedRequest(
+                    false);
+
+            // when
+            mockMvc.perform(patch("/members/notification/night")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly ->
+                    softly.assertThat(foundMember.isNightNotificationAgreed()).isFalse()
+            );
+        }
+
+        @DisplayName("야간 알림을 수정한다.")
+        @Test
+        void success_whenModifyIsMarketingNotificationAgreed() throws Exception {
+            // given
+            ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest = new ModifyIsMarketingNotificationAgreedRequest(
+                    false);
+
+            // when
+            mockMvc.perform(patch("/members/notification/marketing")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly ->
+                    softly.assertThat(foundMember.isMarketingNotificationAgreed()).isFalse()
+            );
+        }
+    }
 
     @DisplayName("회원 탈퇴 시")
     @Nested
@@ -111,7 +188,7 @@ class MemberControllerTest {
 
             // when
             mockMvc.perform(delete("/members")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
             // then
