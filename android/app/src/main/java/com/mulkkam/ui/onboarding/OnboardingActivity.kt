@@ -10,6 +10,7 @@ import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 import com.mulkkam.ui.onboarding.terms.TermsFragment
@@ -33,7 +34,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         initClickListeners()
         initObservers()
         initBackPressHandler()
-        finishOnFragmentsEmpty()
+        navigateToLoginOnFragmentsEmpty()
     }
 
     private fun initProgressBarView() {
@@ -111,11 +112,13 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         )
     }
 
-    private fun finishOnFragmentsEmpty() {
+    private fun navigateToLoginOnFragmentsEmpty() {
         supportFragmentManager.addOnBackStackChangedListener {
             val fragments = supportFragmentManager.fragments
 
             if (fragments.isEmpty()) {
+                val intent = LoginActivity.newIntent(this)
+                startActivity(intent)
                 finish()
             }
         }

@@ -69,23 +69,23 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="58dp"
-        android:text="@string/target_amount_recommended_water_goal"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
+        app:layout_constraintTop_toBottomOf="@id/et_input_goal"
+        tools:text="@string/target_amount_recommended_water_goal" />
 
     <TextView
         android:id="@+id/tv_recommended_target_amount_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/target_amount_recommended_description"
         android:textAppearance="@style/body5"
         android:textColor="@color/gray_200"
         app:layout_constraintStart_toStartOf="@id/tv_recommended_target_amount"
-        app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount" />
+        app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount"
+        tools:text="@string/target_amount_recommended_description" />
 
     <TextView
         android:id="@+id/tv_complete"

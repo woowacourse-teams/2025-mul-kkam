@@ -1,9 +1,8 @@
-package com.mulkkam.ui.settingtargetamount.model
+package com.mulkkam.ui.onboarding.targetamount.model
 
 import com.mulkkam.domain.model.intake.TargetAmount
 
-data class TargetAmountUiModel(
+data class TargetAmountOnboardingUiModel(
     val nickname: String,
     val recommendedTargetAmount: TargetAmount,
-    val previousTargetAmount: TargetAmount,
 )
