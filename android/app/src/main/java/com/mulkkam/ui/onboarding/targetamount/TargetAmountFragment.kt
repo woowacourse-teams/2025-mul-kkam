@@ -39,6 +39,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        initRecommendMessage()
         initTextAppearance()
         initClickListeners()
         initObservers()
@@ -50,7 +51,9 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             gender = parentViewModel.onboardingInfo.gender,
             weight = parentViewModel.onboardingInfo.weight,
         )
+    }
 
+    private fun initRecommendMessage() {
         binding.tvRecommendedTargetAmountDescription.text =
             getString(
                 if (parentViewModel.onboardingInfo.hasBioInfo()) {
@@ -140,9 +143,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             is MulKkamUiState.Success -> updateTargetAmountValidationUI(true)
             is MulKkamUiState.Failure -> {
                 updateTargetAmountValidationUI(false)
-                if (targetAmountValidityUiState.error is TargetAmountError) {
-                    binding.tvTargetAmountWarningMessage.text = targetAmountValidityUiState.error.toMessageRes()
-                }
+                binding.tvTargetAmountWarningMessage.text =
+                    (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes() ?: return
             }
 
             is MulKkamUiState.Loading -> Unit
@@ -215,10 +217,12 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
 
     private fun TargetAmountError.toMessageRes(): String =
         when (this) {
-            TargetAmountError.BelowMinimum ->
+            TargetAmountError.BelowMinimum -> {
                 getString(R.string.setting_target_amount_warning_too_low, TargetAmount.TARGET_AMOUNT_MIN)
+            }
 
-            TargetAmountError.AboveMaximum ->
+            TargetAmountError.AboveMaximum -> {
                 getString(R.string.setting_target_amount_warning_too_high, TargetAmount.TARGET_AMOUNT_MAX)
+            }
         }
 }
