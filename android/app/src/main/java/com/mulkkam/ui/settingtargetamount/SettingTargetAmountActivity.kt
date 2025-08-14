@@ -51,11 +51,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         viewModel.targetAmountInput.observe(this) { targetAmount ->
             if (binding.etInputGoal.text
                     .toString()
-                    .toIntOrNull() == targetAmount?.amount
+                    .toIntOrNull() == targetAmount?.value
             ) {
                 return@observe
             }
-            binding.etInputGoal.setText(targetAmount?.amount.toString())
+            binding.etInputGoal.setText(targetAmount?.value.toString())
         }
 
         viewModel.saveTargetAmountUiState.observe(this) { saveUiState ->
@@ -88,7 +88,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
     private fun showRecommendTargetAmount(targetAmountUiModel: TargetAmountUiModel) {
         val nickname = targetAmountUiModel.nickname
-        val recommended = targetAmountUiModel.recommendedTargetAmount
+        val recommended = targetAmountUiModel.recommendedTargetAmount.value
         binding.tvRecommendedTargetAmount.text =
             getString(R.string.target_amount_recommended_water_goal, nickname, recommended)
                 .getAppearanceSpannable(

@@ -50,12 +50,12 @@ class SettingTargetAmountViewModel : ViewModel() {
 
                 TargetAmountUiModel(
                     nickname = nickname,
-                    recommendedTargetAmount = recommended,
-                    previousTargetAmount = previous,
+                    recommendedTargetAmount = TargetAmount(recommended),
+                    previousTargetAmount = TargetAmount(previous),
                 )
             }.onSuccess { targetAmountUiModel ->
                 _targetInfoUiState.value = MulKkamUiState.Success(targetAmountUiModel)
-                _targetAmountInput.value = TargetAmount(targetAmountUiModel.previousTargetAmount)
+                _targetAmountInput.value = targetAmountUiModel.previousTargetAmount
             }.onFailure {
                 _targetInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
@@ -79,14 +79,14 @@ class SettingTargetAmountViewModel : ViewModel() {
         viewModelScope.launch {
             _saveTargetAmountUiState.value = MulKkamUiState.Loading
             runCatching {
-                intakeRepository.patchIntakeTarget(amount.amount).getOrError()
+                intakeRepository.patchIntakeTarget(amount.value).getOrError()
             }.onSuccess {
                 _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)
 
                 targetInfoUiState.value?.toSuccessDataOrNull()?.let { current ->
                     _targetInfoUiState.value =
                         MulKkamUiState.Success(
-                            current.copy(previousTargetAmount = amount.amount),
+                            current.copy(previousTargetAmount = amount),
                         )
                 }
             }.onFailure {
