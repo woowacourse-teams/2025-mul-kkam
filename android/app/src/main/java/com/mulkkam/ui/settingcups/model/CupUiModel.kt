@@ -2,6 +2,8 @@ package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
 import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import kotlinx.parcelize.Parcelize
 
@@ -30,19 +32,23 @@ data class CupUiModel(
 fun Cup.toUi(): CupUiModel =
     CupUiModel(
         id = id,
-        nickname = nickname,
-        amount = amount,
+        nickname = nickname.value,
+        amount = amount.value,
         rank = rank,
         intakeType = intakeType,
         emoji = emoji,
     )
 
-fun CupUiModel.toDomain(): Cup =
-    Cup(
+fun CupUiModel.toDomain(): Cup {
+    val name = CupName(nickname)
+    val capacity = CupCapacity(amount)
+
+    return Cup(
         id = id,
-        nickname = nickname,
-        amount = amount,
+        nickname = name,
+        amount = capacity,
         rank = rank,
         intakeType = intakeType,
         emoji = emoji,
     )
+}

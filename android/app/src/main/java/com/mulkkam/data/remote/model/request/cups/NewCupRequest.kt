@@ -18,8 +18,8 @@ data class NewCupRequest(
 
 fun Cup.toNewCupRequest(): NewCupRequest =
     NewCupRequest(
-        cupAmount = amount,
-        cupNickname = nickname,
+        cupAmount = amount.value,
+        cupNickname = nickname.value,
         intakeType = intakeType.name,
         emoji = emoji,
     )

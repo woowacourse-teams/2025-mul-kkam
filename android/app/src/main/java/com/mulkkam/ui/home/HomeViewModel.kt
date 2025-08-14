@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.model.cups.CupCapacity
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.members.TodayProgressInfo
@@ -27,8 +28,8 @@ class HomeViewModel : ViewModel() {
     private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
-    val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<CupCapacity>> = MutableLiveData(MulKkamUiState.Idle)
+    val drinkUiState: LiveData<MulKkamUiState<CupCapacity>> get() = _drinkUiState
 
     init {
         loadTodayProgressInfo()
@@ -87,6 +88,17 @@ class HomeViewModel : ViewModel() {
 
     fun addWaterIntake(amount: Int) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
+        runCatching {
+            CupCapacity(amount)
+        }.onSuccess {
+            addWaterIntake(it)
+        }.onFailure {
+            _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+        }
+    }
+
+    private fun addWaterIntake(amount: CupCapacity) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _drinkUiState.value = MulKkamUiState.Loading
@@ -98,7 +110,7 @@ class HomeViewModel : ViewModel() {
                 _todayProgressInfoUiState.value =
                     MulKkamUiState.Success(
                         current.updateProgressInfo(
-                            amountDelta = amount,
+                            amountDelta = amount.value,
                             achievementRate = intakeHistory.achievementRate,
                             comment = intakeHistory.comment,
                         ),
