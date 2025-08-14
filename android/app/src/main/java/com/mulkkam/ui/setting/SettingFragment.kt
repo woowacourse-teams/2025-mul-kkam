@@ -16,6 +16,7 @@ import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
+import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 
 class SettingFragment :
@@ -51,7 +52,7 @@ class SettingFragment :
             SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.PushNotification -> Unit // TODO
             SettingType.Normal.Feedback -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
-            SettingType.Normal.Terms -> Unit // TODO
+            SettingType.Normal.Terms -> startActivity(SettingTermsActivity.newIntent(requireContext()))
         }
     }
 
@@ -88,7 +89,7 @@ class SettingFragment :
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_support)),
                 SettingItem.NormalItem(getString(R.string.setting_feedback_toolbar_title), SettingType.Normal.Feedback),
-                SettingItem.NormalItem("서비스 운영 정책", SettingType.Normal.Terms),
+                SettingItem.NormalItem(getString(R.string.setting_terms_toolbar_title), SettingType.Normal.Terms),
             )
         settingAdapter.submitList(settingItems)
     }

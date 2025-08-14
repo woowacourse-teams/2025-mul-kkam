@@ -7,7 +7,7 @@
     android:background="@color/white">
 
     <androidx.appcompat.widget.Toolbar
-        android:id="@+id/tb_setting_feedback"
+        android:id="@+id/tb_setting_terms"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="@string/setting_feedback_toolbar_title"
+            android:text="@string/setting_terms_toolbar_title"
             android:textAppearance="@style/title2"
             android:textColor="@color/gray_400" />
     </androidx.appcompat.widget.Toolbar>
@@ -42,6 +42,15 @@
         android:background="@color/gray_100"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tb_setting_feedback" />
+        app:layout_constraintTop_toBottomOf="@id/tb_setting_terms" />
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_terms"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/divider_toolbar_divider" />
 </androidx.constraintlayout.widget.ConstraintLayout>

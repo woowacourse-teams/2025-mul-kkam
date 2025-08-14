@@ -78,6 +78,8 @@
 
     <string name="setting_feedback_toolbar_title">피드백 및 문의</string>
 
+    <string name="setting_terms_toolbar_title">서비스 운영 정책</string>
+
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
     <string name="setting_section_notification">알림 설정</string>
