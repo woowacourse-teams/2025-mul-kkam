@@ -15,7 +15,7 @@ spring:
   flyway:
     enabled: true
     clean-disabled: false
-    locations: classpath:db/migration/common, classpath:db/migration/common/mysql
+    locations: classpath:db/migration
 
 fcm:
   base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
