@@ -8,7 +8,6 @@ import androidx.activity.viewModels
 import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNotificationBinding
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.MulKkamUiState
@@ -74,11 +73,9 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
 
     private fun initObservers() {
         viewModel.settingsUiState.observe(this) { state ->
-            mulKkamLogger.debug(message = "213412521521421521521421 $state")
             showSettings((state as? MulKkamUiState.Success<NotificationAgreedInfo>)?.data ?: return@observe)
         }
         viewModel.onError.observe(this) {
-            mulKkamLogger.debug(message = "12312312312312")
             CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
         }
     }
