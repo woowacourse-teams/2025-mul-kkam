@@ -20,6 +20,7 @@ public enum BadRequestErrorCode implements ErrorCode {
     INVALID_METHOD_ARGUMENT,
     INVALID_DATE_FOR_DELETE_INTAKE_HISTORY,
     NOT_ALL_MEMBER_CUPS_INCLUDED,
+    INVALID_TOKEN,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;

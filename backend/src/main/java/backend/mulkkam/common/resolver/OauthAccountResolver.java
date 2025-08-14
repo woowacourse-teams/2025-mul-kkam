@@ -1,9 +1,7 @@
 package backend.mulkkam.common.resolver;
 
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -17,8 +15,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class OauthAccountResolver implements HandlerMethodArgumentResolver {
 
-    private final AuthenticationHeaderHandler authenticationHeaderHandler;
-    private final OauthJwtTokenHandler oauthJwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
 
     @Override
@@ -34,11 +30,10 @@ public class OauthAccountResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-        String token = authenticationHeaderHandler.extractToken(request);
-        Long oauthAccountId = oauthJwtTokenHandler.getSubject(token);
+        Long accountId = (Long) request.getAttribute("subject");
 
         // TODO: 추후 에러 코드로 반영
-        return oauthAccountRepository.findById(oauthAccountId)
+        return oauthAccountRepository.findById(accountId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
     }
 }
