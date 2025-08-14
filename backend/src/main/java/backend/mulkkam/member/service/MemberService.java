@@ -5,6 +5,8 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -23,6 +25,7 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -44,6 +47,10 @@ public class MemberService {
     private final IntakeHistoryDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
+    private final CupRepository cupRepository;
+    private final DeviceRepository deviceRepository;
+    private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    private final NotificationRepository notificationRepository;
 
     public MemberResponse get(Member member) {
         return new MemberResponse(member);
@@ -146,6 +153,17 @@ public class MemberService {
             foundAccountRefreshToken.ifPresent(accountRefreshTokenRepository::delete);
             oauthAccountRepository.delete(oauthAccount);
         }
+
+        cupRepository.deleteByMember(member);
+        deviceRepository.deleteByMember(member);
+
+        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+        intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
+
+        intakeHistoryRepository.deleteByMember(member);
+
+        targetAmountSnapshotRepository.deleteByMember(member);
+        notificationRepository.deleteByMember(member);
 
         memberRepository.delete(member);
     }
