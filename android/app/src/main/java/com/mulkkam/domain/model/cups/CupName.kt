@@ -16,7 +16,7 @@ value class CupName(
     }
 
     companion object {
-        const val CUP_NAME_LENGTH_MIN = 2
+        const val CUP_NAME_LENGTH_MIN = 1
         const val CUP_NAME_LENGTH_MAX = 10
     }
 }

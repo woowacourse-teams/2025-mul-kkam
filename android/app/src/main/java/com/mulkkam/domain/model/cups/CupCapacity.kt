@@ -11,7 +11,7 @@ value class CupCapacity(
     }
 
     companion object {
-        const val MIN_ML = 10
-        const val MAX_ML = 5000
+        const val MIN_ML = 1
+        const val MAX_ML = 2000
     }
 }
