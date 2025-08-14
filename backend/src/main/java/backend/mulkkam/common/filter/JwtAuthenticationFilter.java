@@ -8,14 +8,13 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-import java.io.IOException;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Component
@@ -27,7 +26,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpEndpoint.of("/v3/api-docs", HttpMethod.GET),
             HttpEndpoint.of("/nickname/validation", HttpMethod.GET),
             HttpEndpoint.of("/actuator", HttpMethod.GET),
-            HttpEndpoint.of("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST)
+            HttpEndpoint.of("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST),
+            HttpEndpoint.of("/versions", HttpMethod.GET)
     );
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;
