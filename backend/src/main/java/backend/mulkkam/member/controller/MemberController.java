@@ -203,8 +203,8 @@ public class MemberController {
             @Parameter(hidden = true)
             Member member
     ) {
-        NotificationSettingsResponse response = memberService.getNotificationSettings(member);
-        return ResponseEntity.ok(response);
+        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(member);
+        return ResponseEntity.ok(notificationSettingsResponse);
     }
 
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
