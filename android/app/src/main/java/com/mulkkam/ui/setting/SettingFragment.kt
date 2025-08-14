@@ -77,7 +77,7 @@ class SettingFragment :
                 SettingItem.TitleItem(getString(R.string.setting_section_account)),
                 SettingItem.NormalItem(getString(R.string.setting_nickname_edit_nickname_label), SettingType.Normal.Nickname),
                 SettingItem.NormalItem(getString(R.string.setting_item_body_info), SettingType.Normal.BodyInfo),
-                SettingItem.NormalItem("회원 정보 설정", SettingType.Normal.AccountInfo),
+                SettingItem.NormalItem(getString(R.string.setting_account_info), SettingType.Normal.AccountInfo),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_water)),
                 SettingItem.NormalItem(getString(R.string.setting_cups_toolbar_title), SettingType.Normal.MyCup),

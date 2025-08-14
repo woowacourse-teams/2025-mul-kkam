@@ -159,6 +159,4 @@
 
     <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
     <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
