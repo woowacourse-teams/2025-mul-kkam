@@ -11,6 +11,7 @@ import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
+import com.mulkkam.ui.settingaccountinfo.dialog.AccountLogoutDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
@@ -26,7 +27,7 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
             override fun onSettingNormalClick(item: SettingAccountUiModel) {
                 when (item.title) {
                     R.string.setting_account_info_logout -> {
-                        // TODO: 로그아웃
+                        AccountLogoutDialogFragment().show(supportFragmentManager, null)
                     }
 
                     R.string.setting_account_info_delete_account -> {
@@ -55,6 +56,11 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
 
         viewModel.onDeleteAccount.observe(this) {
             Toast.makeText(this, R.string.setting_account_info_delete_success, Toast.LENGTH_SHORT).show()
+            moveToLogin()
+        }
+
+        viewModel.onLogout.observe(this) {
+            Toast.makeText(this, "로그아웃되었습니다.", Toast.LENGTH_SHORT).show()
             moveToLogin()
         }
     }

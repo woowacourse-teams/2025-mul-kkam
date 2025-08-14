@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.R
+import com.mulkkam.di.RepositoryInjection.authRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.ui.util.MutableSingleLiveData
@@ -18,6 +19,9 @@ class SettingAccountInfoViewModel : ViewModel() {
     private val _onDeleteAccount: MutableSingleLiveData<Unit> = MutableSingleLiveData()
     val onDeleteAccount: SingleLiveData<Unit> = _onDeleteAccount
 
+    private val _onLogout: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onLogout: SingleLiveData<Unit> = _onLogout
+
     init {
         _userInfo.value = userInfoList
     }
@@ -28,6 +32,20 @@ class SettingAccountInfoViewModel : ViewModel() {
                 membersRepository.deleteMembers().getOrError()
             }.onSuccess {
                 deleteTokens()
+                _onDeleteAccount.setValue(Unit)
+            }.onFailure {
+                // TODO: 에러 처리
+            }
+        }
+    }
+
+    fun logoutAccount() {
+        viewModelScope.launch {
+            runCatching {
+                authRepository.postAuthLogout().getOrError()
+            }.onSuccess {
+                deleteTokens()
+                _onLogout.setValue(Unit)
             }.onFailure {
                 // TODO: 에러 처리
             }
@@ -39,8 +57,6 @@ class SettingAccountInfoViewModel : ViewModel() {
             tokenRepository.deleteAccessToken().getOrError()
             tokenRepository.deleteFcmToken().getOrError()
             tokenRepository.deleteRefreshToken().getOrError()
-        }.onSuccess {
-            _onDeleteAccount.setValue(Unit)
         }.onFailure {
             // TODO: 에러 처리
         }
