@@ -17,11 +17,9 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
-import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -40,9 +37,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class IntakeAmountControllerTest extends ControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -57,13 +51,7 @@ class IntakeAmountControllerTest extends ControllerTest {
     private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private String token;
 

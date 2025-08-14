@@ -5,24 +5,16 @@ import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.version.domain.AppMinimumVersion;
 import backend.mulkkam.version.dto.AppMinimumVersionResponse;
 import backend.mulkkam.version.repository.AppMinimumVersionRepository;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AppMinimumVersionControllerTest extends ControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private AppMinimumVersionRepository appMinimumVersionRepository;

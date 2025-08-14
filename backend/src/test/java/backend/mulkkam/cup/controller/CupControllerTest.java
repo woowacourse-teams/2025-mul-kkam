@@ -22,7 +22,6 @@ import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -30,7 +29,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_METHOD_ARGUMENT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
@@ -50,9 +48,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class CupControllerTest extends ControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
 
     @Autowired
@@ -63,12 +58,6 @@ class CupControllerTest extends ControllerTest {
 
     @Autowired
     private CupRepository cupRepository;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private Member savedMember;
 

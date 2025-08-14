@@ -16,13 +16,11 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
-import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,7 +32,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -46,9 +43,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class IntakeHistoryControllerTest extends ControllerTest {
 
     @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
 
     @Autowired
@@ -58,9 +52,6 @@ class IntakeHistoryControllerTest extends ControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
@@ -68,9 +59,6 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
     @Autowired
     private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private String token;
 
