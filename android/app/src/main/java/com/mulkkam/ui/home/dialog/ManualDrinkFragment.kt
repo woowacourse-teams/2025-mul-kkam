@@ -1,5 +1,6 @@
 package com.mulkkam.ui.home.dialog
 
+import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
@@ -21,7 +22,7 @@ class ManualDrinkFragment :
     BindingBottomSheetDialogFragment<FragmentManualDrinkBinding>(
         FragmentManualDrinkBinding::inflate,
     ) {
-    private val homeViewModel: HomeViewModel by activityViewModels()
+    private val parentViewModel: HomeViewModel by activityViewModels()
     private val viewModel: ManualDrinkViewModel by activityViewModels()
 
     override fun onViewCreated(
@@ -40,7 +41,7 @@ class ManualDrinkFragment :
         with(binding) {
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener {
-                homeViewModel.addWaterIntake(
+                parentViewModel.addWaterIntake(
                     binding.etAmount.text
                         .toString()
                         .toIntOrNull() ?: return@setSingleClickListener,
@@ -93,9 +94,7 @@ class ManualDrinkFragment :
                 else -> R.color.gray_400
             }
         val color = ContextCompat.getColor(requireContext(), colorRes)
-        binding.etAmount.foregroundTintList =
-            android.content.res.ColorStateList
-                .valueOf(color)
+        binding.etAmount.foregroundTintList = ColorStateList.valueOf(color)
     }
 
     private fun showAmountValidationMessage(state: MulKkamUiState<Unit>) {
