@@ -42,7 +42,7 @@ class SettingCupViewModel : ViewModel() {
             addSource(_cup) { update() }
         }
 
-    val isSaveEnabled: MediatorLiveData<Boolean> =
+    val isSaveAvailable: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
                 val current =
@@ -136,7 +136,7 @@ class SettingCupViewModel : ViewModel() {
     }
 
     fun saveCup() {
-        if (isSaveEnabled.value != true) return
+        if (isSaveAvailable.value != true) return
         when (_editType.value) {
             SettingWaterCupEditType.ADD -> addCup()
             SettingWaterCupEditType.EDIT -> editCup()

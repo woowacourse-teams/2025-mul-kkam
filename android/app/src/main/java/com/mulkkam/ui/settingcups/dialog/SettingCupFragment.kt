@@ -3,6 +3,7 @@ package com.mulkkam.ui.settingcups.dialog
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
@@ -72,8 +73,8 @@ class SettingCupFragment :
                 showAmountValidationMessage(amountValidity)
             }
 
-            isSaveEnabled.observe(viewLifecycleOwner) { enabled ->
-                binding.tvSave.isEnabled = enabled == true
+            isSaveAvailable.observe(viewLifecycleOwner) { available ->
+                binding.tvSave.isEnabled = available == true
             }
 
             saveSuccess.observe(viewLifecycleOwner) {
@@ -113,8 +114,7 @@ class SettingCupFragment :
             is MulKkamUiState.Success,
             is MulKkamUiState.Idle,
             -> {
-                binding.tvNicknameValidationMessage.text = ""
-                binding.tvNicknameValidationMessage.visibility = View.GONE
+                binding.tvNicknameValidationMessage.updateMessage(null)
             }
 
             is MulKkamUiState.Failure -> {
@@ -132,17 +132,16 @@ class SettingCupFragment :
 
                         else -> ""
                     }
-                if (message.isBlank()) {
-                    binding.tvNicknameValidationMessage.text = ""
-                    binding.tvNicknameValidationMessage.visibility = View.GONE
-                } else {
-                    binding.tvNicknameValidationMessage.text = message
-                    binding.tvNicknameValidationMessage.visibility = View.VISIBLE
-                }
+                binding.tvNicknameValidationMessage.updateMessage(message)
             }
 
             is MulKkamUiState.Loading -> Unit
         }
+    }
+
+    private fun TextView.updateMessage(message: String?) {
+        text = message.orEmpty()
+        visibility = if (message.isNullOrBlank()) View.GONE else View.VISIBLE
     }
 
     private fun showAmountValidationMessage(state: MulKkamUiState<Unit>) {
@@ -150,20 +149,17 @@ class SettingCupFragment :
             is MulKkamUiState.Success,
             is MulKkamUiState.Idle,
             -> {
-                binding.tvAmountValidationMessage.text = ""
-                binding.tvAmountValidationMessage.visibility = View.GONE
+                binding.tvAmountValidationMessage.updateMessage(null)
             }
 
             is MulKkamUiState.Failure -> {
-                val error = state.error
-                if (error is MulKkamError.SettingCupsError.InvalidAmount) {
-                    val msg = "용량은 ${CupCapacity.MIN_ML}ml 이상, ${CupCapacity.MAX_ML}ml 이하로 설정해 주세요"
-                    binding.tvAmountValidationMessage.text = msg
-                    binding.tvAmountValidationMessage.visibility = View.VISIBLE
-                } else {
-                    binding.tvAmountValidationMessage.text = ""
-                    binding.tvAmountValidationMessage.visibility = View.GONE
-                }
+                val message =
+                    if (state.error is MulKkamError.SettingCupsError.InvalidAmount) {
+                        getString(R.string.setting_cup_invalid_range, CupCapacity.MIN_ML, CupCapacity.MAX_ML)
+                    } else {
+                        ""
+                    }
+                binding.tvAmountValidationMessage.updateMessage(message)
             }
 
             is MulKkamUiState.Loading -> Unit
