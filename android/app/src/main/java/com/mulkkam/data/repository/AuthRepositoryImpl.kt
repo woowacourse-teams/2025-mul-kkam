@@ -24,4 +24,16 @@ class AuthRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun postAuthReissue(refreshToken: String): MulKkamResult<Tokens> {
+        val result =
+            authService.postAuthKakao(
+                AuthRequest(refreshToken),
+            )
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
