@@ -86,6 +86,10 @@ public class Member {
         this.isNightNotificationAgreed = isNightNotificationAgreed;
     }
 
+    public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {
