@@ -8,7 +8,6 @@ value class TargetAmount(
 ) {
     init {
         require(amount >= TARGET_AMOUNT_MIN) { throw MulKkamError.TargetAmountError.BelowMinimum }
-
         require(amount <= TARGET_AMOUNT_MAX) { throw MulKkamError.TargetAmountError.AboveMaximum }
     }
 
