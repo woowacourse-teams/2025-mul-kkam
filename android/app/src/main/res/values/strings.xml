@@ -23,6 +23,7 @@
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
     <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
     <string name="home_drink_manual">직접 입력</string>
+    <string name="home_manual_drink_invalid_range">한번에 마실 수 있는 용량은 %,dml 이상, %,dml 이하입니다</string>
 
     <string name="history_view_label">기록</string>
     <string name="history_daily_chart_label">%s의 기록</string>
