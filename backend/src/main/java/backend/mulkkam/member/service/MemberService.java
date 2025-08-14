@@ -106,6 +106,7 @@ public class MemberService {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
         oauthAccount.modifyMember(member);
+        oauthAccountRepository.save(oauthAccount);
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
                 member,
