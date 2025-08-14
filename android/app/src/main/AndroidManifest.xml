@@ -60,7 +60,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.settinguserinfo.SettingUserInfoActivity"
+            android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

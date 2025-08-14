@@ -1,9 +1,12 @@
 package com.mulkkam.ui.settingaccountinfo
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingAccountInfoBinding
+import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -13,22 +16,23 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
     private val viewModel: SettingAccountInfoViewModel by viewModels()
 
     private val adapter: AccountInfoAdapter by lazy {
-        AccountInfoAdapter(
-            object : AccountInfoViewHolder.Handler {
-                override fun onSettingNormalClick(item: SettingAccountUiModel) {
-                    when (item.title) {
-                        R.string.setting_account_info_logout -> {
-                            // TODO: 로그아웃
-                        }
+        AccountInfoAdapter(accountHandler)
+    }
 
-                        R.string.setting_account_info_delete_account -> {
-                            viewModel.deleteAccount()
-                        }
+    private val accountHandler =
+        object : AccountInfoViewHolder.Handler {
+            override fun onSettingNormalClick(item: SettingAccountUiModel) {
+                when (item.title) {
+                    R.string.setting_account_info_logout -> {
+                        // TODO: 로그아웃
+                    }
+
+                    R.string.setting_account_info_delete_account -> {
+                        viewModel.deleteAccount()
                     }
                 }
-            },
-        )
-    }
+            }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,7 +48,11 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
 
     private fun initObservers() {
         viewModel.userInfo.observe(this) {
-            (binding.rvUserInfo.adapter as? AccountInfoAdapter)?.submitList(it)
+            adapter.submitList(it)
+        }
+
+        viewModel.onDeleteAccount.observe(this) {
+            moveToLogin()
         }
     }
 
@@ -52,5 +60,18 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         binding.ivBack.setSingleClickListener {
             finish()
         }
+    }
+
+    private fun moveToLogin() {
+        val intent =
+            Intent(this, LoginActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        startActivity(intent)
+        finish()
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, SettingAccountInfoActivity::class.java)
     }
 }
