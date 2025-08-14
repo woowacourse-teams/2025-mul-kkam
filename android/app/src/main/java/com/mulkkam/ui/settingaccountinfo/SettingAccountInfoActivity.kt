@@ -28,7 +28,8 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
                     }
 
                     R.string.setting_account_info_delete_account -> {
-                        viewModel.deleteAccount()
+                        val asdf = AccountDeleteDialogFragment()
+                        asdf.show(supportFragmentManager, null)
                     }
                 }
             }
