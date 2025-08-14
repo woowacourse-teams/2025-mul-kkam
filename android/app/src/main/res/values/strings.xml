@@ -76,9 +76,12 @@
     <string name="setting_target_amount_unit_ml">ml</string>
     <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
+    <string name="setting_feedback_toolbar_title">피드백 및 문의</string>
+
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
     <string name="setting_section_notification">알림 설정</string>
+    <string name="setting_section_support">고객센터</string>
 
     <string name="setting_item_body_info">신체 정보 설정</string>
     <string name="setting_item_push_notification">푸시 알림 설정</string>

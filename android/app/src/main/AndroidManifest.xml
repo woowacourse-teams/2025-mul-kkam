@@ -71,6 +71,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.settingfeedback.SettingFeedbackActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

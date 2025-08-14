@@ -13,6 +13,7 @@ import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
+import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -49,7 +50,7 @@ class SettingFragment :
             SettingType.Normal.MyCup -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.Normal.Goal -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.Normal.PushNotification -> Unit // TODO
-            SettingType.Normal.Feedback -> navigateToNotificationSetting()
+            SettingType.Normal.Feedback -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
             SettingType.Normal.Terms -> Unit // TODO
         }
     }
@@ -85,8 +86,8 @@ class SettingFragment :
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_push_notification), SettingType.Normal.PushNotification),
                 SettingItem.DividerItem,
-                SettingItem.TitleItem("고객센터"),
-                SettingItem.NormalItem("피드백 및 문의", SettingType.Normal.Feedback),
+                SettingItem.TitleItem(getString(R.string.setting_section_support)),
+                SettingItem.NormalItem(getString(R.string.setting_feedback_toolbar_title), SettingType.Normal.Feedback),
                 SettingItem.NormalItem("서비스 운영 정책", SettingType.Normal.Terms),
             )
         settingAdapter.submitList(settingItems)
