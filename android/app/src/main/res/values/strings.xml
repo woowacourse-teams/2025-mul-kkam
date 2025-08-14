@@ -76,10 +76,20 @@
     <string name="setting_target_amount_unit_ml">ml</string>
     <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
 
+    <string name="setting_feedback_toolbar_title">피드백 및 문의</string>
+    <string name="setting_feedback_description">물깜을 이용하시면서 불편하시거나 궁금한 사항이 있으시다면, 아래 연락처로 편하게 문의주세요.\n\n확인 후 이메일로 답변드리겠습니다.</string>
+    <string name="setting_feedback_description_highlight">물깜을 이용하시면서 불편하시거나 궁금한 사항이 있으시다면, 아래 연락처로 편하게 문의주세요.</string>
+    <string name="setting_feedback_email">mulkkamwater@gmail.com</string>
+
+    <string name="setting_terms_toolbar_title">서비스 운영 정책</string>
+    <string name="setting_terms_agree_service">서비스 이용 약관</string>
+    <string name="setting_terms_agree_privacy">개인정보 수집 및 이용 약관</string>
+    <string name="setting_terms_agree_health_connect">헬스 커넥트 약관</string>
+
     <string name="setting_section_account">계정 정보 설정</string>
     <string name="setting_section_water">물 마시기 설정</string>
     <string name="setting_section_notification">알림 설정</string>
-    <string name="setting_section_service_center">고객센터</string>
+    <string name="setting_section_support">고객센터</string>
 
     <string name="setting_item_body_info">신체 정보 설정</string>
     <string name="setting_item_account_info">회원 정보 설정</string>

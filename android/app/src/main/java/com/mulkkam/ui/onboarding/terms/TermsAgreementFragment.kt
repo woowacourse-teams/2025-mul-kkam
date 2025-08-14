@@ -1,10 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.StringRes
-import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.health.connect.client.PermissionController
@@ -13,23 +10,24 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentTermsBinding
 import com.mulkkam.ui.onboarding.OnboardingViewModel
-import com.mulkkam.ui.onboarding.terms.adapter.TermsAdapter
+import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementAdapter
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementViewHolder.TermsAgreementHandler
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.openTermsLink
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
-class TermsFragment :
+class TermsAgreementFragment :
     BindingFragment<FragmentTermsBinding>(
         FragmentTermsBinding::inflate,
     ) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
-    private val viewModel: TermsViewModel by viewModels()
+    private val viewModel: TermsAgreementViewModel by viewModels()
 
-    private val termsAdapter: TermsAdapter by lazy {
-        TermsAdapter(termsHandler)
+    private val termsAdapter: TermsAgreementAdapter by lazy {
+        TermsAgreementAdapter(termsHandler)
     }
 
     private val requestPermissionsLauncher =
@@ -51,23 +49,10 @@ class TermsFragment :
             override fun loadToTermsPage(termsAgreement: TermsAgreementUiModel) {
                 when (termsAgreement.labelId) {
                     R.string.terms_agree_health_connect -> requireContext().navigateToHealthConnectStore()
-                    else -> openTermsLink(termsAgreement.uri)
+                    else -> requireContext().openTermsLink(termsAgreement.uri)
                 }
             }
         }
-
-    private fun openTermsLink(
-        @StringRes uri: Int,
-    ) {
-        val intent =
-            Intent(
-                Intent.ACTION_VIEW,
-                requireContext()
-                    .getString(uri)
-                    .toUri(),
-            )
-        requireContext().startActivity(intent)
-    }
 
     override fun onViewCreated(
         view: View,

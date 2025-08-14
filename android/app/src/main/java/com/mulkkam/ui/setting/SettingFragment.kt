@@ -11,9 +11,11 @@ import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
+import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
+import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.binding.BindingFragment
 
 class SettingFragment :
@@ -48,8 +50,8 @@ class SettingFragment :
             SettingType.MY_CUP -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
-            SettingType.FEEDBACK -> Unit // TODO
-            SettingType.TERMS -> Unit // TODO
+            SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
+            SettingType.TERMS -> startActivity(SettingTermsActivity.newIntent(requireContext()))
         }
     }
 
@@ -68,7 +70,7 @@ class SettingFragment :
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_push_notification), SettingType.PUSH_NOTIFICATION),
                 SettingItem.DividerItem,
-                SettingItem.TitleItem(getString(R.string.setting_section_service_center)),
+                SettingItem.TitleItem(getString(R.string.setting_section_support)),
                 SettingItem.NormalItem(getString(R.string.setting_item_feedback), SettingType.FEEDBACK),
                 SettingItem.NormalItem(getString(R.string.setting_item_terms), SettingType.TERMS),
             )

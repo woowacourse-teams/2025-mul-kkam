@@ -2,6 +2,7 @@ package com.mulkkam.ui.util.extensions
 
 import android.content.Context
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.di.HealthConnectInjection.PROVIDER_PACKAGE_NAME
@@ -29,4 +30,16 @@ fun Context.navigateToHealthConnectStore() {
             putExtra("callerId", packageName)
         },
     )
+}
+
+fun Context.openTermsLink(
+    @StringRes uri: Int,
+) {
+    val intent =
+        Intent(
+            Intent.ACTION_VIEW,
+            getString(uri)
+                .toUri(),
+        )
+    startActivity(intent)
 }
