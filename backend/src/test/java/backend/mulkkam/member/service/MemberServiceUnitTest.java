@@ -224,6 +224,7 @@ public class MemberServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(memberId);
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             String expected = member.getMemberNickname().value();
 

@@ -1,8 +1,5 @@
 package backend.mulkkam.common.resolver;
 
-import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -14,7 +11,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,18 +19,12 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import java.util.Optional;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
 
 @ExtendWith(MockitoExtension.class)
 class MemberResolverTest {
-
-    @Mock
-    OauthAccountRepository oauthAccountRepository;
 
     @InjectMocks
     MemberResolver memberResolver;
@@ -63,12 +53,6 @@ class MemberResolverTest {
                     true,
                     false
             );
-
-            long oauthAccountId = memberId;
-            OauthAccount oauthAccount = new OauthAccount(oauthAccountId, member, "tempid", OauthProvider.KAKAO);
-
-            given(oauthAccountRepository.findByIdWithMember(member.getId())).willReturn(
-                    Optional.of(oauthAccount));
 
             // when
             MemberDetails result = memberResolver.resolveArgument(
