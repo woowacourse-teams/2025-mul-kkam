@@ -39,4 +39,6 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
             LocalDateTime limitStartDateTime,
             Pageable pageable
     );
+
+    void deleteByMember(Member member);
 }

@@ -11,4 +11,6 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     Optional<Device> findByDeviceIdAndMemberId(String deviceId, Long memberId);
 
     List<Device> findAllByMember(Member member);
+
+    void deleteByMember(Member member);
 }

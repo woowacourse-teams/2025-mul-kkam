@@ -6,13 +6,13 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
+import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
-import java.time.LocalDate;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,8 +20,10 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -165,5 +167,39 @@ public class MemberController {
     ) {
         ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(member, date);
         return ResponseEntity.ok().body(progressInfoResponse);
+    }
+
+    @Operation(summary = "사용자 야간 알림 수신 정보 수정", description = "야간 알림 수신 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "야간 알림 반영 성공")
+    @PatchMapping("/notification/night")
+    public ResponseEntity<Void> modifyIsNightNotificationAgreed(
+            @Parameter(hidden = true)
+            Member member,
+            @Parameter(description = "boolean 값", required = true, example = "true")
+            @RequestBody ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
+    ) {
+        memberService.modifyIsNightNotificationAgreed(member, modifyIsNightNotificationAgreedRequest);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 마케팅 알림 수신 정보 수정", description = "마케팅 알림 수신 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "마케팅 알림 반영 성공")
+    @PatchMapping("/notification/marketing")
+    public ResponseEntity<Void> modifyIsMarketingNotificationAgreed(
+            @Parameter(hidden = true)
+            Member member,
+            @Parameter(description = "boolean 값", required = true, example = "true")
+            @RequestBody ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreed
+    ) {
+        memberService.modifyIsMarketingNotificationAgreed(member, modifyIsMarketingNotificationAgreed);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
+    @ApiResponse(responseCode = "200", description = "탈퇴 성공")
+    @DeleteMapping
+    public ResponseEntity<Void> delete(Member member) {
+        memberService.delete(member);
+        return ResponseEntity.ok().build();
     }
 }

@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
@@ -23,6 +23,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -116,7 +117,7 @@ class IntakeHistoryServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_AMOUNT.name());
+                    .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
@@ -146,17 +147,17 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(
@@ -255,7 +256,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateAchievementRate() {
             // given
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(1_500))
+                    .targetAmount(new TargetAmount(2_000))
                     .buildWithId(1L);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -269,31 +270,31 @@ class IntakeHistoryServiceUnitTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fifthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(14, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(List.of(
@@ -317,7 +318,7 @@ class IntakeHistoryServiceUnitTest {
 
             // then
             assertThat(actual.getFirst().achievementRate())
-                    .isCloseTo(50.0, within(0.01));
+                    .isCloseTo(100.0, within(0.01));
         }
 
         @DisplayName("전체 음용량이 정상적으로 계산된다")
@@ -325,7 +326,7 @@ class IntakeHistoryServiceUnitTest {
         void success_calculateTotalIntakeAmount() {
             // given
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(1_000))
+                    .targetAmount(new TargetAmount(1_000))
                     .buildWithId(1L);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -338,17 +339,17 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);

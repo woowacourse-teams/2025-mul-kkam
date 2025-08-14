@@ -3,7 +3,7 @@ package backend.mulkkam.intake.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 @DataJpaTest
-public class TargetAmountSnapshotRepositoryTest {
+public class TargetTargetAmountSnapshotRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -46,9 +46,9 @@ public class TargetAmountSnapshotRepositoryTest {
             LocalDate pastUpdatedAt = LocalDate.of(2025, 7, 25);
             LocalDate updatedAt = LocalDate.of(2025, 7, 28);
             TargetAmountSnapshot targetAmountSnapshot1 = new TargetAmountSnapshot(savedMember, pastUpdatedAt,
-                    new Amount(1_000));
+                    new TargetAmount(1_000));
             TargetAmountSnapshot targetAmountSnapshot2 = new TargetAmountSnapshot(savedMember, updatedAt,
-                    new Amount(2_000));
+                    new TargetAmount(2_000));
 
             targetAmountSnapshotRepository.save(targetAmountSnapshot1);
             targetAmountSnapshotRepository.save(targetAmountSnapshot2);

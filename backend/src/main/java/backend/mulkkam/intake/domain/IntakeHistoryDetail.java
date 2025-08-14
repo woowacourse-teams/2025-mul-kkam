@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -31,7 +31,7 @@ public class IntakeHistoryDetail {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
-    private Amount intakeAmount;
+    private IntakeAmount intakeAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -39,7 +39,7 @@ public class IntakeHistoryDetail {
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
-            Amount intakeAmount,
+            IntakeAmount intakeAmount,
             IntakeHistory intakeHistory
     ) {
         this.intakeTime = intakeTime;

@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,13 +9,13 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -29,7 +29,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-public class IntakeAmountServiceUnitTest {
+public class IntakeTargetAmountServiceUnitTest {
 
     @InjectMocks
     IntakeAmountService intakeAmountService;
@@ -61,7 +61,7 @@ public class IntakeAmountServiceUnitTest {
             intakeAmountService.modifyTarget(mockMember, intakeTargetAmountModifyRequest);
 
             // then
-            verify(mockMember).updateTargetAmount(new Amount(newTargetAmount));
+            verify(mockMember).updateTargetAmount(new TargetAmount(newTargetAmount));
         }
 
         @DisplayName("용량이 음수인 경우 예외가 발생한다")
@@ -77,8 +77,8 @@ public class IntakeAmountServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_AMOUNT.name());
-            verify(member, never()).updateTargetAmount(any(Amount.class));
+                    .hasMessage(INVALID_TARGET_AMOUNT.name());
+            verify(member, never()).updateTargetAmount(any(TargetAmount.class));
         }
     }
 
@@ -125,7 +125,7 @@ public class IntakeAmountServiceUnitTest {
 
     @DisplayName("사용자의 신체적 속성으로 추천 음용량을 조회하려고 할 때")
     @Nested
-    class GetRecommendedTargetAmount {
+    class GetRecommendedTargetTargetAmount {
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test

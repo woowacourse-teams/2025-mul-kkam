@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.repository;
 
+import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
 import java.time.LocalDate;
@@ -30,4 +31,6 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
                 WHERE d.id = :id
             """)
     Optional<IntakeHistoryDetail> findWithHistoryAndMemberById(@Param("id") Long id);
+
+    void deleteByIntakeHistory(IntakeHistory intakeHistory);
 }

@@ -1,6 +1,6 @@
 package backend.mulkkam.notification.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -44,7 +44,7 @@ public class Notification {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "recommended_target_amount"))
-    private Amount recommendedTargetAmount;
+    private TargetAmount recommendedTargetAmount;
 
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -54,7 +54,7 @@ public class Notification {
             NotificationType notificationType,
             String title,
             LocalDateTime createdAt,
-            Amount recommendedTargetAmount,
+            TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
@@ -70,7 +70,7 @@ public class Notification {
             String title,
             boolean isRead,
             LocalDateTime createdAt,
-            Amount recommendedTargetAmount,
+            TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;

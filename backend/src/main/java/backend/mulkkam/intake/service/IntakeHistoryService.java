@@ -10,7 +10,6 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
@@ -20,6 +19,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -73,7 +73,7 @@ public class IntakeHistoryService {
                     CommentOfAchievementRate.VERY_LOW.getComment()
             );
         }
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 intakeHistory.getTargetAmount()
@@ -120,6 +120,14 @@ public class IntakeHistoryService {
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
+
+        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                member, LocalDate.now(), LocalDate.now());
+        if (intakeHistoryDetails.isEmpty()) {
+            IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
+                    .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
+            intakeHistoryRepository.delete(intakeHistory);
+        }
     }
 
     private void validatePossibleToDelete(
@@ -148,12 +156,11 @@ public class IntakeHistoryService {
         );
     }
 
-    private Amount calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
-        int total = intakeHistoryDetails
+    private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
+        return intakeHistoryDetails
                 .stream()
                 .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
                 .sum();
-        return new Amount(total);
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
@@ -169,9 +176,9 @@ public class IntakeHistoryService {
         List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
         List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
 
-        Amount totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
+        int totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
 
-        Amount targetAmountOfTheDay = intakeHistory.getTargetAmount();
+        TargetAmount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
                 totalIntakeAmount,
                 targetAmountOfTheDay
@@ -180,7 +187,7 @@ public class IntakeHistoryService {
         return new IntakeHistorySummaryResponse(
                 intakeHistory.getHistoryDate(),
                 targetAmountOfTheDay.value(),
-                totalIntakeAmount.value(),
+                totalIntakeAmount,
                 achievementRate.value(),
                 intakeHistory.getStreak(),
                 intakeDetailResponses
@@ -210,6 +217,9 @@ public class IntakeHistoryService {
     }
 
     private IntakeHistorySummaryResponse createDefaultResponse(LocalDate date, Member member) {
+        if (date.equals(LocalDate.now())) {
+            return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
+        }
         Optional<Integer> targetAmount = targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate
                 (
                         member.getId(),
