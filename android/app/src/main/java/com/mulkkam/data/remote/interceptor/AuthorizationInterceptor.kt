@@ -27,7 +27,13 @@ class AuthorizationInterceptor : Interceptor {
         val response = chain.proceed(initialRequest)
 
         // 2. 401 처리
-        if (response.code != HttpURLConnection.HTTP_UNAUTHORIZED || !hasAccessTokenExpiredError(response)) return response
+        if (response.code != HttpURLConnection.HTTP_UNAUTHORIZED ||
+            !hasAccessTokenExpiredError(
+                response,
+            )
+        ) {
+            return response
+        }
 
         val refreshToken = PreferenceInjection.tokenPreference.refreshToken ?: return response
 
@@ -37,19 +43,22 @@ class AuthorizationInterceptor : Interceptor {
         // 3. 토큰 재발급
         val refreshResponse =
             runBlocking {
-                try {
+                runCatching {
                     authService.postAuthTokenReissue(AuthReissueRequest(refreshToken))
-                } catch (e: Exception) {
-                    null
-                }
+                }.getOrNull()
             } ?: return response
 
         if (refreshResponse.isSuccess != true) return response
 
         // 4. 새 토큰 저장
-        val tokens = refreshResponse.toMulKkamResult().getOrError()
-        PreferenceInjection.tokenPreference.saveAccessToken(tokens.accessToken)
-        PreferenceInjection.tokenPreference.saveRefreshToken(tokens.refreshToken)
+        runCatching {
+            refreshResponse.toMulKkamResult().getOrError()
+        }.onSuccess { authTokenInfo ->
+            PreferenceInjection.tokenPreference.saveAccessToken(authTokenInfo.accessToken)
+            PreferenceInjection.tokenPreference.saveRefreshToken(authTokenInfo.refreshToken)
+        }.onFailure {
+            return response
+        }
 
         // 5. 새 요청 재시도
         val newRequest =
@@ -64,18 +73,13 @@ class AuthorizationInterceptor : Interceptor {
         return chain.proceed(newRequest)
     }
 
-    private fun hasAccessTokenExpiredError(response: Response): Boolean {
-        val rawBody = response.body.string()
-
-        return try {
+    private fun hasAccessTokenExpiredError(response: Response): Boolean =
+        runCatching {
+            val rawBody = response.body.string()
             val json = JSONObject(rawBody)
             json.optString(ERROR_BODY) == ResponseError.AccountError.UnAuthorized.code
-        } catch (e: Exception) {
-            false
-        } finally {
-            response.close()
-        }
-    }
+        }.getOrElse { false }
+            .also { response.close() }
 
     companion object {
         private const val HEADER_NAME_AUTHORIZATION: String = "Authorization"
