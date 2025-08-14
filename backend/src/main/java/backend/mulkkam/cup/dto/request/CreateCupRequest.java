@@ -1,6 +1,7 @@
 package backend.mulkkam.cup.dto.request;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupImoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -23,7 +24,8 @@ public record CreateCupRequest(
     public Cup toCup(
             Member member,
             CupRank cupRank,
-            IntakeType intakeType
+            IntakeType intakeType,
+            CupImoji cupImoji
     ) {
         return new Cup(
                 member,
@@ -31,7 +33,7 @@ public record CreateCupRequest(
                 new CupAmount(cupAmount),
                 cupRank,
                 intakeType,
-                emoji
+                cupImoji
         );
     }
 }

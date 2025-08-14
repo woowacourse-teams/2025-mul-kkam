@@ -59,33 +59,35 @@ public class Cup {
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    private String emoji;
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CupImoji cupImoji;
 
     public Cup(Member member,
                CupNickname nickname,
                CupAmount cupAmount,
                CupRank cupRank,
                IntakeType intakeType,
-               String emoji
+               CupImoji cupImoji
     ) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
         this.intakeType = intakeType;
-        this.emoji = emoji;
+        this.cupImoji = cupImoji;
     }
 
     public void update(
             CupNickname nickname,
             CupAmount cupAmount,
             IntakeType intakeType,
-            String emoji
+            CupImoji cupImoji
     ) {
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.intakeType = intakeType;
-        this.emoji = emoji;
+        this.cupImoji = cupImoji;
     }
 
     public boolean isLowerPriorityThan(Cup other) {

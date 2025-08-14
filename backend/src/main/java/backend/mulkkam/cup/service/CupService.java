@@ -8,6 +8,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupImoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -20,6 +21,7 @@ import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.repository.CupImojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import java.util.HashMap;
@@ -39,6 +41,7 @@ public class CupService {
     private static final int MAX_CUP_COUNT = 3;
 
     private final CupRepository cupRepository;
+    private final CupImojiRepository cupImojiRepository;
 
     public CupsResponse readSortedCupsByMember(Member member) {
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
@@ -51,7 +54,8 @@ public class CupService {
             Member member
     ) {
         IntakeType intakeType = IntakeType.findByName(registerCupRequest.intakeType());
-        Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType);
+        CupImoji cupImoji = getCupImoji(registerCupRequest.emoji());
+        Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType, cupImoji);
 
         Cup createdCup = cupRepository.save(cup);
 
@@ -92,18 +96,20 @@ public class CupService {
             UpdateCupRequest updateCupRequest
     ) {
         Cup cup = getCup(cupId);
+        CupImoji cupImoji = getCupImoji(updateCupRequest.emoji());
 
         validateCupOwnership(member, cup);
         cup.update(
                 new CupNickname(updateCupRequest.cupNickname()),
                 new CupAmount(updateCupRequest.cupAmount()),
                 updateCupRequest.intakeType(),
-                updateCupRequest.emoji()
+                cupImoji
         );
     }
 
     @Transactional
     public void delete(
+
             Long cupId,
             Member member
     ) {
@@ -175,6 +181,11 @@ public class CupService {
         if (!cup.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
+    }
+
+    private CupImoji getCupImoji(String emoji) {
+        return cupImojiRepository.findById(Long.parseLong(emoji))
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 cup id"));
     }
 
     private Cup getCup(final Long id) {
