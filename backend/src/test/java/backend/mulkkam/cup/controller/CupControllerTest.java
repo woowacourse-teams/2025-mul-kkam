@@ -88,7 +88,7 @@ class CupControllerTest {
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
-        token = oauthJwtTokenHandler.createToken1(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
     @DisplayName("컵을 생성한다")

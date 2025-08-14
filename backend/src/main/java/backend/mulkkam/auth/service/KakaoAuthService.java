@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.service;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.dto.KakaoSigninRequest;
