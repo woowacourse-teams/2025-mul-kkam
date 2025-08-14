@@ -2,7 +2,7 @@ package com.mulkkam.ui.settingnotification.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 
-object SettingDiffCallback : DiffUtil.ItemCallback<SettingNotificationItem>() {
+object SettingNotificationDiffCallback : DiffUtil.ItemCallback<SettingNotificationItem>() {
     override fun areItemsTheSame(
         oldItem: SettingNotificationItem,
         newItem: SettingNotificationItem,

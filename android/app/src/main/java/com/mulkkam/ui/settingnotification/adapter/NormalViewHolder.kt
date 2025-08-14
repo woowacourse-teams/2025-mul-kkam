@@ -7,11 +7,15 @@ import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NormalViewHolder private constructor(
     binding: ItemSettingNormalBinding,
-    private val handler: Handler,
-) : SettingViewHolder<SettingNotificationItem.NormalNotificationItem, ItemSettingNormalBinding>(binding) {
-    override fun bind(item: SettingNotificationItem.NormalNotificationItem) {
-        binding.tvLabel.text = item.label
+    handler: Handler,
+) : SettingNotificationViewHolder<SettingNotificationItem.NormalNotificationItem, ItemSettingNormalBinding>(binding) {
+    init {
         binding.root.setSingleClickListener { handler.onSettingNormalClick(item) }
+    }
+
+    override fun bind(item: SettingNotificationItem.NormalNotificationItem) {
+        super.bind(item)
+        binding.tvLabel.text = item.label
     }
 
     interface Handler {

@@ -4,15 +4,23 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import androidx.activity.viewModels
 import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNotificationBinding
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.domain.model.members.NotificationAgreedInfo
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingnotification.adapter.SettingNotificationAdapter
 import com.mulkkam.ui.settingnotification.adapter.SettingNotificationItem
-import com.mulkkam.ui.settingnotification.model.SettingType
+import com.mulkkam.ui.settingnotification.model.SettingNotificationType
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationBinding>(ActivitySettingNotificationBinding::inflate) {
+    private val viewModel: SettingNotificationViewModel by viewModels()
+
     private val adapter: SettingNotificationAdapter by lazy {
         handleSettingNotificationClick()
     }
@@ -22,14 +30,21 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
             object : SettingNotificationAdapter.Handler {
                 override fun onSettingNormalClick(item: SettingNotificationItem.NormalNotificationItem) {
                     when (item.type) {
-                        SettingType.Normal.SystemNotification -> navigateToNotificationSetting()
+                        SettingNotificationType.Normal.SystemNotification -> navigateToNotificationSetting()
                     }
                 }
 
-                override fun onSettingSwitchChanged(
+                override fun onSettingSwitchClicked(
                     item: SettingNotificationItem.SwitchNotificationItem,
                     isChecked: Boolean,
                 ) {
+                    when (item.type) {
+                        SettingNotificationType.Switch.MarketingNotification ->
+                            viewModel.updateMarketingNotification(isChecked)
+
+                        SettingNotificationType.Switch.NightMode ->
+                            viewModel.updateNightNotification(isChecked)
+                    }
                 }
             },
         )
@@ -52,30 +67,41 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        binding.ivBack.setSingleClickListener { finish() }
         binding.rvItems.adapter = adapter
-        initSettingNotificationItems()
+        initObservers()
     }
 
-    private fun initSettingNotificationItems() {
-        val settingNotificationItems =
+    private fun initObservers() {
+        viewModel.settingsUiState.observe(this) { state ->
+            mulKkamLogger.debug(message = "213412521521421521521421 $state")
+            showSettings((state as? MulKkamUiState.Success<NotificationAgreedInfo>)?.data ?: return@observe)
+        }
+        viewModel.onError.observe(this) {
+            mulKkamLogger.debug(message = "12312312312312")
+            CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+        }
+    }
+
+    private fun showSettings(model: NotificationAgreedInfo) {
+        val items =
             listOf(
                 SettingNotificationItem.SwitchNotificationItem(
-                    getString(R.string.setting_item_marketing),
-                    false,
-                    SettingType.Switch.MarketingNotification,
+                    label = getString(R.string.setting_item_marketing),
+                    isChecked = model.isMarketingNotificationAgreed,
+                    type = SettingNotificationType.Switch.MarketingNotification,
                 ),
                 SettingNotificationItem.SwitchNotificationItem(
-                    getString(R.string.setting_item_night),
-                    false,
-                    SettingType.Switch.NightMode,
+                    label = getString(R.string.setting_item_night),
+                    isChecked = model.isNightNotificationAgreed,
+                    type = SettingNotificationType.Switch.NightMode,
                 ),
                 SettingNotificationItem.NormalNotificationItem(
-                    getString(R.string.setting_item_system_notification),
-                    SettingType.Normal.SystemNotification,
+                    label = getString(R.string.setting_item_system_notification),
+                    type = SettingNotificationType.Normal.SystemNotification,
                 ),
             )
-        adapter.submitList(settingNotificationItems)
+        adapter.submitList(items)
     }
 
     companion object {

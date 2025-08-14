@@ -1,6 +1,6 @@
 package com.mulkkam.ui.settingnotification.adapter
 
-enum class SettingViewType {
+enum class SettingNotificationViewType {
     NORMAL,
     SWITCH,
 }

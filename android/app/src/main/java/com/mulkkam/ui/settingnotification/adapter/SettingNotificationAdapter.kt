@@ -6,18 +6,20 @@ import androidx.viewbinding.ViewBinding
 
 class SettingNotificationAdapter(
     private val handler: Handler,
-) : ListAdapter<SettingNotificationItem, SettingViewHolder<out SettingNotificationItem, out ViewBinding>>(SettingDiffCallback) {
+) : ListAdapter<SettingNotificationItem, SettingNotificationViewHolder<out SettingNotificationItem, out ViewBinding>>(
+        SettingNotificationDiffCallback,
+    ) {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): SettingViewHolder<out SettingNotificationItem, out ViewBinding> =
-        when (SettingViewType.entries[viewType]) {
-            SettingViewType.NORMAL -> NormalViewHolder.from(parent, handler)
-            SettingViewType.SWITCH -> SwitchViewHolder.from(parent, handler)
+    ): SettingNotificationViewHolder<out SettingNotificationItem, out ViewBinding> =
+        when (SettingNotificationViewType.entries[viewType]) {
+            SettingNotificationViewType.NORMAL -> NormalViewHolder.from(parent, handler)
+            SettingNotificationViewType.SWITCH -> SwitchViewHolder.from(parent, handler)
         }
 
     override fun onBindViewHolder(
-        holder: SettingViewHolder<out SettingNotificationItem, out ViewBinding>,
+        holder: SettingNotificationViewHolder<out SettingNotificationItem, out ViewBinding>,
         position: Int,
     ) {
         when (val item = getItem(position)) {
