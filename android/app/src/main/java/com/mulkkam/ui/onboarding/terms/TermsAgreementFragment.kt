@@ -1,10 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.annotation.StringRes
-import androidx.core.net.toUri
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.health.connect.client.PermissionController
@@ -19,6 +16,7 @@ import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.openTermsLink
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class TermsAgreementFragment :
@@ -51,23 +49,10 @@ class TermsAgreementFragment :
             override fun loadToTermsPage(termsAgreement: TermsAgreementUiModel) {
                 when (termsAgreement.labelId) {
                     R.string.terms_agree_health_connect -> requireContext().navigateToHealthConnectStore()
-                    else -> openTermsLink(termsAgreement.uri)
+                    else -> requireContext().openTermsLink(termsAgreement.uri)
                 }
             }
         }
-
-    private fun openTermsLink(
-        @StringRes uri: Int,
-    ) {
-        val intent =
-            Intent(
-                Intent.ACTION_VIEW,
-                requireContext()
-                    .getString(uri)
-                    .toUri(),
-            )
-        requireContext().startActivity(intent)
-    }
 
     override fun onViewCreated(
         view: View,
