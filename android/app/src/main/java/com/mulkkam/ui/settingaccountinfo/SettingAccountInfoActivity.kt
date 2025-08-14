@@ -46,11 +46,11 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
     }
 
     private fun initAdapter() {
-        binding.rvUserInfo.adapter = adapter
+        binding.rvAccountInfo.adapter = adapter
     }
 
     private fun initObservers() {
-        viewModel.userInfo.observe(this) {
+        viewModel.accountInfo.observe(this) {
             adapter.submitList(it)
         }
 

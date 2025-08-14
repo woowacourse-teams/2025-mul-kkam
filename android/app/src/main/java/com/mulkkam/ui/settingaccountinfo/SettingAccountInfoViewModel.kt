@@ -13,8 +13,8 @@ import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingAccountInfoViewModel : ViewModel() {
-    private val _userInfo: MutableLiveData<List<SettingAccountUiModel>> = MutableLiveData()
-    val userInfo: LiveData<List<SettingAccountUiModel>> = _userInfo
+    private val _accountInfo: MutableLiveData<List<SettingAccountUiModel>> = MutableLiveData()
+    val accountInfo: LiveData<List<SettingAccountUiModel>> = _accountInfo
 
     private val _onDeleteAccount: MutableSingleLiveData<Unit> = MutableSingleLiveData()
     val onDeleteAccount: SingleLiveData<Unit> = _onDeleteAccount
@@ -23,7 +23,7 @@ class SettingAccountInfoViewModel : ViewModel() {
     val onLogout: SingleLiveData<Unit> = _onLogout
 
     init {
-        _userInfo.value = userInfoList
+        _accountInfo.value = accountInfoList
     }
 
     fun deleteAccount() {
@@ -63,7 +63,7 @@ class SettingAccountInfoViewModel : ViewModel() {
     }
 
     companion object {
-        val userInfoList =
+        val accountInfoList =
             listOf(
                 SettingAccountUiModel(R.string.setting_account_info_logout),
                 SettingAccountUiModel(R.string.setting_account_info_delete_account),
