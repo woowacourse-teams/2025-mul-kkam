@@ -7,18 +7,22 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingNotificationViewModel : ViewModel() {
-    private val _settingsUiState: MutableLiveData<MulKkamUiState<NotificationAgreedInfo>> =
-        MutableLiveData(MulKkamUiState.Idle)
+    private val _settingsUiState = MutableLiveData<MulKkamUiState<NotificationAgreedInfo>>(MulKkamUiState.Idle)
     val settingsUiState: LiveData<MulKkamUiState<NotificationAgreedInfo>> get() = _settingsUiState
 
-    private val _onError: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    private val _onError = MutableSingleLiveData<Unit>()
     val onError: SingleLiveData<Unit> get() = _onError
+
+    private val _onMarketingUpdated = MutableSingleLiveData<Boolean>()
+    val onMarketingUpdated: SingleLiveData<Boolean> get() = _onMarketingUpdated
+
+    private val _onNightUpdated = MutableSingleLiveData<Boolean>()
+    val onNightUpdated: SingleLiveData<Boolean> get() = _onNightUpdated
 
     init {
         loadSettings()
@@ -29,7 +33,7 @@ class SettingNotificationViewModel : ViewModel() {
             runCatching {
                 membersRepository.getMembersNotificationSettings().getOrError()
             }.onSuccess {
-                _settingsUiState.value = MulKkamUiState.Success<NotificationAgreedInfo>(it)
+                _settingsUiState.value = MulKkamUiState.Success(it)
             }.onFailure {
                 _onError.setValue(Unit)
             }
@@ -38,7 +42,7 @@ class SettingNotificationViewModel : ViewModel() {
 
     fun updateNightNotification(agreed: Boolean) {
         if (settingsUiState.value is MulKkamUiState.Loading) return
-        val current = settingsUiState.value?.toSuccessDataOrNull() ?: return
+        val current = (settingsUiState.value as? MulKkamUiState.Success)?.data ?: return
 
         viewModelScope.launch {
             runCatching {
@@ -46,8 +50,9 @@ class SettingNotificationViewModel : ViewModel() {
                 membersRepository.patchMembersNotificationNight(agreed).getOrError()
             }.onSuccess {
                 _settingsUiState.value = MulKkamUiState.Success(current.copy(isNightNotificationAgreed = agreed))
+                _onNightUpdated.setValue(agreed)
             }.onFailure {
-                _settingsUiState.value = MulKkamUiState.Success(current.copy(isNightNotificationAgreed = agreed.not()))
+                _settingsUiState.value = MulKkamUiState.Success(current.copy(isNightNotificationAgreed = !agreed))
                 _onError.setValue(Unit)
             }
         }
@@ -55,7 +60,7 @@ class SettingNotificationViewModel : ViewModel() {
 
     fun updateMarketingNotification(agreed: Boolean) {
         if (settingsUiState.value is MulKkamUiState.Loading) return
-        val current = settingsUiState.value?.toSuccessDataOrNull() ?: return
+        val current = (settingsUiState.value as? MulKkamUiState.Success)?.data ?: return
 
         viewModelScope.launch {
             runCatching {
@@ -63,8 +68,9 @@ class SettingNotificationViewModel : ViewModel() {
                 membersRepository.patchMembersNotificationMarketing(agreed).getOrError()
             }.onSuccess {
                 _settingsUiState.value = MulKkamUiState.Success(current.copy(isMarketingNotificationAgreed = agreed))
+                _onMarketingUpdated.setValue(agreed)
             }.onFailure {
-                _settingsUiState.value = MulKkamUiState.Success(current.copy(isMarketingNotificationAgreed = agreed.not()))
+                _settingsUiState.value = MulKkamUiState.Success(current.copy(isMarketingNotificationAgreed = !agreed))
                 _onError.setValue(Unit)
             }
         }
