@@ -1,6 +1,5 @@
 package backend.mulkkam.member.service;
 
-import backend.mulkkam.auth.domain.AccountRefreshToken;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
@@ -10,6 +9,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
@@ -422,7 +422,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
-                    .targetAmount(new Amount(rawTargetAmount))
+                    .targetAmount(new TargetAmount(rawTargetAmount))
                     .build();
             memberRepository.save(member);
 
@@ -534,7 +534,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             deviceRepository.save(device);
 
             Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(),
-                    new Amount(1_000), member);
+                    new TargetAmount(1_000), member);
             notificationRepository.save(notification);
 
             // when
