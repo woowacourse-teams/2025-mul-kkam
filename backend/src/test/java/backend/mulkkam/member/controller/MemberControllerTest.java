@@ -160,6 +160,7 @@ class MemberControllerTest {
 
             NotificationSettingsResponse actual = objectMapper.readValue(json, NotificationSettingsResponse.class);
 
+            //then
             assertSoftly(softly -> {
                 softly.assertThat(actual.isNightNotificationAgreed()).isTrue();
                 softly.assertThat(actual.isMarketingNotificationAgreed()).isTrue();
