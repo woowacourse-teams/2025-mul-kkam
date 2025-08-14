@@ -16,13 +16,14 @@ import com.mulkkam.ui.settingnotification.adapter.SettingNotificationItem
 import com.mulkkam.ui.settingnotification.model.SettingNotificationType
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationBinding>(ActivitySettingNotificationBinding::inflate) {
     private val viewModel: SettingNotificationViewModel by viewModels()
 
-    private val adapter: SettingNotificationAdapter by lazy {
-        handleSettingNotificationClick()
-    }
+    private val adapter: SettingNotificationAdapter by lazy { handleSettingNotificationClick() }
 
     private fun handleSettingNotificationClick() =
         SettingNotificationAdapter(
@@ -48,22 +49,6 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
             },
         )
 
-    private fun navigateToNotificationSetting() {
-        runCatching {
-            val intent =
-                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                    putExtra(Settings.EXTRA_APP_PACKAGE, this@SettingNotificationActivity.packageName)
-                }
-            startActivity(intent)
-        }.onFailure {
-            val intent =
-                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                    data = "package:${this@SettingNotificationActivity.packageName}".toUri()
-                }
-            startActivity(intent)
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.ivBack.setSingleClickListener { finish() }
@@ -73,10 +58,34 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
 
     private fun initObservers() {
         viewModel.settingsUiState.observe(this) { state ->
-            showSettings((state as? MulKkamUiState.Success<NotificationAgreedInfo>)?.data ?: return@observe)
+            val data = (state as? MulKkamUiState.Success<NotificationAgreedInfo>)?.data ?: return@observe
+            showSettings(data)
         }
+
         viewModel.onError.observe(this) {
             CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+        }
+
+        viewModel.onMarketingUpdated.observe(this) { agreed ->
+            val time = formattedTime()
+            val messageRes =
+                if (agreed) {
+                    R.string.setting_notification_marketing_on
+                } else {
+                    R.string.setting_notification_marketing_off
+                }
+            CustomSnackBar.make(binding.root, getString(messageRes, time), R.drawable.ic_info_circle).show()
+        }
+
+        viewModel.onNightUpdated.observe(this) { agreed ->
+            val time = formattedTime()
+            val messageRes =
+                if (agreed) {
+                    R.string.setting_notification_night_on
+                } else {
+                    R.string.setting_notification_night_off
+                }
+            CustomSnackBar.make(binding.root, getString(messageRes, time), R.drawable.ic_info_circle).show()
         }
     }
 
@@ -101,7 +110,33 @@ class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationB
         adapter.submitList(items)
     }
 
+    private fun navigateToNotificationSetting() {
+        runCatching {
+            val intent =
+                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                    putExtra(Settings.EXTRA_APP_PACKAGE, packageName)
+                }
+            startActivity(intent)
+        }.onFailure {
+            val intent =
+                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                    data = "package:$packageName".toUri()
+                }
+            startActivity(intent)
+        }
+    }
+
+    private fun formattedTime(): String {
+        val formatter =
+            DateTimeFormatter
+                .ofPattern(TIME_PATTERN)
+                .withLocale(Locale.getDefault())
+        return LocalDateTime.now().format(formatter)
+    }
+
     companion object {
+        private const val TIME_PATTERN: String = "yyyy.MM.dd a h:mm"
+
         fun newIntent(context: Context): Intent = Intent(context, SettingNotificationActivity::class.java)
     }
 }
