@@ -8,6 +8,7 @@ import com.mulkkam.data.remote.model.response.members.MembersCheckOnboardingResp
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.members.MembersResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
@@ -47,4 +48,7 @@ interface MembersService {
     suspend fun getMembersProgressInfo(
         @Query("date") date: String,
     ): Result<MembersProgressInfoResponse>
+
+    @DELETE("/members")
+    suspend fun deleteMembers(): Result<Unit>
 }

@@ -27,4 +27,6 @@ interface MembersRepository {
     suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean>
 
     suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo>
+
+    suspend fun deleteMembers(): MulKkamResult<Unit>
 }

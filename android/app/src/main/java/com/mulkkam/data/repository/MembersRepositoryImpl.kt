@@ -92,4 +92,12 @@ class MembersRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun deleteMembers(): MulKkamResult<Unit> {
+        val result = membersService.deleteMembers()
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
