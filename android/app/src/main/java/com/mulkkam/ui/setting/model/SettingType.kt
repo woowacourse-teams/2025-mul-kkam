@@ -6,16 +6,16 @@ sealed interface SettingType {
 
         data object BodyInfo : Normal
 
+        data object AccountInfo : Normal
+
         data object MyCup : Normal
 
         data object Goal : Normal
 
-        data object Notification : Normal
-    }
+        data object PushNotification : Normal
 
-    sealed interface Switch : SettingType {
-        data object Marketing : Switch
+        data object Feedback : Normal
 
-        data object Night : Switch
+        data object Terms : Normal
     }
 }

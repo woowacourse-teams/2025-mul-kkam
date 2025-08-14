@@ -14,6 +14,7 @@ import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
+import com.mulkkam.ui.model.UserAuthState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -77,10 +78,10 @@ class MembersRepositoryImpl(
         )
     }
 
-    override suspend fun getMembersCheckOnboarding(): MulKkamResult<Boolean> {
+    override suspend fun getMembersCheckOnboarding(): MulKkamResult<UserAuthState> {
         val result = membersService.getMembersCheckOnboarding()
         return result.fold(
-            onSuccess = { MulKkamResult(data = it.finishedOnboarding) },
+            onSuccess = { MulKkamResult(data = UserAuthState.from(it.finishedOnboarding)) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }

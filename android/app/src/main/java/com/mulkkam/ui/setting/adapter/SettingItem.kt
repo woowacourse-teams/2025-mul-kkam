@@ -14,11 +14,5 @@ sealed class SettingItem(
         val type: SettingType.Normal,
     ) : SettingItem(SettingViewType.NORMAL)
 
-    data class SwitchItem(
-        val label: String,
-        val isChecked: Boolean,
-        val type: SettingType.Switch,
-    ) : SettingItem(SettingViewType.SWITCH)
-
     data object DividerItem : SettingItem(SettingViewType.DIVIDER)
 }

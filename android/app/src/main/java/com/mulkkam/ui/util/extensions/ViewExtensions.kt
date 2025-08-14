@@ -1,12 +1,17 @@
 package com.mulkkam.ui.util.extensions
 
+import android.content.Context
 import android.os.SystemClock
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
 import kotlin.math.max
+
+private const val SINGLE_CLICK_TAG_KEY: Int = -10001
 
 fun View.applyImeMargin(extraBottomSpace: Int = 0) {
     var startTranslationY = translationY
@@ -62,4 +67,13 @@ fun View.setSingleClickListener(
     }
 }
 
-private const val SINGLE_CLICK_TAG_KEY = -10001
+fun View.hideKeyboard() {
+    val window = (context as? android.app.Activity)?.window
+    if (window != null) {
+        WindowInsetsControllerCompat(window, window.decorView)
+            .hide(WindowInsetsCompat.Type.ime())
+        return
+    }
+    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+    imm.hideSoftInputFromWindow(windowToken, 0)
+}

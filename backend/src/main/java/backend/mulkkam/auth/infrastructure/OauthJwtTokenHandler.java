@@ -68,7 +68,7 @@ public class OauthJwtTokenHandler {
                 .build();
     }
 
-    public Long getSubject(String token) {
+    public Long getSubject(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
@@ -77,7 +77,7 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    private Claims getClaims(String token) {
+    private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
