@@ -164,6 +164,7 @@
     <string name="history_delete_confirm">확인</string>
     <string name="history_delete_cancel">취소</string>
     <string name="history_delete_success">기록이 삭제되었습니다.</string>
+    <string name="history_delete_failure_past">과거의 기록은 삭제할 수 없습니다</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
     <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
