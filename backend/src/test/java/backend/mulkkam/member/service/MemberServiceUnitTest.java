@@ -21,6 +21,7 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
@@ -233,17 +232,6 @@ public class MemberServiceUnitTest {
 
             // then
             assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
-        }
-    }
-
-    @DisplayName("멤버를 생성할 때에")
-    @Nested
-    class Create {
-
-        @DisplayName("기본 컵 3개가 저장된다")
-        @Test
-        void success_whenMemberSavedThenBeginningCupsSaved() {
-            // given
         }
     }
 }
