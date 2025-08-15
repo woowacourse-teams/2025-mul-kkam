@@ -5,15 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import com.mulkkam.R
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 
 class TermsAgreementViewModel : ViewModel() {
     private val _termsAgreements = MutableLiveData<List<TermsAgreementUiModel>>()
     val termsAgreements: LiveData<List<TermsAgreementUiModel>> get() = _termsAgreements
-
-    private val _tryHealthPermission: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val tryHealthPermission: SingleLiveData<Unit> get() = _tryHealthPermission
 
     val isAllChecked: LiveData<Boolean> =
         termsAgreements.map {
@@ -42,21 +37,9 @@ class TermsAgreementViewModel : ViewModel() {
             }
     }
 
-    fun updateHealthPermissionStatus(isGranted: Boolean) {
-        _termsAgreements.value =
-            _termsAgreements.value.orEmpty().map { agreement ->
-                if (agreement.labelId == R.string.terms_agree_health_connect) {
-                    agreement.copy(isChecked = isGranted)
-                } else {
-                    agreement
-                }
-            }
-    }
-
     fun checkAllAgreement() {
         val hasUncheckedAgreement = termsAgreements.value.orEmpty().any { !it.isChecked }
         if (hasUncheckedAgreement) {
-            requestHealthPermission()
             _termsAgreements.value =
                 _termsAgreements.value.orEmpty().map { agreement ->
                     agreement.copy(isChecked = true)
@@ -67,10 +50,6 @@ class TermsAgreementViewModel : ViewModel() {
                     agreement.copy(isChecked = false)
                 }
         }
-    }
-
-    fun requestHealthPermission() {
-        _tryHealthPermission.setValue(Unit)
     }
 
     companion object {
@@ -85,10 +64,6 @@ class TermsAgreementViewModel : ViewModel() {
                     labelId = R.string.terms_agree_privacy,
                     isRequired = true,
                     uri = R.string.terms_privacy,
-                ),
-                TermsAgreementUiModel(
-                    labelId = R.string.terms_agree_health_connect,
-                    isRequired = false,
                 ),
                 TermsAgreementUiModel(
                     labelId = R.string.terms_agree_night_notification,
