@@ -83,7 +83,6 @@ public class NotificationService {
 
         notificationRepository.save(createTokenNotificationRequest.toNotification());
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
-
     }
 
     public ReadNotificationsCountResponse getNotificationsCount(Member member) {
