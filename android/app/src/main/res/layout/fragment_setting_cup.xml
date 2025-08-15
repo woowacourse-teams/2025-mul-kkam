@@ -64,6 +64,7 @@
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
         android:imeOptions="actionDone|flagNoEnterAction"
+        android:inputType="text"
         android:maxLength="11"
         android:maxLines="1"
         android:paddingHorizontal="16dp"
