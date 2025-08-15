@@ -102,7 +102,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("음용 기록이 없으면 음용 기록을 생성된다")
         @Test
         void success_whenCreateIntakeHistoryDetail() throws Exception {
-
+            // given
             LocalDate from = LocalDate.of(2025, 7, 15);
             LocalDate to = LocalDate.of(2025, 7, 15);
 
@@ -123,6 +123,7 @@ class IntakeHistoryControllerTest {
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
 
+            // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -144,6 +145,7 @@ class IntakeHistoryControllerTest {
                     new TypeReference<List<IntakeHistorySummaryResponse>>() {
                     });
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(beforeIntakeHistorySummaries.getFirst().intakeDetails().size()).isEqualTo(0);
                 softly.assertThat(beforeIntakeHistorySummaries.getFirst().targetAmount()).isEqualTo(1000);
@@ -161,13 +163,11 @@ class IntakeHistoryControllerTest {
         @DisplayName("전 날에 세부 기록이 없다면 스트릭은 1일부터 시작한다")
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
-
-            LocalDate from = LocalDate.of(2025, 7, 15);
-            LocalDate to = LocalDate.of(2025, 7, 15);
-
+            // given
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
 
+            // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -176,6 +176,7 @@ class IntakeHistoryControllerTest {
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.getFirst().getStreak()).isEqualTo(1);
             });
@@ -184,18 +185,17 @@ class IntakeHistoryControllerTest {
         @DisplayName("전 날에 세부 기록이 없다면 스트릭은 1일부터 시작한다")
         @Test
         void success_streakIsPlusYesterdayStreakWhenThereIsYesterdayIntakeHistory() throws Exception {
-
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .date(LocalDate.of(2025, 7, 14))
                     .streak(45)
                     .build();
-
             intakeHistoryRepository.save(intakeHistory);
-
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
 
+            // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -204,6 +204,7 @@ class IntakeHistoryControllerTest {
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.getFirst().getStreak()).isEqualTo(45);
                 softly.assertThat(intakeHistories.get(1).getStreak()).isEqualTo(46);
@@ -218,6 +219,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("주어진 날짜를 기준으로 조회한다")
         @Test
         void success_isValidDateRange() throws Exception {
+            // given
             LocalDate from = LocalDate.of(2025, 7, 15);
             LocalDate to = LocalDate.of(2025, 7, 16);
             IntakeHistory intakeHistory1 = IntakeHistoryFixtureBuilder
@@ -237,6 +239,7 @@ class IntakeHistoryControllerTest {
             intakeHistoryRepository.saveAll(List.of(intakeHistory1, intakeHistory2));
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
 
+            // when
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", from.toString())
                             .param("to", to.toString())
@@ -248,6 +251,7 @@ class IntakeHistoryControllerTest {
                     new TypeReference<List<IntakeHistorySummaryResponse>>() {
                     });
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(2);
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.of(2025, 7, 15));
@@ -258,9 +262,11 @@ class IntakeHistoryControllerTest {
         @DisplayName("조회한 날짜가 없어도 세부 기록이 없는 빈 객체로 온다")
         @Test
         void success_whenThereAreNoRecords() throws Exception {
+            // given
             LocalDate from = LocalDate.of(2025, 7, 15);
             LocalDate to = LocalDate.of(2025, 7, 16);
 
+            // when
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", from.toString())
                             .param("to", to.toString())
@@ -272,6 +278,7 @@ class IntakeHistoryControllerTest {
                     new TypeReference<List<IntakeHistorySummaryResponse>>() {
                     });
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(2);
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.of(2025, 7, 15));
@@ -282,6 +289,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("조회한 날짜가 없어도 세부 기록이 없는 빈 객체로 올 때, 오늘이라면 목표 음용량이 멤버의 목표 음용량으로 결정된다")
         @Test
         void success_whenThereAreNoRecordsAndThenTargetAmountEqualToTargetAmountOfMember() throws Exception {
+            // when
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", LocalDate.now().toString())
                             .param("to", LocalDate.now().toString())
@@ -293,6 +301,7 @@ class IntakeHistoryControllerTest {
                     new TypeReference<List<IntakeHistorySummaryResponse>>() {
                     });
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(1);
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.now());
@@ -398,6 +407,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("데이터 없이 빈 객체로 올 때, 목표 음용량을 최근 스냅샷을 기준으로 정한다")
         @Test
         void success_whenThereAreNoRecords() throws Exception {
+            // given
             LocalDate from = LocalDate.of(2025, 7, 14);
             LocalDate to = LocalDate.of(2025, 7, 16);
 
@@ -415,6 +425,7 @@ class IntakeHistoryControllerTest {
 
             targetAmountSnapshotRepository.saveAll(List.of(targetAmountSnapshot1, targetAmountSnapshot2));
 
+            // when
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", from.toString())
                             .param("to", to.toString())
@@ -426,6 +437,7 @@ class IntakeHistoryControllerTest {
                     new TypeReference<List<IntakeHistorySummaryResponse>>() {
                     });
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.size()).isEqualTo(3);
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.of(2025, 7, 14));
@@ -447,6 +459,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("삭제해도 음용 세부 기록이 남아있는 경우 음용 기록을 남긴 채로 세부 기록만 삭제한다")
         @Test
         void deleteIntakeDetail_keepsHistory_whenNotAllDetailsDeleted() throws Exception {
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(2000))
@@ -467,12 +480,14 @@ class IntakeHistoryControllerTest {
 
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
 
+            // when
             mockMvc.perform(delete("/intake/history/details/{id}", intakeHistoryDetail2.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.size()).isEqualTo(1);
                 softly.assertThat(intakeHistories.getFirst().getTargetAmount().value()).isEqualTo(2000);
@@ -482,6 +497,7 @@ class IntakeHistoryControllerTest {
         @DisplayName("음용 세부 기록이 남아있지 않은 경우 음용 기록을 삭제한다")
         @Test
         void deleteIntakeDetail_deleteHistory_whenAllDetailsDeleted() throws Exception {
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(2000))
@@ -497,12 +513,14 @@ class IntakeHistoryControllerTest {
 
             intakeHistoryDetailRepository.save(intakeHistoryDetail1);
 
+            // when
             mockMvc.perform(delete("/intake/history/details/{id}", intakeHistoryDetail1.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.size()).isEqualTo(0);
             });
