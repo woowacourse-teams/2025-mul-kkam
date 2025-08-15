@@ -1,6 +1,7 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -21,6 +22,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.NotificationFixtureBuilder;
@@ -35,6 +37,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -260,6 +264,26 @@ class NotificationServiceUnitTest {
                                     o.action() == Action.GO_NOTIFICATION
                     )
             );
+        }
+    }
+
+    @DisplayName("알림 개수를 조회하고자 할 때")
+    @Nested
+    class GetNotificationsCount {
+
+        @DisplayName("안 읽은 알림의 갯수를 반환한다")
+        @ParameterizedTest
+        @ValueSource(longs = {0L, 1L, 3L})
+        void success_validMember(Long count) {
+            // given
+            when(notificationRepository.countByIsReadFalseAndMember(any(Member.class))).thenReturn(count);
+
+            // when
+            ReadNotificationsCountResponse readNotificationsCountResponse = notificationService.getNotificationsCount(
+                    mockMember);
+
+            // then
+            assertThat(readNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
 }
