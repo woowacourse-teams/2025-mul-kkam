@@ -1,7 +1,7 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
-import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import backend.mulkkam.common.exception.errorCode.FirebaseErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -34,7 +34,7 @@ public class FcmService implements AlarmService {
                     .putData(ACTION, sendFcmTokenMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
-            throw new AlarmException(e);
+            throw new CommonException(getErrorCode(e));
         }
     }
 
@@ -50,8 +50,12 @@ public class FcmService implements AlarmService {
                     .putData(ACTION, sendFcmTopicMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
-            MessagingErrorCode messagingErrorCode = e.getMessagingErrorCode();
-            throw new CommonException(FirebaseErrorCode.findByName(messagingErrorCode.name()));
+            throw new CommonException(getErrorCode(e));
         }
+    }
+
+    private ErrorCode getErrorCode(FirebaseMessagingException e) {
+        MessagingErrorCode messagingErrorCode = e.getMessagingErrorCode();
+        return FirebaseErrorCode.findByName(messagingErrorCode.name());
     }
 }
