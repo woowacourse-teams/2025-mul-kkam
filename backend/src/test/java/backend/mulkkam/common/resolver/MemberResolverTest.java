@@ -3,7 +3,11 @@ package backend.mulkkam.common.resolver;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.domain.OauthProvider;
+import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
@@ -15,6 +19,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -23,8 +28,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class)
 class MemberResolverTest {
+
+    @Mock
+    OauthAccountRepository oauthAccountRepository;
 
     @InjectMocks
     MemberResolver memberResolver;
@@ -38,12 +48,8 @@ class MemberResolverTest {
         void success_validToken() throws Exception {
             // given
             String token = "test-token";
+            long accountId = 1L;
             long memberId = 1L;
-
-            MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-            servletRequest.setAttribute("subject", memberId);
-            servletRequest.addHeader("Authorization", "Bearer " + token);
-            NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             Member member = new Member(
                     memberId,
@@ -53,6 +59,15 @@ class MemberResolverTest {
                     true,
                     false
             );
+
+            OauthAccount account = new OauthAccount(member, "kakao-id", OauthProvider.KAKAO);
+
+            when(oauthAccountRepository.findByIdWithMember(accountId)).thenReturn(Optional.of(account));
+
+            MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+            servletRequest.setAttribute("account_id", accountId);
+            servletRequest.addHeader("Authorization", "Bearer " + token);
+            NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             // when
             MemberDetails result = memberResolver.resolveArgument(

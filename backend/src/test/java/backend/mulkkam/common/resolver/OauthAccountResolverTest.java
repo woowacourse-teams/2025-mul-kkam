@@ -37,7 +37,7 @@ class OauthAccountResolverTest {
 
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
             servletRequest.addHeader("Authorization", "Bearer " + token);
-            servletRequest.setAttribute("subject", oauthAccountId);
+            servletRequest.setAttribute("account_id", oauthAccountId);
             NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             // when
