@@ -43,7 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
             Long accountId = oauthJwtTokenHandler.getAccountId(token);
+            Long memberId = oauthJwtTokenHandler.getMemberId(token);
             request.setAttribute("account_id", accountId);
+            request.setAttribute("member_id", memberId);
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());

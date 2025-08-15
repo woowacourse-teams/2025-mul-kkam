@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -44,6 +45,15 @@ public class OauthJwtTokenHandler {
         }
     }
 
+    public @Nullable Long getMemberId(String token) throws InvalidTokenException {
+        try {
+            Claims claims = getClaims(token);
+            return claims.get("memberId", Long.class);
+        } catch (NumberFormatException e) {
+            throw new InvalidTokenException();
+        }
+    }
+
     private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
@@ -69,9 +79,14 @@ public class OauthJwtTokenHandler {
     }
 
     private Claims generateClaims(OauthAccount account) {
+        Long memberId = null;
+        if (account.finishedOnboarding()) {
+            memberId = account.getMember().getId();
+        }
         return Jwts.claims()
                 .subject(account.getId().toString())
                 .id(UUID.randomUUID().toString())
+                .add("memberId", memberId)
                 .build();
     }
 
