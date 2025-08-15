@@ -2,11 +2,14 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER;
 
-import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -32,12 +35,13 @@ import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -55,23 +59,25 @@ public class MemberService {
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
 
-    public MemberResponse get(Member member) {
+    public MemberResponse get(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new MemberResponse(member);
     }
 
     @Transactional
     public void modifyPhysicalAttributes(
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
-        memberRepository.save(member);
     }
 
     public void validateDuplicateNickname(
             String nickname,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
@@ -89,25 +95,26 @@ public class MemberService {
     @Transactional
     public void modifyNickname(
             MemberNicknameModifyRequest memberNicknameModifyRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         member.updateNickname(memberNicknameModifyRequest.toMemberNickname());
-        memberRepository.save(member);
     }
 
-    public MemberNicknameResponse getNickname(Member member) {
+    public MemberNicknameResponse getNickname(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new MemberNicknameResponse(member.getMemberNickname());
     }
 
     @Transactional
     public void create(
-            OauthAccount oauthAccount,
+            OauthAccountDetails accountDetails,
             CreateMemberRequest createMemberRequest
     ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
-        oauthAccount.modifyMember(member);
-        oauthAccountRepository.save(oauthAccount);
+        OauthAccount account = getOauthAccount(accountDetails);
+        account.modifyMember(member);
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
                 member,
@@ -117,17 +124,18 @@ public class MemberService {
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
     }
 
-    public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {
+    public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
+        OauthAccount oauthAccount = getOauthAccount(accountDetails);
         boolean finishedOnboarding = oauthAccount.finishedOnboarding();
         return new OnboardingStatusResponse(finishedOnboarding);
     }
-
     public ProgressInfoResponse getProgressInfo(
-            Member member,
+            MemberDetails memberDetails,
             LocalDate date
     ) {
-        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
-                date);
+        Member member = getMember(memberDetails.id());
+
+        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, date);
         if (foundIntakeHistory.isEmpty()) {
             int streak = findStreak(member, date);
             return new ProgressInfoResponse(member, streak);
@@ -146,34 +154,30 @@ public class MemberService {
 
     @Transactional
     public void modifyIsNightNotificationAgreed(
-            Member member,
+            MemberDetails memberDetails,
             ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
+        Member member = getMember(memberDetails.id());
         member.modifyIsNightNotificationAgreed(modifyIsNightNotificationAgreedRequest.isNightNotificationAgreed());
-        memberRepository.save(member);
     }
 
     @Transactional
     public void modifyIsMarketingNotificationAgreed(
-            Member member,
+            MemberDetails memberDetails,
             ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest
     ) {
+        Member member = getMember(memberDetails.id());
         member.modifyIsMarketingNotificationAgreed(
-                modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
-        memberRepository.save(member);
+                modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed()
+        );
     }
 
     @Transactional
-    public void delete(Member member) {
-        Optional<OauthAccount> foundOauthAccount = oauthAccountRepository.findByMember(member);
+    public void delete(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
 
-        if (foundOauthAccount.isPresent()) {
-            OauthAccount oauthAccount = foundOauthAccount.get();
-            Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
-                    oauthAccount);
-            foundAccountRefreshToken.ifPresent(accountRefreshTokenRepository::delete);
-            oauthAccountRepository.delete(oauthAccount);
-        }
+        oauthAccountRepository.findByMember(member)
+                .ifPresent((this::deleteRefreshTokenAndAccount));
 
         cupRepository.deleteByMember(member);
         deviceRepository.deleteByMember(member);
@@ -189,7 +193,14 @@ public class MemberService {
         memberRepository.delete(member);
     }
 
-    public NotificationSettingsResponse getNotificationSettings(Member member) {
+    private void deleteRefreshTokenAndAccount(OauthAccount account) {
+        accountRefreshTokenRepository.findByAccount(account)
+                .ifPresent(accountRefreshTokenRepository::delete);
+        oauthAccountRepository.delete(account);
+    }
+
+    public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new NotificationSettingsResponse(member);
     }
 
@@ -201,8 +212,19 @@ public class MemberService {
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
-        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
-                member, todayDate.minusDays(1));
-        return yesterdayIntakeHistory.map(intakeHistory -> intakeHistory.getStreak() + 1).orElse(1);
+        LocalDate yesterday = todayDate.minusDays(1);
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, yesterday)
+                .map(intakeHistory -> intakeHistory.getStreak() + 1)
+                .orElse(1);
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
+        return oauthAccountRepository.findById(accountDetails.id())
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
     }
 }

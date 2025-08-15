@@ -10,7 +10,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -28,13 +30,6 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -42,6 +37,14 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
@@ -74,9 +77,12 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_amountMoreThan0() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = 500;
             IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
@@ -85,7 +91,7 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // when
-            intakeHistoryService.create(request, member);
+            intakeHistoryService.create(request, new MemberDetails(member));
 
             // then
             verify(intakeHistoryRepository).save(any(IntakeHistory.class));
@@ -99,6 +105,8 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = -1;
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
@@ -115,7 +123,7 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.ofNullable(intakeHistory));
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
@@ -131,9 +139,13 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_containsOnlyInDateRange() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+
             given(targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(eq(member.getId()),
                     any(LocalDate.class)))
                     .willReturn(Optional.of(1500));
@@ -174,7 +186,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -192,6 +204,8 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -236,7 +250,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -255,9 +269,12 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_calculateAchievementRate() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new TargetAmount(2_000))
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -313,7 +330,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -325,9 +342,12 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_calculateTotalIntakeAmount() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new TargetAmount(1_000))
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -360,7 +380,7 @@ class IntakeHistoryServiceUnitTest {
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(startDate, endDate),
-                    member
+                    new MemberDetails(member)
             );
 
             // then

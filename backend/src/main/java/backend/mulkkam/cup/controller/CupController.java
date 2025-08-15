@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.controller;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
@@ -7,7 +8,6 @@ import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.service.CupService;
-import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,9 +42,9 @@ public class CupController {
     @GetMapping
     public ResponseEntity<CupsResponse> readAllSorted(
             @Parameter(hidden = true)
-            Member member
+            MemberDetails memberDetails
     ) {
-        return ResponseEntity.ok(cupService.readSortedCupsByMember(member));
+        return ResponseEntity.ok(cupService.readSortedCupsByMember(memberDetails));
     }
 
     @Operation(summary = "새로운 컵 생성", description = "사용자가 새로운 커스텀 컵을 생성합니다.")
@@ -55,12 +55,12 @@ public class CupController {
     @PostMapping
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody CreateCupRequest registerCupRequest
     ) {
         cupService.create(
                 registerCupRequest,
-                member
+                memberDetails
         );
         return ResponseEntity.ok().build();
     }
@@ -75,10 +75,10 @@ public class CupController {
     @PutMapping("/ranks")
     public ResponseEntity<CupsRanksResponse> updateRanks(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Valid @RequestBody UpdateCupRanksRequest request
     ) {
-        CupsRanksResponse response = cupService.updateRanks(request, member);
+        CupsRanksResponse response = cupService.updateRanks(request, memberDetails);
         return ResponseEntity.ok(response);
     }
 
@@ -91,14 +91,14 @@ public class CupController {
     @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody UpdateCupRequest updateCupRequest,
             @Parameter(description = "수정할 컵의 ID", required = true)
             @PathVariable Long cupId
     ) {
         cupService.update(
                 cupId,
-                member,
+                memberDetails,
                 updateCupRequest
         );
         return ResponseEntity.ok().build();
@@ -112,11 +112,11 @@ public class CupController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "삭제할 컵의 ID", required = true)
             @PathVariable("id") Long id
     ) {
-        cupService.delete(id, member);
+        cupService.delete(id, memberDetails);
         return ResponseEntity.noContent().build();
     }
 }

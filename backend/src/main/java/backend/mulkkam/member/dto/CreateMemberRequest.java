@@ -1,10 +1,10 @@
 package backend.mulkkam.member.dto;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "온보딩 정보 생성 요청")

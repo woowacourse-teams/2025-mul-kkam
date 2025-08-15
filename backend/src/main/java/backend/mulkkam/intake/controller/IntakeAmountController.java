@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
@@ -8,7 +9,6 @@ import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendReq
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
-import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -42,9 +42,9 @@ public class IntakeAmountController {
     @GetMapping("/recommended")
     public ResponseEntity<IntakeRecommendedAmountResponse> getRecommended(
             @Parameter(hidden = true)
-            Member member
+            MemberDetails memberDetails
     ) {
-        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(member);
+        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(memberDetails);
         return ResponseEntity.ok(intakeRecommendedAmountResponse);
     }
 
@@ -73,10 +73,10 @@ public class IntakeAmountController {
     @PatchMapping("/target")
     public ResponseEntity<Void> modifyTarget(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
-        intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+        intakeAmountService.modifyTarget(memberDetails, intakeTargetAmountModifyRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -86,9 +86,9 @@ public class IntakeAmountController {
     @GetMapping("/target")
     public ResponseEntity<IntakeTargetAmountResponse> getTarget(
             @Parameter(hidden = true)
-            Member member
+            MemberDetails memberDetails
     ) {
-        IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(member);
+        IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(memberDetails);
         return ResponseEntity.ok(intakeTargetAmountResponse);
     }
 
@@ -102,10 +102,10 @@ public class IntakeAmountController {
     @PatchMapping("/target/suggested")
     public ResponseEntity<Void> modifyTargetBySuggested(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest
     ) {
-        intakeAmountService.modifyDailyTargetBySuggested(member, modifyIntakeTargetAmountByRecommendRequest);
+        intakeAmountService.modifyDailyTargetBySuggested(memberDetails, modifyIntakeTargetAmountByRecommendRequest);
         return ResponseEntity.ok().build();
     }
 }

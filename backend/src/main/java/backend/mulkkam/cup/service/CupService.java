@@ -5,7 +5,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
@@ -22,14 +24,16 @@ import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -39,8 +43,10 @@ public class CupService {
     private static final int MAX_CUP_COUNT = 3;
 
     private final CupRepository cupRepository;
+    private final MemberRepository memberRepository;
 
-    public CupsResponse readSortedCupsByMember(Member member) {
+    public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
         return new CupsResponse(cups);
     }
@@ -48,8 +54,9 @@ public class CupService {
     @Transactional
     public CupResponse create(
             CreateCupRequest registerCupRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         IntakeType intakeType = IntakeType.findByName(registerCupRequest.intakeType());
         Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType);
 
@@ -69,9 +76,10 @@ public class CupService {
     @Transactional
     public CupsRanksResponse updateRanks(
             UpdateCupRanksRequest request,
-            Member member
+            MemberDetails memberDetails
     ) {
         CupRanks cupRanks = new CupRanks(buildCupRankMapById(request.cups()));
+        Member member = getMember(memberDetails.id());
         List<Cup> cups = getAllByIdsAndMemberId(cupRanks.getCupIds(), member);
 
         for (Cup cup : cups) {
@@ -88,10 +96,11 @@ public class CupService {
     @Transactional
     public void update(
             Long cupId,
-            Member member,
+            MemberDetails memberDetails,
             UpdateCupRequest updateCupRequest
     ) {
         Cup cup = getCup(cupId);
+        Member member = getMember(memberDetails.id());
 
         validateCupOwnership(member, cup);
         cup.update(
@@ -105,8 +114,9 @@ public class CupService {
     @Transactional
     public void delete(
             Long cupId,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         Cup targetCup = cupRepository.findByIdAndMember(cupId, member)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
 
@@ -180,5 +190,10 @@ public class CupService {
     private Cup getCup(final Long id) {
         return cupRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
+    }
+
+    private Member getMember(final Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

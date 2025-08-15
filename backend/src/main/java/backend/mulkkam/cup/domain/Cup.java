@@ -101,15 +101,9 @@ public class Cup {
     }
 
     public boolean isOwnedBy(Member member) {
-        return this.member.equals(member);
-    }
-
-    public void modifyNicknameAndAmount(
-            CupNickname nickname,
-            CupAmount cupAmount
-    ) {
-        this.nickname = nickname;
-        this.cupAmount = cupAmount;
+        Long ownerId = this.member.getId();
+        Long otherId = member.getId();
+        return ownerId.equals(otherId);
     }
 
     public void modifyRank(CupRank rank) {

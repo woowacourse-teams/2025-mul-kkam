@@ -1,5 +1,8 @@
 package backend.mulkkam.cup.domain.collection;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import org.junit.jupiter.api.DisplayName;
@@ -7,9 +10,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
-
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class CupRanksTest {
 
