@@ -28,15 +28,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse<FailureBody> handleInvalidMethodArgument(MethodArgumentNotValidException e,
-                                                                  HttpServletRequest request) {
+    public ErrorResponse<FailureBody> handleInvalidMethodArgument(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request
+    ) {
         logCommonException(request, INVALID_METHOD_ARGUMENT);
         return ErrorResponse.from(INVALID_METHOD_ARGUMENT);
     }
 
     @ExceptionHandler(CommonException.class)
-    public ErrorResponse<FailureBody> handleCommonException(CommonException e,
-                                                            HttpServletRequest request) {
+    public ErrorResponse<FailureBody> handleCommonException(
+            CommonException e,
+            HttpServletRequest request
+    ) {
         logCommonException(request, e.getErrorCode());
         return ErrorResponse.from(e.getErrorCode());
     }

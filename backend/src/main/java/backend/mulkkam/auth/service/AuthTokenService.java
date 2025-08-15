@@ -65,7 +65,10 @@ public class AuthTokenService {
                 .orElseThrow(() -> new CommonException(UNAUTHORIZED));
     }
 
-    private void validateRequestToken(AccountRefreshToken saved, String refreshToken) {
+    private void validateRequestToken(
+            AccountRefreshToken saved,
+            String refreshToken
+    ) {
         if (!saved.isMatchWith(refreshToken)) {
             throw new CommonException(REFRESH_TOKEN_ALREADY_USED);
         }
