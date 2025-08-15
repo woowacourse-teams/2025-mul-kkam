@@ -7,13 +7,14 @@ import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
-import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
-import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
+import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import com.mulkkam.util.extensions.getParcelableCompat
 
 class SettingCupFragment :
@@ -40,13 +41,13 @@ class SettingCupFragment :
 
     private fun initClickListeners() {
         with(binding) {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSingleClickListener { dismiss() }
 
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveCup()
             }
 
-            tvDelete.setOnClickListener {
+            tvDelete.setSingleClickListener {
                 viewModel.deleteCup()
             }
         }

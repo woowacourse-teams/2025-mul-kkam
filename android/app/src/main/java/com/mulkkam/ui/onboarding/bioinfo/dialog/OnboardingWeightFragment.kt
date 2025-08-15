@@ -4,8 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentWeightBinding
-import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_MAX
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_MIN
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
+import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class OnboardingWeightFragment :
     BindingBottomSheetDialogFragment<FragmentWeightBinding>(
@@ -26,22 +30,16 @@ class OnboardingWeightFragment :
         binding.npWeightChoose.apply {
             minValue = WEIGHT_MIN
             maxValue = WEIGHT_MAX
-            value = parentViewModel.weight.value ?: WEIGHT_DEFAULT
+            value = parentViewModel.weight.value?.value ?: WEIGHT_DEFAULT
         }
     }
 
     private fun initClickListeners() {
-        binding.ivWeightClose.setOnClickListener { dismiss() }
+        binding.ivWeightClose.setSingleClickListener { dismiss() }
 
-        binding.tvComplete.setOnClickListener {
+        binding.tvComplete.setSingleClickListener {
             parentViewModel.updateWeight(binding.npWeightChoose.value)
             dismiss()
         }
-    }
-
-    companion object {
-        private const val WEIGHT_MAX: Int = 150
-        private const val WEIGHT_MIN: Int = 25
-        private const val WEIGHT_DEFAULT: Int = 50
     }
 }

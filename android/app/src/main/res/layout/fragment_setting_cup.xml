@@ -63,9 +63,11 @@
         android:layout_marginTop="6dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
-        android:paddingHorizontal="12dp"
+        android:imeOptions="actionDone|flagNoEnterAction"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
-        android:textAppearance="@style/body3"
+        android:textAppearance="@style/body2"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/et_nickname" />
 
-    <com.mulkkam.ui.custom.MulKkamChipGroup
+    <com.mulkkam.ui.custom.chip.MulKkamChipGroup
         android:id="@+id/mcg_intake_type"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -114,10 +116,12 @@
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/white"
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
+        android:imeOptions="actionDone|flagNoEnterAction"
         android:inputType="number"
-        android:paddingHorizontal="12dp"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
-        android:textAppearance="@style/body3"
+        android:textAppearance="@style/body2"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -127,7 +131,7 @@
         android:id="@+id/tv_unit"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="12dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/setting_target_amount_unit_ml"
         android:textAppearance="@style/title2"
         android:textColor="@color/gray_400"
@@ -142,17 +146,17 @@
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="22dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/bg_common_rectangle_8dp"
-        android:backgroundTint="@color/primary_200"
+        android:background="@drawable/selector_common_button_enabled"
         android:gravity="center"
-        android:paddingVertical="8dp"
+        android:paddingVertical="12dp"
         android:text="@string/setting_cup_save"
         android:textAppearance="@style/title2"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_amount" />
+        app:layout_constraintTop_toBottomOf="@id/et_amount"
+        app:layout_constraintVertical_bias="0.478" />
 
     <TextView
         android:id="@+id/tv_delete"

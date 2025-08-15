@@ -10,5 +10,7 @@ COPY build/libs/*.jar app.jar
 # 포트 노출 (스프링 부트 기본 포트)
 EXPOSE 80
 
+ENV TZ=Asia/Seoul
+
 # 애플리케이션 실행
-ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-Duser.timezone=Asia/Seoul", "-jar", "app.jar"]

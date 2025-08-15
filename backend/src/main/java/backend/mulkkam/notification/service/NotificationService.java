@@ -64,6 +64,37 @@ public class NotificationService {
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
 
+    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
+        if (getNotificationsRequest.size() < 1) {
+            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
+        }
+    }
+
+    private List<Notification> getNotificationsByLastIdAndMember(
+            Member member,
+            Long lastId,
+            LocalDateTime limitStartDateTime,
+            Pageable pageable
+    ) {
+        if (lastId == null) {
+            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
+        }
+        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
+    }
+
+    private List<ReadNotificationResponse> toReadNotificationResponses(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
+        if (hasNext) {
+            notifications.removeLast();
+        }
+
+        return notifications.stream()
+                .map(ReadNotificationResponse::new)
+                .collect(Collectors.toList());
+    }
+
     @Transactional
     public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
         List<Member> allMember = memberRepository.findAll();
@@ -105,24 +136,6 @@ public class NotificationService {
         }
     }
 
-    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
-        if (getNotificationsRequest.size() < 1) {
-            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
-        }
-    }
-
-    private List<Notification> getNotificationsByLastIdAndMember(
-            Member member,
-            Long lastId,
-            LocalDateTime limitStartDateTime,
-            Pageable pageable
-    ) {
-        if (lastId == null) {
-            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
-        }
-        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
-    }
-
     private Long getNextCursor(
             boolean hasNext,
             List<Notification> notifications
@@ -131,18 +144,5 @@ public class NotificationService {
             return notifications.getLast().getId();
         }
         return null;
-    }
-
-    private List<ReadNotificationResponse> toReadNotificationResponses(
-            boolean hasNext,
-            List<Notification> notifications
-    ) {
-        if (hasNext) {
-            notifications.removeLast();
-        }
-
-        return notifications.stream()
-                .map(ReadNotificationResponse::new)
-                .collect(Collectors.toList());
     }
 }

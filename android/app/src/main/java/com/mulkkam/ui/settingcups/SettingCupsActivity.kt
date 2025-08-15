@@ -3,16 +3,22 @@ package com.mulkkam.ui.settingcups
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingCupsBinding
-import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(ActivitySettingCupsBinding::inflate) {
     private val viewModel: SettingCupsViewModel by viewModels()
@@ -58,18 +64,39 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         }
 
     private fun initObserver() {
-        viewModel.cups.observe(this) { cups ->
-            val cupItems =
-                buildList {
-                    addAll(cups.cups.map { SettingCupsItem.CupItem(it) })
-                    if (cups.isAddable) add(SettingCupsItem.AddItem)
-                }
-            settingCupsAdapter.submitList(cupItems)
+        viewModel.cupsUiState.observe(this) { cupsUiState ->
+            handleCupsUiState(cupsUiState)
         }
     }
 
+    private fun handleCupsUiState(cupsUiState: MulKkamUiState<CupsUiModel>) {
+        when (cupsUiState) {
+            is MulKkamUiState.Success<CupsUiModel> -> showCupsInfo(cupsUiState)
+            is MulKkamUiState.Loading -> binding.sflCups.visibility = View.VISIBLE
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar.make(
+                    binding.root,
+                    getString(R.string.load_info_error),
+                    R.drawable.ic_alert_circle,
+                )
+                binding.sflCups.visibility = View.GONE
+            }
+        }
+    }
+
+    private fun showCupsInfo(cupsUiState: MulKkamUiState.Success<CupsUiModel>) {
+        val cupItems =
+            buildList {
+                addAll(cupsUiState.data.cups.map { SettingCupsItem.CupItem(it) })
+                if (cupsUiState.data.isAddable) add(SettingCupsItem.AddItem)
+            }
+        settingCupsAdapter.submitList(cupItems)
+        binding.sflCups.visibility = View.GONE
+    }
+
     private fun initClickListener() {
-        binding.ivBack.setOnClickListener {
+        binding.ivBack.setSingleClickListener {
             finish()
         }
     }

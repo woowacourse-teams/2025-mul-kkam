@@ -1,6 +1,6 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -12,7 +12,7 @@ public class MemberFixtureBuilder {
     private Gender gender;
     private Double weight;
     private PhysicalAttributes physicalAttributes;
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
     private boolean isMarketingNotificationAgreed;
     private boolean isNightNotificationAgreed;
 
@@ -21,7 +21,7 @@ public class MemberFixtureBuilder {
         this.gender = Gender.FEMALE;
         this.weight = 50.2;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
-        this.targetAmount = new Amount(1_000);
+        this.targetAmount = new TargetAmount(1_000);
         this.isMarketingNotificationAgreed = false;
         this.isNightNotificationAgreed = false;
     }
@@ -47,7 +47,7 @@ public class MemberFixtureBuilder {
         return this;
     }
 
-    public MemberFixtureBuilder targetAmount(Amount targetAmount) {
+    public MemberFixtureBuilder targetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
         return this;
     }

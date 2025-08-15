@@ -4,10 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.databinding.FragmentManualDrinkBinding
-import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.ui.binding.BindingBottomSheetDialogFragment
-import com.mulkkam.ui.custom.MulKkamChipGroupAdapter
+import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
+import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ManualDrinkFragment :
     BindingBottomSheetDialogFragment<FragmentManualDrinkBinding>(
@@ -22,27 +23,21 @@ class ManualDrinkFragment :
         super.onViewCreated(view, savedInstanceState)
 
         initClickListeners()
-        initObservers()
         initChips()
     }
 
     private fun initClickListeners() {
         with(binding) {
-            ivClose.setOnClickListener { dismiss() }
+            ivClose.setSingleClickListener { dismiss() }
 
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.addWaterIntake(
                     binding.etAmount.text
                         .toString()
-                        .toIntOrNull() ?: return@setOnClickListener,
+                        .toIntOrNull() ?: return@setSingleClickListener,
                 )
+                dismiss()
             }
-        }
-    }
-
-    private fun initObservers() {
-        viewModel.drinkSuccess.observe(viewLifecycleOwner) {
-            dismiss()
         }
     }
 

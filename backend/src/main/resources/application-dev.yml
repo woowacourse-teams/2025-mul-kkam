@@ -23,14 +23,13 @@ spring:
     locations: classpath:db/migration
     clean-disabled: true
 
-logging:
-  file:
-    name: ${LOG_PATH}
-
 security:
   jwt:
     secret-key: ${JWT_SECRET}
-    expire-length: ${ACCESS_TOKEN_EXPIRE}
+    access:
+      expire-length: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expire-length: ${REFRESH_TOKEN_EXPIRE}
 
 fcm:
   base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
@@ -42,4 +41,27 @@ open-weather:
 
 app:
   logging:
-    mask-auth: false
+    mask-auth: true
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+
+management:
+  metrics:
+    enable:
+      jvm.memory.used: true
+      jvm.memory.max: true
+      jvm.gc.pause: true
+      jvm.threads: true
+      hikaricp: true
+      http.server: true
+      process.cpu: true
+
+  cloudwatch:
+    metrics:
+      export:
+        enabled: true
+        step: 1m
+        namespace: Mulkkam/Dev

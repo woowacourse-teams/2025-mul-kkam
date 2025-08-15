@@ -6,9 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
-import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.util.extensions.loadUrl
+import com.mulkkam.ui.util.extensions.loadUrl
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class CupViewHolder(
     parent: ViewGroup,
@@ -37,7 +38,7 @@ class CupViewHolder(
         }
 
     private fun initClickListeners(item: SettingCupsItem.CupItem) =
-        binding.ivEdit.setOnClickListener {
+        binding.ivEdit.setSingleClickListener {
             handler.onEditClick(item.value)
         }
 
@@ -51,7 +52,6 @@ class CupViewHolder(
                 }
                 false
             }
-            setOnClickListener { }
         }
     }
 

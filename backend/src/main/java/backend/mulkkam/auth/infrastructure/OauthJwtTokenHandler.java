@@ -1,16 +1,18 @@
 package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.common.exception.InvalidTokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
-import java.util.Date;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class OauthJwtTokenHandler {
@@ -18,8 +20,11 @@ public class OauthJwtTokenHandler {
     @Value("${security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${security.jwt.expire-length}")
-    private Long expireLengthInMilliseconds;
+    @Value("${security.jwt.access.expire-length}")
+    private Long accessExpireInMilliseconds;
+
+    @Value("${security.jwt.refresh.expire-length}")
+    private Long refreshExpireInMilliseconds;
 
     private JwtParser parser;
 
@@ -30,13 +35,11 @@ public class OauthJwtTokenHandler {
                 .build();
     }
 
-    public String createToken(OauthAccount account) {
-        Claims claims = Jwts.claims()
-                .subject(account.getId().toString())
-                .build();
+    public String createAccessToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
 
         Date now = new Date();
-        Date validity = new Date(now.getTime() + expireLengthInMilliseconds);
+        Date validity = new Date(now.getTime() + accessExpireInMilliseconds);
         return Jwts.builder()
                 .claims(claims)
                 .issuedAt(now)
@@ -45,22 +48,40 @@ public class OauthJwtTokenHandler {
                 .compact();
     }
 
-    public Long getSubject(String token) {
+    public String createRefreshToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshExpireInMilliseconds);
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(validity)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
+    }
+
+    private Claims generateClaims(OauthAccount account) {
+        return Jwts.claims()
+                .subject(account.getId().toString())
+                .id(UUID.randomUUID().toString())
+                .build();
+    }
+
+    public Long getSubject(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
         } catch (NumberFormatException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new InvalidTokenException();
         }
     }
 
-    private Claims getClaims(String token) {
+    private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
-            // TODO: CustomException 에러 반환 (컨벤션 변경으로 인해 보류)
-            throw new IllegalArgumentException("INVALID_TOKEN");
+            throw new InvalidTokenException();
         }
     }
 }

@@ -5,47 +5,66 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.TargetAmount
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.intake.TargetAmount
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.onboarding.targetamount.model.TargetAmountOnboardingUiModel
 import kotlinx.coroutines.launch
 
 class TargetAmountViewModel : ViewModel() {
-    private var _targetAmount = MutableLiveData<TargetAmount>()
-    val targetAmount: LiveData<TargetAmount> get() = _targetAmount
+    private val _targetAmountOnboardingUiState = MutableLiveData<MulKkamUiState<TargetAmountOnboardingUiModel>>(MulKkamUiState.Idle)
+    val targetAmountOnboardingUiState: LiveData<MulKkamUiState<TargetAmountOnboardingUiModel>> get() = _targetAmountOnboardingUiState
 
-    private val _recommendedTargetAmount = MutableLiveData<Int>()
-    val recommendedTargetAmount: MutableLiveData<Int>
-        get() = _recommendedTargetAmount
+    private val _targetAmountInput = MutableLiveData<TargetAmount?>()
+    val targetAmountInput: LiveData<TargetAmount?> get() = _targetAmountInput
 
-    private val _isTargetAmountValid = MutableLiveData<Boolean?>()
-    val isTargetAmountValid: LiveData<Boolean?> get() = _isTargetAmountValid
+    private val _targetAmountValidityUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val targetAmountValidityUiState: LiveData<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState
 
-    fun getRecommendedTargetAmount(
+    fun loadRecommendedTargetAmount(
+        nickname: String,
         gender: Gender?,
-        weight: Int?,
+        weight: BioWeight?,
     ) {
+        if (_targetAmountOnboardingUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
-            val result = RepositoryInjection.intakeRepository.getIntakeAmountTargetRecommended(gender, weight)
+            _targetAmountOnboardingUiState.value = MulKkamUiState.Loading
             runCatching {
-                result.data?.let {
-                    _recommendedTargetAmount.value = it
-                }
+                val amount =
+                    RepositoryInjection.intakeRepository
+                        .getIntakeAmountTargetRecommended(gender, weight)
+                        .getOrError()
+                TargetAmountOnboardingUiModel(
+                    nickname = nickname,
+                    recommendedTargetAmount = TargetAmount(amount),
+                )
+            }.onSuccess { targetAmountOnboardingUiModel ->
+                _targetAmountOnboardingUiState.value = MulKkamUiState.Success(targetAmountOnboardingUiModel)
+                _targetAmountInput.value = targetAmountOnboardingUiModel.recommendedTargetAmount
+                _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
-                // TODO: 에러 처리
+                _targetAmountOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun updateTargetAmount(newTargetAmount: Int?) {
+        if (newTargetAmount == null) {
+            _targetAmountInput.value = null
+            _targetAmountValidityUiState.value = MulKkamUiState.Idle
+            return
+        }
+
         runCatching {
-            newTargetAmount?.let {
-                _targetAmount.value = TargetAmount(newTargetAmount)
-                _isTargetAmountValid.value = true
-            } ?: run {
-                _isTargetAmountValid.value = null
-            }
+            TargetAmount(newTargetAmount)
+        }.onSuccess { targetAmount ->
+            _targetAmountInput.value = targetAmount
+            _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
         }.onFailure {
-            _isTargetAmountValid.value = false
+            _targetAmountValidityUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
         }
     }
 }

@@ -10,13 +10,16 @@ import androidx.activity.viewModels
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingBioInfoBinding
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.Gender.FEMALE
-import com.mulkkam.domain.model.Gender.MALE
-import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.bio.Gender.FEMALE
+import com.mulkkam.domain.model.bio.Gender.MALE
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
-import com.mulkkam.util.extensions.isHealthConnectAvailable
-import com.mulkkam.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(
@@ -38,7 +41,7 @@ class SettingBioInfoActivity :
 
     private fun initClickListeners() {
         with(binding) {
-            tvSave.setOnClickListener {
+            tvSave.setSingleClickListener {
                 viewModel.saveBioInfo()
             }
 
@@ -58,7 +61,7 @@ class SettingBioInfoActivity :
                 finish()
             }
 
-            llHealthConnect.setOnClickListener {
+            llHealthConnect.setSingleClickListener {
                 if (isHealthConnectAvailable()) {
                     startActivity(healthConnectIntent)
                 } else {
@@ -71,7 +74,7 @@ class SettingBioInfoActivity :
     private fun initObservers() {
         with(viewModel) {
             weight.observe(this@SettingBioInfoActivity) { weight ->
-                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight)
+                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight?.value)
             }
 
             gender.observe(this@SettingBioInfoActivity) { selectedGender ->
@@ -82,11 +85,8 @@ class SettingBioInfoActivity :
                 updateNextButtonEnabled(enabled)
             }
 
-            onBioInfoChanged.observe(this@SettingBioInfoActivity) {
-                Toast
-                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
-                    .show()
-                finish()
+            bioInfoChangeUiState.observe(this@SettingBioInfoActivity) { bioInfoChangeUiState ->
+                handleBioInfoChangeUiState(bioInfoChangeUiState)
             }
         }
     }
@@ -129,11 +129,22 @@ class SettingBioInfoActivity :
 
     private fun updateNextButtonEnabled(enabled: Boolean) {
         binding.tvSave.isEnabled = enabled
-        if (enabled) {
-            binding.tvSave.backgroundTintList =
-                ColorStateList.valueOf(
-                    getColor(R.color.primary_200),
-                )
+    }
+
+    private fun handleBioInfoChangeUiState(bioInfoChangeUiState: MulKkamUiState<Unit>) {
+        when (bioInfoChangeUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                Toast
+                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
+                    .show()
+                finish()
+            }
+
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle)
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package backend.mulkkam.member.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import jakarta.persistence.AttributeOverride;
@@ -37,7 +37,7 @@ public class Member {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
 
     @Column(nullable = false)
     private boolean isMarketingNotificationAgreed;
@@ -48,7 +48,7 @@ public class Member {
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
-            Amount targetAmount,
+            TargetAmount targetAmount,
             boolean isMarketingNotificationAgreed,
             boolean isNightNotificationAgreed
     ) {
@@ -74,12 +74,20 @@ public class Member {
         this.physicalAttributes = physicalAttributes;
     }
 
-    public void updateTargetAmount(Amount newTargetAmount) {
+    public void updateTargetAmount(TargetAmount newTargetAmount) {
         this.targetAmount = newTargetAmount;
     }
 
     public boolean isSameNickname(MemberNickname memberNickname) {
         return this.memberNickname.equals(memberNickname);
+    }
+
+    public void modifyIsNightNotificationAgreed(boolean isNightNotificationAgreed) {
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
+    }
+
+    public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
     }
 
     @Override

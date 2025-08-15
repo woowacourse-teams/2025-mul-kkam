@@ -1,8 +1,8 @@
 package com.mulkkam.data.repository
 
 import com.mulkkam.data.preference.TokenPreference
-import com.mulkkam.domain.model.MulKkamResult
-import com.mulkkam.domain.model.toMulKkamResult
+import com.mulkkam.domain.model.result.MulKkamResult
+import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.TokenRepository
 
 class TokenRepositoryImpl(
@@ -11,6 +11,11 @@ class TokenRepositoryImpl(
     override suspend fun getAccessToken(): MulKkamResult<String?> =
         runCatching {
             tokenPreference.accessToken
+        }.toMulKkamResult()
+
+    override suspend fun getRefreshToken(): MulKkamResult<String?> =
+        runCatching {
+            tokenPreference.refreshToken
         }.toMulKkamResult()
 
     override suspend fun getFcmToken(): MulKkamResult<String?> =
@@ -26,6 +31,16 @@ class TokenRepositoryImpl(
     override suspend fun deleteAccessToken(): MulKkamResult<Unit> =
         runCatching {
             tokenPreference.deleteAccessToken()
+        }.toMulKkamResult()
+
+    override suspend fun saveRefreshToken(token: String): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.saveRefreshToken(token)
+        }.toMulKkamResult()
+
+    override suspend fun deleteRefreshToken(): MulKkamResult<Unit> =
+        runCatching {
+            tokenPreference.deleteRefreshToken()
         }.toMulKkamResult()
 
     override suspend fun saveFcmToken(token: String): MulKkamResult<Unit> =

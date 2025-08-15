@@ -5,27 +5,30 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.domain.model.Cups
-import com.mulkkam.domain.model.TodayProgressInfo
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
+import com.mulkkam.domain.model.members.TodayProgressInfo
+import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 
 class HomeViewModel : ViewModel() {
-    private val _todayProgressInfo = MutableLiveData<TodayProgressInfo>()
-    val todayProgressInfo: LiveData<TodayProgressInfo> get() = _todayProgressInfo
+    private val _todayProgressInfoUiState: MutableLiveData<MulKkamUiState<TodayProgressInfo>> =
+        MutableLiveData(MulKkamUiState.Success<TodayProgressInfo>(EMPTY_TODAY_PROGRESS_INFO))
+    val todayProgressInfoUiState: LiveData<MulKkamUiState<TodayProgressInfo>> get() = _todayProgressInfoUiState
 
-    private val _cups: MutableLiveData<Cups> = MutableLiveData()
-    val cups: LiveData<Cups> get() = _cups
+    private val _cupsUiState: MutableLiveData<MulKkamUiState<Cups>> = MutableLiveData(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
+    val cupsUiState: LiveData<MulKkamUiState<Cups>> get() = _cupsUiState
 
-    private val _characterChat: MutableLiveData<String> = MutableLiveData()
-    val characterChat: LiveData<String> get() = _characterChat
+    private val _alarmCountUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
+    val alarmCountUiState: LiveData<MulKkamUiState<Int>> get() = _alarmCountUiState
 
-    private val _alarmCount: MutableLiveData<Int> = MutableLiveData()
-    val alarmCount: LiveData<Int> get() = _alarmCount
-
-    private val _drinkSuccess: MutableLiveData<Int> = MutableLiveData()
-    val drinkSuccess: LiveData<Int> get() = _drinkSuccess
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> = MutableLiveData(MulKkamUiState.Idle)
+    val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {
         loadTodayProgressInfo()
@@ -34,61 +37,75 @@ class HomeViewModel : ViewModel() {
     }
 
     fun loadTodayProgressInfo() {
+        if (todayProgressInfoUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembersProgressInfo(LocalDate.now())
             runCatching {
-                val progressInfo = result.getOrError()
-                _todayProgressInfo.value = progressInfo
+                _todayProgressInfoUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
+            }.onSuccess { todayProgressInfoUiState ->
+                _todayProgressInfoUiState.value = MulKkamUiState.Success<TodayProgressInfo>(todayProgressInfoUiState)
             }.onFailure {
-                // TODO: 에러 처리
+                _todayProgressInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun loadCups() {
+        if (cupsUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result = RepositoryInjection.cupsRepository.getCups()
             runCatching {
-                _cups.value = result.getOrError()
+                _cupsUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.cupsRepository.getCups().getOrError()
+            }.onSuccess { cupsUiState ->
+                _cupsUiState.value = MulKkamUiState.Success<Cups>(cupsUiState)
             }.onFailure {
-                // TODO: 에러 처리
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun loadAlarmCount() {
+        if (alarmCountUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             // TODO: 알림 개수 조회 API 연결
-            // val result = RepositoryInjection.alarmRepository.getAlarmCount()
+            // RepositoryInjection.alarmRepository.getAlarmCount().getOrError()
             runCatching {
-                // val count = result.getOrError()
-                _alarmCount.value = 2
+                _alarmCountUiState.value = MulKkamUiState.Loading
+            }.onSuccess {
+                _alarmCountUiState.value = MulKkamUiState.Success<Int>(2)
             }.onFailure {
-                // TODO: 에러 처리
+                _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
     fun addWaterIntakeByCup(cupId: Long) {
-        val cup = cups.value?.findCupById(cupId) ?: return
+        val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
+        val cup = cups.findCupById(cupId) ?: return
         addWaterIntake(cup.amount)
     }
 
     fun addWaterIntake(amount: Int) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result =
-                RepositoryInjection.intakeRepository.postIntakeHistory(
-                    LocalDateTime.now(),
-                    amount,
-                )
             runCatching {
-                val intakeHistoryResult = result.getOrError()
-                _todayProgressInfo.value =
-                    todayProgressInfo.value?.updateProgressInfo(amount, intakeHistoryResult.achievementRate)
-                _characterChat.value = intakeHistoryResult.comment
-                _drinkSuccess.value = amount
+                _drinkUiState.value = MulKkamUiState.Loading
+                RepositoryInjection.intakeRepository
+                    .postIntakeHistory(LocalDateTime.now(), amount)
+                    .getOrError()
+            }.onSuccess { intakeHistory ->
+                val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch
+                _todayProgressInfoUiState.value =
+                    MulKkamUiState.Success(
+                        current.updateProgressInfo(
+                            amountDelta = amount,
+                            achievementRate = intakeHistory.achievementRate,
+                            comment = intakeHistory.comment,
+                        ),
+                    )
+                _drinkUiState.value = MulKkamUiState.Success(amount)
             }.onFailure {
-                // TODO: 에러 처리
+                _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

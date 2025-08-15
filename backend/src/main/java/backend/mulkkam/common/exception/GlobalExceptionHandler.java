@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErro
 
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
+@RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -53,10 +55,10 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long oauthId = (Long) request.getAttribute("oauth_id");
 
-        String traceId = (String) request.getAttribute("traceId");
-        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
-                traceId,
+        log.error("[SERVER_ERROR] oauthId = {}, code={}({} {}), message={}",
+                oauthId,
                 INTER_SERVER_ERROR_CODE.name(),
                 INTER_SERVER_ERROR_CODE.getStatus(),
                 e.getClass().getSimpleName(),
@@ -70,10 +72,10 @@ public class GlobalExceptionHandler {
             ErrorCode errorCode
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long oauthId = (Long) request.getAttribute("oauth_id");
 
-        String traceId = (String) request.getAttribute("traceId");
-        log.warn("[CLIENT_ERROR] traceId = {}, code={}({})",
-                traceId,
+        log.info("[CLIENT_ERROR] oauthId = {}, code={}({})",
+                oauthId,
                 errorCode.name(),
                 errorCode.getStatus()
         );

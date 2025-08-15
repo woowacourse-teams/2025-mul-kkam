@@ -9,9 +9,13 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
-import com.mulkkam.ui.binding.BindingActivity
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.login.LoginActivity
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
-import com.mulkkam.ui.onboarding.terms.TermsFragment
+import com.mulkkam.ui.onboarding.terms.TermsAgreementFragment
+import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOnboardingBinding::inflate) {
     private val viewModel: OnboardingViewModel by viewModels()
@@ -22,7 +26,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         supportFragmentManager.commit {
             setReorderingAllowed(true)
             addToBackStack(null)
-            add(R.id.fcv_onboarding, TermsFragment::class.java, null, OnboardingStep.TERMS.name)
+            add(R.id.fcv_onboarding, TermsAgreementFragment::class.java, null, OnboardingStep.TERMS.name)
             viewModel.updateOnboardingState(OnboardingStep.TERMS)
         }
 
@@ -30,7 +34,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         initClickListeners()
         initObservers()
         initBackPressHandler()
-        finishOnFragmentsEmpty()
+        navigateToLoginOnFragmentsEmpty()
     }
 
     private fun initProgressBarView() {
@@ -43,7 +47,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     }
 
     private fun initClickListeners() {
-        binding.tvSkip.setOnClickListener {
+        binding.tvSkip.setSingleClickListener {
             viewModel.moveToNextStep()
         }
 
@@ -62,8 +66,8 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
             binding.tvSkip.isVisible = canSkip
         }
 
-        viewModel.onCompleteOnboarding.observe(this) {
-            showCompleteDialogFragment()
+        viewModel.saveOnboardingUiState.observe(this) { saveOnboardingUiState ->
+            handleSaveOnboardingUiState(saveOnboardingUiState)
         }
     }
 
@@ -75,6 +79,18 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
                 setReorderingAllowed(true)
                 add(R.id.fcv_onboarding, step.fragment, null, step.name)
             }
+        }
+    }
+
+    private fun handleSaveOnboardingUiState(saveOnboardingUiState: MulKkamUiState<Unit>) {
+        when (saveOnboardingUiState) {
+            is MulKkamUiState.Success<Unit> -> showCompleteDialogFragment()
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle)
+                    .show()
         }
     }
 
@@ -96,11 +112,13 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
         )
     }
 
-    private fun finishOnFragmentsEmpty() {
+    private fun navigateToLoginOnFragmentsEmpty() {
         supportFragmentManager.addOnBackStackChangedListener {
             val fragments = supportFragmentManager.fragments
 
             if (fragments.isEmpty()) {
+                val intent = LoginActivity.newIntent(this)
+                startActivity(intent)
                 finish()
             }
         }
