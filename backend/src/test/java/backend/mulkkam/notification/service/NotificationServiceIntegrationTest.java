@@ -200,7 +200,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             assertThat(response.nextCursor()).isNull();
         }
 
-        @DisplayName("size가 음수일 때 예외가 발생한다")
+        @DisplayName("size가 음용일 때 예외가 발생한다")
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given

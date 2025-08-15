@@ -18,7 +18,7 @@ public record MemberResponse(
         @Schema(description = "성별", example = "FEMALE", implementation = Gender.class)
         String gender,
 
-        @Schema(description = "목표 음수량 (ml)", example = "2000", minimum = "1")
+        @Schema(description = "목표 음용량 (ml)", example = "2000", minimum = "1")
         int targetAmount
 ) {
 

@@ -54,8 +54,8 @@ public class CupController {
             @ExampleObject(name = "잘못된 컵 닉네임", summary = "cupNickname 형식 오류", value = "{\"code\":\"INVALID_CUP_NICKNAME\"}"),
             @ExampleObject(name = "최대 보유 컵 개수 초과", summary = "최대 3개까지 보유 가능", value = "{\"code\":\"INVALID_CUP_COUNT\"}")}))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 음수 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "존재하지 않는 음수 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 음용 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
     @PostMapping
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)

@@ -73,7 +73,7 @@ public class IntakeTargetAmountServiceUnitTest {
             assertThat(member.getTargetAmount()).isEqualTo(new TargetAmount(newTargetAmount));
         }
 
-        @DisplayName("용량이 음수인 경우 예외가 발생한다")
+        @DisplayName("용량이 음용인 경우 예외가 발생한다")
         @Test
         void error_amountIsLessThan0() {
             // given

@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
-@Schema(description = "음수량 기록 생성 요청")
+@Schema(description = "음용량 기록 생성 요청")
 public record IntakeDetailCreateRequest(
         @Schema(description = "섭취 일시", example = "2024-01-15T14:30:00")
         LocalDateTime dateTime,
