@@ -3,7 +3,6 @@ package backend.mulkkam.notification.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
-import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -19,7 +18,6 @@ import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -118,12 +116,8 @@ public class NotificationService {
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         notificationRepository.save(createTokenNotificationRequest.toNotification());
+        sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
 
-        try {
-            sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
-        } catch (FirebaseMessagingException e) {
-            throw new AlarmException(e);
-        }
     }
 
     public ReadNotificationsCountResponse getNotificationsCount(Member member) {
@@ -134,7 +128,7 @@ public class NotificationService {
     private void sendNotificationByMember(
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
-    ) throws FirebaseMessagingException {
+    ) {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
