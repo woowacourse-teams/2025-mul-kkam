@@ -23,17 +23,17 @@ import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -126,6 +126,13 @@ public class CupService {
                 .stream()
                 .filter(cup -> cup.isLowerPriorityThan(targetCup))
                 .forEach(Cup::promoteRank);
+    }
+
+    @Transactional
+    public void reset(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+        cupRepository.deleteByMember(member);
+        cupRepository.saveAll(CupFactory.createDefaultCups(member));
     }
 
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {

@@ -235,4 +235,15 @@ public class MemberServiceUnitTest {
             assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
         }
     }
+
+    @DisplayName("멤버를 생성할 때에")
+    @Nested
+    class Create {
+
+        @DisplayName("기본 컵 3개가 저장된다")
+        @Test
+        void success_whenMemberSavedThenBeginningCupsSaved() {
+            // given
+        }
+    }
 }

@@ -9,6 +9,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
@@ -22,6 +31,8 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
@@ -33,6 +44,7 @@ import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -96,6 +108,43 @@ class MemberControllerTest {
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
+    @DisplayName("멤버를 생성할 때에")
+    @Nested
+    class Create {
+
+        @DisplayName("기본 컵 3개도 저장된다.")
+        @Test
+        void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
+            // given
+            databaseCleaner.clean();
+
+            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
+                    true);
+
+            // when
+            mockMvc.perform(post("/members")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createMemberRequest)))
+                    .andExpect(status().isOk());
+
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            Member foundMember = foundOauthAccount.getMember();
+            List<Cup> cups = cupRepository.findAllByMember(foundMember);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cups.size()).isEqualTo(3);
+                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
+                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
+                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
+            });
+        }
+    }
+
     @DisplayName("멤버의 정보를 수정할 때에")
     @Nested
     class Modify {
@@ -112,8 +161,7 @@ class MemberControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
-                    .andExpect(status().isOk())
-                    .andReturn().getResponse().getContentAsString();
+                    .andExpect(status().isOk());
             Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
 
             // then
