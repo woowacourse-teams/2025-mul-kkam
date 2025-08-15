@@ -12,6 +12,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -122,6 +123,7 @@ public class MemberService {
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
+        cupRepository.saveAll(CupFactory.createDefaultCups(member));
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {

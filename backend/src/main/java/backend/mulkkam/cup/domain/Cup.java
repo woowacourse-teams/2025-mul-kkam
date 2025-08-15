@@ -96,10 +96,6 @@ public class Cup {
         cupRank = cupRank.promote();
     }
 
-    public void demoteRank() {
-        cupRank = cupRank.demote();
-    }
-
     public boolean isOwnedBy(Member member) {
         Long ownerId = this.member.getId();
         Long otherId = member.getId();

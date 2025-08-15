@@ -37,6 +37,7 @@ import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -46,8 +47,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -486,6 +485,37 @@ class CupControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
             });
+        }
+    }
+
+    @DisplayName("컵을 초기화시킬 때")
+    @Nested
+    class Reset {
+
+        @DisplayName("기존에 컵이 있다면 모두 삭제시킨 후 기본 컵을 생성한다.")
+        @Test
+        void success_whenResettingDefaultCupsDeletesExistingCups() throws Exception {
+            // given
+            Cup cup = CupFixtureBuilder
+                    .withMember(savedMember)
+                    .build();
+            cupRepository.save(cup);
+
+            // when
+            mockMvc.perform(put("/cups/reset")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk());
+
+            List<Cup> cups = cupRepository.findAllByMember(savedMember);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(cups.size()).isEqualTo(3);
+                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
+                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
+                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
+            });
+
         }
     }
 }

@@ -194,11 +194,6 @@ public class IntakeHistoryService {
                 .map(IntakeDetailResponse::new).toList();
     }
 
-    private IntakeHistory findById(Long id) {
-        return intakeHistoryRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
-    }
-
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
         return intakeHistoryDetailRepository.findWithHistoryAndMemberById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY_DETAIL));
