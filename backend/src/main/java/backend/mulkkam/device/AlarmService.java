@@ -3,9 +3,9 @@ package backend.mulkkam.device;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 
-public interface AlarmSender {
+public interface AlarmService {
 
-    void notifyTopic(SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest);
+    void sendMessageByToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest);
 
-    void notifyToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest);
+    void sendMessageByTopic(SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest);
 }
