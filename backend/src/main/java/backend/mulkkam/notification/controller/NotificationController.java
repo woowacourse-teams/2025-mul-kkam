@@ -68,8 +68,7 @@ public class NotificationController {
         return ResponseEntity.ok().build();
     }
 
-    // TODO 2025. 8. 15. 14:34: swagger
-    @Operation(summary = "읽지 않은 알림 수 조회", description = "현재 사용자의 읽지 않은 알림 개수를 반환합니다.")
+    @Operation(summary = "읽지 않은 알림 수 조회", description = "사용자의 읽지 않은 알림 개수를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadNotificationsCountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/unread-count")
