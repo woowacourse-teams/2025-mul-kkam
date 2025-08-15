@@ -1,6 +1,5 @@
 package backend.mulkkam.member.controller;
 
-import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.FailureBody;

@@ -1,5 +1,7 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -8,8 +10,6 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 @RequiredArgsConstructor
 @Service
