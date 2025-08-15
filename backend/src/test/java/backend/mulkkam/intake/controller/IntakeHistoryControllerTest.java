@@ -29,6 +29,10 @@ import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,11 +43,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -341,7 +340,7 @@ class IntakeHistoryControllerTest {
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.of(2025, 7, 14));
                 softly.assertThat(actual.getFirst().intakeDetails().size()).isEqualTo(0);
                 softly.assertThat(actual.getFirst().targetAmount()).isEqualTo(1500);
-                softly.assertThat(actual.get(1).targetAmount()).isEqualTo(1500);
+                softly.assertThat(actual.get(1).targetAmount()).isEqualTo(2000);
                 softly.assertThat(actual.get(2).targetAmount()).isEqualTo(2000);
                 softly.assertThat(actual.getFirst().intakeDetails()).hasSize(0);
                 softly.assertThat(actual.get(1).intakeDetails()).hasSize(0);

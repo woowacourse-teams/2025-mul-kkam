@@ -85,7 +85,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(savedMember));
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -113,7 +114,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(savedMember));
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -135,7 +137,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(savedMember));
 
             // then
             assertThat(response.readNotificationResponses().size()).isEqualTo(notifications.size());
@@ -167,7 +170,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(savedMember));
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
@@ -194,13 +198,14 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(savedMember));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(savedMember));
 
             // then
             assertThat(response.nextCursor()).isNull();
         }
 
-        @DisplayName("size가 음수일 때 예외가 발생한다")
+        @DisplayName("size가 음용일 때 예외가 발생한다")
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given

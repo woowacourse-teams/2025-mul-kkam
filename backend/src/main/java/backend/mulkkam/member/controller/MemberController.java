@@ -157,7 +157,7 @@ public class MemberController {
         return ResponseEntity.ok(onboardingStatusResponse);
     }
 
-    @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음수량 달성 진행 정보를 조회합니다.")
+    @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음용량 달성 진행 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ProgressInfoResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/progress-info")
@@ -204,7 +204,8 @@ public class MemberController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(memberDetails);
+        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(
+                memberDetails);
         return ResponseEntity.ok(notificationSettingsResponse);
     }
 

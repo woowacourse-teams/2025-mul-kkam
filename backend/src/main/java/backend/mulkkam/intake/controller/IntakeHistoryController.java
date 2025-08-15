@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.util.List;
 
-@Tag(name = "음수량 기록", description = "사용자 음수량 기록 API")
+@Tag(name = "음용량 기록", description = "사용자 음용량 기록 API")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/intake/history")
@@ -36,7 +36,7 @@ public class IntakeHistoryController {
 
     private final IntakeHistoryService intakeHistoryService;
 
-    @Operation(summary = "음수량 기록 요약 조회", description = "지정된 기간 동안의 일별 음수량 기록 요약을 조회합니다.")
+    @Operation(summary = "음용량 기록 요약 조회", description = "지정된 기간 동안의 일별 음용량 기록 요약을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = IntakeHistorySummaryResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 날짜 범위", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
@@ -59,10 +59,10 @@ public class IntakeHistoryController {
         return ResponseEntity.ok().body(dailyResponses);
     }
 
-    @Operation(summary = "음수량 기록 생성", description = "새로운 음수량 기록을 생성합니다.")
+    @Operation(summary = "음용량 기록 생성", description = "새로운 음용량 기록을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "잘못된 요청", summary = "음수량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
+            @ExampleObject(name = "잘못된 요청", summary = "음용량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "404", description = "컵을 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
@@ -84,7 +84,7 @@ public class IntakeHistoryController {
         return ResponseEntity.ok(createIntakeHistoryResponse);
     }
 
-    @Operation(summary = "음수량 기록 삭제", description = "특정 음수량 기록을 삭제합니다.")
+    @Operation(summary = "음용량 기록 삭제", description = "특정 음용량 기록을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "기록 삭제 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class)))
@@ -98,7 +98,7 @@ public class IntakeHistoryController {
     public ResponseEntity<Void> deleteDetailHistory(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @Parameter(description = "삭제할 음수량 기록 id", required = true)
+            @Parameter(description = "삭제할 음용량 기록 id", required = true)
             @PathVariable Long id
     ) {
         intakeHistoryService.deleteDetailHistory(id, memberDetails);
