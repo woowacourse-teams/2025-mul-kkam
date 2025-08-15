@@ -43,7 +43,7 @@ class FcmServiceUnitTest {
     @Nested
     class SendMessageByToken {
 
-        @DisplayName("성공 시 예외가 터지지 않는다") // TODO 2025. 8. 15. 16:17:
+        @DisplayName("유효한 토큰 요청 시 알림이 정상 발송되고 예외가 발생하지 않는다")
         @Test
         void success_validInput() throws FirebaseMessagingException {
             // given
