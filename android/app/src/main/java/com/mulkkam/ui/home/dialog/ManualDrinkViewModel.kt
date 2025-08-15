@@ -10,14 +10,11 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 
 class ManualDrinkViewModel : ViewModel() {
-    private val _amountInput = MutableLiveData<Int>(0)
-    val amountInput: LiveData<Int> get() = _amountInput
-
     private val _amountValidity = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
 
-    private val _intakeType = MutableLiveData<IntakeType>(IntakeType.WATER)
-    val intakeType: LiveData<IntakeType> get() = _intakeType
+    private val amountInput: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    private val intakeType: MutableLiveData<IntakeType> = MutableLiveData<IntakeType>(IntakeType.WATER)
 
     val isSaveAvailable: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
@@ -25,11 +22,11 @@ class ManualDrinkViewModel : ViewModel() {
                 value = _amountValidity.value is MulKkamUiState.Success
             }
             addSource(_amountValidity) { update() }
-            addSource(_amountInput) { update() }
+            addSource(amountInput) { update() }
         }
 
     fun updateAmount(amount: Int) {
-        _amountInput.value = amount
+        amountInput.value = amount
 
         if (amount == 0) {
             _amountValidity.value = MulKkamUiState.Idle
@@ -46,6 +43,6 @@ class ManualDrinkViewModel : ViewModel() {
     }
 
     fun updateIntakeType(type: IntakeType) {
-        _intakeType.value = type
+        intakeType.value = type
     }
 }

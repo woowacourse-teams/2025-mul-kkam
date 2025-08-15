@@ -2,10 +2,13 @@ package com.mulkkam.ui.home.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
+import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.widget.addTextChangedListener
+import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentManualDrinkBinding
@@ -16,6 +19,7 @@ import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ManualDrinkFragment :
@@ -24,6 +28,9 @@ class ManualDrinkFragment :
     ) {
     private val parentViewModel: HomeViewModel by activityViewModels()
     private val viewModel: ManualDrinkViewModel by activityViewModels()
+
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
 
     override fun onViewCreated(
         view: View,
@@ -62,11 +69,36 @@ class ManualDrinkFragment :
         }
 
     private fun initInputListeners() {
-        binding.etAmount.addTextChangedListener {
-            val input = it?.toString().orEmpty()
-            val amount = input.toIntOrNull() ?: 0
-            viewModel.updateAmount(amount)
+        binding.etAmount.doAfterTextChanged { editable ->
+            val original = editable.toString()
+            val processed = original.sanitizeLeadingZeros()
+
+            if (processed != original) {
+                updateEditText(binding.etAmount, processed)
+                val amount = processed.toIntOrNull() ?: 0
+                viewModel.updateAmount(amount)
+                return@doAfterTextChanged
+            }
+
+            debounceAmountUpdate(processed)
         }
+    }
+
+    private fun debounceAmountUpdate(text: String) {
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+        debounceRunnable =
+            Runnable {
+                val amount = text.toIntOrNull() ?: 0
+                viewModel.updateAmount(amount)
+            }.also { debounceHandler.postDelayed(it, 300L) }
+    }
+
+    private fun updateEditText(
+        editText: EditText,
+        newText: String,
+    ) {
+        editText.setText(newText)
+        editText.setSelection(newText.length)
     }
 
     private fun initChips() {
