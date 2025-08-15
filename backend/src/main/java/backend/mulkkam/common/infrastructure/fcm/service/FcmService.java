@@ -1,15 +1,12 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.common.exception.errorCode.ErrorCode;
-import backend.mulkkam.common.exception.errorCode.FirebaseErrorCode;
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.device.AlarmService;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +31,7 @@ public class FcmService implements AlarmService {
                     .putData(ACTION, sendFcmTokenMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
-            throw new CommonException(getErrorCode(e));
+            throw new AlarmException(e);
         }
     }
 
@@ -50,12 +47,7 @@ public class FcmService implements AlarmService {
                     .putData(ACTION, sendFcmTopicMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
-            throw new CommonException(getErrorCode(e));
+            throw new AlarmException(e);
         }
-    }
-
-    private ErrorCode getErrorCode(FirebaseMessagingException e) {
-        MessagingErrorCode messagingErrorCode = e.getMessagingErrorCode();
-        return FirebaseErrorCode.findByName(messagingErrorCode.name());
     }
 }

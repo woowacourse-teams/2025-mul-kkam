@@ -10,7 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -89,7 +89,7 @@ class FcmServiceUnitTest {
             // when & then
             assertThatThrownBy(
                     () -> fcmService.sendMessageByToken(sendMessageByFcmTokenRequest)
-            ).isInstanceOf(CommonException.class)
+            ).isInstanceOf(AlarmException.class)
                     .hasMessage(SENDER_ID_MISMATCH.name());
 
             verify(firebaseMessaging, times(1)).send(any(Message.class));
@@ -146,7 +146,7 @@ class FcmServiceUnitTest {
             // when & then
             assertThatThrownBy(
                     () -> fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest)
-            ).isInstanceOf(CommonException.class)
+            ).isInstanceOf(AlarmException.class)
                     .hasMessage(SENDER_ID_MISMATCH.name());
 
             verify(firebaseMessaging, times(1)).send(any(Message.class));
