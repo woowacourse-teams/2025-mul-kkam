@@ -20,10 +20,11 @@ public class OauthAccountResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public OauthAccountDetails resolveArgument(MethodParameter parameter,
-                                               ModelAndViewContainer mavContainer,
-                                               NativeWebRequest webRequest,
-                                               WebDataBinderFactory binderFactory
+    public OauthAccountDetails resolveArgument(
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 

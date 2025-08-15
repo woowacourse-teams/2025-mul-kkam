@@ -20,10 +20,11 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
     }
 
     @Override
-    public MemberDetails resolveArgument(MethodParameter parameter,
-                                         ModelAndViewContainer mavContainer,
-                                         NativeWebRequest webRequest,
-                                         WebDataBinderFactory binderFactory
+    public MemberDetails resolveArgument(
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
