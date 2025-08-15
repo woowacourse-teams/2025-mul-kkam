@@ -17,6 +17,6 @@ public class ActivityService {
             Member member
     ) {
         CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        notificationService.createTokenNotification(createTokenNotificationRequest);
+        notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
     }
 }

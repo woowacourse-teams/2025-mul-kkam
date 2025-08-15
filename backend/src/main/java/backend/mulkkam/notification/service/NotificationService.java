@@ -65,7 +65,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+    public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) { // TODO 2025. 8. 15. 17:11: 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
             Notification notification = createTopicNotificationRequest.toNotification(member);
@@ -77,7 +77,7 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
+    public void createAndSendTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
         Member member = createTokenNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
