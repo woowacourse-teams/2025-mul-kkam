@@ -3,10 +3,10 @@ package com.mulkkam.ui.notification
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -37,7 +37,7 @@ class NotificationActivity :
         }
 
         viewModel.onApplySuggestion.observe(this) {
-            Toast.makeText(this, R.string.home_notification_apply_success, Toast.LENGTH_SHORT).show()
+            CustomToast.makeText(this, getString(R.string.home_notification_apply_success)).show()
         }
     }
 

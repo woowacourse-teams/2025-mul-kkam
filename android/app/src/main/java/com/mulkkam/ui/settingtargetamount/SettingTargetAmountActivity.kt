@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -15,6 +14,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -81,7 +81,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Idle -> Unit
 
             is MulKkamUiState.Failure -> {
-                Toast.makeText(this, R.string.load_info_error, Toast.LENGTH_SHORT).show()
+                CustomToast.makeText(this, getString(R.string.load_info_error)).show()
             }
         }
     }
@@ -125,8 +125,8 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         when (saveUiState) {
             is MulKkamUiState.Success -> {
                 updateSaveButtonAvailability(true)
-                Toast
-                    .makeText(this, R.string.setting_target_amount_complete_description, Toast.LENGTH_SHORT)
+                CustomToast
+                    .makeText(this, getString(R.string.setting_target_amount_complete_description))
                     .show()
                 finish()
             }
@@ -137,7 +137,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
             is MulKkamUiState.Failure -> {
                 updateSaveButtonAvailability(true)
-                Toast.makeText(this, R.string.network_check_error, Toast.LENGTH_SHORT).show()
+                CustomToast.makeText(this, getString(R.string.network_check_error)).show()
             }
         }
     }
