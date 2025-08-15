@@ -15,6 +15,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -29,6 +30,11 @@ import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -39,11 +45,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -297,6 +298,95 @@ class IntakeHistoryControllerTest {
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.now());
                 softly.assertThat(actual.getFirst().intakeDetails().size()).isEqualTo(0);
                 softly.assertThat(actual.getFirst().targetAmount()).isEqualTo(1500);
+            });
+        }
+
+        @DisplayName("같은 날짜 내 음용 세부 기록이 시간 기준 내림차순으로 정렬된다")
+        @Test
+        void success_ordersIntakeDetailsByTimeDesc() throws Exception {
+            // given
+            LocalDate from = LocalDate.of(2025, 7, 15);
+            LocalDate to = LocalDate.of(2025, 7, 16);
+
+            IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(from)
+                    .build();
+            IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(to)
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(firstIntakeHistory, secondIntakeHistory));
+
+            IntakeHistoryDetail firstDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(firstIntakeHistory)
+                    .time(LocalTime.of(21, 45))
+                    .build();
+            IntakeHistoryDetail firstDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(firstIntakeHistory)
+                    .time(LocalTime.of(9, 0))
+                    .build();
+            IntakeHistoryDetail firstDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(firstIntakeHistory)
+                    .time(LocalTime.of(21, 30))
+                    .build();
+
+            IntakeHistoryDetail secondDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(secondIntakeHistory)
+                    .time(LocalTime.of(21, 45))
+                    .build();
+            IntakeHistoryDetail secondDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(secondIntakeHistory)
+                    .time(LocalTime.of(9, 0))
+                    .build();
+            IntakeHistoryDetail secondDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(secondIntakeHistory)
+                    .time(LocalTime.of(7, 30))
+                    .build();
+
+            intakeHistoryDetailRepository.saveAll(List.of(
+                    firstDayIntakeHistoryDetail1, firstDayIntakeHistoryDetail2, firstDayIntakeHistoryDetail3,
+                    secondDayIntakeHistoryDetail1, secondDayIntakeHistoryDetail2, secondDayIntakeHistoryDetail3
+            ));
+
+            // when
+            String json = mockMvc.perform(get("/intake/history")
+                            .param("from", from.toString())
+                            .param("to", to.toString())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            List<IntakeHistorySummaryResponse> actual = objectMapper.readValue(
+                    json, new TypeReference<>() {
+                    }
+            );
+
+            IntakeHistorySummaryResponse firstIntakeHistoryResponse = actual.stream()
+                    .filter(r -> r.date().equals(from))
+                    .findFirst().orElseThrow();
+            IntakeHistorySummaryResponse secondIntakeHistoryResponse = actual.stream()
+                    .filter(r -> r.date().equals(to))
+                    .findFirst().orElseThrow();
+
+            List<LocalTime> firstIntakeHistoryDetailTimes = firstIntakeHistoryResponse
+                    .intakeDetails()
+                    .stream()
+                    .map(IntakeDetailResponse::time)
+                    .toList();
+
+            List<LocalTime> secondIntakeHistoryDetailTimes = secondIntakeHistoryResponse
+                    .intakeDetails()
+                    .stream()
+                    .map(IntakeDetailResponse::time)
+                    .toList();
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(actual).hasSize(2);
+                softly.assertThat(firstIntakeHistoryDetailTimes).isSortedAccordingTo(Comparator.reverseOrder());
+                softly.assertThat(secondIntakeHistoryDetailTimes).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }
     }
