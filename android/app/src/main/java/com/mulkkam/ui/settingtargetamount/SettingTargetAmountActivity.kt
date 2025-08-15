@@ -15,6 +15,7 @@ import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -81,7 +82,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Idle -> Unit
 
             is MulKkamUiState.Failure -> {
-                CustomToast.makeText(this, getString(R.string.load_info_error)).show()
+                CustomToast
+                    .makeText(this, getString(R.string.load_info_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -137,7 +142,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
             is MulKkamUiState.Failure -> {
                 updateSaveButtonAvailability(true)
-                CustomToast.makeText(this, getString(R.string.network_check_error)).show()
+                CustomToast
+                    .makeText(this, getString(R.string.network_check_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }

@@ -9,6 +9,7 @@ import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
@@ -62,12 +63,20 @@ class SettingCupFragment :
                 editType?.let { showTitle(it) }
             }
             saveSuccess.observe(viewLifecycleOwner) {
-                CustomToast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result)).show()
+                CustomToast
+                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
             deleteSuccess.observe(viewLifecycleOwner) {
-                CustomToast.makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result)).show()
+                CustomToast
+                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }

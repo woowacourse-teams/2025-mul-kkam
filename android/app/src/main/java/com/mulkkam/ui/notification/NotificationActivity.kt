@@ -7,6 +7,7 @@ import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -37,7 +38,11 @@ class NotificationActivity :
         }
 
         viewModel.onApplySuggestion.observe(this) {
-            CustomToast.makeText(this, getString(R.string.home_notification_apply_success)).show()
+            CustomToast
+                .makeText(this, getString(R.string.home_notification_apply_success))
+                .apply {
+                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
         }
     }
 

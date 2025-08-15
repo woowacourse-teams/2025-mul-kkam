@@ -1,6 +1,7 @@
 package com.mulkkam.ui.custom.toast
 
 import android.content.Context
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.annotation.DrawableRes
@@ -11,8 +12,14 @@ class CustomToast private constructor(
     private val toast: Toast,
     toastBinding: LayoutCustomToastBinding,
 ) {
+    private val density = toastBinding.root.context.resources.displayMetrics.density
+
     fun show() {
         toast.show()
+    }
+
+    fun setGravityY(verticalOffsetDp: Float) {
+        toast.setGravity(Gravity.BOTTOM, 0, (verticalOffsetDp * density).toInt())
     }
 
     companion object {

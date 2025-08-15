@@ -15,6 +15,7 @@ import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
@@ -164,7 +165,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun handleNicknameChangeUiState(nickNameChangeUiState: MulKkamUiState<Unit>) {
         when (nickNameChangeUiState) {
             is MulKkamUiState.Success<Unit> -> {
-                CustomToast.makeText(this, getString(R.string.setting_nickname_change_complete)).show()
+                CustomToast
+                    .makeText(this, getString(R.string.setting_nickname_change_complete))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 finish()
             }
 
