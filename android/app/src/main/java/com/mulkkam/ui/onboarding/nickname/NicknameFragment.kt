@@ -25,8 +25,8 @@ import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
-import com.mulkkam.util.extensions.setOnImeActionDoneListener
 
 class NicknameFragment :
     BindingFragment<FragmentNicknameBinding>(
