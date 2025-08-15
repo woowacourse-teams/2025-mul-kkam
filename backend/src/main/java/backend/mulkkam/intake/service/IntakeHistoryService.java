@@ -23,13 +23,12 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -111,7 +110,8 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(intakeHistoryDetailId);
+        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
+                intakeHistoryDetailId);
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
@@ -199,11 +199,6 @@ public class IntakeHistoryService {
     private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
                 .map(IntakeDetailResponse::new).toList();
-    }
-
-    private IntakeHistory findById(Long id) {
-        return intakeHistoryRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
