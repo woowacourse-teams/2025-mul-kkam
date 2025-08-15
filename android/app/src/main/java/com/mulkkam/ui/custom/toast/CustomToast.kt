@@ -19,7 +19,7 @@ class CustomToast private constructor(
     }
 
     fun setGravityY(verticalOffsetDp: Float) {
-        toast.setGravity(Gravity.BOTTOM, 0, (verticalOffsetDp * density).toInt())
+        toast.setGravity(Gravity.BOTTOM or Gravity.FILL_HORIZONTAL, 0, (verticalOffsetDp * density).toInt())
     }
 
     companion object {
