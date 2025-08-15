@@ -21,6 +21,7 @@ import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -158,7 +159,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged { editable ->
-            val processedText = sanitizeLeadingZeros(editable.toString())
+            val processedText = editable.toString().sanitizeLeadingZeros()
 
             if (processedText != editable.toString()) {
                 updateEditText(binding.etInputGoal, processedText)
@@ -168,13 +169,6 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             debounceTargetAmountUpdate(processedText)
         }
     }
-
-    private fun sanitizeLeadingZeros(input: String): String =
-        if (input.length > 1 && input.startsWith("0")) {
-            input.trimStart('0').ifEmpty { "0" }
-        } else {
-            input
-        }
 
     private fun updateEditText(
         editText: EditText,

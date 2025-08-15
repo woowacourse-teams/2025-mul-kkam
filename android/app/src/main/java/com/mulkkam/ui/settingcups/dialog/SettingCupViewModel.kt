@@ -34,7 +34,7 @@ class SettingCupViewModel : ViewModel() {
 
     private var originalCup: CupUiModel = EMPTY_CUP_UI_MODEL
 
-    val hasChanges: MediatorLiveData<Boolean> =
+    private val hasChanges: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
                 value = _cup.value != originalCup
