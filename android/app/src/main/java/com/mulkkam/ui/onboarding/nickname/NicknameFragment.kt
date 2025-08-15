@@ -192,6 +192,6 @@ class NicknameFragment :
         }
 
     private fun initDoneListener() {
-        binding.etInputNickname.setOnImeActionDoneListener((requireContext()))
+        binding.etInputNickname.setOnImeActionDoneListener(requireContext())
     }
 }
