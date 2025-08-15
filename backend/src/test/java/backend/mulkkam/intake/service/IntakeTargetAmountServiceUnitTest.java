@@ -82,7 +82,8 @@ public class IntakeTargetAmountServiceUnitTest {
                     newTargetAmount);
 
             // when & then
-            assertThatThrownBy(() -> intakeAmountService.modifyTarget(new MemberDetails(member), intakeTargetAmountModifyRequest))
+            assertThatThrownBy(
+                    () -> intakeAmountService.modifyTarget(new MemberDetails(member), intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_TARGET_AMOUNT.name());
         }

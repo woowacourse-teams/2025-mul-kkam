@@ -92,7 +92,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeAmountService.modifyTarget(new MemberDetails(savedMember), intakeTargetAmountModifyRequest))
+                    () -> intakeAmountService.modifyTarget(new MemberDetails(savedMember),
+                            intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_TARGET_AMOUNT.name());
         }
@@ -141,7 +142,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
                             1_000
                     );
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member), modifyIntakeTargetAmountByRecommendRequest);
+            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member),
+                    modifyIntakeTargetAmountByRecommendRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,
                     LocalDate.now()

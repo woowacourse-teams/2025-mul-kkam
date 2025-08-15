@@ -204,7 +204,8 @@ public class MemberController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(memberDetails);
+        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(
+                memberDetails);
         return ResponseEntity.ok(notificationSettingsResponse);
     }
 

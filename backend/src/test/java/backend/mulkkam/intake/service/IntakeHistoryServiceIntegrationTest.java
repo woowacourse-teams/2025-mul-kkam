@@ -483,7 +483,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(member)))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }

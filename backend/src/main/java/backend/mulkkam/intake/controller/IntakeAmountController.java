@@ -44,7 +44,8 @@ public class IntakeAmountController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(memberDetails);
+        IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+                memberDetails);
         return ResponseEntity.ok(intakeRecommendedAmountResponse);
     }
 

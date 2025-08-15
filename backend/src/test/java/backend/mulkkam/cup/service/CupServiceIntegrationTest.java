@@ -117,7 +117,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(CommonException.class)
+            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(
+                            CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
 
@@ -320,7 +321,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> cupService.update(cup.getId(), new MemberDetails(member2), updateCupRequest))
                     .isInstanceOf(
-                    CommonException.class).hasMessage(NOT_PERMITTED_FOR_CUP.name());
+                            CommonException.class).hasMessage(NOT_PERMITTED_FOR_CUP.name());
         }
     }
 
@@ -405,7 +406,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertSoftly(softly -> {
-                softly.assertThatCode(() -> cupService.updateRanks(request, new MemberDetails(member))).doesNotThrowAnyException();
+                softly.assertThatCode(() -> cupService.updateRanks(request, new MemberDetails(member)))
+                        .doesNotThrowAnyException();
                 softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank())
                         .isEqualTo(new CupRank(3));
                 softly.assertThat(cupRepository.findById(secondCup.getId()).get().getCupRank())

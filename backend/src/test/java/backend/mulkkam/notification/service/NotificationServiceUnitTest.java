@@ -80,7 +80,8 @@ class NotificationServiceUnitTest {
                     ));
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(member));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -113,7 +114,8 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(member));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -137,7 +139,8 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(member));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size())
@@ -167,7 +170,8 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, new MemberDetails(member));
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
