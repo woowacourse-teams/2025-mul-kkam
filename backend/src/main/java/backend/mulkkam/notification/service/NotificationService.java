@@ -16,6 +16,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -123,6 +124,11 @@ public class NotificationService {
         } catch (FirebaseMessagingException e) {
             throw new AlarmException(e);
         }
+    }
+
+    public ReadNotificationsCountResponse getNotificationsCount(Member member) {
+        Long count = notificationRepository.countByIsReadFalseAndMember(member);
+        return new ReadNotificationsCountResponse(count);
     }
 
     private void sendNotificationByMember(
