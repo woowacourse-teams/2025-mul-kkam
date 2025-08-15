@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadGateErrorCode.SEND_MESSAGE_FAILED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
@@ -8,7 +7,7 @@ import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.device.AlarmSender;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -35,11 +34,12 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
 
-    private final FcmService fcmService;
+    private final AlarmSender alarmSender;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
             GetNotificationsRequest getNotificationsRequest,
             Member member
@@ -59,9 +59,20 @@ public class NotificationService {
         boolean hasNext = notifications.size() > size;
 
         Long nextCursor = getNextCursor(hasNext, notifications);
-        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(hasNext, notifications);
+        List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
+        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(readNotifications);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
+    }
+
+    private List<Notification> getReadNotifications(boolean hasNext, List<Notification> notifications) {
+        if (hasNext) {
+            notifications.removeLast();
+        }
+        notifications.forEach(
+                notification -> notification.updateIsRead(true)
+        );
+        return notifications;
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
@@ -82,14 +93,7 @@ public class NotificationService {
         return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
     }
 
-    private List<ReadNotificationResponse> toReadNotificationResponses(
-            boolean hasNext,
-            List<Notification> notifications
-    ) {
-        if (hasNext) {
-            notifications.removeLast();
-        }
-
+    private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
         return notifications.stream()
                 .map(ReadNotificationResponse::new)
                 .collect(Collectors.toList());
@@ -104,11 +108,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        try {
-            fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
-        } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
-        }
+        alarmSender.notifyTopic(sendMessageByFcmTopicRequest);
     }
 
     @Transactional
@@ -132,7 +132,7 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            alarmSender.notifyToken(sendMessageByFcmTokenRequest);
         }
     }
 
