@@ -10,10 +10,9 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
-import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
-import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
