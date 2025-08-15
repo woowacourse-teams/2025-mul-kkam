@@ -64,40 +64,6 @@ public class NotificationService {
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
 
-    private List<Notification> getReadNotifications(boolean hasNext, List<Notification> notifications) {
-        if (hasNext) {
-            notifications.removeLast();
-        }
-        notifications.forEach(
-                notification -> notification.updateIsRead(true)
-        );
-        return notifications;
-    }
-
-    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
-        if (getNotificationsRequest.size() < 1) {
-            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
-        }
-    }
-
-    private List<Notification> getNotificationsByLastIdAndMember(
-            Member member,
-            Long lastId,
-            LocalDateTime limitStartDateTime,
-            Pageable pageable
-    ) {
-        if (lastId == null) {
-            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
-        }
-        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
-    }
-
-    private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
-        return notifications.stream()
-                .map(ReadNotificationResponse::new)
-                .collect(Collectors.toList());
-    }
-
     @Transactional
     public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
         List<Member> allMember = memberRepository.findAll();
@@ -125,14 +91,9 @@ public class NotificationService {
         return new ReadNotificationsCountResponse(count);
     }
 
-    private void sendNotificationByMember(
-            CreateTokenNotificationRequest createTokenNotificationRequest,
-            List<Device> devicesByMember
-    ) {
-        for (Device device : devicesByMember) {
-            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
-            alarmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
+        if (getNotificationsRequest.size() < 1) {
+            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }
 
@@ -144,5 +105,44 @@ public class NotificationService {
             return notifications.getLast().getId();
         }
         return null;
+    }
+
+    private List<Notification> getReadNotifications(boolean hasNext, List<Notification> notifications) {
+        if (hasNext) {
+            notifications.removeLast();
+        }
+        notifications.forEach(
+                notification -> notification.updateIsRead(true)
+        );
+        return notifications;
+    }
+
+    private List<Notification> getNotificationsByLastIdAndMember(
+            Member member,
+            Long lastId,
+            LocalDateTime limitStartDateTime,
+            Pageable pageable
+    ) {
+        if (lastId == null) {
+            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
+        }
+        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
+    }
+
+    private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
+        return notifications.stream()
+                .map(ReadNotificationResponse::new)
+                .collect(Collectors.toList());
+    }
+
+    private void sendNotificationByMember(
+            CreateTokenNotificationRequest createTokenNotificationRequest,
+            List<Device> devicesByMember
+    ) {
+        for (Device device : devicesByMember) {
+            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
+                    device.getToken());
+            alarmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+        }
     }
 }
