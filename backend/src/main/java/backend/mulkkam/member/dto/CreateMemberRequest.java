@@ -1,10 +1,10 @@
 package backend.mulkkam.member.dto;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "온보딩 정보 생성 요청")
@@ -19,7 +19,7 @@ public record CreateMemberRequest(
         @Schema(description = "성별", example = "FEMALE", implementation = Gender.class)
         Gender gender,
 
-        @Schema(description = "목표 음수량 (ml)", example = "2000", minimum = "1")
+        @Schema(description = "목표 음용량 (ml)", example = "2000", minimum = "1")
         int targetIntakeAmount,
 
         @Schema(description = "마케팅 알림 수신 동의 여부", example = "true")

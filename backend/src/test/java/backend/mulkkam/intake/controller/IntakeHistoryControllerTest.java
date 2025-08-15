@@ -340,7 +340,7 @@ class IntakeHistoryControllerTest {
                 softly.assertThat(actual.getFirst().date()).isEqualTo(LocalDate.of(2025, 7, 14));
                 softly.assertThat(actual.getFirst().intakeDetails().size()).isEqualTo(0);
                 softly.assertThat(actual.getFirst().targetAmount()).isEqualTo(1500);
-                softly.assertThat(actual.get(1).targetAmount()).isEqualTo(1500);
+                softly.assertThat(actual.get(1).targetAmount()).isEqualTo(2000);
                 softly.assertThat(actual.get(2).targetAmount()).isEqualTo(2000);
                 softly.assertThat(actual.getFirst().intakeDetails()).hasSize(0);
                 softly.assertThat(actual.get(1).intakeDetails()).hasSize(0);

@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.ui.onboarding.terms.TermsAgreementUiModel
 import com.mulkkam.ui.onboarding.terms.adapter.TermsAgreementViewHolder.TermsAgreementHandler
 
-class TermsAdapter(
+class TermsAgreementAdapter(
     private val termsAgreementHandler: TermsAgreementHandler,
 ) : RecyclerView.Adapter<TermsAgreementViewHolder>() {
     private val termsAgreements = mutableListOf<TermsAgreementUiModel>()

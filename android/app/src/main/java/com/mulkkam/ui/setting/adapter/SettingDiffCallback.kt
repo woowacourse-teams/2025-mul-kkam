@@ -14,9 +14,6 @@ object SettingDiffCallback : DiffUtil.ItemCallback<SettingItem>() {
             is SettingItem.NormalItem ->
                 newItem is SettingItem.NormalItem && oldItem.type == newItem.type
 
-            is SettingItem.SwitchItem ->
-                newItem is SettingItem.SwitchItem && oldItem.type == newItem.type
-
             is SettingItem.DividerItem ->
                 newItem is SettingItem.DividerItem
         }

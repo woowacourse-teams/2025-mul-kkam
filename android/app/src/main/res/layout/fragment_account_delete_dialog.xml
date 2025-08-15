@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_common_rectangle_14dp">
+
+    <ImageView
+        android:id="@+id/iv_delete_warning_sign"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="28dp"
+        android:src="@drawable/ic_history_delete_warning_sign"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/setting_account_info_delete_label"
+        android:textAppearance="@style/title1"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_delete_warning_sign" />
+
+    <TextView
+        android:id="@+id/tv_warning"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="@string/setting_account_info_delete_description"
+        android:textAppearance="@style/body2"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="@id/tv_title"
+        app:layout_constraintStart_toStartOf="@id/tv_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <TextView
+        android:id="@+id/tv_delete_account_comment"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/setting_account_info_delete_comment"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/primary_200"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_warning" />
+
+    <EditText
+        android:id="@+id/et_delete_account_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="42dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_common_rectangle_stroke_8dp"
+        android:backgroundTint="@color/gray_300"
+        android:hint="@string/setting_account_info_delete_comment"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="10dp"
+        android:textAppearance="@style/body2"
+        android:textColor="@color/gray_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_delete_account_comment" />
+
+    <TextView
+        android:id="@+id/tv_confirm"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="22dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="28dp"
+        android:background="@drawable/selector_common_button_enabled"
+        android:gravity="center"
+        android:enabled="false"
+        android:paddingVertical="10dp"
+        android:text="@string/setting_account_info_confirm"
+        android:textAppearance="@style/body4"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_cancel"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/et_delete_account_confirm" />
+
+    <TextView
+        android:id="@+id/tv_cancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:background="@drawable/bg_common_rectangle_8dp"
+        android:backgroundTint="@color/gray_50"
+        android:gravity="center"
+        android:paddingVertical="10dp"
+        android:text="@string/setting_account_info_cancel"
+        android:textAppearance="@style/body4"
+        android:textColor="@color/black"
+        app:layout_constraintBottom_toBottomOf="@id/tv_confirm"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_confirm"
+        app:layout_constraintTop_toTopOf="@id/tv_confirm" />
+</androidx.constraintlayout.widget.ConstraintLayout>
