@@ -106,7 +106,10 @@ public class NotificationService {
         return null;
     }
 
-    private List<Notification> getReadNotifications(boolean hasNext, List<Notification> notifications) {
+    private List<Notification> getReadNotifications(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
         if (hasNext) {
             notifications.removeLast();
         }
