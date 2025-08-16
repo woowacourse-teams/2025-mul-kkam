@@ -52,7 +52,7 @@ class FcmServiceUnitTest {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = new SendMessageByFcmTokenRequest("title",
                     "body", "token-123", Action.GO_NOTIFICATION);
 
-            // then
+            // when & then
             Assertions.assertThatCode(
                     () -> fcmService.sendMessageByToken(sendMessageByFcmTokenRequest)
             ).doesNotThrowAnyException();
