@@ -60,7 +60,7 @@ public class WeatherService {
 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
-            notificationService.createTokenNotification(
+            notificationService.createAndSendTokenNotification(
                     toCreateNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
         }
     }

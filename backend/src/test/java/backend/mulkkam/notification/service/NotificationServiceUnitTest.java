@@ -1,16 +1,29 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -20,6 +33,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -44,6 +59,12 @@ class NotificationServiceUnitTest {
 
     @Mock
     MemberRepository memberRepository;
+
+    @Mock
+    DeviceRepository deviceRepository;
+
+    @Mock
+    FcmService fcmService;
 
     @InjectMocks
     NotificationService notificationService;
@@ -92,6 +113,7 @@ class NotificationServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
+                results.forEach(r -> softly.assertThat(r.isRead()).isTrue());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }
@@ -183,7 +205,7 @@ class NotificationServiceUnitTest {
             });
         }
 
-        @DisplayName("size가 음용일 때 예외가 발생한다")
+        @DisplayName("size가 음수일 때 예외가 발생한다")
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
@@ -194,6 +216,77 @@ class NotificationServiceUnitTest {
                             () -> notificationService.getNotificationsAfter(request, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
+        }
+    }
+
+    @DisplayName("토큰 방식의 알림을 생성 및 전송 할 때")
+    @Nested
+    class CreateAndSendTokenNotification {
+
+        @DisplayName("올바른 데이터로 요청이 성공한다")
+        @Test
+        void success_validInput() {
+            // given
+            CreateTokenNotificationRequest createTokenNotificationRequest = new CreateTokenNotificationRequest(
+                    "title",
+                    "body",
+                    member,
+                    Action.GO_NOTIFICATION,
+                    NotificationType.SUGGESTION,
+                    new TargetAmount(1000),
+                    LocalDateTime.of(2025, 1, 2, 3, 4)
+            );
+
+            Device d1 = mock(Device.class);
+            when(d1.getToken()).thenReturn("token-1");
+            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
+
+            when(notificationRepository.save(any(Notification.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            // when
+            notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
+
+            // then
+            verify(notificationRepository).save(
+                    argThat(notification ->
+                            notification.getNotificationType() == NotificationType.SUGGESTION &&
+                                    notification.getTitle().equals("body") &&
+                                    notification.getCreatedAt().equals(LocalDateTime.of(2025, 1, 2, 3, 4)) &&
+                                    notification.getRecommendedTargetAmount().equals(new TargetAmount(1000)) &&
+                                    notification.getMember() == member
+                    ));
+
+            verify(deviceRepository).findAllByMember(member);
+
+            verify(fcmService).sendMessageByToken(
+                    argThat(o ->
+                            o.title().equals("title") &&
+                                    o.body().equals("body") &&
+                                    o.token().equals("token-1") &&
+                                    o.action() == Action.GO_NOTIFICATION
+                    )
+            );
+        }
+    }
+
+    @DisplayName("알림 개수를 조회하고자 할 때")
+    @Nested
+    class GetNotificationsCount {
+
+        @DisplayName("안 읽은 알림의 갯수를 반환한다")
+        @ParameterizedTest
+        @ValueSource(longs = {0L, 1L, 3L})
+        void success_validMember(long count) {
+            // given
+            when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
+
+            // when
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+                    new MemberDetails(member));
+
+            // then
+            assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
 }
