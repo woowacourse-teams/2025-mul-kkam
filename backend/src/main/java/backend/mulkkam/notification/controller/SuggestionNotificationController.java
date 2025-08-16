@@ -1,7 +1,6 @@
 package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +20,7 @@ public class SuggestionNotificationController {
     private final SuggestionNotificationService suggestionNotificationService;
 
     @PostMapping("/approval/{id}")
-    public ResponseEntity<ReadNotificationsResponse> applyTargetAmount(
+    public ResponseEntity<Void> applyTargetAmount(
             @PathVariable
             Long id,
             @Parameter(hidden = true)
