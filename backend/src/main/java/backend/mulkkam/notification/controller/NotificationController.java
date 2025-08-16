@@ -41,7 +41,7 @@ public class NotificationController {
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping
-    ResponseEntity<ReadNotificationsResponse> readNotifications(
+    public ResponseEntity<ReadNotificationsResponse> readNotifications(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "알림 조회 조건")
@@ -60,7 +60,7 @@ public class NotificationController {
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping("/activity")
-    ResponseEntity<Void> createNotificationByActivity(
+    public ResponseEntity<Void> createNotificationByActivity(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @RequestBody CreateActivityNotification createActivityNotification
@@ -73,7 +73,7 @@ public class NotificationController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetNotificationsCountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/unread-count")
-    ResponseEntity<GetNotificationsCountResponse> getUnreadNotificationsCount(
+    public ResponseEntity<GetNotificationsCountResponse> getUnreadNotificationsCount(
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
