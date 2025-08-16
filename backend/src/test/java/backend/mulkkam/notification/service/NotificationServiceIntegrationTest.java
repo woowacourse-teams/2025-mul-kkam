@@ -11,9 +11,8 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -117,7 +116,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .createdAt(LocalDate.of(2025, 8, 10))
                     .build();
 
-            suggestionNotificationRepository.saveAll(List.of (
+            suggestionNotificationRepository.saveAll(List.of(
                     SuggestionNotificationFixtureBuilder.withNotification(notification1).build(),
                     SuggestionNotificationFixtureBuilder.withNotification(notification2).build(),
                     SuggestionNotificationFixtureBuilder.withNotification(notification3).build(),
@@ -282,7 +281,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .createdAt(LocalDate.of(2025, 8, 1))
                     .isRead(true)
                     .build();
-            suggestionNotificationRepository.save(SuggestionNotificationFixtureBuilder.withNotification(notification).build());
+            suggestionNotificationRepository.save(
+                    SuggestionNotificationFixtureBuilder.withNotification(notification).build());
 
             notificationRepository.saveAll(createReadNotifications(
                     LocalDate.of(2025, 8, 1),

@@ -3,8 +3,6 @@ package backend.mulkkam.notification.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
@@ -79,7 +77,8 @@ public class NotificationController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        GetUnreadNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(memberDetails);
+        GetUnreadNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
+                memberDetails);
         return ResponseEntity.ok(getNotificationsCountResponse);
     }
 }
