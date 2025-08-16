@@ -33,7 +33,7 @@ public record ReadNotificationResponse(
                 notification.getContent(),
                 notification.getNotificationType().name(),
                 notification.getCreatedAt(),
-                notification.getRecommendedTargetAmount().value(),
+                1000, // TODO 2025. 8. 16. 17:19: 수정
                 notification.isRead()
         );
     }
