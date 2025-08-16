@@ -12,6 +12,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
@@ -284,6 +285,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             suggestionNotificationRepository.save(SuggestionNotificationFixtureBuilder.withNotification(notification).build());
 
             notificationRepository.saveAll(createReadNotifications(
+                    LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
                     LocalDate.of(2025, 8, 4),
@@ -295,11 +297,11 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             // when
-            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
                     new MemberDetails(savedMember));
 
             // then
-            assertThat(getNotificationsCountResponse.count()).isEqualTo(2);
+            assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);
 
         }
     }
