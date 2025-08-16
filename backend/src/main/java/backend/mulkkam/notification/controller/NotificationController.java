@@ -41,7 +41,7 @@ public class NotificationController {
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping
-    ResponseEntity<ReadNotificationsResponse> getNotifications(
+    ResponseEntity<ReadNotificationsResponse> readNotifications(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "알림 조회 조건")
