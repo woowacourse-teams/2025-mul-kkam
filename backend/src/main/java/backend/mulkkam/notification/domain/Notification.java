@@ -1,7 +1,6 @@
 package backend.mulkkam.notification.domain;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -46,14 +45,12 @@ public class Notification {
             NotificationType notificationType,
             String content,
             LocalDateTime createdAt,
-            TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
         this.content = content;
         this.isRead = false;
         this.createdAt = createdAt;
-//        this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
 
@@ -62,22 +59,16 @@ public class Notification {
             String content,
             boolean isRead,
             LocalDateTime createdAt,
-            TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
         this.content = content;
         this.isRead = isRead;
         this.createdAt = createdAt;
-//        this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
 
     public void updateIsRead(boolean isRead) {
         this.isRead = isRead;
-    }
-
-    public TargetAmount getRecommendedTargetAmount() {
-        return new TargetAmount(100); // TODO 2025. 8. 16. 16:23: 컴파일 오류를 해결하기 위한 임시 처리
     }
 }
