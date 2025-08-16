@@ -36,11 +36,4 @@ public class PhysicalAttributes {
             throw new CommonException(INVALID_MEMBER_WEIGHT);
         }
     }
-
-    public Gender getGender() {
-        if (gender == null) {
-            return null;
-        }
-        return gender;
-    }
 }
