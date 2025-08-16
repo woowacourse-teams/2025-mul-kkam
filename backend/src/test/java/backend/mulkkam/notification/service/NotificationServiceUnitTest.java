@@ -12,7 +12,7 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.device.AlarmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -60,7 +60,7 @@ class NotificationServiceUnitTest {
     DeviceRepository deviceRepository;
 
     @Mock
-    AlarmService alarmService;
+    FcmService fcmService;
 
     @InjectMocks
     NotificationService notificationService;
@@ -256,7 +256,7 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(mockMember);
 
-            verify(alarmService).sendMessageByToken(
+            verify(fcmService).sendMessageByToken(
                     argThat(o ->
                             o.title().equals("title") &&
                                     o.body().equals("body") &&

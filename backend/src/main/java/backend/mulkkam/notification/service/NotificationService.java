@@ -6,7 +6,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.device.AlarmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -33,7 +33,7 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
 
-    private final AlarmService alarmService;
+    private final FcmService fcmService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
@@ -73,7 +73,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        alarmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+        fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
     }
 
     @Transactional
@@ -141,7 +141,7 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            alarmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
     }
 }

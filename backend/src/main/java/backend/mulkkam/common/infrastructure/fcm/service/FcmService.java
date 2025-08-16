@@ -3,7 +3,6 @@ package backend.mulkkam.common.infrastructure.fcm.service;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.device.AlarmService;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -13,13 +12,12 @@ import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
-public class FcmService implements AlarmService {
+public class FcmService {
 
     private static final String ACTION = "action";
 
     private final FirebaseMessaging firebaseMessaging;
 
-    @Override
     public void sendMessageByToken(SendMessageByFcmTokenRequest sendFcmTokenMessageRequest) {
         try {
             firebaseMessaging.send(Message.builder()
@@ -35,7 +33,6 @@ public class FcmService implements AlarmService {
         }
     }
 
-    @Override
     public void sendMessageByTopic(SendMessageByFcmTopicRequest sendFcmTopicMessageRequest) {
         try {
             firebaseMessaging.send(Message.builder()
