@@ -16,148 +16,141 @@
         app:liftOnScroll="false">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
-            android:id="@+id/collapsingToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/white"
             app:contentScrim="@color/white"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:statusBarScrim="@android:color/transparent"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false"
+            app:scrimAnimationDuration="0"
+            app:scrimVisibleHeightTrigger="0dp">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:paddingBottom="8dp"
-                app:layout_collapseMode="parallax">
+            <TextView
+                android:id="@+id/tv_view_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:layout_marginTop="28dp"
+                android:text="@string/history_view_label"
+                android:textAppearance="@style/headline1"
+                android:textColor="@color/black"
+                app:layout_collapseMode="parallax" />
 
-                <TextView
-                    android:id="@+id/tv_view_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginTop="28dp"
-                    android:text="@string/history_view_label"
-                    android:textAppearance="@style/headline1"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageButton
-                    android:id="@+id/ib_week_prev"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginStart="20dp"
-                    android:layout_marginTop="16dp"
-                    android:background="@null"
-                    android:backgroundTint="@color/white"
-                    android:padding="8dp"
-                    android:src="@drawable/btn_history_week_prev"
-                    android:contentDescription="@string/history_week_prev"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
-
-        <TextView
-            android:id="@+id/tv_week_range"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="@style/title2"
-            android:textColor="@color/gray_400"
-            app:layout_constraintBottom_toBottomOf="@id/ib_week_prev"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@id/ib_week_prev"
-            tools:text="@string/history_week_range" />
-                <TextView
-                    android:id="@+id/tv_week_range"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/history_week_range"
-                    android:textAppearance="@style/title2"
-                    android:textColor="@color/gray_400"
-                    app:layout_constraintBottom_toBottomOf="@id/ib_week_prev"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
-
-                <ImageButton
-                    android:id="@+id/ib_week_next"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginEnd="20dp"
-                    android:background="@null"
-                    android:backgroundTint="@color/white"
-                    android:padding="8dp"
-                    android:src="@drawable/btn_history_week_next"
-                    android:contentDescription="@string/history_week_next"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
-
-                <GridLayout
-                    android:id="@+id/gl_weekly_charts"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="28dp"
-                    android:layout_marginTop="8dp"
-                    android:columnCount="7"
-                    android:rowCount="1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ib_week_prev">
-
-                    <include
-                        android:id="@+id/include_chart_mon"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_tue"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_wed"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_thu"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_fri"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_sat"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1"
-                        android:layout_marginEnd="4dp" />
-
-                    <include
-                        android:id="@+id/include_chart_sun"
-                        layout="@layout/layout_history_water_intake_chart"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_columnWeight="1" />
-                </GridLayout>
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white">
+
+            <ImageButton
+                android:id="@+id/ib_week_prev"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="16dp"
+                android:background="@null"
+                android:backgroundTint="@color/white"
+                android:contentDescription="@string/history_week_prev"
+                android:padding="8dp"
+                android:src="@drawable/btn_history_week_prev"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <TextView
+                android:id="@+id/tv_week_range"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="@style/title2"
+                android:textColor="@color/gray_400"
+                app:layout_constraintBottom_toBottomOf="@id/ib_week_prev"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ib_week_prev"
+                tools:text="@string/history_week_range" />
+
+            <ImageButton
+                android:id="@+id/ib_week_next"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="20dp"
+                android:background="@null"
+                android:backgroundTint="@color/white"
+                android:contentDescription="@string/history_week_next"
+                android:padding="8dp"
+                android:src="@drawable/btn_history_week_next"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
+
+            <GridLayout
+                android:id="@+id/gl_weekly_charts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="28dp"
+                android:layout_marginTop="8dp"
+                android:columnCount="7"
+                android:rowCount="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/ib_week_prev">
+
+                <include
+                    android:id="@+id/include_chart_mon"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_tue"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_wed"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_thu"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_fri"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_sat"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1"
+                    android:layout_marginEnd="4dp" />
+
+                <include
+                    android:id="@+id/include_chart_sun"
+                    layout="@layout/layout_history_water_intake_chart"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_columnWeight="1" />
+            </GridLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -192,7 +185,7 @@
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:ignore="SmallSp"/>
+                tools:ignore="SmallSp" />
 
             <com.mulkkam.ui.custom.progress.GradientDonutChartView
                 android:id="@+id/view_daily_chart"
@@ -265,16 +258,16 @@
                 app:layout_constraintStart_toStartOf="@id/tv_intake_history_label"
                 app:layout_constraintTop_toBottomOf="@id/tv_intake_history_label" />
 
-        <include
-            android:id="@+id/include_history_shimmer"
-            layout="@layout/layout_history_shimmer"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <include
+                android:id="@+id/include_history_shimmer"
+                layout="@layout/layout_history_shimmer"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
