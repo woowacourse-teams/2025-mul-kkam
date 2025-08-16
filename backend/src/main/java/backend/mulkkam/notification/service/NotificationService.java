@@ -15,7 +15,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
@@ -85,9 +85,9 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public ReadNotificationsCountResponse getNotificationsCount(Member member) {
+    public GetNotificationsCountResponse getNotificationsCount(Member member) {
         Long count = notificationRepository.countByIsReadFalseAndMember(member);
-        return new ReadNotificationsCountResponse(count);
+        return new GetNotificationsCountResponse(count);
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {

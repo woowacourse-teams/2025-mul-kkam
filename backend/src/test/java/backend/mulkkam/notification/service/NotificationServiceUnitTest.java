@@ -22,7 +22,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.NotificationFixtureBuilder;
@@ -279,11 +279,11 @@ class NotificationServiceUnitTest {
             when(notificationRepository.countByIsReadFalseAndMember(any(Member.class))).thenReturn(count);
 
             // when
-            ReadNotificationsCountResponse readNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
                     mockMember);
 
             // then
-            assertThat(readNotificationsCountResponse.count()).isEqualTo(count);
+            assertThat(getNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
 }

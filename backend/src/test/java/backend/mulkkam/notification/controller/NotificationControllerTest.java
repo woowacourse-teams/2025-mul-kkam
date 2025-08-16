@@ -13,7 +13,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.DatabaseCleaner;
@@ -216,7 +216,7 @@ public class NotificationControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            ReadNotificationsCountResponse actual = objectMapper.readValue(json, ReadNotificationsCountResponse.class);
+            GetNotificationsCountResponse actual = objectMapper.readValue(json, GetNotificationsCountResponse.class);
 
             assertThat(actual.count()).isEqualTo(7);
         }

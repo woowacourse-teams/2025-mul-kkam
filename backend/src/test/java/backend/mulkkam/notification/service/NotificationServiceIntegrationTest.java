@@ -11,7 +11,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -239,10 +239,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             // when
-            ReadNotificationsCountResponse readNotificationsCountResponse = notificationService.getNotificationsCount(savedMember);
+            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(savedMember);
 
             // then
-            assertThat(readNotificationsCountResponse.count()).isEqualTo(2);
+            assertThat(getNotificationsCountResponse.count()).isEqualTo(2);
 
         }
     }
