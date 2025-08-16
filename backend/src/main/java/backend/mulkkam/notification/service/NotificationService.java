@@ -14,23 +14,18 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -95,8 +90,9 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetNotificationsCountResponse getNotificationsCount(Member member) {
-        long count = notificationRepository.countByIsReadFalseAndMember(member);
+    public GetNotificationsCountResponse getNotificationsCount(MemberDetails memberDetails) {
+        Long memberId = memberDetails.id();
+        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
         return new GetNotificationsCountResponse(count);
     }
 

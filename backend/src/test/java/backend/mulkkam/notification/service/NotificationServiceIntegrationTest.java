@@ -10,26 +10,24 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationResponse;
-import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -226,7 +224,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
         private List<Notification> createReadNotifications(LocalDate... dates) {
             return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).isRead(true).build())
+                    .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).isRead(true)
+                            .build())
                     .toList();
         }
 
@@ -247,7 +246,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             // when
-            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(savedMember);
+            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
+                    new MemberDetails(savedMember));
 
             // then
             assertThat(getNotificationsCountResponse.count()).isEqualTo(2);

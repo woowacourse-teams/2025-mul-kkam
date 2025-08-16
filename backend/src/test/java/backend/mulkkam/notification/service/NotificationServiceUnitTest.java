@@ -230,7 +230,7 @@ class NotificationServiceUnitTest {
             CreateTokenNotificationRequest createTokenNotificationRequest = new CreateTokenNotificationRequest(
                     "title",
                     "body",
-                    mockMember,
+                    member,
                     Action.GO_NOTIFICATION,
                     NotificationType.SUGGESTION,
                     new TargetAmount(1000),
@@ -239,7 +239,7 @@ class NotificationServiceUnitTest {
 
             Device d1 = mock(Device.class);
             when(d1.getToken()).thenReturn("token-1");
-            when(deviceRepository.findAllByMember(mockMember)).thenReturn(List.of(d1));
+            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
 
             when(notificationRepository.save(any(Notification.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
@@ -254,10 +254,10 @@ class NotificationServiceUnitTest {
                                     notification.getTitle().equals("body") &&
                                     notification.getCreatedAt().equals(LocalDateTime.of(2025, 1, 2, 3, 4)) &&
                                     notification.getRecommendedTargetAmount().equals(new TargetAmount(1000)) &&
-                                    notification.getMember() == mockMember
+                                    notification.getMember() == member
                     ));
 
-            verify(deviceRepository).findAllByMember(mockMember);
+            verify(deviceRepository).findAllByMember(member);
 
             verify(fcmService).sendMessageByToken(
                     argThat(o ->
@@ -279,11 +279,11 @@ class NotificationServiceUnitTest {
         @ValueSource(longs = {0L, 1L, 3L})
         void success_validMember(long count) {
             // given
-            when(notificationRepository.countByIsReadFalseAndMember(any(Member.class))).thenReturn(count);
+            when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
 
             // when
             GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
-                    mockMember);
+                    new MemberDetails(member));
 
             // then
             assertThat(getNotificationsCountResponse.count()).isEqualTo(count);

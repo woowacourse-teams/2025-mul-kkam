@@ -43,5 +43,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     void deleteByMember(Member member);
 
-    long countByIsReadFalseAndMember(Member member);
+    long countByIsReadFalseAndMemberId(Long memberId);
 }
