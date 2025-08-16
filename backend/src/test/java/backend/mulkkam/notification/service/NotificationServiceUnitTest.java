@@ -52,7 +52,7 @@ class NotificationServiceUnitTest {
     private final Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
 
     @Mock
-    NotificationRepository notificationRepository;
+    private NotificationRepository notificationRepository;
 
     @Mock
     private DeviceRepository deviceRepository;
