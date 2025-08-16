@@ -32,7 +32,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        showMainPermissionDialog()
         initBottomNavListener()
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
@@ -45,13 +44,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
         }
-    }
-
-    private fun showMainPermissionDialog() {
-        if (supportFragmentManager.findFragmentByTag(MainPermissionDialogFragment.TAG) != null) return
-        MainPermissionDialogFragment
-            .newInstance()
-            .show(supportFragmentManager, MainPermissionDialogFragment.TAG)
     }
 
     private fun handleNotificationEvent() {
@@ -137,17 +129,30 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     }
 
     private fun initObservers() {
-        viewModel.isHealthPermissionGranted.observe(this) { isGranted ->
-            if (isGranted) {
-                viewModel.scheduleCalorieCheck()
+        with(viewModel) {
+            isHealthPermissionGranted.observe(this@MainActivity) { isGranted ->
+                if (isGranted) {
+                    viewModel.scheduleCalorieCheck()
+                }
             }
-        }
 
-        viewModel.fcmToken.observe(this) { token ->
-            token?.let {
-                viewModel.saveDeviceInfo(loadDeviceId())
+            fcmToken.observe(this@MainActivity) { token ->
+                token?.let {
+                    viewModel.saveDeviceInfo(loadDeviceId())
+                }
+            }
+
+            onFirstLaunch.observe(this@MainActivity) {
+                showMainPermissionDialog()
             }
         }
+    }
+
+    private fun showMainPermissionDialog() {
+        if (supportFragmentManager.findFragmentByTag(MainPermissionDialogFragment.TAG) != null) return
+        MainPermissionDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, MainPermissionDialogFragment.TAG)
     }
 
     @SuppressLint("HardwareIds")
