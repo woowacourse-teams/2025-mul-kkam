@@ -139,10 +139,10 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
                     (
-                            1_000
+                            new TargetAmount(1_000)
                     );
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member),
+            intakeAmountService.modifyDailyTargetBySuggested(member,
                     modifyIntakeTargetAmountByRecommendRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,
