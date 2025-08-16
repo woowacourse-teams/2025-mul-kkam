@@ -10,7 +10,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
@@ -246,11 +246,11 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             // when
-            GetNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
                     new MemberDetails(savedMember));
 
             // then
-            assertThat(getNotificationsCountResponse.count()).isEqualTo(2);
+            assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);
 
         }
     }
