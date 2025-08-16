@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivityService {
 
-    private final NotificationService notificationService;
     private final SuggestionNotificationService suggestionNotificationService;
     private final MemberRepository memberRepository;
 
