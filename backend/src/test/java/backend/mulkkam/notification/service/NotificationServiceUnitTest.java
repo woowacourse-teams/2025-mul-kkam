@@ -274,7 +274,7 @@ class NotificationServiceUnitTest {
         @DisplayName("안 읽은 알림의 갯수를 반환한다")
         @ParameterizedTest
         @ValueSource(longs = {0L, 1L, 3L})
-        void success_validMember(Long count) {
+        void success_validMember(long count) {
             // given
             when(notificationRepository.countByIsReadFalseAndMember(any(Member.class))).thenReturn(count);
 

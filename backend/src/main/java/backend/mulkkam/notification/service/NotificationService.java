@@ -86,7 +86,7 @@ public class NotificationService {
     }
 
     public GetNotificationsCountResponse getNotificationsCount(Member member) {
-        Long count = notificationRepository.countByIsReadFalseAndMember(member);
+        long count = notificationRepository.countByIsReadFalseAndMember(member);
         return new GetNotificationsCountResponse(count);
     }
 
