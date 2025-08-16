@@ -55,13 +55,13 @@ class NotificationServiceUnitTest {
     NotificationRepository notificationRepository;
 
     @Mock
-    DeviceRepository deviceRepository;
+    private DeviceRepository deviceRepository;
 
     @Mock
-    FcmService fcmService;
+    private FcmService fcmService;
 
     @InjectMocks
-    NotificationService notificationService;
+    private NotificationService notificationService;
 
     @DisplayName("알림 조회 기능을 사용할 때")
     @Nested
