@@ -6,10 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY, property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = ReadNotificationResponse.class, name = "REMIND"),
-        @JsonSubTypes.Type(value = ReadSuggestionNotificationResponse.class, name = "SUGGESTION")
+        @JsonSubTypes.Type(value = GetNotificationResponse.class, name = "REMIND"),
+        @JsonSubTypes.Type(value = GetSuggestionNotificationResponse.class, name = "SUGGESTION")
 })
-@Schema(oneOf = {ReadNotificationResponse.class, ReadSuggestionNotificationResponse.class})
+@Schema(oneOf = {GetNotificationResponse.class, GetSuggestionNotificationResponse.class})
 public interface NotificationResponse {
 
     Long id();

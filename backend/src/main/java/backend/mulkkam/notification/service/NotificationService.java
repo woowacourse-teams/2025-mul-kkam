@@ -19,9 +19,9 @@ import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.NotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationResponse;
+import backend.mulkkam.notification.dto.GetNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
-import backend.mulkkam.notification.dto.ReadSuggestionNotificationResponse;
+import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
@@ -150,11 +150,11 @@ public class NotificationService {
             if (notification.getNotificationType() == NotificationType.SUGGESTION) {
                 SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
                         notification);
-                ReadSuggestionNotificationResponse readSuggestionNotificationResponse = new ReadSuggestionNotificationResponse(
+                GetSuggestionNotificationResponse getSuggestionNotificationResponse = new GetSuggestionNotificationResponse(
                         notification, suggestionNotification);
-                notificationResponses.add(readSuggestionNotificationResponse);
+                notificationResponses.add(getSuggestionNotificationResponse);
             } else {
-                notificationResponses.add(new ReadNotificationResponse(notification));
+                notificationResponses.add(new GetNotificationResponse(notification));
             }
         }
         return notificationResponses;

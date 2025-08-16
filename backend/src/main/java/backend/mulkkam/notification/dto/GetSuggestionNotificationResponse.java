@@ -5,7 +5,7 @@ import backend.mulkkam.notification.domain.SuggestionNotification;
 import java.time.LocalDateTime;
 
 // TODO 2025. 8. 16. 17:44: 스웨거 설정 붙이기
-public record ReadSuggestionNotificationResponse(
+public record GetSuggestionNotificationResponse(
         Long id,
 
         String content,
@@ -21,7 +21,7 @@ public record ReadSuggestionNotificationResponse(
         boolean applyRecommendAmount
 ) implements NotificationResponse {
 
-    public ReadSuggestionNotificationResponse(Notification notification, SuggestionNotification suggestionNotification) {
+    public GetSuggestionNotificationResponse(Notification notification, SuggestionNotification suggestionNotification) {
         this(
                 notification.getId(),
                 notification.getContent(),

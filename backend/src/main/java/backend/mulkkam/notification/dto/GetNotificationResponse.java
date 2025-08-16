@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 @Schema(description = "개별 알림 응답")
-public record ReadNotificationResponse (
+public record GetNotificationResponse(
 
         @Schema(description = "알림 ID", example = "1")
         Long id,
@@ -25,7 +25,7 @@ public record ReadNotificationResponse (
         boolean isRead
 ) implements NotificationResponse {
 
-    public ReadNotificationResponse(Notification notification) {
+    public GetNotificationResponse(Notification notification) {
         this(
                 notification.getId(),
                 notification.getContent(),
