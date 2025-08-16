@@ -18,8 +18,8 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -86,7 +86,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = 500;
-            IntakeHistoryDetailCreateRequest request = new IntakeHistoryDetailCreateRequest(
+            CreateIntakeHistoryDetailCRequest request = new CreateIntakeHistoryDetailCRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -111,7 +111,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = -1;
-            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -127,7 +127,7 @@ class IntakeHistoryServiceUnitTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member)))
+                    () -> intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));

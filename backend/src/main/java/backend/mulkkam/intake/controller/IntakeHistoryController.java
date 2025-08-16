@@ -3,8 +3,8 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -74,10 +74,10 @@ public class IntakeHistoryController {
     public ResponseEntity<CreateIntakeHistoryResponse> create(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @RequestBody IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest
+            @RequestBody CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest
     ) {
         CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.create(
-                intakeHistoryDetailCreateRequest,
+                createIntakeHistoryDetailCRequest,
                 memberDetails
         );
         return ResponseEntity.ok(createIntakeHistoryResponse);

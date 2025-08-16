@@ -15,7 +15,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -121,14 +121,14 @@ class IntakeHistoryControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeHistoryDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             String afterJson = mockMvc.perform(get("/intake/history")
@@ -165,14 +165,14 @@ class IntakeHistoryControllerTest {
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
-            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeHistoryDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -193,14 +193,14 @@ class IntakeHistoryControllerTest {
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeHistoryDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
