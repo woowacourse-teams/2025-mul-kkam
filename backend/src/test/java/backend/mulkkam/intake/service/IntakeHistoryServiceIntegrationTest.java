@@ -17,7 +17,7 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -75,14 +75,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
             );
 
             // when
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member));
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -100,14 +100,15 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             int intakeAmount = -1;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
         }
@@ -122,8 +123,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500, WATER);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+                    dateTime, 1500, WATER);
+            intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -151,8 +153,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500, WATER);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
+                    dateTime, 1500, WATER);
+            intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);

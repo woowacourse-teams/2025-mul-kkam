@@ -15,7 +15,7 @@ import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -43,22 +43,22 @@ public class IntakeHistoryService {
 
     @Transactional
     public CreateIntakeHistoryResponse create(
-            IntakeDetailCreateRequest intakeDetailCreateRequest,
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = intakeDetailCreateRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = intakeHistoryDetailCreateRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        int intakeAmount = intakeDetailCreateRequest.intakeType()
-                .calculateHydration(intakeDetailCreateRequest.intakeAmount());
+        int intakeAmount = intakeHistoryDetailCreateRequest.intakeType()
+                .calculateHydration(intakeHistoryDetailCreateRequest.intakeAmount());
 
         IntakeHistoryDetail intakeHistoryDetail = new IntakeHistoryDetail
                 (
-                        intakeDetailCreateRequest.dateTime().toLocalTime(),
+                        intakeHistoryDetailCreateRequest.dateTime().toLocalTime(),
                         new IntakeAmount(intakeAmount),
-                        intakeDetailCreateRequest.intakeType(),
+                        intakeHistoryDetailCreateRequest.intakeType(),
                         intakeHistory
                 );
         intakeHistoryDetailRepository.save(intakeHistoryDetail);

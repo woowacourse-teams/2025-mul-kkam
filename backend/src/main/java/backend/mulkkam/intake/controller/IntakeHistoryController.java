@@ -4,7 +4,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +14,8 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,9 +26,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @Tag(name = "음용량 기록", description = "사용자 음용량 기록 API")
 @RequiredArgsConstructor
@@ -75,10 +74,10 @@ public class IntakeHistoryController {
     public ResponseEntity<CreateIntakeHistoryResponse> create(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @RequestBody IntakeDetailCreateRequest intakeDetailCreateRequest
+            @RequestBody IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest
     ) {
         CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.create(
-                intakeDetailCreateRequest,
+                intakeHistoryDetailCreateRequest,
                 memberDetails
         );
         return ResponseEntity.ok(createIntakeHistoryResponse);

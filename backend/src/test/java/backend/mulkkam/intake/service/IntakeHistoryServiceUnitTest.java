@@ -19,7 +19,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
+import backend.mulkkam.intake.dto.request.IntakeHistoryDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -86,7 +86,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = 500;
-            IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
+            IntakeHistoryDetailCreateRequest request = new IntakeHistoryDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -111,7 +111,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = -1;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            IntakeHistoryDetailCreateRequest intakeHistoryDetailCreateRequest = new IntakeHistoryDetailCreateRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -126,7 +126,8 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.ofNullable(intakeHistory));
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.create(intakeHistoryDetailCreateRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
