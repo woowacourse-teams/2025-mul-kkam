@@ -1,16 +1,12 @@
 package com.mulkkam.ui.main
 
-import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
-import androidx.core.app.ActivityCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -19,6 +15,7 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
 import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
@@ -35,7 +32,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        showMainPermissionDialog()
         initBottomNavListener()
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
@@ -44,11 +41,17 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         setupDoubleBackToExit()
         initObservers()
         loadDeviceId()
-        requestNotificationPermission()
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
         }
+    }
+
+    private fun showMainPermissionDialog() {
+        if (supportFragmentManager.findFragmentByTag(MainPermissionDialogFragment.TAG) != null) return
+        MainPermissionDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, MainPermissionDialogFragment.TAG)
     }
 
     private fun handleNotificationEvent() {
@@ -154,60 +157,11 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
-    private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-        if (hasNotificationPermission()) return
-
-        val shouldShowRationale =
-            ActivityCompat.shouldShowRequestPermissionRationale(this, POST_NOTIFICATIONS)
-        if (!shouldShowRationale) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(POST_NOTIFICATIONS),
-                REQUEST_CODE_NOTIFICATION_PERMISSION,
-            )
-        }
-    }
-
-    private fun hasNotificationPermission(): Boolean =
-        when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> true
-            else -> checkSelfPermission(POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
-        }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray,
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-
-        when (requestCode) {
-            REQUEST_CODE_NOTIFICATION_PERMISSION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    CustomSnackBar
-                        .make(
-                            binding.root,
-                            getString(R.string.main_alarm_permission_granted),
-                            R.drawable.ic_info_circle,
-                        ).show()
-                } else {
-                    CustomSnackBar
-                        .make(
-                            binding.root,
-                            getString(R.string.main_alarm_permission_denied),
-                            R.drawable.ic_info_circle,
-                        ).show()
-                }
-            }
-        }
-    }
-
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
-        private const val REQUEST_CODE_NOTIFICATION_PERMISSION: Int = 1001
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
-        private val HEALTH_CONNECT_PERMISSIONS =
+
+        val HEALTH_CONNECT_PERMISSIONS =
             setOf(
                 HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
                 HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
