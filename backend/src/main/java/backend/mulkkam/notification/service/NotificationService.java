@@ -148,10 +148,10 @@ public class NotificationService {
         List<NotificationResponse> notificationResponses = new ArrayList<>();
         for (Notification notification : notifications) {
             if (notification.getNotificationType() == NotificationType.SUGGESTION) {
-                SuggestionNotification suggestionNotificationByNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
+                SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
                         notification);
                 ReadSuggestionNotificationResponse readSuggestionNotificationResponse = new ReadSuggestionNotificationResponse(
-                        notification, suggestionNotificationByNotification);
+                        notification, suggestionNotification);
                 notificationResponses.add(readSuggestionNotificationResponse);
             } else {
                 notificationResponses.add(new ReadNotificationResponse(notification));

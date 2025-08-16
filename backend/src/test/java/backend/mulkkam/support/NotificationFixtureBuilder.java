@@ -10,7 +10,7 @@ import java.time.LocalTime;
 public class NotificationFixtureBuilder {
 
     private final Member member;
-    private NotificationType notificationType = NotificationType.SUGGESTION;
+    private NotificationType notificationType = NotificationType.NOTICE;
     private String title = "notificationTitle";
     private boolean isRead = false;
     private LocalTime localTime = LocalTime.of(10, 30);

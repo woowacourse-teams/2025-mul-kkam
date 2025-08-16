@@ -17,12 +17,11 @@ import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
-import backend.mulkkam.notification.dto.ReadNotificationResponse;
+import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -54,9 +53,6 @@ class NotificationServiceUnitTest {
 
     @Mock
     NotificationRepository notificationRepository;
-
-    @Mock
-    MemberRepository memberRepository;
 
     @Mock
     DeviceRepository deviceRepository;
@@ -103,9 +99,9 @@ class NotificationServiceUnitTest {
                     new MemberDetails(member));
 
             // then
-            List<ReadNotificationResponse> results = response.readNotificationResponses();
+            List<NotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream()
-                    .map(ReadNotificationResponse::createdAt)
+                    .map(NotificationResponse::createdAt)
                     .toList();
 
             assertSoftly(softly -> {
@@ -194,7 +190,7 @@ class NotificationServiceUnitTest {
                     new MemberDetails(member));
 
             // then
-            List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
+            List<NotificationResponse> readNotificationResponses = response.readNotificationResponses();
 
             assertSoftly(softly -> {
                 softly.assertThat(readNotificationResponses.size()).isEqualTo(defaultSize);
