@@ -2,9 +2,7 @@ package backend.mulkkam.notification.domain;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -14,15 +12,12 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import lombok.AllArgsConstructor;
+import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
 @Entity
 public class Notification {
 
@@ -43,10 +38,6 @@ public class Notification {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "recommended_target_amount"))
-    private TargetAmount recommendedTargetAmount;
-
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
@@ -62,7 +53,7 @@ public class Notification {
         this.content = content;
         this.isRead = false;
         this.createdAt = createdAt;
-        this.recommendedTargetAmount = recommendedTargetAmount;
+//        this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
 
@@ -78,11 +69,15 @@ public class Notification {
         this.content = content;
         this.isRead = isRead;
         this.createdAt = createdAt;
-        this.recommendedTargetAmount = recommendedTargetAmount;
+//        this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
 
     public void updateIsRead(boolean isRead) {
         this.isRead = isRead;
+    }
+
+    public TargetAmount getRecommendedTargetAmount() {
+        return new TargetAmount(100); // TODO 2025. 8. 16. 16:23: 컴파일 오류를 해결하기 위한 임시 처리
     }
 }
