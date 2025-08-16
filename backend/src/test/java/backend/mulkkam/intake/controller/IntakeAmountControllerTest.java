@@ -239,7 +239,6 @@ class IntakeAmountControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
-
         }
     }
 
