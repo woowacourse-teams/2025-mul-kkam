@@ -35,7 +35,7 @@ public class Notification {
     private NotificationType notificationType;
 
     @Column(nullable = false)
-    private String title;
+    private String content;
 
     @Column(nullable = false)
     private boolean isRead;
@@ -53,13 +53,13 @@ public class Notification {
 
     public Notification(
             NotificationType notificationType,
-            String title,
+            String content,
             LocalDateTime createdAt,
             TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
-        this.title = title;
+        this.content = content;
         this.isRead = false;
         this.createdAt = createdAt;
         this.recommendedTargetAmount = recommendedTargetAmount;
@@ -68,14 +68,14 @@ public class Notification {
 
     public Notification(
             NotificationType notificationType,
-            String title,
+            String content,
             boolean isRead,
             LocalDateTime createdAt,
             TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
-        this.title = title;
+        this.content = content;
         this.isRead = isRead;
         this.createdAt = createdAt;
         this.recommendedTargetAmount = recommendedTargetAmount;

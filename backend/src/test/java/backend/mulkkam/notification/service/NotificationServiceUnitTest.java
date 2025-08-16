@@ -251,7 +251,7 @@ class NotificationServiceUnitTest {
             verify(notificationRepository).save(
                     argThat(notification ->
                             notification.getNotificationType() == NotificationType.SUGGESTION &&
-                                    notification.getTitle().equals("body") &&
+                                    notification.getContent().equals("body") &&
                                     notification.getCreatedAt().equals(LocalDateTime.of(2025, 1, 2, 3, 4)) &&
                                     notification.getRecommendedTargetAmount().equals(new TargetAmount(1000)) &&
                                     notification.getMember() == member

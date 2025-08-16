@@ -30,7 +30,7 @@ public record ReadNotificationResponse(
     public ReadNotificationResponse(Notification notification) {
         this(
                 notification.getId(),
-                notification.getTitle(),
+                notification.getContent(),
                 notification.getNotificationType().name(),
                 notification.getCreatedAt(),
                 notification.getRecommendedTargetAmount().value(),
