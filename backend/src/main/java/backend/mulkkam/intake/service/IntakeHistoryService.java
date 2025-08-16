@@ -182,7 +182,7 @@ public class IntakeHistoryService {
             IntakeHistory intakeHistory,
             List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeHistoryDetailResponse> intakeHistoryDetailRespons = toIntakeDetailResponses(intakeDetailsOfDate);
+        List<IntakeHistoryDetailResponse> intakeHistoryDetailResponse = toIntakeDetailResponses(intakeDetailsOfDate);
 
         int totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailsOfDate);
 
@@ -198,7 +198,7 @@ public class IntakeHistoryService {
                 totalIntakeAmount,
                 achievementRate.value(),
                 intakeHistory.getStreak(),
-                intakeHistoryDetailRespons
+                intakeHistoryDetailResponse
         );
     }
 
