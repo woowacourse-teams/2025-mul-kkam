@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
@@ -248,7 +247,6 @@ class MemberControllerTest {
             String json = mockMvc.perform(get("/members")
                             .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
-                    .andDo(print())
                     .andReturn().getResponse().getContentAsString();
 
             MemberResponse actual = objectMapper.readValue(json, MemberResponse.class);
