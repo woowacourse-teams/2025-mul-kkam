@@ -60,7 +60,12 @@ public class IntakeHistoryService {
                         new IntakeAmount(intakeAmount),
                         createIntakeHistoryDetailCRequest.intakeType(),
                         intakeHistory
-                );
+        IntakeHistoryDetail intakeHistoryDetail = new IntakeHistoryDetail(
+                createIntakeHistoryDetailCRequest.dateTime().toLocalTime(),
+                new IntakeAmount(intakeAmount),
+                createIntakeHistoryDetailCRequest.intakeType(),
+                intakeHistory
+        );
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
