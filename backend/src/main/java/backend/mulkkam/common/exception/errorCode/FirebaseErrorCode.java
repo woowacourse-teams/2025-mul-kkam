@@ -29,7 +29,7 @@ public enum FirebaseErrorCode implements ErrorCode {
         return Arrays.stream(FirebaseErrorCode.values())
                 .filter(firebaseErrorCode -> firebaseErrorCode.name().equals(name))
                 .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Invalid FirebaseErrorCode name: " + name));
+                .orElseThrow(() -> new IllegalStateException("Invalid FirebaseErrorCode name: " + name));
     }
 
     @Override
