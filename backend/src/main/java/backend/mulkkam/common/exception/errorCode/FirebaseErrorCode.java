@@ -1,5 +1,8 @@
 package backend.mulkkam.common.exception.errorCode;
 
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
+
+import backend.mulkkam.common.exception.CommonException;
 import java.util.Arrays;
 import org.springframework.http.HttpStatus;
 
@@ -29,7 +32,7 @@ public enum FirebaseErrorCode implements ErrorCode {
         return Arrays.stream(FirebaseErrorCode.values())
                 .filter(firebaseErrorCode -> firebaseErrorCode.name().equals(name))
                 .findAny()
-                .orElseThrow(() -> new IllegalStateException("Invalid FirebaseErrorCode name: " + name));
+                .orElseThrow(() -> new CommonException(INTER_SERVER_ERROR_CODE, name));
     }
 
     @Override
