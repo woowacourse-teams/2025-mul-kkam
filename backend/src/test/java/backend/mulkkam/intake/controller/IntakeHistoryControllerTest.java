@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -15,7 +16,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -34,10 +35,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
-import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -125,7 +122,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -169,7 +166,7 @@ class IntakeHistoryControllerTest {
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -197,7 +194,7 @@ class IntakeHistoryControllerTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -386,13 +383,13 @@ class IntakeHistoryControllerTest {
             List<LocalTime> firstIntakeHistoryDetailTimes = firstIntakeHistoryResponse
                     .intakeDetails()
                     .stream()
-                    .map(IntakeDetailResponse::time)
+                    .map(IntakeHistoryDetailResponse::time)
                     .toList();
 
             List<LocalTime> secondIntakeHistoryDetailTimes = secondIntakeHistoryResponse
                     .intakeDetails()
                     .stream()
-                    .map(IntakeDetailResponse::time)
+                    .map(IntakeHistoryDetailResponse::time)
                     .toList();
 
             // then
