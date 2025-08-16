@@ -1,9 +1,10 @@
 package backend.mulkkam.cup.domain;
 
-import backend.mulkkam.common.exception.CommonException;
-import java.util.Arrays;
-
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
+
+import backend.mulkkam.common.exception.CommonException;
+
+import java.util.Arrays;
 
 public enum IntakeType {
 

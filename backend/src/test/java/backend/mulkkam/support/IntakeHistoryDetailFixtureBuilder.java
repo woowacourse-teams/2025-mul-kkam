@@ -3,6 +3,7 @@ package backend.mulkkam.support;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
+
 import java.time.LocalTime;
 
 public class IntakeHistoryDetailFixtureBuilder {

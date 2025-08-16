@@ -1,12 +1,12 @@
 package backend.mulkkam.auth.controller;
 
-import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.service.AuthTokenService;
 import backend.mulkkam.auth.service.KakaoAuthService;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -62,8 +62,11 @@ public class AuthController {
     @ApiResponse(responseCode = "204", description = "성공 응답")
     @ApiResponse(responseCode = "401", description = "인증 실패")
     @PostMapping("/logout")
-    public ResponseEntity<Void> logout(@Parameter(hidden = true) OauthAccount oauthAccount) {
-        authTokenService.logout(oauthAccount);
+    public ResponseEntity<Void> logout(
+            @Parameter(hidden = true)
+            OauthAccountDetails oauthAccountDetails
+    ) {
+        authTokenService.logout(oauthAccountDetails);
         return ResponseEntity.noContent().build();
     }
 }

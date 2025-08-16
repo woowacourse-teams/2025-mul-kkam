@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
@@ -25,14 +26,9 @@ import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import org.assertj.core.api.AssertionsForClassTypes;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -44,11 +40,19 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceUnitTest {
 
     private static final int DAY_LIMIT = 7;
-    private Member mockMember;
+
+    private final Long memberId = 1L;
+    private final Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
 
     @Mock
     NotificationRepository notificationRepository;
@@ -65,11 +69,6 @@ class NotificationServiceUnitTest {
     @InjectMocks
     NotificationService notificationService;
 
-    @BeforeEach
-    void setUP() {
-        mockMember = mock(Member.class);
-    }
-
     @DisplayName("알림 조회 기능을 사용할 때")
     @Nested
     class GetNotificationsAfter {
@@ -80,7 +79,7 @@ class NotificationServiceUnitTest {
 
         private List<Notification> createNotifications(LocalDate... dates) {
             return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder.withMember(mockMember).createdAt(date).build())
+                    .map(date -> NotificationFixtureBuilder.withMember(member).createdAt(date).build())
                     .toList();
         }
 
@@ -91,7 +90,7 @@ class NotificationServiceUnitTest {
             Long lastId = 10L;
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
 
-            when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
                     .thenReturn(createNotifications(
                             LocalDate.of(2025, 8, 9),
@@ -102,7 +101,8 @@ class NotificationServiceUnitTest {
                     ));
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             List<ReadNotificationResponse> results = response.readNotificationResponses();
@@ -123,7 +123,7 @@ class NotificationServiceUnitTest {
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
             Long lastId = 6L;
-            when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
                     .thenReturn(createNotifications(
                             LocalDate.of(2025, 8, 9),
@@ -136,7 +136,8 @@ class NotificationServiceUnitTest {
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size()).isEqualTo(defaultSize);
@@ -154,13 +155,14 @@ class NotificationServiceUnitTest {
                     LocalDate.of(2025, 8, 6),
                     LocalDate.of(2025, 8, 5)
             );
-            when(notificationRepository.findByCursor(mockMember, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
+            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
                     .thenReturn(notifications);
 
             GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size())
@@ -172,7 +174,7 @@ class NotificationServiceUnitTest {
         void success_returnsFromLatestWhenLastIdIsNull() {
             // given
             Notification latestNotification = NotificationFixtureBuilder
-                    .withMember(mockMember)
+                    .withMember(member)
                     .createdAt(LocalDate.of(2025, 8, 9))
                     .build();
 
@@ -184,13 +186,14 @@ class NotificationServiceUnitTest {
                     LocalDate.of(2025, 8, 5)
             );
 
-            when(notificationRepository.findLatest(mockMember, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
+            when(notificationRepository.findLatest(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
                     .thenReturn(notifications);
 
             GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request, mockMember);
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+                    new MemberDetails(member));
 
             // then
             List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
@@ -210,7 +213,7 @@ class NotificationServiceUnitTest {
 
             // when & then
             AssertionsForClassTypes.assertThatThrownBy(
-                            () -> notificationService.getNotificationsAfter(request, mockMember))
+                            () -> notificationService.getNotificationsAfter(request, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }

@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authenticationHeaderHandler.extractToken(request);
             Long subject = oauthJwtTokenHandler.getSubject(token);
             request.setAttribute("subject", subject);
-            request.setAttribute("oauth_id", subject);
+            request.setAttribute("account_id", subject);
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());

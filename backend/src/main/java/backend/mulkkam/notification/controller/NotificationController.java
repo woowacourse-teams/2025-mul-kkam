@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
@@ -11,8 +11,8 @@ import backend.mulkkam.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -43,12 +43,13 @@ public class NotificationController {
     @GetMapping
     ResponseEntity<ReadNotificationsResponse> getNotifications(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "알림 조회 조건")
             @Valid @ModelAttribute GetNotificationsRequest getNotificationsRequest
     ) {
         ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                getNotificationsRequest, member);
+                getNotificationsRequest, memberDetails
+        );
         return ResponseEntity.ok(readNotificationsResponse);
     }
 
@@ -61,10 +62,10 @@ public class NotificationController {
     @PostMapping("/activity")
     ResponseEntity<Void> createNotificationByActivity(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody CreateActivityNotification createActivityNotification
     ) {
-        activityService.createActivityNotification(createActivityNotification, member);
+        activityService.createActivityNotification(createActivityNotification, memberDetails);
         return ResponseEntity.ok().build();
     }
 

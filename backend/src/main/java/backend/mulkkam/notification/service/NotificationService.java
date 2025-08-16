@@ -3,6 +3,7 @@ package backend.mulkkam.notification.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -21,10 +22,15 @@ import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,7 +47,7 @@ public class NotificationService {
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
             GetNotificationsRequest getNotificationsRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
         validateSizeRange(getNotificationsRequest);
 
@@ -52,8 +58,12 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = getNotificationsRequest.lastId();
-        List<Notification> notifications = getNotificationsByLastIdAndMember(member, lastId, limitStartDateTime,
-                pageable);
+        List<Notification> notifications = getNotificationsByLastIdAndMember(
+                memberDetails,
+                lastId,
+                limitStartDateTime,
+                pageable
+        );
 
         boolean hasNext = notifications.size() > size;
 
@@ -120,15 +130,16 @@ public class NotificationService {
     }
 
     private List<Notification> getNotificationsByLastIdAndMember(
-            Member member,
+            MemberDetails memberDetails,
             Long lastId,
             LocalDateTime limitStartDateTime,
             Pageable pageable
     ) {
+        Long memberId = memberDetails.id();
         if (lastId == null) {
-            return notificationRepository.findLatest(member, limitStartDateTime, pageable);
+            return notificationRepository.findLatest(memberId, limitStartDateTime, pageable);
         }
-        return notificationRepository.findByCursor(member, lastId, limitStartDateTime, pageable);
+        return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
     }
 
     private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {

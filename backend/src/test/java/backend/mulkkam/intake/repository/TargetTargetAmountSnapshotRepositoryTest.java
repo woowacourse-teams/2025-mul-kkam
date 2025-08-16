@@ -3,18 +3,19 @@ package backend.mulkkam.intake.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @DataJpaTest
 public class TargetTargetAmountSnapshotRepositoryTest {
