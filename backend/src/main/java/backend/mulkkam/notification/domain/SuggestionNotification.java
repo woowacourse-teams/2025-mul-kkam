@@ -39,4 +39,8 @@ public class SuggestionNotification {
         this.applyTargetAmount = applyTargetAmount;
         this.notification = notification;
     }
+
+    public void updateApplyTargetAmount(boolean applyTargetAmount) {
+        this.applyTargetAmount = applyTargetAmount;
+    }
 }

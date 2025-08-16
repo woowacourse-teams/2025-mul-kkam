@@ -1,11 +1,18 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
+
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
@@ -19,10 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SuggestionNotificationService {
 
+    private final FcmService fcmService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final FcmService fcmService;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public void createAndSendSuggestionNotification(CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest) {
@@ -35,6 +43,13 @@ public class SuggestionNotificationService {
         sendNotificationByMember(createTokenSuggestionNotificationRequest, devicesByMember);
     }
 
+    @Transactional
+    public void applyTargetAmount(Long id, MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+        SuggestionNotification suggestionNotification = getSuggestionNotification(id, member);
+        suggestionNotification.updateApplyTargetAmount(true);
+    }
+
     private void sendNotificationByMember(
             CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest,
             List<Device> devicesByMember
@@ -44,5 +59,15 @@ public class SuggestionNotificationService {
                     device.getToken());
             fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
+    }
+
+    private SuggestionNotification getSuggestionNotification(Long id, Member member) {
+        return suggestionNotificationRepository.findByIdAndNotificationMember(id, member)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_SUGGESTION_NOTIFICATION));
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
