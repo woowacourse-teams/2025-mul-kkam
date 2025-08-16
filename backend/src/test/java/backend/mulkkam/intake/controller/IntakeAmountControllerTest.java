@@ -11,11 +11,8 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -23,12 +20,8 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.DatabaseCleaner;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -245,132 +238,6 @@ class IntakeAmountControllerTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
-            });
-
-        }
-    }
-
-    @DisplayName("음용 기록의 목표 음용량을 수정한다")
-    @Nested
-    class ModifyIntakeHistoryTarget {
-
-        @DisplayName("음용기록의 하루 목표 음용량이 수정된다")
-        @Test
-        void success_whenIsValidSuggestedAmount() throws Exception {
-            // given
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .date(LocalDate.now())
-                    .build();
-            intakeHistoryRepository.save(intakeHistory);
-            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
-                    .build();
-            intakeHistoryDetailRepository.save(intakeHistoryDetail);
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
-                    2500);
-
-            // when
-            mockMvc.perform(patch("/intake/amount/target/suggested")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(modifyIntakeTargetAmountByRecommendRequest)))
-                    .andExpect(status().isOk());
-
-            Member foundMember = memberRepository.findById(member.getId())
-                    .orElseThrow();
-
-            List<IntakeHistory> foundIntakeHistories = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
-                    member, LocalDate.now(), LocalDate.now());
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(foundMember.getTargetAmount().value()).isEqualTo(1500);
-                softly.assertThat(foundIntakeHistories.getFirst().getTargetAmount().value()).isEqualTo(2500);
-            });
-        }
-
-        @DisplayName("목표 음용량이 0 이하라면 400 에러가 발생한다")
-        @Test
-        void error_whenSuggestedAmountIsLessThanOrEqualToZero() throws Exception {
-            // given
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .date(LocalDate.now())
-                    .build();
-            intakeHistoryRepository.save(intakeHistory);
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
-                    0);
-
-            // when
-            String json = mockMvc.perform(patch("/intake/amount/target/suggested")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(modifyIntakeTargetAmountByRecommendRequest)))
-                    .andExpect(status().isBadRequest())
-                    .andReturn().getResponse().getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
-            });
-        }
-
-        @DisplayName("목표 음용량이 10000 이상이라면 400 에러가 발생한다")
-        @Test
-        void error_whenSuggestedAmountIsMoreThanOrEqualTo10000() throws Exception {
-            // given
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .date(LocalDate.now())
-                    .build();
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
-                    10000);
-            intakeHistoryRepository.save(intakeHistory);
-
-            // when
-            String json = mockMvc.perform(patch("/intake/amount/target/suggested")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(modifyIntakeTargetAmountByRecommendRequest)))
-                    .andExpect(status().isBadRequest())
-                    .andReturn().getResponse().getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
-            });
-        }
-
-        @DisplayName("그 날의 음용 기록이 없다면 새로운 음용 기록을 생성한다")
-        @Test
-        void success_whenIntakeHistoryNotFoundThenCreateIntakeHistory() throws Exception {
-            // given
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
-                    4500);
-
-            // when
-            mockMvc.perform(patch("/intake/amount/target/suggested")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(modifyIntakeTargetAmountByRecommendRequest)))
-                    .andExpect(status().isOk());
-
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member,
-                    LocalDate.now(), LocalDate.now());
-            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(foundMember.getTargetAmount().value()).isEqualTo(1500);
-                softly.assertThat(intakeHistories.getFirst().getTargetAmount().value()).isEqualTo(4500);
             });
 
         }

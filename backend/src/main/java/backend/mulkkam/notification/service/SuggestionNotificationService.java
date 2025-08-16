@@ -9,6 +9,8 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
+import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
@@ -27,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SuggestionNotificationService {
 
     private final FcmService fcmService;
+    private final IntakeAmountService intakeAmountService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
@@ -47,6 +50,9 @@ public class SuggestionNotificationService {
     public void applyTargetAmount(Long id, MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         SuggestionNotification suggestionNotification = getSuggestionNotification(id, member);
+
+        intakeAmountService.modifyDailyTargetBySuggested(member, new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
+
         suggestionNotification.updateApplyTargetAmount(true);
     }
 

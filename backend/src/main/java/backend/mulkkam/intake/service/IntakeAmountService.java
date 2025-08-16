@@ -52,11 +52,10 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyDailyTargetBySuggested(
-            MemberDetails memberDetails,
+            Member member,
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest
     ) {
         LocalDate now = LocalDate.now();
-        Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, now)
                 .orElseGet(() -> {
@@ -64,13 +63,13 @@ public class IntakeAmountService {
                     IntakeHistory newIntakeHistory = new IntakeHistory(
                             member,
                             now,
-                            modifyIntakeTargetAmountByRecommendRequest.toAmount(),
+                            modifyIntakeTargetAmountByRecommendRequest.amount(),
                             streak
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
 
-        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
+        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.amount());
     }
 
     public IntakeRecommendedAmountResponse getRecommended(MemberDetails memberDetails) {
