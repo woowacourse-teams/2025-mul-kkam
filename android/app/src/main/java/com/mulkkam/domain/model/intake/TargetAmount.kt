@@ -4,14 +4,18 @@ import com.mulkkam.domain.model.result.MulKkamError
 
 @JvmInline
 value class TargetAmount(
-    val amount: Int,
+    val value: Int,
 ) {
     init {
-        require(amount in TARGET_AMOUNT_MIN..TARGET_AMOUNT_MAX) { throw MulKkamError.TargetAmountError.InvalidTargetAmount }
+        require(value >= TARGET_AMOUNT_MIN) { throw MulKkamError.TargetAmountError.BelowMinimum }
+
+        require(value <= TARGET_AMOUNT_MAX) { throw MulKkamError.TargetAmountError.AboveMaximum }
     }
 
     companion object {
-        private const val TARGET_AMOUNT_MIN: Int = 200
-        private const val TARGET_AMOUNT_MAX: Int = 5000
+        const val TARGET_AMOUNT_MIN: Int = 200
+        const val TARGET_AMOUNT_MAX: Int = 5000
+
+        val EMPTY_TARGET_AMOUNT: TargetAmount = TargetAmount(TARGET_AMOUNT_MIN)
     }
 }

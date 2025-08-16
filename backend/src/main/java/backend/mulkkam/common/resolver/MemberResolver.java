@@ -1,10 +1,11 @@
 package backend.mulkkam.common.resolver;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
-import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -18,29 +19,26 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class MemberResolver implements HandlerMethodArgumentResolver {
 
-    private final AuthenticationHeaderHandler authenticationHeaderHandler;
-    private final OauthJwtTokenHandler oauthJwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
 
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
-        return parameter.getParameterType().equals(Member.class);
+        return parameter.getParameterType().equals(MemberDetails.class);
     }
 
     @Override
-    public Member resolveArgument(MethodParameter parameter,
-                                  ModelAndViewContainer mavContainer,
-                                  NativeWebRequest webRequest,
-                                  WebDataBinderFactory binderFactory
+    public MemberDetails resolveArgument(
+            MethodParameter parameter,
+            ModelAndViewContainer mavContainer,
+            NativeWebRequest webRequest,
+            WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-        String token = authenticationHeaderHandler.extractToken(request);
-        Long oauthAccountId = oauthJwtTokenHandler.getSubject(token);
+        Long accountId = (Long) request.getAttribute("account_id");
+        OauthAccount account = oauthAccountRepository.findByIdWithMember(accountId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
 
-        OauthAccount oauthAccount = oauthAccountRepository.findByIdWithMember(oauthAccountId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다"));
-
-        return oauthAccount.getMember();
+        return new MemberDetails(account.getMember());
     }
 }

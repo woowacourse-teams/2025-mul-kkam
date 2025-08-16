@@ -14,6 +14,7 @@ import com.mulkkam.domain.model.bio.Gender.MALE
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.dialog.OnboardingWeightFragment
 import com.mulkkam.ui.util.binding.BindingFragment
+import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
@@ -35,6 +36,7 @@ class BioInfoFragment :
         initTextAppearance()
         initClickListeners()
         initObservers()
+        binding.tvNext.applyImeMargin()
     }
 
     private fun initTextAppearance() {

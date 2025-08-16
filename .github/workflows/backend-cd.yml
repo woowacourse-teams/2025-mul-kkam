@@ -2,7 +2,7 @@ name: backend-cd.yml
 
 on:
   push:
-    branches: [ "develop" ]
+    branches: ["develop"]
     paths:
       - "backend/**"
 
@@ -69,6 +69,7 @@ jobs:
           echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
           echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
+          echo "REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
           echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
           echo "FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}" >> ~/mulkkam/.env
           echo "OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}" >> ~/mulkkam/.env

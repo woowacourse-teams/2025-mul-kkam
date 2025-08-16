@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -12,9 +12,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -34,19 +35,19 @@ public class TargetAmountSnapshot {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
 
     public TargetAmountSnapshot(
             Member member,
             LocalDate updatedAt,
-            Amount targetAmount
+            TargetAmount targetAmount
     ) {
         this.member = member;
         this.updatedAt = updatedAt;
         this.targetAmount = targetAmount;
     }
 
-    public void updateTargetAmount(Amount targetAmount) {
+    public void updateTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
     }
 }

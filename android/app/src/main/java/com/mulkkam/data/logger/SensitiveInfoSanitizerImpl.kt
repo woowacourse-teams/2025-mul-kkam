@@ -35,6 +35,12 @@ class SensitiveInfoSanitizerImpl(
                 mask
             }
 
+        // IPv4 주소 (예: 127.0.0.1)
+        out =
+            IPV4_REGEX.replace(out) { _ ->
+                mask
+            }
+
         return out
     }
 
@@ -60,6 +66,11 @@ class SensitiveInfoSanitizerImpl(
         private val JWT_LIKE_REGEX =
             Regex(
                 pattern = """(?i)\beyJ[\w\-_.]+""",
+            )
+
+        private val IPV4_REGEX =
+            Regex(
+                pattern = """\b(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|1?\d{1,2})\b""",
             )
     }
 }

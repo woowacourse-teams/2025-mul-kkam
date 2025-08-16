@@ -1,14 +1,14 @@
 package backend.mulkkam.auth.domain;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class OauthAccountTest {
 

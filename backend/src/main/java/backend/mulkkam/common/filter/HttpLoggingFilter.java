@@ -5,9 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -17,6 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -40,14 +41,15 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
-        try {
-            printRequestUriAndHeaders(wrappingRequest);
+        printRequestUriAndHeaders(wrappingRequest);
 
+        try {
             filterChain.doFilter(wrappingRequest, wrappingResponse);
 
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
-                printResponseHeader(response);
+
+                printResponseHeader(request, response);
                 printResponseBody(wrappingResponse);
             }
             wrappingResponse.copyBodyToResponse();
@@ -110,19 +112,24 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
     }
 
     private void printResponseHeader(
+            HttpServletRequest request,
             HttpServletResponse response
     ) {
+        Long accountId = (Long) request.getAttribute("account_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] ({}) token = {}", status, auth);
+        log.info("[RESPONSE] accountId = {}, ({}) token = {}", accountId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
         try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray()).toPrettyString();
+            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray())
+                    .toPrettyString()
+                    .replaceAll("\\R\\s*\\}$", "}");
+            log.info("ResponseBody: {}", body);
             if (body.isEmpty()) {
                 body = "NONE";
             }

@@ -53,6 +53,17 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/tv_view_label" />
 
+        <TextView
+            android:id="@+id/tv_week_range"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="@style/title2"
+            android:textColor="@color/gray_400"
+            app:layout_constraintBottom_toBottomOf="@id/ib_week_prev"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/ib_week_prev"
+            tools:text="@string/history_week_range" />
                 <TextView
                     android:id="@+id/tv_week_range"
                     android:layout_width="wrap_content"
@@ -253,6 +264,18 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_intake_history_label"
                 app:layout_constraintTop_toBottomOf="@id/tv_intake_history_label" />
+
+        <include
+            android:id="@+id/include_history_shimmer"
+            layout="@layout/layout_history_shimmer"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

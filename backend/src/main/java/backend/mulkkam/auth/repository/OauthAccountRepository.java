@@ -1,9 +1,11 @@
 package backend.mulkkam.auth.repository;
 
 import backend.mulkkam.auth.domain.OauthAccount;
-import java.util.Optional;
+import backend.mulkkam.member.domain.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+
+import java.util.Optional;
 
 public interface OauthAccountRepository extends JpaRepository<OauthAccount, Long> {
 
@@ -16,4 +18,6 @@ public interface OauthAccountRepository extends JpaRepository<OauthAccount, Long
                 WHERE o.id = :id
             """)
     Optional<OauthAccount> findByIdWithMember(Long id);
+
+    Optional<OauthAccount> findByMember(Member member);
 }

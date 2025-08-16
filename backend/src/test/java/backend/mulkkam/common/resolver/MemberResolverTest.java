@@ -1,16 +1,19 @@
 package backend.mulkkam.common.resolver;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.common.filter.AuthenticationHeaderHandler;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
-import java.util.Optional;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -25,19 +28,10 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class MemberResolverTest {
-
-    @Mock
-    OauthJwtTokenHandler oauthJwtTokenHandler;
-
-    @Mock
-    AuthenticationHeaderHandler authenticationHeaderHandler;
 
     @Mock
     OauthAccountRepository oauthAccountRepository;
@@ -54,31 +48,29 @@ class MemberResolverTest {
         void success_validToken() throws Exception {
             // given
             String token = "test-token";
-
-            MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-            servletRequest.addHeader("Authorization", "Bearer " + token);
-            NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
-
+            long accountId = 1L;
             long memberId = 1L;
+
             Member member = new Member(
                     memberId,
                     new MemberNickname("히로"),
                     new PhysicalAttributes(Gender.FEMALE, 70.0),
-                    new Amount(1_000),
+                    new TargetAmount(1_000),
                     true,
                     false
             );
 
-            long oauthAccountId = memberId;
-            OauthAccount oauthAccount = new OauthAccount(oauthAccountId, member, "tempid", OauthProvider.KAKAO);
+            OauthAccount account = new OauthAccount(member, "kakao-id", OauthProvider.KAKAO);
 
-            given(authenticationHeaderHandler.extractToken(servletRequest)).willReturn(token);
-            given(oauthJwtTokenHandler.getSubject(token)).willReturn(member.getId());
-            given(oauthAccountRepository.findByIdWithMember(member.getId())).willReturn(
-                    Optional.of(oauthAccount));
+            when(oauthAccountRepository.findByIdWithMember(accountId)).thenReturn(Optional.of(account));
+
+            MockHttpServletRequest servletRequest = new MockHttpServletRequest();
+            servletRequest.setAttribute("account_id", accountId);
+            servletRequest.addHeader("Authorization", "Bearer " + token);
+            NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             // when
-            Member result = memberResolver.resolveArgument(
+            MemberDetails result = memberResolver.resolveArgument(
                     mock(MethodParameter.class),
                     mock(ModelAndViewContainer.class),
                     webRequest,
@@ -87,8 +79,8 @@ class MemberResolverTest {
 
             // then
             assertSoftly(softAssertions -> {
-                assertThat(result).isInstanceOf(Member.class);
-                assertThat(result.getId()).isEqualTo(memberId);
+                assertThat(result).isInstanceOf(MemberDetails.class);
+                assertThat(result.id()).isEqualTo(memberId);
             });
         }
     }

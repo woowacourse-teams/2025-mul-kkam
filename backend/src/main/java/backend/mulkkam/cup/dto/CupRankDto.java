@@ -2,12 +2,13 @@ package backend.mulkkam.cup.dto;
 
 import backend.mulkkam.cup.domain.Cup;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 public record CupRankDto(
         @Schema(description = "컵 id", example = "1")
         Long id,
         @Schema(description = "컵 순위", example = "2")
-        Integer rank
+        @NotNull Integer rank
 ) {
 
     public CupRankDto(Cup cup) {
