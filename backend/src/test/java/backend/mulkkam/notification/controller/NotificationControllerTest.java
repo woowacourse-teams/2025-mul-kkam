@@ -3,7 +3,6 @@ package backend.mulkkam.notification.controller;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.OauthAccount;
@@ -125,7 +124,6 @@ public class NotificationControllerTest {
                             .param("clientTime", "2025-08-15T13:11:00")
                             .param("size", "5")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                    .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -147,7 +145,6 @@ public class NotificationControllerTest {
                             .param("clientTime", "2025-08-15T13:11:00")
                             .param("size", "5")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                    .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -212,7 +209,6 @@ public class NotificationControllerTest {
             // when & then
             String json = mockMvc.perform(get("/notifications/unread-count")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                    .andDo(print())
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
