@@ -13,15 +13,20 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.ReadSuggestionNotificationResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +43,7 @@ public class NotificationService {
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
+    private final SuggestionNotificationRepository suggestionNotificationRepository;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -64,7 +70,7 @@ public class NotificationService {
 
         Long nextCursor = getNextCursor(hasNext, notifications);
         List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
-        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(readNotifications);
+        List<NotificationResponse> readNotificationResponses = toReadNotificationResponses(readNotifications);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -138,10 +144,20 @@ public class NotificationService {
         return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
     }
 
-    private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
-        return notifications.stream()
-                .map(ReadNotificationResponse::new)
-                .collect(Collectors.toList());
+    private List<NotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
+        List<NotificationResponse> notificationResponses = new ArrayList<>();
+        for (Notification notification : notifications) {
+            if (notification.getNotificationType() == NotificationType.SUGGESTION) {
+                SuggestionNotification suggestionNotificationByNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
+                        notification);
+                ReadSuggestionNotificationResponse readSuggestionNotificationResponse = new ReadSuggestionNotificationResponse(
+                        notification, suggestionNotificationByNotification);
+                notificationResponses.add(readSuggestionNotificationResponse);
+            } else {
+                notificationResponses.add(new ReadNotificationResponse(notification));
+            }
+        }
+        return notificationResponses;
     }
 
     private void sendNotificationByMember(
