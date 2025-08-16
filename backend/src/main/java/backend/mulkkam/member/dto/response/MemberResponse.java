@@ -9,14 +9,14 @@ public record MemberResponse(
         @Schema(description = "회원 ID", example = "1")
         Long id,
 
-        @Schema(description = "닉네임", example = "밍곰")
+        @Schema(description = "닉네임", example = "밍곰", nullable = true)
         String nickname,
 
-        @Schema(description = "체중 (kg)", example = "50.0")
+        @Schema(description = "체중 (kg)", example = "50.0", nullable = true)
         Double weight,
 
         @Schema(description = "성별", example = "FEMALE", implementation = Gender.class)
-        String gender,
+        Gender gender,
 
         @Schema(description = "목표 음용량 (ml)", example = "2000", minimum = "1")
         int targetAmount
@@ -27,7 +27,7 @@ public record MemberResponse(
                 member.getId(),
                 member.getMemberNickname().value(),
                 member.getPhysicalAttributes().getWeight(),
-                member.getPhysicalAttributes().getGender().name(),
+                member.getPhysicalAttributes().getGender(),
                 member.getTargetAmount().value()
         );
     }

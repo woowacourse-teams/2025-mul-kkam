@@ -66,7 +66,7 @@ public class MemberServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(result.nickname()).isEqualTo(member.getMemberNickname().value());
                 softly.assertThat(result.weight()).isEqualTo(member.getPhysicalAttributes().getWeight());
-                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
+                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
         }

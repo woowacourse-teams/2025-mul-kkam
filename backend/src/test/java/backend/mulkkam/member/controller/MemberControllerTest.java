@@ -8,6 +8,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
@@ -27,6 +28,7 @@ import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
@@ -92,6 +94,8 @@ class MemberControllerTest {
                 .builder()
                 .isNightNotificationAgreed(true)
                 .isMarketingNotificationAgreed(true)
+                .weight(null)
+                .gender(null)
                 .build();
         memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -103,6 +107,36 @@ class MemberControllerTest {
     @DisplayName("멤버를 생성할 때에")
     @Nested
     class Create {
+
+        @DisplayName("몸무게 및 성별이 NULL이여도 저장된다.")
+        @Test
+        void success_whenWeightAndGenderCanBeNull() throws Exception {
+            // given
+            databaseCleaner.clean();
+
+            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", null, null, 1500, true,
+                    true);
+
+            // when
+            mockMvc.perform(post("/members")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createMemberRequest)))
+                    .andExpect(status().isOk());
+
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            Member foundMember = memberRepository.findById(foundOauthAccount.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(foundMember.getPhysicalAttributes().getGender()).isNull();
+                softly.assertThat(foundMember.getPhysicalAttributes().getWeight()).isNull();
+                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo("test2");
+            });
+        }
 
         @DisplayName("기본 컵 3개도 저장된다.")
         @Test
@@ -162,7 +196,7 @@ class MemberControllerTest {
             );
         }
 
-        @DisplayName("야간 알림을 수정한다.")
+        @DisplayName("마케팅 알림을 수정한다.")
         @Test
         void success_whenModifyIsMarketingNotificationAgreed() throws Exception {
             // given
@@ -204,6 +238,25 @@ class MemberControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.isNightNotificationAgreed()).isTrue();
                 softly.assertThat(actual.isMarketingNotificationAgreed()).isTrue();
+            });
+        }
+
+        @DisplayName("몸무게 및 성별이 null이라면 null로 반환한다.")
+        @Test
+        void success_whenWeightAndGenderCanBeNull() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/members")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andDo(print())
+                    .andReturn().getResponse().getContentAsString();
+
+            MemberResponse actual = objectMapper.readValue(json, MemberResponse.class);
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.weight()).isNull();
+                softly.assertThat(actual.gender()).isNull();
             });
         }
     }
