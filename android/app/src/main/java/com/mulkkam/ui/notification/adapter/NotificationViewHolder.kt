@@ -21,6 +21,9 @@ class NotificationViewHolder(
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
         with(binding) {
+            if (notification.type == SUGGESTION) {
+                ivNotificationType.setImageResource(R.drawable.ic_notification_sun)
+            }
             tvNotificationTitle.text = notification.title
             tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
             viewUnreadAlarm.isVisible = !notification.isRead

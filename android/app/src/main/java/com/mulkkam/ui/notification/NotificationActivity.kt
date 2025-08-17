@@ -3,6 +3,8 @@ package com.mulkkam.ui.notification
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
@@ -52,13 +54,19 @@ class NotificationActivity :
 
     private fun handleNotificationUiState(notificationUiState: MulKkamUiState<List<Notification>>) {
         when (notificationUiState) {
-            is MulKkamUiState.Success<List<Notification>> -> adapter.changeItems(notificationUiState.data)
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Success<List<Notification>> -> {
+                adapter.changeItems(notificationUiState.data)
+                binding.includeNotificationShimmer.root.visibility = GONE
+            }
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> binding.includeNotificationShimmer.root.visibility = VISIBLE
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
-                    .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
-                    .show()
+                    .make(
+                        binding.root,
+                        getString(R.string.load_info_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
             }
         }
     }
