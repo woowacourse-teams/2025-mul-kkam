@@ -8,6 +8,9 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
+import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -35,11 +38,28 @@ class NotificationActivity :
 
     private fun initObservers() {
         viewModel.notifications.observe(this) {
-            adapter.changeItems(it)
+            handleNotificationUiState(it)
         }
 
-        viewModel.onApplySuggestion.observe(this) {
-            Toast.makeText(this, R.string.home_notification_apply_success, Toast.LENGTH_SHORT).show()
+        viewModel.applySuggestionUiState.observe(this) {
+            if (it is MulKkamUiState.Success) {
+                Toast
+                    .makeText(this, R.string.home_notification_apply_success, Toast.LENGTH_SHORT)
+                    .show()
+            }
+        }
+    }
+
+    private fun handleNotificationUiState(notificationUiState: MulKkamUiState<List<Notification>>) {
+        when (notificationUiState) {
+            is MulKkamUiState.Success<List<Notification>> -> adapter.changeItems(notificationUiState.data)
+            MulKkamUiState.Idle -> Unit
+            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar
+                    .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
+                    .show()
+            }
         }
     }
 
