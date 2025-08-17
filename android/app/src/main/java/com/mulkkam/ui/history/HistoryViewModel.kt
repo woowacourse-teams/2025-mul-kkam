@@ -99,6 +99,7 @@ class HistoryViewModel : ViewModel() {
 
     fun deleteIntakeHistory(history: IntakeHistory) {
         if (deleteUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
             runCatching {
                 _deleteUiState.value = MulKkamUiState.Loading
