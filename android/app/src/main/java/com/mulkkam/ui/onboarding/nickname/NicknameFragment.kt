@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
 import com.mulkkam.domain.model.Nickname
@@ -26,6 +27,7 @@ import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
+import com.mulkkam.ui.util.extensions.hideKeyboard
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NicknameFragment :
@@ -63,6 +65,7 @@ class NicknameFragment :
     private fun initClickListeners() {
         with(binding) {
             tvNext.setSingleClickListener {
+                binding.root.hideKeyboard()
                 parentViewModel.updateNickname(getTrimmedNickname())
                 parentViewModel.moveToNextStep()
             }

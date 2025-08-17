@@ -1,8 +1,8 @@
 package backend.mulkkam.cup.domain.vo;
 
-import backend.mulkkam.common.exception.CommonException;
-
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_RANK_VALUE;
+
+import backend.mulkkam.common.exception.CommonException;
 
 public record CupRank(Integer value) {
 

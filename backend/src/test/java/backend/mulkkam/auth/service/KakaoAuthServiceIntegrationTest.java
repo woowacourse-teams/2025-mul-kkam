@@ -1,25 +1,26 @@
 package backend.mulkkam.auth.service;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
 import backend.mulkkam.auth.infrastructure.KakaoRestClient;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import java.util.List;
 
 public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
 

@@ -1,9 +1,9 @@
 package backend.mulkkam.device.controller;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.service.DeviceService;
-import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -31,9 +31,9 @@ public class DeviceController {
     @PostMapping
     public ResponseEntity<Void> register(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody RegisterDeviceRequest registerDeviceRequest) {
-        deviceService.register(registerDeviceRequest, member);
+        deviceService.register(registerDeviceRequest, memberDetails);
         return ResponseEntity.ok().build();
     }
 }

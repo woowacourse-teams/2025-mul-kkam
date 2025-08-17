@@ -6,7 +6,6 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.core.widget.doAfterTextChanged
@@ -15,6 +14,8 @@ import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
@@ -175,9 +176,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun handleNicknameChangeUiState(nickNameChangeUiState: MulKkamUiState<Unit>) {
         when (nickNameChangeUiState) {
             is MulKkamUiState.Success<Unit> -> {
-                Toast
-                    .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
-                    .show()
+                CustomToast
+                    .makeText(this, getString(R.string.setting_nickname_change_complete))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 finish()
             }
 

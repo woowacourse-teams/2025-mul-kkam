@@ -13,6 +13,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import kotlin.math.max
 
+private const val SINGLE_CLICK_TAG_KEY: Int = -10001
+
 fun View.applyImeMargin(extraBottomSpace: Int = 0) {
     var startTranslationY = translationY
     var endTranslationY = translationY
@@ -74,6 +76,7 @@ fun View.hideKeyboard() {
             .hide(WindowInsetsCompat.Type.ime())
         return
     }
+
     val inputMethodManager =
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
     inputMethodManager.hideSoftInputFromWindow(windowToken, 0)

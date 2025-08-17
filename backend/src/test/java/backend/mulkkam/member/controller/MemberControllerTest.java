@@ -1,27 +1,59 @@
 package backend.mulkkam.member.controller;
 
+import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
+import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.OnboardingStatusResponse;
+import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
-import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
+import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.MemberFixtureBuilder;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
+import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MemberControllerTest {
+
+    @Autowired
+    MockMvc mockMvc;
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -30,235 +62,260 @@ class MemberControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    DatabaseCleaner databaseCleaner;
+    private MemberRepository memberRepository;
 
-    @DisplayName("Filter 검증")
-    @Nested
-    class AuthFilter {
+    @Autowired
+    private ObjectMapper objectMapper;
 
-        @DisplayName("GET /members/{id} 요청을 보낼 때")
-        @Nested
-        class GetMember {
+    @Autowired
+    private DatabaseCleaner databaseCleaner;
 
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .when().get("/members/1")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
+    @Autowired
+    AccountRefreshTokenRepository accountRefreshTokenRepository;
 
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .header("Authorization", "Basic token")
-                        .when().get("/members/1")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-        }
+    @Autowired
+    CupRepository cupRepository;
 
-        @DisplayName("POST /members/physical-attributes 요청을 보낼 때")
-        @Nested
-        class PostPhysicalAttributes {
+    @Autowired
+    IntakeHistoryRepository intakeHistoryRepository;
 
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .when().post("/members/physical-attributes")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
+    @Autowired
+    IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .header("Authorization", "Basic token")
-                        .when().post("/members/physical-attributes")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-        }
+    private Member member;
+    private String token;
 
-        @DisplayName("GET /members/nickname/validation 요청을 보낼 때")
-        @Nested
-        class GetNicknameValidation {
+    @BeforeEach
+    void setUp() {
+        databaseCleaner.clean();
 
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .when().get("/members/nickname/validation")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
+        member = MemberFixtureBuilder
+                .builder()
+                .isNightNotificationAgreed(true)
+                .isMarketingNotificationAgreed(true)
+                .weight(null)
+                .gender(null)
+                .build();
+        memberRepository.save(member);
+        OauthAccount oauthAccount = new OauthAccount(member, "test", KAKAO);
+        oauthAccountRepository.save(oauthAccount);
 
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .header("Authorization", "Basic token")
-                        .when().get("/members/nickname/validation")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-        }
-
-        @DisplayName("PATCH /members/nickname 요청을 보낼 때")
-        @Nested
-        class PatchNickname {
-
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .when().patch("/members/nickname")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .header("Authorization", "Basic token")
-                        .when().patch("/members/nickname")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-        }
-
-        @DisplayName("GET /members/nickname 요청을 보낼 때")
-        @Nested
-        class GetNickname {
-
-            @DisplayName("인증 헤더가 존재하지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_withoutAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .when().get("/members/nickname")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-
-            @DisplayName("인증 헤더 형식이 올바르지 않는 경우, 401 에러가 발생한다.")
-            @Test
-            void error_invalidAuthorizationHeader() {
-                RestAssured.given().log().all()
-                        .header("Authorization", "Basic token")
-                        .when().get("/members/nickname")
-                        .then().log().all()
-                        .statusCode(HttpStatus.UNAUTHORIZED.value());
-            }
-        }
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
-    @DisplayName("온보딩 진행 시")
+    @DisplayName("멤버를 생성할 때에")
     @Nested
     class Create {
 
-        @BeforeEach
-        void setUp() {
+        @DisplayName("몸무게 및 성별이 NULL이여도 저장된다.")
+        @Test
+        void success_whenWeightAndGenderCanBeNull() throws Exception {
+            // given
             databaseCleaner.clean();
-        }
 
-        @DisplayName("토큰에 대한 OauthAccount 를 추출해 정상적으로 저장이 이뤄진다")
-        @Test
-        void success_withValidHeader() {
-            // given
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
             oauthAccountRepository.save(oauthAccount);
-
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    "히로",
-                    70.0,
-                    Gender.FEMALE,
-                    1_000,
-                    true,
-                    false
-            );
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", null, null, 1500, true,
+                    true);
 
             // when
-            RestAssured.given().log().all()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(createMemberRequest)
-                    .when().post("/members")
-                    .then().log().all()
-                    .statusCode(HttpStatus.OK.value());
+            mockMvc.perform(post("/members")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createMemberRequest)))
+                    .andExpect(status().isOk());
+
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            Member foundMember = memberRepository.findById(foundOauthAccount.getId()).orElseThrow();
 
             // then
-            OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
-            assertThat(savedOauthAccount.getMember()).isNotNull();
+            assertSoftly(softly -> {
+                softly.assertThat(foundMember.getPhysicalAttributes().getGender()).isNull();
+                softly.assertThat(foundMember.getPhysicalAttributes().getWeight()).isNull();
+                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo("test2");
+            });
         }
 
-        @DisplayName("생체 정보 없이도 저장이 정상적으로 이뤄진다")
+        @DisplayName("기본 컵 3개도 저장된다.")
         @Test
-        void success_withoutPhysicalAttributes() {
+        void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
             // given
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            databaseCleaner.clean();
+
+            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
             oauthAccountRepository.save(oauthAccount);
-
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    "히로",
-                    null,
-                    null,
-                    1_000,
-                    true,
-                    false
-            );
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
+                    true);
 
             // when
-            RestAssured.given().log().all()
-                    .contentType(ContentType.JSON)
-                    .header("Authorization", "Bearer " + token)
-                    .body(createMemberRequest)
-                    .when().post("/members")
-                    .then().log().all()
-                    .statusCode(HttpStatus.OK.value());
+            mockMvc.perform(post("/members")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createMemberRequest)))
+                    .andExpect(status().isOk());
+
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            Member foundMember = foundOauthAccount.getMember();
+            List<Cup> cups = cupRepository.findAllByMember(foundMember);
 
             // then
-            OauthAccount savedOauthAccount = oauthAccountRepository.findById(oauthAccount.getId()).get();
-            assertThat(savedOauthAccount.getMember()).isNotNull();
+            assertSoftly(softly -> {
+                softly.assertThat(cups.size()).isEqualTo(3);
+                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
+                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
+                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
+            });
         }
     }
 
-    @DisplayName("온보딩 진행 여부 확인 시")
+    @DisplayName("멤버의 정보를 수정할 때에")
     @Nested
-    class CheckOnboardingStatus {
+    class Modify {
+
+        @DisplayName("야간 알림을 수정한다.")
+        @Test
+        void success_whenModifyIsNightNotificationAgreed() throws Exception {
+            // given
+            ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest = new ModifyIsNightNotificationAgreedRequest(
+                    false);
+
+            // when
+            mockMvc.perform(patch("/members/notifications/night")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
+                    .andExpect(status().isOk());
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly ->
+                    softly.assertThat(foundMember.isNightNotificationAgreed()).isFalse()
+            );
+        }
+
+        @DisplayName("마케팅 알림을 수정한다.")
+        @Test
+        void success_whenModifyIsMarketingNotificationAgreed() throws Exception {
+            // given
+            ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest = new ModifyIsMarketingNotificationAgreedRequest(
+                    false);
+
+            // when
+            mockMvc.perform(patch("/members/notifications/marketing")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            // then
+            assertSoftly(softly ->
+                    softly.assertThat(foundMember.isMarketingNotificationAgreed()).isFalse()
+            );
+        }
+    }
+
+    @DisplayName("멤버의 정보를 조회할 때에")
+    @Nested
+    class Get {
+
+        @DisplayName("야간 알림과 마케팅 수신 동의 세팅을 가져온다.")
+        @Test
+        void success_whenModifyIsNightNotificationAgreed() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/members/notifications/settings")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            NotificationSettingsResponse actual = objectMapper.readValue(json, NotificationSettingsResponse.class);
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.isNightNotificationAgreed()).isTrue();
+                softly.assertThat(actual.isMarketingNotificationAgreed()).isTrue();
+            });
+        }
+
+        @DisplayName("몸무게 및 성별이 null이라면 null로 반환한다.")
+        @Test
+        void success_whenWeightAndGenderCanBeNull() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/members")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            MemberResponse actual = objectMapper.readValue(json, MemberResponse.class);
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(actual.weight()).isNull();
+                softly.assertThat(actual.gender()).isNull();
+            });
+        }
+    }
+
+    @DisplayName("회원 탈퇴 시")
+    @Nested
+    class Delete {
 
         @BeforeEach
         void setUp() {
             databaseCleaner.clean();
         }
 
-        @DisplayName("정상적으로 온보딩 진행 여부가 반환된다")
+        @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버가 삭제된다")
         @Test
-        void success_withValidHeader() {
+        void success_withValidToken() throws Exception {
             // given
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            OauthAccount oauthAccount = new OauthAccount(savedMember, "temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
+                    .withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
 
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
+            Cup cup = CupFixtureBuilder
+                    .withMember(member)
+                    .build();
+            cupRepository.save(cup);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .build();
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
             // when
-            OnboardingStatusResponse response = RestAssured.given().log().all()
-                    .header("Authorization", "Bearer " + token)
-                    .when().get("/members/check/onboarding")
-                    .then().log().all()
-                    .statusCode(HttpStatus.OK.value())
-                    .extract().as(OnboardingStatusResponse.class);
+            mockMvc.perform(delete("/members")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk());
 
             // then
-            assertThat(response.finishedOnboarding()).isFalse();
+            assertSoftly(softAssertions -> {
+                assertThat(memberRepository.findAll()).isEmpty();
+                assertThat(oauthAccountRepository.findAll()).isEmpty();
+                assertThat(accountRefreshTokenRepository.findAll()).isEmpty();
+                assertThat(cupRepository.findAll()).isEmpty();
+                assertThat(intakeHistoryRepository.findAll()).isEmpty();
+                assertThat(intakeHistoryDetailRepository.findAll()).isEmpty();
+            });
         }
     }
 }

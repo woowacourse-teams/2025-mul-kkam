@@ -1,9 +1,10 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.intake.domain.vo.AchievementRate;
+import lombok.Getter;
+
 import java.util.Arrays;
 import java.util.Comparator;
-import lombok.Getter;
 
 @Getter
 public enum CommentOfAchievementRate {

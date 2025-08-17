@@ -5,9 +5,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
@@ -17,6 +14,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -114,13 +115,13 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        Long oauthId = (Long) request.getAttribute("oauth_id");
+        Long accountId = (Long) request.getAttribute("account_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] oauthId = {}, ({}) token = {}", oauthId, status, auth);
+        log.info("[RESPONSE] accountId = {}, ({}) token = {}", accountId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {

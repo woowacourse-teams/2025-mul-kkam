@@ -14,7 +14,6 @@ class SettingAdapter(
         when (SettingViewType.entries[viewType]) {
             SettingViewType.TITLE -> TitleViewHolder.from(parent)
             SettingViewType.NORMAL -> NormalViewHolder.from(parent, handler)
-            SettingViewType.SWITCH -> SwitchViewHolder.from(parent, handler)
             SettingViewType.DIVIDER -> DividerViewHolder.from(parent)
         }
 
@@ -25,14 +24,11 @@ class SettingAdapter(
         when (val item = getItem(position)) {
             is SettingItem.TitleItem -> (holder as? TitleViewHolder)?.bind(item)
             is SettingItem.NormalItem -> (holder as? NormalViewHolder)?.bind(item)
-            is SettingItem.SwitchItem -> (holder as? SwitchViewHolder)?.bind(item)
             is SettingItem.DividerItem -> (holder as? DividerViewHolder)?.bind(item)
         }
     }
 
     override fun getItemViewType(position: Int): Int = getItem(position).viewType.ordinal
 
-    interface Handler :
-        NormalViewHolder.Handler,
-        SwitchViewHolder.Handler
+    interface Handler : NormalViewHolder.Handler
 }
