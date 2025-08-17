@@ -22,7 +22,8 @@ public enum IntakeType {
     }
 
     public static IntakeType findByName(String name) {
-        return Arrays.stream(values())
+        return Arrays
+                .stream(values())
                 .filter(intakeType -> intakeType.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_TYPE));
