@@ -16,12 +16,12 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
-import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
@@ -147,17 +147,22 @@ public class NotificationService {
     private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
         List<NotificationResponse> notificationResponses = new ArrayList<>();
         for (Notification notification : notifications) {
-            if (notification.getNotificationType() == NotificationType.SUGGESTION) {
-                SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
-                        notification);
-                GetSuggestionNotificationResponse getSuggestionNotificationResponse = new GetSuggestionNotificationResponse(
-                        notification, suggestionNotification);
-                notificationResponses.add(getSuggestionNotificationResponse);
-            } else {
-                notificationResponses.add(new GetNotificationResponse(notification));
-            }
+            NotificationResponse notificationResponse = getNotificationResponse(notification);
+            notificationResponses.add(notificationResponse);
+
         }
         return notificationResponses;
+    }
+
+    private NotificationResponse getNotificationResponse(Notification notification) {
+        if (notification.getNotificationType() == NotificationType.SUGGESTION) {
+            SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
+                    notification);
+            return new GetSuggestionNotificationResponse(
+                    notification, suggestionNotification);
+        } else {
+            return new GetNotificationResponse(notification);
+        }
     }
 
     private void sendNotificationByMember(
