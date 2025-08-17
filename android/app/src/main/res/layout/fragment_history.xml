@@ -9,7 +9,7 @@
     tools:context=".ui.history.HistoryFragment">
 
     <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+        android:id="@+id/abl_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/white"
@@ -42,7 +42,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white">
+            android:background="@color/white"
+            android:paddingBottom="8dp">
 
             <ImageButton
                 android:id="@+id/ib_week_prev"
