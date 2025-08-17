@@ -107,8 +107,10 @@ class HistoryViewModel : ViewModel() {
             }.onSuccess {
                 _deleteUiState.value = MulKkamUiState.Success(Unit)
                 updateIntakeHistoriesAfterDeletion(history)
+                _deleteUiState.value = MulKkamUiState.Idle
             }.onFailure {
                 _deleteUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _deleteUiState.value = MulKkamUiState.Idle
             }
         }
     }
