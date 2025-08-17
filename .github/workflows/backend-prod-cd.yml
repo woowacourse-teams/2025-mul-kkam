@@ -1,8 +1,8 @@
 name: backend-prod-cd.yml
 
 on:
-  pull_request:
-    branches: [ "be-releases/**" ]
+  push:
+    branches: [ "be-releases" ]
     paths:
       - "backend/**"
 
