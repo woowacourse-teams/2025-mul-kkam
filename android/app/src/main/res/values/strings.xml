@@ -55,18 +55,23 @@
     <string name="setting_cups_label_water">물</string>
     <string name="setting_cups_increment">+ %dml</string>
     <string name="setting_cups_cup_title">나만의 컵 목록</string>
+    <string name="setting_cups_intake_type_water">물</string>
+    <string name="setting_cups_intake_type_coffee">커피</string>
+    <string name="setting_cups_intake_type_unknown">알 수 없음</string>
+
     <string name="setting_cup_edit_title">컵 수정</string>
     <string name="setting_cup_add_title">컵 추가</string>
     <string name="setting_cup_nickname">컵 이름</string>
     <string name="setting_cup_amount">용량</string>
     <string name="setting_cup_save">완료</string>
-    <string name="setting_cups_intake_type_water">물</string>
-    <string name="setting_cups_intake_type_coffee">커피</string>
-    <string name="setting_cups_intake_type_unknown">알 수 없음</string>
     <string name="setting_cup_intake_type">액체 타입</string>
     <string name="setting_cup_delete">컵 삭제하기</string>
     <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
     <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
+
+    <string name="setting_cups_reset_success">나의 컵 목록이 초기화되었습니다</string>
+    <string name="setting_cups_reset_title">컵 목록을 초기화할까요?</string>
+    <string name="setting_cups_reset_description">삭제된 컵 목록은 복구되지 않습니다.</string>
 
     <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
     <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
@@ -179,5 +184,4 @@
     <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%s)</string>
-    <string name="setting_cups_reset_success">나의 컵 목록이 초기화되었습니다!</string>
 </resources>

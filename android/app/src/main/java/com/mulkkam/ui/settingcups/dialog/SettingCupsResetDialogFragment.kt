@@ -6,14 +6,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.activityViewModels
-import com.mulkkam.databinding.FragmentSettingCupResetBinding
+import com.mulkkam.databinding.FragmentSettingCupsResetBinding
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.util.binding.BindingDialogFragment
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingCupsResetDialogFragment :
-    BindingDialogFragment<FragmentSettingCupResetBinding>(
-        FragmentSettingCupResetBinding::inflate,
+    BindingDialogFragment<FragmentSettingCupsResetBinding>(
+        FragmentSettingCupsResetBinding::inflate,
     ) {
     private val parentViewModel: SettingCupsViewModel by activityViewModels()
 
