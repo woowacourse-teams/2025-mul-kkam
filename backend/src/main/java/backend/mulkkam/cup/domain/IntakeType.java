@@ -17,8 +17,8 @@ public enum IntakeType {
         this.hydrationRatio = hydrationRatio;
     }
 
-    public int calculateHydration(int intakeMl) {
-        return (int) Math.round(intakeMl * hydrationRatio);
+    public int calculateHydration(int intakeAmount) {
+        return (int) Math.round(intakeAmount * hydrationRatio);
     }
 
     public static IntakeType findByName(String name) {
