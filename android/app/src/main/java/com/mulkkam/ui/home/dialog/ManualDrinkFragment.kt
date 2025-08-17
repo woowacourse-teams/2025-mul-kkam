@@ -44,7 +44,7 @@ class ManualDrinkFragment :
     }
 
     private fun initDoneListener() {
-        binding.etAmount.setOnImeActionDoneListener(requireContext())
+        binding.etAmount.setOnImeActionDoneListener()
     }
 
     private fun initChips() {

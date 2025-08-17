@@ -206,6 +206,6 @@ class TargetAmountFragment :
         }
 
     private fun initDoneListener() {
-        binding.etInputGoal.setOnImeActionDoneListener(requireContext())
+        binding.etInputGoal.setOnImeActionDoneListener()
     }
 }

@@ -127,8 +127,8 @@ class SettingCupFragment :
     }
 
     private fun initDoneListener() {
-        binding.etNickname.setOnImeActionDoneListener(requireContext())
-        binding.etAmount.setOnImeActionDoneListener(requireContext())
+        binding.etNickname.setOnImeActionDoneListener()
+        binding.etAmount.setOnImeActionDoneListener()
     }
 
     private fun initChips() {

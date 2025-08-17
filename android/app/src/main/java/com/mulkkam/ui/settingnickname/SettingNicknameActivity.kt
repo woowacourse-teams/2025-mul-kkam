@@ -225,7 +225,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         }
 
     private fun initDoneListener() {
-        binding.etInputNickname.setOnImeActionDoneListener(this)
+        binding.etInputNickname.setOnImeActionDoneListener()
     }
 
     companion object {

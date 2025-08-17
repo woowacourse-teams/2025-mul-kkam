@@ -214,7 +214,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         }
 
     private fun initDoneListener() {
-        binding.etInputGoal.setOnImeActionDoneListener(this)
+        binding.etInputGoal.setOnImeActionDoneListener()
     }
 
     companion object {
