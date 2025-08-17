@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.domain;
 
+import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
@@ -14,17 +15,20 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE notification SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class Notification {
+public class Notification extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,9 +44,6 @@ public class Notification {
     @Column(nullable = false)
     private boolean isRead;
 
-    @Column(nullable = false)
-    private LocalDateTime createdAt;
-
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "recommended_target_amount"))
     private TargetAmount recommendedTargetAmount;
@@ -54,14 +55,14 @@ public class Notification {
     public Notification(
             NotificationType notificationType,
             String title,
-            LocalDateTime createdAt,
+            LocalDateTime createdAt, // TODO: 필드 초기화 시점 고려해서 처리할 것
             TargetAmount recommendedTargetAmount,
             Member member
     ) {
         this.notificationType = notificationType;
         this.title = title;
-        this.isRead = false;
         this.createdAt = createdAt;
+        this.isRead = false;
         this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
@@ -70,7 +71,7 @@ public class Notification {
             NotificationType notificationType,
             String title,
             boolean isRead,
-            LocalDateTime createdAt,
+            LocalDateTime createdAt, // TODO: 필드 초기화 시점 고려해서 처리할 것
             TargetAmount recommendedTargetAmount,
             Member member
     ) {

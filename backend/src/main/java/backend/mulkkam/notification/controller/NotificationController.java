@@ -6,6 +6,7 @@ import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,8 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,7 @@ public class NotificationController {
 
     private final ActivityService activityService;
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Operation(summary = "알림 목록 조회", description = "특정 시점 이후의 알림 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadNotificationsResponse.class)))
@@ -77,7 +81,19 @@ public class NotificationController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(memberDetails);
+        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+                memberDetails);
         return ResponseEntity.ok(getUnreadNotificationsCountResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> getUnreadNotificationsCount(
+            @PathVariable(value = "id")
+            Long id,
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        notificationRepository.delete(notificationRepository.findById(id).get());
+        return ResponseEntity.noContent().build();
     }
 }
