@@ -5,15 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View.GONE
 import android.view.View.VISIBLE
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
-import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -47,9 +46,11 @@ class NotificationActivity :
 
         viewModel.applySuggestionUiState.observe(this) {
             if (it is MulKkamUiState.Success) {
-                Toast
-                    .makeText(this, R.string.home_notification_apply_success, Toast.LENGTH_SHORT)
-                    .show()
+                CustomToast
+                    .makeText(this, getString(R.string.home_notification_apply_success))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
