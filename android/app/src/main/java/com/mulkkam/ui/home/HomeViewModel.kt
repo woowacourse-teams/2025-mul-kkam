@@ -74,7 +74,6 @@ class HomeViewModel : ViewModel() {
     fun loadAlarmCount() {
         if (alarmCountUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
-            // TODO: 알림 개수 조회 API 연결
             runCatching {
                 _alarmCountUiState.value = MulKkamUiState.Loading
                 notificationRepository.getNotificationsUnreadCount().getOrError()
