@@ -64,9 +64,9 @@ jobs:
       - name: Create .env file
         run: |
           cat <<EOF > ~/mulkkam/.env
-          DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
-          DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
-          DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
+          PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
+          PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
+          PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
           LOG_PATH=${{ secrets.LOG_PATH }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
