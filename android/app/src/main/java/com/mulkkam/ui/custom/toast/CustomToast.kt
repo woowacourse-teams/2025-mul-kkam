@@ -10,9 +10,9 @@ import com.mulkkam.databinding.LayoutCustomToastBinding
 
 class CustomToast private constructor(
     private val toast: Toast,
-    toastBinding: LayoutCustomToastBinding,
+    binding: LayoutCustomToastBinding,
 ) {
-    private val density = toastBinding.root.context.resources.displayMetrics.density
+    private val density = binding.root.context.resources.displayMetrics.density
 
     fun show() {
         toast.show()
