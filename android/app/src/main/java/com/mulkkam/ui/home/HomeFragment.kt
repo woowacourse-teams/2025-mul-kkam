@@ -254,6 +254,7 @@ class HomeFragment :
     override fun onReselected() {
         viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
+        viewModel.loadAlarmCount()
         binding.fabHomeDrink.closeMenu()
     }
 
