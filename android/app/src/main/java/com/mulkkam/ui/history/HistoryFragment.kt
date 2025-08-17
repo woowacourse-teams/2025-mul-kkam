@@ -80,10 +80,14 @@ class HistoryFragment :
         historyAdapter.onItemLongClickListener =
             HistoryViewHolder.Handler { history ->
                 if (viewModel.waterIntakeState.value !is WaterIntakeState.Present) {
-                    showSnackBar(
-                        message = getString(R.string.history_delete_failure_past),
-                        iconRes = R.drawable.ic_alert_circle,
-                    )
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.history_delete_failure_past),
+                            R.drawable.ic_alert_circle,
+                        ).apply {
+                            setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                        }.show()
                     return@Handler
                 }
 
@@ -176,10 +180,14 @@ class HistoryFragment :
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 binding.includeHistoryShimmer.root.visibility = View.GONE
-                showSnackBar(
-                    message = getString(R.string.load_info_error),
-                    iconRes = R.drawable.ic_alert_circle,
-                )
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.load_info_error),
+                        R.drawable.ic_alert_circle,
+                    ).apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -379,32 +387,33 @@ class HistoryFragment :
 
     private fun handleDeleteFailure(state: MulKkamUiState.Failure) {
         if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
-            showSnackBar(
-                message = getString(R.string.network_check_error),
-                iconRes = R.drawable.ic_alert_circle,
-            )
+            CustomSnackBar
+                .make(
+                    binding.root,
+                    getString(R.string.network_check_error),
+                    R.drawable.ic_alert_circle,
+                ).apply {
+                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                }.show()
         } else {
-            showSnackBar(
-                message = getString(R.string.history_delete_failure_past),
-                iconRes = R.drawable.ic_alert_circle,
-            )
+            CustomSnackBar
+                .make(
+                    binding.root,
+                    getString(R.string.history_delete_failure_past),
+                    R.drawable.ic_alert_circle,
+                ).apply {
+                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                }.show()
         }
     }
 
     private fun handleDeleteSuccess() {
-        showSnackBar(
-            message = getString(R.string.history_delete_success),
-            iconRes = R.drawable.ic_terms_all_check_on,
-        )
-    }
-
-    private fun showSnackBar(
-        message: String,
-        iconRes: Int,
-    ) {
         CustomSnackBar
-            .make(binding.root, message, iconRes)
-            .apply {
+            .make(
+                binding.root,
+                getString(R.string.history_delete_success),
+                R.drawable.ic_terms_all_check_on,
+            ).apply {
                 setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
             }.show()
     }
