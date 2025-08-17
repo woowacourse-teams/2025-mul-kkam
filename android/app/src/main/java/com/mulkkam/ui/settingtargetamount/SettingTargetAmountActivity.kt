@@ -22,6 +22,7 @@ import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -36,6 +37,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvSaveGoal.applyImeMargin()
     }
 
@@ -219,6 +221,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                     TargetAmount.TARGET_AMOUNT_MAX,
                 )
         }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnImeActionDoneListener()
+    }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)

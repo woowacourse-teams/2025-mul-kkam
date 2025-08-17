@@ -3,7 +3,9 @@ package com.mulkkam.ui.util.extensions
 import android.content.Context
 import android.os.SystemClock
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.graphics.Insets
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
@@ -74,6 +76,22 @@ fun View.hideKeyboard() {
             .hide(WindowInsetsCompat.Type.ime())
         return
     }
-    val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
-    imm.hideSoftInputFromWindow(windowToken, 0)
+
+    val inputMethodManager =
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager ?: return
+    inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
 }
+
+fun EditText.setOnImeActionDoneListener() {
+    setOnEditorActionListener { view, actionId, _ ->
+        if (actionId == EditorInfo.IME_ACTION_DONE || actionId == EditorInfo.IME_NULL) {
+            view.hideKeyboard()
+            view.clearFocus()
+            true
+        } else {
+            false
+        }
+    }
+}
+
+private const val SINGLE_CLICK_TAG_KEY = -10001
