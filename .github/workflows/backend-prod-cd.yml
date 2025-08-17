@@ -2,7 +2,7 @@ name: backend-prod-cd.yml
 
 on:
   push:
-    branches: ["be-releases/**"]
+    branches: [ "be-releases/**" ]
     paths:
       - "backend/**"
 
@@ -63,9 +63,9 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
-          echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
-          echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
+          echo "DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}" >> ~/mulkkam/.env
+          echo "DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_URL }}" >> ~/mulkkam/.env
+          echo "DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_URL }}" >> ~/mulkkam/.env
           echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
           echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
           echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
