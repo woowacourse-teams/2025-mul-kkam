@@ -3,6 +3,7 @@ package backend.mulkkam.intake.dto.request;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
 
 import backend.mulkkam.common.exception.CommonException;
+
 import java.time.LocalDate;
 import java.util.List;
 

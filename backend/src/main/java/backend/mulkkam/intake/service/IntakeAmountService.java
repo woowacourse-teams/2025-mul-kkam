@@ -1,7 +1,8 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -18,11 +19,12 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import java.time.LocalDate;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -35,9 +37,10 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyTarget(
-            Member member,
+            MemberDetails memberDetails,
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest
     ) {
+        Member member = getMember(memberDetails.id());
         TargetAmount updateAmount = intakeTargetAmountModifyRequest.toAmount();
         member.updateTargetAmount(updateAmount);
         memberRepository.save(member);
@@ -49,31 +52,36 @@ public class IntakeAmountService {
 
     @Transactional
     public void modifyDailyTargetBySuggested(
-            Member member,
+            MemberDetails memberDetails,
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest
     ) {
-        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
-                LocalDate.now());
+        LocalDate now = LocalDate.now();
+        Member member = getMember(memberDetails.id());
 
-        if (intakeHistory.isPresent()) {
-            intakeHistory.get().modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
-            return;
-        }
-        int streak = findStreak(member, LocalDate.now());
-        IntakeHistory newIntakeHistory = new IntakeHistory(member, LocalDate.now(),
-                modifyIntakeTargetAmountByRecommendRequest.toAmount(), streak);
+        IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, now)
+                .orElseGet(() -> {
+                    int streak = findStreak(member, now);
+                    IntakeHistory newIntakeHistory = new IntakeHistory(
+                            member,
+                            now,
+                            modifyIntakeTargetAmountByRecommendRequest.toAmount(),
+                            streak
+                    );
+                    return intakeHistoryRepository.save(newIntakeHistory);
+                });
 
-        intakeHistoryRepository.save(newIntakeHistory);
-        newIntakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
+        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
     }
 
-    public IntakeRecommendedAmountResponse getRecommended(Member member) {
+    public IntakeRecommendedAmountResponse getRecommended(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
         return new IntakeRecommendedAmountResponse(recommendedTargetAmount.value());
     }
 
-    public IntakeTargetAmountResponse getTarget(Member member) {
+    public IntakeTargetAmountResponse getTarget(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new IntakeTargetAmountResponse(member.getTargetAmount());
     }
 
@@ -97,8 +105,13 @@ public class IntakeAmountService {
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
-        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
-                member, todayDate.minusDays(1));
-        return yesterdayIntakeHistory.map(intakeHistory -> intakeHistory.getStreak() + 1).orElse(1);
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, todayDate.minusDays(1))
+                .map(intakeHistory -> intakeHistory.getStreak() + 1)
+                .orElse(1);
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

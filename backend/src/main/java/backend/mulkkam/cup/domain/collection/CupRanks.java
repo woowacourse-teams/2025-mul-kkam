@@ -1,5 +1,7 @@
 package backend.mulkkam.cup.domain.collection;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.vo.CupRank;
 
@@ -7,8 +9,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 
 public class CupRanks {
 

@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.domain;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,10 +14,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -79,5 +80,9 @@ public class Notification {
         this.createdAt = createdAt;
         this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
+    }
+
+    public void updateIsRead(boolean isRead) {
+        this.isRead = isRead;
     }
 }

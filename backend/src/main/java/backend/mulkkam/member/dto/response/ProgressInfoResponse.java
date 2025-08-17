@@ -17,7 +17,7 @@ public record ProgressInfoResponse(
         @Schema(description = "달성률 (%)", example = "75.5", minimum = "0.0", maximum = "100.0")
         double achievementRate,
 
-        @Schema(description = "목표 음수량 (ml)", example = "5000", minimum = "200")
+        @Schema(description = "목표 음용량 (ml)", example = "5000", minimum = "200")
         int targetAmount,
 
         @Schema(description = "총 섭취량 (ml)", example = "1500", minimum = "1")

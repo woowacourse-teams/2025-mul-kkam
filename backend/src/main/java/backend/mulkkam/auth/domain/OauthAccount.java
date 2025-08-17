@@ -1,5 +1,7 @@
 package backend.mulkkam.auth.domain;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
+
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.Column;
@@ -15,8 +17,6 @@ import jakarta.persistence.OneToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
 
 @Getter
 @NoArgsConstructor

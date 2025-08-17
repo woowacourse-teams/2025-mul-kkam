@@ -18,7 +18,7 @@ public interface TargetAmountSnapshotRepository extends JpaRepository<TargetAmou
                       SELECT MAX(t2.updatedAt)
                       FROM TargetAmountSnapshot t2
                       WHERE t2.member.id = :memberId
-                        AND t2.updatedAt < :before
+                        AND t2.updatedAt <= :before
                   )
             """)
     Optional<Integer> findLatestTargetAmountValueByMemberIdBeforeDate(

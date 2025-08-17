@@ -48,6 +48,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
     private fun initClickListeners() {
         binding.tvSkip.setSingleClickListener {
+            viewModel.clearBioInfo()
             viewModel.moveToNextStep()
         }
 

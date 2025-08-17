@@ -1,11 +1,12 @@
 package backend.mulkkam.intake.service.vo;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
+
 import backend.mulkkam.common.exception.CommonException;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
 
 public record DateRange(
         LocalDate from,
