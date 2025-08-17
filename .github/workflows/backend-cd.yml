@@ -63,16 +63,19 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" >> ~/mulkkam/.env
-          echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" >> ~/mulkkam/.env
-          echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" >> ~/mulkkam/.env
-          echo "LOG_PATH=${{ secrets.LOG_PATH }}" >> ~/mulkkam/.env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> ~/mulkkam/.env
-          echo "ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
-          echo "REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}" >> ~/mulkkam/.env
-          echo "FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}" >> ~/mulkkam/.env
-          echo "FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}" >> ~/mulkkam/.env
-          echo "OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}" >> ~/mulkkam/.env
+          cat <<EOF > ~/mulkkam/.env
+          DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}
+          DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}
+          DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}
+          LOG_PATH=${{ secrets.LOG_PATH }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
+          REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}
+          FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}
+          FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}
+          OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
+          SPRING_PROFILES_ACTIVE=dev
+          EOF
 
       - name: Stop existing services
         run: sudo docker compose stop backend-app
