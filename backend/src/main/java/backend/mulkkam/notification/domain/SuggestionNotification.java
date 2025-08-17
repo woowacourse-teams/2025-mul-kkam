@@ -33,8 +33,11 @@ public class SuggestionNotification {
     @JoinColumn(name = "id")
     private Notification notification;
 
-    public SuggestionNotification(TargetAmount recommendedTargetAmount, boolean applyTargetAmount,
-                                  Notification notification) {
+    public SuggestionNotification(
+            TargetAmount recommendedTargetAmount,
+            boolean applyTargetAmount,
+            Notification notification
+    ) {
         this.recommendedTargetAmount = recommendedTargetAmount;
         this.applyTargetAmount = applyTargetAmount;
         this.notification = notification;
