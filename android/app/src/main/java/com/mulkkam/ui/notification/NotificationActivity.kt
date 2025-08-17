@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityNotificationBinding
@@ -29,6 +30,7 @@ class NotificationActivity :
 
         initObservers()
         initClickListeners()
+        setUpBackPress()
     }
 
     private fun initObservers() {
@@ -43,11 +45,34 @@ class NotificationActivity :
 
     private fun initClickListeners() {
         binding.ivBack.setSingleClickListener {
+            val intent =
+                Intent().apply {
+                    putExtra(EXTRA_KEY_IS_APPLY, true)
+                }
+            setResult(RESULT_OK, intent)
             finish()
         }
     }
 
+    private fun setUpBackPress() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    val intent =
+                        Intent().apply {
+                            putExtra(EXTRA_KEY_IS_APPLY, true)
+                        }
+                    setResult(RESULT_OK, intent)
+                    finish()
+                }
+            },
+        )
+    }
+
     companion object {
+        const val EXTRA_KEY_IS_APPLY: String = "EXTRA_KEY_IS_APPLY"
+
         fun newIntent(context: Context): Intent = Intent(context, NotificationActivity::class.java)
     }
 }

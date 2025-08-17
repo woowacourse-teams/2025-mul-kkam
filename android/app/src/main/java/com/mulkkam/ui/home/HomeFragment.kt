@@ -1,9 +1,13 @@
 package com.mulkkam.ui.home
 
+import android.app.Activity.RESULT_OK
+import android.content.Intent
 import android.graphics.LinearGradient
 import android.graphics.Shader
 import android.os.Bundle
 import android.view.View
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.ColorRes
 import androidx.core.graphics.toColorInt
 import androidx.core.view.isVisible
@@ -29,6 +33,7 @@ class HomeFragment :
     BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
     Refreshable {
     private val viewModel: HomeViewModel by activityViewModels()
+    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onViewCreated(
         view: View,
@@ -39,6 +44,7 @@ class HomeFragment :
         initObservers()
         initCustomChartOptions()
         initClickListeners()
+        initActivityResultLauncher()
     }
 
     private fun initObservers() {
@@ -63,13 +69,20 @@ class HomeFragment :
 
     private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
         when (todayProgressInfoMulKkamUiState) {
-            is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
+            is MulKkamUiState.Success<TodayProgressInfo> ->
+                showTodayProgressInfo(
+                    todayProgressInfoMulKkamUiState,
+                )
+
             MulKkamUiState.Loading -> Unit
             MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
-                    .make(binding.root, getString(R.string.load_info_error), R.drawable.ic_alert_circle)
-                    .apply {
+                    .make(
+                        binding.root,
+                        getString(R.string.load_info_error),
+                        R.drawable.ic_alert_circle,
+                    ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
@@ -150,7 +163,11 @@ class HomeFragment :
                     ExtendableFloatingMenuItem(
                         buttonLabel = cup.nickname,
                         icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
-                        iconLabel = getString(R.string.expandable_floating_menu_intake_unit, cup.amount),
+                        iconLabel =
+                            getString(
+                                R.string.expandable_floating_menu_intake_unit,
+                                cup.amount,
+                            ),
                         data = cup,
                     )
                 } +
@@ -203,7 +220,7 @@ class HomeFragment :
     private fun initClickListeners() {
         binding.ivHomeNotification.setSingleClickListener {
             val intent = NotificationActivity.newIntent(requireContext())
-            startActivity(intent)
+            activityResultLauncher.launch(intent)
         }
     }
 
@@ -232,16 +249,22 @@ class HomeFragment :
         when (drinkUiState) {
             is MulKkamUiState.Success<Int> -> {
                 CustomSnackBar
-                    .make(binding.root, getString(R.string.manual_drink_success, drinkUiState.data), R.drawable.ic_terms_all_check_on)
-                    .apply {
+                    .make(
+                        binding.root,
+                        getString(R.string.manual_drink_success, drinkUiState.data),
+                        R.drawable.ic_terms_all_check_on,
+                    ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
 
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
-                    .make(binding.root, getString(R.string.manual_drink_network_error), R.drawable.ic_alert_circle)
-                    .apply {
+                    .make(
+                        binding.root,
+                        getString(R.string.manual_drink_network_error),
+                        R.drawable.ic_alert_circle,
+                    ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
@@ -251,16 +274,23 @@ class HomeFragment :
         }
     }
 
+    private fun initActivityResultLauncher() {
+        activityResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == RESULT_OK) {
+                    val isApply =
+                        it.data?.getBooleanExtra(NotificationActivity.EXTRA_KEY_IS_APPLY, false)
+                    viewModel.loadAlarmCount()
+                    if (isApply == true) viewModel.loadTodayProgressInfo()
+                }
+            }
+    }
+
     override fun onReselected() {
         viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
         viewModel.loadAlarmCount()
         binding.fabHomeDrink.closeMenu()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        viewModel.loadTodayProgressInfo()
     }
 
     companion object {
