@@ -179,4 +179,5 @@
     <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%s)</string>
+    <string name="setting_cups_reset_success">나의 컵 목록이 초기화되었습니다!</string>
 </resources>

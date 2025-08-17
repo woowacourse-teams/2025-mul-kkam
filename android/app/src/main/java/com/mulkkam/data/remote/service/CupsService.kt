@@ -37,4 +37,7 @@ interface CupsService {
     suspend fun deleteCup(
         @Path("id") id: Long,
     ): Result<Unit>
+
+    @PUT("/cups/reset")
+    suspend fun resetCups(): Result<Unit>
 }
