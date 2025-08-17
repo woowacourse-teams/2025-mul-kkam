@@ -85,12 +85,6 @@ sealed class MulKkamError : Throwable() {
         }
     }
 
-    sealed class CalorieError : MulKkamError() {
-        data object LowCalorie : CalorieError() {
-            private fun readResolve(): Any = LowCalorie
-        }
-    }
-
     // 기타 공통 에러
     data object NetworkUnavailable : MulKkamError() {
         private fun readResolve(): Any = NetworkUnavailable

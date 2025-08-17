@@ -5,7 +5,6 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.repository.HealthRepository
 import com.mulkkam.domain.repository.HealthRepository.Companion.SECONDS_IN_TWO_HOURS
 import com.mulkkam.domain.repository.NotificationRepository
@@ -26,10 +25,10 @@ class CalorieWorker(
                     now.minusSeconds(SECONDS_IN_TWO_HOURS),
                     now,
                 ).getOrError()
-        }.onSuccess { burn ->
-            notificationRepository.postActiveCaloriesBurned(burn.kcal)
+        }.onSuccess { exerciseCalorie ->
+            if (exerciseCalorie.exercised.not()) return@onSuccess
+            notificationRepository.postActiveCaloriesBurned(exerciseCalorie.kcal)
         }.onFailure {
-            if (it is MulKkamError.CalorieError.LowCalorie) return@onFailure
             mulKkamLogger.error(
                 LogEvent.HEALTH_CONNECT,
                 "Calorie fetch failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
