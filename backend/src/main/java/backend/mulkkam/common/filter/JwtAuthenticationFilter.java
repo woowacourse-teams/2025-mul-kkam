@@ -42,9 +42,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         try {
             String token = authenticationHeaderHandler.extractToken(request);
-            Long subject = oauthJwtTokenHandler.getSubject(token);
-            request.setAttribute("subject", subject);
-            request.setAttribute("account_id", subject);
+            Long accountId = oauthJwtTokenHandler.getAccountId(token);
+            Long memberId = oauthJwtTokenHandler.getMemberId(token);
+            request.setAttribute("account_id", accountId);
+            request.setAttribute("member_id", memberId);
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
