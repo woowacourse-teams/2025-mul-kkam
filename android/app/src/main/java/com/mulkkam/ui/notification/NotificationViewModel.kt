@@ -19,6 +19,9 @@ class NotificationViewModel : ViewModel() {
     private val _onApplySuggestion: MutableSingleLiveData<Unit> = MutableSingleLiveData()
     val onApplySuggestion: SingleLiveData<Unit> = _onApplySuggestion
 
+    private val _isApplySuggestion: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isApplySuggestion: LiveData<Boolean> = _isApplySuggestion
+
     init {
         loadNotifications()
     }
@@ -47,6 +50,7 @@ class NotificationViewModel : ViewModel() {
             runCatching {
                 result.getOrError()
                 _onApplySuggestion.setValue(Unit)
+                _isApplySuggestion.value = true
                 onComplete(true)
             }.onFailure {
                 // TODO: 에러 처리

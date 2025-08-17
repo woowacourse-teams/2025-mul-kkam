@@ -45,13 +45,18 @@ class NotificationActivity :
 
     private fun initClickListeners() {
         binding.ivBack.setSingleClickListener {
-            val intent =
-                Intent().apply {
-                    putExtra(EXTRA_KEY_IS_APPLY, true)
-                }
-            setResult(RESULT_OK, intent)
-            finish()
+            finishWithResult()
         }
+    }
+
+    private fun finishWithResult() {
+        val isApply = viewModel.isApplySuggestion.value == true
+        val intent =
+            Intent().apply {
+                putExtra(EXTRA_KEY_IS_APPLY, isApply)
+            }
+        setResult(RESULT_OK, intent)
+        finish()
     }
 
     private fun setUpBackPress() {
@@ -59,12 +64,7 @@ class NotificationActivity :
             this,
             object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
-                    val intent =
-                        Intent().apply {
-                            putExtra(EXTRA_KEY_IS_APPLY, true)
-                        }
-                    setResult(RESULT_OK, intent)
-                    finish()
+                    finishWithResult()
                 }
             },
         )
