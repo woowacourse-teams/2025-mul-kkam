@@ -214,16 +214,16 @@ class HomeFragment :
             .show(childFragmentManager, ManualDrinkFragment.TAG)
     }
 
-    private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Int>) {
+    private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Long>) {
         when (alarmCountUiState) {
-            is MulKkamUiState.Success<Int> -> showAlarmCount(alarmCountUiState.data)
+            is MulKkamUiState.Success<Long> -> showAlarmCount(alarmCountUiState.data)
             MulKkamUiState.Idle -> showAlarmCount(ALARM_COUNT_MIN)
             MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
     }
 
-    private fun showAlarmCount(count: Int) {
+    private fun showAlarmCount(count: Long) {
         binding.tvAlarmCount.text = count.toString()
         binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
@@ -264,6 +264,6 @@ class HomeFragment :
 
     companion object {
         private const val PROGRESS_BAR_RADIUS: Float = 12f
-        private const val ALARM_COUNT_MIN: Int = 0
+        private const val ALARM_COUNT_MIN: Long = 0L
     }
 }
