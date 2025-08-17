@@ -3,7 +3,7 @@ package backend.mulkkam.member.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
@@ -227,6 +227,6 @@ public class MemberService {
 
     private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
         return oauthAccountRepository.findById(accountDetails.id())
-                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
     }
 }
