@@ -87,6 +87,10 @@ class OnboardingViewModel : ViewModel() {
         onboardingInfo = onboardingInfo.copy(gender = gender, weight = weight)
     }
 
+    fun clearBioInfo() {
+        onboardingInfo = onboardingInfo.copy(gender = null, weight = null)
+    }
+
     fun updateTargetAmount(targetAmount: Int) {
         onboardingInfo = onboardingInfo.copy(targetAmount = targetAmount)
     }

@@ -115,13 +115,13 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             HttpServletRequest request,
             HttpServletResponse response
     ) {
-        Long oauthId = (Long) request.getAttribute("oauth_id");
+        Long accountId = (Long) request.getAttribute("account_id");
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] oauthId = {}, ({}) token = {}", oauthId, status, auth);
+        log.info("[RESPONSE] accountId = {}, ({}) token = {}", accountId, status, auth);
     }
 
     private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {

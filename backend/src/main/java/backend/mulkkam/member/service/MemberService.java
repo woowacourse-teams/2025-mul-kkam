@@ -3,7 +3,7 @@ package backend.mulkkam.member.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
@@ -12,6 +12,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -122,6 +123,7 @@ public class MemberService {
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
+        cupRepository.saveAll(CupFactory.createDefaultCups(member));
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
@@ -225,6 +227,6 @@ public class MemberService {
 
     private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
         return oauthAccountRepository.findById(accountDetails.id())
-                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
     }
 }

@@ -23,13 +23,12 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -95,6 +94,7 @@ public class IntakeHistoryService {
                 .map(date -> {
                     List<IntakeHistoryDetail> detailsOfDate = details.stream()
                             .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
+                            .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
                             .toList();
                     if (detailsOfDate.isEmpty()) {
                         return createDefaultResponse(date, member);
@@ -111,7 +111,8 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(intakeHistoryDetailId);
+        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
+                intakeHistoryDetailId);
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
@@ -168,10 +169,9 @@ public class IntakeHistoryService {
             IntakeHistory intakeHistory,
             List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
-        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
+        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(intakeDetailsOfDate);
 
-        int totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
+        int totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailsOfDate);
 
         TargetAmount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
@@ -189,21 +189,9 @@ public class IntakeHistoryService {
         );
     }
 
-    private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
-        return intakeDetails
-                .stream()
-                .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
-                .toList();
-    }
-
     private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
                 .map(IntakeDetailResponse::new).toList();
-    }
-
-    private IntakeHistory findById(Long id) {
-        return intakeHistoryRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {

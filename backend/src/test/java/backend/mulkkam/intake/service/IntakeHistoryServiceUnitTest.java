@@ -30,6 +30,14 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,14 +45,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
@@ -97,7 +97,7 @@ class IntakeHistoryServiceUnitTest {
             verify(intakeHistoryRepository).save(any(IntakeHistory.class));
         }
 
-        @DisplayName("용량이 음수인 경우 예외가 발생한다")
+        @DisplayName("용량이 음용인 경우 예외가 발생한다")
         @Test
         void error_amountIsLessThan0() {
             // given
@@ -135,7 +135,7 @@ class IntakeHistoryServiceUnitTest {
     @Nested
     class ReadSummaryOfIntakeHistories {
 
-        @DisplayName("날짜별 음수량 요약 기록이 날짜 순으로 반환된다")
+        @DisplayName("날짜별 음용량 요약 기록이 날짜 순으로 반환된다")
         @Test
         void success_containsOnlyInDateRange() {
             // given
@@ -196,7 +196,7 @@ class IntakeHistoryServiceUnitTest {
             assertThat(dates).isSorted();
         }
 
-        @DisplayName("같은 날짜에 대한 음수량 기록이 날짜 순으로 반환된다")
+        @DisplayName("같은 날짜에 대한 음용량 기록이 날짜 순으로 반환된다")
         @Test
         void success_orderByDateAscInSummaryResponses() {
             // given
@@ -260,7 +260,7 @@ class IntakeHistoryServiceUnitTest {
                     .toList();
 
             assertSoftly(softly -> {
-                softly.assertThat(dateTimes).isSorted();
+                softly.assertThat(dateTimes).isSortedAccordingTo(Comparator.reverseOrder());
                 softly.assertThat(dateTimes).hasSize(4);
             });
         }

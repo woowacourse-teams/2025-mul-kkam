@@ -88,7 +88,7 @@ class CupServiceUnitTest {
             });
         }
 
-        @DisplayName("용량이 음수면 예외가 발생한다")
+        @DisplayName("용량이 음용면 예외가 발생한다")
         @Test
         void error_amountLessThan0() {
             // given

@@ -4,7 +4,6 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -32,7 +31,7 @@ public class FcmController {
     @PostMapping("/message/fcm/topic")
     public ResponseEntity<Void> sendMessageTopic(
             @RequestBody SendMessageByFcmTopicRequest sendFcmTopicMessageRequest
-    ) throws FirebaseMessagingException {
+    ){
         fcmService.sendMessageByTopic(sendFcmTopicMessageRequest);
         return ResponseEntity.ok().build();
     }
@@ -46,7 +45,7 @@ public class FcmController {
     @PostMapping("/message/fcm/token")
     public ResponseEntity<Void> sendMessageToken(
             @RequestBody SendMessageByFcmTokenRequest sendFcmTokenMessageRequest
-    ) throws FirebaseMessagingException {
+    ) {
         fcmService.sendMessageByToken(sendFcmTokenMessageRequest);
         return ResponseEntity.ok().build();
     }

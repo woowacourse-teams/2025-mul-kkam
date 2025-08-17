@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadGateErrorCode.SEND_MESSAGE_FAILED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
@@ -15,19 +14,18 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import com.google.firebase.messaging.FirebaseMessagingException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -41,6 +39,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
 
+    @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
             GetNotificationsRequest getNotificationsRequest,
             MemberDetails memberDetails
@@ -64,15 +63,66 @@ public class NotificationService {
         boolean hasNext = notifications.size() > size;
 
         Long nextCursor = getNextCursor(hasNext, notifications);
-        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(hasNext, notifications);
+        List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
+        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(readNotifications);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
+    }
+
+    @Transactional
+    public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+        List<Member> allMember = memberRepository.findAll();
+        for (Member member : allMember) {
+            Notification notification = createTopicNotificationRequest.toNotification(member);
+            notificationRepository.save(notification);
+        }
+
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
+        fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+    }
+
+    @Transactional
+    public void createAndSendTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
+        Member member = createTokenNotificationRequest.member();
+        List<Device> devicesByMember = deviceRepository.findAllByMember(member);
+
+        notificationRepository.save(createTokenNotificationRequest.toNotification());
+        sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
+    }
+
+    public GetUnreadNotificationsCountResponse getNotificationsCount(MemberDetails memberDetails) {
+        Long memberId = memberDetails.id();
+        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
+        return new GetUnreadNotificationsCountResponse(count);
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
         if (getNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
+    }
+
+    private Long getNextCursor(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
+        if (hasNext) {
+            return notifications.getLast().getId();
+        }
+        return null;
+    }
+
+    private List<Notification> getReadNotifications(
+            boolean hasNext,
+            List<Notification> notifications
+    ) {
+        if (hasNext) {
+            notifications.removeLast();
+        }
+        notifications.forEach(
+                notification -> notification.updateIsRead(true)
+        );
+        return notifications;
     }
 
     private List<Notification> getNotificationsByLastIdAndMember(
@@ -88,66 +138,20 @@ public class NotificationService {
         return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
     }
 
-    private List<ReadNotificationResponse> toReadNotificationResponses(
-            boolean hasNext,
-            List<Notification> notifications
-    ) {
-        if (hasNext) {
-            notifications.removeLast();
-        }
-
+    private List<ReadNotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
         return notifications.stream()
                 .map(ReadNotificationResponse::new)
                 .collect(Collectors.toList());
     }
 
-    @Transactional
-    public void createTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
-            notificationRepository.save(notification);
-        }
-
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        try {
-            fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
-        } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-    }
-
-    @Transactional
-    public void createTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
-        Member member = createTokenNotificationRequest.member();
-        List<Device> devicesByMember = deviceRepository.findAllByMember(member);
-
-        notificationRepository.save(createTokenNotificationRequest.toNotification());
-
-        try {
-            sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
-        } catch (FirebaseMessagingException e) {
-            throw new CommonException(SEND_MESSAGE_FAILED);
-        }
-    }
-
-    private void sendNotificationByMember(CreateTokenNotificationRequest createTokenNotificationRequest,
-                                          List<Device> devicesByMember)
-            throws FirebaseMessagingException {
+    private void sendNotificationByMember(
+            CreateTokenNotificationRequest createTokenNotificationRequest,
+            List<Device> devicesByMember
+    ) {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
             fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
-    }
-
-    private Long getNextCursor(
-            boolean hasNext,
-            List<Notification> notifications
-    ) {
-        if (hasNext) {
-            return notifications.getLast().getId();
-        }
-        return null;
     }
 }

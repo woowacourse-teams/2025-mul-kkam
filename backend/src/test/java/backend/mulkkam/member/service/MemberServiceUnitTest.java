@@ -21,6 +21,7 @@ import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -28,8 +29,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class MemberServiceUnitTest {
@@ -67,7 +66,7 @@ public class MemberServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(result.nickname()).isEqualTo(member.getMemberNickname().value());
                 softly.assertThat(result.weight()).isEqualTo(member.getPhysicalAttributes().getWeight());
-                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
+                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
         }

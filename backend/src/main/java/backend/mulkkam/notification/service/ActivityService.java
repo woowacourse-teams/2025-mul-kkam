@@ -24,7 +24,7 @@ public class ActivityService {
     ) {
         Member member = getMember(memberDetails.id());
         CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        notificationService.createTokenNotification(createTokenNotificationRequest);
+        notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
     }
 
     private Member getMember(Long id) {

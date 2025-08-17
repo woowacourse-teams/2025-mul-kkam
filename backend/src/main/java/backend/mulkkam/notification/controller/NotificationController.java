@@ -4,6 +4,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
@@ -66,5 +67,17 @@ public class NotificationController {
     ) {
         activityService.createActivityNotification(createActivityNotification, memberDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "읽지 않은 알림 수 조회", description = "사용자의 읽지 않은 알림 개수를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetUnreadNotificationsCountResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping("/unread-count")
+    ResponseEntity<GetUnreadNotificationsCountResponse> getUnreadNotificationsCount(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(memberDetails);
+        return ResponseEntity.ok(getUnreadNotificationsCountResponse);
     }
 }

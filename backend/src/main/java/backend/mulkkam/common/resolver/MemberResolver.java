@@ -1,6 +1,9 @@
 package backend.mulkkam.common.resolver;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.MethodParameter;
@@ -28,8 +31,12 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-        Long accountId = (Long) request.getAttribute("subject");
+        Long memberId = (Long) request.getAttribute("member_id");
 
-        return new MemberDetails(accountId);
+        if (memberId == null) {
+            throw new CommonException(NOT_FOUND_MEMBER);
+        }
+
+        return new MemberDetails(memberId);
     }
 }
