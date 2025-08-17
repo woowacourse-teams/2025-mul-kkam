@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.repository;
 
-import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import java.util.Optional;
@@ -12,5 +11,5 @@ public interface SuggestionNotificationRepository extends JpaRepository<Suggesti
 
     SuggestionNotification getSuggestionNotificationByNotification(Notification notification);
 
-    Optional<SuggestionNotification> findByIdAndNotificationMember(Long id, Member member);
+    Optional<SuggestionNotification> findByIdAndNotificationMemberId(Long id, Long notification_member_id);
 }

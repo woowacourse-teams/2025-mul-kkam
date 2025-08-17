@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.service;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -63,8 +62,7 @@ class SuggestionNotificationUnitServiceTest {
                 .recommendedTargetAmount(2000)
                 .build();
 
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(suggestionNotificationRepository.findByIdAndNotificationMember(10L, member))
+            when(suggestionNotificationRepository.findByIdAndNotificationMemberId(10L, memberId))
                 .thenReturn(Optional.of(suggestionNotification));
 
             // when
@@ -72,30 +70,26 @@ class SuggestionNotificationUnitServiceTest {
 
             // then
             verify(intakeAmountService, times(1))
-                .modifyDailyTargetBySuggested(member, new ModifyIntakeTargetAmountByRecommendRequest(new TargetAmount(2000)));
+                .modifyDailyTargetBySuggested(new MemberDetails(memberId), new ModifyIntakeTargetAmountByRecommendRequest(new TargetAmount(2000)));
             assertThat(suggestionNotification.isApplyTargetAmount()).isTrue();
         }
 
         @DisplayName("존재하지 않는 멤버 id로 요청하면 예외를 발생한다")
         @Test
         void error_byNonExistingSuggestionMemberId() {
-            // given
-            when(memberRepository.findById(999L)).thenReturn(Optional.empty());
-
             // when & then
             assertThatThrownBy(
                     () -> suggestionNotificationService.applyTargetAmount(1L,
                             new MemberDetails(999L))
             ).isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_MEMBER.name());
+                    .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
         }
 
         @DisplayName("존재하지 않는 제안 알림 id로 요청하면 예외를 발생한다")
         @Test
         void error_byNonExistingSuggestionNotificationId() {
             // given
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(suggestionNotificationRepository.findByIdAndNotificationMember(999L, member)).thenReturn(Optional.empty());
+            when(suggestionNotificationRepository.findByIdAndNotificationMemberId(999L, memberId)).thenReturn(Optional.empty());
 
             // when & then
             assertThatThrownBy(

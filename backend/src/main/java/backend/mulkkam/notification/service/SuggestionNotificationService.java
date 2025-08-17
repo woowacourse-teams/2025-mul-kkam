@@ -48,10 +48,9 @@ public class SuggestionNotificationService {
 
     @Transactional
     public void applyTargetAmount(Long id, MemberDetails memberDetails) {
-        Member member = getMember(memberDetails.id());
-        SuggestionNotification suggestionNotification = getSuggestionNotification(id, member);
+        SuggestionNotification suggestionNotification = getSuggestionNotification(id, memberDetails.id());
 
-        intakeAmountService.modifyDailyTargetBySuggested(member, new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
+        intakeAmountService.modifyDailyTargetBySuggested(memberDetails, new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
 
         suggestionNotification.updateApplyTargetAmount(true);
     }
@@ -67,8 +66,8 @@ public class SuggestionNotificationService {
         }
     }
 
-    private SuggestionNotification getSuggestionNotification(Long id, Member member) {
-        return suggestionNotificationRepository.findByIdAndNotificationMember(id, member)
+    private SuggestionNotification getSuggestionNotification(Long id, Long memberId) {
+        return suggestionNotificationRepository.findByIdAndNotificationMemberId(id, memberId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 
