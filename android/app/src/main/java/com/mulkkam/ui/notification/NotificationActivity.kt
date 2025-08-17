@@ -35,7 +35,7 @@ class NotificationActivity :
 
         initObservers()
         initClickListeners()
-        setUpBackPress()
+        initBackPress()
     }
 
     private fun initObservers() {
@@ -87,7 +87,7 @@ class NotificationActivity :
         finish()
     }
 
-    private fun setUpBackPress() {
+    private fun initBackPress() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
