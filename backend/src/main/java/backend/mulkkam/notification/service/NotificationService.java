@@ -70,7 +70,7 @@ public class NotificationService {
 
         Long nextCursor = getNextCursor(hasNext, notifications);
         List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
-        List<NotificationResponse> readNotificationResponses = toReadNotificationResponses(readNotifications);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotifications);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -144,7 +144,7 @@ public class NotificationService {
         return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
     }
 
-    private List<NotificationResponse> toReadNotificationResponses(List<Notification> notifications) {
+    private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
         List<NotificationResponse> notificationResponses = new ArrayList<>();
         for (Notification notification : notifications) {
             if (notification.getNotificationType() == NotificationType.SUGGESTION) {
