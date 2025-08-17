@@ -2,7 +2,7 @@ name: backend-cd.yml
 
 on:
   push:
-    branches: ["develop"]
+    branches: [ "develop" ]
     paths:
       - "backend/**"
 
@@ -48,7 +48,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:${{ github.sha }}
 
   deploy:
-    runs-on: self-hosted
+    runs-on: [ self-hosted, linux, dev ]
     needs: build-and-push
     steps:
       - name: Stop and remove existing container

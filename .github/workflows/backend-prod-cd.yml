@@ -48,7 +48,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.sha }}
 
   deploy:
-    runs-on: self-hosted
+    runs-on: [ self-hosted, linux, prod ]
     needs: build-and-push
     steps:
       - name: Stop and remove existing container
