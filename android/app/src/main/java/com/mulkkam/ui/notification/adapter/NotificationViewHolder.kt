@@ -2,7 +2,6 @@ package com.mulkkam.ui.notification.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.content.ContextCompat.getString
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
@@ -10,6 +9,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ItemHomeNotificationBinding
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.notification.NotificationType.SUGGESTION
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.Duration
 import java.time.LocalDateTime
@@ -79,7 +79,11 @@ class NotificationViewHolder(
         if (isSuccess) {
             binding.tvSuggestion.isVisible = false
         } else {
-            Toast.makeText(binding.root.context, R.string.home_notification_apply_failed, Toast.LENGTH_SHORT).show()
+            CustomToast
+                .makeText(
+                    binding.root.context,
+                    getString(binding.root.context, R.string.home_notification_apply_failed),
+                ).show()
         }
     }
 
