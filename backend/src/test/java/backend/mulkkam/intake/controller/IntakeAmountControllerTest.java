@@ -27,6 +27,8 @@ import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,9 +39,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -94,6 +93,7 @@ class IntakeAmountControllerTest {
         @DisplayName("몸무게가 올바르게 설정되었을 경우 몸무게 * 30을 추천한다")
         @Test
         void success_whenGivenValidMemberWeight() throws Exception {
+            // when
             String json = mockMvc.perform(get("/intake/amount/recommended")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
@@ -102,6 +102,7 @@ class IntakeAmountControllerTest {
             RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
                     RecommendedIntakeAmountResponse.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(2100);
             });
@@ -110,6 +111,7 @@ class IntakeAmountControllerTest {
         @DisplayName("몸무게가 null일 경우 기본 값인 1800을 추천한다")
         @Test
         void success_whenGivenNullMemberWeight() throws Exception {
+            // given
             databaseCleaner.clean();
             Member member = MemberFixtureBuilder
                     .builder()
@@ -120,6 +122,7 @@ class IntakeAmountControllerTest {
             oauthAccountRepository.save(oauthAccount);
             token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
+            // when
             String json = mockMvc.perform(get("/intake/amount/recommended")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
@@ -128,6 +131,7 @@ class IntakeAmountControllerTest {
             RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
                     RecommendedIntakeAmountResponse.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(1800);
             });
@@ -136,6 +140,7 @@ class IntakeAmountControllerTest {
         @DisplayName("입력받은 몸무게 * 30을 추천한다")
         @Test
         void success_whenGivenValidWeight() throws Exception {
+            // when
             String json = mockMvc.perform(get("/intake/amount/recommended")
                             .param("weight", "70")
                             .param("GENDER", "FEMALE")
@@ -146,6 +151,7 @@ class IntakeAmountControllerTest {
             RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
                     RecommendedIntakeAmountResponse.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(2100);
             });
@@ -154,6 +160,7 @@ class IntakeAmountControllerTest {
         @DisplayName("입력받은 몸무게가 null 이라면 60 * 30을 추천한다")
         @Test
         void success_whenGivenNullWeight() throws Exception {
+            // when
             String json = mockMvc.perform(get("/intake/amount/target/recommended")
                             .param("weight", (String) null)
                             .param("GENDER", "FEMALE")
@@ -164,6 +171,7 @@ class IntakeAmountControllerTest {
             RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
                     RecommendedIntakeAmountResponse.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(1800);
             });
@@ -178,8 +186,10 @@ class IntakeAmountControllerTest {
         @DisplayName("멤버의 음용량이 수정된다")
         @Test
         void success_whenIsValidAmount() throws Exception {
+            // given
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(2500);
 
+            // when
             mockMvc.perform(patch("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -188,6 +198,7 @@ class IntakeAmountControllerTest {
 
             Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(foundMember.getTargetAmount().value()).isEqualTo(2500);
             });
@@ -196,8 +207,10 @@ class IntakeAmountControllerTest {
         @DisplayName("목표 음용량이 0 이하라면 400 에러가 발생한다")
         @Test
         void error_whenAmountIsLessThanOrEqualToZero() throws Exception {
+            // given
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(0);
 
+            // when
             String json = mockMvc.perform(patch("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -206,6 +219,7 @@ class IntakeAmountControllerTest {
                     .andReturn().getResponse().getContentAsString();
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
@@ -214,9 +228,11 @@ class IntakeAmountControllerTest {
         @DisplayName("목표 음용량이 10000 이상이라면 400 에러가 발생한다")
         @Test
         void error_whenAmountIsMoreThanOrEqualTo10000() throws Exception {
+            // given
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     10000);
 
+            // when
             String json = mockMvc.perform(patch("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -226,6 +242,7 @@ class IntakeAmountControllerTest {
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
@@ -240,23 +257,21 @@ class IntakeAmountControllerTest {
         @DisplayName("음용기록의 하루 목표 음용량이 수정된다")
         @Test
         void success_whenIsValidSuggestedAmount() throws Exception {
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
-
             intakeHistoryRepository.save(intakeHistory);
-
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .build();
-
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
-
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
                     2500);
 
+            // when
             mockMvc.perform(patch("/intake/amount/target/suggested")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -269,6 +284,7 @@ class IntakeAmountControllerTest {
             List<IntakeHistory> foundIntakeHistories = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
                     member, LocalDate.now(), LocalDate.now());
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(foundMember.getTargetAmount().value()).isEqualTo(1500);
                 softly.assertThat(foundIntakeHistories.getFirst().getTargetAmount().value()).isEqualTo(2500);
@@ -278,17 +294,17 @@ class IntakeAmountControllerTest {
         @DisplayName("목표 음용량이 0 이하라면 400 에러가 발생한다")
         @Test
         void error_whenSuggestedAmountIsLessThanOrEqualToZero() throws Exception {
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
-
             intakeHistoryRepository.save(intakeHistory);
-
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
                     0);
 
+            // when
             String json = mockMvc.perform(patch("/intake/amount/target/suggested")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -298,6 +314,7 @@ class IntakeAmountControllerTest {
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
@@ -306,16 +323,17 @@ class IntakeAmountControllerTest {
         @DisplayName("목표 음용량이 10000 이상이라면 400 에러가 발생한다")
         @Test
         void error_whenSuggestedAmountIsMoreThanOrEqualTo10000() throws Exception {
+            // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
                     .date(LocalDate.now())
                     .build();
-
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
                     10000);
-
             intakeHistoryRepository.save(intakeHistory);
+
+            // when
             String json = mockMvc.perform(patch("/intake/amount/target/suggested")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -325,6 +343,7 @@ class IntakeAmountControllerTest {
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(INVALID_TARGET_AMOUNT.name());
             });
@@ -333,9 +352,11 @@ class IntakeAmountControllerTest {
         @DisplayName("그 날의 음용 기록이 없다면 새로운 음용 기록을 생성한다")
         @Test
         void success_whenIntakeHistoryNotFoundThenCreateIntakeHistory() throws Exception {
+            // given
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
                     4500);
 
+            // when
             mockMvc.perform(patch("/intake/amount/target/suggested")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
@@ -346,6 +367,7 @@ class IntakeAmountControllerTest {
                     LocalDate.now(), LocalDate.now());
             Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(foundMember.getTargetAmount().value()).isEqualTo(1500);
                 softly.assertThat(intakeHistories.getFirst().getTargetAmount().value()).isEqualTo(4500);
@@ -361,6 +383,7 @@ class IntakeAmountControllerTest {
         @DisplayName("멤버의 음용량을 통해 값을 얻는다")
         @Test
         void success_isValidData() throws Exception {
+            // when
             String json = mockMvc.perform(get("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
@@ -369,6 +392,7 @@ class IntakeAmountControllerTest {
             IntakeTargetAmountResponse actual = objectMapper.readValue(json,
                     IntakeTargetAmountResponse.class);
 
+            // then
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(1500);
             });

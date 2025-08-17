@@ -12,4 +12,9 @@ public class CommonException extends RuntimeException {
         super(errorCode.name());
         this.errorCode = errorCode;
     }
+
+    public CommonException(ErrorCode errorCode, String message) {
+        super(errorCode.name() + ":" + message);
+        this.errorCode = errorCode;
+    }
 }

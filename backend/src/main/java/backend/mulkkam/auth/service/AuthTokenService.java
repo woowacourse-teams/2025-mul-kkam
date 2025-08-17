@@ -54,7 +54,7 @@ public class AuthTokenService {
 
     private Long getAccountId(String refreshToken) {
         try {
-            return oauthJwtTokenHandler.getSubject(refreshToken);
+            return oauthJwtTokenHandler.getAccountId(refreshToken);
         } catch (InvalidTokenException e) {
             throw new CommonException(REFRESH_TOKEN_IS_EXPIRED);
         }

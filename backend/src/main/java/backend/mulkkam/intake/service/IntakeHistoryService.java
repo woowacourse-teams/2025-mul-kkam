@@ -94,6 +94,7 @@ public class IntakeHistoryService {
                 .map(date -> {
                     List<IntakeHistoryDetail> detailsOfDate = details.stream()
                             .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
+                            .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
                             .toList();
                     if (detailsOfDate.isEmpty()) {
                         return createDefaultResponse(date, member);
@@ -168,10 +169,9 @@ public class IntakeHistoryService {
             IntakeHistory intakeHistory,
             List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeHistoryDetail> sortedIntakeDetails = sortIntakeHistories(intakeDetailsOfDate);
-        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(sortedIntakeDetails);
+        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(intakeDetailsOfDate);
 
-        int totalIntakeAmount = calculateTotalIntakeAmount(sortedIntakeDetails);
+        int totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailsOfDate);
 
         TargetAmount targetAmountOfTheDay = intakeHistory.getTargetAmount();
         AchievementRate achievementRate = new AchievementRate(
@@ -187,13 +187,6 @@ public class IntakeHistoryService {
                 intakeHistory.getStreak(),
                 intakeDetailResponses
         );
-    }
-
-    private List<IntakeHistoryDetail> sortIntakeHistories(List<IntakeHistoryDetail> intakeDetails) {
-        return intakeDetails
-                .stream()
-                .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime))
-                .toList();
     }
 
     private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {

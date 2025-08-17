@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: ${PROD_DATASOURCE_URL}
+    username: ${PROD_DATASOURCE_USERNAME}
+    password: ${PROD_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -47,21 +47,3 @@ cloud:
   aws:
     region:
       static: ap-northeast-2
-
-management:
-  metrics:
-    enable:
-      jvm.memory.used: true
-      jvm.memory.max: true
-      jvm.gc.pause: true
-      jvm.threads: true
-      hikaricp: true
-      http.server: true
-      process.cpu: true
-
-  cloudwatch:
-    metrics:
-      export:
-        enabled: true
-        step: 1m
-        namespace: Mulkkam/Dev

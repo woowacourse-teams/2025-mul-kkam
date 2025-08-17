@@ -81,4 +81,8 @@ public class Notification {
         this.recommendedTargetAmount = recommendedTargetAmount;
         this.member = member;
     }
+
+    public void updateIsRead(boolean isRead) {
+        this.isRead = isRead;
+    }
 }
