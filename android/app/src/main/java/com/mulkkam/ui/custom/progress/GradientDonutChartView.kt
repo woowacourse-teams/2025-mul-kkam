@@ -62,11 +62,16 @@ class GradientDonutChartView(
     }
 
     fun setProgress(targetProgress: Float) {
+        progress = targetProgress
+    }
+
+    fun setProgressWithAnimation(targetProgress: Float) {
         val animator =
             ValueAnimator.ofFloat(progress, targetProgress).apply {
                 this.duration = ANIMATION_DURATION_MS
                 addUpdateListener {
-                    progress = it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
+                    progress =
+                        it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
                     invalidate()
                 }
             }
