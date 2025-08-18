@@ -24,6 +24,7 @@ class GradientDonutChartView(
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
+            paint.strokeCap = Paint.Cap.ROUND
             strokeWidth = strokePx
         }
 
