@@ -85,17 +85,6 @@ class IntakeRepositoryImpl(
         )
     }
 
-    override suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit> {
-        val result =
-            intakeService.patchIntakeAmountTargetSuggested(
-                IntakeAmountRequest(amount),
-            )
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
     override suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit> {
         val result = intakeService.deleteIntakeHistoryDetails(id)
         return result.fold(
