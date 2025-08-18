@@ -93,5 +93,3 @@ fun EditText.setOnImeActionDoneListener() {
         }
     }
 }
-
-private const val SINGLE_CLICK_TAG_KEY = -10001
