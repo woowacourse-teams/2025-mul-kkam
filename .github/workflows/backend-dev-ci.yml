@@ -1,7 +1,7 @@
-name: backend-ci.yml
+name: backend-dev-ci.yml
 on:
   pull_request:
-    branches: ["develop"]
+    branches: [ "develop" ]
     paths:
       - "backend/**"
 
