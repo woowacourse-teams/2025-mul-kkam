@@ -133,7 +133,8 @@ public class NotificationControllerTest {
                 softly.assertThat(actual.nextCursor()).isEqualTo(4);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 5L);
+                        .allMatch(r -> r.id() >= 5L)
+                        .allMatch(r -> !r.isRead());
             });
         }
 
@@ -154,7 +155,8 @@ public class NotificationControllerTest {
                 softly.assertThat(actual.nextCursor()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 4L);
+                        .allMatch(r -> r.id() >= 4L)
+                        .allMatch(r -> !r.isRead());
             });
         }
     }
