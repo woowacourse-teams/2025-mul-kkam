@@ -3,9 +3,12 @@ package com.mulkkam.ui.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
+import android.graphics.Bitmap
 import android.widget.RemoteViews
+import androidx.annotation.ColorRes
 import com.mulkkam.R
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
 
 class ProgressWidget : AppWidgetProvider() {
@@ -25,35 +28,42 @@ internal fun updateAppWidget(
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int,
 ) {
-    // RemoteViews 생성
     val views = RemoteViews(context.packageName, R.layout.progress_widget)
 
-    // 도넛 차트 뷰 생성
+    val donutBitmap = createDonutBitmap(context, progress = 90f)
+
+    views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
+    views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
+
+    appWidgetManager.updateAppWidget(appWidgetId, views)
+}
+
+private fun createDonutBitmap(
+    context: Context,
+    width: Int = 300,
+    height: Int = 300,
+    stroke: Float = 10f,
+    progress: Float,
+    @ColorRes backgroundColor: Int = R.color.gray_10,
+    @ColorRes paintColor: Int = R.color.primary_50,
+): Bitmap {
     val donutView =
         GradientDonutChartView(context).apply {
-            // 위젯 크기에 맞게 사이즈 지정 (고정 값 or 동적으로 계산)
-            layoutParams = android.view.ViewGroup.LayoutParams(300, 300)
-            setStroke(10f)
-            setBackgroundPaintColor(R.color.gray_10)
-            setPaintColor(R.color.primary_50)
-            setProgress(90f)
+            layoutParams = android.view.ViewGroup.LayoutParams(width, height)
+            setStroke(stroke)
+            setBackgroundPaintColor(backgroundColor)
+            setPaintColor(paintColor)
+            setProgress(progress)
             invalidate()
         }
 
-    // View → Bitmap 변환
     donutView.measure(
         android.view.View.MeasureSpec
-            .makeMeasureSpec(300, android.view.View.MeasureSpec.EXACTLY),
+            .makeMeasureSpec(width, android.view.View.MeasureSpec.EXACTLY),
         android.view.View.MeasureSpec
-            .makeMeasureSpec(300, android.view.View.MeasureSpec.EXACTLY),
+            .makeMeasureSpec(height, android.view.View.MeasureSpec.EXACTLY),
     )
     donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
 
-    val bitmap = ViewBitmapCapture.snapshot(donutView)
-
-    // RemoteViews 에 Bitmap 반영
-    views.setImageViewBitmap(R.id.iv_donut_chart, bitmap)
-
-    // 위젯 갱신
-    appWidgetManager.updateAppWidget(appWidgetId, views)
+    return ViewBitmapCapture.snapshot(donutView)
 }
