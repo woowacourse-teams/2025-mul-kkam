@@ -1,6 +1,6 @@
 package com.mulkkam.domain.model.intake
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
 class IntakeTypeTest {
@@ -14,7 +14,7 @@ class IntakeTypeTest {
         val expected = IntakeType.WATER
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -27,7 +27,7 @@ class IntakeTypeTest {
         val expected = IntakeType.COFFEE
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -40,6 +40,6 @@ class IntakeTypeTest {
         val expected = IntakeType.UNKNOWN
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 }

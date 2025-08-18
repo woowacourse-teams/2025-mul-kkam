@@ -1,7 +1,7 @@
 package com.mulkkam.domain.model.notififcation
 
 import com.mulkkam.domain.model.notification.NotificationType
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -16,7 +16,7 @@ class NotificationTypeTest {
         val expected = NotificationType.SUGGESTION
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -29,7 +29,7 @@ class NotificationTypeTest {
         val expected = NotificationType.REMIND
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -42,7 +42,7 @@ class NotificationTypeTest {
         val expected = NotificationType.NOTICE
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test

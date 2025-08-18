@@ -1,6 +1,6 @@
 package com.mulkkam.domain.model.bio
 
-import org.junit.jupiter.api.Assertions.assertEquals
+import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
@@ -15,7 +15,7 @@ class GenderTest {
         val expected = Gender.MALE
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
@@ -28,7 +28,7 @@ class GenderTest {
         val expected = Gender.FEMALE
 
         // then
-        assertEquals(expected, actual)
+        assertThat(actual).isEqualTo(expected)
     }
 
     @Test
