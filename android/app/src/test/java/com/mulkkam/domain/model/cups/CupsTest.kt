@@ -28,7 +28,7 @@ class CupsTest {
     @Test
     fun `아이디를 통해 컵을 찾는다`() {
         // given
-        val id = 1L
+        val id = HWANNOW_CUP.id
 
         // when
         val actual = cups.findCupById(id)
