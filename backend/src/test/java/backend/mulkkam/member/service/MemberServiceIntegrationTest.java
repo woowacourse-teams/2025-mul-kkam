@@ -537,8 +537,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Device device = new Device("token", "id", member);
             deviceRepository.save(device);
 
-            Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(),
-                    new TargetAmount(1_000), member);
+            Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(), member);
             notificationRepository.save(notification);
 
             // when

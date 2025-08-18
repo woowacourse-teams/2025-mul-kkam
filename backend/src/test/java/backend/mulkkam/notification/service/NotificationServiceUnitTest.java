@@ -17,17 +17,20 @@ import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
-import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,12 +43,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Pageable;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-
 @ExtendWith(MockitoExtension.class)
 class NotificationServiceUnitTest {
 
@@ -55,19 +52,16 @@ class NotificationServiceUnitTest {
     private final Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
 
     @Mock
-    NotificationRepository notificationRepository;
+    private NotificationRepository notificationRepository;
 
     @Mock
-    MemberRepository memberRepository;
+    private DeviceRepository deviceRepository;
 
     @Mock
-    DeviceRepository deviceRepository;
-
-    @Mock
-    FcmService fcmService;
+    private FcmService fcmService;
 
     @InjectMocks
-    NotificationService notificationService;
+    private NotificationService notificationService;
 
     @DisplayName("알림 조회 기능을 사용할 때")
     @Nested
@@ -105,9 +99,9 @@ class NotificationServiceUnitTest {
                     new MemberDetails(member));
 
             // then
-            List<ReadNotificationResponse> results = response.readNotificationResponses();
+            List<NotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream()
-                    .map(ReadNotificationResponse::createdAt)
+                    .map(NotificationResponse::createdAt)
                     .toList();
 
             assertSoftly(softly -> {
@@ -196,7 +190,7 @@ class NotificationServiceUnitTest {
                     new MemberDetails(member));
 
             // then
-            List<ReadNotificationResponse> readNotificationResponses = response.readNotificationResponses();
+            List<NotificationResponse> readNotificationResponses = response.readNotificationResponses();
 
             assertSoftly(softly -> {
                 softly.assertThat(readNotificationResponses.size()).isEqualTo(defaultSize);
@@ -231,9 +225,8 @@ class NotificationServiceUnitTest {
                     "title",
                     "body",
                     member,
-                    Action.GO_NOTIFICATION,
-                    NotificationType.SUGGESTION,
-                    new TargetAmount(1000),
+                    Action.GO_HOME,
+                    NotificationType.NOTICE,
                     LocalDateTime.of(2025, 1, 2, 3, 4)
             );
 
@@ -250,10 +243,9 @@ class NotificationServiceUnitTest {
             // then
             verify(notificationRepository).save(
                     argThat(notification ->
-                            notification.getNotificationType() == NotificationType.SUGGESTION &&
-                                    notification.getTitle().equals("body") &&
+                            notification.getNotificationType() == NotificationType.NOTICE &&
+                                    notification.getContent().equals("body") &&
                                     notification.getCreatedAt().equals(LocalDateTime.of(2025, 1, 2, 3, 4)) &&
-                                    notification.getRecommendedTargetAmount().equals(new TargetAmount(1000)) &&
                                     notification.getMember() == member
                     ));
 
@@ -264,7 +256,7 @@ class NotificationServiceUnitTest {
                             o.title().equals("title") &&
                                     o.body().equals("body") &&
                                     o.token().equals("token-1") &&
-                                    o.action() == Action.GO_NOTIFICATION
+                                    o.action() == Action.GO_HOME
                     )
             );
         }
