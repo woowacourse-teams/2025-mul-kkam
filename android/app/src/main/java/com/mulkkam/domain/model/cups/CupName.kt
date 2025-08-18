@@ -7,10 +7,12 @@ value class CupName(
     val value: String,
 ) {
     init {
-        check(value.trim().length in CUP_NAME_LENGTH_MIN..CUP_NAME_LENGTH_MAX) {
+        val trimmed: String = value.trim()
+
+        check(trimmed.length in CUP_NAME_LENGTH_MIN..CUP_NAME_LENGTH_MAX) {
             throw MulKkamError.SettingCupsError.InvalidNicknameLength
         }
-        check(value.trim().all { it.isLetterOrDigit() }) {
+        check(trimmed.all { it.isLetterOrDigit() || it.isWhitespace() }) {
             throw MulKkamError.SettingCupsError.InvalidNicknameCharacters
         }
     }
