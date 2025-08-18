@@ -10,6 +10,8 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
@@ -20,6 +22,7 @@ import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
 import backend.mulkkam.support.SuggestionNotificationFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,6 +60,8 @@ class SuggestionNotificationControllerTest {
     private Member member;
     @Autowired
     private SuggestionNotificationRepository suggestionNotificationRepository;
+    @Autowired
+    private IntakeHistoryRepository intakeHistoryRepository;
 
 
     @BeforeEach
@@ -75,12 +80,13 @@ class SuggestionNotificationControllerTest {
     @Nested
     class ApplyTargetAmount {
 
+        private SuggestionNotification suggestionNotification;
         private Long savedSuggestionNotificationId;
 
         @BeforeEach
         void setUp() {
             Notification notification = NotificationFixtureBuilder.withMember(member).build();
-            SuggestionNotification suggestionNotification = SuggestionNotificationFixtureBuilder
+            suggestionNotification = SuggestionNotificationFixtureBuilder
                     .withNotification(notification)
                     .build();
             savedSuggestionNotificationId = suggestionNotificationRepository.save(suggestionNotification).getId();
@@ -94,6 +100,17 @@ class SuggestionNotificationControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
+
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.findByIdAndNotificationMemberId(
+                    savedSuggestionNotificationId,
+                    member.getId()).get();
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories.size()).isEqualTo(1);
+                softly.assertThat(intakeHistories.getFirst().getTargetAmount())
+                        .isEqualTo(savedSuggestionNotification.getRecommendedTargetAmount());
+                softly.assertThat(savedSuggestionNotification.isApplyTargetAmount()).isTrue();
+            });
         }
 
         @DisplayName("존재하지 않는 제안 알림 ID로 요청 시 예외가 발생한다")
