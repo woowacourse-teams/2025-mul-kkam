@@ -2,8 +2,6 @@ package backend.mulkkam.common.resolver;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
-import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,8 +17,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 @RequiredArgsConstructor
 public class MemberResolver implements HandlerMethodArgumentResolver {
 
-    private final OauthAccountRepository oauthAccountRepository;
-
     @Override
     public boolean supportsParameter(MethodParameter parameter) {
         return parameter.getParameterType().equals(MemberDetails.class);
@@ -35,10 +31,12 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
-        Long accountId = (Long) request.getAttribute("account_id");
-        OauthAccount account = oauthAccountRepository.findByIdWithMember(accountId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+        Long memberId = (Long) request.getAttribute("member_id");
 
-        return new MemberDetails(account.getMember());
+        if (memberId == null) {
+            throw new CommonException(NOT_FOUND_MEMBER);
+        }
+
+        return new MemberDetails(memberId);
     }
 }
