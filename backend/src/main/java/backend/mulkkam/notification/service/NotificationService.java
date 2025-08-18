@@ -155,14 +155,12 @@ public class NotificationService {
     }
 
     private NotificationResponse getNotificationResponse(Notification notification) {
-        if (notification.getNotificationType() == NotificationType.SUGGESTION) {
-            SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
-                    notification);
-            return new GetSuggestionNotificationResponse(
-                    notification, suggestionNotification);
-        } else {
+        if (notification.getNotificationType() != NotificationType.SUGGESTION) {
             return new GetNotificationResponse(notification);
         }
+        SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
+                notification);
+        return new GetSuggestionNotificationResponse(notification, suggestionNotification);
     }
 
     private void sendNotificationByMember(
