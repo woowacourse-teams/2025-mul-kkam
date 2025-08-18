@@ -52,6 +52,49 @@ jobs:
           chmod +x ./gradlew
         working-directory: ./backend
 
+      - name: Fail if DROP detected in Flyway migrations
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          MIG_DIR="backend/src/main/resources/db/migration"
+
+          if [ ! -d "$MIG_DIR" ]; then
+            echo "[INFO] Migration dir not found: $MIG_DIR (skip check)"
+            exit 0
+          fi
+
+          # 검사 대상 파일들
+          mapfile -t FILES < <(find "$MIG_DIR" -type f -name "*.sql" | sort)
+
+          has_violation=0
+
+          for f in "${FILES[@]}"; do
+            # 화이트리스트 태그가 있으면 스킵 (의도적 DROP 허용)
+            if grep -qE '^\s*--\s*ALLOW_DROP\b' "$f"; then
+              echo "[ALLOW] $f has ALLOW_DROP tag. Skipping."
+              continue
+            fi
+
+            # 주석 제거(--, /* */) 후 DROP 탐지
+            # 1) -- 한줄 주석 제거
+            # 2) /* ... */ 블록 주석 제거 (멀티라인)
+            stripped=$(sed -E 's/--.*$//; :a; /\/\*/{N; /\*\//!ba; s/\/\*[^*]*\*+([^/*][^*]*\*+)*\///g}' "$f")
+
+            # DROP 탐지 (table|index|constraint|column 등)
+            if echo "$stripped" | grep -qiE '\bdrop\b\s+(table|index|constraint|column|view|sequence)?\b'; then
+              echo "::error file=$f,line=1::[DROP DETECTED] $f"
+              has_violation=1
+            fi
+          done
+
+          if [ "$has_violation" -ne 0 ]; then
+            echo "[FAIL] DROP detected in one or more migration files. If intended, add a first-line tag: '-- ALLOW_DROP'"
+            exit 1
+          fi
+
+          echo "[OK] No DROP detected in Flyway migration SQL files."
+
       - name: Run tests
         env:
           FCM_BASE64_ENCODING_KEY: ${{ secrets.FCM_BASE64_ENCODING_KEY }}

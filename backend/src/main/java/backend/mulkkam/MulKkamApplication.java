@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MulKkamApplication {
 
     public static void main(String[] args) {
+
         SpringApplication.run(MulKkamApplication.class, args);
+        
     }
 }
