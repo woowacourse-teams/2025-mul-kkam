@@ -5,6 +5,7 @@ import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.fixture.FULL_INTAKE_HISTORY
 import com.mulkkam.ui.fixture.getWeeklyIntakeHistories
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.CoroutinesTestExtension
 import com.mulkkam.ui.util.InstantTaskExecutorExtension
@@ -94,6 +95,7 @@ class HistoryViewModelTest {
 
         // then
         assertThat(capturedId.captured).isEqualTo(expected.id)
+        assertThat(actual).isInstanceOf(MulKkamUiState.Success::class.java)
 
         coVerify(exactly = 1) { fakeIntakeRepository.deleteIntakeHistoryDetails(any()) }
     }

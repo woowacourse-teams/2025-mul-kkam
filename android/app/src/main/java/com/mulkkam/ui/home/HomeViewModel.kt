@@ -110,10 +110,8 @@ class HomeViewModel : ViewModel() {
                         ),
                     )
                 _drinkUiState.value = MulKkamUiState.Success(amount)
-                _drinkUiState.value = MulKkamUiState.Idle
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
-                _drinkUiState.value = MulKkamUiState.Idle
             }
         }
     }

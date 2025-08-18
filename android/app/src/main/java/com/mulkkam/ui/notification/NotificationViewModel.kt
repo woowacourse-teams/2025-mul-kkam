@@ -61,11 +61,9 @@ class NotificationViewModel : ViewModel() {
                 _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
                 _isApplySuggestion.value = true
                 onComplete(true)
-                _applySuggestionUiState.value = MulKkamUiState.Idle
             }.onFailure {
                 _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 onComplete(false)
-                _applySuggestionUiState.value = MulKkamUiState.Idle
             }
         }
     }
