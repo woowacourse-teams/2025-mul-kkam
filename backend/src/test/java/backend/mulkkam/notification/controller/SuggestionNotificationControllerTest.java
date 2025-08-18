@@ -13,6 +13,7 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -79,9 +80,10 @@ class SuggestionNotificationControllerTest {
         @BeforeEach
         void setUp() {
             Notification notification = NotificationFixtureBuilder.withMember(member).build();
-
-            savedSuggestionNotificationId = suggestionNotificationRepository.save(
-                    SuggestionNotificationFixtureBuilder.withNotification(notification).build()).getId();
+            SuggestionNotification suggestionNotification = SuggestionNotificationFixtureBuilder
+                    .withNotification(notification)
+                    .build();
+            savedSuggestionNotificationId = suggestionNotificationRepository.save(suggestionNotification).getId();
         }
 
         @DisplayName("올바른 제안 알림 ID로 요청 시 적용에 성공한다")
