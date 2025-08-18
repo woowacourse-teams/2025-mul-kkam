@@ -7,14 +7,14 @@ class BioWeightTest {
     @Test
     fun `최소 몸무게보다 작은 몸무게가 들어올 경우 에러가 발생한다`() {
         assertThrows<IllegalArgumentException> {
-            BioWeight(0)
+            BioWeight(BioWeight.WEIGHT_MIN - 1)
         }
     }
 
     @Test
     fun `최대 몸무게보다 높은 몸무게가 들어올 경우 에러가 발생한다`() {
         assertThrows<IllegalArgumentException> {
-            BioWeight(1000)
+            BioWeight(BioWeight.WEIGHT_MAX + 1)
         }
     }
 }
