@@ -1,7 +1,5 @@
 package com.mulkkam.domain.model.result
 
-import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError : MulKkamError() {
