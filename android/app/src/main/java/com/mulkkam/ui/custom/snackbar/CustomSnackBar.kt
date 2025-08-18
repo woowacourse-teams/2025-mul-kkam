@@ -9,9 +9,9 @@ import com.mulkkam.databinding.LayoutCustomSnackBarBinding
 
 class CustomSnackBar private constructor(
     private val snackBar: Snackbar,
-    snackBarBinding: LayoutCustomSnackBarBinding,
+    binding: LayoutCustomSnackBarBinding,
 ) {
-    private val density = snackBarBinding.root.context.resources.displayMetrics.density
+    private val density = binding.root.context.resources.displayMetrics.density
 
     fun show() {
         snackBar.show()
