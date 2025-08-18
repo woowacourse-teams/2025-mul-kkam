@@ -2,6 +2,7 @@ package com.mulkkam.domain.model.bio
 
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 class GenderTest {
     @Test
@@ -28,5 +29,16 @@ class GenderTest {
 
         // then
         assertEquals(expected, actual)
+    }
+
+    @Test
+    fun `잘못된 문자열이 들어오면 에러가 발생한다`() {
+        // given
+        val input = "HWANNOW"
+
+        // when
+        assertThrows<IllegalArgumentException> {
+            Gender.from(input)
+        }
     }
 }
