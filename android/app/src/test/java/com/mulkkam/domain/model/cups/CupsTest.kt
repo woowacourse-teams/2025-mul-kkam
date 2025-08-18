@@ -18,7 +18,7 @@ class CupsTest {
 
     @Test
     fun `컵의 개수가 최대 사이즈인지 확인한다`() {
-        // when
+        // given & when
         val actual = cups.isMaxSize
 
         // then

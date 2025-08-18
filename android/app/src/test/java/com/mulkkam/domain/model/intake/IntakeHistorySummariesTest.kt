@@ -12,7 +12,7 @@ class IntakeHistorySummariesTest {
 
     @Test
     fun `음용 기록 요약의 첫번째 날짜를 반환한다`() {
-        // when
+        // given & when
         val actual = mockedIntakeHistories.firstDay
         val expected = today
 
@@ -22,7 +22,7 @@ class IntakeHistorySummariesTest {
 
     @Test
     fun `음용 기록 요약의 마지막 날짜를 반환한다`() {
-        // when
+        // given & when
         val actual = mockedIntakeHistories.lastDay
         val expected = today.plusDays(6)
 
@@ -44,7 +44,7 @@ class IntakeHistorySummariesTest {
 
     @Test
     fun `현재 날짜의 연도와 다른 연도가 없으면 이번 연도의 기록으로 판단한다`() {
-        // when
+        // given & when
         val actual = mockedIntakeHistories.isCurrentYear(today)
 
         // then
@@ -53,7 +53,7 @@ class IntakeHistorySummariesTest {
 
     @Test
     fun `특정 날짜의 기록을 반환한다`() {
-        // when
+        // given & when
         val actual = mockedIntakeHistories.getByDateOrEmpty(today)
         val expected = FULL_INTAKE_HISTORY.copy(date = today)
 
@@ -63,7 +63,7 @@ class IntakeHistorySummariesTest {
 
     @Test
     fun `특정 인덱스의 기록을 반환한다`() {
-        // when
+        // given & when
         val actual = mockedIntakeHistories.getByIndex(0)
         val expected = FULL_INTAKE_HISTORY.copy(date = today)
 

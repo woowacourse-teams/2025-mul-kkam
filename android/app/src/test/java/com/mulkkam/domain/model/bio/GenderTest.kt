@@ -36,7 +36,7 @@ class GenderTest {
         // given
         val input = "HWANNOW"
 
-        // when
+        // when & then
         assertThrows<IllegalArgumentException> {
             Gender.from(input)
         }
