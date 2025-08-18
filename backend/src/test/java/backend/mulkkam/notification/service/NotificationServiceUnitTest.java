@@ -113,7 +113,7 @@ class NotificationServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
-                results.forEach(r -> softly.assertThat(r.isRead()).isTrue());
+                results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }

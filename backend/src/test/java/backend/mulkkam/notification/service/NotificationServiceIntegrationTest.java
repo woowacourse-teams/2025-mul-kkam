@@ -10,8 +10,8 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -28,6 +28,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -91,11 +92,17 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             List<ReadNotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream().map(ReadNotificationResponse::createdAt).toList();
 
+            List<Boolean> actualIsReads = notificationRepository.findByCursor(savedMember.getId(), 10L,
+                            requestTime, Pageable.ofSize(defaultSize + 1)).stream()
+                    .map(Notification::isRead)
+                            .toList();
+
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
-                results.forEach(r -> softly.assertThat(r.isRead()).isTrue());
+                results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
+                softly.assertThat(actualIsReads).allMatch(o -> o == Boolean.TRUE);
             });
         }
 
