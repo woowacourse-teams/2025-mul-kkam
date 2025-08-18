@@ -3,11 +3,12 @@ package com.mulkkam.ui.settingaccountinfo
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingAccountInfoBinding
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.login.LoginActivity
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
@@ -55,12 +56,20 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         }
 
         viewModel.onDeleteAccount.observe(this) {
-            Toast.makeText(this, R.string.setting_account_info_delete_success, Toast.LENGTH_SHORT).show()
+            CustomToast
+                .makeText(this, getString(R.string.setting_account_info_delete_success))
+                .apply {
+                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
             moveToLogin()
         }
 
         viewModel.onLogout.observe(this) {
-            Toast.makeText(this, R.string.setting_account_info_logout_success, Toast.LENGTH_SHORT).show()
+            CustomToast
+                .makeText(this, getString(R.string.setting_account_info_logout_success))
+                .apply {
+                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
             moveToLogin()
         }
     }

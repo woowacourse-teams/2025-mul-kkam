@@ -7,7 +7,6 @@ import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
@@ -19,6 +18,8 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -26,6 +27,7 @@ import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import com.mulkkam.util.extensions.getParcelableCompat
 
@@ -50,6 +52,7 @@ class SettingCupFragment :
         initClickListeners()
         initObservers()
         initInputListeners()
+        initDoneListener()
         initChips()
         initDeleteButton()
     }
@@ -86,13 +89,21 @@ class SettingCupFragment :
             }
 
             saveSuccess.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), getString(R.string.setting_cup_save_result), Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
 
             deleteSuccess.observe(viewLifecycleOwner) {
-                Toast.makeText(requireContext(), getString(R.string.setting_cup_delete_result), Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
@@ -233,6 +244,11 @@ class SettingCupFragment :
             }.apply {
                 debounceHandler.postDelayed(this, 300L)
             }
+    }
+
+    private fun initDoneListener() {
+        binding.etNickname.setOnImeActionDoneListener()
+        binding.etAmount.setOnImeActionDoneListener()
     }
 
     private fun initChips() {

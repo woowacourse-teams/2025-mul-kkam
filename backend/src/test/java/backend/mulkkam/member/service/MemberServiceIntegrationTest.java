@@ -47,16 +47,15 @@ import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -110,7 +109,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(result.id()).isEqualTo(member.getId());
                 softly.assertThat(result.nickname()).isEqualTo(member.getMemberNickname().value());
                 softly.assertThat(result.weight()).isEqualTo(member.getPhysicalAttributes().getWeight());
-                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
+                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
         }
@@ -338,7 +337,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
 
             // when & then
-            assertThatThrownBy(() -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
+            assertThatThrownBy(
+                    () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_MEMBER_NICKNAME.name());
         }
@@ -365,7 +365,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         oauthAccountRepository.save(oauthAccount);
 
         // when & then
-        assertThatThrownBy(() -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
+        assertThatThrownBy(
+                () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
                 .isInstanceOf(CommonException.class)
                 .hasMessage(INVALID_TARGET_AMOUNT.name());
     }

@@ -76,6 +76,10 @@ sealed class ResponseError(
         data object InvalidDateRange : HistoryError("INVALID_DATE_RANGE") {
             private fun readResolve(): Any = InvalidDateRange
         }
+
+        data object InvalidDateForDelete : HistoryError("INVALID_DATE_FOR_DELETE_INTAKE_HISTORY") {
+            private fun readResolve(): Any = InvalidDateForDelete
+        }
     }
 
     sealed class NotFoundError(
@@ -161,6 +165,7 @@ fun ResponseError.toDomain(): MulKkamError =
 
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
+        HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
 
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member

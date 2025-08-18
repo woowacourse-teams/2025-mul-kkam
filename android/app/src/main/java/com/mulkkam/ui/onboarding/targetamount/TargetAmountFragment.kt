@@ -24,6 +24,7 @@ import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -45,6 +46,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvComplete.applyImeMargin()
 
         viewModel.loadRecommendedTargetAmount(
@@ -218,4 +220,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                 getString(R.string.setting_target_amount_warning_too_high, TargetAmount.TARGET_AMOUNT_MAX)
             }
         }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnImeActionDoneListener()
+    }
 }

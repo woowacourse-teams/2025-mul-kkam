@@ -20,6 +20,7 @@ import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ManualDrinkFragment :
@@ -42,6 +43,7 @@ class ManualDrinkFragment :
         initChips()
         initObservers()
         initInputListeners()
+        initDoneListener()
     }
 
     private fun initClickListeners() =
@@ -99,6 +101,10 @@ class ManualDrinkFragment :
     ) {
         editText.setText(newText)
         editText.setSelection(newText.length)
+    }
+
+    private fun initDoneListener() {
+        binding.etAmount.setOnImeActionDoneListener()
     }
 
     private fun initChips() {

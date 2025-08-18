@@ -27,6 +27,7 @@ import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class NicknameFragment :
@@ -48,6 +49,7 @@ class NicknameFragment :
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        initDoneListener()
         binding.tvNext.applyImeMargin()
     }
 
@@ -191,4 +193,8 @@ class NicknameFragment :
             NicknameError.InvalidNickname -> getString(R.string.nickname_invalid)
             NicknameError.SameAsBefore -> getString(R.string.nickname_same_as_before)
         }
+
+    private fun initDoneListener() {
+        binding.etInputNickname.setOnImeActionDoneListener()
+    }
 }

@@ -73,6 +73,10 @@ sealed class MulKkamError : Throwable() {
         data object InvalidDateRange : HistoryError() {
             private fun readResolve(): Any = InvalidDateRange
         }
+
+        data object InvalidDateForDelete : HistoryError() {
+            private fun readResolve(): Any = InvalidDateForDelete
+        }
     }
 
     sealed class NotFoundError : MulKkamError() {
