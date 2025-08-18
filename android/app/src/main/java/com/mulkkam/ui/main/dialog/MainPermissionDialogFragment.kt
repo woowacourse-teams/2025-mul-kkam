@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toDrawable
@@ -15,7 +14,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.health.connect.client.PermissionController
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentMainPermissionBinding
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.main.MainActivity.Companion.HEALTH_CONNECT_PERMISSIONS
+import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.util.binding.BindingDialogFragment
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -46,9 +47,11 @@ class MainPermissionDialogFragment :
                 R.string.main_health_permission_denied
             }
 
-        Toast
+        CustomToast
             .makeText(requireContext(), getString(messageResId), R.drawable.ic_info_circle)
-            .show()
+            .apply {
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
     }
 
     private fun handleNotificationPermissionResult(granted: Boolean) {
@@ -59,9 +62,11 @@ class MainPermissionDialogFragment :
                 R.string.main_alarm_permission_denied
             }
 
-        Toast
+        CustomToast
             .makeText(requireContext(), getString(messageResId), R.drawable.ic_info_circle)
-            .show()
+            .apply {
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
         dismiss()
     }
 

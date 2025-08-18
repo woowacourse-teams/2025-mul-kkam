@@ -164,6 +164,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
+        const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
+
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
 
         val HEALTH_CONNECT_PERMISSIONS =
