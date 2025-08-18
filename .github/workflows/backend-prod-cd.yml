@@ -2,9 +2,8 @@ name: backend-prod-cd.yml
 
 on:
   push:
-    branches: [ "be-releases" ]
-    paths:
-      - "backend/**"
+    tags:
+      - 'v*.*.*'
 
 jobs:
   build-and-push:
@@ -12,6 +11,8 @@ jobs:
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -45,7 +46,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.ref_name }}
 
   deploy:
     runs-on: [ self-hosted, linux, prod ]
