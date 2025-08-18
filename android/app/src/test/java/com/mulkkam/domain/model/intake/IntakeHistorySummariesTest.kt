@@ -72,7 +72,7 @@ class IntakeHistorySummariesTest {
     }
 
     @Test
-    fun `특정 일수 이후의 기록을 반환한다`() {
+    fun `특정 주차 이후의 기록을 반환한다`() {
         // given
         val offset = 3L
 
