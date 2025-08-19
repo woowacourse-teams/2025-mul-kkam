@@ -141,13 +141,13 @@ class SettingCupFragment :
                     when (state.error) {
                         is MulKkamError.SettingCupsError.InvalidNicknameLength ->
                             getString(
-                                R.string.nickname_invalid_length,
+                                R.string.setting_cup_name_invalid_range,
                                 CupName.CUP_NAME_LENGTH_MIN,
                                 CupName.CUP_NAME_LENGTH_MAX,
                             )
 
                         is MulKkamError.SettingCupsError.InvalidNicknameCharacters ->
-                            getString(R.string.nickname_invalid_characters)
+                            getString(R.string.setting_cup_name_invalid_characters)
 
                         else -> ""
                     }
