@@ -42,12 +42,12 @@ fun updateProgressWidgetWithWorker(
             workInfo?.takeIf { it.state.isFinished }?.let {
                 val achievementRate = it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
                 val appWidgetManager = AppWidgetManager.getInstance(context)
-                updateAppWidget(context, appWidgetManager, appWidgetId, achievementRate)
+                updateProgressWidget(context, appWidgetManager, appWidgetId, achievementRate)
             }
         }
 }
 
-internal fun updateAppWidget(
+private fun updateProgressWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int,
@@ -57,7 +57,7 @@ internal fun updateAppWidget(
 
     val donutBitmap = createDonutBitmap(context, progress = progress)
 
-    val progressText = "${progress.toInt()}%"
+    val progressText = context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
     views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
     views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)

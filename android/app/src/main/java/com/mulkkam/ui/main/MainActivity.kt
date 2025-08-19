@@ -1,6 +1,9 @@
 package com.mulkkam.ui.main
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -21,6 +24,8 @@ import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.ProgressWidget
+import com.mulkkam.ui.widget.updateProgressWidgetWithWorker
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -162,6 +167,20 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
+    override fun onPause() {
+        super.onPause()
+        updateProgressWidgets()
+    }
+
+    private fun updateProgressWidgets() {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val progressWidget = ComponentName(this, ProgressWidget::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(progressWidget)
+        appWidgetIds.forEach { appWidgetId ->
+            updateProgressWidgetWithWorker(this, appWidgetId)
+        }
+    }
+
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
@@ -175,5 +194,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             )
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+
+        fun newPendingIntent(context: Context): PendingIntent =
+            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }
