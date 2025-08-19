@@ -43,3 +43,12 @@ ALTER TABLE target_amount_snapshot
 ALTER TABLE target_amount_snapshot
     ADD COLUMN deleted_at datetime NULL;
 
+ALTER TABLE suggestion_notification
+    ADD COLUMN created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE suggestion_notification
+    ADD COLUMN deleted_at datetime NULL;
+
+ALTER TABLE suggestion_notification
+    ADD COLUMN IF NOT EXISTS recommended_target_amount INT NULL;
+
