@@ -6,34 +6,31 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "개별 알림 응답")
-public record ReadNotificationResponse(
+@Schema(description = "개별 일반 알림 응답")
+public record GetNotificationResponse(
+
         @Schema(description = "알림 ID", example = "1")
         Long id,
 
-        @Schema(description = "알림 제목", example = "물 마실 시간이에요!")
-        String title,
+        @Schema(description = "알림 내용", example = "물 마실 시간이에요!")
+        String content,
 
-        @Schema(description = "알림 타입", example = "REMINDER", implementation = NotificationType.class)
+        @Schema(description = "알림 타입", example = "REMIND", implementation = NotificationType.class)
         String type,
 
         @Schema(description = "알림 생성 시간", example = "2024-01-15T09:30:00")
         LocalDateTime createdAt,
 
-        @Schema(description = "권장 목표량 (ml)", example = "2000", minimum = "0")
-        int recommendedTargetAmount,
-
         @Schema(description = "읽음 여부", example = "false")
         boolean isRead
-) {
+) implements NotificationResponse {
 
-    public ReadNotificationResponse(Notification notification) {
+    public GetNotificationResponse(Notification notification) {
         this(
                 notification.getId(),
-                notification.getTitle(),
+                notification.getContent(),
                 notification.getNotificationType().name(),
                 notification.getCreatedAt(),
-                notification.getRecommendedTargetAmount().value(),
                 notification.isRead()
         );
     }

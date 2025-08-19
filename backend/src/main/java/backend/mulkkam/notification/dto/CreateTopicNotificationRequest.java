@@ -32,7 +32,6 @@ public record CreateTopicNotificationRequest(
                 notificationType,
                 body,
                 createdAt,
-                recommendedTargetAmount,
                 member
         );
     }

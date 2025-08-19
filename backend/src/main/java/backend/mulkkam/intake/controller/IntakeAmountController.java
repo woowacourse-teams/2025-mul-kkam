@@ -5,7 +5,6 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.service.IntakeAmountService;
@@ -91,22 +90,5 @@ public class IntakeAmountController {
     ) {
         IntakeTargetAmountResponse intakeTargetAmountResponse = intakeAmountService.getTarget(memberDetails);
         return ResponseEntity.ok(intakeTargetAmountResponse);
-    }
-
-    @Operation(summary = "금일 목표 음용량을 요청한 음용량으로 설정", description = "금일 목표 음용량을 요청한 음용량으로 수정합니다.")
-    @ApiResponse(responseCode = "200", description = "설정 성공")
-    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "잘못된 목표량", summary = "amount 범위 오류", value = "{\"code\":\"INVALID_AMOUNT\"}")}))
-    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @ApiResponse(responseCode = "404", description = "금일 음용 기록을 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "금일 음용 기록 없음", summary = "IntakeHistory 미존재", value = "{\"code\":\"NOT_FOUND_INTAKE_HISTORY\"}")}))
-    @PatchMapping("/target/suggested")
-    public ResponseEntity<Void> modifyTargetBySuggested(
-            @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest
-    ) {
-        intakeAmountService.modifyDailyTargetBySuggested(memberDetails, modifyIntakeTargetAmountByRecommendRequest);
-        return ResponseEntity.ok().build();
     }
 }
