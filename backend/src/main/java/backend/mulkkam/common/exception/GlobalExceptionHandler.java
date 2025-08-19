@@ -28,15 +28,19 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ErrorResponse<FailureBody> handleInvalidMethodArgument(MethodArgumentNotValidException e,
-                                                                  HttpServletRequest request) {
+    public ErrorResponse<FailureBody> handleInvalidMethodArgument(
+            MethodArgumentNotValidException e,
+            HttpServletRequest request
+    ) {
         logCommonException(request, INVALID_METHOD_ARGUMENT);
         return ErrorResponse.from(INVALID_METHOD_ARGUMENT);
     }
 
     @ExceptionHandler(CommonException.class)
-    public ErrorResponse<FailureBody> handleCommonException(CommonException e,
-                                                            HttpServletRequest request) {
+    public ErrorResponse<FailureBody> handleCommonException(
+            CommonException e,
+            HttpServletRequest request
+    ) {
         logCommonException(request, e.getErrorCode());
         return ErrorResponse.from(e.getErrorCode());
     }
@@ -55,11 +59,10 @@ public class GlobalExceptionHandler {
             HttpServletRequest request
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long accountId = (Long) request.getAttribute("account_id");
 
-        String traceId = (String) request.getAttribute("traceId");
-
-        log.error("[SERVER_ERROR] traceId = {}, code={}({} {}), message={}",
-                traceId,
+        log.error("[SERVER_ERROR] accountId = {}, code={}({} {}), message={}",
+                accountId,
                 INTER_SERVER_ERROR_CODE.name(),
                 INTER_SERVER_ERROR_CODE.getStatus(),
                 e.getClass().getSimpleName(),
@@ -73,11 +76,10 @@ public class GlobalExceptionHandler {
             ErrorCode errorCode
     ) {
         request.setAttribute("errorLoggedByGlobal", true);
+        Long accountId = (Long) request.getAttribute("account_id");
 
-        String traceId = (String) request.getAttribute("traceId");
-
-        log.info("[CLIENT_ERROR] traceId = {}, code={}({})",
-                traceId,
+        log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
+                accountId,
                 errorCode.name(),
                 errorCode.getStatus()
         );

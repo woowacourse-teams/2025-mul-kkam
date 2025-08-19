@@ -20,10 +20,12 @@ import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.history.adapter.HistoryAdapter
 import com.mulkkam.ui.history.adapter.HistoryViewHolder
 import com.mulkkam.ui.history.dialog.DeleteConfirmDialogFragment
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -77,6 +79,18 @@ class HistoryFragment :
         }
         historyAdapter.onItemLongClickListener =
             HistoryViewHolder.Handler { history ->
+                if (viewModel.waterIntakeState.value !is WaterIntakeState.Present) {
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.history_delete_failure_past),
+                            R.drawable.ic_alert_circle,
+                        ).apply {
+                            setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                        }.show()
+                    return@Handler
+                }
+
                 this.historyToDelete = history
                 DeleteConfirmDialogFragment().show(
                     childFragmentManager,
@@ -129,7 +143,7 @@ class HistoryFragment :
 
     private fun initObservers() {
         viewModel.weeklyIntakeHistoriesUiState.observe(viewLifecycleOwner) { weeklyIntakeHistoriesUiState ->
-            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState ?: return@observe)
+            handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState)
         }
 
         viewModel.dailyIntakeHistories.observe(viewLifecycleOwner) { dailyIntakeHistories ->
@@ -148,25 +162,32 @@ class HistoryFragment :
         }
 
         viewModel.deleteUiState.observe(viewLifecycleOwner) { deleteUiState ->
-            if (deleteUiState is MulKkamUiState.Success) {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.history_delete_success),
-                        R.drawable.ic_terms_all_check_on,
-                    ).show()
-            }
+            handleDeleteUiState(deleteUiState)
         }
     }
 
     private fun handleWeeklyIntakeHistoriesUiState(weeklyIntakeHistoriesUiState: MulKkamUiState<IntakeHistorySummaries>) {
         when (weeklyIntakeHistoriesUiState) {
-            is MulKkamUiState.Success<IntakeHistorySummaries> -> updateWeeklyChartData(weeklyIntakeHistoriesUiState.data)
-            is MulKkamUiState.Loading -> binding.includeHistoryShimmer.root.visibility = View.VISIBLE
-            is MulKkamUiState.Empty -> Unit
+            is MulKkamUiState.Success<IntakeHistorySummaries> ->
+                updateWeeklyChartData(
+                    weeklyIntakeHistoriesUiState.data,
+                )
+
+            is MulKkamUiState.Loading ->
+                binding.includeHistoryShimmer.root.visibility =
+                    View.VISIBLE
+
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 binding.includeHistoryShimmer.root.visibility = View.GONE
-                CustomSnackBar.make(binding.root, getString(R.string.home_network_error), R.drawable.ic_alert_circle).show()
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.load_info_error),
+                        R.drawable.ic_alert_circle,
+                    ).apply {
+                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -354,6 +375,47 @@ class HistoryFragment :
                 characterImage,
             ),
         )
+    }
+
+    private fun handleDeleteUiState(deleteUiState: MulKkamUiState<Unit>) {
+        when (deleteUiState) {
+            is MulKkamUiState.Failure -> handleDeleteFailure(deleteUiState)
+            is MulKkamUiState.Success -> handleDeleteSuccess()
+            else -> Unit
+        }
+    }
+
+    private fun handleDeleteFailure(state: MulKkamUiState.Failure) {
+        if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
+            CustomSnackBar
+                .make(
+                    binding.root,
+                    getString(R.string.network_check_error),
+                    R.drawable.ic_alert_circle,
+                ).apply {
+                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                }.show()
+        } else {
+            CustomSnackBar
+                .make(
+                    binding.root,
+                    getString(R.string.history_delete_failure_past),
+                    R.drawable.ic_alert_circle,
+                ).apply {
+                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                }.show()
+        }
+    }
+
+    private fun handleDeleteSuccess() {
+        CustomSnackBar
+            .make(
+                binding.root,
+                getString(R.string.history_delete_success),
+                R.drawable.ic_terms_all_check_on,
+            ).apply {
+                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+            }.show()
     }
 
     private fun initClickListeners() {

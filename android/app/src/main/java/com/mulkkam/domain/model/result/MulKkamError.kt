@@ -1,7 +1,5 @@
 package com.mulkkam.domain.model.result
 
-import com.mulkkam.domain.model.result.MulKkamError.NicknameError
-
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError : MulKkamError() {
@@ -46,8 +44,12 @@ sealed class MulKkamError : Throwable() {
     }
 
     sealed class TargetAmountError : MulKkamError() {
-        data object InvalidTargetAmount : TargetAmountError() {
-            private fun readResolve(): Any = InvalidTargetAmount
+        data object BelowMinimum : TargetAmountError() {
+            private fun readResolve(): Any = BelowMinimum
+        }
+
+        data object AboveMaximum : TargetAmountError() {
+            private fun readResolve(): Any = AboveMaximum
         }
     }
 
@@ -66,6 +68,10 @@ sealed class MulKkamError : Throwable() {
     sealed class HistoryError : MulKkamError() {
         data object InvalidDateRange : HistoryError() {
             private fun readResolve(): Any = InvalidDateRange
+        }
+
+        data object InvalidDateForDelete : HistoryError() {
+            private fun readResolve(): Any = InvalidDateForDelete
         }
     }
 

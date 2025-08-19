@@ -1,9 +1,10 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -11,12 +12,12 @@ import java.time.LocalTime;
 public class NotificationFixtureBuilder {
 
     private final Member member;
-    private NotificationType notificationType = NotificationType.NOTICE;
+    private NotificationType notificationType = NotificationType.SUGGESTION;
     private String title = "notificationTitle";
     private boolean isRead = false;
     private LocalTime localTime = LocalTime.of(10, 30);
     private LocalDateTime createdAt = LocalDateTime.of(LocalDate.now(), localTime);
-    private Amount recommendedTargetAmount = new Amount(1800);
+    private TargetAmount recommendedTargetAmount = new TargetAmount(1800);
 
     private NotificationFixtureBuilder(Member member) {
         this.member = member;
@@ -51,7 +52,7 @@ public class NotificationFixtureBuilder {
         return this;
     }
 
-    public NotificationFixtureBuilder recommendedTargetAmount(Amount recommendedTargetAmount) {
+    public NotificationFixtureBuilder recommendedTargetAmount(TargetAmount recommendedTargetAmount) {
         this.recommendedTargetAmount = recommendedTargetAmount;
         return this;
     }

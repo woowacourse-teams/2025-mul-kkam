@@ -136,13 +136,29 @@
     </com.facebook.shimmer.ShimmerFrameLayout>
 
     <com.facebook.shimmer.ShimmerFrameLayout
+        android:id="@+id/sfl_date"
+        android:layout_width="148dp"
+        android:layout_height="26dp"
+        android:layout_marginTop="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/sfl_bar_weekly"
+        app:shimmer_auto_start="true">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_common_rectangle_12dp"
+            android:backgroundTint="@color/gray_100" />
+    </com.facebook.shimmer.ShimmerFrameLayout>
+
+    <com.facebook.shimmer.ShimmerFrameLayout
         android:id="@+id/sfl_daily_chart"
         android:layout_width="0dp"
         android:layout_height="232dp"
         android:layout_marginTop="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/sfl_bar_weekly"
+        app:layout_constraintTop_toBottomOf="@id/sfl_date"
         app:shimmer_auto_start="true">
 
         <View

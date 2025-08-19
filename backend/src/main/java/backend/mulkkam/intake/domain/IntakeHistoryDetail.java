@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
@@ -12,10 +12,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor
@@ -31,7 +32,7 @@ public class IntakeHistoryDetail {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
-    private Amount intakeAmount;
+    private IntakeAmount intakeAmount;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
@@ -39,7 +40,7 @@ public class IntakeHistoryDetail {
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
-            Amount intakeAmount,
+            IntakeAmount intakeAmount,
             IntakeHistory intakeHistory
     ) {
         this.intakeTime = intakeTime;

@@ -96,16 +96,10 @@ public class Cup {
         cupRank = cupRank.promote();
     }
 
-    public void demoteRank() {
-        cupRank = cupRank.demote();
-    }
-
-    public void modifyNicknameAndAmount(
-            CupNickname nickname,
-            CupAmount cupAmount
-    ) {
-        this.nickname = nickname;
-        this.cupAmount = cupAmount;
+    public boolean isOwnedBy(Member member) {
+        Long ownerId = this.member.getId();
+        Long otherId = member.getId();
+        return ownerId.equals(otherId);
     }
 
     public void modifyRank(CupRank rank) {

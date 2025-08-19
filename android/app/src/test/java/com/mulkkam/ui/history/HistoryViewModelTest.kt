@@ -6,6 +6,7 @@ import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.fixture.FULL_INTAKE_HISTORY
 import com.mulkkam.fixture.getWeeklyIntakeHistories
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.CoroutinesTestExtension
 import com.mulkkam.ui.util.InstantTaskExecutorExtension
 import com.mulkkam.ui.util.getOrAwaitValue
@@ -56,7 +57,7 @@ class HistoryViewModelTest {
 
         // when
         historyViewModel.loadIntakeHistories()
-        val actual = (historyViewModel.weeklyIntakeHistoriesUiState.getOrAwaitValue() as? MulKkamUiState.Success)?.data
+        val actual = historyViewModel.weeklyIntakeHistoriesUiState.getOrAwaitValue().toSuccessDataOrNull()
 
         // then
         assertThat(actual).isEqualTo(expected)
@@ -90,7 +91,7 @@ class HistoryViewModelTest {
 
         // when
         historyViewModel.deleteIntakeHistory(expected)
-        val actual = historyViewModel.deleteUiState.getOrAwaitValue() as? MulKkamUiState.Success
+        val actual = historyViewModel.deleteUiState.getOrAwaitValue()
 
         // then
         assertThat(actual).isInstanceOf(MulKkamUiState.Success::class.java)

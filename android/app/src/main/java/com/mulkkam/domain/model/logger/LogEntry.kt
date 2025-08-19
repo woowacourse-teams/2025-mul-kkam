@@ -1,6 +1,7 @@
 package com.mulkkam.domain.model.logger
 
-import java.time.Instant
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 /**
@@ -20,5 +21,13 @@ data class LogEntry(
     val event: LogEvent,
     val message: String,
     val userId: String? = null,
-    val timestamp: String = DateTimeFormatter.ISO_INSTANT.format(Instant.now()),
-)
+    val timestamp: String =
+        ZonedDateTime
+            .now(KST_ZONE_ID)
+            .format(ISO_OFFSET_KST),
+) {
+    companion object {
+        private val KST_ZONE_ID: ZoneId = ZoneId.of("Asia/Seoul")
+        private val ISO_OFFSET_KST: DateTimeFormatter = DateTimeFormatter.ISO_OFFSET_DATE_TIME
+    }
+}

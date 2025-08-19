@@ -18,15 +18,15 @@ sealed class ResponseError(
     sealed class NicknameError(
         code: String,
     ) : ResponseError(code) {
-        object SameAsBefore : NicknameError("SAME_AS_BEFORE_NICKNAME") {
+        data object SameAsBefore : NicknameError("SAME_AS_BEFORE_NICKNAME") {
             private fun readResolve(): Any = SameAsBefore
         }
 
-        object InvalidNickname : NicknameError("INVALID_MEMBER_NICKNAME") {
+        data object InvalidNickname : NicknameError("INVALID_MEMBER_NICKNAME") {
             private fun readResolve(): Any = InvalidNickname
         }
 
-        object DuplicateNickname : NicknameError("DUPLICATE_MEMBER_NICKNAME") {
+        data object DuplicateNickname : NicknameError("DUPLICATE_MEMBER_NICKNAME") {
             private fun readResolve(): Any = DuplicateNickname
         }
     }
@@ -35,19 +35,19 @@ sealed class ResponseError(
     sealed class SettingCupsError(
         code: String,
     ) : ResponseError(code) {
-        object InvalidCount : SettingCupsError("INVALID_CUP_COUNT") {
+        data object InvalidCount : SettingCupsError("INVALID_CUP_COUNT") {
             private fun readResolve(): Any = InvalidCount
         }
 
-        object InvalidAmount : SettingCupsError("INVALID_CUP_AMOUNT") {
+        data object InvalidAmount : SettingCupsError("INVALID_CUP_AMOUNT") {
             private fun readResolve(): Any = InvalidAmount
         }
 
-        object InvalidNickname : SettingCupsError("INVALID_CUP_NICKNAME") {
+        data object InvalidNickname : SettingCupsError("INVALID_CUP_NICKNAME") {
             private fun readResolve(): Any = InvalidNickname
         }
 
-        object InvalidRankValue : SettingCupsError("INVALID_CUP_RANK_VALUE") {
+        data object InvalidRankValue : SettingCupsError("INVALID_CUP_RANK_VALUE") {
             private fun readResolve(): Any = InvalidRankValue
         }
     }
@@ -56,12 +56,16 @@ sealed class ResponseError(
     sealed class AccountError(
         code: String,
     ) : ResponseError(code) {
-        object NotExistUser : AccountError("NOT_EXIST_USER") {
+        data object NotExistUser : AccountError("NOT_EXIST_USER") {
             private fun readResolve(): Any = NotExistUser
         }
 
-        object InvalidToken : AccountError("INVALID_TOKEN") {
+        data object InvalidToken : AccountError("INVALID_TOKEN") {
             private fun readResolve(): Any = InvalidToken
+        }
+
+        data object Unauthorized : AccountError("Unauthorized") {
+            private fun readResolve(): Any = Unauthorized
         }
     }
 
@@ -69,42 +73,46 @@ sealed class ResponseError(
     sealed class HistoryError(
         code: String,
     ) : ResponseError(code) {
-        object InvalidDateRange : HistoryError("INVALID_DATE_RANGE") {
+        data object InvalidDateRange : HistoryError("INVALID_DATE_RANGE") {
             private fun readResolve(): Any = InvalidDateRange
+        }
+
+        data object InvalidDateForDelete : HistoryError("INVALID_DATE_FOR_DELETE_INTAKE_HISTORY") {
+            private fun readResolve(): Any = InvalidDateForDelete
         }
     }
 
     sealed class NotFoundError(
         code: String,
     ) : ResponseError(code) {
-        object Member : NotFoundError("NOT_FOUND_MEMBER") {
+        data object Member : NotFoundError("NOT_FOUND_MEMBER") {
             private fun readResolve(): Any = Member
         }
 
-        object Cup : NotFoundError("NOT_FOUND_CUP") {
+        data object Cup : NotFoundError("NOT_FOUND_CUP") {
             private fun readResolve(): Any = Cup
         }
 
-        object IntakeType : NotFoundError("NOT_FOUND_INTAKE_TYPE") {
+        data object IntakeType : NotFoundError("NOT_FOUND_INTAKE_TYPE") {
             private fun readResolve(): Any = IntakeType
         }
     }
 
     // 기타 공통 에러
-    object NetworkUnavailable : ResponseError("NETWORK_UNAVAILABLE") {
+    data object NetworkUnavailable : ResponseError("NETWORK_UNAVAILABLE") {
         private fun readResolve(): Any = NetworkUnavailable
     }
 
-    object DatabaseError : ResponseError("DATABASE_ERROR") {
+    data object DatabaseError : ResponseError("DATABASE_ERROR") {
         private fun readResolve(): Any = DatabaseError
     }
 
-    object Unknown : ResponseError("UNKNOWN") {
+    data object Unknown : ResponseError("UNKNOWN") {
         private fun readResolve(): Any = Unknown
     }
 
     companion object {
-        fun from(code: String?): ResponseError? =
+        fun from(code: String?): ResponseError =
             when (code) {
                 // Nickname
                 NicknameError.SameAsBefore.code -> NicknameError.SameAsBefore
@@ -133,7 +141,6 @@ sealed class ResponseError(
                 NetworkUnavailable.code -> NetworkUnavailable
                 DatabaseError.code -> DatabaseError
 
-                null -> null
                 else -> Unknown
             }
     }
@@ -158,6 +165,7 @@ fun ResponseError.toDomain(): MulKkamError =
 
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
+        HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
 
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member

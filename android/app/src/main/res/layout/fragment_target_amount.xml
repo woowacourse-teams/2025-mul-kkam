@@ -30,6 +30,7 @@
         android:hint="@string/setting_target_amount_hint_input_goal"
         android:imeOptions="actionDone|flagNoEnterAction"
         android:inputType="number"
+        android:maxLength="5"
         android:maxLines="1"
         android:paddingVertical="10dp"
         android:paddingStart="16dp"
@@ -55,7 +56,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="6dp"
         android:layout_marginTop="7dp"
-        android:text="@string/setting_target_amount_warning_too_much"
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
         android:visibility="invisible"
@@ -69,23 +69,23 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="58dp"
-        android:text="@string/target_amount_recommended_water_goal"
         android:textAppearance="@style/body3"
         android:textColor="@color/gray_400"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_input_goal" />
+        app:layout_constraintTop_toBottomOf="@id/et_input_goal"
+        tools:text="@string/target_amount_recommended_water_goal" />
 
     <TextView
         android:id="@+id/tv_recommended_target_amount_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="@string/target_amount_recommended_description"
         android:textAppearance="@style/body5"
         android:textColor="@color/gray_200"
         app:layout_constraintStart_toStartOf="@id/tv_recommended_target_amount"
-        app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount" />
+        app:layout_constraintTop_toBottomOf="@id/tv_recommended_target_amount"
+        tools:text="@string/target_amount_recommended_description" />
 
     <TextView
         android:id="@+id/tv_complete"

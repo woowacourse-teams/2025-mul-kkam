@@ -1,5 +1,9 @@
 package backend.mulkkam.common.filter;
 
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_AUTHORIZATION_HEADER;
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.MISSING_AUTHORIZATION_HEADER;
+
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +15,11 @@ public class AuthenticationHeaderHandler {
     public String extractToken(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
         if (authorization == null || authorization.isBlank()) {
-            // TODO: CommonException 으로 변경
-            throw new IllegalArgumentException("로그인이 필요한 서비스입니다.");
+            throw new CommonException(MISSING_AUTHORIZATION_HEADER);
         }
 
         if (!authorization.startsWith(AUTHORIZATION_PREFIX)) {
-            // TODO: CommonException 으로 변경
-            throw new IllegalArgumentException("유효하지 않은 인증 헤더입니다.");
+            throw new CommonException(INVALID_AUTHORIZATION_HEADER);
         }
 
         return authorization.substring(AUTHORIZATION_PREFIX.length());

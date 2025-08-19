@@ -18,7 +18,8 @@ import java.time.LocalDate
 import java.time.temporal.TemporalAdjusters
 
 class HistoryViewModel : ViewModel() {
-    private val _weeklyIntakeHistoriesUiState: MutableLiveData<MulKkamUiState<IntakeHistorySummaries>> = MutableLiveData()
+    private val _weeklyIntakeHistoriesUiState: MutableLiveData<MulKkamUiState<IntakeHistorySummaries>> =
+        MutableLiveData(MulKkamUiState.Idle)
     val weeklyIntakeHistoriesUiState: LiveData<MulKkamUiState<IntakeHistorySummaries>> get() = _weeklyIntakeHistoriesUiState
 
     private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> = MutableLiveData(EMPTY_DAILY_WATER_INTAKE)
@@ -30,7 +31,7 @@ class HistoryViewModel : ViewModel() {
     private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
     val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
 
-    private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>()
+    private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val deleteUiState: LiveData<MulKkamUiState<Unit>> get() = _deleteUiState
 
     init {
@@ -41,6 +42,7 @@ class HistoryViewModel : ViewModel() {
         referenceDate: LocalDate = LocalDate.now(),
         currentDate: LocalDate = LocalDate.now(),
     ) {
+        if (weeklyIntakeHistoriesUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             val weekDates = getWeekDates(referenceDate)
             runCatching {
@@ -96,6 +98,8 @@ class HistoryViewModel : ViewModel() {
     }
 
     fun deleteIntakeHistory(history: IntakeHistory) {
+        if (deleteUiState.value is MulKkamUiState.Loading) return
+
         viewModelScope.launch {
             runCatching {
                 _deleteUiState.value = MulKkamUiState.Loading
