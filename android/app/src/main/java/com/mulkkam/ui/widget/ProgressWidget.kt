@@ -16,6 +16,7 @@ import com.mulkkam.data.local.work.ProgressWidgetWorker.Companion.KEY_OUTPUT_ACH
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
+import java.util.UUID
 
 class ProgressWidget : AppWidgetProvider() {
     override fun onUpdate(
@@ -37,7 +38,17 @@ fun updateProgressWidgetWithWorker(
     val workRequest = OneTimeWorkRequestBuilder<ProgressWidgetWorker>().build()
 
     workManager.enqueue(workRequest)
-    val liveData = workManager.getWorkInfoByIdLiveData(workRequest.id)
+
+    observeWorker(context, appWidgetId, workRequest.id)
+}
+
+private fun observeWorker(
+    context: Context,
+    appWidgetId: Int,
+    workId: UUID,
+) {
+    val workManager = WorkManager.getInstance(context.applicationContext)
+    val liveData = workManager.getWorkInfoByIdLiveData(workId)
 
     val observer =
         object : Observer<WorkInfo?> {
@@ -47,12 +58,7 @@ fun updateProgressWidgetWithWorker(
                         it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
 
                     val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    updateProgressWidget(
-                        context.applicationContext,
-                        appWidgetManager,
-                        appWidgetId,
-                        achievementRate,
-                    )
+                    updateProgressWidget(context.applicationContext, appWidgetManager, appWidgetId, achievementRate)
 
                     liveData.removeObserver(this)
                 }
