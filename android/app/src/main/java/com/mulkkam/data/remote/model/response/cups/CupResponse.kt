@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.model.response.cups
 
 import com.mulkkam.domain.model.cups.Cup
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import kotlinx.serialization.SerialName
@@ -27,7 +27,7 @@ fun CupResponse.toDomain() =
     Cup(
         id = id,
         nickname = CupName(cupNickname),
-        amount = CupCapacity(cupAmount),
+        amount = CupAmount(cupAmount),
         rank = cupRank,
         intakeType = IntakeType.from(intakeType),
         emoji = emoji,

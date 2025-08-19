@@ -8,7 +8,7 @@ import com.mulkkam.data.remote.model.response.intake.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -35,7 +35,7 @@ class IntakeRepositoryImpl(
 
     override suspend fun postIntakeHistory(
         dateTime: LocalDateTime,
-        amount: CupCapacity,
+        amount: CupAmount,
     ): MulKkamResult<IntakeHistoryResult> {
         val result =
             intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount.value))

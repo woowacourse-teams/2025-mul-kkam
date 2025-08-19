@@ -2,7 +2,7 @@ package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
 import com.mulkkam.domain.model.cups.Cup
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import kotlinx.parcelize.Parcelize
@@ -41,12 +41,12 @@ fun Cup.toUi(): CupUiModel =
 
 fun CupUiModel.toDomain(): Cup {
     val name = CupName(nickname)
-    val capacity = CupCapacity(amount)
+    val amount = CupAmount(amount)
 
     return Cup(
         id = id,
         nickname = name,
-        amount = capacity,
+        amount = amount,
         rank = rank,
         intakeType = intakeType,
         emoji = emoji,

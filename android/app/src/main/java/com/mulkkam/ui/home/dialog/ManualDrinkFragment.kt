@@ -12,7 +12,7 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentManualDrinkBinding
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
@@ -144,7 +144,7 @@ class ManualDrinkFragment :
             is MulKkamUiState.Failure -> {
                 val message =
                     if (state.error is MulKkamError.SettingCupsError.InvalidAmount) {
-                        getString(R.string.home_manual_drink_invalid_range, CupCapacity.MIN_ML, CupCapacity.MAX_ML)
+                        getString(R.string.home_manual_drink_invalid_range, CupAmount.MIN_ML, CupAmount.MAX_ML)
                     } else {
                         ""
                     }

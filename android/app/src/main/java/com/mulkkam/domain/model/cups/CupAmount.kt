@@ -3,7 +3,7 @@ package com.mulkkam.domain.model.cups
 import com.mulkkam.domain.model.result.MulKkamError
 
 @JvmInline
-value class CupCapacity(
+value class CupAmount(
     val value: Int,
 ) {
     init {

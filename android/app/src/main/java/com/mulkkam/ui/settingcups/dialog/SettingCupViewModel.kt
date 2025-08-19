@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.cupsRepository
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -119,7 +119,7 @@ class SettingCupViewModel : ViewModel() {
         }
 
         runCatching {
-            CupCapacity(amount)
+            CupAmount(amount)
         }.onSuccess {
             _amountValidity.value = MulKkamUiState.Success(Unit)
         }.onFailure {

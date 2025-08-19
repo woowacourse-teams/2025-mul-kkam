@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.notificationRepository
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.members.TodayProgressInfo
@@ -31,9 +31,9 @@ class HomeViewModel : ViewModel() {
         MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Long>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<CupCapacity>> =
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<CupAmount>> =
         MutableLiveData(MulKkamUiState.Idle)
-    val drinkUiState: LiveData<MulKkamUiState<CupCapacity>> get() = _drinkUiState
+    val drinkUiState: LiveData<MulKkamUiState<CupAmount>> get() = _drinkUiState
 
     init {
         loadTodayProgressInfo()
@@ -95,7 +95,7 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntake(amount: Int) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         runCatching {
-            CupCapacity(amount)
+            CupAmount(amount)
         }.onSuccess {
             addWaterIntake(it)
         }.onFailure {
@@ -103,7 +103,7 @@ class HomeViewModel : ViewModel() {
         }
     }
 
-    private fun addWaterIntake(amount: CupCapacity) {
+    private fun addWaterIntake(amount: CupAmount) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {

@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.mulkkam.domain.model.cups.CupCapacity
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -29,7 +29,7 @@ class ManualDrinkViewModel : ViewModel() {
         amountInput.value = amount
 
         runCatching {
-            CupCapacity(amount)
+            CupAmount(amount)
         }.onSuccess {
             _amountValidity.value = MulKkamUiState.Success(Unit)
         }.onFailure {
