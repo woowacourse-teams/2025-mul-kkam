@@ -34,9 +34,9 @@ class NotificationViewHolder(
                     root.context.getColorStateList(R.color.white)
                 }
 
-            tvSuggestion.isVisible = notification.type == SUGGESTION
+            tvSuggestion.isVisible = notification.applyRecommendAmount == false
             tvSuggestion.setSingleClickListener {
-                handler.onApply(notification.recommendedTargetAmount, ::onCompleteApply)
+                handler.onApply(notification.id, ::onCompleteApply)
             }
         }
     }

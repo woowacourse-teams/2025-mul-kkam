@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -49,14 +48,14 @@ class NotificationViewModel : ViewModel() {
     }
 
     fun applySuggestion(
-        amount: Int,
+        id: Int,
         onComplete: (isSuccess: Boolean) -> Unit,
     ) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _applySuggestionUiState.value = MulKkamUiState.Loading
-                intakeRepository.patchIntakeAmountTargetSuggested(amount).getOrError()
+                notificationRepository.postSuggestionNotificationsApproval(id).getOrError()
             }.onSuccess {
                 _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
                 _isApplySuggestion.value = true
