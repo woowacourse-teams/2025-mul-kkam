@@ -24,6 +24,7 @@ class GradientDonutChartView(
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
+            paint.strokeCap = Paint.Cap.ROUND
             strokeWidth = strokePx
         }
 
@@ -62,11 +63,16 @@ class GradientDonutChartView(
     }
 
     fun setProgress(targetProgress: Float) {
+        progress = targetProgress
+    }
+
+    fun setProgressWithAnimation(targetProgress: Float) {
         val animator =
             ValueAnimator.ofFloat(progress, targetProgress).apply {
                 this.duration = ANIMATION_DURATION_MS
                 addUpdateListener {
-                    progress = it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
+                    progress =
+                        it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
                     invalidate()
                 }
             }
