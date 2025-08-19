@@ -2,9 +2,6 @@ package com.mulkkam.ui.splash
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
@@ -87,10 +84,5 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
 
     companion object {
         private const val BLINK_PROGRESS: Float = 0.84f
-
-        private fun newIntent(context: Context): Intent = Intent(context, SplashActivity::class.java)
-
-        fun newPendingIntent(context: Context): PendingIntent =
-            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }

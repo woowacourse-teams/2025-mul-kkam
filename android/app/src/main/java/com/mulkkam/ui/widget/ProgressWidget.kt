@@ -12,7 +12,7 @@ import com.mulkkam.R
 import com.mulkkam.data.local.work.ProgressWidgetWorker
 import com.mulkkam.data.local.work.ProgressWidgetWorker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
-import com.mulkkam.ui.splash.SplashActivity
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
 
 class ProgressWidget : AppWidgetProvider() {
@@ -61,7 +61,7 @@ internal fun updateAppWidget(
     views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
     views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
-    views.setOnClickPendingIntent(R.id.main, SplashActivity.newPendingIntent(context))
+    views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
 
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
