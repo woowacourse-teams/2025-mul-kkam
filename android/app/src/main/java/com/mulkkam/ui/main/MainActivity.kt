@@ -176,8 +176,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val progressWidget = ComponentName(this, ProgressWidget::class.java)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(progressWidget)
-        appWidgetIds.forEach { appWidgetId ->
-            updateProgressWidgetWithWorker(this, appWidgetId)
+        appWidgetIds.forEach {
+            updateProgressWidgetWithWorker(this)
         }
     }
 

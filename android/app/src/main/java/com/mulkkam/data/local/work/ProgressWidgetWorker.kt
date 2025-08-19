@@ -3,12 +3,12 @@ package com.mulkkam.data.local.work
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import androidx.work.workDataOf
 import com.mulkkam.domain.repository.MembersRepository
+import com.mulkkam.ui.widget.ProgressWidget
 import java.time.LocalDate
 
 class ProgressWidgetWorker(
-    appContext: Context,
+    private val appContext: Context,
     params: WorkerParameters,
     private val membersRepository: MembersRepository,
 ) : CoroutineWorker(appContext, params) {
@@ -20,18 +20,16 @@ class ProgressWidgetWorker(
                 ).getOrError()
         }.fold(
             onSuccess = { membersProgressInfo ->
-                val outputData =
-                    workDataOf(
-                        KEY_OUTPUT_ACHIEVEMENT_RATE to membersProgressInfo.achievementRate,
-                    )
-                Result.success(outputData)
+                sendResultBroadcast(membersProgressInfo.achievementRate)
+                Result.success()
             },
             onFailure = {
                 Result.failure()
             },
         )
 
-    companion object {
-        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
+    private fun sendResultBroadcast(rate: Float) {
+        val intent = ProgressWidget.newIntent(appContext, rate)
+        appContext.sendBroadcast(intent)
     }
 }

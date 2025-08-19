@@ -3,76 +3,68 @@ package com.mulkkam.ui.widget
 import android.app.ActionBar.LayoutParams
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.view.View.MeasureSpec.EXACTLY
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
-import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.data.local.work.ProgressWidgetWorker
-import com.mulkkam.data.local.work.ProgressWidgetWorker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
-import java.util.UUID
 
 class ProgressWidget : AppWidgetProvider() {
+    override fun onReceive(
+        context: Context,
+        intent: Intent,
+    ) {
+        super.onReceive(context, intent)
+
+        if (intent.action == ACTION_UPDATE_PROGRESS) {
+            val rate = intent.getFloatExtra(KEY_EXTRA_ACHIEVEMENT_RATE, 0f)
+            val appWidgetManager = AppWidgetManager.getInstance(context)
+            val appWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, javaClass))
+            appWidgetIds.forEach { id ->
+                updateProgressWidget(context, appWidgetManager, id, rate)
+            }
+        }
+    }
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray,
     ) {
-        for (appWidgetId in appWidgetIds) {
-            updateProgressWidgetWithWorker(context, appWidgetId)
+        appWidgetIds.forEach { id ->
+            updateProgressWidgetWithWorker(context)
         }
+    }
+
+    companion object {
+        private const val KEY_EXTRA_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
+        private const val ACTION_UPDATE_PROGRESS = "com.example.ACTION_UPDATE_PROGRESS"
+
+        fun newIntent(
+            context: Context,
+            rate: Float,
+        ): Intent =
+            Intent(context, ProgressWidget::class.java).apply {
+                action = ACTION_UPDATE_PROGRESS
+                putExtra(KEY_EXTRA_ACHIEVEMENT_RATE, rate)
+            }
     }
 }
 
-fun updateProgressWidgetWithWorker(
-    context: Context,
-    appWidgetId: Int,
-) {
+fun updateProgressWidgetWithWorker(context: Context) {
     val workManager = WorkManager.getInstance(context.applicationContext)
     val workRequest = OneTimeWorkRequestBuilder<ProgressWidgetWorker>().build()
 
     workManager.enqueue(workRequest)
-
-    observeWorker(context, appWidgetId, workRequest.id)
-}
-
-private fun observeWorker(
-    context: Context,
-    appWidgetId: Int,
-    workId: UUID,
-) {
-    val workManager = WorkManager.getInstance(context.applicationContext)
-    val liveData = workManager.getWorkInfoByIdLiveData(workId)
-
-    val observer =
-        object : Observer<WorkInfo?> {
-            override fun onChanged(workInfo: WorkInfo?) {
-                workInfo?.takeIf { it.state.isFinished }?.let {
-                    val achievementRate =
-                        it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
-
-                    val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    updateProgressWidget(
-                        context.applicationContext,
-                        appWidgetManager,
-                        appWidgetId,
-                        achievementRate,
-                    )
-
-                    liveData.removeObserver(this)
-                }
-            }
-        }
-
-    liveData.observeForever(observer)
 }
 
 private fun updateProgressWidget(
