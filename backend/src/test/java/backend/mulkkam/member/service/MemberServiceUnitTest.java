@@ -154,7 +154,7 @@ public class MemberServiceUnitTest {
                     .buildWithId(memberId);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
+            when(memberRepository.existsByActiveNicknameValue(newNickname)).thenReturn(false);
 
             // when & then
             assertThatCode(() -> memberService.validateDuplicateNickname(
@@ -176,7 +176,7 @@ public class MemberServiceUnitTest {
                     .memberNickname(new MemberNickname(oldNickname))
                     .buildWithId(memberId);
 
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
+            when(memberRepository.existsByActiveNicknameValue(newNickname)).thenReturn(true);
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when & then

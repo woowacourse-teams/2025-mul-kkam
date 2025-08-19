@@ -36,13 +36,12 @@ import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -82,13 +81,13 @@ public class MemberService {
         if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
+        if (memberRepository.existsByActiveNicknameValue(nickname)) {
             throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
         }
     }
 
     public void validateDuplicateNickname(String nickname) {
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
+        if (memberRepository.existsByActiveNicknameValue(nickname)) {
             throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
         }
     }
@@ -131,6 +130,7 @@ public class MemberService {
         boolean finishedOnboarding = oauthAccount.finishedOnboarding();
         return new OnboardingStatusResponse(finishedOnboarding);
     }
+
     public ProgressInfoResponse getProgressInfo(
             MemberDetails memberDetails,
             LocalDate date
