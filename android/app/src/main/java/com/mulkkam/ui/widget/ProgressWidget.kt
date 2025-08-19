@@ -60,7 +60,12 @@ private fun observeWorker(
                         it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
 
                     val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    updateProgressWidget(context.applicationContext, appWidgetManager, appWidgetId, achievementRate)
+                    updateProgressWidget(
+                        context.applicationContext,
+                        appWidgetManager,
+                        appWidgetId,
+                        achievementRate,
+                    )
 
                     liveData.removeObserver(this)
                 }
@@ -78,7 +83,14 @@ private fun updateProgressWidget(
 ) {
     val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
 
-    val donutBitmap = createDonutBitmap(context, progress = progress)
+    val donutBitmap =
+        createDonutBitmap(
+            context,
+            width = 78.dpToPx(context),
+            height = 78.dpToPx(context),
+            stroke = 10f,
+            progress = progress,
+        )
 
     val progressText =
         context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
@@ -92,9 +104,9 @@ private fun updateProgressWidget(
 
 private fun createDonutBitmap(
     context: Context,
-    width: Int = 300,
-    height: Int = 300,
-    stroke: Float = 10f,
+    width: Int,
+    height: Int,
+    stroke: Float,
     progress: Float,
     @ColorRes backgroundColor: Int = R.color.gray_10,
     @ColorRes paintColor: Int = R.color.primary_50,
@@ -119,3 +131,6 @@ private fun createDonutBitmap(
 
     return ViewBitmapCapture.snapshot(donutView)
 }
+
+// TODO: 공백의 개쩌는 확장함수 분리 필요
+private fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
