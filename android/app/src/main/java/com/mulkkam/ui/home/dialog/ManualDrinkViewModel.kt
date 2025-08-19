@@ -28,11 +28,6 @@ class ManualDrinkViewModel : ViewModel() {
     fun updateAmount(amount: Int) {
         amountInput.value = amount
 
-        if (amount == 0) {
-            _amountValidity.value = MulKkamUiState.Idle
-            return
-        }
-
         runCatching {
             CupCapacity(amount)
         }.onSuccess {
