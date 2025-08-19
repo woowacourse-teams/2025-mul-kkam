@@ -1,5 +1,6 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.local.preference.MembersPreference
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
@@ -17,6 +18,7 @@ import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
+import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.UserAuthState
 import java.time.LocalDate
@@ -24,6 +26,7 @@ import java.time.format.DateTimeFormatter
 
 class MembersRepositoryImpl(
     private val membersService: MembersService,
+    private val membersPreference: MembersPreference,
 ) : MembersRepository {
     override suspend fun postMembers(onboardingInfo: OnboardingInfo): MulKkamResult<Unit> {
         val result = membersService.postMembers(onboardingInfo.toData())
@@ -131,4 +134,14 @@ class MembersRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun getIsFirstLaunch(): MulKkamResult<Boolean> =
+        runCatching {
+            membersPreference.isFirstLaunch
+        }.toMulKkamResult()
+
+    override suspend fun saveIsFirstLaunch(): MulKkamResult<Unit> =
+        runCatching {
+            membersPreference.saveIsFirstLaunch()
+        }.toMulKkamResult()
 }

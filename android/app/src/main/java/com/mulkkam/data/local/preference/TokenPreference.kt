@@ -1,4 +1,4 @@
-package com.mulkkam.data.preference
+package com.mulkkam.data.local.preference
 
 import android.content.Context
 import androidx.core.content.edit

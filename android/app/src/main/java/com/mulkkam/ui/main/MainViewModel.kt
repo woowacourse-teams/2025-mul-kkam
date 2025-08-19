@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
+import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.di.WorkInjection.calorieScheduler
 import com.mulkkam.domain.work.CalorieScheduler.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
@@ -21,8 +22,13 @@ class MainViewModel : ViewModel() {
     val fcmToken: SingleLiveData<String?>
         get() = _fcmToken
 
+    private val _onFirstLaunch: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onFirstLaunch: SingleLiveData<Unit>
+        get() = _onFirstLaunch
+
     init {
         getFcmToken()
+        checkFirstLaunch()
     }
 
     private fun getFcmToken() {
@@ -31,6 +37,19 @@ class MainViewModel : ViewModel() {
                 tokenRepository.getFcmToken().getOrError()
             }.onSuccess { token ->
                 _fcmToken.postValue(token)
+            }
+        }
+    }
+
+    private fun checkFirstLaunch() {
+        viewModelScope.launch {
+            runCatching {
+                membersRepository.getIsFirstLaunch().getOrError()
+            }.onSuccess { isFirstLaunch ->
+                if (isFirstLaunch) {
+                    _onFirstLaunch.setValue(Unit)
+                    membersRepository.saveIsFirstLaunch()
+                }
             }
         }
     }

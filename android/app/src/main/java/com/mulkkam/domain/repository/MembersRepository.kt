@@ -37,4 +37,8 @@ interface MembersRepository {
     suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo>
 
     suspend fun deleteMembers(): MulKkamResult<Unit>
+
+    suspend fun getIsFirstLaunch(): MulKkamResult<Boolean>
+
+    suspend fun saveIsFirstLaunch(): MulKkamResult<Unit>
 }
