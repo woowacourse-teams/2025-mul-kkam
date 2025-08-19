@@ -13,7 +13,7 @@ import com.mulkkam.data.local.work.ProgressWidgetWorker
 import com.mulkkam.data.local.work.ProgressWidgetWorker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.splash.SplashActivity
-import com.mulkkam.ui.util.ViewBitmapCapture
+import com.mulkkam.ui.util.extensions.snapshot
 
 class ProgressWidget : AppWidgetProvider() {
     override fun onUpdate(
@@ -93,5 +93,5 @@ private fun createDonutBitmap(
     )
     donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
 
-    return ViewBitmapCapture.snapshot(donutView)
+    return donutView.snapshot()
 }
