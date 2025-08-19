@@ -1,5 +1,6 @@
 ALTER TABLE notification
-DROP COLUMN recommended_target_amount;
+DROP
+COLUMN recommended_target_amount;
 
 CREATE TABLE suggestion_notification
 (
