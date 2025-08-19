@@ -21,6 +21,7 @@ class WorkerFactory(
         when (workerClassName) {
             CalorieWorker::class.java.name -> CalorieWorker(appContext, workerParameters, healthRepository, notificationRepository)
             ProgressWidgetWorker::class.java.name -> ProgressWidgetWorker(appContext, workerParameters, membersRepository)
+            IntakeWidgetWorker::class.java.name -> IntakeWidgetWorker(appContext, workerParameters, membersRepository)
             else -> null
         }
 }
