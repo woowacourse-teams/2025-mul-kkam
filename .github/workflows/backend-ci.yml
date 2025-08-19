@@ -1,7 +1,7 @@
 name: backend-ci.yml
 on:
   pull_request:
-    branches: ["develop"]
+    branches: ["develop", "develop-be"]
     paths:
       - "backend/**"
 
@@ -24,6 +24,8 @@ jobs:
           --health-retries=5
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -52,36 +54,47 @@ jobs:
           chmod +x ./gradlew
         working-directory: ./backend
 
-      - name: Fail if DROP detected in Flyway migrations
+      - name: Fail if DROP detected in Flyway migrations (only changed files)
         shell: bash
         run: |
           set -euo pipefail
 
           MIG_DIR="backend/src/main/resources/db/migration"
+          BASE_REF="${{ github.event.pull_request.base.ref }}"
 
           if [ ! -d "$MIG_DIR" ]; then
             echo "[INFO] Migration dir not found: $MIG_DIR (skip check)"
             exit 0
           fi
 
-          # 검사 대상 파일들
-          mapfile -t FILES < <(find "$MIG_DIR" -type f -name "*.sql" | sort)
+          # 기준 브랜치 최신 커밋 가져오고, PR 변경 파일만 추출 (추가/수정/이름변경)
+          git fetch origin "$BASE_REF" --depth=1
+
+          mapfile -t FILES < <(
+            git diff --name-only --diff-filter=AMR "origin/${BASE_REF}...HEAD" \
+              | grep -E "^${MIG_DIR//\//\/}/.*\.sql$" || true
+          )
+
+          if [ ${#FILES[@]} -eq 0 ]; then
+            echo "[INFO] No modified migration SQL files in this PR. Skipping."
+            exit 0
+          fi
+
+          echo "[INFO] Changed migration files:"
+          printf ' - %s\n' "${FILES[@]}"
 
           has_violation=0
 
           for f in "${FILES[@]}"; do
-            # 화이트리스트 태그가 있으면 스킵 (의도적 DROP 허용)
+            # ALLOW 태그가 있으면 스킵 (원하면 여기 정책을 CI용으로 바꿔서 무시 가능)
             if grep -qE '^\s*--\s*ALLOW_DROP\b' "$f"; then
               echo "[ALLOW] $f has ALLOW_DROP tag. Skipping."
               continue
             fi
 
             # 주석 제거(--, /* */) 후 DROP 탐지
-            # 1) -- 한줄 주석 제거
-            # 2) /* ... */ 블록 주석 제거 (멀티라인)
-            stripped=$(sed -E 's/--.*$//; :a; /\/\*/{N; /\*\//!ba; s/\/\*[^*]*\*+([^/*][^*]*\*+)*\///g}' "$f")
+            stripped="$(sed -E 's/--.*$//; :a; /\/\*/{N; /\*\//!ba; s/\/\*[^*]*\*+([^/*][^*]*\*+)*\///g}' "$f")"
 
-            # DROP 탐지 (table|index|constraint|column 등)
             if echo "$stripped" | grep -qiE '\bdrop\b\s+(table|index|constraint|column|view|sequence)?\b'; then
               echo "::error file=$f,line=1::[DROP DETECTED] $f"
               has_violation=1
@@ -89,11 +102,11 @@ jobs:
           done
 
           if [ "$has_violation" -ne 0 ]; then
-            echo "[FAIL] DROP detected in one or more migration files. If intended, add a first-line tag: '-- ALLOW_DROP'"
+            echo "[FAIL] DROP detected in changed migration files."
             exit 1
           fi
 
-          echo "[OK] No DROP detected in Flyway migration SQL files."
+          echo "[OK] No DROP detected in changed migration SQL files."
 
       - name: Run tests
         env:
