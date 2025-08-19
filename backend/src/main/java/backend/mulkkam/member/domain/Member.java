@@ -22,7 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE member SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE member SET active_nickname = NULL, deleted_at = NOW() WHERE id = ?")
 @Entity
 public class Member extends BaseEntity {
 
@@ -99,10 +99,6 @@ public class Member extends BaseEntity {
 
     public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
-    }
-
-    public void updateActiveNickname(String activeNickname) {
-        this.activeNickname = activeNickname;
     }
 
     @Override
