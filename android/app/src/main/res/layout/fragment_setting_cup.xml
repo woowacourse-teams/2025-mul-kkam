@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_common_rectangle_top_12dp"
-    android:backgroundTint="@color/white">
+    android:backgroundTint="@color/white"
+    tools:context=".ui.settingcups.dialog.SettingCupFragment">
 
     <ImageView
         android:layout_width="wrap_content"
@@ -176,18 +177,24 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="22dp"
-        android:layout_marginBottom="24dp"
         android:background="@drawable/selector_common_button_enabled"
         android:gravity="center"
         android:paddingVertical="12dp"
         android:text="@string/setting_cup_save"
         android:textAppearance="@style/title2"
         android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_amount_validation_message"
         app:layout_constraintVertical_bias="0.478" />
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_save" />
 
     <TextView
         android:id="@+id/tv_delete"
