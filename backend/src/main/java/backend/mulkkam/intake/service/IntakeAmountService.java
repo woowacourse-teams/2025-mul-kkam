@@ -19,12 +19,11 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
+import java.time.LocalDate;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -64,13 +63,13 @@ public class IntakeAmountService {
                     IntakeHistory newIntakeHistory = new IntakeHistory(
                             member,
                             now,
-                            modifyIntakeTargetAmountByRecommendRequest.toAmount(),
+                            modifyIntakeTargetAmountByRecommendRequest.amount(),
                             streak
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
 
-        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.toAmount());
+        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.amount());
     }
 
     public IntakeRecommendedAmountResponse getRecommended(MemberDetails memberDetails) {
