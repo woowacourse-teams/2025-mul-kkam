@@ -1,4 +1,4 @@
-package com.mulkkam.domain.model
+package com.mulkkam.domain.model.members
 
 import com.mulkkam.domain.model.result.MulKkamError
 
