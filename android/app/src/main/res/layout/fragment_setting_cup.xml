@@ -56,7 +56,7 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title" />
 
     <EditText
-        android:id="@+id/et_nickname"
+        android:id="@+id/et_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
@@ -84,8 +84,8 @@
         android:textAppearance="@style/label1"
         android:textColor="@color/secondary_200"
         android:visibility="gone"
-        app:layout_constraintStart_toStartOf="@id/et_nickname"
-        app:layout_constraintTop_toBottomOf="@id/et_nickname"
+        app:layout_constraintStart_toStartOf="@id/et_name"
+        app:layout_constraintTop_toBottomOf="@id/et_name"
         tools:text="@string/setting_nickname_warning_duplicated_nickname"
         tools:visibility="visible" />
 

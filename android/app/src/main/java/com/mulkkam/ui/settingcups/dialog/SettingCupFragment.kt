@@ -74,9 +74,9 @@ class SettingCupFragment :
                 settingWaterCupEditType?.let { showTitle(it) }
             }
 
-            nicknameValidity.observe(viewLifecycleOwner) { nicknameValidity ->
-                applyFieldColor(nicknameValidity, true)
-                showNicknameValidationMessage(nicknameValidity)
+            cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->
+                applyFieldColor(cupNameValidity, true)
+                showCupNameValidationMessage(cupNameValidity)
             }
 
             amountValidity.observe(viewLifecycleOwner) { amountValidity ->
@@ -111,7 +111,7 @@ class SettingCupFragment :
 
     private fun applyFieldColor(
         state: MulKkamUiState<Unit>,
-        isNickname: Boolean,
+        isCupName: Boolean,
     ) {
         val colorRes =
             when (state) {
@@ -121,14 +121,14 @@ class SettingCupFragment :
             }
         val color = ContextCompat.getColor(requireContext(), colorRes)
 
-        if (isNickname) {
-            binding.etNickname.foregroundTintList = ColorStateList.valueOf(color)
+        if (isCupName) {
+            binding.etName.foregroundTintList = ColorStateList.valueOf(color)
         } else {
             binding.etAmount.foregroundTintList = ColorStateList.valueOf(color)
         }
     }
 
-    private fun showNicknameValidationMessage(state: MulKkamUiState<Unit>) {
+    private fun showCupNameValidationMessage(state: MulKkamUiState<Unit>) {
         when (state) {
             is MulKkamUiState.Success,
             is MulKkamUiState.Idle,
@@ -187,13 +187,13 @@ class SettingCupFragment :
 
     private fun showCupInfo(cup: CupUiModel) =
         with(binding) {
-            val isNicknameChanged = etNickname.text.toString() != cup.nickname
-            val isNicknameValid = cup.nickname != EMPTY_CUP_UI_MODEL.nickname
+            val isCupNameChanged = etName.text.toString() != cup.name
+            val isCupNameValid = cup.name != EMPTY_CUP_UI_MODEL.name
             val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
 
-            if (isNicknameChanged && isNicknameValid) {
-                etNickname.setText(cup.nickname)
+            if (isCupNameChanged && isCupNameValid) {
+                etName.setText(cup.name)
             }
             if (isAmountChanged && isAmountValid) {
                 etAmount.setText(cup.amount.toString())
@@ -211,7 +211,7 @@ class SettingCupFragment :
 
     private fun initInputListeners() =
         with(binding) {
-            etNickname.addTextChangedListener { viewModel.updateNickname(it?.toString().orEmpty()) }
+            etName.addTextChangedListener { viewModel.updateCupName(it?.toString().orEmpty()) }
             etAmount.doAfterTextChanged { editable ->
                 val original = editable.toString()
                 val processedText = original.sanitizeLeadingZeros()
@@ -247,7 +247,7 @@ class SettingCupFragment :
     }
 
     private fun initDoneListener() {
-        binding.etNickname.setOnImeActionDoneListener()
+        binding.etName.setOnImeActionDoneListener()
         binding.etAmount.setOnImeActionDoneListener()
     }
 

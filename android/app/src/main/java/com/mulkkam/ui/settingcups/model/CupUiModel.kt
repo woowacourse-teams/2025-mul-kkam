@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class CupUiModel(
     val id: Long,
-    val nickname: String,
+    val name: String,
     val amount: Int,
     val rank: Int,
     val intakeType: IntakeType,
@@ -20,7 +20,7 @@ data class CupUiModel(
         val EMPTY_CUP_UI_MODEL =
             CupUiModel(
                 id = 0L,
-                nickname = "",
+                name = "",
                 amount = 0,
                 rank = 0,
                 intakeType = IntakeType.UNKNOWN,
@@ -32,7 +32,7 @@ data class CupUiModel(
 fun Cup.toUi(): CupUiModel =
     CupUiModel(
         id = id,
-        nickname = nickname.value,
+        name = name.value,
         amount = amount.value,
         rank = rank,
         intakeType = intakeType,
@@ -40,12 +40,12 @@ fun Cup.toUi(): CupUiModel =
     )
 
 fun CupUiModel.toDomain(): Cup {
-    val name = CupName(nickname)
+    val name = CupName(name)
     val amount = CupAmount(amount)
 
     return Cup(
         id = id,
-        nickname = name,
+        name = name,
         amount = amount,
         rank = rank,
         intakeType = intakeType,

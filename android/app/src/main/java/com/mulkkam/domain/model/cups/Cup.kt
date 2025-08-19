@@ -4,7 +4,7 @@ import com.mulkkam.domain.model.intake.IntakeType
 
 data class Cup(
     val id: Long,
-    val nickname: CupName,
+    val name: CupName,
     val amount: CupAmount,
     val rank: Int,
     val intakeType: IntakeType,

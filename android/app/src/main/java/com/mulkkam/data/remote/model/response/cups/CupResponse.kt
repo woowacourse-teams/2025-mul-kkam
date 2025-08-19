@@ -26,7 +26,7 @@ data class CupResponse(
 fun CupResponse.toDomain() =
     Cup(
         id = id,
-        nickname = CupName(cupNickname),
+        name = CupName(cupNickname),
         amount = CupAmount(cupAmount),
         rank = cupRank,
         intakeType = IntakeType.from(intakeType),

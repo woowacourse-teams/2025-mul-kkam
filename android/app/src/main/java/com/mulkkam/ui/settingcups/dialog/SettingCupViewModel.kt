@@ -26,8 +26,8 @@ class SettingCupViewModel : ViewModel() {
     private val _editType: MutableLiveData<SettingWaterCupEditType> = MutableLiveData(SettingWaterCupEditType.ADD)
     val editType: LiveData<SettingWaterCupEditType> get() = _editType
 
-    private val _nicknameValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-    val nicknameValidity: LiveData<MulKkamUiState<Unit>> get() = _nicknameValidity
+    private val _cupNameValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    val cupNameValidity: LiveData<MulKkamUiState<Unit>> get() = _cupNameValidity
 
     private val _amountValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
@@ -56,19 +56,19 @@ class SettingCupViewModel : ViewModel() {
                     return
                 }
 
-                val nicknameChanged = current.nickname != originalCup.nickname
+                val nameChanged = current.name != originalCup.name
                 val amountChanged = current.amount != originalCup.amount
 
-                val isNicknameAvailable =
-                    if (nicknameChanged) _nicknameValidity.value is MulKkamUiState.Success else true
+                val isNameAvailable =
+                    if (nameChanged) _cupNameValidity.value is MulKkamUiState.Success else true
                 val isAmountAvailable =
                     if (amountChanged) _amountValidity.value is MulKkamUiState.Success else true
 
-                value = isNicknameAvailable && isAmountAvailable
+                value = isNameAvailable && isAmountAvailable
             }
 
             addSource(_cup) { update() }
-            addSource(_nicknameValidity) { update() }
+            addSource(_cupNameValidity) { update() }
             addSource(_amountValidity) { update() }
             addSource(hasChanges) { update() }
         }
@@ -87,25 +87,25 @@ class SettingCupViewModel : ViewModel() {
                 null -> SettingWaterCupEditType.ADD
                 else -> SettingWaterCupEditType.EDIT
             }
-        _nicknameValidity.value = MulKkamUiState.Idle
+        _cupNameValidity.value = MulKkamUiState.Idle
         _amountValidity.value = MulKkamUiState.Idle
     }
 
-    fun updateNickname(nickname: String) {
-        val updated = cup.value?.copy(nickname = nickname) ?: return
+    fun updateCupName(name: String) {
+        val updated = cup.value?.copy(name = name) ?: return
         _cup.value = updated
 
-        if (nickname == originalCup.nickname) {
-            _nicknameValidity.value = MulKkamUiState.Idle
+        if (name == originalCup.name) {
+            _cupNameValidity.value = MulKkamUiState.Idle
             return
         }
 
         runCatching {
-            CupName(nickname)
+            CupName(name)
         }.onSuccess {
-            _nicknameValidity.value = MulKkamUiState.Success(Unit)
+            _cupNameValidity.value = MulKkamUiState.Success(Unit)
         }.onFailure {
-            _nicknameValidity.value = MulKkamUiState.Failure(it.toMulKkamError())
+            _cupNameValidity.value = MulKkamUiState.Failure(it.toMulKkamError())
         }
     }
 

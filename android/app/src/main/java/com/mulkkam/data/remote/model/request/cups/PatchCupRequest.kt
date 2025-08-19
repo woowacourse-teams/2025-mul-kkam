@@ -18,7 +18,7 @@ data class PatchCupRequest(
 
 fun Cup.toPatchCupRequest(): PatchCupRequest =
     PatchCupRequest(
-        cupNickname = nickname.value,
+        cupNickname = name.value,
         cupAmount = amount.value,
         intakeType = intakeType.name,
         emoji = emoji,
