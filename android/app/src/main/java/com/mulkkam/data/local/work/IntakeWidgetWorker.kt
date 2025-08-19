@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.MembersRepository
 import java.time.LocalDate
 
@@ -11,20 +12,24 @@ class IntakeWidgetWorker(
     appContext: Context,
     params: WorkerParameters,
     private val membersRepository: MembersRepository,
+    private val cupsRepository: CupsRepository,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result =
         runCatching {
-            membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
+            val progress = membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
+            val cups = cupsRepository.getCups().getOrError()
+
+            val primaryCup = cups.cups.firstOrNull()
+            val primaryCupAmount = primaryCup?.amount?.value ?: 0
+
+            workDataOf(
+                KEY_OUTPUT_ACHIEVEMENT_RATE to progress.achievementRate,
+                KEY_OUTPUT_TARGET to progress.targetAmount,
+                KEY_OUTPUT_TOTAL to progress.totalAmount,
+                KEY_OUTPUT_PRIMARY_CUP_AMOUNT to primaryCupAmount,
+            )
         }.fold(
-            onSuccess = { info ->
-                Result.success(
-                    workDataOf(
-                        KEY_OUTPUT_ACHIEVEMENT_RATE to info.achievementRate,
-                        KEY_OUTPUT_TARGET to info.targetAmount,
-                        KEY_OUTPUT_TOTAL to info.totalAmount,
-                    ),
-                )
-            },
+            onSuccess = { Result.success(it) },
             onFailure = { Result.failure() },
         )
 
@@ -32,5 +37,6 @@ class IntakeWidgetWorker(
         const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
         const val KEY_OUTPUT_TARGET = "TARGET_AMOUNT"
         const val KEY_OUTPUT_TOTAL = "TOTAL_AMOUNT"
+        const val KEY_OUTPUT_PRIMARY_CUP_AMOUNT = "PRIMARY_CUP_AMOUNT"
     }
 }

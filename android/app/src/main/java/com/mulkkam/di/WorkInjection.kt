@@ -5,7 +5,9 @@ import androidx.work.Configuration
 import androidx.work.WorkManager
 import com.mulkkam.data.local.work.CalorieSchedulerImpl
 import com.mulkkam.data.local.work.WorkerFactory
+import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
+import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.work.CalorieScheduler
@@ -22,8 +24,9 @@ object WorkInjection {
             val config =
                 Configuration
                     .Builder()
-                    .setWorkerFactory(WorkerFactory(healthRepository, notificationRepository, membersRepository))
-                    .build()
+                    .setWorkerFactory(
+                        WorkerFactory(healthRepository, notificationRepository, membersRepository, cupsRepository, intakeRepository),
+                    ).build()
 
             WorkManager.initialize(context, config)
             workManager = WorkManager.getInstance(context)

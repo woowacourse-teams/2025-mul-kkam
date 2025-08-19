@@ -59,13 +59,14 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/ll_drink"
             android:layout_width="52dp"
             android:layout_height="52dp"
             android:background="@drawable/bg_common_rectangle_10dp"
             android:backgroundTint="@color/white"
+            android:clickable="true"
             android:foreground="@drawable/bg_common_rectangle_stroke_10dp"
             android:foregroundTint="@color/gray_300"
-
             android:gravity="center"
             android:orientation="vertical">
 
