@@ -35,14 +35,16 @@ import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
+import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -59,6 +61,7 @@ public class MemberService {
     private final DeviceRepository deviceRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
+    private final SuggestionNotificationRepository suggestionNotificationRepository;
 
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -190,6 +193,9 @@ public class MemberService {
         intakeHistoryRepository.deleteByMember(member);
 
         targetAmountSnapshotRepository.deleteByMember(member);
+
+        List<Long> notificationIds = findSuggestionNotificationIdsByMember(member);
+        suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
 
         memberRepository.delete(member);
@@ -228,5 +234,12 @@ public class MemberService {
     private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
         return oauthAccountRepository.findById(accountDetails.id())
                 .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
+    }
+
+    private List<Long> findSuggestionNotificationIdsByMember(Member member) {
+        return notificationRepository.findAllByMember(member).stream()
+                .filter(notification -> notification.getNotificationType().equals(NotificationType.SUGGESTION))
+                .map(Notification::getId)
+                .toList();
     }
 }
