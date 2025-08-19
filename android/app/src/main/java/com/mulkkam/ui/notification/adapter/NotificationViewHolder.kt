@@ -8,6 +8,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemHomeNotificationBinding
 import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationType.NOTICE
+import com.mulkkam.domain.model.notification.NotificationType.REMIND
 import com.mulkkam.domain.model.notification.NotificationType.SUGGESTION
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -20,28 +22,46 @@ class NotificationViewHolder(
     private val handler: NotificationHandler,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
-        with(binding) {
-            if (notification.type == SUGGESTION) {
-                ivNotificationType.setImageResource(R.drawable.ic_notification_sun)
-            }
-            tvNotificationTitle.text = notification.title
-            tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
-            viewUnreadAlarm.isVisible = !notification.isRead
-            root.backgroundTintList =
-                if (!notification.isRead) {
-                    root.context.getColorStateList(R.color.primary_10)
-                } else {
-                    root.context.getColorStateList(R.color.white)
-                }
+        setNotificationIcon(notification)
+        setNotificationContent(notification)
+        setReadStatus(notification)
+        setSuggestion(notification)
+    }
 
-            tvSuggestion.isVisible = notification.applyRecommendAmount == false
-            tvSuggestion.setSingleClickListener {
+    private fun setNotificationIcon(notification: Notification) {
+        val iconResId =
+            when (notification.type) {
+                SUGGESTION -> R.drawable.ic_notification_suggestion
+                REMIND -> R.drawable.ic_notification_remind
+                NOTICE -> R.drawable.ic_notification_notice
+            }
+        binding.ivNotificationType.setImageResource(iconResId)
+    }
+
+    private fun setNotificationContent(notification: Notification) {
+        binding.tvNotificationTitle.text = notification.title
+        binding.tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
+    }
+
+    private fun setReadStatus(notification: Notification) {
+        binding.viewUnreadAlarm.isVisible = !notification.isRead
+        binding.root.backgroundTintList =
+            binding.root.context.getColorStateList(
+                if (notification.isRead) R.color.white else R.color.primary_10,
+            )
+    }
+
+    private fun setSuggestion(notification: Notification) {
+        val isSuggestable = notification.applyRecommendAmount == false
+        binding.tvSuggestion.isVisible = isSuggestable
+        if (isSuggestable) {
+            binding.tvSuggestion.setSingleClickListener {
                 handler.onApply(notification.id, ::onCompleteApply)
             }
         }
     }
 
-    fun LocalDateTime.toRelativeTimeString(): String {
+    private fun LocalDateTime.toRelativeTimeString(): String {
         val now = LocalDateTime.now()
         val duration = Duration.between(this, now)
         val context = binding.root.context
