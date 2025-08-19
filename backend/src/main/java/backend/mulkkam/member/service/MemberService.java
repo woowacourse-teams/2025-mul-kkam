@@ -199,7 +199,6 @@ public class MemberService {
         suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
 
-        member.updateActiveNickname(null);
         memberRepository.delete(member);
     }
 
