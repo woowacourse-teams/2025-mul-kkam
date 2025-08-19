@@ -50,7 +50,7 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private boolean isNightNotificationAgreed;
 
-    @Column(nullable = true, unique = true)
+    @Column(unique = true)
     private String activeNickname;
 
     public Member(
