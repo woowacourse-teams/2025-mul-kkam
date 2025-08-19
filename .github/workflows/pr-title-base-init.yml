@@ -49,12 +49,9 @@ jobs:
           base="develop"
           # 사람별 매핑
           case "$actor" in
-            'CheChe903'| 'Jin409' | '2Jin1031' | 'minSsan')
-              base="develop-be"
-              ;;
-            'junseo511', 'devfeijoa', 'hwannow')
-              base="develop-an"
-              ;;
+          CheChe903|Jin409|2Jin1031|minSsan) base="develop-be" ;;
+          junseo511|devfeijoa|hwannow)       base="develop-an" ;;
+          *)                                 base="develop" ;;
           esac
           echo "base_branch=${base}" >> "$GITHUB_OUTPUT"
 
