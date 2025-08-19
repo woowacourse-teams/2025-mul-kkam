@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
@@ -69,13 +70,9 @@ class HomeFragment :
 
     private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
         when (todayProgressInfoMulKkamUiState) {
-            is MulKkamUiState.Success<TodayProgressInfo> ->
-                showTodayProgressInfo(
-                    todayProgressInfoMulKkamUiState,
-                )
-
-            MulKkamUiState.Loading -> Unit
-            MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Success<TodayProgressInfo> -> showTodayProgressInfo(todayProgressInfoMulKkamUiState)
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
                     .make(
@@ -150,8 +147,8 @@ class HomeFragment :
     private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
         when (cupsUiState) {
             is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
     }
@@ -161,13 +158,9 @@ class HomeFragment :
             items =
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(
-                        buttonLabel = cup.nickname,
+                        buttonLabel = cup.name.value,
                         icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
-                        iconLabel =
-                            getString(
-                                R.string.expandable_floating_menu_intake_unit,
-                                cup.amount,
-                            ),
+                        iconLabel = getString(R.string.expandable_floating_menu_intake_unit, cup.amount.value),
                         data = cup,
                     )
                 } +
@@ -245,18 +238,24 @@ class HomeFragment :
         binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
 
-    private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
+    private fun handleDrinkResult(drinkUiState: MulKkamUiState<CupAmount>) {
         when (drinkUiState) {
-            is MulKkamUiState.Success<Int> -> {
+            is MulKkamUiState.Success<CupAmount> -> {
                 CustomSnackBar
                     .make(
                         binding.root,
-                        getString(R.string.manual_drink_success, drinkUiState.data),
+                        getString(
+                            R.string.manual_drink_success,
+                            drinkUiState.data.value,
+                        ),
                         R.drawable.ic_terms_all_check_on,
                     ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
+
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
 
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
@@ -268,9 +267,6 @@ class HomeFragment :
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
-
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
         }
     }
 

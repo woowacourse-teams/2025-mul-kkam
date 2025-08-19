@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.R
@@ -14,6 +13,8 @@ import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.bio.Gender.FEMALE
 import com.mulkkam.domain.model.bio.Gender.MALE
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightFragment
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -134,8 +135,12 @@ class SettingBioInfoActivity :
     private fun handleBioInfoChangeUiState(bioInfoChangeUiState: MulKkamUiState<Unit>) {
         when (bioInfoChangeUiState) {
             is MulKkamUiState.Success<Unit> -> {
-                Toast
-                    .makeText(this@SettingBioInfoActivity, R.string.setting_bio_info_complete_description, Toast.LENGTH_SHORT)
+                CustomToast
+                    .makeText(
+                        this@SettingBioInfoActivity,
+                        getString(R.string.setting_bio_info_complete_description),
+                        R.drawable.ic_terms_all_check_on,
+                    ).apply { setGravityY(TOAST_BOTTOM_NAV_OFFSET) }
                     .show()
                 finish()
             }

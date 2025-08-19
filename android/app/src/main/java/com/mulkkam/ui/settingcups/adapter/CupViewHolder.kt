@@ -26,7 +26,7 @@ class CupViewHolder(
 
     private fun showCupInfo(item: SettingCupsItem.CupItem) =
         with(binding) {
-            tvNickname.text = item.value.nickname
+            tvNickname.text = item.value.name
             tvIncrement.text = root.context.getString(R.string.setting_cups_increment, item.value.amount)
             tvSettingWaterCupTagType.text =
                 when (item.value.intakeType) {
