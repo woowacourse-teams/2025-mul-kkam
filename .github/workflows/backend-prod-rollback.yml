@@ -38,11 +38,11 @@ jobs:
           echo "Rollback IMAGE_TAG=${IMAGE_TAG}"
 
       - name: Pull target image
-        working-directory: ~/mulkkam
+        working-directory: /home/ubuntu/mulkkam
         run: sudo docker compose pull backend-app
 
       - name: Restart service with target version
-        working-directory: ~/mulkkam
+        working-directory: /home/ubuntu/mulkkam
         run: |
           sudo docker compose stop backend-app || true
           sudo docker compose up -d backend-app
