@@ -1,0 +1,23 @@
+name: develop-pr-branch-guard
+
+on:
+  pull_request:
+    branches: [ develop ]
+    types: [ opened, synchronize, reopened, edited ]
+
+jobs:
+  guard:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Validate PR source branch
+        run: |
+          BASE="${{ github.base_ref }}"    
+          HEAD="${{ github.head_ref }}"
+          echo "base=${BASE} head=${HEAD}"
+
+          if [ "${BASE}" = "develop" ] && ! echo "${HEAD}" | grep -Eq '^(develop-be|develop-an)$'; then
+            echo "::error title=Blocked merge::Only develop-be or develop-an can target develop."
+            exit 1
+          fi
+
+          echo "OK: Allowed source branch."
