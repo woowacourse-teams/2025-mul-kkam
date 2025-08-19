@@ -1,9 +1,9 @@
 name: backend-prod-cd
 
 on:
-  push:
+  pull_request:
     branches:
-      - 'release/v*.*.*'     # 그대로: push 트리거(타깃 브랜치)
+      - 'release/v*.*.*'
 
 jobs:
   build-and-push:
