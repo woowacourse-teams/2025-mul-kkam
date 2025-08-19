@@ -37,3 +37,9 @@ ALTER TABLE device
 ALTER TABLE device
     ADD COLUMN created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
 
+ALTER TABLE target_amount_snapshot
+    ADD COLUMN created_at datetime NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+ALTER TABLE target_amount_snapshot
+    ADD COLUMN deleted_at datetime NULL;
+
