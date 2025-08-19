@@ -50,18 +50,27 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private boolean isNightNotificationAgreed;
 
+    @Embedded
+    @AttributeOverride(
+            name = "value",
+            column = @Column(name = "active_nickname", nullable = false, unique = true, length = MemberNickname.MAX_LENGTH)
+    )
+    private MemberNickname activeNickname;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
             TargetAmount targetAmount,
             boolean isMarketingNotificationAgreed,
-            boolean isNightNotificationAgreed
+            boolean isNightNotificationAgreed,
+            MemberNickname activeNickname
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
         this.isNightNotificationAgreed = isNightNotificationAgreed;
+        this.activeNickname = activeNickname;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {
