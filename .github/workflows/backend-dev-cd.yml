@@ -75,6 +75,12 @@ jobs:
           FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
           SPRING_PROFILES_ACTIVE=dev
+          DEV_DB_RO=${{ secrets.DEV_DB_RO }}
+          DEV_DB_RO_PASSWORD=${{ secrets.DEV_DB_RO_PASSWORD }}
+          DEV_DB_RW=${{ secrets.DEV_DB_RW }}
+          DEV_DB_RW_PASSWORD=${{ secrets.DEV_DB_RW_PASSWORD }}
+          DEV_DB_MIG=${{ secrets.DEV_DB_MIG }}
+          DEV_DB_MIG_PASSWORD=${{ secrets.DEV_DB_MIG_PASSWORD }}
           EOF
 
       - name: Stop existing services

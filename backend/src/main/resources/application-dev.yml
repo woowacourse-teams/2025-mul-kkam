@@ -3,9 +3,14 @@ server:
 
 spring:
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    ro:
+      url: ${DATASOURCE_URL}
+      username: ${DEV_DB_RO}
+      password: ${DEV_DB_RO_PASSWORD}
+    rw:
+      url: ${DATASOURCE_URL}
+      username: ${DEV_DB_RW}
+      password: ${DEV_DB_RW_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -22,6 +27,10 @@ spring:
     validate-on-migrate: true
     locations: classpath:db/migration
     clean-disabled: true
+    url: ${DATASOURCE_URL}
+    user: ${DEV_DB_MIG}
+    password: ${DEV_DB_MIG_PASSWORD}
+
 
 security:
   jwt:
