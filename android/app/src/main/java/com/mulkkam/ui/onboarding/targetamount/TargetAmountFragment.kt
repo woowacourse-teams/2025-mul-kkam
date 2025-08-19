@@ -49,7 +49,10 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         binding.tvComplete.applyImeMargin()
 
         viewModel.loadRecommendedTargetAmount(
-            nickname = parentViewModel.onboardingInfo.nickname.orEmpty(),
+            nickname =
+                parentViewModel.onboardingInfo.nickname
+                    ?.name
+                    .orEmpty(),
             gender = parentViewModel.onboardingInfo.gender,
             weight = parentViewModel.onboardingInfo.weight,
         )
@@ -146,7 +149,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             is MulKkamUiState.Failure -> {
                 updateTargetAmountValidationUI(false)
                 binding.tvTargetAmountWarningMessage.text =
-                    (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes() ?: return
+                    (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes()
+                        ?: return
             }
 
             is MulKkamUiState.Loading -> Unit
@@ -162,8 +166,11 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         val ctx = requireContext()
 
         binding.tvRecommendedTargetAmount.text =
-            getString(R.string.target_amount_recommended_water_goal, nickname, recommendedTargetAmount)
-                .getAppearanceSpannable(ctx, R.style.title2, nickname, formattedAmount)
+            getString(
+                R.string.target_amount_recommended_water_goal,
+                nickname,
+                recommendedTargetAmount,
+            ).getAppearanceSpannable(ctx, R.style.title2, nickname, formattedAmount)
                 .getColoredSpannable(ctx, R.color.primary_200, nickname, formattedAmount)
     }
 
@@ -176,7 +183,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         with(binding) {
             tvComplete.isEnabled = isValid == true
             tvTargetAmountWarningMessage.isVisible = isValid == false
-            etInputGoal.backgroundTintList = ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
+            etInputGoal.backgroundTintList =
+                ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
         }
     }
 
@@ -220,11 +228,17 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
     private fun TargetAmountError.toMessageRes(): String =
         when (this) {
             TargetAmountError.BelowMinimum -> {
-                getString(R.string.setting_target_amount_warning_too_low, TargetAmount.TARGET_AMOUNT_MIN)
+                getString(
+                    R.string.setting_target_amount_warning_too_low,
+                    TargetAmount.TARGET_AMOUNT_MIN,
+                )
             }
 
             TargetAmountError.AboveMaximum -> {
-                getString(R.string.setting_target_amount_warning_too_high, TargetAmount.TARGET_AMOUNT_MAX)
+                getString(
+                    R.string.setting_target_amount_warning_too_high,
+                    TargetAmount.TARGET_AMOUNT_MAX,
+                )
             }
         }
 
