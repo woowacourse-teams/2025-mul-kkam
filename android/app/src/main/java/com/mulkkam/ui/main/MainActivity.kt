@@ -41,7 +41,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             switchFragment(MainTab.HOME)
         }
         handleNotificationEvent()
-        setupDoubleBackToExit()
+        initDoubleBackToExit()
         initObservers()
         loadDeviceId()
         requestNotificationPermission()
@@ -110,7 +110,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
     }
 
-    private fun setupDoubleBackToExit() {
+    private fun initDoubleBackToExit() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
@@ -190,14 +190,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                             binding.root,
                             getString(R.string.main_alarm_permission_granted),
                             R.drawable.ic_info_circle,
-                        ).show()
+                        ).apply { setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET) }
+                        .show()
                 } else {
                     CustomSnackBar
                         .make(
                             binding.root,
                             getString(R.string.main_alarm_permission_denied),
                             R.drawable.ic_info_circle,
-                        ).show()
+                        ).apply { setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET) }
+                        .show()
                 }
             }
         }
@@ -205,6 +207,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
+        const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
         private const val REQUEST_CODE_NOTIFICATION_PERMISSION: Int = 1001
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
         private val HEALTH_CONNECT_PERMISSIONS =

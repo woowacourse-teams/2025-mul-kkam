@@ -34,7 +34,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
 
             // when
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-            Long actual = oauthJwtTokenHandler.getSubject(token);
+            Long actual = oauthJwtTokenHandler.getAccountId(token);
 
             // then
             assertThat(actual).isEqualTo(oauthAccount.getId());
@@ -54,7 +54,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             // when
-            Long actual = oauthJwtTokenHandler.getSubject(token);
+            Long actual = oauthJwtTokenHandler.getAccountId(token);
 
             // then
             assertThat(actual).isEqualTo(oauthAccount.getId());
@@ -67,7 +67,7 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             String invalidToken = "invalidToken";
 
             // when & then
-            assertThatThrownBy(() -> oauthJwtTokenHandler.getSubject(invalidToken))
+            assertThatThrownBy(() -> oauthJwtTokenHandler.getAccountId(invalidToken))
                     .isInstanceOf(InvalidTokenException.class);
         }
     }

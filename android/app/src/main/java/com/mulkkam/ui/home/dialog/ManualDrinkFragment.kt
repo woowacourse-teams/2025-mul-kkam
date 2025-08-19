@@ -8,6 +8,7 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ManualDrinkFragment :
@@ -24,6 +25,7 @@ class ManualDrinkFragment :
 
         initClickListeners()
         initChips()
+        initDoneListener()
     }
 
     private fun initClickListeners() {
@@ -39,6 +41,10 @@ class ManualDrinkFragment :
                 dismiss()
             }
         }
+    }
+
+    private fun initDoneListener() {
+        binding.etAmount.setOnImeActionDoneListener()
     }
 
     private fun initChips() {
