@@ -20,7 +20,7 @@ class WorkerFactory(
     ): ListenableWorker? =
         when (workerClassName) {
             CalorieWorker::class.java.name -> CalorieWorker(appContext, workerParameters, healthRepository, notificationRepository)
-            ProgressWidgetWorker::class.java.name -> ProgressWidgetWorker(appContext, workerParameters, membersRepository)
+            ProgressCheckWorker::class.java.name -> ProgressCheckWorker(appContext, workerParameters, membersRepository)
             else -> null
         }
 }
