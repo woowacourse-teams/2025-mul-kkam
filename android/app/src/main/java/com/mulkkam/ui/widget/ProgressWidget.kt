@@ -1,9 +1,11 @@
 package com.mulkkam.ui.widget
 
+import android.app.ActionBar.LayoutParams
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.graphics.Bitmap
+import android.view.View.MeasureSpec.EXACTLY
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.lifecycle.Observer
@@ -99,7 +101,7 @@ private fun createDonutBitmap(
 ): Bitmap {
     val donutView =
         GradientDonutChartView(context).apply {
-            layoutParams = android.view.ViewGroup.LayoutParams(width, height)
+            layoutParams = LayoutParams(width, height)
             setStroke(stroke)
             setBackgroundPaintColor(backgroundColor)
             setPaintColor(paintColor)
@@ -109,9 +111,9 @@ private fun createDonutBitmap(
 
     donutView.measure(
         android.view.View.MeasureSpec
-            .makeMeasureSpec(width, android.view.View.MeasureSpec.EXACTLY),
+            .makeMeasureSpec(width, EXACTLY),
         android.view.View.MeasureSpec
-            .makeMeasureSpec(height, android.view.View.MeasureSpec.EXACTLY),
+            .makeMeasureSpec(height, EXACTLY),
     )
     donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
 
