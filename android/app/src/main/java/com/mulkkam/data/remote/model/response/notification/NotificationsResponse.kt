@@ -9,7 +9,7 @@ data class NotificationsResponse(
     @SerialName("readNotificationResponses")
     val readNotificationResponses: List<ReadNotificationResponse>,
     @SerialName("nextCursor")
-    val nextCursor: Int?,
+    val nextCursor: Long?,
 )
 
 fun NotificationsResponse.toDomain(): List<Notification> = this.readNotificationResponses.map { it.toDomain() }
