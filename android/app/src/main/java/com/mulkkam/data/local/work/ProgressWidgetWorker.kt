@@ -32,6 +32,6 @@ class ProgressWidgetWorker(
         )
 
     companion object {
-        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "achievementRate"
+        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
     }
 }
