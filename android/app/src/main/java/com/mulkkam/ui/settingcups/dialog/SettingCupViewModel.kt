@@ -20,16 +20,16 @@ import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
 
 class SettingCupViewModel : ViewModel() {
-    private val _cup = MutableLiveData(EMPTY_CUP_UI_MODEL)
+    private val _cup: MutableLiveData<CupUiModel> = MutableLiveData(EMPTY_CUP_UI_MODEL)
     val cup: LiveData<CupUiModel> get() = _cup
 
-    private val _editType = MutableLiveData(SettingWaterCupEditType.ADD)
+    private val _editType: MutableLiveData<SettingWaterCupEditType> = MutableLiveData(SettingWaterCupEditType.ADD)
     val editType: LiveData<SettingWaterCupEditType> get() = _editType
 
-    private val _nicknameValidity = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    private val _nicknameValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val nicknameValidity: LiveData<MulKkamUiState<Unit>> get() = _nicknameValidity
 
-    private val _amountValidity = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    private val _amountValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
 
     private var originalCup: CupUiModel = EMPTY_CUP_UI_MODEL
