@@ -6,7 +6,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
+import androidx.lifecycle.Observer
 import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.data.local.work.ProgressWidgetWorker
@@ -31,20 +33,33 @@ fun updateProgressWidgetWithWorker(
     context: Context,
     appWidgetId: Int,
 ) {
-    val workManager = WorkManager.getInstance(context)
+    val workManager = WorkManager.getInstance(context.applicationContext)
     val workRequest = OneTimeWorkRequestBuilder<ProgressWidgetWorker>().build()
 
     workManager.enqueue(workRequest)
+    val liveData = workManager.getWorkInfoByIdLiveData(workRequest.id)
 
-    workManager
-        .getWorkInfoByIdLiveData(workRequest.id)
-        .observeForever { workInfo ->
-            workInfo?.takeIf { it.state.isFinished }?.let {
-                val achievementRate = it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
-                val appWidgetManager = AppWidgetManager.getInstance(context)
-                updateProgressWidget(context, appWidgetManager, appWidgetId, achievementRate)
+    val observer =
+        object : Observer<WorkInfo?> {
+            override fun onChanged(workInfo: WorkInfo?) {
+                workInfo?.takeIf { it.state.isFinished }?.let {
+                    val achievementRate =
+                        it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+
+                    val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
+                    updateProgressWidget(
+                        context.applicationContext,
+                        appWidgetManager,
+                        appWidgetId,
+                        achievementRate,
+                    )
+
+                    liveData.removeObserver(this)
+                }
             }
         }
+
+    liveData.observeForever(observer)
 }
 
 private fun updateProgressWidget(
@@ -57,7 +72,8 @@ private fun updateProgressWidget(
 
     val donutBitmap = createDonutBitmap(context, progress = progress)
 
-    val progressText = context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
+    val progressText =
+        context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
     views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
     views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
