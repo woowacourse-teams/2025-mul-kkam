@@ -2,6 +2,8 @@ package com.mulkkam.ui.main
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
+import android.appwidget.AppWidgetManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +25,8 @@ import com.mulkkam.ui.service.NotificationService
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.IntakeWidget
+import com.mulkkam.ui.widget.ProgressWidget
+import com.mulkkam.ui.widget.updateProgressWidgetWithWorker
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -167,6 +171,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     override fun onStop() {
         super.onStop()
         IntakeWidget.refresh(this)
+        updateProgressWidgets()
+    }
+
+    private fun updateProgressWidgets() {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val progressWidget = ComponentName(this, ProgressWidget::class.java)
+        val appWidgetIds = appWidgetManager.getAppWidgetIds(progressWidget)
+        appWidgetIds.forEach {
+            updateProgressWidgetWithWorker(this)
+        }
     }
 
     companion object {
