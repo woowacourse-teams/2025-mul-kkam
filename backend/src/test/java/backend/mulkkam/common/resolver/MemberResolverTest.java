@@ -1,18 +1,25 @@
 package backend.mulkkam.common.resolver;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.support.MemberFixtureBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.MethodParameter;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -21,8 +28,13 @@ import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
+import java.util.Optional;
+
 @ExtendWith(MockitoExtension.class)
 class MemberResolverTest {
+
+    @Mock
+    private OauthAccountRepository oauthAccountRepository;
 
     @InjectMocks
     private MemberResolver memberResolver;
@@ -36,12 +48,17 @@ class MemberResolverTest {
         void success_validToken() {
             // given
             String token = "test-token";
+            long accountId = 1L;
             long memberId = 1L;
+            Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
+            OauthAccount account = new OauthAccount(accountId, member, "oauthId", KAKAO);
 
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-            servletRequest.setAttribute("member_id", memberId);
+            servletRequest.setAttribute("account_id", accountId);
             servletRequest.addHeader("Authorization", "Bearer " + token);
             NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
+
+            when(oauthAccountRepository.findByIdWithMember(accountId)).thenReturn(Optional.of(account));
 
             // when
             MemberDetails result = memberResolver.resolveArgument(
@@ -58,7 +75,7 @@ class MemberResolverTest {
             });
         }
 
-        @DisplayName("토큰을 추출해 성공적으로 Member 를 반환한다")
+        @DisplayName("토큰에 멤버 정보가 없는 경우 예외가 발생한다.")
         @Test
         void error_didNotOnboarded() {
             // given
@@ -76,7 +93,7 @@ class MemberResolverTest {
                         webRequest,
                         mock(WebDataBinderFactory.class)
                 );
-            }).isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_MEMBER.name());
+            }).isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_OAUTH_ACCOUNT.name());
         }
     }
 }
