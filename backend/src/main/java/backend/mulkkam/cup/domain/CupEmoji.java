@@ -21,4 +21,8 @@ public class CupEmoji {
 
     @Column(name = "url", nullable = false)
     private String url;
+
+    public CupEmoji(String url) {
+        this.url = url;
+    }
 }
