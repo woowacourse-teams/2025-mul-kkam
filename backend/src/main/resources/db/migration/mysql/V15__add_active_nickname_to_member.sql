@@ -6,4 +6,7 @@ ALTER TABLE member
     ADD COLUMN nickname VARCHAR(10) NOT NULL;
 
 ALTER TABLE member
-    ADD COLUMN active_nickname VARCHAR(50) NULL UNIQUE;
+    ADD COLUMN active_nickname VARCHAR(50) NULL;
+
+ALTER TABLE member
+    ADD CONSTRAINT uk_member_active_nickname UNIQUE (active_nickname);
