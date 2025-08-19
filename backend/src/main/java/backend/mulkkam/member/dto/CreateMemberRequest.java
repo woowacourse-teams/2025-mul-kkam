@@ -34,7 +34,8 @@ public record CreateMemberRequest(
                 new PhysicalAttributes(gender, weight),
                 new TargetAmount(targetIntakeAmount),
                 isMarketingNotificationAgreed,
-                isMarketingNotificationAgreed
+                isMarketingNotificationAgreed,
+                memberNickname
         );
     }
 }
