@@ -35,7 +35,7 @@ public record CreateMemberRequest(
                 new TargetAmount(targetIntakeAmount),
                 isMarketingNotificationAgreed,
                 isMarketingNotificationAgreed,
-                new MemberNickname(memberNickname)
+                memberNickname
         );
     }
 }

@@ -33,7 +33,7 @@ public class Member extends BaseEntity {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", nullable = false, unique = true, length = MemberNickname.MAX_LENGTH)
+            column = @Column(name = "nickname", unique = false, nullable = false, length = MemberNickname.MAX_LENGTH)
     )
     private MemberNickname memberNickname;
 
@@ -50,12 +50,8 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private boolean isNightNotificationAgreed;
 
-    @Embedded
-    @AttributeOverride(
-            name = "value",
-            column = @Column(name = "active_nickname", nullable = false, unique = true, length = MemberNickname.MAX_LENGTH)
-    )
-    private MemberNickname activeNickname;
+    @Column(nullable = true, unique = true)
+    private String activeNickname;
 
     public Member(
             MemberNickname memberNickname,
@@ -63,7 +59,7 @@ public class Member extends BaseEntity {
             TargetAmount targetAmount,
             boolean isMarketingNotificationAgreed,
             boolean isNightNotificationAgreed,
-            MemberNickname activeNickname
+            String activeNickname
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
@@ -82,6 +78,7 @@ public class Member extends BaseEntity {
 
     public void updateNickname(MemberNickname memberNickname) {
         this.memberNickname = memberNickname;
+        this.activeNickname = memberNickname.value();
     }
 
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {
@@ -102,6 +99,10 @@ public class Member extends BaseEntity {
 
     public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+    }
+
+    public void updateActiveNickname(String activeNickname) {
+        this.activeNickname = activeNickname;
     }
 
     @Override

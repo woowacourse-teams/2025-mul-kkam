@@ -1,4 +1,3 @@
-DROP INDEX IF EXISTS nickname ON member;
-
+ALTER TABLE member DROP CONSTRAINT IF EXISTS nickname;
 ALTER TABLE member
-    ADD COLUMN active_nickname VARCHAR(50);
+    ADD COLUMN active_nickname VARCHAR(50) NULL UNIQUE;

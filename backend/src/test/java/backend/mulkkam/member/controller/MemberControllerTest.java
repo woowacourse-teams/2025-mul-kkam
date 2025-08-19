@@ -4,6 +4,7 @@ import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -321,6 +322,43 @@ class MemberControllerTest {
                 assertThat(intakeHistoryDetailRepository.findAll()).isEmpty();
             });
         }
+
+        @DisplayName("삭제된 멤버의 닉네임으로 저장이 가능하다.")
+        @Test
+        void success_whenNicknameCanBeNicknameOfDeletedMember() throws Exception {
+            // given
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("체체"))
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            OauthAccount oauthAccount = new OauthAccount(savedMember, "temp", OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
+            AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
+                    .withOauthAccount(oauthAccount)
+                    .build();
+            accountRefreshTokenRepository.save(accountRefreshToken);
+
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+            // when
+            mockMvc.perform(delete("/members")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk());
+
+            Member otherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("체체"))
+                    .build();
+
+            // then
+            assertSoftly(softAssertions -> {
+                assertThatCode(() -> memberRepository.save(otherMember))
+                        .doesNotThrowAnyException();
+            });
+        }
     }
 
     @DisplayName("회원 닉네임 중복 검사 할 때에")
@@ -369,6 +407,4 @@ class MemberControllerTest {
             });
         }
     }
-
-
 }

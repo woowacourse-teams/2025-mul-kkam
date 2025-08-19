@@ -15,7 +15,7 @@ public class MemberFixtureBuilder {
     private TargetAmount targetAmount;
     private boolean isMarketingNotificationAgreed;
     private boolean isNightNotificationAgreed;
-    private MemberNickname activeNickname;
+    private String activeNickname;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
@@ -25,7 +25,7 @@ public class MemberFixtureBuilder {
         this.targetAmount = new TargetAmount(1_000);
         this.isMarketingNotificationAgreed = false;
         this.isNightNotificationAgreed = false;
-        this.activeNickname = new MemberNickname("히로");
+        this.activeNickname = "히로";
     }
 
     public static MemberFixtureBuilder builder() {
@@ -34,7 +34,7 @@ public class MemberFixtureBuilder {
 
     public MemberFixtureBuilder memberNickname(MemberNickname memberNickname) {
         this.memberNickname = memberNickname;
-        this.activeNickname = memberNickname;
+        this.activeNickname = memberNickname.value();
         return this;
     }
 
