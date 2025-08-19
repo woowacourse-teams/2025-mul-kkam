@@ -1,18 +1,27 @@
-name: backend-prod-cd.yml
+name: backend-prod-cd
 
 on:
-  push:
-    tags:
-      - 'v*.*.*'
+  pull_request:
+    branches:
+      - 'release/v*.*.*'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Derive version from branch
+        id: ver
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"
+          VERSION="${BRANCH#release/}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
@@ -45,12 +54,13 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.ref_name }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ steps.ver.outputs.version }}
 
   deploy:
     runs-on: [ self-hosted, linux, prod ]
     needs: build-and-push
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
     steps:
       - name: Stop and remove existing container
         run: |
@@ -59,12 +69,10 @@ jobs:
             docker rm -f backend-app
           fi
 
-      - name: Pull latest image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-
       - name: Create .env file
         run: |
           cat <<EOF > ~/mulkkam/.env
+          IMAGE_TAG=${IMAGE_TAG}
           PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
           PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
           PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
