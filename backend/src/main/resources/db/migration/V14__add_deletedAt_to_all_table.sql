@@ -48,7 +48,3 @@ ALTER TABLE suggestion_notification
 
 ALTER TABLE suggestion_notification
     ADD COLUMN deleted_at datetime NULL;
-
-ALTER TABLE suggestion_notification
-    ADD COLUMN IF NOT EXISTS recommended_target_amount INT NULL;
-
