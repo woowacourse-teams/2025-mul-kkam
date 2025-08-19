@@ -2,10 +2,7 @@ package backend.mulkkam.notification.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -43,10 +40,6 @@ public class Notification extends BaseEntity {
 
     @Column(nullable = false)
     private boolean isRead;
-
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "recommended_target_amount"))
-    private TargetAmount recommendedTargetAmount;
 
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
