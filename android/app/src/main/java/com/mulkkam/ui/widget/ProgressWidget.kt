@@ -1,22 +1,18 @@
 package com.mulkkam.ui.widget
 
-import android.app.ActionBar.LayoutParams
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.view.View.MeasureSpec.EXACTLY
 import android.widget.RemoteViews
-import androidx.annotation.ColorRes
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.data.local.work.ProgressWidgetWorker
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.util.ViewBitmapCapture
+import com.mulkkam.ui.util.extensions.dpToPx
 
 class ProgressWidget : AppWidgetProvider() {
     override fun onReceive(
@@ -76,7 +72,7 @@ private fun updateProgressWidget(
     val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
 
     val donutBitmap =
-        createDonutBitmap(
+        GradientDonutChartView.createBitmap(
             context,
             width = 78.dpToPx(context),
             height = 78.dpToPx(context),
@@ -93,36 +89,3 @@ private fun updateProgressWidget(
 
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }
-
-private fun createDonutBitmap(
-    context: Context,
-    width: Int,
-    height: Int,
-    stroke: Float,
-    progress: Float,
-    @ColorRes backgroundColor: Int = R.color.gray_10,
-    @ColorRes paintColor: Int = R.color.primary_50,
-): Bitmap {
-    val donutView =
-        GradientDonutChartView(context).apply {
-            layoutParams = LayoutParams(width, height)
-            setStroke(stroke)
-            setBackgroundPaintColor(backgroundColor)
-            setPaintColor(paintColor)
-            setProgress(progress)
-            invalidate()
-        }
-
-    donutView.measure(
-        android.view.View.MeasureSpec
-            .makeMeasureSpec(width, EXACTLY),
-        android.view.View.MeasureSpec
-            .makeMeasureSpec(height, EXACTLY),
-    )
-    donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
-
-    return ViewBitmapCapture.snapshot(donutView)
-}
-
-// TODO: 공백의 개쩌는 확장함수 분리 필요
-private fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
