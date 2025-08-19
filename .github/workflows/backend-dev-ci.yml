@@ -86,21 +86,24 @@ jobs:
           has_violation=0
 
           for f in "${FILES[@]}"; do
-            # ALLOW 태그가 있으면 스킵 (원하면 여기 정책을 CI용으로 바꿔서 무시 가능)
             if grep -qE '^\s*--\s*ALLOW_DROP\b' "$f"; then
-              echo "[ALLOW] $f has ALLOW_DROP tag. Skipping."
-              continue
+            echo "[ALLOW] $f has ALLOW_DROP tag. Skipping."
+            continue
             fi
-
-            # 주석 제거(--, /* */) 후 DROP 탐지
+          
+            # 주석 제거(--, /* */)
             stripped="$(sed -E 's/--.*$//; :a; /\/\*/{N; /\*\//!ba; s/\/\*[^*]*\*+([^/*][^*]*\*+)*\///g}' "$f")"
-
-            if echo "$stripped" | grep -qiE '\bdrop\b\s+(table|index|constraint|column|view|sequence)?\b'; then
-              echo "::error file=$f,line=1::[DROP DETECTED] $f"
-              has_violation=1
+          
+            # 줄바꿈을 공백으로 바꿔서 한 줄로 합침
+            one_line="$(echo "$stripped" | tr '\n' ' ')"
+          
+            if echo "$one_line" | grep -qiE '\bdrop\b\s+(table|index|constraint|column|view|sequence)\b'; then
+            echo "::error file=$f,line=1::[DROP DETECTED] $f"
+            has_violation=1
             fi
           done
-
+            
+  
           if [ "$has_violation" -ne 0 ]; then
             echo "[FAIL] DROP detected in changed migration files."
             exit 1
