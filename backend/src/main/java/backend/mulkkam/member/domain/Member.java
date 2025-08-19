@@ -33,7 +33,7 @@ public class Member extends BaseEntity {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", unique = false, nullable = false, length = MemberNickname.MAX_LENGTH)
+            column = @Column(name = "nickname", nullable = false, length = MemberNickname.MAX_LENGTH)
     )
     private MemberNickname memberNickname;
 
