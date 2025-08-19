@@ -48,10 +48,3 @@ ALTER TABLE suggestion_notification
 
 ALTER TABLE suggestion_notification
     ADD COLUMN deleted_at datetime NULL;
-
-ALTER TABLE suggestion_notification
-    ADD COLUMN test datetime NULL;
-
-ALTER TABLE suggestion_notification
-DROP
-COLUMN test;
