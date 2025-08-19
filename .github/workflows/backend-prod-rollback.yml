@@ -52,6 +52,8 @@ jobs:
           sleep 5
           docker ps --filter "name=backend-app"
 
+          curl -fsS http://localhost/actuator/health | cat
+
           for i in $(seq 1 3); do
           if curl -fsS http://localhost/actuator/health >/dev/null; then
               echo "Health check passed (attempt $i)"

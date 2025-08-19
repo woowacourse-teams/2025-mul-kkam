@@ -85,15 +85,7 @@ public class MemberService {
         if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
-            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
-        }
-    }
-
-    public void validateDuplicateNickname(String nickname) {
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
-            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
-        }
+        validateDuplicateNickname(nickname);
     }
 
     @Transactional
@@ -102,7 +94,15 @@ public class MemberService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
+        validateDuplicateNickname(memberNicknameModifyRequest.memberNickname());
+
         member.updateNickname(memberNicknameModifyRequest.toMemberNickname());
+    }
+
+    public void validateDuplicateNickname(String nickname) {
+        if (memberRepository.existsByActiveNickname(nickname)) {
+            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
+        }
     }
 
     public MemberNicknameResponse getNickname(MemberDetails memberDetails) {
@@ -134,6 +134,7 @@ public class MemberService {
         boolean finishedOnboarding = oauthAccount.finishedOnboarding();
         return new OnboardingStatusResponse(finishedOnboarding);
     }
+
     public ProgressInfoResponse getProgressInfo(
             MemberDetails memberDetails,
             LocalDate date
