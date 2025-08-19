@@ -37,7 +37,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             switchFragment(MainTab.HOME)
         }
         handleNotificationEvent()
-        setupDoubleBackToExit()
+        initDoubleBackToExit()
         initObservers()
         loadDeviceId()
 
@@ -105,7 +105,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
     }
 
-    private fun setupDoubleBackToExit() {
+    private fun initDoubleBackToExit() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
