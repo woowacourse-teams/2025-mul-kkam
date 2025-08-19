@@ -6,9 +6,13 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import com.mulkkam.R
+import com.mulkkam.data.local.work.ProgressWidgetWorker
+import com.mulkkam.data.local.work.ProgressWidgetWorker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.splash.SplashActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
 
 class ProgressWidget : AppWidgetProvider() {
@@ -18,22 +22,46 @@ class ProgressWidget : AppWidgetProvider() {
         appWidgetIds: IntArray,
     ) {
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            updateProgressWidgetWithWorker(context, appWidgetId)
         }
     }
+}
+
+fun updateProgressWidgetWithWorker(
+    context: Context,
+    appWidgetId: Int,
+) {
+    val workManager = WorkManager.getInstance(context)
+    val workRequest = OneTimeWorkRequestBuilder<ProgressWidgetWorker>().build()
+
+    workManager.enqueue(workRequest)
+
+    workManager
+        .getWorkInfoByIdLiveData(workRequest.id)
+        .observeForever { workInfo ->
+            workInfo?.takeIf { it.state.isFinished }?.let {
+                val achievementRate = it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+                val appWidgetManager = AppWidgetManager.getInstance(context)
+                updateAppWidget(context, appWidgetManager, appWidgetId, achievementRate)
+            }
+        }
 }
 
 internal fun updateAppWidget(
     context: Context,
     appWidgetManager: AppWidgetManager,
     appWidgetId: Int,
+    progress: Float = 0f,
 ) {
-    val views = RemoteViews(context.packageName, R.layout.progress_widget)
+    val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
 
-    val donutBitmap = createDonutBitmap(context, progress = 90f)
+    val donutBitmap = createDonutBitmap(context, progress = progress)
+
+    val progressText = "${progress.toInt()}%"
+    views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
     views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
-    views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
+    views.setOnClickPendingIntent(R.id.main, SplashActivity.newPendingIntent(context))
 
     appWidgetManager.updateAppWidget(appWidgetId, views)
 }

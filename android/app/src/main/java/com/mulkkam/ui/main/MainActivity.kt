@@ -2,7 +2,6 @@ package com.mulkkam.ui.main
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -218,8 +217,5 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             )
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
-
-        fun newPendingIntent(context: Context): PendingIntent =
-            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }
