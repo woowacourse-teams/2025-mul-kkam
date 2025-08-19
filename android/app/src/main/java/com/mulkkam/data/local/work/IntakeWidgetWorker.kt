@@ -18,15 +18,13 @@ class IntakeWidgetWorker(
         runCatching {
             val progress = membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
             val cups = cupsRepository.getCups().getOrError()
-
-            val primaryCup = cups.cups.firstOrNull()
-            val primaryCupAmount = primaryCup?.amount?.value ?: 0
+            val cupAmount = cups.representCup?.amount?.value ?: 0
 
             workDataOf(
                 KEY_OUTPUT_ACHIEVEMENT_RATE to progress.achievementRate,
                 KEY_OUTPUT_TARGET to progress.targetAmount,
                 KEY_OUTPUT_TOTAL to progress.totalAmount,
-                KEY_OUTPUT_PRIMARY_CUP_AMOUNT to primaryCupAmount,
+                KEY_OUTPUT_PRIMARY_CUP_AMOUNT to cupAmount,
             )
         }.fold(
             onSuccess = { Result.success(it) },
