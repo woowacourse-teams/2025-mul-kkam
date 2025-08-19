@@ -2,7 +2,6 @@ package backend.mulkkam.averageTemperature.dto;
 
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
@@ -14,7 +13,6 @@ public record CreateTokenNotificationRequest(
         Member member,
         Action action,
         NotificationType notificationType,
-        Amount recommendedTargetAmount,
         LocalDateTime createdAt
 ) {
 
@@ -32,7 +30,6 @@ public record CreateTokenNotificationRequest(
                 notificationType,
                 body,
                 createdAt,
-                recommendedTargetAmount,
                 member
         );
     }

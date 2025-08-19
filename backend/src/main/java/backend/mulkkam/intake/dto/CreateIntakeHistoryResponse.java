@@ -3,7 +3,7 @@ package backend.mulkkam.intake.dto;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(description = "음수량 기록 생성 응답")
+@Schema(description = "음용량 기록 생성 응답")
 public record CreateIntakeHistoryResponse(
         @Parameter(description = "목표 달성률", example = "50.0")
         double achievementRate,

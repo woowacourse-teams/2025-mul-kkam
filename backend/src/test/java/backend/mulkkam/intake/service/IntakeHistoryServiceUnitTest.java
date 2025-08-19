@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_AMOUNT;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
@@ -10,11 +10,13 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
 import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
@@ -23,6 +25,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -32,6 +35,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
@@ -73,9 +77,12 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_amountMoreThan0() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = 500;
             IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
@@ -84,13 +91,13 @@ class IntakeHistoryServiceUnitTest {
             );
 
             // when
-            intakeHistoryService.create(request, member);
+            intakeHistoryService.create(request, new MemberDetails(member));
 
             // then
             verify(intakeHistoryRepository).save(any(IntakeHistory.class));
         }
 
-        @DisplayName("용량이 음수인 경우 예외가 발생한다")
+        @DisplayName("용량이 음용인 경우 예외가 발생한다")
         @Test
         void error_amountIsLessThan0() {
             // given
@@ -98,6 +105,8 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = -1;
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
@@ -114,9 +123,9 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.ofNullable(intakeHistory));
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, member))
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_AMOUNT.name());
+                    .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
             verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
         }
@@ -126,13 +135,17 @@ class IntakeHistoryServiceUnitTest {
     @Nested
     class ReadSummaryOfIntakeHistories {
 
-        @DisplayName("날짜별 음수량 요약 기록이 날짜 순으로 반환된다")
+        @DisplayName("날짜별 음용량 요약 기록이 날짜 순으로 반환된다")
         @Test
         void success_containsOnlyInDateRange() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .buildWithId(1L);
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+
             given(targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(eq(member.getId()),
                     any(LocalDate.class)))
                     .willReturn(Optional.of(1500));
@@ -146,17 +159,17 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(
@@ -173,7 +186,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -183,7 +196,7 @@ class IntakeHistoryServiceUnitTest {
             assertThat(dates).isSorted();
         }
 
-        @DisplayName("같은 날짜에 대한 음수량 기록이 날짜 순으로 반환된다")
+        @DisplayName("같은 날짜에 대한 음용량 기록이 날짜 순으로 반환된다")
         @Test
         void success_orderByDateAscInSummaryResponses() {
             // given
@@ -191,6 +204,8 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -235,7 +250,7 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
@@ -245,7 +260,7 @@ class IntakeHistoryServiceUnitTest {
                     .toList();
 
             assertSoftly(softly -> {
-                softly.assertThat(dateTimes).isSorted();
+                softly.assertThat(dateTimes).isSortedAccordingTo(Comparator.reverseOrder());
                 softly.assertThat(dateTimes).hasSize(4);
             });
         }
@@ -254,9 +269,12 @@ class IntakeHistoryServiceUnitTest {
         @Test
         void success_calculateAchievementRate() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(1_500))
-                    .buildWithId(1L);
+                    .targetAmount(new TargetAmount(2_000))
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -269,31 +287,31 @@ class IntakeHistoryServiceUnitTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fifthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(14, 0))
-                    .intakeAmount(new Amount(100))
+                    .intakeAmount(new IntakeAmount(200))
                     .build();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(List.of(
@@ -312,21 +330,24 @@ class IntakeHistoryServiceUnitTest {
                             startDate,
                             endDate
                     ),
-                    member
+                    new MemberDetails(member)
             );
 
             // then
             assertThat(actual.getFirst().achievementRate())
-                    .isCloseTo(50.0, within(0.01));
+                    .isCloseTo(100.0, within(0.01));
         }
 
         @DisplayName("전체 음용량이 정상적으로 계산된다")
         @Test
         void success_calculateTotalIntakeAmount() {
             // given
+            Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new Amount(1_000))
-                    .buildWithId(1L);
+                    .targetAmount(new TargetAmount(1_000))
+                    .buildWithId(memberId);
+
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -338,17 +359,17 @@ class IntakeHistoryServiceUnitTest {
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .intakeAmount(new Amount(500))
+                    .intakeAmount(new IntakeAmount(500))
                     .build();
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
@@ -359,7 +380,7 @@ class IntakeHistoryServiceUnitTest {
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(startDate, endDate),
-                    member
+                    new MemberDetails(member)
             );
 
             // then

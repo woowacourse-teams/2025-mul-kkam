@@ -1,0 +1,70 @@
+name: backend-prod-rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release tag to deploy (e.g., v1.2.3)"
+        required: true
+        type: string
+
+jobs:
+  redeploy:
+    runs-on: [self-hosted, linux, prod]
+    env:
+      IMAGE_TAG: ${{ inputs.version }}
+    steps:
+      - name: Ensure image exists in registry
+        run: |
+          docker manifest inspect ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${IMAGE_TAG} >/dev/null \
+            || { echo "Image mulkkam-prod:${IMAGE_TAG} not found"; exit 1; }
+
+      - name: Create .env with IMAGE_TAG
+        run: |
+          cat <<EOF > ~/mulkkam/.env
+          IMAGE_TAG=${IMAGE_TAG}
+          PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
+          PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
+          PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
+          LOG_PATH=${{ secrets.LOG_PATH }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
+          REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}
+          FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}
+          FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}
+          OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
+          SPRING_PROFILES_ACTIVE=prod
+          EOF
+          echo "Rollback IMAGE_TAG=${IMAGE_TAG}"
+
+      - name: Pull target image
+        working-directory: /home/ubuntu/mulkkam
+        run: sudo docker compose pull backend-app
+
+      - name: Restart service with target version
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          sudo docker compose stop backend-app || true
+          sudo docker compose up -d backend-app
+
+      - name: Smoke check (3 tries / 5s interval)
+        run: |
+          sleep 5
+          docker ps --filter "name=backend-app"
+
+          curl -fsS http://localhost/actuator/health | cat
+
+          for i in $(seq 1 3); do
+          if curl -fsS http://localhost/actuator/health >/dev/null; then
+              echo "Health check passed (attempt $i)"
+              exit 0
+          else
+              echo "Health check failed (attempt $i)"
+          fi
+
+          if [ "$i" -lt 3 ]; then
+              sleep 5
+          fi
+          done
+
+          exit 1

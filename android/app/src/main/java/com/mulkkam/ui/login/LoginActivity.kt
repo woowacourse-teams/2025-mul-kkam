@@ -3,7 +3,6 @@ package com.mulkkam.ui.login
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import com.kakao.sdk.auth.model.OAuthToken
@@ -12,11 +11,14 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
-import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.model.AppAuthState.ACTIVE_USER
-import com.mulkkam.ui.model.AppAuthState.UNONBOARDED
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.UserAuthState
+import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
+import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -30,7 +32,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         super.onCreate(savedInstanceState)
         initClickListeners()
         initObservers()
-        setupDoubleBackToExit()
+        initDoubleBackToExit()
     }
 
     private fun initClickListeners() {
@@ -49,14 +51,15 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
 
     private fun loginWithKakaoTalk() {
         UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
-            if (error != null) {
-                Log.e("[Login Error]", "카카오톡으로 로그인 실패", error)
-                if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                    return@loginWithKakaoTalk
+            when {
+                error is ClientError && error.reason == ClientErrorCause.Cancelled -> Unit
+
+                error != null -> {
+                    mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
+                    loginWithKakaoAccount()
                 }
-                loginWithKakaoAccount()
-            } else {
-                handleKakaoLoginResult(token)
+
+                else -> handleKakaoLoginResult(token)
             }
         }
     }
@@ -64,7 +67,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     private fun loginWithKakaoAccount() {
         UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
             if (error != null) {
-                Log.e("[Login Error]", "카카오 계정으로 로그인 실패", error)
+                mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
             } else {
                 handleKakaoLoginResult(token)
             }
@@ -78,19 +81,36 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun initObservers() {
-        viewModel.authState.observe(this) { authState ->
-            val intent =
-                when (authState) {
-                    UNONBOARDED -> OnboardingActivity.newIntent(this@LoginActivity)
-                    ACTIVE_USER -> MainActivity.newIntent(this@LoginActivity)
-                    else -> throw MulKkamError.NotFoundError.Member
-                }
-
-            startActivity(intent)
+        viewModel.authUiState.observe(this) { authUiState ->
+            handleAuthUiState(authUiState)
         }
     }
 
-    private fun setupDoubleBackToExit() {
+    private fun handleAuthUiState(authUiState: MulKkamUiState<UserAuthState>) {
+        when (authUiState) {
+            is MulKkamUiState.Success<UserAuthState> -> {
+                navigateToNextScreen(authUiState)
+            }
+
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+            }
+        }
+    }
+
+    private fun navigateToNextScreen(authUiState: MulKkamUiState.Success<UserAuthState>) {
+        val intent =
+            when (authUiState.data) {
+                UNONBOARDED -> OnboardingActivity.newIntent(this)
+                ACTIVE_USER -> MainActivity.newIntent(this)
+            }
+        startActivity(intent)
+        finish()
+    }
+
+    private fun initDoubleBackToExit() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {

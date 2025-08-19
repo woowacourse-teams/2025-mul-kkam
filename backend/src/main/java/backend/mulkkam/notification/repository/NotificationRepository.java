@@ -2,12 +2,13 @@ package backend.mulkkam.notification.repository;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
@@ -15,13 +16,15 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
     SELECT n
     FROM Notification n
+    LEFT JOIN fetch SuggestionNotification s
+    ON n.id = s.id
     WHERE n.id < :lastId
       AND n.createdAt >= :limitStartDateTime
-      AND n.member = :member
+      AND n.member.id = :memberId
     ORDER BY n.id DESC
     """)
     List<Notification> findByCursor(
-            Member member,
+            Long memberId,
             Long lastId,
             LocalDateTime limitStartDateTime,
             Pageable pageable
@@ -30,13 +33,21 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
     SELECT n
     FROM Notification n
+    LEFT JOIN fetch SuggestionNotification s
+    ON n.id = s.id
     WHERE n.createdAt >= :limitStartDateTime
-      AND n.member = :member
+    AND n.member.id = :memberId
     ORDER BY n.id DESC
     """)
     List<Notification> findLatest(
-            Member member,
+            Long memberId,
             LocalDateTime limitStartDateTime,
             Pageable pageable
     );
+
+    void deleteByMember(Member member);
+
+    long countByIsReadFalseAndMemberId(Long memberId);
+
+    List<Notification> findAllByMember(Member member);
 }

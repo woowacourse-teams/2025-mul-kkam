@@ -1,10 +1,10 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.intake.domain.vo.Amount;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 
 public class MemberFixtureBuilder {
 
@@ -12,18 +12,20 @@ public class MemberFixtureBuilder {
     private Gender gender;
     private Double weight;
     private PhysicalAttributes physicalAttributes;
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
     private boolean isMarketingNotificationAgreed;
     private boolean isNightNotificationAgreed;
+    private String activeNickname;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
         this.gender = Gender.FEMALE;
         this.weight = 50.2;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);
-        this.targetAmount = new Amount(1_000);
+        this.targetAmount = new TargetAmount(1_000);
         this.isMarketingNotificationAgreed = false;
         this.isNightNotificationAgreed = false;
+        this.activeNickname = "히로";
     }
 
     public static MemberFixtureBuilder builder() {
@@ -32,6 +34,7 @@ public class MemberFixtureBuilder {
 
     public MemberFixtureBuilder memberNickname(MemberNickname memberNickname) {
         this.memberNickname = memberNickname;
+        this.activeNickname = memberNickname.value();
         return this;
     }
 
@@ -47,7 +50,7 @@ public class MemberFixtureBuilder {
         return this;
     }
 
-    public MemberFixtureBuilder targetAmount(Amount targetAmount) {
+    public MemberFixtureBuilder targetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
         return this;
     }
@@ -68,7 +71,8 @@ public class MemberFixtureBuilder {
                 this.physicalAttributes,
                 this.targetAmount,
                 this.isMarketingNotificationAgreed,
-                this.isNightNotificationAgreed
+                this.isNightNotificationAgreed,
+                this.activeNickname
         );
     }
 
@@ -79,7 +83,8 @@ public class MemberFixtureBuilder {
                 this.physicalAttributes,
                 this.targetAmount,
                 this.isMarketingNotificationAgreed,
-                this.isNightNotificationAgreed
+                this.isNightNotificationAgreed,
+                this.activeNickname
         );
     }
 }

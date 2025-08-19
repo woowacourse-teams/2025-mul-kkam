@@ -11,6 +11,7 @@ import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
 
@@ -35,40 +36,7 @@ public class OauthJwtTokenHandler {
                 .build();
     }
 
-    public String createAccessToken(OauthAccount account) {
-        Claims claims = generateClaims(account);
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + accessExpireInMilliseconds);
-        return Jwts.builder()
-                .claims(claims)
-                .issuedAt(now)
-                .expiration(validity)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
-    }
-
-    public String createRefreshToken(OauthAccount account) {
-        Claims claims = generateClaims(account);
-
-        Date now = new Date();
-        Date validity = new Date(now.getTime() + refreshExpireInMilliseconds);
-        return Jwts.builder()
-                .claims(claims)
-                .issuedAt(now)
-                .expiration(validity)
-                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
-                .compact();
-    }
-
-    private Claims generateClaims(OauthAccount account) {
-        return Jwts.claims()
-                .subject(account.getId().toString())
-                .id(UUID.randomUUID().toString())
-                .build();
-    }
-
-    public Long getSubject(String token) {
+    public Long getAccountId(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
             return Long.parseLong(claims.getSubject());
@@ -77,11 +45,57 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    private Claims getClaims(String token) {
+    public @Nullable Long getMemberId(String token) throws InvalidTokenException {
+        try {
+            Claims claims = getClaims(token);
+            return claims.get("memberId", Long.class);
+        } catch (NumberFormatException e) {
+            throw new InvalidTokenException();
+        }
+    }
+
+    private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
         } catch (JwtException | IllegalArgumentException e) {
             throw new InvalidTokenException();
         }
+    }
+
+    public String createAccessToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + accessExpireInMilliseconds);
+        return getCompactedJwt(claims, now, validity);
+    }
+
+    public String createRefreshToken(OauthAccount account) {
+        Claims claims = generateClaims(account);
+
+        Date now = new Date();
+        Date validity = new Date(now.getTime() + refreshExpireInMilliseconds);
+        return getCompactedJwt(claims, now, validity);
+    }
+
+    private Claims generateClaims(OauthAccount account) {
+        Long memberId = null;
+        if (account.finishedOnboarding()) {
+            memberId = account.getMember().getId();
+        }
+        return Jwts.claims()
+                .subject(account.getId().toString())
+                .id(UUID.randomUUID().toString())
+                .add("memberId", memberId)
+                .build();
+    }
+
+    private String getCompactedJwt(Claims claims, Date now, Date validity) {
+        return Jwts.builder()
+                .claims(claims)
+                .issuedAt(now)
+                .expiration(validity)
+                .signWith(Keys.hmacShaKeyFor(secretKey.getBytes()))
+                .compact();
     }
 }

@@ -1,8 +1,8 @@
 package backend.mulkkam.member.controller;
 
-import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
@@ -11,6 +11,7 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -20,9 +21,9 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
 
 @Tag(name = "회원", description = "회원 관리 API")
 @RequiredArgsConstructor
@@ -45,9 +48,9 @@ public class MemberController {
     @GetMapping
     public ResponseEntity<MemberResponse> get(
             @Parameter(hidden = true)
-            Member member
+            MemberDetails memberDetails
     ) {
-        MemberResponse memberResponse = memberService.get(member);
+        MemberResponse memberResponse = memberService.get(memberDetails);
         return ResponseEntity.ok(memberResponse);
     }
 
@@ -60,12 +63,12 @@ public class MemberController {
     @PostMapping("/physical-attributes")
     public ResponseEntity<Void> modifyPhysicalAttributes(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody PhysicalAttributesModifyRequest physicalAttributesModifyRequest
     ) {
         memberService.modifyPhysicalAttributes(
                 physicalAttributesModifyRequest,
-                member
+                memberDetails
         );
         return ResponseEntity.ok().build();
     }
@@ -85,13 +88,13 @@ public class MemberController {
     @GetMapping("/nickname/validation")
     public ResponseEntity<Void> checkForDuplicates(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "검사할 닉네임", required = true, example = "밍곰")
             @RequestParam String nickname
     ) {
         memberService.validateDuplicateNickname(
                 nickname,
-                member
+                memberDetails
         );
         return ResponseEntity.ok().build();
     }
@@ -108,11 +111,11 @@ public class MemberController {
     @PatchMapping("/nickname")
     public ResponseEntity<Void> modifyNickname(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody MemberNicknameModifyRequest memberNicknameModifyRequest
     ) {
         // TODO: 닉네임 중복 검사 추가 - 409 status
-        memberService.modifyNickname(memberNicknameModifyRequest, member);
+        memberService.modifyNickname(memberNicknameModifyRequest, memberDetails);
         return ResponseEntity.ok().build();
     }
 
@@ -122,9 +125,9 @@ public class MemberController {
     @GetMapping("/nickname")
     public ResponseEntity<MemberNicknameResponse> getNickname(
             @Parameter(hidden = true)
-            Member member
+            MemberDetails memberDetails
     ) {
-        MemberNicknameResponse memberNicknameResponse = memberService.getNickname(member);
+        MemberNicknameResponse memberNicknameResponse = memberService.getNickname(memberDetails);
         return ResponseEntity.ok(memberNicknameResponse);
     }
 
@@ -136,10 +139,10 @@ public class MemberController {
     @PostMapping
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
-            OauthAccount oauthAccount,
+            OauthAccountDetails accountDetails,
             @RequestBody CreateMemberRequest createMemberRequest
     ) {
-        memberService.create(oauthAccount, createMemberRequest);
+        memberService.create(accountDetails, createMemberRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -148,49 +151,69 @@ public class MemberController {
     @GetMapping("/check/onboarding")
     public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(
             @Parameter(hidden = true)
-            OauthAccount oauthAccount
+            OauthAccountDetails accountDetails
     ) {
-        OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(oauthAccount);
+        OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(accountDetails);
         return ResponseEntity.ok(onboardingStatusResponse);
     }
 
-    @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음수량 달성 진행 정보를 조회합니다.")
+    @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음용량 달성 진행 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ProgressInfoResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/progress-info")
     public ResponseEntity<ProgressInfoResponse> getProgressInfo(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "조회할 날짜 (YYYY-MM-DD)", required = true, example = "2025-08-10")
             @RequestParam LocalDate date
     ) {
-        ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(member, date);
+        ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(memberDetails, date);
         return ResponseEntity.ok().body(progressInfoResponse);
     }
 
     @Operation(summary = "사용자 야간 알림 수신 정보 수정", description = "야간 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "야간 알림 반영 성공")
-    @PatchMapping("/notification/night")
+    @PatchMapping("/notifications/night")
     public ResponseEntity<Void> modifyIsNightNotificationAgreed(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "boolean 값", required = true, example = "true")
             @RequestBody ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
-        memberService.modifyIsNightNotificationAgreed(member, modifyIsNightNotificationAgreedRequest);
+        memberService.modifyIsNightNotificationAgreed(memberDetails, modifyIsNightNotificationAgreedRequest);
         return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "사용자 마케팅 알림 수신 정보 수정", description = "마케팅 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "마케팅 알림 반영 성공")
-    @PatchMapping("/notification/marketing")
+    @PatchMapping("/notifications/marketing")
     public ResponseEntity<Void> modifyIsMarketingNotificationAgreed(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "boolean 값", required = true, example = "true")
             @RequestBody ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreed
     ) {
-        memberService.modifyIsMarketingNotificationAgreed(member, modifyIsMarketingNotificationAgreed);
+        memberService.modifyIsMarketingNotificationAgreed(memberDetails, modifyIsMarketingNotificationAgreed);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 알림 수신 정보 조회", description = "야간/마케팅 알림 수신 여부를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "알림 수신 여부 조회 성공")
+    @GetMapping("/notifications/settings")
+    public ResponseEntity<NotificationSettingsResponse> getNotificationSettings(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(
+                memberDetails);
+        return ResponseEntity.ok(notificationSettingsResponse);
+    }
+
+    @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
+    @ApiResponse(responseCode = "200", description = "탈퇴 성공")
+    @DeleteMapping
+    public ResponseEntity<Void> delete(MemberDetails memberDetails) {
+        memberService.delete(memberDetails);
         return ResponseEntity.ok().build();
     }
 }

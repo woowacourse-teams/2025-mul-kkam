@@ -1,7 +1,8 @@
 package backend.mulkkam.intake.domain;
 
-import backend.mulkkam.intake.domain.vo.Amount;
+import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -15,11 +16,15 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE target_amount_snapshot SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class TargetAmountSnapshot {
+public class TargetAmountSnapshot extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,19 +39,19 @@ public class TargetAmountSnapshot {
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "target_amount", nullable = false))
-    private Amount targetAmount;
+    private TargetAmount targetAmount;
 
     public TargetAmountSnapshot(
             Member member,
             LocalDate updatedAt,
-            Amount targetAmount
+            TargetAmount targetAmount
     ) {
         this.member = member;
         this.updatedAt = updatedAt;
         this.targetAmount = targetAmount;
     }
 
-    public void updateTargetAmount(Amount targetAmount) {
+    public void updateTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
     }
 }

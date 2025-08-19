@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.health.READ_ACTIVE_CALORIES_BURNED" />
+    <uses-permission android:name="android.permission.health.READ_HEALTH_DATA_IN_BACKGROUND" />
 
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
@@ -23,6 +24,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MulKkam"
         tools:targetApi="31">
+
 
         <provider
             android:name="androidx.startup.InitializationProvider"
@@ -59,6 +61,10 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.onboarding.OnboardingActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -69,6 +75,14 @@
                 <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.settingfeedback.SettingFeedbackActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.settingterms.SettingTermsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="false"
@@ -113,6 +127,10 @@
                     android:scheme="kakao${kakaoKey}" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".ui.settingnotification.SettingNotificationActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

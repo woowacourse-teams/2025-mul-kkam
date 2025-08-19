@@ -5,6 +5,7 @@ package com.mulkkam.domain.model.logger
  */
 enum class LogEvent {
     NETWORK,
-    ERROR,
     DEBUG,
+    ERROR,
+    HEALTH_CONNECT,
 }
