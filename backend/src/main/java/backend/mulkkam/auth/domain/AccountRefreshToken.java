@@ -29,7 +29,10 @@ public class AccountRefreshToken {
     @Column(nullable = false)
     private String refreshToken;
 
-    public AccountRefreshToken(OauthAccount account, String refreshToken) {
+    public AccountRefreshToken(
+            OauthAccount account,
+            String refreshToken
+    ) {
         this(null, account, refreshToken);
     }
 

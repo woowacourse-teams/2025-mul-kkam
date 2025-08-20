@@ -1,24 +1,28 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,6 +36,7 @@ public class NotificationController {
 
     private final ActivityService activityService;
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Operation(summary = "알림 목록 조회", description = "특정 시점 이후의 알림 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadNotificationsResponse.class)))
@@ -40,14 +45,15 @@ public class NotificationController {
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping
-    ResponseEntity<ReadNotificationsResponse> getNotifications(
+    public ResponseEntity<ReadNotificationsResponse> readNotifications(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @Parameter(description = "알림 조회 조건")
             @Valid @ModelAttribute GetNotificationsRequest getNotificationsRequest
     ) {
         ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                getNotificationsRequest, member);
+                getNotificationsRequest, memberDetails
+        );
         return ResponseEntity.ok(readNotificationsResponse);
     }
 
@@ -58,12 +64,36 @@ public class NotificationController {
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping("/activity")
-    ResponseEntity<Void> createNotificationByActivity(
+    public ResponseEntity<Void> createNotificationByActivity(
             @Parameter(hidden = true)
-            Member member,
+            MemberDetails memberDetails,
             @RequestBody CreateActivityNotification createActivityNotification
     ) {
-        activityService.createActivityNotification(createActivityNotification, member);
+        activityService.createActivityNotification(createActivityNotification, memberDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "읽지 않은 알림 수 조회", description = "사용자의 읽지 않은 알림 개수를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetUnreadNotificationsCountResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping("/unread-count")
+    public ResponseEntity<GetUnreadNotificationsCountResponse> getUnreadNotificationsCount(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+                memberDetails);
+        return ResponseEntity.ok(getUnreadNotificationsCountResponse);
+    }
+
+    @DeleteMapping("/{id}")
+    ResponseEntity<Void> getUnreadNotificationsCount(
+            @PathVariable(value = "id")
+            Long id,
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        notificationRepository.delete(notificationRepository.findById(id).get());
+        return ResponseEntity.noContent().build();
     }
 }

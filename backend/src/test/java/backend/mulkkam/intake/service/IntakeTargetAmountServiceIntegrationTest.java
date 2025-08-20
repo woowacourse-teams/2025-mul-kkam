@@ -6,6 +6,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -24,12 +25,13 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -64,7 +66,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest);
+            intakeAmountService.modifyTarget(new MemberDetails(savedMember), intakeTargetAmountModifyRequest);
 
             // then
             Optional<Member> foundMember = memberRepository.findById(member.getId());
@@ -74,7 +76,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("음용량이 음수인 경우 예외가 발생한다")
+        @DisplayName("음용량이 음용인 경우 예외가 발생한다")
         @Test
         void error_amountIsLessThan0() {
             // given
@@ -90,7 +92,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeAmountService.modifyTarget(savedMember, intakeTargetAmountModifyRequest))
+                    () -> intakeAmountService.modifyTarget(new MemberDetails(savedMember),
+                            intakeTargetAmountModifyRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_TARGET_AMOUNT.name());
         }
@@ -103,14 +106,14 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new TargetAmount(originTargetAmount))
                     .build();
-            memberRepository.save(member);
+            Member savedMember = memberRepository.save(member);
 
             int newTargetAmount = 1_000;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            intakeAmountService.modifyTarget(new MemberDetails(savedMember.getId()), intakeTargetAmountModifyRequest);
             Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
                     member.getId(), LocalDate.now());
 
@@ -136,10 +139,11 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
             ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
                     (
-                            1_000
+                            new TargetAmount(1_000)
                     );
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(member, modifyIntakeTargetAmountByRecommendRequest);
+            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId()),
+                    modifyIntakeTargetAmountByRecommendRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,
                     LocalDate.now()
@@ -175,7 +179,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(1000);
 
             // when
-            intakeAmountService.modifyTarget(member, intakeTargetAmountModifyRequest);
+            intakeAmountService.modifyTarget(new MemberDetails(member), intakeTargetAmountModifyRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member, LocalDate.now());
 
@@ -202,7 +206,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember);
+                    new MemberDetails(savedMember)
+            );
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -219,7 +224,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
-                    savedMember);
+                    new MemberDetails(savedMember)
+            );
 
             // then
             assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
@@ -241,7 +247,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(savedMember);
+            IntakeTargetAmountResponse actual = intakeAmountService.getTarget(new MemberDetails(savedMember));
 
             // then
             assertThat(actual.amount()).isEqualTo(expected);

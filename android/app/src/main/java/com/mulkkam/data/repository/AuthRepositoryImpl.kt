@@ -36,4 +36,14 @@ class AuthRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun postAuthLogout(): MulKkamResult<Unit> {
+        val result =
+            authService.postAuthLogout()
+
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }

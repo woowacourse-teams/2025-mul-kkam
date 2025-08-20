@@ -1,8 +1,9 @@
 package backend.mulkkam.member.domain;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
+import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
@@ -14,12 +15,16 @@ import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE member SET active_nickname = NULL, deleted_at = NOW() WHERE id = ?")
 @Entity
-public class Member {
+public class Member extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +33,7 @@ public class Member {
     @Embedded
     @AttributeOverride(
             name = "value",
-            column = @Column(name = "nickname", nullable = false, unique = true, length = MemberNickname.MAX_LENGTH)
+            column = @Column(name = "nickname", nullable = false, length = MemberNickname.MAX_LENGTH)
     )
     private MemberNickname memberNickname;
 
@@ -45,18 +50,23 @@ public class Member {
     @Column(nullable = false)
     private boolean isNightNotificationAgreed;
 
+    @Column(unique = true)
+    private String activeNickname;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
             TargetAmount targetAmount,
             boolean isMarketingNotificationAgreed,
-            boolean isNightNotificationAgreed
+            boolean isNightNotificationAgreed,
+            String activeNickname
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
         this.targetAmount = targetAmount;
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
         this.isNightNotificationAgreed = isNightNotificationAgreed;
+        this.activeNickname = activeNickname;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {
@@ -68,6 +78,7 @@ public class Member {
 
     public void updateNickname(MemberNickname memberNickname) {
         this.memberNickname = memberNickname;
+        this.activeNickname = memberNickname.value();
     }
 
     public void updatePhysicalAttributes(PhysicalAttributes physicalAttributes) {

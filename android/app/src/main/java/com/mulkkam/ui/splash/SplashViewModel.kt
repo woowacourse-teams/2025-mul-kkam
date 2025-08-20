@@ -6,40 +6,47 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
-import com.mulkkam.ui.model.AppAuthState
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.UserAuthState
 import kotlinx.coroutines.launch
 
 class SplashViewModel : ViewModel() {
-    private val _authState = MutableLiveData<AppAuthState>()
-    val authState: LiveData<AppAuthState> = _authState
+    private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> =
+        MutableLiveData<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
+    val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
 
-    fun updateAuthState() {
+    init {
+        updateAuthState()
+    }
+
+    private fun updateAuthState() {
+        if (_authUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
-                val token = tokenRepository.getAccessToken().getOrError()
-                if (token == null) {
-                    _authState.value = AppAuthState.UNAUTHORIZED
-                    return@launch
+                _authUiState.value = MulKkamUiState.Loading
+                tokenRepository.getAccessToken().getOrError()
+            }.onSuccess { accessToken ->
+                when (accessToken.isNullOrBlank().not()) {
+                    true -> updateAuthStateWithOnboarding()
+                    false -> _authUiState.value = MulKkamUiState.Failure(MulKkamError.AccountError.InvalidToken)
                 }
             }.onFailure {
-                _authState.value = AppAuthState.UNAUTHORIZED
-                return@launch
+                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
-            updateAuthStateWithOnboarding()
         }
     }
 
-    private suspend fun updateAuthStateWithOnboarding() {
-        runCatching {
-            membersRepository.getMembersCheckOnboarding().getOrError()
-        }.onSuccess { hasCompletedOnboarding ->
-            _authState.value =
-                when {
-                    hasCompletedOnboarding -> AppAuthState.ACTIVE_USER
-                    else -> AppAuthState.UNONBOARDED
-                }
-        }.onFailure {
-            _authState.value = AppAuthState.UNAUTHORIZED
+    private fun updateAuthStateWithOnboarding() {
+        viewModelScope.launch {
+            runCatching {
+                membersRepository.getMembersCheckOnboarding().getOrError()
+            }.onSuccess { userAuthState ->
+                _authUiState.value = MulKkamUiState.Success<UserAuthState>(userAuthState)
+            }.onFailure {
+                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
         }
     }
 }

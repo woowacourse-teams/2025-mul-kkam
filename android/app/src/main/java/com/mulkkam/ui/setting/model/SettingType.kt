@@ -1,21 +1,12 @@
 package com.mulkkam.ui.setting.model
 
-sealed interface SettingType {
-    sealed interface Normal : SettingType {
-        data object Nickname : Normal
-
-        data object BodyInfo : Normal
-
-        data object MyCup : Normal
-
-        data object Goal : Normal
-
-        data object Notification : Normal
-    }
-
-    sealed interface Switch : SettingType {
-        data object Marketing : Switch
-
-        data object Night : Switch
-    }
+enum class SettingType {
+    NICKNAME,
+    BODY_INFO,
+    ACCOUNT_INFO,
+    MY_CUP,
+    GOAL,
+    PUSH_NOTIFICATION,
+    FEEDBACK,
+    TERMS,
 }

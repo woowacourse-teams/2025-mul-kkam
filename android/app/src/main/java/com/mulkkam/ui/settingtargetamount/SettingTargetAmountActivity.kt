@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -15,12 +14,15 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -35,6 +37,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvSaveGoal.applyImeMargin()
     }
 
@@ -51,11 +54,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         viewModel.targetAmountInput.observe(this) { targetAmount ->
             if (binding.etInputGoal.text
                     .toString()
-                    .toIntOrNull() == targetAmount?.amount
+                    .toIntOrNull() == targetAmount?.value
             ) {
                 return@observe
             }
-            binding.etInputGoal.setText(targetAmount?.amount.toString())
+            binding.etInputGoal.setText(targetAmount?.value.toString())
         }
 
         viewModel.saveTargetAmountUiState.observe(this) { saveUiState ->
@@ -81,14 +84,18 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Idle -> Unit
 
             is MulKkamUiState.Failure -> {
-                Toast.makeText(this, R.string.load_info_error, Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(this, getString(R.string.load_info_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
 
     private fun showRecommendTargetAmount(targetAmountUiModel: TargetAmountUiModel) {
         val nickname = targetAmountUiModel.nickname
-        val recommended = targetAmountUiModel.recommendedTargetAmount
+        val recommended = targetAmountUiModel.recommendedTargetAmount.value
         binding.tvRecommendedTargetAmount.text =
             getString(R.string.target_amount_recommended_water_goal, nickname, recommended)
                 .getAppearanceSpannable(
@@ -125,8 +132,8 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         when (saveUiState) {
             is MulKkamUiState.Success -> {
                 updateSaveButtonAvailability(true)
-                Toast
-                    .makeText(this, R.string.setting_target_amount_complete_description, Toast.LENGTH_SHORT)
+                CustomToast
+                    .makeText(this, getString(R.string.setting_target_amount_complete_description))
                     .show()
                 finish()
             }
@@ -137,7 +144,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
             is MulKkamUiState.Failure -> {
                 updateSaveButtonAvailability(true)
-                Toast.makeText(this, R.string.network_check_error, Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(this, getString(R.string.network_check_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -210,6 +221,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                     TargetAmount.TARGET_AMOUNT_MAX,
                 )
         }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnImeActionDoneListener()
+    }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)

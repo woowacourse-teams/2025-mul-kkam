@@ -2,10 +2,11 @@ package backend.mulkkam.notification.dto;
 
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+
 import java.time.LocalDateTime;
 
 public record CreateTopicNotificationRequest(
@@ -31,7 +32,6 @@ public record CreateTopicNotificationRequest(
                 notificationType,
                 body,
                 createdAt,
-                recommendedTargetAmount,
                 member
         );
     }

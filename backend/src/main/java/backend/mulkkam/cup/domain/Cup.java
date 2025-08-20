@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.domain;
 
+import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
@@ -19,12 +20,16 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE cup SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class Cup {
+public class Cup extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -96,20 +101,10 @@ public class Cup {
         cupRank = cupRank.promote();
     }
 
-    public void demoteRank() {
-        cupRank = cupRank.demote();
-    }
-
     public boolean isOwnedBy(Member member) {
-        return this.member.equals(member);
-    }
-
-    public void modifyNicknameAndAmount(
-            CupNickname nickname,
-            CupAmount cupAmount
-    ) {
-        this.nickname = nickname;
-        this.cupAmount = cupAmount;
+        Long ownerId = this.member.getId();
+        Long otherId = member.getId();
+        return ownerId.equals(otherId);
     }
 
     public void modifyRank(CupRank rank) {

@@ -1,8 +1,9 @@
 package backend.mulkkam.support;
 
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
+
 import java.time.LocalDate;
 
 public class TargetAmountSnapshotFixtureBuilder {

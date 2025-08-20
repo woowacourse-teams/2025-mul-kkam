@@ -2,13 +2,17 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
-import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -28,9 +32,13 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -53,60 +61,64 @@ public class MemberService {
     private final DeviceRepository deviceRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
+    private final SuggestionNotificationRepository suggestionNotificationRepository;
 
-    public MemberResponse get(Member member) {
+    public MemberResponse get(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new MemberResponse(member);
     }
 
     @Transactional
     public void modifyPhysicalAttributes(
             PhysicalAttributesModifyRequest physicalAttributesModifyRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         member.updatePhysicalAttributes(physicalAttributesModifyRequest.toPhysicalAttributes());
-        memberRepository.save(member);
     }
 
     public void validateDuplicateNickname(
             String nickname,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
         if (member.isSameNickname(new MemberNickname(nickname))) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
-            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
-        }
-    }
-
-    public void validateDuplicateNickname(String nickname) {
-        if (memberRepository.existsByMemberNicknameValue(nickname)) {
-            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
-        }
+        validateDuplicateNickname(nickname);
     }
 
     @Transactional
     public void modifyNickname(
             MemberNicknameModifyRequest memberNicknameModifyRequest,
-            Member member
+            MemberDetails memberDetails
     ) {
+        Member member = getMember(memberDetails.id());
+        validateDuplicateNickname(memberNicknameModifyRequest.memberNickname());
+
         member.updateNickname(memberNicknameModifyRequest.toMemberNickname());
-        memberRepository.save(member);
     }
 
-    public MemberNicknameResponse getNickname(Member member) {
+    public void validateDuplicateNickname(String nickname) {
+        if (memberRepository.existsByActiveNickname(nickname)) {
+            throw new CommonException(DUPLICATE_MEMBER_NICKNAME);
+        }
+    }
+
+    public MemberNicknameResponse getNickname(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
         return new MemberNicknameResponse(member.getMemberNickname());
     }
 
     @Transactional
     public void create(
-            OauthAccount oauthAccount,
+            OauthAccountDetails accountDetails,
             CreateMemberRequest createMemberRequest
     ) {
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
-        oauthAccount.modifyMember(member);
-        oauthAccountRepository.save(oauthAccount);
+        OauthAccount account = getOauthAccount(accountDetails);
+        account.modifyMember(member);
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
                 member,
@@ -114,19 +126,22 @@ public class MemberService {
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
+        cupRepository.saveAll(CupFactory.createDefaultCups(member));
     }
 
-    public OnboardingStatusResponse checkOnboardingStatus(OauthAccount oauthAccount) {
+    public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
+        OauthAccount oauthAccount = getOauthAccount(accountDetails);
         boolean finishedOnboarding = oauthAccount.finishedOnboarding();
         return new OnboardingStatusResponse(finishedOnboarding);
     }
 
     public ProgressInfoResponse getProgressInfo(
-            Member member,
+            MemberDetails memberDetails,
             LocalDate date
     ) {
-        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
-                date);
+        Member member = getMember(memberDetails.id());
+
+        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, date);
         if (foundIntakeHistory.isEmpty()) {
             int streak = findStreak(member, date);
             return new ProgressInfoResponse(member, streak);
@@ -145,32 +160,30 @@ public class MemberService {
 
     @Transactional
     public void modifyIsNightNotificationAgreed(
-            Member member,
+            MemberDetails memberDetails,
             ModifyIsNightNotificationAgreedRequest modifyIsNightNotificationAgreedRequest
     ) {
+        Member member = getMember(memberDetails.id());
         member.modifyIsNightNotificationAgreed(modifyIsNightNotificationAgreedRequest.isNightNotificationAgreed());
     }
 
     @Transactional
     public void modifyIsMarketingNotificationAgreed(
-            Member member,
+            MemberDetails memberDetails,
             ModifyIsMarketingNotificationAgreedRequest modifyIsMarketingNotificationAgreedRequest
     ) {
+        Member member = getMember(memberDetails.id());
         member.modifyIsMarketingNotificationAgreed(
-                modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed());
+                modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed()
+        );
     }
 
     @Transactional
-    public void delete(Member member) {
-        Optional<OauthAccount> foundOauthAccount = oauthAccountRepository.findByMember(member);
+    public void delete(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
 
-        if (foundOauthAccount.isPresent()) {
-            OauthAccount oauthAccount = foundOauthAccount.get();
-            Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
-                    oauthAccount);
-            foundAccountRefreshToken.ifPresent(accountRefreshTokenRepository::delete);
-            oauthAccountRepository.delete(oauthAccount);
-        }
+        oauthAccountRepository.findByMember(member)
+                .ifPresent((this::deleteRefreshTokenAndAccount));
 
         cupRepository.deleteByMember(member);
         deviceRepository.deleteByMember(member);
@@ -181,9 +194,23 @@ public class MemberService {
         intakeHistoryRepository.deleteByMember(member);
 
         targetAmountSnapshotRepository.deleteByMember(member);
+
+        List<Long> notificationIds = findSuggestionNotificationIdsByMember(member);
+        suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
 
         memberRepository.delete(member);
+    }
+
+    private void deleteRefreshTokenAndAccount(OauthAccount account) {
+        accountRefreshTokenRepository.findByAccount(account)
+                .ifPresent(accountRefreshTokenRepository::delete);
+        oauthAccountRepository.delete(account);
+    }
+
+    public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+        return new NotificationSettingsResponse(member);
     }
 
     private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
@@ -194,8 +221,26 @@ public class MemberService {
     }
 
     private int findStreak(Member member, LocalDate todayDate) {
-        Optional<IntakeHistory> yesterdayIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
-                member, todayDate.minusDays(1));
-        return yesterdayIntakeHistory.map(intakeHistory -> intakeHistory.getStreak() + 1).orElse(1);
+        LocalDate yesterday = todayDate.minusDays(1);
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, yesterday)
+                .map(intakeHistory -> intakeHistory.getStreak() + 1)
+                .orElse(1);
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
+        return oauthAccountRepository.findById(accountDetails.id())
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
+    }
+
+    private List<Long> findSuggestionNotificationIdsByMember(Member member) {
+        return notificationRepository.findAllByMember(member).stream()
+                .filter(notification -> notification.getNotificationType().equals(NotificationType.SUGGESTION))
+                .map(Notification::getId)
+                .toList();
     }
 }

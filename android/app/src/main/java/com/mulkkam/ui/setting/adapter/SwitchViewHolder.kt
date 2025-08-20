@@ -1,5 +1,8 @@
 package com.mulkkam.ui.setting.adapter
 
+class SwitchViewHolder
+/*
+
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.mulkkam.databinding.ItemSettingSwitchBinding
@@ -33,3 +36,4 @@ class SwitchViewHolder private constructor(
         )
     }
 }
+*/

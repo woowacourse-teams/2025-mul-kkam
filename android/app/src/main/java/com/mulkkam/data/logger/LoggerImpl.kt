@@ -38,8 +38,9 @@ class LoggerImpl(
     private fun formatMessage(entry: LogEntry): String =
         buildString {
             append("level=").append(entry.level)
-            append(", event=").append(entry.event)
-            append(", message=").append(entry.message)
+            append(", event=").appendLine(entry.event)
+            append("timestamp=").appendLine(entry.timestamp)
+            append("message=").append(entry.message)
             append(" | userId=").append(entry.userId ?: "null")
         }
 
