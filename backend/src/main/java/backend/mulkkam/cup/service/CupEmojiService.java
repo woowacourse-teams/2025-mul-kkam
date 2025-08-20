@@ -17,11 +17,10 @@ public class CupEmojiService {
 
     public CupEmojisResponse readAll() {
         List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
-
         return new CupEmojisResponse(toCupEmojiResponse(cupEmojis));
     }
 
-    private static List<CupEmojiResponse> toCupEmojiResponse(List<CupEmoji> cupEmojis) {
+    private List<CupEmojiResponse> toCupEmojiResponse(List<CupEmoji> cupEmojis) {
         return cupEmojis.stream().map(CupEmojiResponse::new)
                 .collect(Collectors.toList());
     }
