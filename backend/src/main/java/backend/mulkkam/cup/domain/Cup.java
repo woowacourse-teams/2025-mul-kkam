@@ -64,33 +64,35 @@ public class Cup extends BaseEntity {
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    private String emoji;
+    @JoinColumn(nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    private CupEmoji cupEmoji;
 
     public Cup(Member member,
                CupNickname nickname,
                CupAmount cupAmount,
                CupRank cupRank,
                IntakeType intakeType,
-               String emoji
+               CupEmoji cupEmoji
     ) {
         this.member = member;
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.cupRank = cupRank;
         this.intakeType = intakeType;
-        this.emoji = emoji;
+        this.cupEmoji = cupEmoji;
     }
 
     public void update(
             CupNickname nickname,
             CupAmount cupAmount,
             IntakeType intakeType,
-            String emoji
+            CupEmoji cupEmoji
     ) {
         this.nickname = nickname;
         this.cupAmount = cupAmount;
         this.intakeType = intakeType;
-        this.emoji = emoji;
+        this.cupEmoji = cupEmoji;
     }
 
     public boolean isLowerPriorityThan(Cup other) {

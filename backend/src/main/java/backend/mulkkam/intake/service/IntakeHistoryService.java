@@ -2,19 +2,23 @@ package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -27,6 +31,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,24 +45,47 @@ public class IntakeHistoryService {
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    private final CupRepository cupRepository;
 
     @Transactional
-    public CreateIntakeHistoryResponse create(
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest,
+    public CreateIntakeHistoryResponse createByCup(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = createIntakeHistoryDetailCRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = createIntakeHistoryDetailByCupRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        int intakeAmount = createIntakeHistoryDetailCRequest.intakeType()
-                .calculateHydration(createIntakeHistoryDetailCRequest.intakeAmount());
+        Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailCRequest.toIntakeHistoryDetail(
-                intakeHistory, new IntakeAmount(intakeAmount));
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory, cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+    }
+
+    @Transactional
+    public CreateIntakeHistoryResponse createByUserInput(
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest,
+            MemberDetails memberDetails
+    ) {
+        LocalDate intakeDate = createIntakeHistoryDetailByUserInputRequest.dateTime().toLocalDate();
+        Member member = getMember(memberDetails.id());
+
+        IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(intakeHistory);
+        intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+    }
+
+    private CreateIntakeHistoryResponse getCreateIntakeHistoryResponse(
+            LocalDate intakeDate,
+            Member member,
+            IntakeHistory intakeHistory
+    ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
         if (intakeHistoryDetails.isEmpty()) {
@@ -200,7 +228,15 @@ public class IntakeHistoryService {
 
     private List<IntakeHistoryDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
-                .map(IntakeHistoryDetailResponse::new).toList();
+                .map(this::toIntakeHistoryDetailResponse)
+                .collect(Collectors.toList());
+    }
+
+    private IntakeHistoryDetailResponse toIntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail) {
+        if (intakeDetail.hasCupEmojiUrl()) {
+            return new IntakeHistoryDetailResponse(intakeDetail, CupEmoji.getDefaultCupEmojiUrl());
+        }
+        return new IntakeHistoryDetailResponse(intakeDetail);
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
@@ -220,5 +256,10 @@ public class IntakeHistoryService {
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private Cup getCup(Long id) {
+        return cupRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
     }
 }

@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
@@ -23,11 +24,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 @Getter
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
@@ -42,28 +38,43 @@ public class IntakeHistoryDetail extends BaseEntity {
     @Column(nullable = false)
     private LocalTime intakeTime;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
-    private IntakeAmount intakeAmount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private IntakeHistory intakeHistory;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private IntakeHistory intakeHistory;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
+    private IntakeAmount intakeAmount;
+
+    private String cupEmojiUrl;
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
-            IntakeAmount intakeAmount,
+            IntakeHistory intakeHistory,
             IntakeType intakeType,
-            IntakeHistory intakeHistory
+            Cup cup
     ) {
         this.intakeTime = intakeTime;
-        this.intakeAmount = intakeAmount;
-        this.intakeType = intakeType;
         this.intakeHistory = intakeHistory;
+        this.intakeType = intakeType;
+        this.intakeAmount = new IntakeAmount(cup.getCupAmount().value());
+        this.cupEmojiUrl = cup.getCupEmoji().getUrl();
+    }
+
+    public IntakeHistoryDetail(
+            LocalTime intakeTime,
+            IntakeHistory intakeHistory,
+            IntakeType intakeType,
+            IntakeAmount intakeAmount
+    ) {
+        this.intakeTime = intakeTime;
+        this.intakeHistory = intakeHistory;
+        this.intakeType = intakeType;
+        this.intakeAmount = intakeAmount;
     }
 
     public boolean isOwnedBy(Member comparedMember) {
@@ -72,5 +83,9 @@ public class IntakeHistoryDetail extends BaseEntity {
 
     public boolean isCreatedAt(LocalDate comparedDate) {
         return this.intakeHistory.isCreatedAt(comparedDate);
+    }
+
+    public boolean hasCupEmojiUrl() {
+        return cupEmojiUrl == null;
     }
 }

@@ -18,6 +18,8 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -88,6 +90,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -299,6 +304,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            cupEmojiRepository.saveAll(
+                    List.of(
+                            new CupEmoji("http://example1.com"),
+                            new CupEmoji("http://example2.com")
+                    )
+            );
 
             // when
             memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
@@ -386,6 +397,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji).build();
+            Cup savedCup = cupRepository.save(cup);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
@@ -397,7 +413,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithCup(savedCup);
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -521,9 +537,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
-            Cup cup = CupFixtureBuilder.withMember(member)
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji)
                     .build();
-            cupRepository.save(cup);
+            Cup savedCup = cupRepository.save(cup);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .build();
@@ -531,7 +548,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .build();
+                    .buildWithCup(savedCup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             Device device = new Device("token", "id", member);
@@ -547,7 +564,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
                 softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
-                softly.assertThat(cupRepository.findById(cup.getId())).isEmpty();
+                softly.assertThat(cupRepository.findById(savedCup.getId())).isEmpty();
                 softly.assertThat(intakeHistoryRepository.findById(intakeHistory.getId())).isEmpty();
                 softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();

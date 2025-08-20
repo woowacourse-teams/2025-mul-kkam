@@ -1,6 +1,7 @@
 package backend.mulkkam.cup.dto.request;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -16,14 +17,15 @@ public record CreateCupRequest(
         Integer cupAmount,
         @Schema(description = "음료 종류", implementation = IntakeType.class)
         String intakeType,
-        @Schema(description = "이모지", example = "☕️")
-        String emoji
+        @Schema(description = "컵 이모지 id", example = "1")
+        Long emojiId
 ) {
 
     public Cup toCup(
             Member member,
             CupRank cupRank,
-            IntakeType intakeType
+            IntakeType intakeType,
+            CupEmoji cupEmoji
     ) {
         return new Cup(
                 member,
@@ -31,7 +33,7 @@ public record CreateCupRequest(
                 new CupAmount(cupAmount),
                 cupRank,
                 intakeType,
-                emoji
+                cupEmoji
         );
     }
 }

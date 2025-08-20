@@ -12,6 +12,7 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -20,12 +21,16 @@ import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import java.util.List;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -33,9 +38,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class CupServiceUnitTest {
@@ -46,8 +48,20 @@ class CupServiceUnitTest {
     @Mock
     private MemberRepository memberRepository;
 
+    @Mock
+    private CupEmojiRepository cupEmojiRepository;
+
     @InjectMocks
     private CupService cupService;
+
+    private Long cupEmojiId;
+    private CupEmoji cupEmoji;
+
+    @BeforeEach
+    void setUp() {
+        cupEmojiId = 1L;
+        cupEmoji = new CupEmoji(cupEmojiId, "https://cup.com");
+    }
 
     @DisplayName("컵을 생성할 때")
     @Nested
@@ -63,15 +77,16 @@ class CupServiceUnitTest {
                     cupNickname,
                     cupAmount,
                     "WATER",
-                    "emoji"
+                    cupEmojiId
             );
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup savedCup = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
+            when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
             when(cupRepository.save(any(Cup.class))).thenReturn(savedCup);
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
@@ -96,10 +111,11 @@ class CupServiceUnitTest {
                     "스타벅스",
                     -100,
                     "WATER",
-                    "emoji"
+                    cupEmojiId
             );
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
+            when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
@@ -119,11 +135,13 @@ class CupServiceUnitTest {
                     "스타벅스",
                     0,
                     "WATER",
-                    "emoji"
+                    cupEmojiId
             );
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
+
+            when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
@@ -143,20 +161,20 @@ class CupServiceUnitTest {
                     "스타벅스",
                     500,
                     "WATER",
-                    "emoji"
+                    cupEmojiId
             );
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup3 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(3))
                     .build();
 
@@ -166,11 +184,11 @@ class CupServiceUnitTest {
                     cup3
             );
 
-            // when
+            when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
             when(cupRepository.countByMemberId(member.getId())).thenReturn(cups.size());
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
-            // then
+            // when & then
             assertThatThrownBy(() -> cupService.create(
                     registerCupRequest,
                     new MemberDetails(member)
@@ -191,13 +209,13 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .cupAmount(new CupAmount(500))
                     .build();
 
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .cupAmount(new CupAmount(1000))
                     .build();
@@ -233,15 +251,15 @@ class CupServiceUnitTest {
 
         private final Member member = MemberFixtureBuilder.builder().build();
         private final Cup firstCup = CupFixtureBuilder
-                .withMember(member)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(1))
                 .build();
         private final Cup secondCup = CupFixtureBuilder
-                .withMember(member)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(2))
                 .build();
         private final Cup thirdCup = CupFixtureBuilder
-                .withMember(member)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(3))
                 .build();
 
@@ -299,26 +317,29 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType = IntakeType.WATER;
 
             Cup cup = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .intakeType(beforeIntakeType)
                     .build();
 
-            given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
-            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
-
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
-            String afterEmoji = "emoji";
+            Long afterEmojiId = 2L;
+
+            CupEmoji afterCupEmoji = new CupEmoji("http://afterCupEmoji.com");
 
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    afterEmoji
+                    afterEmojiId
             );
+
+            given(cupRepository.findById(cup.getId())).willReturn(Optional.of(cup));
+            when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
+            when(cupEmojiRepository.findById(afterEmojiId)).thenReturn(Optional.of(afterCupEmoji));
 
             // when
             cupService.update(
@@ -332,7 +353,7 @@ class CupServiceUnitTest {
                 softly.assertThat(cup.getCupAmount().value()).isEqualTo(afterCupAmount);
                 softly.assertThat(cup.getNickname().value()).isEqualTo(afterCupNickName);
                 softly.assertThat(cup.getIntakeType()).isEqualTo(afterIntakeType);
-                softly.assertThat(cup.getEmoji()).isEqualTo(afterEmoji);
+                softly.assertThat(cup.getCupEmoji()).isEqualTo(afterCupEmoji);
             });
         }
 
@@ -349,7 +370,7 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType1 = IntakeType.COFFEE;
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
                     .intakeType(beforeIntakeType1)
@@ -360,7 +381,7 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType2 = IntakeType.COFFEE;
 
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
                     .intakeType(beforeIntakeType2)
@@ -369,16 +390,19 @@ class CupServiceUnitTest {
             given(cupRepository.findById(cup1.getId())).willReturn(Optional.of(cup1));
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
+            Long afterEmojiId = 2L;
+            CupEmoji afterCupEmoji = new CupEmoji("http://example.com");
             String afterCupNickName = "변경 후";
             Integer afterCupAmount = 1000;
             IntakeType afterIntakeType = IntakeType.COFFEE;
-            String afterEmoji = "emoji";
+
+            when(cupEmojiRepository.findById(afterEmojiId)).thenReturn(Optional.of(afterCupEmoji));
 
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    afterEmoji
+                    afterEmojiId
             );
 
             // when
@@ -392,9 +416,9 @@ class CupServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(cup1.getNickname().value()).isEqualTo(afterCupNickName);
                 softly.assertThat(cup1.getCupAmount().value()).isEqualTo(afterCupAmount);
+                softly.assertThat(cup1.getCupEmoji().getUrl()).isEqualTo("http://example.com");
                 softly.assertThat(cup2.getNickname().value()).isEqualTo(beforeCupNickName2);
                 softly.assertThat(cup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
-                softly.assertThat(cup1.getEmoji()).isEqualTo(afterEmoji);
             });
         }
 
@@ -416,7 +440,7 @@ class CupServiceUnitTest {
             Integer beforeCupAmount = 500;
 
             Cup cup = CupFixtureBuilder
-                    .withMember(member1)
+                    .withMemberAndCupEmoji(member1, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .buildWithId(1L);
@@ -428,10 +452,11 @@ class CupServiceUnitTest {
                     afterCupNickName,
                     afterCupAmount,
                     IntakeType.WATER,
-                    "emoji"
+                    cupEmojiId
             );
             given(cupRepository.findById(cup.getId()))
                     .willReturn(Optional.of(cup));
+            when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
 
             // when & then
             assertThatThrownBy(() -> cupService.update(

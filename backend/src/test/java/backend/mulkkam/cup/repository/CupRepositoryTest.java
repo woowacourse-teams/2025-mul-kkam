@@ -3,12 +3,14 @@ package backend.mulkkam.cup.repository;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -26,6 +28,17 @@ class CupRepositoryTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    private CupEmoji savedCupEmoji;
+
+    @BeforeEach
+    void setUp() {
+        CupEmoji cupEmoji = new CupEmoji("http://example.com");
+        savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+    }
+
     @DisplayName("사용자의 컵을 조회할 때에")
     @Nested
     class FindAllByMemberIdOrderByCupRankAsc {
@@ -38,11 +51,11 @@ class CupRepositoryTest {
             memberRepository.save(member);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -71,11 +84,11 @@ class CupRepositoryTest {
             memberRepository.save(member2);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member1)
+                    .withMemberAndCupEmoji(member1, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member2)
+                    .withMemberAndCupEmoji(member2, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -92,5 +105,4 @@ class CupRepositoryTest {
             });
         }
     }
-
 }
