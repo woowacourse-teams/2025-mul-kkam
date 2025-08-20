@@ -1,4 +1,4 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.work
 
 import android.content.Context
 import androidx.work.CoroutineWorker

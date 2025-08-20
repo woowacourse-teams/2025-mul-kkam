@@ -1,4 +1,4 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.work
 
 import android.content.Context
 import androidx.work.ListenableWorker
@@ -24,7 +24,7 @@ class WorkerFactory(
     ): ListenableWorker =
         when (workerClassName) {
             CalorieWorker::class.java.name -> CalorieWorker(appContext, workerParameters, healthRepository, notificationRepository)
-            ProgressWidgetWorker::class.java.name -> ProgressWidgetWorker(appContext, workerParameters, membersRepository)
+            ProgressCheckWorker::class.java.name -> ProgressCheckWorker(appContext, workerParameters, membersRepository)
             IntakeWidgetWorker::class.java.name -> IntakeWidgetWorker(appContext, workerParameters, membersRepository, cupsRepository)
             DrinkByAmountWorker::class.java.name -> DrinkByAmountWorker(appContext, workerParameters, intakeRepository)
             else -> throw IllegalArgumentException("Unknown worker class: $workerClassName")

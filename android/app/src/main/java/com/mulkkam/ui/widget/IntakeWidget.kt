@@ -14,8 +14,8 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.mulkkam.R
-import com.mulkkam.data.local.work.DrinkByAmountWorker
-import com.mulkkam.data.local.work.IntakeWidgetWorker
+import com.mulkkam.data.work.DrinkByAmountWorker
+import com.mulkkam.data.work.IntakeWidgetWorker
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx

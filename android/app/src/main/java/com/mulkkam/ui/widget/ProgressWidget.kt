@@ -2,90 +2,97 @@ package com.mulkkam.ui.widget
 
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
-import android.content.ComponentName
 import android.content.Context
-import android.content.Intent
 import android.widget.RemoteViews
-import androidx.work.OneTimeWorkRequestBuilder
+import androidx.lifecycle.Observer
+import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.data.local.work.ProgressWidgetWorker
+import com.mulkkam.di.WorkInjection.progressChecker
+import com.mulkkam.domain.work.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
+import java.util.UUID
 
 class ProgressWidget : AppWidgetProvider() {
-    override fun onReceive(
-        context: Context,
-        intent: Intent,
-    ) {
-        super.onReceive(context, intent)
-
-        if (intent.action == ACTION_UPDATE_PROGRESS) {
-            val rate = intent.getFloatExtra(KEY_EXTRA_ACHIEVEMENT_RATE, 0f)
-            val appWidgetManager = AppWidgetManager.getInstance(context)
-            val appWidgetIds = appWidgetManager.getAppWidgetIds(ComponentName(context, javaClass))
-            appWidgetIds.forEach { id ->
-                updateProgressWidget(context, appWidgetManager, id, rate)
-            }
-        }
-    }
-
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetIds: IntArray,
     ) {
-        appWidgetIds.forEach { id ->
-            updateProgressWidgetWithWorker(context)
+        for (appWidgetId in appWidgetIds) {
+            updateProgressWidgetWithWorker(context, appWidgetId)
         }
     }
 
     companion object {
-        private const val KEY_EXTRA_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
-        private const val ACTION_UPDATE_PROGRESS = "com.example.ACTION_UPDATE_PROGRESS"
-
-        fun newIntent(
+        fun updateProgressWidgetWithWorker(
             context: Context,
-            rate: Float,
-        ): Intent =
-            Intent(context, ProgressWidget::class.java).apply {
-                action = ACTION_UPDATE_PROGRESS
-                putExtra(KEY_EXTRA_ACHIEVEMENT_RATE, rate)
-            }
+            appWidgetId: Int,
+        ) {
+            val workId = progressChecker.checkCurrentAchievementRate()
+
+            observeWorker(context, appWidgetId, workId)
+        }
+
+        private fun observeWorker(
+            context: Context,
+            appWidgetId: Int,
+            workId: UUID,
+        ) {
+            val workManager = WorkManager.getInstance(context.applicationContext)
+            val liveData = workManager.getWorkInfoByIdLiveData(workId)
+
+            val observer =
+                object : Observer<WorkInfo?> {
+                    override fun onChanged(value: WorkInfo?) {
+                        value?.takeIf { it.state.isFinished }?.let {
+                            val achievementRate =
+                                it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+
+                            val appWidgetManager =
+                                AppWidgetManager.getInstance(context.applicationContext)
+                            updateProgressWidget(
+                                context.applicationContext,
+                                appWidgetManager,
+                                appWidgetId,
+                                achievementRate,
+                            )
+
+                            liveData.removeObserver(this)
+                        }
+                    }
+                }
+
+            liveData.observeForever(observer)
+        }
+
+        private fun updateProgressWidget(
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetId: Int,
+            progress: Float = 0f,
+        ) {
+            val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
+
+            val donutBitmap =
+                GradientDonutChartView.createBitmap(
+                    context,
+                    width = 78.dpToPx(context),
+                    height = 78.dpToPx(context),
+                    stroke = 10f,
+                    progress = progress,
+                )
+
+            val progressText =
+                context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
+            views.setTextViewText(R.id.tv_achievement_rate, progressText)
+
+            views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
+            views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
+
+            appWidgetManager.updateAppWidget(appWidgetId, views)
+        }
     }
-}
-
-fun updateProgressWidgetWithWorker(context: Context) {
-    val workManager = WorkManager.getInstance(context.applicationContext)
-    val workRequest = OneTimeWorkRequestBuilder<ProgressWidgetWorker>().build()
-
-    workManager.enqueue(workRequest)
-}
-
-private fun updateProgressWidget(
-    context: Context,
-    appWidgetManager: AppWidgetManager,
-    appWidgetId: Int,
-    progress: Float = 0f,
-) {
-    val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
-
-    val donutBitmap =
-        GradientDonutChartView.createBitmap(
-            context,
-            width = 78.dpToPx(context),
-            height = 78.dpToPx(context),
-            stroke = 10f,
-            progress = progress,
-        )
-
-    val progressText =
-        context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
-    views.setTextViewText(R.id.tv_achievement_rate, progressText)
-
-    views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
-    views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
-
-    appWidgetManager.updateAppWidget(appWidgetId, views)
 }

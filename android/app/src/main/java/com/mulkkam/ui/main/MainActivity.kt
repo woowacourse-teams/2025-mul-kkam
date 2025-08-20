@@ -26,7 +26,6 @@ import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
-import com.mulkkam.ui.widget.updateProgressWidgetWithWorker
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -178,8 +177,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         val appWidgetManager = AppWidgetManager.getInstance(this)
         val progressWidget = ComponentName(this, ProgressWidget::class.java)
         val appWidgetIds = appWidgetManager.getAppWidgetIds(progressWidget)
-        appWidgetIds.forEach {
-            updateProgressWidgetWithWorker(this)
+        appWidgetIds.forEach { appWidgetId ->
+            ProgressWidget.updateProgressWidgetWithWorker(this, appWidgetId)
         }
     }
 
