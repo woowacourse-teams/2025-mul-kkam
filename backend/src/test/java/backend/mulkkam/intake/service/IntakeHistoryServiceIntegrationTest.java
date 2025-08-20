@@ -37,17 +37,12 @@ import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -148,7 +143,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     dateTime, 1500, WATER, savedCupId);
-            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
+            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -173,8 +168,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500, WATER, savedCupId);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(savedMember));
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(dateTime, 1500, WATER, savedCupId);
+            intakeHistoryService.create(createIntakeHistoryDetailRequest, new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);

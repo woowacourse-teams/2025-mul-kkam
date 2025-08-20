@@ -47,22 +47,23 @@ public class IntakeHistoryService {
 
     @Transactional
     public CreateIntakeHistoryResponse create(
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest,
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = createIntakeHistoryDetailCRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = createIntakeHistoryDetailRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        int intakeAmount = createIntakeHistoryDetailCRequest.intakeType()
-                .calculateHydration(createIntakeHistoryDetailCRequest.intakeAmount());
+        int intakeAmount = createIntakeHistoryDetailRequest.intakeType()
+                .calculateHydration(createIntakeHistoryDetailRequest.intakeAmount());
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailCRequest.toIntakeHistoryDetail(
-                intakeHistory, new IntakeAmount(intakeAmount));
+        Cup cup = getCup(createIntakeHistoryDetailRequest.cupId());
+
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailRequest.toIntakeDetail(
+                intakeHistory, new IntakeAmount(intakeAmount), cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        Cup cup = getCup(intakeDetailCreateRequest.cupId());
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
         if (intakeHistoryDetails.isEmpty()) {

@@ -281,7 +281,7 @@ class IntakeHistoryServiceUnitTest {
             // then
             List<LocalTime> dateTimes = actual.stream()
                     .flatMap(summary -> summary.intakeDetails().stream())
-                    .map(IntakeDetailResponse::time)
+                    .map(IntakeHistoryDetailResponse::time)
                     .toList();
 
             assertSoftly(softly -> {

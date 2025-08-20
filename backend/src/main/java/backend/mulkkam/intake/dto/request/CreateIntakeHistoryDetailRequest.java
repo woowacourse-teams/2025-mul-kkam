@@ -1,12 +1,13 @@
 package backend.mulkkam.intake.dto.request;
 
-import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Schema(description = "음용량 기록 생성 요청")
 public record CreateIntakeHistoryDetailRequest(
@@ -17,8 +18,7 @@ public record CreateIntakeHistoryDetailRequest(
         int intakeAmount,
 
         @Schema(description = "음용 타입", example = "WATER")
-        IntakeType intakeType
-        int intakeAmount,
+        IntakeType intakeType,
 
         @Schema(description = "사용한 컵 Id", example = "1")
         Long cupId
@@ -29,5 +29,6 @@ public record CreateIntakeHistoryDetailRequest(
             Cup cup
     ) {
         LocalTime time = dateTime.toLocalTime();
-        return new IntakeHistoryDetail(dateTime.toLocalTime(), intakeAmount.value(), intakeType, intakeHistory, cup);
+        return new IntakeHistoryDetail(time, intakeAmount, intakeHistory, intakeType, cup);
+    }
 }

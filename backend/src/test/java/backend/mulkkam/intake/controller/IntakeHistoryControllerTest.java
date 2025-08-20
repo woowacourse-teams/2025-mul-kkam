@@ -141,14 +141,14 @@ class IntakeHistoryControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailRequest)))
                     .andExpect(status().isOk());
 
             String afterJson = mockMvc.perform(get("/intake/history")
@@ -213,14 +213,14 @@ class IntakeHistoryControllerTest {
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);

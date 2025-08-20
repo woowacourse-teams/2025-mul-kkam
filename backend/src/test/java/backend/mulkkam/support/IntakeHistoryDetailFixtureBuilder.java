@@ -1,9 +1,10 @@
 package backend.mulkkam.support;
 
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-
 import java.time.LocalTime;
 
 public class IntakeHistoryDetailFixtureBuilder {
@@ -42,8 +43,8 @@ public class IntakeHistoryDetailFixtureBuilder {
         return new IntakeHistoryDetail(
                 this.time,
                 this.intakeAmount,
-                this.intakeType,
                 this.intakeHistory,
+                this.intakeType,
                 this.cup
         );
     }
