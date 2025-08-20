@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
+import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
@@ -20,9 +21,9 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -95,9 +96,10 @@ class IntakeHistoryServiceUnitTest {
             when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
 
             int intakeAmount = 500;
-            IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest request = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
+                    WATER,
                     cup.getId()
             );
 
@@ -124,9 +126,10 @@ class IntakeHistoryServiceUnitTest {
             when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
 
             int intakeAmount = -1;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
+                    WATER,
                     cup.getId()
             );
 
@@ -139,7 +142,8 @@ class IntakeHistoryServiceUnitTest {
                     .willReturn(Optional.ofNullable(intakeHistory));
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
             verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));

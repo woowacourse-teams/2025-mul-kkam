@@ -15,10 +15,11 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -46,17 +47,22 @@ public class IntakeHistoryService {
 
     @Transactional
     public CreateIntakeHistoryResponse create(
-            IntakeDetailCreateRequest intakeDetailCreateRequest,
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = intakeDetailCreateRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = createIntakeHistoryDetailCRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
-        IntakeHistory intakeHistory = findIntakeHistory(member, intakeDate);
-        Cup cup = getCup(intakeDetailCreateRequest.cupId());
-        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory, cup);
+        IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+
+        int intakeAmount = createIntakeHistoryDetailCRequest.intakeType()
+                .calculateHydration(createIntakeHistoryDetailCRequest.intakeAmount());
+
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailCRequest.toIntakeHistoryDetail(
+                intakeHistory, new IntakeAmount(intakeAmount));
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
+        Cup cup = getCup(intakeDetailCreateRequest.cupId());
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
         if (intakeHistoryDetails.isEmpty()) {
@@ -70,7 +76,10 @@ public class IntakeHistoryService {
         return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
     }
 
-    private IntakeHistory findIntakeHistory(Member member, LocalDate intakeDate) {
+    private IntakeHistory getIntakeHistory(
+            Member member,
+            LocalDate intakeDate
+    ) {
         return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
                 .orElseGet(() -> {
                     int streak = findStreak(member, intakeDate);
@@ -174,7 +183,7 @@ public class IntakeHistoryService {
             IntakeHistory intakeHistory,
             List<IntakeHistoryDetail> intakeDetailsOfDate
     ) {
-        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(intakeDetailsOfDate);
+        List<IntakeHistoryDetailResponse> intakeHistoryDetailResponse = toIntakeDetailResponses(intakeDetailsOfDate);
 
         int totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailsOfDate);
 
@@ -190,13 +199,13 @@ public class IntakeHistoryService {
                 totalIntakeAmount,
                 achievementRate.value(),
                 intakeHistory.getStreak(),
-                intakeDetailResponses
+                intakeHistoryDetailResponse
         );
     }
 
-    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
+    private List<IntakeHistoryDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
-                .map(IntakeDetailResponse::new).toList();
+                .map(IntakeHistoryDetailResponse::new).toList();
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {

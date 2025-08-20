@@ -1,9 +1,9 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
+
 import java.time.LocalTime;
 
 public class IntakeHistoryDetailFixtureBuilder {
@@ -12,6 +12,7 @@ public class IntakeHistoryDetailFixtureBuilder {
     private final Cup cup;
     private LocalTime time = LocalTime.of(10, 0, 0);
     private IntakeAmount intakeAmount = new IntakeAmount(1_000);
+    private IntakeType intakeType = IntakeType.WATER;
 
     private IntakeHistoryDetailFixtureBuilder(IntakeHistory intakeHistory, Cup cup) {
         this.intakeHistory = intakeHistory;
@@ -32,10 +33,16 @@ public class IntakeHistoryDetailFixtureBuilder {
         return this;
     }
 
+    public IntakeHistoryDetailFixtureBuilder intakeType(IntakeType intakeType) {
+        this.intakeType = intakeType;
+        return this;
+    }
+
     public IntakeHistoryDetail build() {
         return new IntakeHistoryDetail(
                 this.time,
                 this.intakeAmount,
+                this.intakeType,
                 this.intakeHistory,
                 this.cup
         );

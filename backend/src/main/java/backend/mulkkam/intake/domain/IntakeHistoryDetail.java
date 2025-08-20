@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
@@ -8,6 +9,8 @@ import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -20,6 +23,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -39,6 +47,10 @@ public class IntakeHistoryDetail extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
     private IntakeAmount intakeAmount;
 
+    @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
+    private IntakeType intakeType;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     private IntakeHistory intakeHistory;
@@ -51,11 +63,13 @@ public class IntakeHistoryDetail extends BaseEntity {
             LocalTime intakeTime,
             IntakeAmount intakeAmount,
             IntakeHistory intakeHistory,
+            IntakeType intakeType,
             Cup cup
     ) {
         this.intakeTime = intakeTime;
         this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
+        this.intakeType = intakeType;
         this.cup = cup;
     }
 
