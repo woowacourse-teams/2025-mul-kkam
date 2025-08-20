@@ -2,6 +2,7 @@ package backend.mulkkam.intake.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -70,7 +71,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
-    @PostMapping
+    @PostMapping("/cup") // TODO 2025. 8. 20. 17:09: url 다시 생각하기
     public ResponseEntity<CreateIntakeHistoryResponse> createByCup(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
@@ -78,6 +79,28 @@ public class IntakeHistoryController {
     ) {
         CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.createByCup(
                 createIntakeHistoryDetailByCupRequest,
+                memberDetails
+        );
+        return ResponseEntity.ok(createIntakeHistoryResponse);
+    }
+
+    @Operation(summary = "직접 입력을 통해 음용량 기록 생성", description = "직접 입력을 통해 새로운 음용량 기록을 생성합니다.")
+    @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryResponse.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "잘못된 요청", summary = "음용량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
+    }))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
+    }))
+    @PostMapping("/input")
+    public ResponseEntity<CreateIntakeHistoryResponse> createByUserInput(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @RequestBody CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest
+    ) {
+        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.createByUserInput(
+                createIntakeHistoryDetailByUserInputRequest,
                 memberDetails
         );
         return ResponseEntity.ok(createIntakeHistoryResponse);

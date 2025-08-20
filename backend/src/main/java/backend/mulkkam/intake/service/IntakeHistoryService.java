@@ -15,6 +15,7 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -57,6 +58,32 @@ public class IntakeHistoryService {
         Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
 
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory, cup);
+        intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
+
+        if (intakeHistoryDetails.isEmpty()) {
+            return new CreateIntakeHistoryResponse(0, CommentOfAchievementRate.VERY_LOW.getComment());
+        }
+
+        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
+        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
+
+        return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
+    }
+
+    @Transactional
+    public CreateIntakeHistoryResponse createByUserInput( // TODO 2025. 8. 20. 17:04: 위의 메서드와 중복 처리
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest,
+            MemberDetails memberDetails
+    ) {
+        LocalDate intakeDate = createIntakeHistoryDetailByUserInputRequest.dateTime().toLocalDate();
+        Member member = getMember(memberDetails.id());
+
+        IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);

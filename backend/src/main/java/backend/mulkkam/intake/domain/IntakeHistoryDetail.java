@@ -38,17 +38,17 @@ public class IntakeHistoryDetail extends BaseEntity {
     @Column(nullable = false)
     private LocalTime intakeTime;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
-    private IntakeAmount intakeAmount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private IntakeHistory intakeHistory;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private IntakeHistory intakeHistory;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
+    private IntakeAmount intakeAmount;
 
     private String cupEmojiUrl;
 
@@ -59,24 +59,22 @@ public class IntakeHistoryDetail extends BaseEntity {
             Cup cup
     ) {
         this.intakeTime = intakeTime;
-        this.intakeAmount = new IntakeAmount(cup.getCupAmount().value());
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
+        this.intakeAmount = new IntakeAmount(cup.getCupAmount().value());
         this.cupEmojiUrl = cup.getCupEmoji().getUrl();
     }
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
-            IntakeAmount intakeAmount,
             IntakeHistory intakeHistory,
             IntakeType intakeType,
-            String cupEmojiUrl
+            IntakeAmount intakeAmount
     ) {
         this.intakeTime = intakeTime;
-        this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
-        this.cupEmojiUrl = cupEmojiUrl;
+        this.intakeAmount = intakeAmount;
     }
 
     public boolean isOwnedBy(Member comparedMember) {
