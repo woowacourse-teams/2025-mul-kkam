@@ -53,13 +53,9 @@ public class IntakeHistoryService {
 
         int intakeAmount = createIntakeHistoryDetailCRequest.intakeType()
                 .calculateHydration(createIntakeHistoryDetailCRequest.intakeAmount());
-
-        IntakeHistoryDetail intakeHistoryDetail = new IntakeHistoryDetail(
-                createIntakeHistoryDetailCRequest.dateTime().toLocalTime(),
-                new IntakeAmount(intakeAmount),
-                createIntakeHistoryDetailCRequest.intakeType(),
-                intakeHistory
-        );
+        
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailCRequest.toIntakeHistoryDetail(
+                intakeHistory, new IntakeAmount(intakeAmount));
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
