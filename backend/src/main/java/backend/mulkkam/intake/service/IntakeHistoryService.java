@@ -15,7 +15,6 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -55,13 +54,9 @@ public class IntakeHistoryService {
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        int intakeAmount = createIntakeHistoryDetailRequest.intakeType()
-                .calculateHydration(createIntakeHistoryDetailRequest.intakeAmount());
-
         Cup cup = getCup(createIntakeHistoryDetailRequest.cupId());
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailRequest.toIntakeDetail(
-                intakeHistory, new IntakeAmount(intakeAmount), cup);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailRequest.toIntakeDetail(intakeHistory, cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);

@@ -28,7 +28,7 @@ public record IntakeHistoryDetailResponse(
                 intakeDetail.getIntakeTime(),
                 intakeDetail.getIntakeAmount().value(),
                 intakeDetail.getIntakeType(),
-                intakeDetail.getCup().getCupEmoji().getUrl()
+                intakeDetail.getCupEmojiUrl()
         );
     }
 }

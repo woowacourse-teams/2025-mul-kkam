@@ -1,27 +1,20 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
-import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -80,75 +73,6 @@ class IntakeHistoryServiceUnitTest {
                 LocalDate.of(2025, 3, 19),
                 LocalTime.of(15, 30, 30)
         );
-
-        @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
-        @Test
-        void success_amountMoreThan0() {
-            // given
-            Long memberId = 1L;
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .buildWithId(memberId);
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup =CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
-
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
-
-            int intakeAmount = 500;
-            CreateIntakeHistoryDetailRequest request = new CreateIntakeHistoryDetailRequest(
-                    DATE_TIME,
-                    intakeAmount,
-                    WATER,
-                    cup.getId()
-            );
-
-            // when
-            intakeHistoryService.create(request, new MemberDetails(member));
-
-            // then
-            verify(intakeHistoryRepository).save(any(IntakeHistory.class));
-        }
-
-        @DisplayName("용량이 음용인 경우 예외가 발생한다")
-        @Test
-        void error_amountIsLessThan0() {
-            // given
-            Long memberId = 1L;
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .buildWithId(1L);
-
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup =CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
-
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
-
-            int intakeAmount = -1;
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
-                    DATE_TIME,
-                    intakeAmount,
-                    WATER,
-                    cup.getId()
-            );
-
-            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.of(2025, 3, 19))
-                    .build();
-
-            given(intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.of(2025, 3, 19)))
-                    .willReturn(Optional.ofNullable(intakeHistory));
-
-            // when & then
-            assertThatThrownBy(
-                    () -> intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member)))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_INTAKE_AMOUNT.name());
-            verify(intakeHistoryDetailRepository, never()).save(any(IntakeHistoryDetail.class));
-            verify(intakeHistoryRepository, never()).save(any(IntakeHistory.class));
-        }
     }
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
@@ -180,17 +104,17 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
@@ -241,22 +165,22 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
 
@@ -313,31 +237,31 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fifthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(14, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
@@ -389,17 +313,17 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 

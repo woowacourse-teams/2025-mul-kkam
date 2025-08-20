@@ -411,7 +411,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
+                    .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
             intakeDetailRepository.save(intakeHistoryDetail);
@@ -547,7 +547,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
+                    .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 

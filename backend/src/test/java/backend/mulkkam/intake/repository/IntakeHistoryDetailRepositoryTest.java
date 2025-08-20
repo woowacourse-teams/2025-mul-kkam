@@ -2,15 +2,10 @@ package backend.mulkkam.intake.repository;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.CupEmoji;
-import backend.mulkkam.cup.repository.CupEmojiRepository;
-import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -36,13 +31,6 @@ public class IntakeHistoryDetailRepositoryTest {
     @Autowired
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-    @Autowired
-    private CupRepository cupRepository;
-
-    @Autowired
-    private CupEmojiRepository cupEmojiRepository;
-
-    private Cup savedCup;
     private Member savedMember;
 
     @BeforeEach
@@ -51,12 +39,6 @@ public class IntakeHistoryDetailRepositoryTest {
                 .builder()
                 .build();
         savedMember = memberRepository.save(member);
-
-        CupEmoji cupEmoji = new CupEmoji("http://example.com");
-        CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
-
-        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
-        savedCup = cupRepository.save(cup);
     }
 
     @DisplayName("음용 세부 기록을 조회할 때에")
@@ -82,22 +64,22 @@ public class IntakeHistoryDetailRepositoryTest {
             intakeHistoryRepository.save(secondIntakeHistory);
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
+                    .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
+                    .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(11, 0))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
+                    .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(15, 0))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
+                    .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(13, 0))
                     .build();
 
@@ -114,7 +96,8 @@ public class IntakeHistoryDetailRepositoryTest {
                     savedMember,
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(savedMember,
+            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    savedMember,
                     date,
                     date.plusDays(1));
 

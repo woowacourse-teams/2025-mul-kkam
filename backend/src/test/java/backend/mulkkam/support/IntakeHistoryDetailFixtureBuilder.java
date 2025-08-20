@@ -1,6 +1,5 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -10,18 +9,17 @@ import java.time.LocalTime;
 public class IntakeHistoryDetailFixtureBuilder {
 
     private final IntakeHistory intakeHistory;
-    private final Cup cup;
     private LocalTime time = LocalTime.of(10, 0, 0);
     private IntakeAmount intakeAmount = new IntakeAmount(1_000);
     private IntakeType intakeType = IntakeType.WATER;
+    private String cupEmojiUrl = "http://example.com";
 
-    private IntakeHistoryDetailFixtureBuilder(IntakeHistory intakeHistory, Cup cup) {
+    private IntakeHistoryDetailFixtureBuilder(IntakeHistory intakeHistory) {
         this.intakeHistory = intakeHistory;
-        this.cup = cup;
     }
 
-    public static IntakeHistoryDetailFixtureBuilder withIntakeHistoryAndCup(IntakeHistory intakeHistory, Cup cup) {
-        return new IntakeHistoryDetailFixtureBuilder(intakeHistory, cup);
+    public static IntakeHistoryDetailFixtureBuilder withIntakeHistory(IntakeHistory intakeHistory) {
+        return new IntakeHistoryDetailFixtureBuilder(intakeHistory);
     }
 
     public IntakeHistoryDetailFixtureBuilder intakeAmount(IntakeAmount intakeAmount) {
@@ -39,13 +37,18 @@ public class IntakeHistoryDetailFixtureBuilder {
         return this;
     }
 
+    public IntakeHistoryDetailFixtureBuilder cupEmojiUrl(String cupEmojiUrl) {
+        this.cupEmojiUrl = cupEmojiUrl;
+        return this;
+    }
+
     public IntakeHistoryDetail build() {
         return new IntakeHistoryDetail(
                 this.time,
                 this.intakeAmount,
                 this.intakeHistory,
                 this.intakeType,
-                this.cup
+                this.cupEmojiUrl
         );
     }
 }

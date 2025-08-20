@@ -1,8 +1,8 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
-import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
@@ -23,11 +23,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -55,22 +50,33 @@ public class IntakeHistoryDetail extends BaseEntity {
     @JoinColumn(nullable = false)
     private IntakeHistory intakeHistory;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private Cup cup;
+    private String cupEmojiUrl;
+
+    public IntakeHistoryDetail(
+            LocalTime intakeTime,
+            IntakeHistory intakeHistory,
+            IntakeType intakeType,
+            Cup cup
+    ) {
+        this.intakeTime = intakeTime;
+        this.intakeAmount = new IntakeAmount(cup.getCupAmount().value());
+        this.intakeHistory = intakeHistory;
+        this.intakeType = intakeType;
+        this.cupEmojiUrl = cup.getCupEmoji().getUrl();
+    }
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
             IntakeAmount intakeAmount,
             IntakeHistory intakeHistory,
             IntakeType intakeType,
-            Cup cup
+            String cupEmojiUrl
     ) {
         this.intakeTime = intakeTime;
         this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
-        this.cup = cup;
+        this.cupEmojiUrl = cupEmojiUrl;
     }
 
     public boolean isOwnedBy(Member comparedMember) {

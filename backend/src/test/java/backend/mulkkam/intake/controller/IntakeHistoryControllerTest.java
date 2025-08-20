@@ -14,6 +14,7 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -103,7 +104,10 @@ class IntakeHistoryControllerTest extends ControllerTest {
         CupEmoji cupEmoji = new CupEmoji("http://example.com");
         CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
 
-        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
+        Cup cup = CupFixtureBuilder
+                .withMemberAndCupEmoji(savedMember, savedCupEmoji)
+                .cupAmount(new CupAmount(1000))
+                .build();
         savedCup = cupRepository.save(cup);
         savedCupId = savedCup.getId();
     }
@@ -134,7 +138,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -151,11 +155,11 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             List<IntakeHistorySummaryResponse> beforeIntakeHistorySummaries = objectMapper.readValue(beforeJson,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             List<IntakeHistorySummaryResponse> afterIntakeHistorySummaries = objectMapper.readValue(afterJson,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             // then
@@ -178,7 +182,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
             CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -206,7 +210,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
             CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -244,10 +248,10 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .date(to)
                     .build();
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory1, savedCup)
+                    .withIntakeHistory(intakeHistory1)
                     .build();
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory2, savedCup)
+                    .withIntakeHistory(intakeHistory2)
                     .build();
             intakeHistoryRepository.saveAll(List.of(intakeHistory1, intakeHistory2));
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
@@ -342,28 +346,28 @@ class IntakeHistoryControllerTest extends ControllerTest {
             intakeHistoryRepository.saveAll(List.of(firstIntakeHistory, secondIntakeHistory));
 
             IntakeHistoryDetail firstDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
+                    .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(21, 45))
                     .build();
             IntakeHistoryDetail firstDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
+                    .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(9, 0))
                     .build();
             IntakeHistoryDetail firstDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
+                    .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(21, 30))
                     .build();
 
             IntakeHistoryDetail secondDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
+                    .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(21, 45))
                     .build();
             IntakeHistoryDetail secondDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
+                    .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(9, 0))
                     .build();
             IntakeHistoryDetail secondDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
+                    .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(7, 30))
                     .build();
 
@@ -482,12 +486,12 @@ class IntakeHistoryControllerTest extends ControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 
@@ -520,7 +524,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
+                    .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .build();
 

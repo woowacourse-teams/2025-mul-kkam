@@ -308,7 +308,7 @@ class MemberControllerTest extends ControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistoryAndCup(intakeHistory, cup)
+                    .withIntakeHistory(intakeHistory)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
