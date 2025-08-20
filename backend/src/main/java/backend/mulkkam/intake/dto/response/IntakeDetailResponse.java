@@ -14,13 +14,17 @@ public record IntakeDetailResponse(
         LocalTime time,
 
         @Schema(description = "섭취량 (ml)", example = "250")
-        int intakeAmount
+        int intakeAmount,
+
+        @Schema(description = "컵 이미지 url", example = "http://example.com")
+        String url
 ) {
     public IntakeDetailResponse(IntakeHistoryDetail intakeDetail) {
         this(
                 intakeDetail.getId(),
                 intakeDetail.getIntakeTime(),
-                intakeDetail.getIntakeAmount().value()
+                intakeDetail.getIntakeAmount().value(),
+                intakeDetail.getCup().getCupEmoji().getUrl()
         );
     }
 }

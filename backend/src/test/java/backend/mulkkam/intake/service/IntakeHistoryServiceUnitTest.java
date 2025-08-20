@@ -14,6 +14,9 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -27,6 +30,7 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -64,6 +68,9 @@ class IntakeHistoryServiceUnitTest {
     @Mock
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
+    @Mock
+    private CupRepository cupRepository;
+
     @DisplayName("물의 음용량을 저장할 때에")
     @Nested
     class Create {
@@ -81,13 +88,17 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(memberId);
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup =CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
 
             int intakeAmount = 500;
             IntakeDetailCreateRequest request = new IntakeDetailCreateRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    cup.getId()
             );
 
             // when
@@ -106,12 +117,17 @@ class IntakeHistoryServiceUnitTest {
                     .builder()
                     .buildWithId(1L);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup =CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            when(cupRepository.findById(1L)).thenReturn(Optional.of(cup));
 
             int intakeAmount = -1;
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    cup.getId()
             );
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
@@ -144,8 +160,10 @@ class IntakeHistoryServiceUnitTest {
                     .builder()
                     .buildWithId(memberId);
 
-            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
+            when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             given(targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(eq(member.getId()),
                     any(LocalDate.class)))
                     .willReturn(Optional.of(1500));
@@ -158,17 +176,17 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
@@ -205,6 +223,9 @@ class IntakeHistoryServiceUnitTest {
                     .builder()
                     .buildWithId(1L);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -216,22 +237,22 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(10, 0))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(11, 0))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(15, 0))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(13, 0))
                     .build();
 
@@ -274,6 +295,9 @@ class IntakeHistoryServiceUnitTest {
                     .targetAmount(new TargetAmount(2_000))
                     .buildWithId(memberId);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -285,31 +309,31 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(10, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(11, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(15, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(13, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
 
             IntakeHistoryDetail fifthIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .time(LocalTime.of(14, 0))
                     .intakeAmount(new IntakeAmount(200))
                     .build();
@@ -347,6 +371,9 @@ class IntakeHistoryServiceUnitTest {
                     .targetAmount(new TargetAmount(1_000))
                     .buildWithId(memberId);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -358,17 +385,17 @@ class IntakeHistoryServiceUnitTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 

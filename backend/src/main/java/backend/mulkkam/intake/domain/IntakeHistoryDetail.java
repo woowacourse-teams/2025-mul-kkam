@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
@@ -42,14 +43,20 @@ public class IntakeHistoryDetail extends BaseEntity {
     @JoinColumn(nullable = false)
     private IntakeHistory intakeHistory;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private Cup cup;
+
     public IntakeHistoryDetail(
             LocalTime intakeTime,
             IntakeAmount intakeAmount,
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            Cup cup
     ) {
         this.intakeTime = intakeTime;
         this.intakeAmount = intakeAmount;
         this.intakeHistory = intakeHistory;
+        this.cup = cup;
     }
 
     public boolean isOwnedBy(Member comparedMember) {

@@ -82,34 +82,34 @@ public class NotificationControllerTest {
         void setUp() {
             List<Notification> notifications = List.of(
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build()
             );
             notificationRepository.saveAll(notifications);
@@ -167,36 +167,36 @@ public class NotificationControllerTest {
         void setUp() {
             List<Notification> notifications = List.of(
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .isRead(true)
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .isRead(true)
                             .build(),
                     NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025,8,15))
+                            .createdAt(LocalDate.of(2025, 8, 15))
                             .isRead(true)
                             .build()
             );
@@ -212,7 +212,8 @@ public class NotificationControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            GetUnreadNotificationsCountResponse actual = objectMapper.readValue(json, GetUnreadNotificationsCountResponse.class);
+            GetUnreadNotificationsCountResponse actual = objectMapper.readValue(json,
+                    GetUnreadNotificationsCountResponse.class);
 
             assertThat(actual.count()).isEqualTo(7);
         }

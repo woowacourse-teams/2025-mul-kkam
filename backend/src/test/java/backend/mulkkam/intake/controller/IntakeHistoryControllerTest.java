@@ -11,6 +11,10 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
+import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -23,6 +27,7 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -34,10 +39,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
-import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -79,24 +80,40 @@ class IntakeHistoryControllerTest {
     private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
     @Autowired
+    private CupRepository cupRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
+
 
     private String token;
 
-    private Member member;
+    private Member savedMember;
+
+    private Cup savedCup;
+
+    private Long savedCupId;
 
     @BeforeEach
     void setUp() {
         databaseCleaner.clean();
-        member = MemberFixtureBuilder
+        Member member = MemberFixtureBuilder
                 .builder()
                 .weight(70.0)
                 .targetAmount(new TargetAmount(1500))
                 .build();
-        memberRepository.save(member);
-        OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
+        savedMember = memberRepository.save(member);
+        OauthAccount oauthAccount = new OauthAccount(savedMember, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+        CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
+        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
+        savedCup = cupRepository.save(cup);
+        savedCupId = savedCup.getId();
     }
 
     @DisplayName("음용 세부 기록을 생성할 때에")
@@ -111,7 +128,7 @@ class IntakeHistoryControllerTest {
             LocalDate to = LocalDate.of(2025, 7, 15);
 
             TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .targetAmount(new TargetAmount(1000))
                     .updatedAt(LocalDate.of(2025, 6, 15))
                     .build();
@@ -125,7 +142,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -169,7 +186,7 @@ class IntakeHistoryControllerTest {
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -178,7 +195,7 @@ class IntakeHistoryControllerTest {
                             .content(objectMapper.writeValueAsString(intakeDetailCreateRequest)))
                     .andExpect(status().isOk());
 
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {
@@ -191,13 +208,13 @@ class IntakeHistoryControllerTest {
         void success_streakIsPlusYesterdayStreakWhenThereIsYesterdayIntakeHistory() throws Exception {
             // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(LocalDate.of(2025, 7, 14))
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
@@ -206,7 +223,7 @@ class IntakeHistoryControllerTest {
                             .content(objectMapper.writeValueAsString(intakeDetailCreateRequest)))
                     .andExpect(status().isOk());
 
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {
@@ -227,18 +244,18 @@ class IntakeHistoryControllerTest {
             LocalDate from = LocalDate.of(2025, 7, 15);
             LocalDate to = LocalDate.of(2025, 7, 16);
             IntakeHistory intakeHistory1 = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(from)
                     .build();
             IntakeHistory intakeHistory2 = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(to)
                     .build();
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory1)
+                    .withIntakeHistoryAndCup(intakeHistory1, savedCup)
                     .build();
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory2)
+                    .withIntakeHistoryAndCup(intakeHistory2, savedCup)
                     .build();
             intakeHistoryRepository.saveAll(List.of(intakeHistory1, intakeHistory2));
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
@@ -252,7 +269,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             List<IntakeHistorySummaryResponse> actual = objectMapper.readValue(json,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             // then
@@ -279,7 +296,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             List<IntakeHistorySummaryResponse> actual = objectMapper.readValue(json,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             // then
@@ -302,7 +319,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             List<IntakeHistorySummaryResponse> actual = objectMapper.readValue(json,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             // then
@@ -322,39 +339,39 @@ class IntakeHistoryControllerTest {
             LocalDate to = LocalDate.of(2025, 7, 16);
 
             IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(from)
                     .build();
             IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(to)
                     .build();
 
             intakeHistoryRepository.saveAll(List.of(firstIntakeHistory, secondIntakeHistory));
 
             IntakeHistoryDetail firstDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(firstIntakeHistory)
+                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
                     .time(LocalTime.of(21, 45))
                     .build();
             IntakeHistoryDetail firstDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(firstIntakeHistory)
+                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
                     .time(LocalTime.of(9, 0))
                     .build();
             IntakeHistoryDetail firstDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(firstIntakeHistory)
+                    .withIntakeHistoryAndCup(firstIntakeHistory, savedCup)
                     .time(LocalTime.of(21, 30))
                     .build();
 
             IntakeHistoryDetail secondDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(secondIntakeHistory)
+                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
                     .time(LocalTime.of(21, 45))
                     .build();
             IntakeHistoryDetail secondDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(secondIntakeHistory)
+                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
                     .time(LocalTime.of(9, 0))
                     .build();
             IntakeHistoryDetail secondDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(secondIntakeHistory)
+                    .withIntakeHistoryAndCup(secondIntakeHistory, savedCup)
                     .time(LocalTime.of(7, 30))
                     .build();
 
@@ -416,13 +433,13 @@ class IntakeHistoryControllerTest {
             LocalDate to = LocalDate.of(2025, 7, 16);
 
             TargetAmountSnapshot targetAmountSnapshot1 = TargetAmountSnapshotFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .targetAmount(new TargetAmount(1500))
                     .updatedAt(LocalDate.of(2025, 7, 13))
                     .build();
 
             TargetAmountSnapshot targetAmountSnapshot2 = TargetAmountSnapshotFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .targetAmount(new TargetAmount(2000))
                     .updatedAt(LocalDate.of(2025, 7, 15))
                     .build();
@@ -438,7 +455,7 @@ class IntakeHistoryControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             List<IntakeHistorySummaryResponse> actual = objectMapper.readValue(json,
-                    new TypeReference<List<IntakeHistorySummaryResponse>>() {
+                    new TypeReference<>() {
                     });
 
             // then
@@ -465,7 +482,7 @@ class IntakeHistoryControllerTest {
         void deleteIntakeDetail_keepsHistory_whenNotAllDetailsDeleted() throws Exception {
             // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .targetIntakeAmount(new TargetAmount(2000))
                     .date(LocalDate.now())
                     .build();
@@ -473,12 +490,12 @@ class IntakeHistoryControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .time(LocalTime.of(10, 0))
                     .build();
 
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .time(LocalTime.of(10, 0))
                     .build();
 
@@ -489,7 +506,7 @@ class IntakeHistoryControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {
@@ -503,7 +520,7 @@ class IntakeHistoryControllerTest {
         void deleteIntakeDetail_deleteHistory_whenAllDetailsDeleted() throws Exception {
             // given
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .targetIntakeAmount(new TargetAmount(2000))
                     .date(LocalDate.now())
                     .build();
@@ -511,7 +528,7 @@ class IntakeHistoryControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .time(LocalTime.of(10, 0))
                     .build();
 
@@ -522,7 +539,7 @@ class IntakeHistoryControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {

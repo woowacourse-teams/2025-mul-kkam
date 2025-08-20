@@ -1,10 +1,10 @@
 package backend.mulkkam.intake.dto.request;
 
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
@@ -14,10 +14,13 @@ public record IntakeDetailCreateRequest(
         LocalDateTime dateTime,
 
         @Schema(description = "섭취량 (ml)", example = "250", minimum = "1")
-        int intakeAmount
+        int intakeAmount,
+
+        @Schema(description = "사용한 컵 Id", example = "1")
+        Long cupId
 ) {
-    public IntakeHistoryDetail toIntakeDetail(IntakeHistory intakeHistory) {
+    public IntakeHistoryDetail toIntakeDetail(IntakeHistory intakeHistory, Cup cup) {
         LocalTime time = dateTime.toLocalTime();
-        return new IntakeHistoryDetail(time, new IntakeAmount(intakeAmount), intakeHistory);
+        return new IntakeHistoryDetail(time, new IntakeAmount(intakeAmount), intakeHistory, cup);
     }
 }

@@ -397,6 +397,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
+            CupEmoji cupEmoji = new CupEmoji("http://example.com");
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji).build();
+            Cup savedCup = cupRepository.save(cup);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
@@ -406,7 +411,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
             intakeDetailRepository.save(intakeHistoryDetail);
@@ -535,14 +540,14 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
             Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji)
                     .build();
-            cupRepository.save(cup);
+            Cup savedCup = cupRepository.save(cup);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
@@ -559,7 +564,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
                 softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
-                softly.assertThat(cupRepository.findById(cup.getId())).isEmpty();
+                softly.assertThat(cupRepository.findById(savedCup.getId())).isEmpty();
                 softly.assertThat(intakeHistoryRepository.findById(intakeHistory.getId())).isEmpty();
                 softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();

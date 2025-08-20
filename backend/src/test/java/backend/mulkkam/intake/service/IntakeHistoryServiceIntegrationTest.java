@@ -11,6 +11,10 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
+import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
@@ -26,11 +30,13 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -59,6 +65,27 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     TargetAmountSnapshotRepository targetAmountSnapshotRepository;
 
+    @Autowired
+    CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
+    CupRepository cupRepository;
+
+    private Member savedMember;
+    private Cup savedCup;
+    private Long savedCupId;
+
+    @BeforeEach
+    void setUp() {
+        Member member = MemberFixtureBuilder.builder().build();
+        savedMember = memberRepository.save(member);
+
+        CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
+        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
+        savedCup = cupRepository.save(cup);
+        savedCupId = savedCup.getId();
+    }
+
     @DisplayName("음용량을 저장할 때에")
     @Nested
     class Create {
@@ -71,17 +98,15 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_amountMoreThan0() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            Member savedMember = memberRepository.save(member);
-
             int intakeAmount = 500;
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    savedCupId
             );
 
             // when
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(savedMember));
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -95,17 +120,15 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsLessThan0() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
-
             int intakeAmount = -1;
             IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    savedCupId
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
+            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
         }
@@ -114,17 +137,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_IfYesterdayHistoryNotExist() {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder().
-                    build();
-            memberRepository.save(member);
-
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500, savedCupId);
+            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(savedMember));
 
             // when
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {
@@ -138,22 +156,19 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         void success_IfYesterdayHistoryExist() {
             // given
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            Member member = MemberFixtureBuilder
-                    .builder().
-                    build();
-            memberRepository.save(member);
+
             IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(dateTime.toLocalDate().minusDays(1))
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500, savedCupId);
+            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(savedMember));
 
             // when
-            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             // then
             assertSoftly(softly -> {
@@ -171,9 +186,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyInDateRange() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            Member savedMember = memberRepository.save(member);
-
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 23);
 
@@ -233,11 +245,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_containsOnlyHistoryOfMember() {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            Member savedMember = memberRepository.save(member);
-
             Member anotherMember = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("칼리"))
@@ -253,7 +260,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             IntakeHistoryDetail detailOfAnotherMember = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(historyOfAnotherMember)
+                    .withIntakeHistoryAndCup(historyOfAnotherMember, savedCup)
                     .build();
 
             IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
@@ -262,7 +269,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             IntakeHistoryDetail detailOfMember = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(historyOfMember)
+                    .withIntakeHistoryAndCup(historyOfMember, savedCup)
                     .build();
 
             intakeHistoryRepository.save(historyOfAnotherMember);
@@ -294,9 +301,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int targetAmountOfMember = 1_500;
             Member member = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("칼로리"))
                     .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             Member savedMember = memberRepository.save(member);
+
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com1"));
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
+            Cup savedCup = cupRepository.save(cup);
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
@@ -308,17 +320,17 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
 
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .intakeAmount(new IntakeAmount(500))
                     .build();
 
@@ -351,6 +363,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("칼로리"))
                     .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             memberRepository.save(member);
@@ -385,14 +398,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @DisplayName("존재하지 않는 기록에 대한 요청인 경우 예외가 발생한다")
         @Test
         void error_historyDetailIsNotExisted() {
-            // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
-
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(member)))
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_INTAKE_HISTORY_DETAIL.name());
         }
@@ -401,11 +408,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberIsNotPermitted() {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
-
             Member anotherMember = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("칼리"))
@@ -413,13 +415,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedAnotherMember = memberRepository.save(anotherMember);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(LocalDate.now())
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
@@ -437,24 +439,19 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validData() {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
-
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(LocalDate.now())
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
-            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(member));
+            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(savedMember));
 
             // then
             Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeHistoryDetailRepository.findById(
@@ -466,25 +463,20 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_requestToDeletePastDate() {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
-
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(LocalDate.now().minusDays(1))
                     .build();
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, savedCup)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(member)))
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }

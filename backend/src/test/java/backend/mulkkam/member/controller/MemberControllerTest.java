@@ -319,7 +319,7 @@ class MemberControllerTest {
             intakeHistoryRepository.save(intakeHistory);
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
-                    .withIntakeHistory(intakeHistory)
+                    .withIntakeHistoryAndCup(intakeHistory, cup)
                     .build();
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 

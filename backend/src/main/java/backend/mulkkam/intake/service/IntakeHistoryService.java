@@ -2,12 +2,15 @@ package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -39,6 +42,7 @@ public class IntakeHistoryService {
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    private final CupRepository cupRepository;
 
     @Transactional
     public CreateIntakeHistoryResponse create(
@@ -49,7 +53,8 @@ public class IntakeHistoryService {
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = findIntakeHistory(member, intakeDate);
-        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
+        Cup cup = getCup(intakeDetailCreateRequest.cupId());
+        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory, cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
@@ -211,5 +216,10 @@ public class IntakeHistoryService {
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private Cup getCup(Long id) {
+        return cupRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
     }
 }
