@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_INTAKE_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
+import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
@@ -15,9 +16,9 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -31,16 +32,15 @@ import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -75,13 +75,14 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    WATER
             );
 
             // when
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
 
             // then
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -99,13 +100,15 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             int intakeAmount = -1;
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
-                    intakeAmount
+                    intakeAmount,
+                    WATER
             );
 
             // when & then
-            assertThatThrownBy(() -> intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member)))
+            assertThatThrownBy(
+                    () -> intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_INTAKE_AMOUNT.name());
         }
@@ -120,8 +123,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+                    dateTime, 1500, WATER);
+            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -149,8 +153,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(dateTime, 1500);
-            intakeHistoryService.create(intakeDetailCreateRequest, new MemberDetails(member));
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+                    dateTime, 1500, WATER);
+            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -282,7 +287,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             List<Long> intakeHistoryIds = actual.stream()
                     .flatMap(summary -> summary.intakeDetails().stream())
-                    .map(IntakeDetailResponse::id)
+                    .map(IntakeHistoryDetailResponse::id)
                     .toList();
 
             assertThat(intakeHistoryIds).containsOnly(savedHistoryOfMember.getId());
