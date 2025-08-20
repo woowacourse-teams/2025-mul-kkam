@@ -360,42 +360,46 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class Delete {
 
-        private final Member member = MemberFixtureBuilder.builder().build();
-
-        private final Cup firstCup = CupFixtureBuilder
-                .withMemberAndCupEmoji(member, savedCupEmoji)
-                .cupRank(new CupRank(1))
-                .build();
-        private final Cup secondCup = CupFixtureBuilder
-                .withMemberAndCupEmoji(member, savedCupEmoji)
-                .cupRank(new CupRank(2))
-                .build();
-        private final Cup thirdCup = CupFixtureBuilder
-                .withMemberAndCupEmoji(member, savedCupEmoji)
-                .cupRank(new CupRank(3))
-                .build();
+        private Member savedMember;
+        private Cup savedFirstCup;
+        private Cup savedSecondCup;
+        private Cup savedThirdCup;
 
         @BeforeEach
         void setup() {
-            memberRepository.save(member);
-            cupRepository.save(firstCup);
-            cupRepository.save(secondCup);
-            cupRepository.save(thirdCup);
+            Member member = MemberFixtureBuilder.builder().build();
+            savedMember = memberRepository.save(member);
+
+            Cup firstCup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .cupRank(new CupRank(1))
+                    .build();
+            Cup secondCup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .cupRank(new CupRank(2))
+                    .build();
+            Cup thirdCup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .cupRank(new CupRank(3))
+                    .build();
+            savedFirstCup = cupRepository.save(firstCup);
+            savedSecondCup = cupRepository.save(secondCup);
+            savedThirdCup = cupRepository.save(thirdCup);
         }
 
         @DisplayName("우선순위가 더 낮은 컵들의 우선순위가 한 단계씩 승격된다.")
         @Test
         void success_withLowerPriorityCups() {
             // when
-            cupService.delete(firstCup.getId(), new MemberDetails(member));
+            cupService.delete(savedFirstCup.getId(), new MemberDetails(savedMember));
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupRepository.existsById(firstCup.getId())).isFalse();
-                softly.assertThat(cupRepository.findAllByMember(member)).hasSize(2);
-                softly.assertThat(cupRepository.findById(secondCup.getId())).isPresent().get()
+                softly.assertThat(cupRepository.existsById(savedFirstCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMember(savedMember)).hasSize(2);
+                softly.assertThat(cupRepository.findById(savedSecondCup.getId())).isPresent().get()
                         .extracting(Cup::getCupRank).isEqualTo(new CupRank(1));
-                softly.assertThat(cupRepository.findById(thirdCup.getId())).isPresent().get()
+                softly.assertThat(cupRepository.findById(savedThirdCup.getId())).isPresent().get()
                         .extracting(Cup::getCupRank).isEqualTo(new CupRank(2));
             });
         }
@@ -404,15 +408,15 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withoutLowerPriorityCups() {
             // when
-            cupService.delete(thirdCup.getId(), new MemberDetails(member));
+            cupService.delete(savedThirdCup.getId(), new MemberDetails(savedMember));
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupRepository.existsById(thirdCup.getId())).isFalse();
-                softly.assertThat(cupRepository.findAllByMember(member)).hasSize(2);
-                softly.assertThat(cupRepository.findById(firstCup.getId())).isPresent().get()
+                softly.assertThat(cupRepository.existsById(savedThirdCup.getId())).isFalse();
+                softly.assertThat(cupRepository.findAllByMember(savedMember)).hasSize(2);
+                softly.assertThat(cupRepository.findById(savedFirstCup.getId())).isPresent().get()
                         .extracting(Cup::getCupRank).isEqualTo(new CupRank(1));
-                softly.assertThat(cupRepository.findById(secondCup.getId())).isPresent().get()
+                softly.assertThat(cupRepository.findById(savedSecondCup.getId())).isPresent().get()
                         .extracting(Cup::getCupRank).isEqualTo(new CupRank(2));
             });
         }
