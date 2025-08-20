@@ -9,8 +9,6 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -22,12 +20,10 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,17 +53,6 @@ class IntakeHistoryServiceUnitTest {
     @Mock
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-
-    @DisplayName("컵으로 물의 음용량을 저장할 때에")
-    @Nested
-    class CreateByCup { // TODO 2025. 8. 20. 16:55: 테스트 추가
-
-        public static final LocalDateTime DATE_TIME = LocalDateTime.of(
-                LocalDate.of(2025, 3, 19),
-                LocalTime.of(15, 30, 30)
-        );
-    }
-
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
     @Nested
     class ReadSummaryOfIntakeHistories {
@@ -80,9 +65,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(memberId);
-
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             given(targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(eq(member.getId()),
@@ -143,9 +125,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
-
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
@@ -215,9 +194,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new TargetAmount(2_000))
                     .buildWithId(memberId);
-
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
@@ -291,9 +267,6 @@ class IntakeHistoryServiceUnitTest {
             Member member = MemberFixtureBuilder.builder()
                     .targetAmount(new TargetAmount(1_000))
                     .buildWithId(memberId);
-
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).buildWithId(1L);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
