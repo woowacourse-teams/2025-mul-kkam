@@ -20,7 +20,7 @@ public record IntakeHistoryDetailResponse(
         IntakeType intakeType,
 
         @Schema(description = "컵 이미지 url", example = "http://example.com")
-        String url
+        String cupEmojiUrl
 ) {
     public IntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail) {
         this(
@@ -29,6 +29,16 @@ public record IntakeHistoryDetailResponse(
                 intakeDetail.getIntakeAmount().value(),
                 intakeDetail.getIntakeType(),
                 intakeDetail.getCupEmojiUrl()
+        );
+    }
+
+    public IntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail, String cupEmojiUrl) {
+        this(
+                intakeDetail.getId(),
+                intakeDetail.getIntakeTime(),
+                intakeDetail.getIntakeAmount().value(),
+                intakeDetail.getIntakeType(),
+                cupEmojiUrl
         );
     }
 }

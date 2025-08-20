@@ -10,6 +10,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -30,6 +31,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -226,7 +228,15 @@ public class IntakeHistoryService {
 
     private List<IntakeHistoryDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
         return intakeDetails.stream()
-                .map(IntakeHistoryDetailResponse::new).toList();
+                .map(this::toIntakeHistoryDetailResponse)
+                .collect(Collectors.toList());
+    }
+
+    private IntakeHistoryDetailResponse toIntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail) {
+        if (intakeDetail.isNonExistingCupEmojiUrl()) {
+            return new IntakeHistoryDetailResponse(intakeDetail, CupEmoji.getDefaultCupEmojiUrl());
+        }
+        return new IntakeHistoryDetailResponse(intakeDetail);
     }
 
     private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {

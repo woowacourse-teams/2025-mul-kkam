@@ -84,4 +84,8 @@ public class IntakeHistoryDetail extends BaseEntity {
     public boolean isCreatedAt(LocalDate comparedDate) {
         return this.intakeHistory.isCreatedAt(comparedDate);
     }
+
+    public boolean isNonExistingCupEmojiUrl() { // TODO 2025. 8. 20. 17:30: 네이밍 수정
+        return cupEmojiUrl == null;
+    }
 }
