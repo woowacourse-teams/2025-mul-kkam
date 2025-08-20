@@ -29,104 +29,107 @@ class ProgressWidget : AppWidgetProvider() {
             updateProgressWidgetWithWorker(context, appWidgetId)
         }
     }
-}
 
-fun updateProgressWidgetWithWorker(
-    context: Context,
-    appWidgetId: Int,
-) {
-    val workId = progressChecker.checkCurrentAchievementRate()
+    companion object {
+        fun updateProgressWidgetWithWorker(
+            context: Context,
+            appWidgetId: Int,
+        ) {
+            val workId = progressChecker.checkCurrentAchievementRate()
 
-    observeWorker(context, appWidgetId, workId)
-}
+            observeWorker(context, appWidgetId, workId)
+        }
 
-private fun observeWorker(
-    context: Context,
-    appWidgetId: Int,
-    workId: UUID,
-) {
-    val workManager = WorkManager.getInstance(context.applicationContext)
-    val liveData = workManager.getWorkInfoByIdLiveData(workId)
+        private fun observeWorker(
+            context: Context,
+            appWidgetId: Int,
+            workId: UUID,
+        ) {
+            val workManager = WorkManager.getInstance(context.applicationContext)
+            val liveData = workManager.getWorkInfoByIdLiveData(workId)
 
-    val observer =
-        object : Observer<WorkInfo?> {
-            override fun onChanged(workInfo: WorkInfo?) {
-                workInfo?.takeIf { it.state.isFinished }?.let {
-                    val achievementRate =
-                        it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+            val observer =
+                object : Observer<WorkInfo?> {
+                    override fun onChanged(workInfo: WorkInfo?) {
+                        workInfo?.takeIf { it.state.isFinished }?.let {
+                            val achievementRate =
+                                it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
 
-                    val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    updateProgressWidget(
-                        context.applicationContext,
-                        appWidgetManager,
-                        appWidgetId,
-                        achievementRate,
-                    )
+                            val appWidgetManager =
+                                AppWidgetManager.getInstance(context.applicationContext)
+                            updateProgressWidget(
+                                context.applicationContext,
+                                appWidgetManager,
+                                appWidgetId,
+                                achievementRate,
+                            )
 
-                    liveData.removeObserver(this)
+                            liveData.removeObserver(this)
+                        }
+                    }
                 }
-            }
+
+            liveData.observeForever(observer)
         }
 
-    liveData.observeForever(observer)
-}
+        private fun updateProgressWidget(
+            context: Context,
+            appWidgetManager: AppWidgetManager,
+            appWidgetId: Int,
+            progress: Float = 0f,
+        ) {
+            val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
 
-private fun updateProgressWidget(
-    context: Context,
-    appWidgetManager: AppWidgetManager,
-    appWidgetId: Int,
-    progress: Float = 0f,
-) {
-    val views = RemoteViews(context.packageName, R.layout.layout_progress_widget)
+            val donutBitmap =
+                createDonutBitmap(
+                    context,
+                    width = 78.dpToPx(context),
+                    height = 78.dpToPx(context),
+                    stroke = 10f,
+                    progress = progress,
+                )
 
-    val donutBitmap =
-        createDonutBitmap(
-            context,
-            width = 78.dpToPx(context),
-            height = 78.dpToPx(context),
-            stroke = 10f,
-            progress = progress,
-        )
+            val progressText =
+                context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
+            views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
-    val progressText =
-        context.getString(R.string.progress_widget_achievement_rate, progress.toInt())
-    views.setTextViewText(R.id.tv_achievement_rate, progressText)
+            views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
+            views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
 
-    views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
-    views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
-
-    appWidgetManager.updateAppWidget(appWidgetId, views)
-}
-
-private fun createDonutBitmap(
-    context: Context,
-    width: Int,
-    height: Int,
-    stroke: Float,
-    progress: Float,
-    @ColorRes backgroundColor: Int = R.color.gray_10,
-    @ColorRes paintColor: Int = R.color.primary_50,
-): Bitmap {
-    val donutView =
-        GradientDonutChartView(context).apply {
-            layoutParams = LayoutParams(width, height)
-            setStroke(stroke)
-            setBackgroundPaintColor(backgroundColor)
-            setPaintColor(paintColor)
-            setProgress(progress)
-            invalidate()
+            appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
-    donutView.measure(
-        android.view.View.MeasureSpec
-            .makeMeasureSpec(width, EXACTLY),
-        android.view.View.MeasureSpec
-            .makeMeasureSpec(height, EXACTLY),
-    )
-    donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
+        private fun createDonutBitmap(
+            context: Context,
+            width: Int,
+            height: Int,
+            stroke: Float,
+            progress: Float,
+            @ColorRes backgroundColor: Int = R.color.gray_10,
+            @ColorRes paintColor: Int = R.color.primary_50,
+        ): Bitmap {
+            val donutView =
+                GradientDonutChartView(context).apply {
+                    layoutParams = LayoutParams(width, height)
+                    setStroke(stroke)
+                    setBackgroundPaintColor(backgroundColor)
+                    setPaintColor(paintColor)
+                    setProgress(progress)
+                    invalidate()
+                }
 
-    return ViewBitmapCapture.snapshot(donutView)
+            donutView.measure(
+                android.view.View.MeasureSpec
+                    .makeMeasureSpec(width, EXACTLY),
+                android.view.View.MeasureSpec
+                    .makeMeasureSpec(height, EXACTLY),
+            )
+            donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
+
+            return ViewBitmapCapture.snapshot(donutView)
+        }
+
+        // TODO: 공백의 개쩌는 확장함수 분리 필요
+        private fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
+    }
 }
-
-// TODO: 공백의 개쩌는 확장함수 분리 필요
-private fun Int.dpToPx(context: Context): Int = (this * context.resources.displayMetrics.density).toInt()
