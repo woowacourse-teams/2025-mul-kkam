@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
-import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -19,7 +18,6 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
@@ -51,9 +49,6 @@ class IntakeHistoryServiceUnitTest {
     private IntakeHistoryService intakeHistoryService;
 
     @Mock
-    private IntakeHistoryRepository intakeHistoryRepository;
-
-    @Mock
     private MemberRepository memberRepository;
 
     @Mock
@@ -62,12 +57,10 @@ class IntakeHistoryServiceUnitTest {
     @Mock
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-    @Mock
-    private CupRepository cupRepository;
 
-    @DisplayName("물의 음용량을 저장할 때에")
+    @DisplayName("컵으로 물의 음용량을 저장할 때에")
     @Nested
-    class Create {
+    class CreateByCup { // TODO 2025. 8. 20. 16:55: 테스트 추가
 
         public static final LocalDateTime DATE_TIME = LocalDateTime.of(
                 LocalDate.of(2025, 3, 19),

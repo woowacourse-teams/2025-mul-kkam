@@ -20,7 +20,7 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -137,14 +137,14 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailByCupRequest)))
                     .andExpect(status().isOk());
 
             String afterJson = mockMvc.perform(get("/intake/history")
@@ -181,7 +181,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
@@ -209,14 +209,14 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailByCupRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);

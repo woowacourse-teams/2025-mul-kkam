@@ -3,7 +3,7 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;
@@ -58,7 +58,7 @@ public class IntakeHistoryController {
         return ResponseEntity.ok().body(dailyResponses);
     }
 
-    @Operation(summary = "음용량 기록 생성", description = "새로운 음용량 기록을 생성합니다.")
+    @Operation(summary = "컵을 통해 음용량 기록 생성", description = "컵을 통해 새로운 음용량 기록을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "음용량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
@@ -71,13 +71,13 @@ public class IntakeHistoryController {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
     @PostMapping
-    public ResponseEntity<CreateIntakeHistoryResponse> create(
+    public ResponseEntity<CreateIntakeHistoryResponse> createByCup(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @RequestBody CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest
+            @RequestBody CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest
     ) {
-        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.create(
-                createIntakeHistoryDetailCRequest,
+        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.createByCup(
+                createIntakeHistoryDetailByCupRequest,
                 memberDetails
         );
         return ResponseEntity.ok(createIntakeHistoryResponse);

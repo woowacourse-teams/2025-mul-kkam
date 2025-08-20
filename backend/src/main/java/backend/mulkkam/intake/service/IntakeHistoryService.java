@@ -16,7 +16,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -45,18 +45,18 @@ public class IntakeHistoryService {
     private final CupRepository cupRepository;
 
     @Transactional
-    public CreateIntakeHistoryResponse create(
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest,
+    public CreateIntakeHistoryResponse createByCup(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = createIntakeHistoryDetailRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = createIntakeHistoryDetailByCupRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        Cup cup = getCup(createIntakeHistoryDetailRequest.cupId());
+        Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailRequest.toIntakeDetail(intakeHistory, cup);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory, cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);

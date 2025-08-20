@@ -19,7 +19,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -84,18 +84,18 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         savedCupId = savedCup.getId();
     }
 
-    @DisplayName("음용량을 저장할 때에")
+    @DisplayName("컵으로 음용량을 저장할 때에")
     @Nested
-    class Create {
+    class CreateByCup {
 
         @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
         @Test
         void success_IfYesterdayHistoryNotExist() {
             // given
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
                     dateTime, WATER, savedCupId);
-            intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(savedMember));
+            intakeHistoryService.createByCup(createIntakeHistoryDetailCRequest, new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -120,8 +120,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailRequest = new CreateIntakeHistoryDetailRequest(dateTime, WATER, savedCupId);
-            intakeHistoryService.create(createIntakeHistoryDetailRequest, new MemberDetails(savedMember));
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(dateTime, WATER, savedCupId);
+            intakeHistoryService.createByCup(createIntakeHistoryDetailByCupRequest, new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
