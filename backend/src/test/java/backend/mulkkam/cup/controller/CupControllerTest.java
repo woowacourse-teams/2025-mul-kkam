@@ -61,12 +61,6 @@ class CupControllerTest extends ControllerTest {
     private CupRepository cupRepository;
 
     @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
     private CupEmojiRepository cupEmojiRepository;
 
     private Member savedMember;

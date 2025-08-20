@@ -13,7 +13,6 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -28,8 +27,6 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
@@ -78,9 +75,6 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private String token;
 
