@@ -13,8 +13,8 @@ ALTER TABLE cup
     ADD CONSTRAINT fk_cup_emoji
         FOREIGN KEY (cup_emoji_id) REFERENCES cup_emoji (id);
 
-INSERT INTO cup_emoji (id, url, created_at, deleted_at)
-    VALUES (1, 'https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c', '2025-08-01 10:10:10', NULL),
-           (2, 'https://github.com/user-attachments/assets/393fc8f9-bc46-4856-bfbe-889efc97151e', '2025-08-01 10:10:11', NULL);
+INSERT INTO cup_emoji (url, created_at, deleted_at)
+    VALUES ('https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c', '2025-08-01 10:10:10', NULL),
+           ( 'https://github.com/user-attachments/assets/393fc8f9-bc46-4856-bfbe-889efc97151e', '2025-08-01 10:10:11', NULL);
 
 ALTER TABLE cup DROP COLUMN emoji;
