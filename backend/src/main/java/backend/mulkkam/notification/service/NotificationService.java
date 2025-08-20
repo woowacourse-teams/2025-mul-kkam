@@ -42,6 +42,7 @@ public class NotificationService {
     private final FcmService fcmService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
+    private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
 
     @Transactional
@@ -69,7 +70,7 @@ public class NotificationService {
 
         Long nextCursor = getNextCursor(hasNext, pagedNotifications);
         List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
-        List<ReadNotificationResponse> readNotificationResponses = toReadNotificationResponses(notifications);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
         notifications.forEach(
                 notification -> notification.updateIsRead(true)
         );
