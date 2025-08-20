@@ -9,12 +9,11 @@ import android.view.View.MeasureSpec.EXACTLY
 import android.widget.RemoteViews
 import androidx.annotation.ColorRes
 import androidx.lifecycle.Observer
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.data.local.work.ProgressCheckWorker
 import com.mulkkam.data.local.work.ProgressCheckWorker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
+import com.mulkkam.di.WorkInjection.progressChecker
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.ViewBitmapCapture
@@ -36,12 +35,9 @@ fun updateProgressWidgetWithWorker(
     context: Context,
     appWidgetId: Int,
 ) {
-    val workManager = WorkManager.getInstance(context.applicationContext)
-    val workRequest = OneTimeWorkRequestBuilder<ProgressCheckWorker>().build()
+    val workId = progressChecker.checkCurrentAchievementRate()
 
-    workManager.enqueue(workRequest)
-
-    observeWorker(context, appWidgetId, workRequest.id)
+    observeWorker(context, appWidgetId, workId)
 }
 
 private fun observeWorker(
