@@ -49,7 +49,7 @@ object WorkInjection {
     }
 }
 
-internal class MulkkamWorkerFactory(
+private class MulkkamWorkerFactory(
     private val healthRepository: HealthRepository,
     private val notificationRepository: NotificationRepository,
     private val membersRepository: MembersRepository,
