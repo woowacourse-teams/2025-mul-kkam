@@ -26,27 +26,27 @@ class ProgressWidget : AppWidgetProvider() {
         appWidgetIds: IntArray,
     ) {
         for (appWidgetId in appWidgetIds) {
-            updateProgressWidgetWithWorker(context, appWidgetId)
+            updateProgressWidget(context, appWidgetId)
         }
     }
 
     companion object {
-        fun updateProgressWidgetWithWorker(
+        fun updateProgressWidget(
             context: Context,
             appWidgetId: Int,
         ) {
-            val workId = progressChecker.checkCurrentAchievementRate()
+            val requestId = progressChecker.checkCurrentAchievementRate()
 
-            observeWorker(context, appWidgetId, workId)
+            observeWorker(context, appWidgetId, requestId)
         }
 
         private fun observeWorker(
             context: Context,
             appWidgetId: Int,
-            workId: UUID,
+            requestId: UUID,
         ) {
             val workManager = WorkManager.getInstance(context.applicationContext)
-            val liveData = workManager.getWorkInfoByIdLiveData(workId)
+            val liveData = workManager.getWorkInfoByIdLiveData(requestId)
 
             val observer =
                 object : Observer<WorkInfo?> {
@@ -57,7 +57,7 @@ class ProgressWidget : AppWidgetProvider() {
 
                             val appWidgetManager =
                                 AppWidgetManager.getInstance(context.applicationContext)
-                            updateProgressWidget(
+                            updateProgressWidgetViews(
                                 context.applicationContext,
                                 appWidgetManager,
                                 appWidgetId,
@@ -72,7 +72,7 @@ class ProgressWidget : AppWidgetProvider() {
             liveData.observeForever(observer)
         }
 
-        private fun updateProgressWidget(
+        private fun updateProgressWidgetViews(
             context: Context,
             appWidgetManager: AppWidgetManager,
             appWidgetId: Int,
