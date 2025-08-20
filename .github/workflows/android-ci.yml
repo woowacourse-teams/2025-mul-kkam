@@ -40,9 +40,11 @@ jobs:
     
     - name: set up local.properties
       env:
-        BASE_URL: ${{secrets.BASE_URL}}
-      run:
-        echo base.url=\"$_BASE_URL\" >> ./local.properties
+        RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
+        DEBUG_BASE_URL:   ${{ secrets.DEBUG_BASE_URL }}
+      run: |
+        echo release.base.url=\""${RELEASE_BASE_URL}"\" >> ./local.properties
+        echo debug.base.url=\""${DEBUG_BASE_URL}"\" >> ./local.properties
 
     - name: set up google-services.json
       env:
