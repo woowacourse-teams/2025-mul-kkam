@@ -1,4 +1,4 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.work
 
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager

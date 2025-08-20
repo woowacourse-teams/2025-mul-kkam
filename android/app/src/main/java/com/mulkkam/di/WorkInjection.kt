@@ -3,9 +3,9 @@ package com.mulkkam.di
 import android.content.Context
 import androidx.work.Configuration
 import androidx.work.WorkManager
-import com.mulkkam.data.local.work.CalorieSchedulerImpl
-import com.mulkkam.data.local.work.ProgressCheckerImpl
-import com.mulkkam.data.local.work.WorkerFactory
+import com.mulkkam.data.work.CalorieSchedulerImpl
+import com.mulkkam.data.work.ProgressCheckerImpl
+import com.mulkkam.data.work.WorkerFactory
 import com.mulkkam.di.RepositoryInjection.healthRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository

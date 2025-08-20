@@ -1,10 +1,11 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.work
 
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.mulkkam.domain.repository.MembersRepository
+import com.mulkkam.domain.work.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import java.time.LocalDate
 
 class ProgressCheckWorker(
@@ -30,8 +31,4 @@ class ProgressCheckWorker(
                 Result.failure()
             },
         )
-
-    companion object {
-        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
-    }
 }
