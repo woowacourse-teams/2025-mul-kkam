@@ -2,13 +2,10 @@ package com.mulkkam.ui.splash
 
 import android.animation.Animator
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
 import com.mulkkam.databinding.ActivitySplashBinding
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
@@ -16,7 +13,6 @@ import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
-import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 
 @SuppressLint("CustomSplashScreen")
@@ -27,26 +23,10 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding.lottieSplashCircle.resumeAnimation()
-        viewModel.checkAppVersion(getAppVersion())
         initAnimatorUpdateListener()
         initAnimatorListener()
         initObservers()
     }
-
-    private fun getAppVersion(): String =
-        runCatching {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val packageInfo =
-                    packageManager.getPackageInfo(
-                        packageName,
-                        PackageManager.PackageInfoFlags.of(0),
-                    )
-                packageInfo.versionName
-            } else {
-                val packageInfo = packageManager.getPackageInfo(packageName, 0)
-                packageInfo.versionName
-            }
-        }.getOrNull() ?: ""
 
     private fun initAnimatorUpdateListener() {
         binding.lottieSplashCircle.addAnimatorUpdateListener { animation ->
@@ -80,21 +60,6 @@ class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBind
         viewModel.authUiState.observe(this) { authUiState ->
             navigateToNextScreen(authUiState)
         }
-
-        viewModel.isAppOutdated.observe(this) { isAppOutdated ->
-            if (isAppOutdated) {
-                showUpdateDialog()
-            } else {
-                viewModel.updateAuthState()
-            }
-        }
-    }
-
-    private fun showUpdateDialog() {
-        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
-        AppUpdateDialogFragment
-            .newInstance()
-            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
 
     private fun navigateToNextScreen(authUiState: MulKkamUiState<UserAuthState>) {

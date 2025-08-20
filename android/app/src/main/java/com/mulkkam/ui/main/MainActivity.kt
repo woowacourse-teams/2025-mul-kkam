@@ -19,7 +19,9 @@ import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
 import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
+import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
@@ -32,6 +34,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.checkAppVersion(getAppVersion())
         initBottomNavListener()
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
@@ -145,7 +148,18 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             onFirstLaunch.observe(this@MainActivity) {
                 showMainPermissionDialog()
             }
+
+            isAppOutdated.observe(this@MainActivity) { isAppOutdated ->
+                if (isAppOutdated) showUpdateDialog()
+            }
         }
+    }
+
+    private fun showUpdateDialog() {
+        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
+        AppUpdateDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
 
     private fun showMainPermissionDialog() {
