@@ -36,21 +36,28 @@ public class SuggestionNotificationService {
     private final MemberRepository memberRepository;
 
     @Transactional
-    public void createAndSendSuggestionNotification(CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest) {
+    public void createAndSendSuggestionNotification(
+            CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest) {
         Member member = createTokenSuggestionNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
-        Notification savedNotification = notificationRepository.save(createTokenSuggestionNotificationRequest.toNotification());
-        suggestionNotificationRepository.save(createTokenSuggestionNotificationRequest.toSuggestionNotification(savedNotification));
+        Notification savedNotification = notificationRepository.save(
+                createTokenSuggestionNotificationRequest.toNotification());
+        suggestionNotificationRepository.save(
+                createTokenSuggestionNotificationRequest.toSuggestionNotification(savedNotification));
 
         sendNotificationByMember(createTokenSuggestionNotificationRequest, devicesByMember);
     }
 
     @Transactional
-    public void applyTargetAmount(Long id, MemberDetails memberDetails) {
+    public void applyTargetAmount(
+            Long id,
+            MemberDetails memberDetails
+    ) {
         SuggestionNotification suggestionNotification = getSuggestionNotification(id, memberDetails.id());
 
-        intakeAmountService.modifyDailyTargetBySuggested(memberDetails, new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
+        intakeAmountService.modifyDailyTargetBySuggested(memberDetails,
+                new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
 
         suggestionNotification.updateApplyTargetAmount(true);
     }

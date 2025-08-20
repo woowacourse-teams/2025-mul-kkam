@@ -44,8 +44,8 @@ public class NotificationService {
     private final FcmService fcmService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -61,18 +61,21 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = getNotificationsRequest.lastId();
-        List<Notification> notifications = getNotificationsByLastIdAndMember(
+        List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
                 memberDetails,
                 lastId,
                 limitStartDateTime,
                 pageable
         );
 
-        boolean hasNext = notifications.size() > size;
+        boolean hasNext = pagedNotifications.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, notifications);
-        List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
-        List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotifications);
+        Long nextCursor = getNextCursor(hasNext, pagedNotifications);
+        List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
+        notifications.forEach(
+                notification -> notification.updateIsRead(true)
+        );
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -141,16 +144,13 @@ public class NotificationService {
         return null;
     }
 
-    private List<Notification> getReadNotifications(
+    private List<Notification> getNotifications(
             boolean hasNext,
             List<Notification> notifications
     ) {
         if (hasNext) {
             notifications.removeLast();
         }
-        notifications.forEach(
-                notification -> notification.updateIsRead(true)
-        );
         return notifications;
     }
 

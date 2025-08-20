@@ -21,10 +21,9 @@ import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.DatabaseCleaner;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -35,14 +34,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class NotificationControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+public class NotificationControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -55,12 +50,6 @@ public class NotificationControllerTest {
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private Member savedMember;
 
@@ -139,7 +128,8 @@ public class NotificationControllerTest {
                 softly.assertThat(actual.nextCursor()).isEqualTo(4);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 5L);
+                        .allMatch(r -> r.id() >= 5L)
+                        .allMatch(r -> !r.isRead());
             });
         }
 
@@ -160,7 +150,8 @@ public class NotificationControllerTest {
                 softly.assertThat(actual.nextCursor()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 4L);
+                        .allMatch(r -> r.id() >= 4L)
+                        .allMatch(r -> !r.isRead());
             });
         }
     }

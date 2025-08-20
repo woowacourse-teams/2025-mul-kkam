@@ -17,11 +17,10 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import backend.mulkkam.support.DatabaseCleaner;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
 import backend.mulkkam.support.SuggestionNotificationFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,14 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class SuggestionNotificationControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class SuggestionNotificationControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -48,12 +43,6 @@ class SuggestionNotificationControllerTest {
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private String token;
 
@@ -85,7 +74,9 @@ class SuggestionNotificationControllerTest {
 
         @BeforeEach
         void setUp() {
-            Notification notification = NotificationFixtureBuilder.withMember(member).build();
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(member)
+                    .build();
             suggestionNotification = SuggestionNotificationFixtureBuilder
                     .withNotification(notification)
                     .build();
@@ -107,8 +98,44 @@ class SuggestionNotificationControllerTest {
                     member.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.size()).isEqualTo(1);
-                softly.assertThat(intakeHistories.getFirst().getTargetAmount())
-                        .isEqualTo(savedSuggestionNotification.getRecommendedTargetAmount());
+                softly.assertThat(intakeHistories.getFirst().getTargetAmount().value())
+                        .isEqualTo(2_800);
+                softly.assertThat(savedSuggestionNotification.isApplyTargetAmount()).isTrue();
+            });
+        }
+
+        @DisplayName("알림을 N개 받을 시 그에 맞춰 음용량이 변경된다.")
+        @Test
+        void success_whenGivenContinuousValidSuggestionNotificationId() throws Exception {
+            // given
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(member)
+                    .build();
+            suggestionNotification = SuggestionNotificationFixtureBuilder
+                    .withNotification(notification)
+                    .recommendedTargetAmount(1500)
+                    .build();
+            SuggestionNotification savedSuggestionNotification2 = suggestionNotificationRepository.save(
+                    suggestionNotification);
+
+            // when & then
+            mockMvc.perform(post("/suggestion-notifications/approval/" + savedSuggestionNotificationId)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            mockMvc.perform(post("/suggestion-notifications/approval/" + savedSuggestionNotification2.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.findByIdAndNotificationMemberId(
+                    savedSuggestionNotificationId,
+                    member.getId()).get();
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories.size()).isEqualTo(1);
+                softly.assertThat(intakeHistories.getFirst().getTargetAmount().value())
+                        .isEqualTo(4_300);
                 softly.assertThat(savedSuggestionNotification.isApplyTargetAmount()).isTrue();
             });
         }
