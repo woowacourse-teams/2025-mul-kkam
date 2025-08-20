@@ -42,7 +42,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         loadDeviceId()
 
         if (isHealthConnectAvailable()) {
-            viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
+            viewModel.checkHealthPermissions(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
         }
     }
 
@@ -168,11 +168,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
 
-        val HEALTH_CONNECT_PERMISSIONS =
-            setOf(
-                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
-                HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
-            )
+        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String = HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+        val PERMISSION_ACTIVE_CALORIES_BURNED: String = HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
     }
