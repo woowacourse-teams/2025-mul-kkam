@@ -189,12 +189,11 @@ public class MemberService {
 
         oauthAccountRepository.findByMember(member)
                 .ifPresent((this::deleteRefreshTokenAndAccount));
-
-        cupRepository.deleteByMember(member);
         deviceRepository.deleteByMember(member);
 
         List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
         intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
+        cupRepository.deleteByMember(member);
 
         intakeHistoryRepository.deleteByMember(member);
 
