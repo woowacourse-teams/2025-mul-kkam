@@ -62,7 +62,7 @@ public class CupService {
     ) {
         Member member = getMember(memberDetails.id());
         IntakeType intakeType = IntakeType.findByName(createCupRequest.intakeType());
-        CupEmoji cupEmoji = getCupEmoji(createCupRequest.emoji());
+        CupEmoji cupEmoji = getCupEmoji(createCupRequest.emojiId());
         Cup cup = createCupRequest.toCup(member, calculateNextCupRank(member), intakeType, cupEmoji);
 
         Cup createdCup = cupRepository.save(cup);
