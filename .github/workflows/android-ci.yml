@@ -40,11 +40,13 @@ jobs:
     
     - name: set up local.properties
       env:
-        RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
-        DEBUG_BASE_URL:   ${{ secrets.DEBUG_BASE_URL }}
+        RELEASE_BASE_URL:  ${{ secrets.RELEASE_BASE_URL }}
+        DEBUG_BASE_URL:    ${{ secrets.DEBUG_BASE_URL }}
+        KEY_KAKAO:         ${{ secrets.DEBUG_BASE_URL }}
       run: |
-        echo release.base.url=\""${RELEASE_BASE_URL}"\" >> ./local.properties
-        echo debug.base.url=\""${DEBUG_BASE_URL}"\" >> ./local.properties
+        echo "release.base.url=${RELEASE_BASE_URL}" >> ./local.properties
+        echo "debug.base.url=${DEBUG_BASE_URL}"     >> ./local.properties
+        echo "key.kakao=${KEY_KAKAO}"               >> ./local.properties
 
     - name: set up google-services.json
       env:
