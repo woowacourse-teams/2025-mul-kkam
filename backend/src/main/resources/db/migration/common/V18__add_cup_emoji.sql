@@ -20,3 +20,6 @@ INSERT INTO cup_emoji (url, created_at, deleted_at)
 -- ALLOW_DROP
 -- reason: cup과 cupEmoji 테이블 분리 과정에서 기존 제약/컬럼 drop 필요 (PR-519)
 ALTER TABLE cup DROP COLUMN emoji;
+
+ALTER TABLE intake_history_detail
+    ADD COLUMN cup_emoji_url VARCHAR(255);
