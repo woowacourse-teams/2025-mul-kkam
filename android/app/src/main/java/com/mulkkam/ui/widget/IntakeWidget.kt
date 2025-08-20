@@ -179,7 +179,6 @@ class IntakeWidget : AppWidgetProvider() {
                     action = IntakeWidgetAction.ACTION_DRINK.name
                     putExtra(KEY_EXTRA_AMOUNT, amount)
                     putExtra(KEY_EXTRA_WIDGET_ID, appWidgetId)
-                    data = "mulkkam://widget/drink?id=$appWidgetId&amount=$amount".toUri()
                 }
 
             val requestCode = REQUEST_CODE_DRINK + appWidgetId
