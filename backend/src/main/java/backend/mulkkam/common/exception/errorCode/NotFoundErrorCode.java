@@ -15,6 +15,7 @@ public enum NotFoundErrorCode implements ErrorCode {
     NOT_FOUND_OAUTH_ACCOUNT_FOR_MEMBER,
     NOT_FOUND_SUGGESTION_NOTIFICATION,
     NOT_FOUND_OAUTH_ACCOUNT,
+    NOT_FOUND_APP_MINIMUM_VERSION,
     ;
 
     private static final HttpStatus status = HttpStatus.NOT_FOUND;
