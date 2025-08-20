@@ -24,7 +24,6 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -88,13 +87,11 @@ public class WeatherService {
         );
     }
 
-    @NotNull
-    private static TargetAmount getTargetAmount(
+    private TargetAmount getTargetAmount(
             Member member,
             Optional<IntakeHistory> intakeHistory,
             ExtraIntakeAmount extraIntakeAmount
     ) {
-        TargetAmount targetAmount;
         return intakeHistory.map(history -> new TargetAmount(
                         history.getTargetAmount().value() + (int) extraIntakeAmount.value()))
                 .orElseGet(() -> new TargetAmount(member.getTargetAmount().value() + (int) extraIntakeAmount.value()));
