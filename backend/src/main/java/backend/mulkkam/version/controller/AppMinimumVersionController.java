@@ -24,6 +24,6 @@ public class AppMinimumVersionController {
     @GetMapping
     public ResponseEntity<AppMinimumVersionResponse> read() {
         AppMinimumVersionResponse appMinimumVersionResponse = appMinimumVersionService.read();
-        return ResponseEntity.ok().body(appMinimumVersionResponse);
+        return ResponseEntity.ok(appMinimumVersionResponse);
     }
 }
