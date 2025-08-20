@@ -4,6 +4,7 @@ import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRe
 import com.mulkkam.data.remote.model.response.notification.NotificationUnreadCountResponse
 import com.mulkkam.data.remote.model.response.notification.NotificationsResponse
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -29,4 +30,9 @@ interface NotificationsService {
 
     @GET("/notifications/unread-count")
     suspend fun getNotificationsUnreadCount(): Result<NotificationUnreadCountResponse>
+
+    @DELETE("/notifications/{id}")
+    suspend fun deleteNotifications(
+        @Path("id") id: Int,
+    ): Result<Unit>
 }
