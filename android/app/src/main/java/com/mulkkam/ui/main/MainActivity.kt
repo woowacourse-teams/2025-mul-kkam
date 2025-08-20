@@ -2,8 +2,6 @@ package com.mulkkam.ui.main
 
 import android.annotation.SuppressLint
 import android.app.PendingIntent
-import android.appwidget.AppWidgetManager
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -170,16 +168,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
     override fun onStop() {
         super.onStop()
         IntakeWidget.refresh(this)
-        updateProgressWidgets()
-    }
-
-    private fun updateProgressWidgets() {
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val progressWidget = ComponentName(this, ProgressWidget::class.java)
-        val appWidgetIds = appWidgetManager.getAppWidgetIds(progressWidget)
-        appWidgetIds.forEach { appWidgetId ->
-            ProgressWidget.updateProgressWidget(this, appWidgetId)
-        }
+        ProgressWidget.refresh(this)
     }
 
     companion object {
