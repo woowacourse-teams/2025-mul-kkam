@@ -31,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
 
 class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -134,11 +135,17 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             List<NotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream().map(NotificationResponse::createdAt).toList();
 
+            List<Boolean> actualIsReads = notificationRepository.findByCursor(savedMember.getId(), 10L,
+                            requestTime, Pageable.ofSize(defaultSize + 1)).stream()
+                    .map(Notification::isRead)
+                            .toList();
+
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
-                results.forEach(r -> softly.assertThat(r.isRead()).isTrue());
+                results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
+                softly.assertThat(actualIsReads).allMatch(o -> o == Boolean.TRUE);
             });
         }
 
