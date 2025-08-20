@@ -81,7 +81,7 @@ class ProgressWidget : AppWidgetProvider() {
                     context,
                     width = 78.dpToPx(context),
                     height = 78.dpToPx(context),
-                    stroke = 10f,
+                    stroke = 8f,
                     progress = progress,
                 )
 

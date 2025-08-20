@@ -7,7 +7,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.widget.RemoteViews
-import androidx.core.net.toUri
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
@@ -21,6 +20,8 @@ import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOT
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
+import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_DRINK
+import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_REFRESH
 import java.time.LocalDate
 import java.util.UUID
 
@@ -75,8 +76,8 @@ class IntakeWidget : AppWidgetProvider() {
     ) {
         super.onReceive(context, intent)
         when (IntakeWidgetAction.from(intent.action)) {
-            IntakeWidgetAction.ACTION_DRINK -> performDrink(intent, context)
-            IntakeWidgetAction.ACTION_REFRESH -> refreshWidget(context)
+            ACTION_DRINK -> performDrink(intent, context)
+            ACTION_REFRESH -> refreshWidget(context)
             null -> return
         }
     }
@@ -176,7 +177,7 @@ class IntakeWidget : AppWidgetProvider() {
         ): PendingIntent {
             val intent =
                 Intent(context, IntakeWidget::class.java).apply {
-                    action = IntakeWidgetAction.ACTION_DRINK.name
+                    action = ACTION_DRINK.name
                     putExtra(KEY_EXTRA_AMOUNT, amount)
                     putExtra(KEY_EXTRA_WIDGET_ID, appWidgetId)
                 }
@@ -193,7 +194,7 @@ class IntakeWidget : AppWidgetProvider() {
         fun refresh(context: Context) {
             val intent =
                 Intent(context, IntakeWidget::class.java).apply {
-                    action = IntakeWidgetAction.ACTION_REFRESH.name
+                    action = ACTION_REFRESH.name
                 }
             context.sendBroadcast(intent)
         }
