@@ -17,15 +17,15 @@ public enum IntakeType {
         this.hydrationRatio = hydrationRatio;
     }
 
-    public int calculateHydration(int intakeAmount) {
-        return (int) Math.round(intakeAmount * hydrationRatio);
-    }
-
     public static IntakeType findByName(String name) {
         return Arrays
                 .stream(values())
                 .filter(intakeType -> intakeType.name().equalsIgnoreCase(name))
                 .findFirst()
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_TYPE));
+    }
+
+    public int calculateHydration(int intakeAmount) {
+        return (int) Math.round(intakeAmount * hydrationRatio);
     }
 }
