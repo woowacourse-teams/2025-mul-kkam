@@ -13,7 +13,11 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.di.CheckerInjection.intakeChecker
-import com.mulkkam.domain.checker.IntakeChecker
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_AMOUNT
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TARGET_AMOUNT
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
@@ -27,6 +31,42 @@ class IntakeWidget : AppWidgetProvider() {
         appWidgetIds: IntArray,
     ) {
         appWidgetIds.forEach { id -> updateIntakeWidgetInfo(context, id) }
+    }
+
+    private fun updateIntakeWidgetInfo(
+        context: Context,
+        appWidgetId: Int,
+    ) {
+        val requestId = intakeChecker.checkWidgetInfo()
+
+        val workManager = WorkManager.getInstance(context.applicationContext)
+        val live = workManager.getWorkInfoByIdLiveData(requestId)
+
+        val observer =
+            object : Observer<WorkInfo?> {
+                override fun onChanged(value: WorkInfo?) {
+                    if (value?.state?.isFinished != true) return
+
+                    val rate = value.outputData.getFloat(KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE, 0f)
+                    val target = value.outputData.getInt(KEY_INTAKE_CHECKER_TARGET_AMOUNT, 0)
+                    val total = value.outputData.getInt(KEY_INTAKE_CHECKER_TOTAL_AMOUNT, 0)
+                    val amount = value.outputData.getInt(KEY_INTAKE_CHECKER_CUP_AMOUNT, 0)
+
+                    val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
+                    showIntakeWidgetInfo(
+                        context = context.applicationContext,
+                        appWidgetManager = appWidgetManager,
+                        appWidgetId = appWidgetId,
+                        achievementRate = rate,
+                        targetAmount = target,
+                        totalAmount = total,
+                        primaryCupAmount = amount,
+                    )
+
+                    live.removeObserver(this)
+                }
+            }
+        live.observeForever(observer)
     }
 
     override fun onReceive(
@@ -45,7 +85,7 @@ class IntakeWidget : AppWidgetProvider() {
         intent: Intent,
         context: Context,
     ) {
-        val amount = intent.getIntExtra(EXTRA_AMOUNT, 0)
+        val amount = intent.getIntExtra(KEY_EXTRA_AMOUNT, 0)
         val requestId = intakeChecker.drink(amount)
         observeDrinkWorker(context, requestId)
     }
@@ -61,7 +101,7 @@ class IntakeWidget : AppWidgetProvider() {
             object : Observer<WorkInfo?> {
                 override fun onChanged(value: WorkInfo?) {
                     if (value?.state?.isFinished == true) {
-                        val success = value.outputData.getBoolean(IntakeChecker.KEY_OUTPUT_PERFORM_SUCCESS, false)
+                        val success = value.outputData.getBoolean(KEY_INTAKE_CHECKER_PERFORM_SUCCESS, false)
                         if (success) refreshWidget(context)
                         live.removeObserver(this)
                     }
@@ -74,42 +114,6 @@ class IntakeWidget : AppWidgetProvider() {
         val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
         val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, IntakeWidget::class.java))
         ids.forEach { id -> updateIntakeWidgetInfo(context, id) }
-    }
-
-    private fun updateIntakeWidgetInfo(
-        context: Context,
-        appWidgetId: Int,
-    ) {
-        val requestId = intakeChecker.checkWidgetInfo()
-
-        val workManager = WorkManager.getInstance(context.applicationContext)
-        val live = workManager.getWorkInfoByIdLiveData(requestId)
-
-        val observer =
-            object : Observer<WorkInfo?> {
-                override fun onChanged(value: WorkInfo?) {
-                    if (value?.state?.isFinished != true) return
-
-                    val rate = value.outputData.getFloat(IntakeChecker.KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
-                    val target = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_TARGET, 0)
-                    val total = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_TOTAL, 0)
-                    val amount = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_PRIMARY_CUP_AMOUNT, 0)
-
-                    val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    showIntakeWidgetInfo(
-                        context = context.applicationContext,
-                        appWidgetManager = appWidgetManager,
-                        appWidgetId = appWidgetId,
-                        achievementRate = rate,
-                        targetAmount = target,
-                        totalAmount = total,
-                        primaryCupAmount = amount,
-                    )
-
-                    live.removeObserver(this)
-                }
-            }
-        live.observeForever(observer)
     }
 
     private fun showIntakeWidgetInfo(
@@ -162,8 +166,8 @@ class IntakeWidget : AppWidgetProvider() {
 
     companion object {
         private const val REQUEST_CODE_DRINK: Int = 20_100
-        private const val EXTRA_AMOUNT: String = "EXTRA_AMOUNT"
-        private const val EXTRA_WIDGET_ID: String = "EXTRA_WIDGET_ID"
+        private const val KEY_EXTRA_AMOUNT: String = "EXTRA_AMOUNT"
+        private const val KEY_EXTRA_WIDGET_ID: String = "EXTRA_WIDGET_ID"
 
         fun newDrinkPendingIntent(
             context: Context,
@@ -173,8 +177,8 @@ class IntakeWidget : AppWidgetProvider() {
             val intent =
                 Intent(context, IntakeWidget::class.java).apply {
                     action = IntakeWidgetAction.ACTION_DRINK.name
-                    putExtra(EXTRA_AMOUNT, amount)
-                    putExtra(EXTRA_WIDGET_ID, appWidgetId)
+                    putExtra(KEY_EXTRA_AMOUNT, amount)
+                    putExtra(KEY_EXTRA_WIDGET_ID, appWidgetId)
                     data = "mulkkam://widget/drink?id=$appWidgetId&amount=$amount".toUri()
                 }
 

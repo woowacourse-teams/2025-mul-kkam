@@ -4,7 +4,8 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.mulkkam.domain.checker.IntakeChecker
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_AMOUNT
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupAmount.Companion.MIN_ML
 import com.mulkkam.domain.repository.IntakeRepository
@@ -16,7 +17,7 @@ class DrinkByAmountWorker(
     private val intakeRepository: IntakeRepository,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
-        val amount = inputData.getInt(IntakeChecker.KEY_INPUT_AMOUNT, 0)
+        val amount = inputData.getInt(KEY_INTAKE_CHECKER_AMOUNT, 0)
         if (amount < MIN_ML) return Result.failure()
 
         return runCatching {
@@ -24,7 +25,7 @@ class DrinkByAmountWorker(
                 .postIntakeHistory(LocalDateTime.now(), CupAmount(amount))
                 .getOrError()
         }.fold(
-            onSuccess = { Result.success(workDataOf(IntakeChecker.KEY_OUTPUT_PERFORM_SUCCESS to true)) },
+            onSuccess = { Result.success(workDataOf(KEY_INTAKE_CHECKER_PERFORM_SUCCESS to true)) },
             onFailure = { Result.failure() },
         )
     }

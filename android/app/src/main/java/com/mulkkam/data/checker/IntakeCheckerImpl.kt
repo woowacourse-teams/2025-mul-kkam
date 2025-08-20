@@ -14,7 +14,7 @@ class IntakeCheckerImpl(
     override fun drink(amount: Int): UUID {
         val request =
             OneTimeWorkRequestBuilder<DrinkByAmountWorker>()
-                .setInputData(workDataOf(IntakeChecker.KEY_INPUT_AMOUNT to amount))
+                .setInputData(workDataOf(IntakeChecker.KEY_INTAKE_CHECKER_AMOUNT to amount))
                 .build()
         workManager.enqueue(request)
         return request.id
