@@ -10,9 +10,8 @@ class ProgressCheckerImpl(
     private val workManager: WorkManager,
 ) : ProgressChecker {
     override fun checkCurrentAchievementRate(): UUID {
-        val workRequest = OneTimeWorkRequestBuilder<ProgressWorker>().build()
-
-        workManager.enqueue(workRequest)
-        return workRequest.id
+        val request = OneTimeWorkRequestBuilder<ProgressWorker>().build()
+        workManager.enqueue(request)
+        return request.id
     }
 }
