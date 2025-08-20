@@ -25,13 +25,12 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.ServiceIntegrationTest;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -134,13 +133,12 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
+                    .targetIntakeAmount(new TargetAmount(1_000))
                     .date(LocalDate.now())
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
-                    (
-                            new TargetAmount(1_000)
-                    );
+            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
+                    500);
             // when
             intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId()),
                     modifyIntakeTargetAmountByRecommendRequest);
@@ -153,7 +151,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(findIntakeHistory).isPresent();
-                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1_500);
                 softly.assertThat(findMember).isPresent();
                 softly.assertThat(findMember.get().getTargetAmount().value()).isEqualTo(memberTargetAmount);
             });

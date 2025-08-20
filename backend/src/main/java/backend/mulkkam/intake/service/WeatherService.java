@@ -7,13 +7,14 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
-import backend.mulkkam.notification.service.NotificationService;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
 import java.time.Duration;
 import java.time.LocalDate;
@@ -21,7 +22,9 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,11 +37,11 @@ public class WeatherService {
     private static final int AVAILABLE_DATE_RANGE_FOR_FORECAST = 5;
 
     private final WeatherClient weatherClient;
-    private final NotificationService notificationService;
     private final SuggestionNotificationService suggestionNotificationService;
     private final IntakeRecommendedAmountService intakeRecommendedAmountService;
     private final AverageTemperatureRepository averageTemperatureRepository;
     private final MemberRepository memberRepository;
+    private final IntakeHistoryRepository intakeHistoryRepository;
 
 
     @Transactional
@@ -71,14 +74,30 @@ public class WeatherService {
     ) {
         ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
                 member.getId(), averageTemperature.getTemperature());
-        return new CreateTokenSuggestionNotificationRequest(
-                "날씨에 따른 수분 충전",
+        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
+                LocalDate.now());
+
+        TargetAmount targetAmount = getTargetAmount(member, intakeHistory, extraIntakeAmount);
+
+        return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
                 String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?",
                         (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
                 member,
-                new TargetAmount(member.getTargetAmount().value() + (int) (extraIntakeAmount.value())),
+                targetAmount.value(),
                 todayDateTimeInSeoul
         );
+    }
+
+    @NotNull
+    private static TargetAmount getTargetAmount(
+            Member member,
+            Optional<IntakeHistory> intakeHistory,
+            ExtraIntakeAmount extraIntakeAmount
+    ) {
+        TargetAmount targetAmount;
+        return intakeHistory.map(history -> new TargetAmount(
+                        history.getTargetAmount().value() + (int) extraIntakeAmount.value()))
+                .orElseGet(() -> new TargetAmount(member.getTargetAmount().value() + (int) extraIntakeAmount.value()));
     }
 
     public double getAverageTemperatureForDate(LocalDate targetDate) {
