@@ -35,27 +35,18 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
-import org.springframework.test.web.servlet.MockMvc;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-class CupControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class CupControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -101,7 +92,6 @@ class CupControllerTest {
                 new CupEmoji("https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c"));
         savedCupEmojiId = savedCupEmoji.getId();
     }
-
 
     @DisplayName("컵을 생성한다")
     @Nested
