@@ -20,10 +20,12 @@ import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import backend.mulkkam.support.ControllerTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -37,27 +39,17 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.security.Key;
-import java.util.Date;
 
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
-class AuthControllerTest {
+class AuthControllerTest extends ControllerTest {
 
     private final String oauthAccessToken = "abcdefg";
     private final KakaoUserInfo userInfo = new KakaoUserInfo("abc");
 
     @Value("${security.jwt.secret-key}")
     private String secretKey;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
@@ -87,7 +79,7 @@ class AuthControllerTest {
 
             // when
             mockMvc.perform(post("/auth/logout")
-                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
                     .andExpect(status().isNoContent());
 
             // then
@@ -163,8 +155,8 @@ class AuthControllerTest {
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
 
             mockMvc.perform(post("/auth/token/reissue")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .content(objectMapper.writeValueAsString(request)))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(request)))
                     .andExpect(status().isOk());
 
             // when

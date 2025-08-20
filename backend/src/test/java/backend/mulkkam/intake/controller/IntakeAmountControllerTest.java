@@ -14,12 +14,10 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
-import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.DatabaseCleaner;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,14 +29,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntakeAmountControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class IntakeAmountControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -48,15 +42,6 @@ class IntakeAmountControllerTest {
 
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
-
-    @Autowired
-    private IntakeHistoryRepository intakeHistoryRepository;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
-    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @Autowired
     private ObjectMapper objectMapper;
