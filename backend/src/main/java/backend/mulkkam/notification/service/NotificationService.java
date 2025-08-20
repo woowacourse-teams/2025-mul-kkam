@@ -1,10 +1,12 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
@@ -102,6 +104,27 @@ public class NotificationService {
         return new GetUnreadNotificationsCountResponse(count);
     }
 
+    @Transactional
+    public void delete(
+            MemberDetails memberDetails,
+            Long notificationId
+    ) {
+        Long memberId = memberDetails.id();
+
+        Notification notification = getNotification(notificationId);
+
+        if (!notification.isOwnedBy(memberId)) {
+            throw new CommonException(NOT_PERMITTED_FOR_NOTIFICATION);
+        }
+
+        if (notification.isSuggestion()) {
+            SuggestionNotification suggestionNotification = getSuggestionNotification(notificationId);
+            suggestionNotificationRepository.delete(suggestionNotification);
+        }
+
+        notificationRepository.delete(notification);
+    }
+
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
         if (getNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
@@ -172,5 +195,15 @@ public class NotificationService {
                     device.getToken());
             fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
+    }
+
+    private Notification getNotification(Long id) {
+        return notificationRepository.findByIdWithMember(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_NOTIFICATION));
+    }
+
+    private SuggestionNotification getSuggestionNotification(Long id) {
+        return suggestionNotificationRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 }
