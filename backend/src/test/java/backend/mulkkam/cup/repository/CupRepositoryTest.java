@@ -3,6 +3,7 @@ package backend.mulkkam.cup.repository;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -25,6 +26,8 @@ class CupRepositoryTest {
 
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
 
     @DisplayName("사용자의 컵을 조회할 때에")
     @Nested
@@ -37,6 +40,7 @@ class CupRepositoryTest {
             Member member = MemberFixtureBuilder.builder().build();
             memberRepository.save(member);
 
+            CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup cup1 = CupFixtureBuilder
                     .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
@@ -70,6 +74,7 @@ class CupRepositoryTest {
             memberRepository.save(member1);
             memberRepository.save(member2);
 
+            CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup cup1 = CupFixtureBuilder
                     .withMemberAndCupEmoji(member1, cupEmoji)
                     .cupRank(new CupRank(1))

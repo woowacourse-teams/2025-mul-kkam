@@ -21,6 +21,8 @@ import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -89,6 +91,11 @@ class MemberControllerTest {
 
     private Member member;
     private String token;
+    private CupEmoji savedCupEmoji;
+    private Long savedCupEmojiId; // TODO 2025. 8. 20. 09:41: 안 쓰면 지욱
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
 
     @BeforeEach
     void setUp() {
@@ -106,6 +113,9 @@ class MemberControllerTest {
         oauthAccountRepository.save(oauthAccount);
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+        savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
+        savedCupEmojiId = savedCupEmoji.getId();
     }
 
     @DisplayName("멤버를 생성할 때에")
@@ -123,6 +133,8 @@ class MemberControllerTest {
             token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
             CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", null, null, 1500, true,
                     true);
+            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
+            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
 
             // when
             mockMvc.perform(post("/members")
@@ -151,6 +163,8 @@ class MemberControllerTest {
             OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
             oauthAccountRepository.save(oauthAccount);
             token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
+            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
             CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
                     true);
 
@@ -292,8 +306,10 @@ class MemberControllerTest {
 
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
+
             Cup cup = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, savedCupEmoji)
                     .build();
             cupRepository.save(cup);
 

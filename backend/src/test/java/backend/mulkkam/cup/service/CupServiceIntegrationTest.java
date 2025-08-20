@@ -12,6 +12,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -22,6 +23,7 @@ import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -47,6 +49,19 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    private CupEmoji savedCupEmoji;
+    private Long savedCupEmojiId;
+
+    @BeforeEach
+    void setUp() {
+        savedCupEmoji = cupEmojiRepository.save(
+                new CupEmoji("https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c"));
+        savedCupEmojiId = savedCupEmoji.getId();
+    }
+
     @DisplayName("컵을 생성할 때에")
     @Nested
     class Create {
@@ -64,7 +79,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            CreateCupRequest cupRegisterRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
+            CreateCupRequest cupRegisterRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", savedCupEmojiId);
 
             // when
             CupResponse cupResponse = cupService.create(cupRegisterRequest, new MemberDetails(member));
@@ -103,7 +118,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupService.delete(thirdCup.getId(), new MemberDetails(member));
 
-            CreateCupRequest request = new CreateCupRequest("new", 100, "WATER", "emoji");
+            CreateCupRequest request = new CreateCupRequest("new", 100, "WATER", savedCupEmojiId);
 
             // when
             cupService.create(request, new MemberDetails(member));
@@ -122,7 +137,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = -100;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
+            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", savedCupEmojiId);
 
             // when & then
             assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(
@@ -136,7 +151,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", "emoji");
+            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", savedCupEmojiId);
 
             // when & then
             assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
@@ -148,10 +163,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest("스타벅스1", 500, "WATER", "emoji");
-            CreateCupRequest registerCupRequest1 = new CreateCupRequest("스타벅스2", 500, "WATER", "emoji");
-            CreateCupRequest registerCupRequest2 = new CreateCupRequest("스타벅스3", 500, "WATER", "emoji");
-            CreateCupRequest registerCupRequest3 = new CreateCupRequest("스타벅스4", 500, "WATER", "emoji");
+            CreateCupRequest registerCupRequest = new CreateCupRequest("스타벅스1", 500, "WATER", savedCupEmojiId);
+            CreateCupRequest registerCupRequest1 = new CreateCupRequest("스타벅스2", 500, "WATER", savedCupEmojiId);
+            CreateCupRequest registerCupRequest2 = new CreateCupRequest("스타벅스3", 500, "WATER", savedCupEmojiId);
+            CreateCupRequest registerCupRequest3 = new CreateCupRequest("스타벅스4", 500, "WATER", savedCupEmojiId);
 
             // when
             cupService.create(registerCupRequest1, new MemberDetails(member));
@@ -238,7 +253,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    "emoji"
+                    savedCupEmojiId
             );
 
             // when
@@ -291,7 +306,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    "emoji"
+                    savedCupEmojiId
             );
 
             // when
@@ -332,7 +347,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer afterCupAmount = 1000;
 
             UpdateCupRequest updateCupRequest = new UpdateCupRequest(afterCupNickName, afterCupAmount, IntakeType.WATER,
-                    "emoji");
+                    savedCupEmojiId);
 
             // when & then
             assertThatThrownBy(() -> cupService.update(cup.getId(), new MemberDetails(member2), updateCupRequest))

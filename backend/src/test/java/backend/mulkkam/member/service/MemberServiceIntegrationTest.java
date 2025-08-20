@@ -18,6 +18,8 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -88,6 +90,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -299,6 +304,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            cupEmojiRepository.saveAll(
+                    List.of(
+                            new CupEmoji("http://example1.com"),
+                            new CupEmoji("http://example2.com")
+                    )
+            );
 
             // when
             memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
@@ -521,7 +532,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
-            Cup cup = CupFixtureBuilder.withMember(member)
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
+            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji)
                     .build();
             cupRepository.save(cup);
 

@@ -17,8 +17,8 @@ public record CreateCupRequest(
         Integer cupAmount,
         @Schema(description = "음료 종류", implementation = IntakeType.class)
         String intakeType,
-        @Schema(description = "이모지", example = "☕️")
-        String emoji
+        @Schema(description = "컵 이모지 id", example = "1")
+        Long emoji
 ) {
 
     public Cup toCup(

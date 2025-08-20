@@ -17,8 +17,9 @@ public class CupFixtureBuilder {
     private CupRank cupRank = new CupRank(1);
     private IntakeType intakeType = IntakeType.WATER;
 
-    private CupFixtureBuilder(Member member) {
+    private CupFixtureBuilder(Member member, CupEmoji cupEmoji) {
         this.member = member;
+        this.cupEmoji = cupEmoji;
     }
 
     public static CupFixtureBuilder withMemberAndCupEmoji(Member member, CupEmoji cupEmoji) {
