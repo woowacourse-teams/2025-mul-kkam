@@ -1,4 +1,4 @@
-package com.mulkkam.domain.work
+package com.mulkkam.domain.checker
 
 import java.util.UUID
 

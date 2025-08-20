@@ -8,8 +8,8 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.di.WorkInjection.progressChecker
-import com.mulkkam.domain.work.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
+import com.mulkkam.di.CheckerInjection.progressChecker
+import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx

@@ -24,7 +24,7 @@ class WorkerFactory(
     ): ListenableWorker =
         when (workerClassName) {
             CalorieWorker::class.java.name -> CalorieWorker(appContext, workerParameters, healthRepository, notificationRepository)
-            ProgressCheckWorker::class.java.name -> ProgressCheckWorker(appContext, workerParameters, membersRepository)
+            ProgressWorker::class.java.name -> ProgressWorker(appContext, workerParameters, membersRepository)
             IntakeWidgetWorker::class.java.name -> IntakeWidgetWorker(appContext, workerParameters, membersRepository, cupsRepository)
             DrinkByAmountWorker::class.java.name -> DrinkByAmountWorker(appContext, workerParameters, intakeRepository)
             else -> throw IllegalArgumentException("Unknown worker class: $workerClassName")
