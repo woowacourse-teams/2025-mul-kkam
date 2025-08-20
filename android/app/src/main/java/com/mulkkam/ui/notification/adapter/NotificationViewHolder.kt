@@ -12,6 +12,7 @@ import com.mulkkam.domain.model.notification.NotificationType.NOTICE
 import com.mulkkam.domain.model.notification.NotificationType.REMIND
 import com.mulkkam.domain.model.notification.NotificationType.SUGGESTION
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.Duration
 import java.time.LocalDateTime
@@ -103,7 +104,9 @@ class NotificationViewHolder(
                 .makeText(
                     binding.root.context,
                     getString(binding.root.context, R.string.home_notification_apply_failed),
-                ).show()
+                ).apply {
+                    setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
         }
     }
 
