@@ -92,11 +92,11 @@ public class NotificationController {
     @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
+            @PathVariable Long id,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @PathVariable Long id
+            MemberDetails memberDetails
     ) {
         notificationService.delete(memberDetails, id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

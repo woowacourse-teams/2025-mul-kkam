@@ -242,7 +242,7 @@ public class NotificationControllerTest {
             // when
             String json = mockMvc.perform(delete("/notifications/" + notification.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                    .andExpect(status().isOk())
+                    .andExpect(status().isNoContent())
                     .andReturn().getResponse().getContentAsString();
 
             // then
