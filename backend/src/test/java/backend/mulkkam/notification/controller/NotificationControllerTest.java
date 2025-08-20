@@ -76,7 +76,7 @@ public class NotificationControllerTest {
 
     @DisplayName("알림을 조회할 때")
     @Nested
-    class GetNotifications {
+    class ReadNotifications {
 
         @BeforeEach
         void setUp() {

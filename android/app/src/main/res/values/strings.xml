@@ -32,6 +32,8 @@
     <string name="history_intake_amount">+%,dml</string>
     <string name="history_no_intake_histories">해당 날짜는 기록된 일지가 없어요…</string>
     <string name="history_today_label">Today!</string>
+    <string name="history_week_prev">이전 주</string>
+    <string name="history_week_next">다음 주</string>
 
     <string name="water_chart_date">%d/%d</string>
 

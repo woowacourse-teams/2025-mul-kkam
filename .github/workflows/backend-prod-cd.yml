@@ -1,22 +1,36 @@
-name: backend-prod-cd.yml
+name: backend-prod-cd
 
 on:
   push:
-    branches: [ "be-releases" ]
-    paths:
-      - "backend/**"
+    branches:
+      - 'release/v*.*.*'
 
 jobs:
   build-and-push:
     runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Derive version from branch
+        id: ver
+        shell: bash
+        run: |
+          BRANCH="${GITHUB_REF_NAME}"                   
+          if [[ ! "$BRANCH" =~ ^release/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unsupported branch: $BRANCH"; exit 1   
+          fi
+          VERSION="${BRANCH#release/}"                  
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Resolved VERSION=$VERSION"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "21"
 
       - name: Grant execute permission to gradlew
@@ -36,7 +50,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Multi-Arch Image
+      - name: Build and Push Multi-Arch Image (tagged)
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -44,26 +58,25 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ steps.ver.outputs.version }}
 
   deploy:
     runs-on: [ self-hosted, linux, prod ]
     needs: build-and-push
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}   # build에서 전달한 vX.Y.Z
     steps:
       - name: Stop and remove existing container
         run: |
           if [ "$(docker ps -a -q -f name=backend-app)" ]; then
-            docker stop backend-app
-            docker rm -f backend-app
+            docker stop backend-app || true
+            docker rm -f backend-app || true
           fi
 
-      - name: Pull latest image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-
-      - name: Create .env file
+      - name: Create .env file (inject IMAGE_TAG)
         run: |
           cat <<EOF > ~/mulkkam/.env
+          IMAGE_TAG=${IMAGE_TAG}
           PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
           PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
           PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
@@ -76,11 +89,13 @@ jobs:
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
           SPRING_PROFILES_ACTIVE=prod
           EOF
+          echo "Injected IMAGE_TAG=${IMAGE_TAG}"
 
+      # compose가 image: mulkkam/mulkkam-prod:${IMAGE_TAG} 를 읽어 해당 태그로 실행
       - name: Stop existing services
-        run: sudo docker compose stop backend-app
         working-directory: /home/ubuntu/mulkkam
+        run: sudo docker compose stop backend-app
 
       - name: Start new services
-        run: sudo docker compose up -d backend-app
         working-directory: /home/ubuntu/mulkkam
+        run: sudo docker compose up -d backend-app

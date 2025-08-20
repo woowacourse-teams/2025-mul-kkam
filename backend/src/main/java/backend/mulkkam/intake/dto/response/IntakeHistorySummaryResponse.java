@@ -2,7 +2,6 @@ package backend.mulkkam.intake.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -26,7 +25,7 @@ public record IntakeHistorySummaryResponse(
         int streak,
 
         @Schema(description = "음용량 상세 기록 목록")
-        List<IntakeDetailResponse> intakeDetails
+        List<IntakeHistoryDetailResponse> intakeDetails
 ) {
     public IntakeHistorySummaryResponse(LocalDate date, int targetAmount) {
         this(

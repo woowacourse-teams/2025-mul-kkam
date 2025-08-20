@@ -24,6 +24,7 @@ import com.mulkkam.ui.model.NicknameValidationUiState.SAME_AS_BEFORE
 import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
@@ -38,6 +39,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        initDoneListener()
         binding.tvSaveNickname.applyImeMargin()
     }
 
@@ -82,7 +84,12 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
 
                 else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.network_check_error),
+                            R.drawable.ic_alert_circle,
+                        ).show()
             }
         }
 
@@ -93,7 +100,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun handleOriginalNicknameUiState(originalNicknameUiState: MulKkamUiState<Nickname>) {
         when (originalNicknameUiState) {
-            is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
+            is MulKkamUiState.Success<Nickname> ->
+                binding.etInputNickname.setText(
+                    originalNicknameUiState.data.name,
+                )
+
             is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure ->
@@ -215,6 +226,10 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             NicknameError.InvalidNickname -> getString(R.string.nickname_invalid)
             NicknameError.SameAsBefore -> getString(R.string.nickname_same_as_before)
         }
+
+    private fun initDoneListener() {
+        binding.etInputNickname.setOnImeActionDoneListener()
+    }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingNicknameActivity::class.java)

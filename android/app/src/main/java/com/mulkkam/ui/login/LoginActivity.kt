@@ -32,7 +32,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         super.onCreate(savedInstanceState)
         initClickListeners()
         initObservers()
-        setupDoubleBackToExit()
+        initDoubleBackToExit()
     }
 
     private fun initClickListeners() {
@@ -110,7 +110,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         finish()
     }
 
-    private fun setupDoubleBackToExit() {
+    private fun initDoubleBackToExit() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {
