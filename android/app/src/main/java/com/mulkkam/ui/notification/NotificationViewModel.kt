@@ -74,8 +74,10 @@ class NotificationViewModel : ViewModel() {
     }
 
     fun deleteNotification(id: Int) {
+        if (deleteNotificationUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                _deleteNotificationUiState.value = MulKkamUiState.Loading
                 notificationRepository.deleteNotifications(id).getOrError()
             }.onSuccess {
                 _deleteNotificationUiState.value = MulKkamUiState.Success(Unit)
