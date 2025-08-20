@@ -1,7 +1,10 @@
 package backend.mulkkam.notification.controller;
 
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_NOTIFICATION;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -9,9 +12,12 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -194,7 +200,7 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.saveAll(notifications);
         }
 
-        @DisplayName("유요한 요청이면 올바르게 반환한다")
+        @DisplayName("유효한 요청이면 올바르게 반환한다")
         @Test
         void success_validMember() throws Exception {
             // when & then
@@ -207,6 +213,70 @@ public class NotificationControllerTest extends ControllerTest {
                     GetUnreadNotificationsCountResponse.class);
 
             assertThat(actual.count()).isEqualTo(7);
+        }
+    }
+
+    @DisplayName("알림을 삭제할 때")
+    @Nested
+    class Delete {
+
+        @DisplayName("유효한 요청인 경우 정상적으로 처리된다")
+        @Test
+        void success_withValidId() throws Exception {
+            // given
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(savedMember)
+                    .notificationType(NotificationType.REMIND)
+                    .build();
+            notificationRepository.save(notification);
+
+            // when
+            String json = mockMvc.perform(delete("/notifications/" + notification.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isNoContent())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            assertThat(notificationRepository.findById(notification.getId())).isEmpty();
+        }
+
+        @DisplayName("삭제 권한이 없는 사용자가 요청하는 경우 예외를 던진다")
+        @Test
+        void success_withForbiddenMember() throws Exception {
+            // given
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            memberRepository.save(anotherMember);
+
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(anotherMember)
+                    .notificationType(NotificationType.REMIND)
+                    .build();
+            notificationRepository.save(notification);
+
+            // when
+            String json = mockMvc.perform(delete("/notifications/" + notification.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isForbidden())
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+            assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_NOTIFICATION.name());
+        }
+
+        @DisplayName("존재하지 않는 알림에 대한 삭제 요청인 경우 예외를 던진다")
+        @Test
+        void success_notExistingNotification() throws Exception {
+            // when
+            String json = mockMvc.perform(delete("/notifications/1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isNotFound())
+                    .andReturn().getResponse().getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+            assertThat(actual.getCode()).isEqualTo(NOT_FOUND_NOTIFICATION.name());
         }
     }
 }

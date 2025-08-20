@@ -7,7 +7,10 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
@@ -309,7 +312,95 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);
+        }
+    }
 
+    @DisplayName("알림을 삭제할 때")
+    @Nested
+    class Delete {
+
+        @DisplayName("존재하는 id 를 통해 삭제하는 경우 성공한다")
+        @Test
+        void success_existingId() {
+            // given
+            Notification notification = NotificationFixtureBuilder.withMember(savedMember)
+                    .notificationType(NotificationType.REMIND)
+                    .createdAt(LocalDate.of(2025, 8, 1))
+                    .isRead(true)
+                    .build();
+            notificationRepository.save(notification);
+
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+
+            // when
+            notificationService.delete(memberDetails, notification.getId());
+
+            // then
+            assertThat(notificationRepository.findById(notification.getId())).isEmpty();
+        }
+
+        @DisplayName("타입이 suggestion 인 경우 SuggestionNotification 까지 삭제된다")
+        @Test
+        void success_typeIsSuggestion() {
+            // given
+            Notification notification = NotificationFixtureBuilder.withMember(savedMember)
+                    .notificationType(NotificationType.SUGGESTION)
+                    .createdAt(LocalDate.of(2025, 8, 1))
+                    .isRead(true)
+                    .build();
+            suggestionNotificationRepository.save(
+                    SuggestionNotificationFixtureBuilder.withNotification(notification).build());
+            notificationRepository.save(notification);
+
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+
+            // when
+            notificationService.delete(memberDetails, notification.getId());
+
+            // then
+            assertSoftly(softly -> {
+                assertThat(notificationRepository.findById(notification.getId())).isEmpty();
+                assertThat(suggestionNotificationRepository.findById(notification.getId())).isEmpty();
+            });
+        }
+
+        @DisplayName("존재하지 않는 id 인 경우 예외를 던진다")
+        @Test
+        void success_notExistingId() {
+            // given
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+
+            // when & then
+            assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessageContaining(NotFoundErrorCode.NOT_FOUND_NOTIFICATION.name());
+        }
+
+        @DisplayName("삭제할 권한이 없는 경우 예외를 던진다")
+        @Test
+        void success_unauthorizedToDelete() {
+            // given
+            Notification notification = NotificationFixtureBuilder.withMember(savedMember)
+                    .notificationType(NotificationType.SUGGESTION)
+                    .createdAt(LocalDate.of(2025, 8, 1))
+                    .isRead(true)
+                    .build();
+            suggestionNotificationRepository.save(
+                    SuggestionNotificationFixtureBuilder.withNotification(notification).build());
+            notificationRepository.save(notification);
+
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            memberRepository.save(anotherMember);
+
+            MemberDetails memberDetails = new MemberDetails(anotherMember.getId());
+
+            // when & then
+            assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessageContaining(ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION.name());
         }
     }
 }
