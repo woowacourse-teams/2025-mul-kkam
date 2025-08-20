@@ -4,14 +4,15 @@ server:
 spring:
   datasource:
     ro:
-      url: ${DATASOURCE_URL}
+      jdbc-url: ${DATASOURCE_URL}
       username: ${DEV_DB_RO}
       password: ${DEV_DB_RO_PASSWORD}
+      driver-class-name: com.mysql.cj.jdbc.Driver
     rw:
-      url: ${DATASOURCE_URL}
+      jdbc-url: ${DATASOURCE_URL}
       username: ${DEV_DB_RW}
       password: ${DEV_DB_RW_PASSWORD}
-    driver-class-name: com.mysql.cj.jdbc.Driver
+      driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
