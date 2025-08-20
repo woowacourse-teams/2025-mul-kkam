@@ -60,21 +60,11 @@ public class IntakeHistoryService {
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory, cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
-
-        if (intakeHistoryDetails.isEmpty()) {
-            return new CreateIntakeHistoryResponse(0, CommentOfAchievementRate.VERY_LOW.getComment());
-        }
-
-        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
-        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
-        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
-
-        return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
     }
 
     @Transactional
-    public CreateIntakeHistoryResponse createByUserInput( // TODO 2025. 8. 20. 17:04: 위의 메서드와 중복 처리
+    public CreateIntakeHistoryResponse createByUserInput(
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest,
             MemberDetails memberDetails
     ) {
@@ -86,6 +76,14 @@ public class IntakeHistoryService {
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+    }
+
+    private CreateIntakeHistoryResponse getCreateIntakeHistoryResponse(
+            LocalDate intakeDate,
+            Member member,
+            IntakeHistory intakeHistory
+    ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
         if (intakeHistoryDetails.isEmpty()) {
