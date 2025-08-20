@@ -233,7 +233,7 @@ public class IntakeHistoryService {
     }
 
     private IntakeHistoryDetailResponse toIntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail) {
-        if (intakeDetail.isNonExistingCupEmojiUrl()) {
+        if (intakeDetail.hasCupEmojiUrl()) {
             return new IntakeHistoryDetailResponse(intakeDetail, CupEmoji.getDefaultCupEmojiUrl());
         }
         return new IntakeHistoryDetailResponse(intakeDetail);
