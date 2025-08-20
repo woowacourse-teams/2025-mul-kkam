@@ -4,8 +4,8 @@ import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.dto.CupEmojiResponse;
 import backend.mulkkam.cup.dto.CupEmojisResponse;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +22,7 @@ public class CupEmojiService {
     }
 
     private static List<CupEmojiResponse> toCupEmojiResponse(List<CupEmoji> cupEmojis) {
-        List<CupEmojiResponse> cupEmojiResponses = new ArrayList<>();
-        for (CupEmoji cupEmoji : cupEmojis) {
-            CupEmojiResponse cupEmojiResponse = new CupEmojiResponse(cupEmoji);
-            cupEmojiResponses.add(cupEmojiResponse);
-        }
-        return cupEmojiResponses;
+        return cupEmojis.stream().map(CupEmojiResponse::new)
+                .collect(Collectors.toList());
     }
 }
