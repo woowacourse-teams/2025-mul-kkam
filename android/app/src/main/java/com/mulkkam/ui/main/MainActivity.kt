@@ -24,6 +24,7 @@ import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
@@ -166,8 +167,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
+        IntakeWidget.refresh(this)
         updateProgressWidgets()
     }
 

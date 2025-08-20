@@ -195,4 +195,6 @@
     <string name="main_permission_health"><b>활동량</b>에 따라 오늘의 <b>권장 수분 섭취량</b>을\n추천받을 수 있습니다.</string>
 
     <string name="progress_widget_achievement_rate">%d%%</string>
+
+    <string name="intake_widget_home_target">%d월 %d일의 목표</string>
 </resources>

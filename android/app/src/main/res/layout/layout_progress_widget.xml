@@ -3,7 +3,7 @@
     android:id="@+id/main"
     android:layout_height="match_parent"
     android:background="@drawable/bg_common_rectangle_12dp"
-    android:backgroundTint="@color/white_translucent"
+    android:backgroundTint="@color/white_widget_bg"
     android:orientation="vertical">
 
     <FrameLayout

@@ -4,11 +4,11 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import com.mulkkam.domain.repository.MembersRepository
-import com.mulkkam.domain.work.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
 import java.time.LocalDate
 
-class ProgressCheckWorker(
+class ProgressWorker(
     appContext: Context,
     params: WorkerParameters,
     private val membersRepository: MembersRepository,
