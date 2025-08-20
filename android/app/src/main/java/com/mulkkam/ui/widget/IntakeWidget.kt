@@ -170,7 +170,7 @@ class IntakeWidget : AppWidgetProvider() {
         private const val KEY_EXTRA_AMOUNT: String = "EXTRA_AMOUNT"
         private const val KEY_EXTRA_WIDGET_ID: String = "EXTRA_WIDGET_ID"
 
-        fun newDrinkPendingIntent(
+        private fun newDrinkPendingIntent(
             context: Context,
             appWidgetId: Int,
             amount: Int,
