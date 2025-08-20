@@ -58,7 +58,7 @@ class SuggestionNotificationUnitServiceTest {
                     .build();
             SuggestionNotification suggestionNotification = SuggestionNotificationFixtureBuilder
                     .withNotification(notification)
-                    .recommendedTargetAmount(2000)
+                    .recommendedTargetAmount(2_000)
                     .build();
 
             when(suggestionNotificationRepository.findByIdAndNotificationMemberId(10L, memberId))
