@@ -16,6 +16,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
     SELECT n
     FROM Notification n
+    LEFT JOIN fetch SuggestionNotification s
+    ON n.id = s.id
     WHERE n.id < :lastId
       AND n.createdAt >= :limitStartDateTime
       AND n.member.id = :memberId
@@ -31,8 +33,10 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
     SELECT n
     FROM Notification n
+    LEFT JOIN fetch SuggestionNotification s
+    ON n.id = s.id
     WHERE n.createdAt >= :limitStartDateTime
-      AND n.member.id = :memberId
+    AND n.member.id = :memberId
     ORDER BY n.id DESC
     """)
     List<Notification> findLatest(
@@ -42,4 +46,8 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     );
 
     void deleteByMember(Member member);
+
+    long countByIsReadFalseAndMemberId(Long memberId);
+
+    List<Notification> findAllByMember(Member member);
 }

@@ -4,9 +4,13 @@ ALTER TABLE intake_history
 ALTER TABLE intake_history
     ADD COLUMN streak INT NOT NULL;
 
+-- ALLOW_DROP
+-- reason: rename 과정에서 기존 제약/컬럼 drop 필요 (PR-1234)
 ALTER TABLE intake_history
     DROP COLUMN date_time;
 
+-- ALLOW_DROP
+-- reason: rename 과정에서 기존 제약/컬럼 drop 필요 (PR-1234)
 ALTER TABLE intake_history
     DROP COLUMN intake_amount;
 

@@ -2,12 +2,12 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
-import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
+import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class ActivityService {
 
-    private final NotificationService notificationService;
+    private final SuggestionNotificationService suggestionNotificationService;
     private final MemberRepository memberRepository;
 
     public void createActivityNotification(
@@ -23,8 +23,8 @@ public class ActivityService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        CreateTokenNotificationRequest createTokenNotificationRequest = createActivityNotification.toFcmToken(member);
-        notificationService.createTokenNotification(createTokenNotificationRequest);
+        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(member);
+        suggestionNotificationService.createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
     }
 
     private Member getMember(Long id) {

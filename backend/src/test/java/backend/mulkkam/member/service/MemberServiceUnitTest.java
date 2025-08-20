@@ -66,7 +66,7 @@ public class MemberServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(result.nickname()).isEqualTo(member.getMemberNickname().value());
                 softly.assertThat(result.weight()).isEqualTo(member.getPhysicalAttributes().getWeight());
-                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender().name());
+                softly.assertThat(result.gender()).isEqualTo(member.getPhysicalAttributes().getGender());
                 softly.assertThat(result.targetAmount()).isEqualTo(member.getTargetAmount().value());
             });
         }
@@ -154,7 +154,7 @@ public class MemberServiceUnitTest {
                     .buildWithId(memberId);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
+            when(memberRepository.existsByActiveNickname(newNickname)).thenReturn(false);
 
             // when & then
             assertThatCode(() -> memberService.validateDuplicateNickname(
@@ -176,7 +176,7 @@ public class MemberServiceUnitTest {
                     .memberNickname(new MemberNickname(oldNickname))
                     .buildWithId(memberId);
 
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
+            when(memberRepository.existsByActiveNickname(newNickname)).thenReturn(true);
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when & then

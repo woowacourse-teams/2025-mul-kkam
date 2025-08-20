@@ -1,6 +1,6 @@
 package backend.mulkkam.common.resolver;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -37,8 +37,8 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
 
         Long accountId = (Long) request.getAttribute("account_id");
         OauthAccount account = oauthAccountRepository.findByIdWithMember(accountId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
 
-        return new MemberDetails(account.getMember());
+        return new MemberDetails(account.getMember().getId());
     }
 }

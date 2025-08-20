@@ -7,16 +7,29 @@ public record RecommendAmount(int value) {
     private static final int WATER_INTAKE_PER_KG = 30;
     private static final int MIN_RECOMMEND_AMOUNT = 200;
     private static final int MAX_RECOMMEND_AMOUNT = 5_000;
+    private static final int STANDARD_WEIGHT = 60;
 
     public RecommendAmount(PhysicalAttributes physicalAttributes) {
-        this(calculateRecommendedAmount((int) (physicalAttributes.getWeight() * WATER_INTAKE_PER_KG)));
+        this(calculateRecommendedAmount(physicalAttributes));
     }
 
     public RecommendAmount(int value) {
-        this.value = calculateRecommendedAmount(value);
+        this.value = clampValue(value);
+    }
+    
+    private static int calculateRecommendedAmount(PhysicalAttributes physicalAttributes) {
+        double weight = determineWeight(physicalAttributes);
+        return clampValue((int) (weight * WATER_INTAKE_PER_KG));
     }
 
-    private static int calculateRecommendedAmount(int value) {
+    private static double determineWeight(PhysicalAttributes physicalAttributes) {
+        if (physicalAttributes.getWeight() == null) {
+            return STANDARD_WEIGHT;
+        }
+        return physicalAttributes.getWeight();
+    }
+
+    private static int clampValue(int value) {
         if (value < MIN_RECOMMEND_AMOUNT) {
             return MIN_RECOMMEND_AMOUNT;
         }

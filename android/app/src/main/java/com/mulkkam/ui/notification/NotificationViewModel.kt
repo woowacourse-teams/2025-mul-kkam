@@ -7,33 +7,43 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
+import com.mulkkam.domain.model.result.toMulKkamError
+import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class NotificationViewModel : ViewModel() {
-    private val _notifications: MutableLiveData<List<Notification>> = MutableLiveData()
-    val notifications: LiveData<List<Notification>> = _notifications
+    private val _notifications: MutableLiveData<MulKkamUiState<List<Notification>>> =
+        MutableLiveData(MulKkamUiState.Idle)
+    val notifications: LiveData<MulKkamUiState<List<Notification>>> = _notifications
 
-    private val _onApplySuggestion: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-    val onApplySuggestion: SingleLiveData<Unit> = _onApplySuggestion
+    private val _applySuggestionUiState: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData(
+            MulKkamUiState.Idle,
+        )
+    val applySuggestionUiState: LiveData<MulKkamUiState<Unit>> = _applySuggestionUiState
+
+    private val _isApplySuggestion: MutableLiveData<Boolean> = MutableLiveData(false)
+    val isApplySuggestion: LiveData<Boolean> = _isApplySuggestion
 
     init {
         loadNotifications()
     }
 
     private fun loadNotifications() {
+        if (notifications.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result =
-                notificationRepository.getNotifications(
-                    LocalDateTime.now(),
-                    NOTIFICATION_SIZE,
-                )
             runCatching {
-                _notifications.value = result.getOrError()
+                _notifications.value = MulKkamUiState.Loading
+                notificationRepository
+                    .getNotifications(
+                        LocalDateTime.now(),
+                        NOTIFICATION_SIZE,
+                    ).getOrError()
+            }.onSuccess { notifications ->
+                _notifications.value = MulKkamUiState.Success<List<Notification>>(notifications)
             }.onFailure {
-                // TODO: 에러 처리
+                _notifications.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -42,14 +52,17 @@ class NotificationViewModel : ViewModel() {
         amount: Int,
         onComplete: (isSuccess: Boolean) -> Unit,
     ) {
+        if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
-            val result = intakeRepository.patchIntakeAmountTargetSuggested(amount)
             runCatching {
-                result.getOrError()
-                _onApplySuggestion.setValue(Unit)
+                _applySuggestionUiState.value = MulKkamUiState.Loading
+                intakeRepository.patchIntakeAmountTargetSuggested(amount).getOrError()
+            }.onSuccess {
+                _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
+                _isApplySuggestion.value = true
                 onComplete(true)
             }.onFailure {
-                // TODO: 에러 처리
+                _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 onComplete(false)
             }
         }
