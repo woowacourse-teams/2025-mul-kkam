@@ -69,6 +69,10 @@ public class IntakeHistory extends BaseEntity {
         this.targetAmount = targetAmount;
     }
 
+    public void addTargetAmount(int targetAmount) {
+        this.targetAmount = new TargetAmount(this.targetAmount.value() + targetAmount);
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (o == null || getClass() != o.getClass()) {

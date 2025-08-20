@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -14,8 +15,8 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
@@ -23,21 +24,16 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.DatabaseCleaner;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.TargetAmountSnapshotFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
-import java.util.List;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,14 +44,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class IntakeHistoryControllerTest {
-
-    @Autowired
-    private MockMvc mockMvc;
+class IntakeHistoryControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -67,9 +59,6 @@ class IntakeHistoryControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private DatabaseCleaner databaseCleaner;
-
-    @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
@@ -77,9 +66,6 @@ class IntakeHistoryControllerTest {
 
     @Autowired
     private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private String token;
 
@@ -124,14 +110,14 @@ class IntakeHistoryControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             String afterJson = mockMvc.perform(get("/intake/history")
@@ -168,14 +154,14 @@ class IntakeHistoryControllerTest {
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -196,14 +182,14 @@ class IntakeHistoryControllerTest {
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            IntakeDetailCreateRequest intakeDetailCreateRequest = new IntakeDetailCreateRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000);
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
+                    LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
             mockMvc.perform(post("/intake/history")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(intakeDetailCreateRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
@@ -386,13 +372,13 @@ class IntakeHistoryControllerTest {
             List<LocalTime> firstIntakeHistoryDetailTimes = firstIntakeHistoryResponse
                     .intakeDetails()
                     .stream()
-                    .map(IntakeDetailResponse::time)
+                    .map(IntakeHistoryDetailResponse::time)
                     .toList();
 
             List<LocalTime> secondIntakeHistoryDetailTimes = secondIntakeHistoryResponse
                     .intakeDetails()
                     .stream()
-                    .map(IntakeDetailResponse::time)
+                    .map(IntakeHistoryDetailResponse::time)
                     .toList();
 
             // then

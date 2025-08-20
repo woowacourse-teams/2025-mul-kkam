@@ -1,10 +1,12 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
@@ -42,8 +44,8 @@ public class NotificationService {
     private final FcmService fcmService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -59,18 +61,21 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = getNotificationsRequest.lastId();
-        List<Notification> notifications = getNotificationsByLastIdAndMember(
+        List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
                 memberDetails,
                 lastId,
                 limitStartDateTime,
                 pageable
         );
 
-        boolean hasNext = notifications.size() > size;
+        boolean hasNext = pagedNotifications.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, notifications);
-        List<Notification> readNotifications = getReadNotifications(hasNext, notifications);
-        List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotifications);
+        Long nextCursor = getNextCursor(hasNext, pagedNotifications);
+        List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
+        notifications.forEach(
+                notification -> notification.updateIsRead(true)
+        );
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -102,6 +107,27 @@ public class NotificationService {
         return new GetUnreadNotificationsCountResponse(count);
     }
 
+    @Transactional
+    public void delete(
+            MemberDetails memberDetails,
+            Long notificationId
+    ) {
+        Long memberId = memberDetails.id();
+
+        Notification notification = getNotification(notificationId);
+
+        if (!notification.isOwnedBy(memberId)) {
+            throw new CommonException(NOT_PERMITTED_FOR_NOTIFICATION);
+        }
+
+        if (notification.isSuggestion()) {
+            SuggestionNotification suggestionNotification = getSuggestionNotification(notificationId);
+            suggestionNotificationRepository.delete(suggestionNotification);
+        }
+
+        notificationRepository.delete(notification);
+    }
+
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
         if (getNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
@@ -118,16 +144,13 @@ public class NotificationService {
         return null;
     }
 
-    private List<Notification> getReadNotifications(
+    private List<Notification> getNotifications(
             boolean hasNext,
             List<Notification> notifications
     ) {
         if (hasNext) {
             notifications.removeLast();
         }
-        notifications.forEach(
-                notification -> notification.updateIsRead(true)
-        );
         return notifications;
     }
 
@@ -172,5 +195,15 @@ public class NotificationService {
                     device.getToken());
             fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
+    }
+
+    private Notification getNotification(Long id) {
+        return notificationRepository.findByIdWithMember(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_NOTIFICATION));
+    }
+
+    private SuggestionNotification getSuggestionNotification(Long id) {
+        return suggestionNotificationRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 }

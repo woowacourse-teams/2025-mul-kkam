@@ -86,14 +86,17 @@ public class NotificationController {
         return ResponseEntity.ok(getUnreadNotificationsCountResponse);
     }
 
+    @Operation(summary = "알림 삭제", description = "사용자의 알림을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "삭제 성공")
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 id")
+    @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
     @DeleteMapping("/{id}")
-    ResponseEntity<Void> getUnreadNotificationsCount(
-            @PathVariable(value = "id")
-            Long id,
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        notificationRepository.delete(notificationRepository.findById(id).get());
+        notificationService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
     }
 }

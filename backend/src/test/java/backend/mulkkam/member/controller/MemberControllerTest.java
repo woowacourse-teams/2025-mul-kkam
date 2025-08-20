@@ -36,12 +36,11 @@ import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.DatabaseCleaner;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,14 +50,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MemberControllerTest {
-
-    @Autowired
-    MockMvc mockMvc;
+class MemberControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -68,12 +63,6 @@ class MemberControllerTest {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    @Autowired
-    private DatabaseCleaner databaseCleaner;
 
     @Autowired
     AccountRefreshTokenRepository accountRefreshTokenRepository;

@@ -1,13 +1,12 @@
 package backend.mulkkam.support;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 
 public class SuggestionNotificationFixtureBuilder {
 
     private final Notification notification;
-    private TargetAmount recommendedTargetAmount = new TargetAmount(1800);
+    private int recommendedTargetAmount = 1_800;
     private boolean applyTargetAmount = false;
 
     private SuggestionNotificationFixtureBuilder(Notification notification) {
@@ -19,7 +18,7 @@ public class SuggestionNotificationFixtureBuilder {
     }
 
     public SuggestionNotificationFixtureBuilder recommendedTargetAmount(int value) {
-        this.recommendedTargetAmount = new TargetAmount(value);
+        this.recommendedTargetAmount = value;
         return this;
     }
 
