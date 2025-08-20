@@ -1,7 +1,6 @@
 package backend.mulkkam.notification.dto;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
@@ -14,10 +13,10 @@ public record CreateActivityNotification(
     public CreateTokenSuggestionNotificationRequest toFcmToken(Member member) {
         return new CreateTokenSuggestionNotificationRequest(
                 "활동량 기반 추가 물 섭취량 추천 안내",
-                String.format("활동량 증가로 인해 수분 보충이 필요합니다. 부족한 양은 %dml입니다. 반영할까요?",
-                        calculateAdditionalIntake(burnCalorie)),
+                String.format("운동으로 인한 칼로리가 %dkcal이에요. 그에 따른 보충 수분량은 %dml이에요. 반영할까요?",
+                        (int) burnCalorie, calculateAdditionalIntake(burnCalorie)),
                 member,
-                new TargetAmount(member.getTargetAmount().value() + (int) (burnCalorie)),
+                member.getTargetAmount().value() + (int) (burnCalorie),
                 LocalDateTime.now()
         );
     }

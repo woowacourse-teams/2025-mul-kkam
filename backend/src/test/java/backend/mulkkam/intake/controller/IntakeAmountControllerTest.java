@@ -203,12 +203,12 @@ class IntakeAmountControllerTest extends ControllerTest {
             });
         }
 
-        @DisplayName("목표 음용량이 10000 이상이라면 400 에러가 발생한다")
+        @DisplayName("목표 음용량이 5000 초과라면 400 에러가 발생한다")
         @Test
-        void error_whenAmountIsMoreThanOrEqualTo10000() throws Exception {
+        void error_whenAmountIsMoreThanOrEqualTo5000() throws Exception {
             // given
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
-                    10000);
+                    5_001);
 
             // when
             String json = mockMvc.perform(patch("/intake/amount/target")

@@ -61,20 +61,22 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
                     .build();
             SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.save(
                     SuggestionNotificationFixtureBuilder.withNotification(notification)
-                            .recommendedTargetAmount(2000)
+                            .recommendedTargetAmount(2_000)
                             .build());
 
             // when
-            suggestionNotificationService.applyTargetAmount(savedSuggestionNotification.getId(), new MemberDetails(savedMember.getId()));
+            suggestionNotificationService.applyTargetAmount(savedSuggestionNotification.getId(),
+                    new MemberDetails(savedMember.getId()));
 
             // then
-            SuggestionNotification actual = suggestionNotificationRepository.findById(savedSuggestionNotification.getId()).get();
+            SuggestionNotification actual = suggestionNotificationRepository.findById(
+                    savedSuggestionNotification.getId()).get();
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             assertSoftly(softly -> {
                 softly.assertThat(actual.isApplyTargetAmount()).isTrue();
                 softly.assertThat(intakeHistories.getFirst().getTargetAmount())
-                        .isEqualTo(new TargetAmount(2000));
+                        .isEqualTo(new TargetAmount(3_000));
             });
         }
 
