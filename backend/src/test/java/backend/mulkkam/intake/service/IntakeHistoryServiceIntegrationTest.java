@@ -70,7 +70,6 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     CupRepository cupRepository;
 
     private Member savedMember;
-    private Cup savedCup;
     private Long savedCupId;
 
     @BeforeEach
@@ -80,7 +79,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
         Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
-        savedCup = cupRepository.save(cup);
+        Cup savedCup = cupRepository.save(cup);
         savedCupId = savedCup.getId();
     }
 
