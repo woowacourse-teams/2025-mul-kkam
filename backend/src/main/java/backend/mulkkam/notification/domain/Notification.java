@@ -75,4 +75,13 @@ public class Notification extends BaseEntity {
     public void updateIsRead(boolean isRead) {
         this.isRead = isRead;
     }
+
+    public boolean isOwnedBy(Long otherId) {
+        Long ownerId = this.member.getId();
+        return ownerId.equals(otherId);
+    }
+
+    public boolean isSuggestion() {
+        return this.notificationType.equals(NotificationType.SUGGESTION);
+    }
 }

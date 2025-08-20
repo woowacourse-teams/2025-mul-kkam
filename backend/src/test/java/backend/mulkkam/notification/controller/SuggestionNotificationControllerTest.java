@@ -74,7 +74,9 @@ class SuggestionNotificationControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            Notification notification = NotificationFixtureBuilder.withMember(member).build();
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(member)
+                    .build();
             suggestionNotification = SuggestionNotificationFixtureBuilder
                     .withNotification(notification)
                     .build();
@@ -96,8 +98,44 @@ class SuggestionNotificationControllerTest extends ControllerTest {
                     member.getId()).get();
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistories.size()).isEqualTo(1);
-                softly.assertThat(intakeHistories.getFirst().getTargetAmount())
-                        .isEqualTo(savedSuggestionNotification.getRecommendedTargetAmount());
+                softly.assertThat(intakeHistories.getFirst().getTargetAmount().value())
+                        .isEqualTo(2_800);
+                softly.assertThat(savedSuggestionNotification.isApplyTargetAmount()).isTrue();
+            });
+        }
+
+        @DisplayName("알림을 N개 받을 시 그에 맞춰 음용량이 변경된다.")
+        @Test
+        void success_whenGivenContinuousValidSuggestionNotificationId() throws Exception {
+            // given
+            Notification notification = NotificationFixtureBuilder
+                    .withMember(member)
+                    .build();
+            suggestionNotification = SuggestionNotificationFixtureBuilder
+                    .withNotification(notification)
+                    .recommendedTargetAmount(1500)
+                    .build();
+            SuggestionNotification savedSuggestionNotification2 = suggestionNotificationRepository.save(
+                    suggestionNotification);
+
+            // when & then
+            mockMvc.perform(post("/suggestion-notifications/approval/" + savedSuggestionNotificationId)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+            mockMvc.perform(post("/suggestion-notifications/approval/" + savedSuggestionNotification2.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+            SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.findByIdAndNotificationMemberId(
+                    savedSuggestionNotificationId,
+                    member.getId()).get();
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories.size()).isEqualTo(1);
+                softly.assertThat(intakeHistories.getFirst().getTargetAmount().value())
+                        .isEqualTo(4_300);
                 softly.assertThat(savedSuggestionNotification.isApplyTargetAmount()).isTrue();
             });
         }

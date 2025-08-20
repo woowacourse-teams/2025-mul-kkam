@@ -63,13 +63,12 @@ public class IntakeAmountService {
                     IntakeHistory newIntakeHistory = new IntakeHistory(
                             member,
                             now,
-                            modifyIntakeTargetAmountByRecommendRequest.amount(),
+                            member.getTargetAmount(),
                             streak
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
-
-        intakeHistory.modifyTargetAmount(modifyIntakeTargetAmountByRecommendRequest.amount());
+        intakeHistory.addTargetAmount(modifyIntakeTargetAmountByRecommendRequest.amount());
     }
 
     public IntakeRecommendedAmountResponse getRecommended(MemberDetails memberDetails) {
