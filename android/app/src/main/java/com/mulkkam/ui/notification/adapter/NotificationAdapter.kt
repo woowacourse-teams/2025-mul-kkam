@@ -7,8 +7,9 @@ import com.mulkkam.ui.notification.adapter.NotificationViewHolder.NotificationHa
 
 class NotificationAdapter(
     private val handler: NotificationHandler,
-) : RecyclerView.Adapter<NotificationViewHolder>() {
-    private val notifications: MutableList<Notification> = mutableListOf()
+) : RecyclerView.Adapter<NotificationViewHolder>(),
+    ItemSwipeListener {
+    val notifications: MutableList<Notification> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -36,5 +37,10 @@ class NotificationAdapter(
         } else {
             notifyItemRangeInserted(oldSize, newSize - oldSize)
         }
+    }
+
+    override fun onItemSwipe(position: Int) {
+        notifications.removeAt(position)
+        notifyItemRemoved(position)
     }
 }
