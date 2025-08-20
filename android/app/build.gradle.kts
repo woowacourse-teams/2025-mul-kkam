@@ -1,4 +1,6 @@
 import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import com.github.triplet.gradle.androidpublisher.ReleaseStatus
+import com.github.triplet.gradle.androidpublisher.ResolutionStrategy
 
 plugins {
     alias(libs.plugins.android.application)
@@ -9,6 +11,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.github.triplet.play)
 }
 
 android {
@@ -22,6 +25,8 @@ android {
     val kakaoKey = localProperties.getProperty("key.kakao") ?: ""
     val releaseBaseUrl = localProperties.getProperty("release.base.url") ?: ""
     val debugBaseUrl = localProperties.getProperty("debug.base.url") ?: ""
+
+    val semanticPattern = Regex("""\d+\.\d+\.\d+([-\+].+)?""")
 
     defaultConfig {
         applicationId = "com.mulkkam"
@@ -37,7 +42,15 @@ android {
             libs.versions.versionCode
                 .get()
                 .toInt()
-        versionName = libs.versions.versionName.get()
+        val clientVersionName = providers.gradleProperty("versionName").orNull
+        if (!clientVersionName.isNullOrBlank()) {
+            require(semanticPattern.matches(clientVersionName)) {
+                "Invalid versionName: $clientVersionName"
+            }
+            versionName = clientVersionName
+        } else {
+            versionName = libs.versions.versionName.get()
+        }
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         testInstrumentationRunnerArguments["runnerBuilder"] =
@@ -137,4 +150,11 @@ dependencies {
 
     // 스켈레톤
     implementation(libs.shimmer)
+}
+
+play {
+    track.set("internal")
+    defaultToAppBundles.set(true)
+    releaseStatus.set(ReleaseStatus.COMPLETED)
+    resolutionStrategy.set(ResolutionStrategy.AUTO)
 }

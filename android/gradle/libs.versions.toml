@@ -36,6 +36,7 @@ timber = "5.0.1"
 firebase-crashlytics = "3.0.5"
 androidsvg = "1.4"
 kapt = "2.2.0"
+github-triplet-play = "3.12.1"
 
 [libraries]
 # AndroidX 및 UI
@@ -101,3 +102,4 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
+github-triplet-play = {id = "com.github.triplet.play", version.ref = "github-triplet-play"}
