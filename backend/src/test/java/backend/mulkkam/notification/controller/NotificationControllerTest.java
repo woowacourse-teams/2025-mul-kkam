@@ -203,7 +203,7 @@ public class NotificationControllerTest {
             notificationRepository.saveAll(notifications);
         }
 
-        @DisplayName("유요한 요청이면 올바르게 반환한다")
+        @DisplayName("유효한 요청이면 올바르게 반환한다")
         @Test
         void success_validMember() throws Exception {
             // when & then
