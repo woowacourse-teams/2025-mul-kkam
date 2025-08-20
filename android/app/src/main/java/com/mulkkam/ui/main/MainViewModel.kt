@@ -88,8 +88,6 @@ class MainViewModel : ViewModel() {
                 versionsRepository.getMinimumVersion().getOrError()
             }.onSuccess { minimumVersion ->
                 _isAppOutdated.setValue(isOutdated(currentVersionName, minimumVersion))
-            }.onFailure {
-                _isAppOutdated.setValue(true)
             }
         }
     }
