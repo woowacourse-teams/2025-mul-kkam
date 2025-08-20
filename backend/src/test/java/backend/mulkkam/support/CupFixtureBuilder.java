@@ -1,6 +1,7 @@
 package backend.mulkkam.support;
 
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
@@ -10,18 +11,18 @@ import backend.mulkkam.member.domain.Member;
 public class CupFixtureBuilder {
 
     private final Member member;
+    private final CupEmoji cupEmoji;
     private CupNickname cupNickname = new CupNickname("스타벅스");
     private CupAmount cupAmount = new CupAmount(500);
     private CupRank cupRank = new CupRank(1);
     private IntakeType intakeType = IntakeType.WATER;
-    private String emoji = "emoji";
 
     private CupFixtureBuilder(Member member) {
         this.member = member;
     }
 
-    public static CupFixtureBuilder withMember(Member member) {
-        return new CupFixtureBuilder(member);
+    public static CupFixtureBuilder withMemberAndCupEmoji(Member member, CupEmoji cupEmoji) {
+        return new CupFixtureBuilder(member, cupEmoji);
     }
 
     public CupFixtureBuilder cupNickname(CupNickname cupNickname) {
@@ -39,11 +40,6 @@ public class CupFixtureBuilder {
         return this;
     }
 
-    public CupFixtureBuilder emoji(String emoji) {
-        this.emoji = emoji;
-        return this;
-    }
-
     public CupFixtureBuilder intakeType(IntakeType intakeType) {
         this.intakeType = intakeType;
         return this;
@@ -56,7 +52,7 @@ public class CupFixtureBuilder {
                 cupAmount,
                 cupRank,
                 intakeType,
-                emoji
+                cupEmoji
         );
     }
 
@@ -68,7 +64,7 @@ public class CupFixtureBuilder {
                 cupAmount,
                 cupRank,
                 intakeType,
-                emoji
+                cupEmoji
         );
     }
 }
