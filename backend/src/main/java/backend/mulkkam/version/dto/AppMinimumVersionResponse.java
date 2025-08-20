@@ -1,6 +1,9 @@
 package backend.mulkkam.version.dto;
 
-public record AppMinimumVersionResponse(
-        String minimumVersion
-) {
+import backend.mulkkam.version.domain.AppMinimumVersion;
+
+public record AppMinimumVersionResponse(String minimumVersion) {
+    public AppMinimumVersionResponse(AppMinimumVersion appMinimumVersion) {
+        this(appMinimumVersion.getMinimumVersion());
+    }
 }

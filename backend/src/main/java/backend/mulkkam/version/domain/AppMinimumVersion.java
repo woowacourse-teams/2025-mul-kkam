@@ -23,7 +23,10 @@ public class AppMinimumVersion {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    public AppMinimumVersion(String minimumVersion, LocalDateTime updatedAt) {
+    public AppMinimumVersion(
+            String minimumVersion,
+            LocalDateTime updatedAt
+    ) {
         this.minimumVersion = minimumVersion;
         this.updatedAt = updatedAt;
     }
