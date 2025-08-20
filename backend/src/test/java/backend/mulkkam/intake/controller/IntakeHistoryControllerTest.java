@@ -13,6 +13,7 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -28,6 +29,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
+import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
@@ -92,10 +94,18 @@ class IntakeHistoryControllerTest extends ControllerTest {
                 .weight(70.0)
                 .targetAmount(new TargetAmount(1500))
                 .build();
-        memberRepository.save(member);
+        savedMember = memberRepository.save(member);
+
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+        CupEmoji cupEmoji = new CupEmoji("http://example.com");
+        CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+
+        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, savedCupEmoji).build();
+        savedCup = cupRepository.save(cup);
+        savedCupId = savedCup.getId();
     }
 
     @DisplayName("음용 세부 기록을 생성할 때에")
