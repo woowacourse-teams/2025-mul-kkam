@@ -1,5 +1,6 @@
 package backend.mulkkam.support;
 
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -42,13 +43,21 @@ public class IntakeHistoryDetailFixtureBuilder {
         return this;
     }
 
-    public IntakeHistoryDetail build() {
+    public IntakeHistoryDetail buildWithCup(Cup cup) {
         return new IntakeHistoryDetail(
                 this.time,
-                this.intakeAmount,
                 this.intakeHistory,
                 this.intakeType,
-                this.cupEmojiUrl
+                cup
+        );
+    }
+
+    public IntakeHistoryDetail buildWithInput() {
+        return new IntakeHistoryDetail(
+                this.time,
+                this.intakeHistory,
+                this.intakeType,
+                this.intakeAmount
         );
     }
 }

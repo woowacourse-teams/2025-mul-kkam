@@ -80,8 +80,7 @@ class MemberControllerTest extends ControllerTest {
 
     private Member member;
     private String token;
-    private CupEmoji savedCupEmoji;
-    private Long savedCupEmojiId; // TODO 2025. 8. 20. 09:41: 안 쓰면 지욱
+    private Cup savedCup;
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
@@ -103,8 +102,9 @@ class MemberControllerTest extends ControllerTest {
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
-        savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
-        savedCupEmojiId = savedCupEmoji.getId();
+        CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
+        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji).build();
+        savedCup = cupRepository.save(cup);
     }
 
     @DisplayName("멤버를 생성할 때에")
@@ -309,7 +309,7 @@ class MemberControllerTest extends ControllerTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .build();
+                            .buildWithCup(savedCup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when

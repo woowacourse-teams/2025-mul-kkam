@@ -66,22 +66,22 @@ public class IntakeHistoryDetailRepositoryTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(11, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(15, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(13, 0))
-                    .build();
+                    .buildWithInput();
 
             intakeHistoryDetailRepository.saveAll(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));

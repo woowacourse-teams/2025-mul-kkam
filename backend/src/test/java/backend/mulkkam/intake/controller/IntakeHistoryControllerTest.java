@@ -141,7 +141,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
-            mockMvc.perform(post("/intake/history")
+            mockMvc.perform(post("/intake/history/cup")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createIntakeHistoryDetailByCupRequest)))
@@ -181,14 +181,14 @@ class IntakeHistoryControllerTest extends ControllerTest {
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
-            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
-            mockMvc.perform(post("/intake/history")
+            mockMvc.perform(post("/intake/history/cup")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailCRequest)))
+                            .content(objectMapper.writeValueAsString(createIntakeHistoryDetailByCupRequest)))
                     .andExpect(status().isOk());
 
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -213,7 +213,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
 
             // when
-            mockMvc.perform(post("/intake/history")
+            mockMvc.perform(post("/intake/history/cup")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(createIntakeHistoryDetailByCupRequest)))
@@ -249,10 +249,10 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .build();
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory1)
-                    .build();
+                    .buildWithCup(savedCup);
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory2)
-                    .build();
+                    .buildWithCup(savedCup);
             intakeHistoryRepository.saveAll(List.of(intakeHistory1, intakeHistory2));
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
 
@@ -348,28 +348,28 @@ class IntakeHistoryControllerTest extends ControllerTest {
             IntakeHistoryDetail firstDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(21, 45))
-                    .build();
+                    .buildWithCup(savedCup);
             IntakeHistoryDetail firstDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(9, 0))
-                    .build();
+                    .buildWithCup(savedCup);
             IntakeHistoryDetail firstDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(21, 30))
-                    .build();
+                    .buildWithCup(savedCup);
 
             IntakeHistoryDetail secondDayIntakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(21, 45))
-                    .build();
+                    .buildWithCup(savedCup);
             IntakeHistoryDetail secondDayIntakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(9, 0))
-                    .build();
+                    .buildWithCup(savedCup);
             IntakeHistoryDetail secondDayIntakeHistoryDetail3 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(7, 30))
-                    .build();
+                    .buildWithCup(savedCup);
 
             intakeHistoryDetailRepository.saveAll(List.of(
                     firstDayIntakeHistoryDetail1, firstDayIntakeHistoryDetail2, firstDayIntakeHistoryDetail3,
@@ -488,12 +488,12 @@ class IntakeHistoryControllerTest extends ControllerTest {
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithCup(savedCup);
 
             IntakeHistoryDetail intakeHistoryDetail2 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithCup(savedCup);
 
             intakeHistoryDetailRepository.saveAll(List.of(intakeHistoryDetail1, intakeHistoryDetail2));
 
@@ -526,7 +526,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
             IntakeHistoryDetail intakeHistoryDetail1 = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithCup(savedCup);
 
             intakeHistoryDetailRepository.save(intakeHistoryDetail1);
 

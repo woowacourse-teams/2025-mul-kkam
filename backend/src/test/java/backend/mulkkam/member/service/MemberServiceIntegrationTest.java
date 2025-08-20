@@ -413,7 +413,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithCup(savedCup);
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -548,7 +548,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .build();
+                    .buildWithCup(savedCup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             Device device = new Device("token", "id", member);

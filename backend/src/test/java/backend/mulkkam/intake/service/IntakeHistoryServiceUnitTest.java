@@ -99,17 +99,17 @@ class IntakeHistoryServiceUnitTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail));
@@ -160,22 +160,22 @@ class IntakeHistoryServiceUnitTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
-                    .build();
+                    .buildWithInput();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(List.of(
                     firstIntakeDetail,
@@ -233,31 +233,31 @@ class IntakeHistoryServiceUnitTest {
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(10, 0))
                     .intakeAmount(new IntakeAmount(200))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(11, 0))
                     .intakeAmount(new IntakeAmount(200))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(15, 0))
                     .intakeAmount(new IntakeAmount(200))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(13, 0))
                     .intakeAmount(new IntakeAmount(200))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail fifthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .time(LocalTime.of(14, 0))
                     .intakeAmount(new IntakeAmount(200))
-                    .build();
+                    .buildWithInput();
 
             List<IntakeHistoryDetail> details = new ArrayList<>(List.of(
                     firstIntakeDetail,
@@ -308,17 +308,17 @@ class IntakeHistoryServiceUnitTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithInput();
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
