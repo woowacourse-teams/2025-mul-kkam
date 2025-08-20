@@ -29,4 +29,3 @@ public enum IntakeType {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_TYPE));
     }
 }
-
