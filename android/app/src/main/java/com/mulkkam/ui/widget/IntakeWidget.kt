@@ -9,13 +9,11 @@ import android.content.Intent
 import android.widget.RemoteViews
 import androidx.core.net.toUri
 import androidx.lifecycle.Observer
-import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
-import androidx.work.workDataOf
 import com.mulkkam.R
-import com.mulkkam.data.work.DrinkByAmountWorker
-import com.mulkkam.data.work.IntakeWidgetWorker
+import com.mulkkam.di.CheckerInjection.intakeChecker
+import com.mulkkam.domain.checker.IntakeChecker
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
@@ -37,14 +35,8 @@ class IntakeWidget : AppWidgetProvider() {
     ) {
         super.onReceive(context, intent)
         when (IntakeWidgetAction.from(intent.action)) {
-            IntakeWidgetAction.ACTION_DRINK -> {
-                performDrink(intent, context)
-            }
-
-            IntakeWidgetAction.ACTION_REFRESH -> {
-                refreshWidget(context)
-            }
-
+            IntakeWidgetAction.ACTION_DRINK -> performDrink(intent, context)
+            IntakeWidgetAction.ACTION_REFRESH -> refreshWidget(context)
             null -> return
         }
     }
@@ -54,35 +46,28 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
     ) {
         val amount = intent.getIntExtra(EXTRA_AMOUNT, 0)
-
-        val request =
-            OneTimeWorkRequestBuilder<DrinkByAmountWorker>()
-                .setInputData(workDataOf(DrinkByAmountWorker.KEY_INPUT_AMOUNT to amount))
-                .build()
-        val workManager = WorkManager.getInstance(context.applicationContext)
-        workManager.enqueue(request)
-
-        observeIntakeWorker(context, request.id)
+        val requestId = intakeChecker.drink(amount)
+        observeDrinkWorker(context, requestId)
     }
 
-    private fun observeIntakeWorker(
+    private fun observeDrinkWorker(
         context: Context,
         workId: UUID,
     ) {
         val workManager = WorkManager.getInstance(context.applicationContext)
-        val liveData = workManager.getWorkInfoByIdLiveData(workId)
+        val live = workManager.getWorkInfoByIdLiveData(workId)
 
         val observer =
             object : Observer<WorkInfo?> {
                 override fun onChanged(value: WorkInfo?) {
                     if (value?.state?.isFinished == true) {
-                        val success = value.outputData.getBoolean(DrinkByAmountWorker.KEY_PERFORM_SUCCESS, false)
+                        val success = value.outputData.getBoolean(IntakeChecker.KEY_OUTPUT_PERFORM_SUCCESS, false)
                         if (success) refreshWidget(context)
-                        liveData.removeObserver(this)
+                        live.removeObserver(this)
                     }
                 }
             }
-        liveData.observeForever(observer)
+        live.observeForever(observer)
     }
 
     private fun refreshWidget(context: Context) {
@@ -95,31 +80,39 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val workManager = WorkManager.getInstance(context.applicationContext)
-        val request = OneTimeWorkRequestBuilder<IntakeWidgetWorker>().build()
-        workManager.enqueue(request)
+        val requestId = intakeChecker.checkWidgetInfo()
 
-        val liveData = workManager.getWorkInfoByIdLiveData(request.id)
+        val workManager = WorkManager.getInstance(context.applicationContext)
+        val live = workManager.getWorkInfoByIdLiveData(requestId)
+
         val observer =
             object : Observer<WorkInfo?> {
                 override fun onChanged(value: WorkInfo?) {
                     if (value?.state?.isFinished != true) return
 
-                    val rate = value.outputData.getFloat(IntakeWidgetWorker.KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
-                    val target = value.outputData.getInt(IntakeWidgetWorker.KEY_OUTPUT_TARGET, 0)
-                    val total = value.outputData.getInt(IntakeWidgetWorker.KEY_OUTPUT_TOTAL, 0)
-                    val amount = value.outputData.getInt(IntakeWidgetWorker.KEY_OUTPUT_PRIMARY_CUP_AMOUNT, 0)
+                    val rate = value.outputData.getFloat(IntakeChecker.KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+                    val target = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_TARGET, 0)
+                    val total = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_TOTAL, 0)
+                    val amount = value.outputData.getInt(IntakeChecker.KEY_OUTPUT_PRIMARY_CUP_AMOUNT, 0)
 
                     val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-                    updateIntakeWidgetView(context.applicationContext, appWidgetManager, appWidgetId, rate, target, total, amount)
+                    showIntakeWidgetInfo(
+                        context = context.applicationContext,
+                        appWidgetManager = appWidgetManager,
+                        appWidgetId = appWidgetId,
+                        achievementRate = rate,
+                        targetAmount = target,
+                        totalAmount = total,
+                        primaryCupAmount = amount,
+                    )
 
-                    liveData.removeObserver(this)
+                    live.removeObserver(this)
                 }
             }
-        liveData.observeForever(observer)
+        live.observeForever(observer)
     }
 
-    private fun updateIntakeWidgetView(
+    private fun showIntakeWidgetInfo(
         context: Context,
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
@@ -142,7 +135,11 @@ class IntakeWidget : AppWidgetProvider() {
 
         views.setTextViewText(
             R.id.tv_title_date,
-            context.getString(R.string.intake_widget_home_target, LocalDate.now().monthValue, LocalDate.now().dayOfMonth),
+            context.getString(
+                R.string.intake_widget_home_target,
+                LocalDate.now().monthValue,
+                LocalDate.now().dayOfMonth,
+            ),
         )
 
         views.setTextViewText(
@@ -191,7 +188,10 @@ class IntakeWidget : AppWidgetProvider() {
         }
 
         fun refresh(context: Context) {
-            val intent = Intent(context, IntakeWidget::class.java).apply { action = IntakeWidgetAction.ACTION_REFRESH.name }
+            val intent =
+                Intent(context, IntakeWidget::class.java).apply {
+                    action = IntakeWidgetAction.ACTION_REFRESH.name
+                }
             context.sendBroadcast(intent)
         }
     }

@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
+import com.mulkkam.domain.checker.IntakeChecker
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.MembersRepository
 import java.time.LocalDate
@@ -21,20 +22,13 @@ class IntakeWidgetWorker(
             val cupAmount = cups.representCup?.amount?.value ?: 0
 
             workDataOf(
-                KEY_OUTPUT_ACHIEVEMENT_RATE to progress.achievementRate,
-                KEY_OUTPUT_TARGET to progress.targetAmount,
-                KEY_OUTPUT_TOTAL to progress.totalAmount,
-                KEY_OUTPUT_PRIMARY_CUP_AMOUNT to cupAmount,
+                IntakeChecker.KEY_OUTPUT_ACHIEVEMENT_RATE to progress.achievementRate,
+                IntakeChecker.KEY_OUTPUT_TARGET to progress.targetAmount,
+                IntakeChecker.KEY_OUTPUT_TOTAL to progress.totalAmount,
+                IntakeChecker.KEY_OUTPUT_PRIMARY_CUP_AMOUNT to cupAmount,
             )
         }.fold(
             onSuccess = { Result.success(it) },
             onFailure = { Result.failure() },
         )
-
-    companion object {
-        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
-        const val KEY_OUTPUT_TARGET = "TARGET_AMOUNT"
-        const val KEY_OUTPUT_TOTAL = "TOTAL_AMOUNT"
-        const val KEY_OUTPUT_PRIMARY_CUP_AMOUNT = "PRIMARY_CUP_AMOUNT"
-    }
 }
