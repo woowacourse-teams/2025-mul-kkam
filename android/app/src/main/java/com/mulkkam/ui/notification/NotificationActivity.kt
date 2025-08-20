@@ -25,9 +25,14 @@ class NotificationActivity :
         ActivityNotificationBinding::inflate,
     ) {
     private val notificationAdapter: NotificationAdapter by lazy {
-        NotificationAdapter { amount, onComplete ->
-            viewModel.applySuggestion(amount, onComplete)
-        }
+        NotificationAdapter(
+            applyHandler = { amount, onComplete ->
+                viewModel.applySuggestion(amount, onComplete)
+            },
+            deleteHandler = { id ->
+                viewModel.deleteNotification(id)
+            },
+        )
     }
     private val itemTouchHelper: ItemTouchHelper by lazy {
         ItemTouchHelper(NotificationItemTouchHelperCallback(notificationAdapter))
@@ -62,6 +67,10 @@ class NotificationActivity :
                     }.show()
             }
         }
+
+        viewModel.deleteNotificationUiState.observe(this) {
+            handleDeleteNotificationUiState(it)
+        }
     }
 
     private fun handleNotificationUiState(notificationUiState: MulKkamUiState<List<Notification>>) {
@@ -79,6 +88,27 @@ class NotificationActivity :
                         getString(R.string.load_info_error),
                         R.drawable.ic_alert_circle,
                     ).show()
+            }
+        }
+    }
+
+    private fun handleDeleteNotificationUiState(deleteNotificationUiState: MulKkamUiState<Unit>) {
+        when (deleteNotificationUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                CustomToast
+                    .makeText(this, getString(R.string.home_notification_delete_success))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
+            }
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomToast
+                    .makeText(this, getString(R.string.home_notification_delete_failed))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }

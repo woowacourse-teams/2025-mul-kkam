@@ -19,7 +19,7 @@ import java.time.format.DateTimeFormatter
 
 class NotificationViewHolder(
     private val binding: ItemHomeNotificationBinding,
-    private val handler: NotificationHandler,
+    private val handler: NotificationApplyHandler,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
         setNotificationIcon(notification)
@@ -107,7 +107,7 @@ class NotificationViewHolder(
         }
     }
 
-    fun interface NotificationHandler {
+    fun interface NotificationApplyHandler {
         fun onApply(
             amount: Int,
             onComplete: (isSuccess: Boolean) -> Unit,
@@ -123,7 +123,7 @@ class NotificationViewHolder(
 
         fun from(
             parent: ViewGroup,
-            handler: NotificationHandler,
+            handler: NotificationApplyHandler,
         ): NotificationViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemHomeNotificationBinding.inflate(inflater, parent, false)
