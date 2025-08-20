@@ -6,6 +6,6 @@ interface ProgressChecker {
     fun checkCurrentAchievementRate(): UUID
 
     companion object {
-        const val KEY_OUTPUT_ACHIEVEMENT_RATE = "ACHIEVEMENT_RATE"
+        const val KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE: String = "ACHIEVEMENT_RATE"
     }
 }

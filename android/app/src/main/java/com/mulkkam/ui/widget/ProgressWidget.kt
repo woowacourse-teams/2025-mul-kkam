@@ -11,7 +11,7 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.di.CheckerInjection.progressChecker
-import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_OUTPUT_ACHIEVEMENT_RATE
+import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
@@ -60,7 +60,7 @@ class ProgressWidget : AppWidgetProvider() {
                 override fun onChanged(value: WorkInfo?) {
                     value?.takeIf { it.state.isFinished }?.let {
                         val achievementRate =
-                            it.outputData.getFloat(KEY_OUTPUT_ACHIEVEMENT_RATE, 0f)
+                            it.outputData.getFloat(KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE, 0f)
 
                         val appWidgetManager =
                             AppWidgetManager.getInstance(context.applicationContext)
