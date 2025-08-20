@@ -157,7 +157,7 @@ class IntakeWidget : AppWidgetProvider() {
 
         views.setOnClickPendingIntent(
             R.id.ll_drink,
-            getDrinkPendingIntent(context, appWidgetId, primaryCupAmount),
+            newDrinkPendingIntent(context, appWidgetId, primaryCupAmount),
         )
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -168,7 +168,7 @@ class IntakeWidget : AppWidgetProvider() {
         private const val EXTRA_AMOUNT: String = "EXTRA_AMOUNT"
         private const val EXTRA_WIDGET_ID: String = "EXTRA_WIDGET_ID"
 
-        fun getDrinkPendingIntent(
+        fun newDrinkPendingIntent(
             context: Context,
             appWidgetId: Int,
             amount: Int,
