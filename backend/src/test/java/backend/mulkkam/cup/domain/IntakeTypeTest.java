@@ -5,14 +5,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import backend.mulkkam.common.exception.CommonException;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-
-import java.util.stream.Stream;
 
 class IntakeTypeTest {
 
@@ -50,6 +50,28 @@ class IntakeTypeTest {
             assertThatThrownBy(() -> IntakeType.findByName("not_existed_value"))
                     .isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_INTAKE_TYPE.name());
         }
+    }
 
+    @DisplayName("타입에 따른 음용량을 계산할 때")
+    @Nested
+    class CalculateHydration {
+
+        @DisplayName("입력한 섭취량에 맞추어 수분량이 계산된다")
+        @ParameterizedTest(name = "타입={0}, 음용량={1}ml → 예상 수분량={2}ml")
+        @CsvSource({
+                "WATER, 250, 250",
+                "COFFEE, 300, 285",
+                "COFFEE, 150, 143"
+        })
+        void success_calculatedDependingOnTheType(String typeName, int intakeAmount, int expectedHydration) {
+            // given
+            IntakeType intakeType = IntakeType.findByName(typeName);
+
+            // when
+            int actualHydration = intakeType.calculateHydration(intakeAmount);
+
+            // then
+            assertThat(actualHydration).isEqualTo(expectedHydration);
+        }
     }
 }
