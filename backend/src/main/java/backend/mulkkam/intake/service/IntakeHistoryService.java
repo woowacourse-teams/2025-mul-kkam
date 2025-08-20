@@ -14,7 +14,7 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -43,7 +43,7 @@ public class IntakeHistoryService {
 
     @Transactional
     public CreateIntakeHistoryResponse create(
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest,
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest,
             MemberDetails memberDetails
     ) {
         LocalDate intakeDate = createIntakeHistoryDetailCRequest.dateTime().toLocalDate();
@@ -53,7 +53,7 @@ public class IntakeHistoryService {
 
         int intakeAmount = createIntakeHistoryDetailCRequest.intakeType()
                 .calculateHydration(createIntakeHistoryDetailCRequest.intakeAmount());
-        
+
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailCRequest.toIntakeHistoryDetail(
                 intakeHistory, new IntakeAmount(intakeAmount));
         intakeHistoryDetailRepository.save(intakeHistoryDetail);

@@ -15,7 +15,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -121,7 +121,7 @@ class IntakeHistoryControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
@@ -165,7 +165,7 @@ class IntakeHistoryControllerTest {
         @Test
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when
@@ -193,7 +193,7 @@ class IntakeHistoryControllerTest {
                     .streak(45)
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     LocalDateTime.of(2025, 7, 15, 10, 0), 1000, WATER);
 
             // when

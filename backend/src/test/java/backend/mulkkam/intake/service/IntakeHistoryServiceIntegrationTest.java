@@ -16,7 +16,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -75,7 +75,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             int intakeAmount = 500;
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -100,7 +100,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             int intakeAmount = -1;
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -123,7 +123,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     dateTime, 1500, WATER);
             intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
 
@@ -153,7 +153,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     dateTime, 1500, WATER);
             intakeHistoryService.create(createIntakeHistoryDetailCRequest, new MemberDetails(member));
 

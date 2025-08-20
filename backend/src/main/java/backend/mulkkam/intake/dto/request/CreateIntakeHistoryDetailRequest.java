@@ -1,11 +1,14 @@
 package backend.mulkkam.intake.dto.request;
 
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
 @Schema(description = "음용량 기록 생성 요청")
-public record CreateIntakeHistoryDetailCRequest(
+public record CreateIntakeHistoryDetailRequest(
         @Schema(description = "섭취 일시", example = "2024-01-15T14:30:00")
         LocalDateTime dateTime,
 
@@ -15,4 +18,10 @@ public record CreateIntakeHistoryDetailCRequest(
         @Schema(description = "음용 타입", example = "WATER")
         IntakeType intakeType
 ) {
+    public IntakeHistoryDetail toIntakeHistoryDetail(
+            IntakeHistory intakeHistory,
+            IntakeAmount intakeAmount
+    ) {
+        return new IntakeHistoryDetail(dateTime.toLocalTime(), intakeAmount, intakeType, intakeHistory);
+    }
 }

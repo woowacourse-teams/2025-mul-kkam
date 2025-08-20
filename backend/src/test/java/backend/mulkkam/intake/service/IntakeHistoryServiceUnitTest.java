@@ -18,7 +18,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailCRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -86,7 +86,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = 500;
-            CreateIntakeHistoryDetailCRequest request = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest request = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
@@ -111,7 +111,7 @@ class IntakeHistoryServiceUnitTest {
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             int intakeAmount = -1;
-            CreateIntakeHistoryDetailCRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailCRequest(
+            CreateIntakeHistoryDetailRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailRequest(
                     DATE_TIME,
                     intakeAmount,
                     WATER
