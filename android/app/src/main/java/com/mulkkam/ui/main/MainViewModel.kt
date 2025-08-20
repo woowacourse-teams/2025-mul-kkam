@@ -96,18 +96,15 @@ class MainViewModel : ViewModel() {
         currentVersion: String,
         minimumVersion: String,
     ): Boolean {
-        val currentParts: List<Int> = currentVersion.split(".").mapNotNull { it.toIntOrNull() }
-        val minimumParts: List<Int> = minimumVersion.split(".").mapNotNull { it.toIntOrNull() }
-        val maxLength: Int = maxOf(currentParts.size, minimumParts.size)
+        val currentParts = currentVersion.split(".").map { it.toInt() }
+        val minimumParts = minimumVersion.split(".").map { it.toInt() }
 
-        for (index in 0 until maxLength) {
-            val currentPart: Int = currentParts.getOrElse(index) { 0 }
-            val minimumPart: Int = minimumParts.getOrElse(index) { 0 }
+        for (index in currentParts.indices) {
+            val currentPart = currentParts[index]
+            val minimumPart = minimumParts[index]
 
-            when {
-                currentPart < minimumPart -> return true
-                currentPart > minimumPart -> return false
-            }
+            if (currentPart < minimumPart) return true
+            if (currentPart > minimumPart) return false
         }
         return false
     }
