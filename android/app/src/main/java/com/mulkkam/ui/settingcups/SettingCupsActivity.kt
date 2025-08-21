@@ -15,6 +15,7 @@ import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
+import com.mulkkam.ui.settingcups.dialog.SettingCupsResetDialogFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -63,9 +64,22 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             }
         }
 
+    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
+        if (supportFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
+        SettingCupFragment
+            .newInstance(cup)
+            .show(supportFragmentManager, SettingCupFragment.TAG)
+    }
+
     private fun initObserver() {
-        viewModel.cupsUiState.observe(this) { cupsUiState ->
-            handleCupsUiState(cupsUiState)
+        with(viewModel) {
+            cupsUiState.observe(this@SettingCupsActivity) { cupsUiState ->
+                handleCupsUiState(cupsUiState)
+            }
+
+            cupsResetUiState.observe(this@SettingCupsActivity) { cupsResetUiState ->
+                handleCupsResetUiState(cupsResetUiState)
+            }
         }
     }
 
@@ -75,11 +89,12 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             is MulKkamUiState.Loading -> binding.sflCups.visibility = View.VISIBLE
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar.make(
-                    binding.root,
-                    getString(R.string.load_info_error),
-                    R.drawable.ic_alert_circle,
-                )
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.load_info_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
                 binding.sflCups.visibility = View.GONE
             }
         }
@@ -95,16 +110,44 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         binding.sflCups.visibility = View.GONE
     }
 
-    private fun initClickListener() {
-        binding.ivBack.setSingleClickListener {
-            finish()
+    private fun handleCupsResetUiState(cupsResetUiState: MulKkamUiState<Unit>) {
+        when (cupsResetUiState) {
+            is MulKkamUiState.Success<Unit> -> {
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.setting_cups_reset_success),
+                        R.drawable.ic_terms_all_check_on,
+                    ).show()
+            }
+
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure ->
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_check_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
         }
     }
 
-    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
-        if (supportFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
-        SettingCupFragment
-            .newInstance(cup)
+    private fun initClickListener() {
+        with(binding) {
+            ivBack.setSingleClickListener {
+                finish()
+            }
+            tvReset.setSingleClickListener {
+                showResetDialog()
+            }
+        }
+    }
+
+    private fun showResetDialog() {
+        if (supportFragmentManager.findFragmentByTag(SettingCupsResetDialogFragment.TAG) != null) return
+        SettingCupsResetDialogFragment
+            .newInstance()
             .show(supportFragmentManager, SettingCupFragment.TAG)
     }
 

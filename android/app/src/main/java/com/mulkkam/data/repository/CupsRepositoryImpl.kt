@@ -61,4 +61,12 @@ class CupsRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun resetCups(): MulKkamResult<Unit> {
+        val result = cupsService.resetCups()
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }
