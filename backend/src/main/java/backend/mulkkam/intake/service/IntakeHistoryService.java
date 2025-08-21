@@ -3,7 +3,6 @@ package backend.mulkkam.intake.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
@@ -59,7 +58,8 @@ public class IntakeHistoryService {
 
         Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory, cup);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory,
+                cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
@@ -75,7 +75,8 @@ public class IntakeHistoryService {
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(intakeHistory);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(
+                intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
         return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
@@ -153,14 +154,6 @@ public class IntakeHistoryService {
 
         validatePossibleToDelete(intakeHistoryDetail, member);
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
-
-        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                member, LocalDate.now(), LocalDate.now());
-        if (intakeHistoryDetails.isEmpty()) {
-            IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
-                    .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
-            intakeHistoryRepository.delete(intakeHistory);
-        }
     }
 
     private void validatePossibleToDelete(
