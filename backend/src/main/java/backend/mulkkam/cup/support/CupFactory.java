@@ -16,12 +16,12 @@ public class CupFactory {
 
     public static List<Cup> createDefaultCups(Member member, List<CupEmoji> cupEmojis) {
         return List.of(
-                new Cup(member, new CupNickname("종이컵"), new CupAmount(180), new CupRank(1), IntakeType.WATER, cupEmojis.get(0)),
+                new Cup(member, new CupNickname("종이컵"), new CupAmount(180), new CupRank(1), IntakeType.WATER, cupEmojis.getFirst()),
                 // TODO 2025. 8. 20. 09:49: 버그 발생 위험 높은 코드
                 new Cup(member, new CupNickname("스타벅스 톨"), new CupAmount(354), new CupRank(2), IntakeType.WATER,
-                        cupEmojis.get(0)),
+                        cupEmojis.getFirst()),
                 new Cup(member, new CupNickname("스타벅스 그란데"), new CupAmount(473), new CupRank(3), IntakeType.WATER,
-                        cupEmojis.get(1))
+                        cupEmojis.getFirst())
         );
     }
 }
