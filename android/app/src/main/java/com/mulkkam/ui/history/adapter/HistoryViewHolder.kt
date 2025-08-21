@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemIntakeHistoryBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
+import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -43,7 +44,7 @@ class HistoryViewHolder(
                 )
             tvIntakeAmount.setTextColor(intakeHistory.intakeType.toColorHex().toColorInt())
 
-            ivCupIcon.loadUrl(intakeHistory.cupEmojiUrl)
+            ivCupIcon.loadUrl(url = intakeHistory.cupEmojiUrl, shape = ImageShape.Circle)
         }
     }
 
