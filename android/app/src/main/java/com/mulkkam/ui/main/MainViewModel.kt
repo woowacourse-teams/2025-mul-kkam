@@ -3,11 +3,12 @@ package com.mulkkam.ui.main
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.CheckerInjection.calorieChecker
 import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
+import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
-import com.mulkkam.di.WorkInjection.calorieScheduler
-import com.mulkkam.domain.work.CalorieScheduler.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
+import com.mulkkam.domain.checker.CalorieChecker.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
@@ -21,8 +22,13 @@ class MainViewModel : ViewModel() {
     val fcmToken: SingleLiveData<String?>
         get() = _fcmToken
 
+    private val _onFirstLaunch: MutableSingleLiveData<Unit> = MutableSingleLiveData()
+    val onFirstLaunch: SingleLiveData<Unit>
+        get() = _onFirstLaunch
+
     init {
         getFcmToken()
+        checkFirstLaunch()
     }
 
     private fun getFcmToken() {
@@ -35,6 +41,19 @@ class MainViewModel : ViewModel() {
         }
     }
 
+    private fun checkFirstLaunch() {
+        viewModelScope.launch {
+            runCatching {
+                membersRepository.getIsFirstLaunch().getOrError()
+            }.onSuccess { isFirstLaunch ->
+                if (isFirstLaunch) {
+                    _onFirstLaunch.setValue(Unit)
+                    membersRepository.saveIsFirstLaunch()
+                }
+            }
+        }
+    }
+
     fun checkHealthPermissions(permissions: Set<String>) {
         viewModelScope.launch {
             _isHealthPermissionGranted.value = healthRepository.hasPermissions(permissions)
@@ -42,7 +61,7 @@ class MainViewModel : ViewModel() {
     }
 
     fun scheduleCalorieCheck() {
-        calorieScheduler.scheduleCalorieCheck(DEFAULT_CHECK_CALORIE_INTERVAL_HOURS)
+        calorieChecker.checkCalorie(DEFAULT_CHECK_CALORIE_INTERVAL_HOURS)
     }
 
     fun saveDeviceInfo(deviceId: String) {

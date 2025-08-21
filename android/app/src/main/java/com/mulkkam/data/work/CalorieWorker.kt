@@ -1,4 +1,4 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.work
 
 import android.content.Context
 import androidx.work.CoroutineWorker
@@ -19,21 +19,23 @@ class CalorieWorker(
     override suspend fun doWork(): Result {
         val now = Instant.now()
 
-        val burn =
-            runCatching {
-                healthRepository.getActiveCaloriesBurned(
+        runCatching {
+            healthRepository
+                .getActiveCaloriesBurned(
                     now.minusSeconds(SECONDS_IN_TWO_HOURS),
                     now,
-                )
-            }.getOrElse {
-                mulKkamLogger.error(
-                    LogEvent.HEALTH_CONNECT,
-                    "Calorie fetch failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
-                )
-                return Result.retry()
-            }
+                ).getOrError()
+        }.onSuccess { exerciseCalorie ->
+            if (exerciseCalorie.exercised.not()) return@onSuccess
+            notificationRepository.postActiveCaloriesBurned(exerciseCalorie.kcal)
+        }.onFailure {
+            mulKkamLogger.error(
+                LogEvent.HEALTH_CONNECT,
+                "Calorie fetch failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
+            )
+            return Result.retry()
+        }
 
-        notificationRepository.postActiveCaloriesBurned(burn.kcal)
         return Result.success()
     }
 }

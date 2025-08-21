@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.widget.EditText
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
 import androidx.core.widget.doAfterTextChanged
@@ -15,12 +14,16 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingTargetAmountBinding
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.MulKkamError.TargetAmountError
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -35,6 +38,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvSaveGoal.applyImeMargin()
     }
 
@@ -81,7 +85,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Idle -> Unit
 
             is MulKkamUiState.Failure -> {
-                Toast.makeText(this, R.string.load_info_error, Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(this, getString(R.string.load_info_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -125,9 +133,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
         when (saveUiState) {
             is MulKkamUiState.Success -> {
                 updateSaveButtonAvailability(true)
-                Toast
-                    .makeText(this, R.string.setting_target_amount_complete_description, Toast.LENGTH_SHORT)
-                    .show()
+                CustomToast
+                    .makeText(this, getString(R.string.setting_target_amount_complete_description))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 finish()
             }
 
@@ -137,7 +147,11 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
             is MulKkamUiState.Failure -> {
                 updateSaveButtonAvailability(true)
-                Toast.makeText(this, R.string.network_check_error, Toast.LENGTH_SHORT).show()
+                CustomToast
+                    .makeText(this, getString(R.string.network_check_error))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
             }
         }
     }
@@ -150,7 +164,8 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Failure -> {
                 if (targetAmountValidityUiState.error is TargetAmountError) {
                     updateTargetAmountValidationUI(false)
-                    binding.tvTargetAmountWarningMessage.text = targetAmountValidityUiState.error.toMessageRes()
+                    binding.tvTargetAmountWarningMessage.text =
+                        targetAmountValidityUiState.error.toMessageRes()
                 }
             }
         }
@@ -158,7 +173,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
 
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged { editable ->
-            val processedText = sanitizeLeadingZeros(editable.toString())
+            val processedText = editable.toString().sanitizeLeadingZeros()
 
             if (processedText != editable.toString()) {
                 updateEditText(binding.etInputGoal, processedText)
@@ -168,13 +183,6 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             debounceTargetAmountUpdate(processedText)
         }
     }
-
-    private fun sanitizeLeadingZeros(input: String): String =
-        if (input.length > 1 && input.startsWith("0")) {
-            input.trimStart('0').ifEmpty { "0" }
-        } else {
-            input
-        }
 
     private fun updateEditText(
         editText: EditText,
@@ -210,6 +218,10 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                     TargetAmount.TARGET_AMOUNT_MAX,
                 )
         }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnImeActionDoneListener()
+    }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingTargetAmountActivity::class.java)

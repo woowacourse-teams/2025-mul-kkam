@@ -7,11 +7,15 @@
     <string name="main_main_back_press_exit_message">뒤로가기 버튼을 한 번 더 누르면 종료됩니다</string>
     <string name="main_alarm_permission_granted">알림 권한이 허용되었습니다</string>
     <string name="main_alarm_permission_denied">알림 권한이 거부되었습니다</string>
+    <string name="main_health_permission_granted">헬스 커넥트 권한이 허용되었습니다</string>
+    <string name="main_health_permission_denied">헬스 커넥트 권한이 거부되었습니다</string>
 
     <string name="home_notification">알림</string>
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
     <string name="home_notification_apply_failed">목표량 반영에 실패했어요</string>
     <string name="home_notification_apply_success">목표량에 반영되었어요</string>
+    <string name="home_notification_delete_success">알림이 삭제되었어요</string>
+    <string name="home_notification_delete_failed">알림 삭제에 실패했어요</string>
     <string name="home_notification_just_now">방금 전</string>
     <string name="home_notification_minutes_ago">%d분 전</string>
     <string name="home_notification_hours_ago">%d시간 전</string>
@@ -23,6 +27,7 @@
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
     <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
     <string name="home_drink_manual">직접 입력</string>
+    <string name="home_manual_drink_invalid_range">한번에 마실 수 있는 용량은 %,dml 이상, %,dml 이하입니다</string>
 
     <string name="history_view_label">기록</string>
     <string name="history_daily_chart_label">%s의 기록</string>
@@ -32,6 +37,8 @@
     <string name="history_intake_amount">+%,dml</string>
     <string name="history_no_intake_histories">해당 날짜는 기록된 일지가 없어요…</string>
     <string name="history_today_label">Today!</string>
+    <string name="history_week_prev">이전 주</string>
+    <string name="history_week_next">다음 주</string>
 
     <string name="water_chart_date">%d/%d</string>
 
@@ -68,6 +75,9 @@
     <string name="setting_cup_delete">컵 삭제하기</string>
     <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
     <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
+    <string name="setting_cup_invalid_range">컵의 용량은 %,dml 이상, %,dml 이하로 설정해 주세요</string>
+    <string name="setting_cup_name_invalid_range">닉네임은 %d자 이상, %d자 이하만 가능합니다</string>
+    <string name="setting_cup_name_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
 
     <string name="setting_cups_reset_success">나의 컵 목록이 초기화되었습니다</string>
     <string name="setting_cups_reset_title">컵 목록을 초기화할까요?</string>
@@ -169,6 +179,7 @@
     <string name="history_delete_confirm">확인</string>
     <string name="history_delete_cancel">취소</string>
     <string name="history_delete_success">기록이 삭제되었습니다.</string>
+    <string name="history_delete_failure_past">과거의 기록은 삭제할 수 없습니다</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
     <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
@@ -184,4 +195,13 @@
     <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%s)</string>
     <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%s)</string>
+
+    <string name="main_permission_title">시작하기 전에</string>
+    <string name="main_permission_description">더 나은 서비스 이용을 위해 필요한\n권한을 알려드립니다.</string>
+    <string name="main_permission_notification"><b>물 마시기, 목표량 추천</b> 등\n알림을 받을 수 있습니다.</string>
+    <string name="main_permission_health"><b>활동량</b>에 따라 오늘의 <b>권장 수분 섭취량</b>을\n추천받을 수 있습니다.</string>
+
+    <string name="progress_widget_achievement_rate">%d%%</string>
+
+    <string name="intake_widget_home_target">%d월 %d일의 목표</string>
 </resources>

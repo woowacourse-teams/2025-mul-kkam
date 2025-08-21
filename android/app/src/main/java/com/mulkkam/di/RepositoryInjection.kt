@@ -9,6 +9,7 @@ import com.mulkkam.data.repository.MembersRepositoryImpl
 import com.mulkkam.data.repository.NicknameRepositoryImpl
 import com.mulkkam.data.repository.NotificationRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
+import com.mulkkam.di.PreferenceInjection.membersPreference
 import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection.authService
 import com.mulkkam.di.ServiceInjection.cupsService
@@ -50,7 +51,7 @@ object RepositoryInjection {
     }
 
     val membersRepository: MembersRepository by lazy {
-        MembersRepositoryImpl(membersService)
+        MembersRepositoryImpl(membersService, membersPreference)
     }
 
     val nicknameRepository: NicknameRepository by lazy {

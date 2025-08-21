@@ -9,26 +9,29 @@ import java.time.format.DateTimeFormatter
 
 @Serializable
 data class ReadNotificationResponse(
-    @SerialName("id")
-    val id: Int,
-    @SerialName("title")
-    val title: String,
     @SerialName("type")
     val type: String,
+    @SerialName("id")
+    val id: Int,
+    @SerialName("content")
+    val content: String,
     @SerialName("createdAt")
     val createdAt: String,
-    @SerialName("recommendedTargetAmount")
-    val recommendedTargetAmount: Int?,
     @SerialName("isRead")
     val isRead: Boolean,
+    @SerialName("recommendedTargetAmount")
+    val recommendedTargetAmount: Int? = null,
+    @SerialName("applyRecommendAmount")
+    val applyRecommendAmount: Boolean? = null,
 )
 
 fun ReadNotificationResponse.toDomain(): Notification =
     Notification(
         id = id,
-        title = title,
+        title = content,
         type = NotificationType.from(type),
         createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
         recommendedTargetAmount = recommendedTargetAmount ?: 0,
         isRead = isRead,
+        applyRecommendAmount = applyRecommendAmount,
     )

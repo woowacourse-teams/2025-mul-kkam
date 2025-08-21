@@ -76,6 +76,10 @@ sealed class ResponseError(
         data object InvalidDateRange : HistoryError("INVALID_DATE_RANGE") {
             private fun readResolve(): Any = InvalidDateRange
         }
+
+        data object InvalidDateForDelete : HistoryError("INVALID_DATE_FOR_DELETE_INTAKE_HISTORY") {
+            private fun readResolve(): Any = InvalidDateForDelete
+        }
     }
 
     sealed class NotFoundError(
@@ -152,7 +156,7 @@ fun ResponseError.toDomain(): MulKkamError =
         // SettingCups
         SettingCupsError.InvalidCount -> MulKkamError.SettingCupsError.InvalidCount
         SettingCupsError.InvalidAmount -> MulKkamError.SettingCupsError.InvalidAmount
-        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNickname
+        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNicknameLength
         SettingCupsError.InvalidRankValue -> MulKkamError.SettingCupsError.InvalidRankValue
 
         // Account
@@ -161,6 +165,7 @@ fun ResponseError.toDomain(): MulKkamError =
 
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
+        HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
 
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member

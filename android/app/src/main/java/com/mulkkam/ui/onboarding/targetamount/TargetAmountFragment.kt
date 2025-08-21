@@ -23,6 +23,8 @@ import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
 
@@ -44,6 +46,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         initClickListeners()
         initObservers()
         initTargetAmountInputWatcher()
+        initDoneListener()
         binding.tvComplete.applyImeMargin()
 
         viewModel.loadRecommendedTargetAmount(
@@ -157,12 +160,11 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         recommendedTargetAmount: Int,
     ) {
         val formattedAmount = String.format(Locale.US, "%,dml", recommendedTargetAmount)
-        val ctx = requireContext()
 
         binding.tvRecommendedTargetAmount.text =
             getString(R.string.target_amount_recommended_water_goal, nickname, recommendedTargetAmount)
-                .getAppearanceSpannable(ctx, R.style.title2, nickname, formattedAmount)
-                .getColoredSpannable(ctx, R.color.primary_200, nickname, formattedAmount)
+                .getAppearanceSpannable(requireContext(), R.style.title2, nickname, formattedAmount)
+                .getColoredSpannable(requireContext(), R.color.primary_200, nickname, formattedAmount)
     }
 
     private fun updateSaveEnabled(enabled: Boolean) {
@@ -180,7 +182,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
 
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged { editable ->
-            val processedText = sanitizeLeadingZeros(editable.toString())
+            val processedText = editable.toString().sanitizeLeadingZeros()
 
             if (processedText != editable.toString()) {
                 updateEditText(binding.etInputGoal, processedText)
@@ -190,13 +192,6 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             debounceTargetAmountUpdate(processedText)
         }
     }
-
-    private fun sanitizeLeadingZeros(input: String): String =
-        if (input.length > 1 && input.startsWith("0")) {
-            input.trimStart('0').ifEmpty { "0" }
-        } else {
-            input
-        }
 
     private fun updateEditText(
         editText: EditText,
@@ -225,4 +220,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                 getString(R.string.setting_target_amount_warning_too_high, TargetAmount.TARGET_AMOUNT_MAX)
             }
         }
+
+    private fun initDoneListener() {
+        binding.etInputGoal.setOnImeActionDoneListener()
+    }
 }

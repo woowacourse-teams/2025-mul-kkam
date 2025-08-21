@@ -6,15 +6,16 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
-import com.mulkkam.domain.model.Nickname
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.NicknameValidationUiState.INVALID
@@ -23,6 +24,7 @@ import com.mulkkam.ui.model.NicknameValidationUiState.SAME_AS_BEFORE
 import com.mulkkam.ui.model.NicknameValidationUiState.VALID
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.applyImeMargin
+import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
@@ -37,6 +39,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
         initClickListeners()
         initObservers()
         initNicknameInputWatcher()
+        initDoneListener()
         binding.tvSaveNickname.applyImeMargin()
     }
 
@@ -81,7 +84,12 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
                     binding.tvNicknameValidationMessage.text = error.toMessageRes()
 
                 else ->
-                    CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+                    CustomSnackBar
+                        .make(
+                            binding.root,
+                            getString(R.string.network_check_error),
+                            R.drawable.ic_alert_circle,
+                        ).show()
             }
         }
 
@@ -92,7 +100,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun handleOriginalNicknameUiState(originalNicknameUiState: MulKkamUiState<Nickname>) {
         when (originalNicknameUiState) {
-            is MulKkamUiState.Success<Nickname> -> binding.etInputNickname.setText(originalNicknameUiState.data.name)
+            is MulKkamUiState.Success<Nickname> ->
+                binding.etInputNickname.setText(
+                    originalNicknameUiState.data.name,
+                )
+
             is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure ->
@@ -164,9 +176,11 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun handleNicknameChangeUiState(nickNameChangeUiState: MulKkamUiState<Unit>) {
         when (nickNameChangeUiState) {
             is MulKkamUiState.Success<Unit> -> {
-                Toast
-                    .makeText(this, R.string.setting_nickname_change_complete, Toast.LENGTH_SHORT)
-                    .show()
+                CustomToast
+                    .makeText(this, getString(R.string.setting_nickname_change_complete))
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 finish()
             }
 
@@ -212,6 +226,10 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             NicknameError.InvalidNickname -> getString(R.string.nickname_invalid)
             NicknameError.SameAsBefore -> getString(R.string.nickname_same_as_before)
         }
+
+    private fun initDoneListener() {
+        binding.etInputNickname.setOnImeActionDoneListener()
+    }
 
     companion object {
         fun newIntent(context: Context): Intent = Intent(context, SettingNicknameActivity::class.java)
