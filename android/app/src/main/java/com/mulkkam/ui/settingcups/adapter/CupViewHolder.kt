@@ -8,7 +8,6 @@ import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
@@ -30,13 +29,12 @@ class CupViewHolder(
     private fun showCupInfo(item: SettingCupsItem.CupItem) =
         with(binding) {
             tvNickname.text = item.value.name
-            tvIncrement.text =
-                root.context.getString(R.string.setting_cups_increment, item.value.amount)
-            tvSettingWaterCupTagType.text =
-                when (item.value.intakeType) {
-                    IntakeType.WATER -> root.context.getString(R.string.setting_cups_intake_type_water)
-                    IntakeType.COFFEE -> root.context.getString(R.string.setting_cups_intake_type_coffee)
-                    IntakeType.UNKNOWN -> root.context.getString(R.string.setting_cups_intake_type_unknown)
+            tvIncrement.text = root.context.getString(R.string.setting_cups_increment, item.value.amount)
+            tvSettingCupRepresentative.visibility =
+                if (item.value.isRepresentative) {
+                    ViewGroup.VISIBLE
+                } else {
+                    ViewGroup.GONE
                 }
             ivIcon.loadUrl(
                 url = item.value.emoji,
@@ -50,8 +48,8 @@ class CupViewHolder(
                         .toColorInt(),
                 )
 
+            tvSettingWaterCupTagType.text = item.value.intakeType.toLabel()
             tvSettingWaterCupTagType.backgroundTintList = intakeTypeColor
-
             tvIncrement.setTextColor(intakeTypeColor)
         }
 
