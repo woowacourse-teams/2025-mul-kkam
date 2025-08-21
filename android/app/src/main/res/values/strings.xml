@@ -185,7 +185,7 @@
 
     <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
     <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
-    <string name="authorization_expired">인증이 만료되었습니다</string>
+    <string name="authorization_expired">인증이 만료되었습니다. 로그인을 다시 시도해 주세요</string>
 
     <string name="setting_notification_marketing_on">마케팅 수신 동의가 완료되었습니다 (%s)</string>
     <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
