@@ -77,8 +77,8 @@
     <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
     <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
     <string name="setting_cup_invalid_range">컵의 용량은 %,dml 이상, %,dml 이하로 설정해 주세요</string>
-    <string name="setting_cup_name_invalid_range">닉네임은 %d자 이상, %d자 이하만 가능합니다</string>
-    <string name="setting_cup_name_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
+    <string name="setting_cup_name_invalid_range">컵 이름은 %d자 이상, %d자 이하만 가능합니다</string>
+    <string name="setting_cup_name_invalid_characters">컵 이름은 특수 문자나 공백은 사용할 수 없습니다</string>
 
     <string name="setting_cups_reset_success">나의 컵 목록이 초기화되었습니다</string>
     <string name="setting_cups_reset_title">컵 목록을 초기화할까요?</string>
