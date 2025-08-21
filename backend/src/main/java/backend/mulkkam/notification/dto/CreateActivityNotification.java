@@ -13,7 +13,7 @@ public record CreateActivityNotification(
     public CreateTokenSuggestionNotificationRequest toFcmToken(Member member) {
         return new CreateTokenSuggestionNotificationRequest(
                 "활동량 기반 추가 물 섭취량 추천 안내",
-                String.format("운동으로 인한 칼로리가 %dkcal이에요. 그에 따른 보충 수분량은 %dML이에요. 반영할까요?",
+                String.format("운동으로 인한 칼로리가 %dKCAL이에요. 그에 따른 보충 수분량은 %dML이에요. 반영할까요?",
                         (int) burnCalorie, calculateAdditionalIntake(burnCalorie)),
                 member,
                 member.getTargetAmount().value() + (int) (burnCalorie),
