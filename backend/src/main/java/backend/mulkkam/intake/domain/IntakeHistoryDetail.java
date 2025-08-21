@@ -55,13 +55,12 @@ public class IntakeHistoryDetail extends BaseEntity {
     public IntakeHistoryDetail(
             LocalTime intakeTime,
             IntakeHistory intakeHistory,
-            IntakeType intakeType,
             Cup cup
     ) {
         this.intakeTime = intakeTime;
         this.intakeHistory = intakeHistory;
-        this.intakeType = intakeType;
-        this.intakeAmount = new IntakeAmount(cup.getCupAmount().value());
+        this.intakeType = cup.getIntakeType();
+        this.intakeAmount = new IntakeAmount(cup.calculateHydration());
         this.cupEmojiUrl = cup.getCupEmoji().getUrl();
     }
 
@@ -69,12 +68,12 @@ public class IntakeHistoryDetail extends BaseEntity {
             LocalTime intakeTime,
             IntakeHistory intakeHistory,
             IntakeType intakeType,
-            IntakeAmount intakeAmount
+            int intakeAmount
     ) {
         this.intakeTime = intakeTime;
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
-        this.intakeAmount = intakeAmount;
+        this.intakeAmount = new IntakeAmount(intakeType.calculateHydration(intakeAmount));
     }
 
     public boolean isOwnedBy(Member comparedMember) {

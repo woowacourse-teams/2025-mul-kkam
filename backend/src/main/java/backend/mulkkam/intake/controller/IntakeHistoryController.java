@@ -2,9 +2,9 @@ package backend.mulkkam.intake.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.service.IntakeHistoryService;

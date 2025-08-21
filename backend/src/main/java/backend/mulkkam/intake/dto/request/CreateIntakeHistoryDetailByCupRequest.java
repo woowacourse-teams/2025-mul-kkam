@@ -20,6 +20,6 @@ public record CreateIntakeHistoryDetailByCupRequest(
             Cup cup
     ) {
         LocalTime time = dateTime.toLocalTime();
-        return new IntakeHistoryDetail(time, intakeHistory, cup.getIntakeType(), cup);
+        return new IntakeHistoryDetail(time, intakeHistory, cup);
     }
 }
