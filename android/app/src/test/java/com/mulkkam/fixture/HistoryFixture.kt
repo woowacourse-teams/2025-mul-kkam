@@ -67,11 +67,15 @@ val HALF_INTAKE_HISTORY =
                     id = 1,
                     dateTime = LocalTime.of(10, 0),
                     intakeAmount = 300,
+                    intakeType = IntakeType.WATER,
+                    cupEmojiUrl = "",
                 ),
                 IntakeHistory(
                     id = 2,
                     dateTime = LocalTime.of(11, 0),
                     intakeAmount = 300,
+                    intakeType = IntakeType.WATER,
+                    cupEmojiUrl = "",
                 ),
             ),
     )
@@ -90,6 +94,8 @@ val SAMPLE_INTAKE_HISTORY =
         id = 1,
         dateTime = LocalTime.of(10, 0),
         intakeAmount = 300,
+        intakeType = IntakeType.WATER,
+        cupEmojiUrl = "",
     )
 
 private const val WEEK_LENGTH: Int = 7
