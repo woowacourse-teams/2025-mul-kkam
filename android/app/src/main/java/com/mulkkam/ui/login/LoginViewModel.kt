@@ -40,10 +40,9 @@ class LoginViewModel : ViewModel() {
         val currentParts = currentVersion.split(".").map { it.toNumericPart() }
         val minimumParts = minimumVersion.split(".").map { it.toNumericPart() }
 
-        val maxSize = maxOf(currentParts.size, minimumParts.size)
-        for (index in 0 until maxSize) {
-            val currentPart = currentParts.getOrElse(index) { 0 }
-            val minimumPart = minimumParts.getOrElse(index) { 0 }
+        for (index in currentParts.indices) {
+            val currentPart = currentParts[index]
+            val minimumPart = minimumParts[index]
 
             if (currentPart < minimumPart) return true
             if (currentPart > minimumPart) return false
