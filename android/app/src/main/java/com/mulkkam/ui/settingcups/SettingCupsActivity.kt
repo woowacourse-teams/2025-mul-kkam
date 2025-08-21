@@ -42,6 +42,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
 
     private fun initRecyclerView() {
         binding.rvCups.adapter = settingCupsAdapter
+        binding.rvCups.itemAnimator = null
         itemTouchHelper.attachToRecyclerView(binding.rvCups)
     }
 

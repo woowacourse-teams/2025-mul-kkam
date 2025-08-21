@@ -74,6 +74,7 @@ class HistoryFragment :
 
     private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
+            itemAnimator = null
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
