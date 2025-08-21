@@ -69,6 +69,7 @@
     <string name="setting_cup_edit_title">컵 수정</string>
     <string name="setting_cup_add_title">컵 추가</string>
     <string name="setting_cup_nickname">컵 이름</string>
+    <string name="setting_cup_emoji">컵 아이콘</string>
     <string name="setting_cup_amount">용량</string>
     <string name="setting_cup_save">완료</string>
     <string name="setting_cup_intake_type">액체 타입</string>

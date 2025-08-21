@@ -21,6 +21,8 @@ class LoginViewModel : ViewModel() {
     private val _isAppOutdated: MutableSingleLiveData<Boolean> = MutableSingleLiveData()
     val isAppOutdated: SingleLiveData<Boolean> get() = _isAppOutdated
 
+    private val numericPattern = Regex("""^\d+""")
+
     fun checkAppVersion(currentVersionName: String) {
         viewModelScope.launch {
             runCatching {
@@ -35,8 +37,8 @@ class LoginViewModel : ViewModel() {
         currentVersion: String,
         minimumVersion: String,
     ): Boolean {
-        val currentParts = currentVersion.split(".").map { it.toInt() }
-        val minimumParts = minimumVersion.split(".").map { it.toInt() }
+        val currentParts = currentVersion.split(".").map { it.toNumericPart() }
+        val minimumParts = minimumVersion.split(".").map { it.toNumericPart() }
 
         for (index in currentParts.indices) {
             val currentPart = currentParts[index]
@@ -47,6 +49,8 @@ class LoginViewModel : ViewModel() {
         }
         return false
     }
+
+    private fun String.toNumericPart(): Int = numericPattern.find(this)?.value?.toIntOrNull() ?: 0
 
     fun loginWithKakao(token: String) {
         viewModelScope.launch {

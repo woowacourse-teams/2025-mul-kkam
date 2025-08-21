@@ -8,6 +8,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
@@ -34,7 +35,10 @@ class CupViewHolder(
                     IntakeType.COFFEE -> root.context.getString(R.string.setting_cups_intake_type_coffee)
                     IntakeType.UNKNOWN -> root.context.getString(R.string.setting_cups_intake_type_unknown)
                 }
-            ivIcon.loadUrl(item.value.emoji)
+            ivIcon.loadUrl(
+                url = item.value.emoji,
+                shape = ImageShape.Rounded(12),
+            )
         }
 
     private fun initClickListeners(item: SettingCupsItem.CupItem) =
