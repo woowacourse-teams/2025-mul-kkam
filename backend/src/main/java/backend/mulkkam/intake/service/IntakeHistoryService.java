@@ -15,7 +15,7 @@ import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -48,7 +48,7 @@ public class IntakeHistoryService {
     private final CupRepository cupRepository;
 
     @Transactional
-    public CreateIntakeHistoryResponse createByCup(
+    public CreateIntakeHistoryDetailResponse createByCup(
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest,
             MemberDetails memberDetails
     ) {
@@ -63,11 +63,11 @@ public class IntakeHistoryService {
                 cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory, cup.getCupAmount().value());
     }
 
     @Transactional
-    public CreateIntakeHistoryResponse createByUserInput(
+    public CreateIntakeHistoryDetailResponse createByUserInput(
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest,
             MemberDetails memberDetails
     ) {
@@ -80,7 +80,8 @@ public class IntakeHistoryService {
                 intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory,
+                createIntakeHistoryDetailByUserInputRequest.intakeAmount());
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
@@ -141,10 +142,11 @@ public class IntakeHistoryService {
         intakeHistoryDetailRepository.delete(intakeHistoryDetail);
     }
 
-    private CreateIntakeHistoryResponse getCreateIntakeHistoryResponse(
+    private CreateIntakeHistoryDetailResponse getCreateIntakeHistoryResponse(
             LocalDate intakeDate,
             Member member,
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            int intakeAmount
     ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
@@ -152,7 +154,7 @@ public class IntakeHistoryService {
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
-        return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
+        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount);
     }
 
     private IntakeHistory getIntakeHistory(

@@ -2,7 +2,7 @@ package backend.mulkkam.intake.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -60,7 +60,7 @@ public class IntakeHistoryController {
     }
 
     @Operation(summary = "컵을 통해 음용량 기록 생성", description = "컵을 통해 새로운 음용량 기록을 생성합니다.")
-    @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryResponse.class)))
+    @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryDetailResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "음용량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
@@ -72,12 +72,12 @@ public class IntakeHistoryController {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
     @PostMapping("/cup") // TODO 2025. 8. 20. 17:09: url 다시 생각하기
-    public ResponseEntity<CreateIntakeHistoryResponse> createByCup(
+    public ResponseEntity<CreateIntakeHistoryDetailResponse> createByCup(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @RequestBody CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest
     ) {
-        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.createByCup(
+        CreateIntakeHistoryDetailResponse createIntakeHistoryResponse = intakeHistoryService.createByCup(
                 createIntakeHistoryDetailByCupRequest,
                 memberDetails
         );
@@ -85,7 +85,7 @@ public class IntakeHistoryController {
     }
 
     @Operation(summary = "직접 입력을 통해 음용량 기록 생성", description = "직접 입력을 통해 새로운 음용량 기록을 생성합니다.")
-    @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryResponse.class)))
+    @ApiResponse(responseCode = "200", description = "기록 생성 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryDetailResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "음용량 범위 오류 등", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
@@ -94,12 +94,12 @@ public class IntakeHistoryController {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
     @PostMapping("/input")
-    public ResponseEntity<CreateIntakeHistoryResponse> createByUserInput(
+    public ResponseEntity<CreateIntakeHistoryDetailResponse> createByUserInput(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @RequestBody CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest
     ) {
-        CreateIntakeHistoryResponse createIntakeHistoryResponse = intakeHistoryService.createByUserInput(
+        CreateIntakeHistoryDetailResponse createIntakeHistoryResponse = intakeHistoryService.createByUserInput(
                 createIntakeHistoryDetailByUserInputRequest,
                 memberDetails
         );
