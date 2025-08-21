@@ -20,7 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 public class CupEmoji extends BaseEntity {
 
-    private static final String DEFAULT_CUP_EMOJI_URL = "https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c";
+    private static final String DEFAULT_CUP_EMOJI_URL = "https://github.com/user-attachments/assets/df68b91b-772c-4feb-bc2a-59955fe74c57";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
