@@ -58,7 +58,7 @@ class CompleteDialogFragment :
             ).getColoredSpannable(
                 requireContext(),
                 R.color.primary_200,
-                parentViewModel.onboardingInfo.nickname ?: "",
+                parentViewModel.onboardingInfo.nickname?.name ?: "",
             )
     }
 

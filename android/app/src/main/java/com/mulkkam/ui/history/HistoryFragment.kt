@@ -199,7 +199,7 @@ class HistoryFragment :
         }
 
         val formatter =
-            if (weeklyIntakeHistories.isCurrentYear) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
+            if (weeklyIntakeHistories.isCurrentYear()) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
 
         binding.tvWeekRange.text =
             getString(
