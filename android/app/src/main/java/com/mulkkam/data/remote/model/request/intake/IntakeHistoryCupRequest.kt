@@ -4,9 +4,9 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IntakeHistoryRequest(
+data class IntakeHistoryCupRequest(
     @SerialName("dateTime")
     val dateTime: String,
-    @SerialName("intakeAmount")
-    val intakeAmount: Int,
+    @SerialName("cupId")
+    val cupId: Long,
 )

@@ -1,7 +1,8 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.intake.IntakeHistoryRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
 import com.mulkkam.data.remote.model.response.intake.IntakeHistoryResultResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeHistorySummaryResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
@@ -20,9 +21,14 @@ interface IntakeService {
         @Query("to") to: String,
     ): Result<List<IntakeHistorySummaryResponse>>
 
-    @POST("/intake/history")
-    suspend fun postIntakeHistory(
-        @Body intakeHistory: IntakeHistoryRequest,
+    @POST("/intake/history/input")
+    suspend fun postIntakeHistoryInput(
+        @Body intakeHistory: IntakeHistoryInputRequest,
+    ): Result<IntakeHistoryResultResponse>
+
+    @POST("/intake/history/cup")
+    suspend fun postIntakeHistoryCup(
+        @Body intakeHistory: IntakeHistoryCupRequest,
     ): Result<IntakeHistoryResultResponse>
 
     @PATCH("/intake/amount/target")
