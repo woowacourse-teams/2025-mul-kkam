@@ -151,7 +151,7 @@ class HomeFragment :
             CustomToast
                 .makeText(
                     requireContext(),
-                    getString(R.string.try_login_again),
+                    getString(R.string.authorization_expired),
                     R.drawable.ic_alert_circle,
                 ).show()
             navigateToLogin()
