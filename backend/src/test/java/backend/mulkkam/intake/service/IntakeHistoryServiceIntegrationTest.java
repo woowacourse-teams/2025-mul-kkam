@@ -96,7 +96,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
-                    dateTime, WATER, savedCupId);
+                    dateTime, savedCupId);
             intakeHistoryService.createByCup(createIntakeHistoryDetailCRequest, new MemberDetails(savedMember));
 
             // when
@@ -122,7 +122,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(dateTime, WATER, savedCupId);
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
+                    dateTime, savedCupId);
             intakeHistoryService.createByCup(createIntakeHistoryDetailByCupRequest, new MemberDetails(savedMember));
 
             // when
@@ -147,7 +148,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
                     dateTime, WATER, 1000);
-            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest, new MemberDetails(savedMember));
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -172,8 +174,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             intakeHistoryRepository.save(yesterDayIntakeHistory);
 
-            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(dateTime, WATER, 1000);
-            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest, new MemberDetails(savedMember));
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
+                    dateTime, WATER, 1000);
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(savedMember));
 
             // when
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
@@ -402,24 +406,27 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_whenIntakeHistoryDetailByUserInput() {
             // given
-            LocalDate date = LocalDate.of(2025,7 ,15);
+            LocalDate date = LocalDate.of(2025, 7, 15);
             LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(15, 0));
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
                     dateTime, WATER, 1000);
 
             // when
-            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest, new MemberDetails(savedMember));
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(savedMember));
 
             // then
             DateRangeRequest dateRangeRequest = new DateRangeRequest(date, date);
             List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest, new MemberDetails(savedMember.getId()));
-            IntakeHistoryDetailResponse intakeHistoryDetailResponse = intakeHistorySummaryResponses.getFirst().intakeDetails().getFirst();
+            IntakeHistoryDetailResponse intakeHistoryDetailResponse = intakeHistorySummaryResponses.getFirst()
+                    .intakeDetails().getFirst();
 
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
                 softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
-                softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl()).isEqualTo(CupEmoji.getDefaultCupEmojiUrl());
+                softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl())
+                        .isEqualTo(CupEmoji.getDefaultCupEmojiUrl());
             });
         }
     }
@@ -509,7 +516,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(savedMember)))
+                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(),
+                            new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }
