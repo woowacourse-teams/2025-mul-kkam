@@ -63,7 +63,7 @@ public class IntakeHistoryService {
                 cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory, cup.getCupAmount().value());
     }
 
     @Transactional
@@ -80,7 +80,8 @@ public class IntakeHistoryService {
                 intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory,
+                createIntakeHistoryDetailByUserInputRequest.intakeAmount());
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
@@ -144,7 +145,8 @@ public class IntakeHistoryService {
     private CreateIntakeHistoryDetailResponse getCreateIntakeHistoryResponse(
             LocalDate intakeDate,
             Member member,
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            int intakeAmount
     ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
@@ -152,7 +154,7 @@ public class IntakeHistoryService {
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
-        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate);
+        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount);
     }
 
     private IntakeHistory getIntakeHistory(
