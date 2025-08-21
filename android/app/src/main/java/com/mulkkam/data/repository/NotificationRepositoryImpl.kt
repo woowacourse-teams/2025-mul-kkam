@@ -58,4 +58,13 @@ class NotificationRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
+
+    override suspend fun deleteNotifications(id: Int): MulKkamResult<Unit> {
+        val result = notificationService.deleteNotifications(id)
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }

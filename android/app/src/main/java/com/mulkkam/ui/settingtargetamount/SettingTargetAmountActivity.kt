@@ -135,7 +135,9 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 updateSaveButtonAvailability(true)
                 CustomToast
                     .makeText(this, getString(R.string.setting_target_amount_complete_description))
-                    .show()
+                    .apply {
+                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
                 finish()
             }
 
@@ -162,7 +164,8 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             is MulKkamUiState.Failure -> {
                 if (targetAmountValidityUiState.error is TargetAmountError) {
                     updateTargetAmountValidationUI(false)
-                    binding.tvTargetAmountWarningMessage.text = targetAmountValidityUiState.error.toMessageRes()
+                    binding.tvTargetAmountWarningMessage.text =
+                        targetAmountValidityUiState.error.toMessageRes()
                 }
             }
         }

@@ -14,6 +14,8 @@
     <string name="home_notification_apply_target_amount">목표량 반영하기</string>
     <string name="home_notification_apply_failed">목표량 반영에 실패했어요</string>
     <string name="home_notification_apply_success">목표량에 반영되었어요</string>
+    <string name="home_notification_delete_success">알림이 삭제되었어요</string>
+    <string name="home_notification_delete_failed">알림 삭제에 실패했어요</string>
     <string name="home_notification_just_now">방금 전</string>
     <string name="home_notification_minutes_ago">%d분 전</string>
     <string name="home_notification_hours_ago">%d시간 전</string>
