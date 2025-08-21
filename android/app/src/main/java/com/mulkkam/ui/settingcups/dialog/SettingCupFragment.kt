@@ -253,7 +253,7 @@ class SettingCupFragment :
             Runnable {
                 viewModel.updateAmount(text.toIntOrNull() ?: 0)
             }.apply {
-                debounceHandler.postDelayed(this, 300L)
+                debounceHandler.postDelayed(this, 100L)
             }
     }
 

@@ -210,7 +210,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             Runnable {
                 val targetAmount = text.toIntOrNull()
                 viewModel.updateTargetAmount(targetAmount)
-            }.also { debounceHandler.postDelayed(it, 300L) }
+            }.also { debounceHandler.postDelayed(it, 100L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =
