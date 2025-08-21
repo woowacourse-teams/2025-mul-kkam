@@ -30,6 +30,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -82,16 +83,70 @@ public class IntakeHistoryService {
         return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory);
     }
 
+    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
+            DateRangeRequest dateRangeRequest,
+            MemberDetails memberDetails
+    ) {
+        Member member = getMember(memberDetails.id());
+        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
+
+        Map<LocalDate, IntakeHistory> histories = intakeHistoryRepository
+                .findAllByMemberAndHistoryDateBetween(member, dateRangeRequest.from(), dateRangeRequest.to())
+                .stream()
+                .collect(Collectors.toMap(
+                        IntakeHistory::getHistoryDate,
+                        history -> history
+                ));
+
+        List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                member,
+                dateRangeRequest.from(),
+                dateRangeRequest.to()
+        );
+
+        Map<LocalDate, List<IntakeHistoryDetail>> details = allDetails.stream()
+                .collect(Collectors.groupingBy(
+                        d -> d.getIntakeHistory().getHistoryDate()
+                ));
+        return dates.stream()
+                .map(date -> {
+                    List<IntakeHistoryDetail> detailsOfDate = details.getOrDefault(date, List.of())
+                            .stream()
+                            .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
+                            .toList();
+
+                    if (detailsOfDate.isEmpty()) {
+                        IntakeHistory historyOnly = histories.get(date);
+                        if (historyOnly == null) {
+                            return createDefaultResponse(date, member);
+                        }
+                        return toIntakeHistorySummaryResponse(historyOnly, List.of());
+                    }
+                    return toIntakeHistorySummaryResponse(histories.get(date), detailsOfDate);
+                })
+                .toList();
+    }
+
+
+    @Transactional
+    public void deleteDetailHistory(
+            Long intakeHistoryDetailId,
+            MemberDetails memberDetails
+    ) {
+        Member member = getMember(memberDetails.id());
+        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
+                intakeHistoryDetailId);
+
+        validatePossibleToDelete(intakeHistoryDetail, member);
+        intakeHistoryDetailRepository.delete(intakeHistoryDetail);
+    }
+
     private CreateIntakeHistoryResponse getCreateIntakeHistoryResponse(
             LocalDate intakeDate,
             Member member,
             IntakeHistory intakeHistory
     ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
-
-        if (intakeHistoryDetails.isEmpty()) {
-            return new CreateIntakeHistoryResponse(0, CommentOfAchievementRate.VERY_LOW.getComment());
-        }
 
         int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
@@ -115,45 +170,6 @@ public class IntakeHistoryService {
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
-    }
-
-    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
-            DateRangeRequest dateRangeRequest,
-            MemberDetails memberDetails
-    ) {
-        Member member = getMember(memberDetails.id());
-        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
-        List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                member,
-                dateRangeRequest.from(),
-                dateRangeRequest.to()
-        );
-        return dates.stream()
-                .map(date -> {
-                    List<IntakeHistoryDetail> detailsOfDate = details.stream()
-                            .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
-                            .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
-                            .toList();
-                    if (detailsOfDate.isEmpty()) {
-                        return createDefaultResponse(date, member);
-                    }
-                    IntakeHistory intakeHistory = detailsOfDate.getFirst().getIntakeHistory();
-                    return toIntakeHistorySummaryResponse(intakeHistory, detailsOfDate);
-                })
-                .toList();
-    }
-
-    @Transactional
-    public void deleteDetailHistory(
-            Long intakeHistoryDetailId,
-            MemberDetails memberDetails
-    ) {
-        Member member = getMember(memberDetails.id());
-        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
-                intakeHistoryDetailId);
-
-        validatePossibleToDelete(intakeHistoryDetail, member);
-        intakeHistoryDetailRepository.delete(intakeHistoryDetail);
     }
 
     private void validatePossibleToDelete(

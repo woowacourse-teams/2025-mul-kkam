@@ -16,6 +16,7 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
@@ -52,6 +53,9 @@ class IntakeHistoryServiceUnitTest {
 
     @Mock
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    @Mock
+    private IntakeHistoryRepository intakeHistoryRepository;
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
     @Nested
@@ -164,6 +168,8 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -244,6 +250,8 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -297,6 +305,8 @@ class IntakeHistoryServiceUnitTest {
 
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
