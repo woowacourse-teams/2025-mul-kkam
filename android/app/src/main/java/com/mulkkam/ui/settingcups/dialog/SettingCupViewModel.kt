@@ -44,8 +44,9 @@ class SettingCupViewModel : ViewModel() {
     private val hasChanges: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
-                value = _cup.value != originalCup
+                value = cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmojiId != null
             }
+            addSource(_cupEmojisUiState) { update() }
             addSource(_cup) { update() }
         }
 
@@ -79,6 +80,7 @@ class SettingCupViewModel : ViewModel() {
             addSource(_cup) { update() }
             addSource(_cupNameValidity) { update() }
             addSource(_amountValidity) { update() }
+            addSource(_cupEmojisUiState) { update() }
             addSource(hasChanges) { update() }
         }
 

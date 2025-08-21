@@ -19,7 +19,6 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
@@ -101,9 +100,7 @@ class SettingCupFragment :
             saveSuccess.observe(viewLifecycleOwner) {
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
@@ -111,9 +108,7 @@ class SettingCupFragment :
             deleteSuccess.observe(viewLifecycleOwner) {
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }

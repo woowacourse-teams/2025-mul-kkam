@@ -23,12 +23,5 @@ data class CupEmojisUiModel(
 
 fun List<CupEmoji>.toUi(): CupEmojisUiModel =
     CupEmojisUiModel(
-        cupEmojis =
-            this.mapIndexed { index, cupEmoji ->
-                if (index == 0) {
-                    cupEmoji.toUi().copy(isSelected = true)
-                } else {
-                    cupEmoji.toUi()
-                }
-            },
+        cupEmojis = map { it.toUi() },
     )
