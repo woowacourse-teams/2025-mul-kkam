@@ -1,5 +1,5 @@
--- V20250821_223001__contract_member_nickname_unique.sql.sql
--- nickname 컬럼에 걸린 고유 인덱스명을 동적으로 조회해 드롭
+-- ALLOW_DROP
+-- reason: nickname 컬럼에 걸린 고유 인덱스명을 동적으로 조회해 드롭 (679)
 SET @idx := (
     SELECT index_name
     FROM information_schema.statistics
