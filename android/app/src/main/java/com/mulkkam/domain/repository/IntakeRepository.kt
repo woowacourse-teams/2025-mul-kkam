@@ -22,6 +22,11 @@ interface IntakeRepository {
         amount: CupAmount,
     ): MulKkamResult<IntakeHistoryResult>
 
+    suspend fun postIntakeHistoryCup(
+        dateTime: LocalDateTime,
+        cupId: Long,
+    ): MulKkamResult<IntakeHistoryResult>
+
     suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit>
 
     suspend fun getIntakeTarget(): MulKkamResult<Int>
