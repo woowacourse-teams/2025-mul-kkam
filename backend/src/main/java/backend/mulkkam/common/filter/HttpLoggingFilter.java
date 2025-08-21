@@ -129,7 +129,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             String body = objectMapper.readTree(responseWrapper.getContentAsByteArray())
                     .toPrettyString()
                     .replaceAll("\\R\\s*\\}$", "}");
-            log.info("ResponseBody: {}", body);
             if (body.isEmpty()) {
                 body = "NONE";
             }
