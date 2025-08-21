@@ -79,7 +79,7 @@ public class WeatherService {
         TargetAmount targetAmount = getTargetAmount(member, intakeHistory, extraIntakeAmount);
 
         return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d입니다. %dML를 추가하는 것을 추천해요. 반영할까요?",
+                String.format("오늘 날씨의 평균은 %d도입니다. %dml를 추가하는 것을 추천해요. 반영할까요?",
                         (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
                 member,
                 targetAmount.value(),
