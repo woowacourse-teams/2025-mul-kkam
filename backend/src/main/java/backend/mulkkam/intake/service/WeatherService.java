@@ -137,7 +137,6 @@ public class WeatherService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
 
-
     private double convertFromKelvinToCelsius(double temperatureAsKelvin) {
         return temperatureAsKelvin - 273.15;
     }
