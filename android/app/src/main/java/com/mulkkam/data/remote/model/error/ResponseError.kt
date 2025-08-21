@@ -156,7 +156,7 @@ fun ResponseError.toDomain(): MulKkamError =
         // SettingCups
         SettingCupsError.InvalidCount -> MulKkamError.SettingCupsError.InvalidCount
         SettingCupsError.InvalidAmount -> MulKkamError.SettingCupsError.InvalidAmount
-        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNickname
+        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNicknameLength
         SettingCupsError.InvalidRankValue -> MulKkamError.SettingCupsError.InvalidRankValue
 
         // Account

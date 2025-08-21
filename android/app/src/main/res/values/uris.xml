@@ -5,5 +5,8 @@
     <string name="terms_night_notification">https://wealthy-clematis-4a5.notion.site/24d5bca0ac2280e4983ce621db23a70e?source=copy_link</string>
     <string name="terms_marketing">https://wealthy-clematis-4a5.notion.site/24d5bca0ac22800983a3f9bab1fbdc2f?source=copy_link</string>
     <string name="feedback_email">mailto:mulkkamwater@gmail.com</string>
+    <string name="play_store_app">market://details?id=%s</string>
+    <string name="play_store_web">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="play_store">com.android.vending</string>
 </resources>
 

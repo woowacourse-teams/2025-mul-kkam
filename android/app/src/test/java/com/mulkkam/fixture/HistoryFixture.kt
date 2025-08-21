@@ -3,6 +3,7 @@ package com.mulkkam.fixture
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
+import com.mulkkam.domain.model.intake.IntakeType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime
@@ -34,16 +35,22 @@ val FULL_INTAKE_HISTORY =
                     id = 1,
                     dateTime = LocalTime.of(10, 0),
                     intakeAmount = 300,
+                    intakeType = IntakeType.WATER,
+                    cupEmojiUrl = "",
                 ),
                 IntakeHistory(
                     id = 2,
                     dateTime = LocalTime.of(11, 0),
                     intakeAmount = 400,
+                    intakeType = IntakeType.WATER,
+                    cupEmojiUrl = "",
                 ),
                 IntakeHistory(
                     id = 3,
                     dateTime = LocalTime.of(12, 0),
                     intakeAmount = 500,
+                    intakeType = IntakeType.WATER,
+                    cupEmojiUrl = "",
                 ),
             ),
     )

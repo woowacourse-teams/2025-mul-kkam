@@ -88,6 +88,7 @@
         android:foreground="@drawable/bg_common_rectangle_stroke_8dp"
         android:imeOptions="actionDone|flagNoEnterAction"
         android:inputType="number"
+        android:maxLength="5"
         android:maxLines="1"
         android:paddingHorizontal="16dp"
         android:paddingVertical="10dp"
@@ -96,6 +97,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_amount" />
+
+    <TextView
+        android:id="@+id/tv_amount_validation_message"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="6dp"
+        android:layout_marginTop="8dp"
+        android:textAppearance="@style/label1"
+        android:textColor="@color/secondary_200"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@id/et_amount"
+        app:layout_constraintTop_toBottomOf="@id/et_amount"
+        tools:text="@string/setting_nickname_warning_duplicated_nickname"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/tv_unit"
@@ -125,6 +140,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_amount" />
+        app:layout_constraintTop_toBottomOf="@id/tv_amount_validation_message" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

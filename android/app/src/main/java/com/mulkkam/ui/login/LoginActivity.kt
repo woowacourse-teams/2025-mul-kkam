@@ -20,7 +20,9 @@ import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
@@ -30,9 +32,10 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.checkAppVersion(getAppVersion())
         initClickListeners()
         initObservers()
-        setupDoubleBackToExit()
+        initDoubleBackToExit()
     }
 
     private fun initClickListeners() {
@@ -84,6 +87,17 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         viewModel.authUiState.observe(this) { authUiState ->
             handleAuthUiState(authUiState)
         }
+
+        viewModel.isAppOutdated.observe(this) { isAppOutdated ->
+            if (isAppOutdated) showUpdateDialog()
+        }
+    }
+
+    private fun showUpdateDialog() {
+        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
+        AppUpdateDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
 
     private fun handleAuthUiState(authUiState: MulKkamUiState<UserAuthState>) {
@@ -110,7 +124,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         finish()
     }
 
-    private fun setupDoubleBackToExit() {
+    private fun initDoubleBackToExit() {
         onBackPressedDispatcher.addCallback(
             this,
             object : OnBackPressedCallback(true) {

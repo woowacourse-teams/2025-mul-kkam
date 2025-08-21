@@ -34,8 +34,12 @@ sealed class MulKkamError : Throwable() {
             private fun readResolve(): Any = InvalidAmount
         }
 
-        data object InvalidNickname : SettingCupsError() {
-            private fun readResolve(): Any = InvalidNickname
+        data object InvalidNicknameLength : SettingCupsError() {
+            private fun readResolve(): Any = InvalidNicknameLength
+        }
+
+        data object InvalidNicknameCharacters : SettingCupsError() {
+            private fun readResolve(): Any = InvalidNicknameCharacters
         }
 
         data object InvalidRankValue : SettingCupsError() {

@@ -2,10 +2,12 @@ package com.mulkkam.ui.history.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemIntakeHistoryBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
+import com.mulkkam.ui.util.extensions.loadUrl
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -39,6 +41,9 @@ class HistoryViewHolder(
                     R.string.history_intake_amount,
                     intakeHistory.intakeAmount,
                 )
+            tvIntakeAmount.setTextColor(intakeHistory.intakeType.toColorHex().toColorInt())
+
+            ivCupIcon.loadUrl(intakeHistory.cupEmojiUrl)
         }
     }
 

@@ -23,6 +23,7 @@ import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
@@ -149,8 +150,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             is MulKkamUiState.Failure -> {
                 updateTargetAmountValidationUI(false)
                 binding.tvTargetAmountWarningMessage.text =
-                    (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes()
-                        ?: return
+                    (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes() ?: return
             }
 
             is MulKkamUiState.Loading -> Unit
@@ -163,15 +163,11 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         recommendedTargetAmount: Int,
     ) {
         val formattedAmount = String.format(Locale.US, "%,dml", recommendedTargetAmount)
-        val ctx = requireContext()
 
         binding.tvRecommendedTargetAmount.text =
-            getString(
-                R.string.target_amount_recommended_water_goal,
-                nickname,
-                recommendedTargetAmount,
-            ).getAppearanceSpannable(ctx, R.style.title2, nickname, formattedAmount)
-                .getColoredSpannable(ctx, R.color.primary_200, nickname, formattedAmount)
+            getString(R.string.target_amount_recommended_water_goal, nickname, recommendedTargetAmount)
+                .getAppearanceSpannable(requireContext(), R.style.title2, nickname, formattedAmount)
+                .getColoredSpannable(requireContext(), R.color.primary_200, nickname, formattedAmount)
     }
 
     private fun updateSaveEnabled(enabled: Boolean) {
@@ -183,14 +179,13 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         with(binding) {
             tvComplete.isEnabled = isValid == true
             tvTargetAmountWarningMessage.isVisible = isValid == false
-            etInputGoal.backgroundTintList =
-                ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
+            etInputGoal.backgroundTintList = ColorStateList.valueOf(getColor(requireContext(), editTextColorRes))
         }
     }
 
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged { editable ->
-            val processedText = sanitizeLeadingZeros(editable.toString())
+            val processedText = editable.toString().sanitizeLeadingZeros()
 
             if (processedText != editable.toString()) {
                 updateEditText(binding.etInputGoal, processedText)
@@ -200,13 +195,6 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
             debounceTargetAmountUpdate(processedText)
         }
     }
-
-    private fun sanitizeLeadingZeros(input: String): String =
-        if (input.length > 1 && input.startsWith("0")) {
-            input.trimStart('0').ifEmpty { "0" }
-        } else {
-            input
-        }
 
     private fun updateEditText(
         editText: EditText,
@@ -228,17 +216,11 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
     private fun TargetAmountError.toMessageRes(): String =
         when (this) {
             TargetAmountError.BelowMinimum -> {
-                getString(
-                    R.string.setting_target_amount_warning_too_low,
-                    TargetAmount.TARGET_AMOUNT_MIN,
-                )
+                getString(R.string.setting_target_amount_warning_too_low, TargetAmount.TARGET_AMOUNT_MIN)
             }
 
             TargetAmountError.AboveMaximum -> {
-                getString(
-                    R.string.setting_target_amount_warning_too_high,
-                    TargetAmount.TARGET_AMOUNT_MAX,
-                )
+                getString(R.string.setting_target_amount_warning_too_high, TargetAmount.TARGET_AMOUNT_MAX)
             }
         }
 
