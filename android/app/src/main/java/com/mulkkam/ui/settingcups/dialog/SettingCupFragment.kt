@@ -148,7 +148,7 @@ class SettingCupFragment :
         when (state) {
             is MulKkamUiState.Success,
             is MulKkamUiState.Idle,
-                -> {
+            -> {
                 binding.tvNicknameValidationMessage.updateMessage(null)
             }
 
@@ -183,7 +183,7 @@ class SettingCupFragment :
         when (state) {
             is MulKkamUiState.Success,
             is MulKkamUiState.Idle,
-                -> {
+            -> {
                 binding.tvAmountValidationMessage.updateMessage(null)
             }
 

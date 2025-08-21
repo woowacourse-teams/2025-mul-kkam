@@ -23,6 +23,9 @@ class SettingCupsViewModel : ViewModel() {
     private var _cupsReorderUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData(MulKkamUiState.Idle)
     val cupsReorderUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsReorderUiState
 
+    private var _cupsResetUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData(MulKkamUiState.Idle)
+    val cupsResetUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsResetUiState
+
     init {
         loadCups()
     }
@@ -65,6 +68,20 @@ class SettingCupsViewModel : ViewModel() {
             }.onFailure { t ->
                 _cupsUiState.value = cupsUiState.value
                 _cupsReorderUiState.value = MulKkamUiState.Failure(t.toMulKkamError())
+            }
+        }
+    }
+
+    fun resetCups() {
+        viewModelScope.launch {
+            _cupsResetUiState.value = MulKkamUiState.Loading
+            runCatching {
+                cupsRepository.resetCups().getOrError()
+            }.onSuccess {
+                _cupsResetUiState.value = MulKkamUiState.Success(Unit)
+                loadCups()
+            }.onFailure {
+                _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }

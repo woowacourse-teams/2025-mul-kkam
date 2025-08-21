@@ -29,5 +29,7 @@ interface CupsRepository {
 
     suspend fun deleteCup(id: Long): MulKkamResult<Unit>
 
+    suspend fun resetCups(): MulKkamResult<Unit>
+
     suspend fun getCupEmojis(): MulKkamResult<List<CupEmoji>>
 }

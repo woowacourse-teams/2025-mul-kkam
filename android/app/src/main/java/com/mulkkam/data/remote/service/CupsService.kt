@@ -40,4 +40,7 @@ interface CupsService {
 
     @GET("/cup-emoji")
     suspend fun getCupEmojis(): Result<CupEmojisResponse>
+
+    @PUT("/cups/reset")
+    suspend fun resetCups(): Result<Unit>
 }
