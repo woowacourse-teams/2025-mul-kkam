@@ -1,6 +1,5 @@
 package backend.mulkkam.intake.controller;
 
-import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -138,7 +137,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .andReturn().getResponse().getContentAsString();
 
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history/cup")
@@ -182,7 +181,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         void success_streakIsOneWhenThereIsNotYesterdayIntakeHistory() throws Exception {
             // given
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history/cup")
@@ -210,7 +209,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
                     .build();
             intakeHistoryRepository.save(intakeHistory);
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
-                    LocalDateTime.of(2025, 7, 15, 10, 0), WATER, savedCupId);
+                    LocalDateTime.of(2025, 7, 15, 10, 0), savedCupId);
 
             // when
             mockMvc.perform(post("/intake/history/cup")
