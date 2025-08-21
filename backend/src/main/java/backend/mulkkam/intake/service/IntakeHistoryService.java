@@ -62,8 +62,8 @@ public class IntakeHistoryService {
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory,
                 cup);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
-
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory, cup.getCupAmount().value());
+        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory,
+                intakeHistoryDetail.getIntakeAmount().value());
     }
 
     @Transactional
@@ -79,9 +79,8 @@ public class IntakeHistoryService {
         IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(
                 intakeHistory);
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
-
         return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory,
-                createIntakeHistoryDetailByUserInputRequest.intakeAmount());
+                intakeHistoryDetail.getIntakeAmount().value());
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
