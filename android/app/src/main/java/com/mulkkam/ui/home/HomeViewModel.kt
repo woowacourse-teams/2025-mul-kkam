@@ -5,10 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -89,27 +91,34 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntakeByCup(cupId: Long) {
         val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
-        addWaterIntake(cup.amount)
+        // TODO: 컵으로 마시는 API 연동 필요
+//        addWaterIntake(cup.amount)
     }
 
-    fun addWaterIntake(amount: Int) {
+    fun addWaterIntake(
+        intakeType: IntakeType,
+        amount: Int,
+    ) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         runCatching {
             CupAmount(amount)
         }.onSuccess {
-            addWaterIntake(it)
+            addWaterIntake(intakeType, it)
         }.onFailure {
             _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
         }
     }
 
-    private fun addWaterIntake(amount: CupAmount) {
+    private fun addWaterIntake(
+        intakeType: IntakeType,
+        amount: CupAmount,
+    ) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _drinkUiState.value = MulKkamUiState.Loading
-                RepositoryInjection.intakeRepository
-                    .postIntakeHistory(LocalDateTime.now(), amount)
+                intakeRepository
+                    .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
                 val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch

@@ -4,9 +4,11 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class IntakeHistoryRequest(
+data class IntakeHistoryInputRequest(
     @SerialName("dateTime")
     val dateTime: String,
+    @SerialName("intakeType")
+    val intakeType: String,
     @SerialName("intakeAmount")
     val intakeAmount: Int,
 )

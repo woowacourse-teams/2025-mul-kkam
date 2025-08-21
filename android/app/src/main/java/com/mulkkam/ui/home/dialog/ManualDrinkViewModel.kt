@@ -14,7 +14,8 @@ class ManualDrinkViewModel : ViewModel() {
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
 
     private val amountInput: MutableLiveData<Int> = MutableLiveData<Int>(0)
-    private val intakeType: MutableLiveData<IntakeType> = MutableLiveData<IntakeType>(IntakeType.WATER)
+    private val _intakeType: MutableLiveData<IntakeType> = MutableLiveData<IntakeType>(IntakeType.WATER)
+    val intakeType: LiveData<IntakeType> get() = _intakeType
 
     val isSaveAvailable: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
@@ -38,6 +39,6 @@ class ManualDrinkViewModel : ViewModel() {
     }
 
     fun updateIntakeType(type: IntakeType) {
-        intakeType.value = type
+        _intakeType.value = type
     }
 }
