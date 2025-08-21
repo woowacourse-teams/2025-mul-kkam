@@ -1,6 +1,0 @@
-CREATE TABLE app_minimum_version
-(
-    id              BIGINT AUTO_INCREMENT PRIMARY KEY,
-    minimum_version VARCHAR(20) NOT NULL,
-    updated_at      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-);
