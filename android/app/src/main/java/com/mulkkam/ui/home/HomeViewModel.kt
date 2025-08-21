@@ -135,8 +135,8 @@ class HomeViewModel : ViewModel() {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         runCatching {
             CupAmount(amount)
-        }.onSuccess {
-            addWaterIntake(intakeType, it)
+        }.onSuccess { amount ->
+            addWaterIntake(intakeType, amount)
         }.onFailure {
             _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
         }
