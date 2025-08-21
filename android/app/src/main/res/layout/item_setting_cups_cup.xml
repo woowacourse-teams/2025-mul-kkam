@@ -18,25 +18,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <View
-        android:id="@+id/view_icon"
+    <ImageView
+        android:id="@+id/iv_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
         android:layout_marginStart="6dp"
-        android:background="@drawable/bg_common_rectangle_12dp"
-        android:backgroundTint="@color/primary_100"
         app:layout_constraintBottom_toBottomOf="@id/iv_move"
         app:layout_constraintStart_toEndOf="@id/iv_move"
-        app:layout_constraintTop_toTopOf="@id/iv_move" />
-
-    <ImageView
-        android:id="@+id/iv_icon"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        app:layout_constraintBottom_toBottomOf="@id/view_icon"
-        app:layout_constraintEnd_toEndOf="@id/view_icon"
-        app:layout_constraintStart_toStartOf="@id/view_icon"
-        app:layout_constraintTop_toTopOf="@id/view_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_move"
+        tools:background="@drawable/bg_common_rectangle_12dp"
+        tools:backgroundTint="@color/primary_100"
         tools:src="@drawable/ic_app" />
 
     <LinearLayout
@@ -44,9 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/view_icon"
-        app:layout_constraintStart_toEndOf="@id/view_icon"
-        app:layout_constraintTop_toTopOf="@id/view_icon">
+        app:layout_constraintBottom_toBottomOf="@id/iv_icon"
+        app:layout_constraintStart_toEndOf="@id/iv_icon"
+        app:layout_constraintTop_toTopOf="@id/iv_icon">
 
         <TextView
             android:id="@+id/tv_setting_water_cup_tag_type"

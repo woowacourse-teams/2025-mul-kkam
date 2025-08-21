@@ -2,7 +2,6 @@ package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.cups.CupsRankRequest
 import com.mulkkam.data.remote.model.request.cups.NewCupRequest
-import com.mulkkam.data.remote.model.request.cups.PatchCupRequest
 import com.mulkkam.data.remote.model.response.cups.CupEmojisResponse
 import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
 import com.mulkkam.data.remote.model.response.cups.CupsResponse
@@ -31,7 +30,7 @@ interface CupsService {
     @PATCH("/cups/{cupId}")
     suspend fun patchCup(
         @Path("cupId") cupId: Long,
-        @Body patchCupRequest: PatchCupRequest,
+        @Body newCupRequest: NewCupRequest,
     ): Result<Unit>
 
     @DELETE("/cups/{id}")

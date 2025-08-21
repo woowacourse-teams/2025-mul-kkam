@@ -11,6 +11,9 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
+import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
+import com.mulkkam.ui.settingcups.dialog.model.toUi
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -31,6 +34,10 @@ class SettingCupViewModel : ViewModel() {
 
     private val _amountValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
+
+    private val _cupEmojisUiState: MutableLiveData<MulKkamUiState<CupEmojisUiModel>> =
+        MutableLiveData<MulKkamUiState<CupEmojisUiModel>>(MulKkamUiState.Idle)
+    val cupEmojisUiState: LiveData<MulKkamUiState<CupEmojisUiModel>> get() = _cupEmojisUiState
 
     private var originalCup: CupUiModel = EMPTY_CUP_UI_MODEL
 
@@ -63,8 +70,10 @@ class SettingCupViewModel : ViewModel() {
                     if (nameChanged) _cupNameValidity.value is MulKkamUiState.Success else true
                 val isAmountAvailable =
                     if (amountChanged) _amountValidity.value is MulKkamUiState.Success else true
+                val isEmojiSelected =
+                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmojiId != null
 
-                value = isNameAvailable && isAmountAvailable
+                value = isNameAvailable && isAmountAvailable && isEmojiSelected
             }
 
             addSource(_cup) { update() }
@@ -78,6 +87,23 @@ class SettingCupViewModel : ViewModel() {
 
     private val _deleteSuccess = MutableSingleLiveData<Unit>()
     val deleteSuccess: SingleLiveData<Unit> get() = _deleteSuccess
+
+    init {
+        loadCupEmojis()
+    }
+
+    private fun loadCupEmojis() {
+        if (cupEmojisUiState.value is MulKkamUiState.Success) return
+
+        viewModelScope.launch {
+            runCatching {
+                _cupEmojisUiState.value = MulKkamUiState.Loading
+                cupsRepository.getCupEmojis().getOrError()
+            }.onSuccess {
+                _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
+            }
+        }
+    }
 
     fun initCup(cup: CupUiModel?) {
         originalCup = cup ?: EMPTY_CUP_UI_MODEL
@@ -131,10 +157,6 @@ class SettingCupViewModel : ViewModel() {
         _cup.value = _cup.value?.copy(intakeType = intakeType)
     }
 
-    fun updateEmoji(emoji: String) {
-        _cup.value = _cup.value?.copy(emoji = emoji)
-    }
-
     fun saveCup() {
         if (isSaveAvailable.value != true) return
         when (_editType.value) {
@@ -146,10 +168,19 @@ class SettingCupViewModel : ViewModel() {
 
     private fun addCup() {
         viewModelScope.launch {
-            val cupUiModel = cup.value ?: return@launch
+            val cup = cup.value?.toDomain() ?: return@launch
 
             runCatching {
-                cupsRepository.postCup(cupUiModel.toDomain()).getOrError()
+                cupsRepository
+                    .postCup(
+                        name = cup.name,
+                        amount = cup.amount,
+                        intakeType = cup.intakeType,
+                        emojiId =
+                            cupEmojisUiState.value
+                                ?.toSuccessDataOrNull()
+                                ?.selectedCupEmojiId ?: return@launch,
+                    ).getOrError()
             }.onSuccess {
                 _saveSuccess.setValue(Unit)
             }
@@ -158,10 +189,20 @@ class SettingCupViewModel : ViewModel() {
 
     private fun editCup() {
         viewModelScope.launch {
-            val cupUiModel = cup.value ?: return@launch
+            val cup = cup.value?.toDomain() ?: return@launch
 
             runCatching {
-                cupsRepository.patchCup(cupUiModel.toDomain()).getOrError()
+                cupsRepository
+                    .patchCup(
+                        id = cup.id,
+                        name = cup.name,
+                        amount = cup.amount,
+                        intakeType = cup.intakeType,
+                        emojiId =
+                            cupEmojisUiState.value
+                                ?.toSuccessDataOrNull()
+                                ?.selectedCupEmojiId ?: return@launch,
+                    ).getOrError()
             }.onSuccess {
                 _saveSuccess.setValue(Unit)
             }
@@ -178,5 +219,10 @@ class SettingCupViewModel : ViewModel() {
                 _deleteSuccess.setValue(Unit)
             }
         }
+    }
+
+    fun selectEmoji(emojiId: Long) {
+        val emoji = cupEmojisUiState.value?.toSuccessDataOrNull() ?: return
+        _cupEmojisUiState.value = MulKkamUiState.Success<CupEmojisUiModel>(emoji.selectCupEmoji(emojiId))
     }
 }

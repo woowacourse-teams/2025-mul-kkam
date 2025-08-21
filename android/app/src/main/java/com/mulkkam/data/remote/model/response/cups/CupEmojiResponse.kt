@@ -7,7 +7,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CupEmojiResponse(
     @SerialName("id")
-    val id: Int,
+    val id: Long,
     @SerialName("cupEmojiUrl")
     val cupEmojiUrl: String,
 )
