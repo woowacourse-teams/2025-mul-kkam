@@ -229,7 +229,7 @@ class HistoryFragment :
                     intakeHistorySummary.date.monthValue,
                     intakeHistorySummary.date.dayOfMonth,
                 )
-            pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
+            pcWaterIntake.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -267,7 +267,7 @@ class HistoryFragment :
 
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
+            viewDailyChart.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 
