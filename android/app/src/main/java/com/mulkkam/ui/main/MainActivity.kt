@@ -1,6 +1,7 @@
 package com.mulkkam.ui.main
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -23,6 +24,8 @@ import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.IntakeWidget
+import com.mulkkam.ui.widget.ProgressWidget
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -176,6 +179,12 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
+    override fun onStop() {
+        super.onStop()
+        IntakeWidget.refresh(this)
+        ProgressWidget.refresh(this)
+    }
+
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
@@ -186,5 +195,8 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         val PERMISSION_ACTIVE_CALORIES_BURNED: String = HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+
+        fun newPendingIntent(context: Context): PendingIntent =
+            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }

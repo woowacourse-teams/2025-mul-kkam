@@ -1,15 +1,16 @@
-package com.mulkkam.data.local.work
+package com.mulkkam.data.checker
 
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.mulkkam.domain.work.CalorieScheduler
+import com.mulkkam.data.work.CalorieWorker
+import com.mulkkam.domain.checker.CalorieChecker
 import java.util.concurrent.TimeUnit
 
-class CalorieSchedulerImpl(
+class CalorieCheckerImpl(
     private val workManager: WorkManager,
-) : CalorieScheduler {
-    override fun scheduleCalorieCheck(intervalHours: Long) {
+) : CalorieChecker {
+    override fun checkCalorie(intervalHours: Long) {
         val request = PeriodicWorkRequestBuilder<CalorieWorker>(intervalHours, TimeUnit.HOURS).build()
         workManager.enqueueUniquePeriodicWork(
             CHECK_CALORIE_WORK_NAME,
