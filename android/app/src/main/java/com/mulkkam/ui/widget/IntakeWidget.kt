@@ -13,7 +13,7 @@ import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.di.CheckerInjection.intakeChecker
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
-import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_AMOUNT
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TARGET_AMOUNT
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
@@ -51,7 +51,7 @@ class IntakeWidget : AppWidgetProvider() {
                     val rate = value.outputData.getFloat(KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE, 0f)
                     val target = value.outputData.getInt(KEY_INTAKE_CHECKER_TARGET_AMOUNT, 0)
                     val total = value.outputData.getInt(KEY_INTAKE_CHECKER_TOTAL_AMOUNT, 0)
-                    val amount = value.outputData.getInt(KEY_INTAKE_CHECKER_CUP_AMOUNT, 0)
+                    val cupId = value.outputData.getLong(KEY_INTAKE_CHECKER_CUP_ID, 0L)
 
                     val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
                     showIntakeWidgetInfo(
@@ -61,7 +61,7 @@ class IntakeWidget : AppWidgetProvider() {
                         achievementRate = rate,
                         targetAmount = target,
                         totalAmount = total,
-                        primaryCupAmount = amount,
+                        cupId = cupId,
                     )
 
                     live.removeObserver(this)
@@ -86,8 +86,8 @@ class IntakeWidget : AppWidgetProvider() {
         intent: Intent,
         context: Context,
     ) {
-        val amount = intent.getIntExtra(KEY_EXTRA_AMOUNT, 0)
-        val requestId = intakeChecker.drink(amount)
+        val cupId = intent.getLongExtra(KEY_EXTRA_CUP_ID, 0L)
+        val requestId = intakeChecker.drink(cupId)
         observeDrinkWorker(context, requestId)
     }
 
@@ -124,7 +124,7 @@ class IntakeWidget : AppWidgetProvider() {
         achievementRate: Float,
         targetAmount: Int,
         totalAmount: Int,
-        primaryCupAmount: Int,
+        cupId: Long,
     ) {
         val views = RemoteViews(context.packageName, R.layout.layout_intake_widget)
 
@@ -159,7 +159,7 @@ class IntakeWidget : AppWidgetProvider() {
 
         views.setOnClickPendingIntent(
             R.id.ll_drink,
-            newDrinkPendingIntent(context, appWidgetId, primaryCupAmount),
+            newDrinkPendingIntent(context, appWidgetId, cupId),
         )
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
@@ -167,18 +167,18 @@ class IntakeWidget : AppWidgetProvider() {
 
     companion object {
         private const val REQUEST_CODE_DRINK: Int = 20_100
-        private const val KEY_EXTRA_AMOUNT: String = "EXTRA_AMOUNT"
+        private const val KEY_EXTRA_CUP_ID: String = "EXTRA_CUP_ID"
         private const val KEY_EXTRA_WIDGET_ID: String = "EXTRA_WIDGET_ID"
 
         private fun newDrinkPendingIntent(
             context: Context,
             appWidgetId: Int,
-            amount: Int,
+            cupId: Long,
         ): PendingIntent {
             val intent =
                 Intent(context, IntakeWidget::class.java).apply {
                     action = ACTION_DRINK.name
-                    putExtra(KEY_EXTRA_AMOUNT, amount)
+                    putExtra(KEY_EXTRA_CUP_ID, cupId)
                     putExtra(KEY_EXTRA_WIDGET_ID, appWidgetId)
                 }
 
