@@ -44,6 +44,32 @@
         app:layout_constraintTop_toTopOf="@id/tv_title"
         app:tint="@color/gray_400" />
 
+
+    <TextView
+        android:id="@+id/tv_emoji"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="26dp"
+        android:text="@string/setting_cup_emoji"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_emoji"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="18dp"
+        android:layout_marginTop="6dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.GridLayoutManager"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_emoji"
+        tools:listitem="@layout/item_cup_emoji" />
+
     <TextView
         android:id="@+id/tv_nickname"
         android:layout_width="wrap_content"
@@ -54,7 +80,7 @@
         android:textAppearance="@style/title3"
         android:textColor="@color/gray_400"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title" />
+        app:layout_constraintTop_toBottomOf="@id/rv_emoji" />
 
     <EditText
         android:id="@+id/et_name"

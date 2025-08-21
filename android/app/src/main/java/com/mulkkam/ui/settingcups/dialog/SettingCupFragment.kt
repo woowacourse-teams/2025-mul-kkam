@@ -19,9 +19,11 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
+import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
+import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -36,6 +38,7 @@ class SettingCupFragment :
         FragmentSettingCupBinding::inflate,
     ) {
     private val viewModel: SettingCupViewModel by activityViewModels()
+    private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
@@ -49,12 +52,18 @@ class SettingCupFragment :
         super.onViewCreated(view, savedInstanceState)
 
         viewModel.initCup(cup)
+        initRecyclerView()
         initClickListeners()
         initObservers()
         initInputListeners()
         initDoneListener()
         initChips()
         initDeleteButton()
+    }
+
+    private fun initRecyclerView() {
+        binding.rvEmoji.adapter = adapter
+        binding.rvEmoji.itemAnimator = null
     }
 
     private fun initClickListeners() =
@@ -91,9 +100,7 @@ class SettingCupFragment :
             saveSuccess.observe(viewLifecycleOwner) {
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
                 settingCupsViewModel.loadCups()
                 dismiss()
             }
@@ -101,11 +108,15 @@ class SettingCupFragment :
             deleteSuccess.observe(viewLifecycleOwner) {
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
                 settingCupsViewModel.loadCups()
                 dismiss()
+            }
+
+            cupEmojisUiState.observe(viewLifecycleOwner) { cupEmojisUiState ->
+                if (cupEmojisUiState is MulKkamUiState<CupEmojisUiModel>) {
+                    adapter.submitList(cupEmojisUiState.toSuccessDataOrNull()?.cupEmojis)
+                }
             }
         }
 

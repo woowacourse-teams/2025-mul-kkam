@@ -1,6 +1,5 @@
 [versions]
 coreTesting = "2.2.0"
-glide = "4.16.0"
 lottie = "6.6.7"
 minSdk = "28"
 shimmer = "0.5.0"
@@ -34,8 +33,8 @@ mockk = "1.14.0"
 assertj-core = "3.27.3"
 timber = "5.0.1"
 firebase-crashlytics = "3.0.5"
-androidsvg = "1.4"
 kapt = "2.2.0"
+coil = "3.3.0"
 github-triplet-play = "3.12.1"
 
 [libraries]
@@ -66,10 +65,10 @@ assertj-core = { group = "org.assertj", name = "assertj-core", version.ref = "as
 mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
-glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
-glide-compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glide" }
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
-androidsvg = { module = "com.caverock:androidsvg", version.ref = "androidsvg" }
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil"}
+coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil"}
+coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
 
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }

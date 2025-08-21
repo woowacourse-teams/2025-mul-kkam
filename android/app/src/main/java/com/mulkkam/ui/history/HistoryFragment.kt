@@ -199,7 +199,7 @@ class HistoryFragment :
         }
 
         val formatter =
-            if (weeklyIntakeHistories.isCurrentYear) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
+            if (weeklyIntakeHistories.isCurrentYear()) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
 
         binding.tvWeekRange.text =
             getString(
@@ -229,7 +229,7 @@ class HistoryFragment :
                     intakeHistorySummary.date.monthValue,
                     intakeHistorySummary.date.dayOfMonth,
                 )
-            pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
+            pcWaterIntake.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -267,7 +267,7 @@ class HistoryFragment :
 
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
+            viewDailyChart.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 

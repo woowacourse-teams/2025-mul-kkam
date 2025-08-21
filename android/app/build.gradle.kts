@@ -125,10 +125,10 @@ dependencies {
     testImplementation(libs.mockk)
 
     // 이미지 로딩 및 캐싱 라이브러리
-    implementation(libs.glide)
+    implementation(libs.coil)
+    implementation(libs.coil.svg)
+    implementation(libs.coil.network)
     implementation(libs.lottie)
-    implementation(libs.androidsvg)
-    kapt(libs.glide.compiler)
 
     // 로그인
     implementation(libs.kakao.v2.user)

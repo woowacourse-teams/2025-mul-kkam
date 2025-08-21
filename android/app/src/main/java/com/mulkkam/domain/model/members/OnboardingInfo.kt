@@ -4,7 +4,7 @@ import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 
 data class OnboardingInfo(
-    val nickname: String? = null,
+    val nickname: Nickname? = null,
     val weight: BioWeight? = null,
     val gender: Gender? = null,
     val targetAmount: Int? = null,

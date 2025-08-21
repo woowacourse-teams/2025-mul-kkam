@@ -50,7 +50,10 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         binding.tvComplete.applyImeMargin()
 
         viewModel.loadRecommendedTargetAmount(
-            nickname = parentViewModel.onboardingInfo.nickname.orEmpty(),
+            nickname =
+                parentViewModel.onboardingInfo.nickname
+                    ?.name
+                    .orEmpty(),
             gender = parentViewModel.onboardingInfo.gender,
             weight = parentViewModel.onboardingInfo.weight,
         )
