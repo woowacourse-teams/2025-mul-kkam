@@ -26,12 +26,7 @@ class AppUpdateDialogFragment :
 
         setWindowOptions()
         initClickListeners()
-        binding.tvTitle.text =
-            getString(R.string.app_update_title).getColoredSpannable(
-                requireContext(),
-                R.color.primary_200,
-                getString(R.string.app_update_title_highlighted),
-            )
+        initHighlightedText()
     }
 
     private fun setWindowOptions() {
@@ -71,6 +66,15 @@ class AppUpdateDialogFragment :
 
         requireActivity().finishAffinity()
         requireActivity().finishAndRemoveTask()
+    }
+
+    private fun initHighlightedText() {
+        binding.tvTitle.text =
+            getString(R.string.app_update_title).getColoredSpannable(
+                requireContext(),
+                R.color.primary_200,
+                getString(R.string.app_update_title_highlighted),
+            )
     }
 
     companion object {
