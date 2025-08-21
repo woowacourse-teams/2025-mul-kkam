@@ -7,9 +7,11 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
+import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
+import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
@@ -91,8 +93,39 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntakeByCup(cupId: Long) {
         val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
-        // TODO: 컵으로 마시는 API 연동 필요
-//        addWaterIntake(cup.amount)
+        addWaterIntakeByCup(cup)
+    }
+
+    private fun addWaterIntakeByCup(cup: Cup) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
+        viewModelScope.launch {
+            runCatching {
+                _drinkUiState.value = MulKkamUiState.Loading
+                intakeRepository
+                    .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
+                    .getOrError()
+            }.onSuccess { intakeHistory ->
+                updateIntakeHistory(intakeHistory, cup.amount)
+            }.onFailure {
+                _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
+    private fun updateIntakeHistory(
+        intakeHistory: IntakeHistoryResult,
+        amount: CupAmount,
+    ) {
+        val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return
+        _todayProgressInfoUiState.value =
+            MulKkamUiState.Success(
+                current.updateProgressInfo(
+                    amountDelta = amount.value,
+                    achievementRate = intakeHistory.achievementRate,
+                    comment = intakeHistory.comment,
+                ),
+            )
+        _drinkUiState.value = MulKkamUiState.Success(amount)
     }
 
     fun addWaterIntake(
@@ -121,16 +154,7 @@ class HomeViewModel : ViewModel() {
                     .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch
-                _todayProgressInfoUiState.value =
-                    MulKkamUiState.Success(
-                        current.updateProgressInfo(
-                            amountDelta = amount.value,
-                            achievementRate = intakeHistory.achievementRate,
-                            comment = intakeHistory.comment,
-                        ),
-                    )
-                _drinkUiState.value = MulKkamUiState.Success(amount)
+                updateIntakeHistory(intakeHistory, amount)
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
