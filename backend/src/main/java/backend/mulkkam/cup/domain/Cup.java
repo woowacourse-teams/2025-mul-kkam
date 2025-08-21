@@ -95,6 +95,10 @@ public class Cup extends BaseEntity {
         this.cupEmoji = cupEmoji;
     }
 
+    public int calculateHydration() {
+        return intakeType.calculateHydration(cupAmount.value());
+    }
+
     public boolean isLowerPriorityThan(Cup other) {
         return cupRank.hasLowerPriorityThan(other.getCupRank());
     }

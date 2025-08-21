@@ -1,9 +1,8 @@
-package backend.mulkkam.intake.dto;
+package backend.mulkkam.intake.dto.request;
 
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -23,6 +22,6 @@ public record CreateIntakeHistoryDetailByUserInputRequest(
             IntakeHistory intakeHistory
     ) {
         LocalTime time = dateTime.toLocalTime();
-        return new IntakeHistoryDetail(time, intakeHistory, intakeType, new IntakeAmount(intakeAmount));
+        return new IntakeHistoryDetail(time, intakeHistory, intakeType, intakeAmount);
     }
 }

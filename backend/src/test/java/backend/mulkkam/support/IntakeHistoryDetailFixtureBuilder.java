@@ -48,7 +48,7 @@ public class IntakeHistoryDetailFixtureBuilder {
                 this.time,
                 this.intakeHistory,
                 this.intakeType,
-                cup
+                cup.getCupAmount().value()
         );
     }
 
@@ -57,7 +57,7 @@ public class IntakeHistoryDetailFixtureBuilder {
                 this.time,
                 this.intakeHistory,
                 this.intakeType,
-                this.intakeAmount
+                this.intakeAmount.value()
         );
     }
 }
