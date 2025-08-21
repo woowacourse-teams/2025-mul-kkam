@@ -51,6 +51,7 @@ class ManualDrinkFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener {
                 parentViewModel.addWaterIntake(
+                    viewModel.intakeType.value ?: IntakeType.WATER,
                     binding.etAmount.text
                         .toString()
                         .toIntOrNull() ?: return@setSingleClickListener,

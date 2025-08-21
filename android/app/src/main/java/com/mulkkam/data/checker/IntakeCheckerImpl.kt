@@ -11,10 +11,10 @@ import java.util.UUID
 class IntakeCheckerImpl(
     private val workManager: WorkManager,
 ) : IntakeChecker {
-    override fun drink(amount: Int): UUID {
+    override fun drink(cupId: Long): UUID {
         val request =
             OneTimeWorkRequestBuilder<DrinkByAmountWorker>()
-                .setInputData(workDataOf(IntakeChecker.KEY_INTAKE_CHECKER_AMOUNT to amount))
+                .setInputData(workDataOf(IntakeChecker.KEY_INTAKE_CHECKER_CUP_ID to cupId))
                 .build()
         workManager.enqueue(request)
         return request.id
