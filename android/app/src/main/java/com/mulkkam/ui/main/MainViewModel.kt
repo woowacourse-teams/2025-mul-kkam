@@ -8,6 +8,7 @@ import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
+import com.mulkkam.di.RepositoryInjection.versionsRepository
 import com.mulkkam.domain.checker.CalorieChecker.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
@@ -25,6 +26,9 @@ class MainViewModel : ViewModel() {
     private val _onFirstLaunch: MutableSingleLiveData<Unit> = MutableSingleLiveData()
     val onFirstLaunch: SingleLiveData<Unit>
         get() = _onFirstLaunch
+
+    private val _isAppOutdated: MutableSingleLiveData<Boolean> = MutableSingleLiveData()
+    val isAppOutdated: SingleLiveData<Boolean> get() = _isAppOutdated
 
     init {
         getFcmToken()
@@ -76,5 +80,32 @@ class MainViewModel : ViewModel() {
                 tokenRepository.deleteFcmToken()
             }
         }
+    }
+
+    fun checkAppVersion(currentVersionName: String) {
+        viewModelScope.launch {
+            runCatching {
+                versionsRepository.getMinimumVersion().getOrError()
+            }.onSuccess { minimumVersion ->
+                _isAppOutdated.setValue(isOutdated(currentVersionName, minimumVersion))
+            }
+        }
+    }
+
+    private fun isOutdated(
+        currentVersion: String,
+        minimumVersion: String,
+    ): Boolean {
+        val currentParts = currentVersion.split(".").map { it.toInt() }
+        val minimumParts = minimumVersion.split(".").map { it.toInt() }
+
+        for (index in currentParts.indices) {
+            val currentPart = currentParts[index]
+            val minimumPart = minimumParts[index]
+
+            if (currentPart < minimumPart) return true
+            if (currentPart > minimumPart) return false
+        }
+        return false
     }
 }

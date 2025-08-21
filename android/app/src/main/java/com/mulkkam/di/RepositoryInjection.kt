@@ -9,6 +9,7 @@ import com.mulkkam.data.repository.MembersRepositoryImpl
 import com.mulkkam.data.repository.NicknameRepositoryImpl
 import com.mulkkam.data.repository.NotificationRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
+import com.mulkkam.data.repository.VersionsRepositoryImpl
 import com.mulkkam.di.PreferenceInjection.membersPreference
 import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection.authService
@@ -19,6 +20,7 @@ import com.mulkkam.di.ServiceInjection.intakeService
 import com.mulkkam.di.ServiceInjection.membersService
 import com.mulkkam.di.ServiceInjection.nicknameService
 import com.mulkkam.di.ServiceInjection.notificationService
+import com.mulkkam.di.ServiceInjection.versionsService
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.DevicesRepository
@@ -28,6 +30,7 @@ import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.domain.repository.NotificationRepository
 import com.mulkkam.domain.repository.TokenRepository
+import com.mulkkam.domain.repository.VersionsRepository
 
 object RepositoryInjection {
     val intakeRepository: IntakeRepository by lazy {
@@ -64,5 +67,9 @@ object RepositoryInjection {
 
     val notificationRepository: NotificationRepository by lazy {
         NotificationRepositoryImpl(notificationService)
+    }
+
+    val versionsRepository: VersionsRepository by lazy {
+        VersionsRepositoryImpl(versionsService)
     }
 }

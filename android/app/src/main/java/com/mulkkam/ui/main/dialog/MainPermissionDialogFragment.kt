@@ -15,7 +15,8 @@ import androidx.health.connect.client.PermissionController
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentMainPermissionBinding
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity.Companion.HEALTH_CONNECT_PERMISSIONS
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_ACTIVE_CALORIES_BURNED
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND
 import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.util.binding.BindingDialogFragment
@@ -29,7 +30,7 @@ class MainPermissionDialogFragment :
 
     private val requestHealthConnectLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
-            handleHealthPermissionResult(results.containsAll(HEALTH_CONNECT_PERMISSIONS))
+            handleHealthPermissionResult(results.contains(PERMISSION_HEALTH_DATA_IN_BACKGROUND))
             requestNotificationPermission()
         }
 
@@ -90,14 +91,16 @@ class MainPermissionDialogFragment :
 
     private fun initClickListeners() {
         binding.tvConfirm.setSingleClickListener {
-            requestHealthConnectLauncher.launch(HEALTH_CONNECT_PERMISSIONS)
+            requestHealthConnectLauncher.launch(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
             dialog?.hide()
         }
     }
 
     private fun requestNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
-        if (hasNotificationPermission()) return
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || hasNotificationPermission()) {
+            dismiss()
+            return
+        }
 
         requestNotificationLauncher.launch(POST_NOTIFICATIONS)
     }

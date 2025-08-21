@@ -199,4 +199,9 @@
     <string name="progress_widget_achievement_rate">%d%%</string>
 
     <string name="intake_widget_home_target">%d월 %d일의 목표</string>
+
+    <string name="app_update_update">업데이트</string>
+    <string name="app_update_description">지금 바로 확인하러 가볼까요?</string>
+    <string name="app_update_title">새 기능이 추가되었어요</string>
+    <string name="app_update_title_highlighted">새 기능</string>
 </resources>
