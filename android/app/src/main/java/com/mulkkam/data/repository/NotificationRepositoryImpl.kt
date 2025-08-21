@@ -41,11 +41,29 @@ class NotificationRepositoryImpl(
         )
     }
 
+    override suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit> {
+        val result = notificationService.postSuggestionNotificationsApproval(id)
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
     override suspend fun getNotificationsUnreadCount(): MulKkamResult<Long> {
         val result = notificationService.getNotificationsUnreadCount()
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.count) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun deleteNotifications(id: Int): MulKkamResult<Unit> {
+        val result = notificationService.deleteNotifications(id)
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }

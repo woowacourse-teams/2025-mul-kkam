@@ -75,7 +75,9 @@ class SettingBioInfoActivity :
     private fun initObservers() {
         with(viewModel) {
             weight.observe(this@SettingBioInfoActivity) { weight ->
-                binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight?.value)
+                weight?.let {
+                    binding.tvWeight.text = getString(R.string.bio_info_weight_format, weight.value)
+                }
             }
 
             gender.observe(this@SettingBioInfoActivity) { selectedGender ->

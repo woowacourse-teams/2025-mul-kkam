@@ -1,6 +1,7 @@
 package com.mulkkam.ui.main
 
 import android.annotation.SuppressLint
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -19,8 +20,12 @@ import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
 import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
+import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.IntakeWidget
+import com.mulkkam.ui.widget.ProgressWidget
 
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
@@ -32,6 +37,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.checkAppVersion(getAppVersion())
         initBottomNavListener()
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
@@ -42,7 +48,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         loadDeviceId()
 
         if (isHealthConnectAvailable()) {
-            viewModel.checkHealthPermissions(HEALTH_CONNECT_PERMISSIONS)
+            viewModel.checkHealthPermissions(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
         }
     }
 
@@ -145,7 +151,18 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             onFirstLaunch.observe(this@MainActivity) {
                 showMainPermissionDialog()
             }
+
+            isAppOutdated.observe(this@MainActivity) { isAppOutdated ->
+                if (isAppOutdated) showUpdateDialog()
+            }
         }
+    }
+
+    private fun showUpdateDialog() {
+        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
+        AppUpdateDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
 
     private fun showMainPermissionDialog() {
@@ -162,18 +179,24 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             Settings.Secure.ANDROID_ID,
         )
 
+    override fun onStop() {
+        super.onStop()
+        IntakeWidget.refresh(this)
+        ProgressWidget.refresh(this)
+    }
+
     companion object {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
         const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
 
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
 
-        val HEALTH_CONNECT_PERMISSIONS =
-            setOf(
-                HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class),
-                HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND,
-            )
+        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String = HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+        val PERMISSION_ACTIVE_CALORIES_BURNED: String = HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
+
+        fun newPendingIntent(context: Context): PendingIntent =
+            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }

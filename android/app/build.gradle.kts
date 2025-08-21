@@ -18,6 +18,11 @@ android {
             .get()
             .toInt()
 
+    val localProperties = gradleLocalProperties(rootDir, providers)
+    val kakaoKey = localProperties.getProperty("key.kakao") ?: ""
+    val releaseBaseUrl = localProperties.getProperty("release.base.url") ?: ""
+    val debugBaseUrl = localProperties.getProperty("debug.base.url") ?: ""
+
     defaultConfig {
         applicationId = "com.mulkkam"
         minSdk =
@@ -38,36 +43,32 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            gradleLocalProperties(rootDir, providers).getProperty("base.url"),
-        )
-
-        val kakaoKey =
-            gradleLocalProperties(rootDir, providers).getProperty("key.kakao") ?: ""
         buildConfigField("String", "KEY_KAKAO", "\"$kakaoKey\"")
 
         manifestPlaceholders["kakaoKey"] = kakaoKey
+
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro",
+        )
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+
+            buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
         }
 
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
     }
     buildFeatures {

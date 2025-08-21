@@ -82,7 +82,7 @@ class HistoryFragment :
                 if (viewModel.waterIntakeState.value !is WaterIntakeState.Present) {
                     CustomSnackBar
                         .make(
-                            binding.root,
+                            binding.root.rootView,
                             getString(R.string.history_delete_failure_past),
                             R.drawable.ic_alert_circle,
                         ).apply {
@@ -182,7 +182,7 @@ class HistoryFragment :
                 binding.includeHistoryShimmer.root.visibility = View.GONE
                 CustomSnackBar
                     .make(
-                        binding.root,
+                        binding.root.rootView,
                         getString(R.string.load_info_error),
                         R.drawable.ic_alert_circle,
                     ).apply {
@@ -229,7 +229,7 @@ class HistoryFragment :
                     intakeHistorySummary.date.monthValue,
                     intakeHistorySummary.date.dayOfMonth,
                 )
-            pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
+            pcWaterIntake.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -267,7 +267,7 @@ class HistoryFragment :
 
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
+            viewDailyChart.setProgressWithAnimation(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -389,7 +389,7 @@ class HistoryFragment :
         if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
             CustomSnackBar
                 .make(
-                    binding.root,
+                    binding.root.rootView,
                     getString(R.string.network_check_error),
                     R.drawable.ic_alert_circle,
                 ).apply {
@@ -398,7 +398,7 @@ class HistoryFragment :
         } else {
             CustomSnackBar
                 .make(
-                    binding.root,
+                    binding.root.rootView,
                     getString(R.string.history_delete_failure_past),
                     R.drawable.ic_alert_circle,
                 ).apply {
@@ -410,7 +410,7 @@ class HistoryFragment :
     private fun handleDeleteSuccess() {
         CustomSnackBar
             .make(
-                binding.root,
+                binding.root.rootView,
                 getString(R.string.history_delete_success),
                 R.drawable.ic_terms_all_check_on,
             ).apply {
