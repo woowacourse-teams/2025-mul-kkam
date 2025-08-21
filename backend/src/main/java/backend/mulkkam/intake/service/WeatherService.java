@@ -79,7 +79,7 @@ public class WeatherService {
         TargetAmount targetAmount = getTargetAmount(member, intakeHistory, extraIntakeAmount);
 
         return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d이여서 %d를 추가하는 것을 추천합니다. 반영하시겠습니까?",
+                String.format("오늘 날씨의 평균은 %d도입니다. %dml를 추가하는 것을 추천해요. 반영할까요?",
                         (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
                 member,
                 targetAmount.value(),
@@ -136,7 +136,6 @@ public class WeatherService {
         return averageTemperatureRepository.findByDate(todayInSeoul)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
-
 
     private double convertFromKelvinToCelsius(double temperatureAsKelvin) {
         return temperatureAsKelvin - 273.15;

@@ -510,7 +510,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
             });
         }
 
-        @DisplayName("음용 세부 기록이 남아있지 않은 경우 음용 기록을 삭제한다")
+        @DisplayName("음용 세부 기록이 남아있지 않은 경우 음용 기록을 삭제하지 않는다.")
         @Test
         void deleteIntakeDetail_deleteHistory_whenAllDetailsDeleted() throws Exception {
             // given
@@ -538,7 +538,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(intakeHistories.size()).isEqualTo(0);
+                softly.assertThat(intakeHistories.size()).isEqualTo(1);
             });
         }
     }
