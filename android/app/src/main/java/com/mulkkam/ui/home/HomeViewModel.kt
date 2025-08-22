@@ -35,9 +35,9 @@ class HomeViewModel : ViewModel() {
         MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Long>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<CupAmount>> =
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> =
         MutableLiveData(MulKkamUiState.Idle)
-    val drinkUiState: LiveData<MulKkamUiState<CupAmount>> get() = _drinkUiState
+    val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
 
     init {
         loadTodayProgressInfo()
@@ -105,27 +105,24 @@ class HomeViewModel : ViewModel() {
                     .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                updateIntakeHistory(intakeHistory, cup.amount)
+                updateIntakeHistory(intakeHistory)
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
-    private fun updateIntakeHistory(
-        intakeHistory: IntakeHistoryResult,
-        amount: CupAmount,
-    ) {
+    private fun updateIntakeHistory(intakeHistory: IntakeHistoryResult) {
         val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return
         _todayProgressInfoUiState.value =
             MulKkamUiState.Success(
                 current.updateProgressInfo(
-                    amountDelta = amount.value,
+                    amountDelta = intakeHistory.intakeAmount,
                     achievementRate = intakeHistory.achievementRate,
                     comment = intakeHistory.comment,
                 ),
             )
-        _drinkUiState.value = MulKkamUiState.Success(amount)
+        _drinkUiState.value = MulKkamUiState.Success(intakeHistory.intakeAmount)
     }
 
     fun addWaterIntake(
@@ -154,7 +151,7 @@ class HomeViewModel : ViewModel() {
                     .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                updateIntakeHistory(intakeHistory, amount)
+                updateIntakeHistory(intakeHistory)
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

@@ -201,7 +201,7 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             Runnable {
                 val targetAmount = text.toIntOrNull() ?: 0
                 viewModel.updateTargetAmount(targetAmount)
-            }.apply { debounceHandler.postDelayed(this, 300L) }
+            }.apply { debounceHandler.postDelayed(this, 100L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =

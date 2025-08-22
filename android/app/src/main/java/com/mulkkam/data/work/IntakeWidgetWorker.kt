@@ -22,7 +22,7 @@ class IntakeWidgetWorker(
         runCatching {
             val progress = membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
             val cups = cupsRepository.getCups().getOrError()
-            val cupId = cups.representCup?.id
+            val cupId = cups.representativeCup?.id
 
             workDataOf(
                 KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE to progress.achievementRate,

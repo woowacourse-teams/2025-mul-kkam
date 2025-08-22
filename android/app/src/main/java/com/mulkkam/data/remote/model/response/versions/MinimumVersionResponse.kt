@@ -1,4 +1,4 @@
-package com.mulkkam.data.remote.model.response
+package com.mulkkam.data.remote.model.response.versions
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

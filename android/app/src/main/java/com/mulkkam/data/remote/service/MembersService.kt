@@ -9,7 +9,7 @@ import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.members.MembersCheckOnboardingResponse
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.members.MembersResponse
-import com.mulkkam.data.remote.model.response.notification.NotificationAgreedResponse
+import com.mulkkam.data.remote.model.response.notifications.NotificationAgreedResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

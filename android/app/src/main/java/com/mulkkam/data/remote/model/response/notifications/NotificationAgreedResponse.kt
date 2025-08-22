@@ -1,4 +1,4 @@
-package com.mulkkam.data.remote.model.response.notification
+package com.mulkkam.data.remote.model.response.notifications
 
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import kotlinx.serialization.SerialName

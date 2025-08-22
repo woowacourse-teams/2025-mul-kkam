@@ -39,17 +39,35 @@
         app:layout_constraintStart_toEndOf="@id/iv_icon"
         app:layout_constraintTop_toTopOf="@id/iv_icon">
 
-        <TextView
-            android:id="@+id/tv_setting_water_cup_tag_type"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_common_rectangle_4dp"
-            android:backgroundTint="@color/primary_200"
-            android:paddingHorizontal="4dp"
-            android:paddingVertical="2dp"
-            android:text="@string/setting_cups_label_water"
-            android:textAppearance="@style/label2"
-            android:textColor="@color/white" />
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tv_setting_cup_representative"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_common_rectangle_4dp"
+                android:backgroundTint="@color/black"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="2dp"
+                android:text="@string/setting_cup_representative"
+                android:textAppearance="@style/label2"
+                android:textColor="@color/white" />
+
+            <TextView
+                android:id="@+id/tv_setting_water_cup_tag_type"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_common_rectangle_4dp"
+                android:backgroundTint="@color/primary_200"
+                android:paddingHorizontal="4dp"
+                android:paddingVertical="2dp"
+                android:text="@string/setting_cups_label_water"
+                android:textAppearance="@style/label2"
+                android:textColor="@color/white" />
+        </LinearLayout>
 
         <TextView
             android:id="@+id/tv_nickname"

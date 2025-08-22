@@ -203,6 +203,11 @@ class SettingCupFragment :
             val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
 
+            if (cup.isRepresentative) {
+                tvDelete.visibility = View.GONE
+            } else {
+                tvDelete.visibility = View.VISIBLE
+            }
             if (isCupNameChanged && isCupNameValid) {
                 etName.setText(cup.name)
             }
@@ -253,7 +258,7 @@ class SettingCupFragment :
             Runnable {
                 viewModel.updateAmount(text.toIntOrNull() ?: 0)
             }.apply {
-                debounceHandler.postDelayed(this, 300L)
+                debounceHandler.postDelayed(this, 100L)
             }
     }
 
