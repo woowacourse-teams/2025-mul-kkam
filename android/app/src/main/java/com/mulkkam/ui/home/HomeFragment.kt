@@ -14,7 +14,6 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
-import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
@@ -238,15 +237,15 @@ class HomeFragment :
         binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
 
-    private fun handleDrinkResult(drinkUiState: MulKkamUiState<CupAmount>) {
+    private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
         when (drinkUiState) {
-            is MulKkamUiState.Success<CupAmount> -> {
+            is MulKkamUiState.Success<Int> -> {
                 CustomSnackBar
                     .make(
                         binding.root,
                         getString(
                             R.string.manual_drink_success,
-                            drinkUiState.data.value,
+                            drinkUiState.data,
                         ),
                         R.drawable.ic_terms_all_check_on,
                     ).apply {

@@ -93,7 +93,7 @@ class ManualDrinkFragment :
             Runnable {
                 val amount = text.toIntOrNull() ?: 0
                 viewModel.updateAmount(amount)
-            }.also { debounceHandler.postDelayed(it, 300L) }
+            }.also { debounceHandler.postDelayed(it, 100L) }
     }
 
     private fun updateEditText(

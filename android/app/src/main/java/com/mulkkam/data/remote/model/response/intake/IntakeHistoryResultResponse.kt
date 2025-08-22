@@ -10,10 +10,13 @@ data class IntakeHistoryResultResponse(
     val achievementRate: Float,
     @SerialName("comment")
     val comment: String,
+    @SerialName("intakeAmount")
+    val intakeAmount: Int,
 )
 
 fun IntakeHistoryResultResponse.toDomain() =
     IntakeHistoryResult(
         achievementRate = achievementRate,
         comment = comment,
+        intakeAmount = intakeAmount,
     )

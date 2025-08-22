@@ -74,6 +74,7 @@ class HistoryFragment :
 
     private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
+            itemAnimator = null
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
@@ -367,6 +368,7 @@ class HistoryFragment :
                 is WaterIntakeState.Past.NoRecord -> R.drawable.img_history_crying_character
                 is WaterIntakeState.Past.Full -> R.drawable.img_history_character
                 is WaterIntakeState.Present.Full -> R.drawable.img_history_character
+                is WaterIntakeState.Future -> R.drawable.img_history_sleeping_character
                 else -> R.drawable.img_history_character
             }
         binding.ivHistoryCharacter.setImageDrawable(

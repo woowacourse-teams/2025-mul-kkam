@@ -1,8 +1,8 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRequest
-import com.mulkkam.data.remote.model.response.notification.NotificationUnreadCountResponse
-import com.mulkkam.data.remote.model.response.notification.NotificationsResponse
+import com.mulkkam.data.remote.model.response.notifications.NotificationUnreadCountResponse
+import com.mulkkam.data.remote.model.response.notifications.NotificationsResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET

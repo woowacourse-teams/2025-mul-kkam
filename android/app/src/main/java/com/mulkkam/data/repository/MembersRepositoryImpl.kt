@@ -9,7 +9,7 @@ import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRe
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.toData
 import com.mulkkam.data.remote.model.response.members.toDomain
-import com.mulkkam.data.remote.model.response.notification.toDomain
+import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender

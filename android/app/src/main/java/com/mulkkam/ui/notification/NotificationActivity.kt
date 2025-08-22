@@ -50,6 +50,7 @@ class NotificationActivity :
 
     private fun initRecyclerView() {
         binding.rvNotification.adapter = notificationAdapter
+        binding.rvNotification.itemAnimator = null
         itemTouchHelper.attachToRecyclerView(binding.rvNotification)
     }
 
