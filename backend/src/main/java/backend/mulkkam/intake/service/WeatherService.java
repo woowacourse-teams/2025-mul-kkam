@@ -82,7 +82,7 @@ public class WeatherService {
                 String.format("오늘 날씨의 평균은 %d도입니다. %dml를 추가하는 것을 추천해요. 반영할까요?",
                         (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
                 member,
-                targetAmount.value(),
+                (int) extraIntakeAmount.value(),
                 todayDateTimeInSeoul
         );
     }
