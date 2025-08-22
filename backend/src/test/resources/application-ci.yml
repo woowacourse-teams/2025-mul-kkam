@@ -17,6 +17,10 @@ spring:
     clean-disabled: false
     locations: classpath:db/migration/common, classpath:db/migration/mysql
 
+  test:
+    database:
+      replace: none
+
 fcm:
   base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
   project-id: ${FCM_PROJECT_ID}

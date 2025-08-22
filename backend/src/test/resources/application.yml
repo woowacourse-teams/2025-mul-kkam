@@ -17,6 +17,10 @@ spring:
       ddl-auto: create-drop
     defer-datasource-initialization: false
 
+  test:
+    database:
+      replace: none
+
 open-weather:
   api:
     key: temp
