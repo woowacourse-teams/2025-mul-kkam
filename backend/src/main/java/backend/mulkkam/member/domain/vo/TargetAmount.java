@@ -3,7 +3,9 @@ package backend.mulkkam.member.domain.vo;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 
 import backend.mulkkam.common.exception.CommonException;
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public record TargetAmount(
         int value
 ) {

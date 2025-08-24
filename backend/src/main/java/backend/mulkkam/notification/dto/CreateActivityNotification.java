@@ -16,7 +16,7 @@ public record CreateActivityNotification(
                 String.format("운동으로 인한 칼로리가 %dkcal이에요. 그에 따른 보충 수분량은 %dml이에요. 반영할까요?",
                         (int) burnCalorie, calculateAdditionalIntake(burnCalorie)),
                 member,
-                member.getTargetAmount().value() + (int) (burnCalorie),
+                (int) (burnCalorie),
                 LocalDateTime.now()
         );
     }

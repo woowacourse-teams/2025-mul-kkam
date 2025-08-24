@@ -115,14 +115,14 @@ public class IntakeHistoryService {
                             .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
                             .toList();
 
+                    IntakeHistory historyOnly = histories.get(date);
                     if (detailsOfDate.isEmpty()) {
-                        IntakeHistory historyOnly = histories.get(date);
                         if (historyOnly == null) {
                             return createDefaultResponse(date, member);
                         }
                         return toIntakeHistorySummaryResponse(historyOnly, List.of());
                     }
-                    return toIntakeHistorySummaryResponse(histories.get(date), detailsOfDate);
+                    return toIntakeHistorySummaryResponse(historyOnly, detailsOfDate);
                 })
                 .toList();
     }
