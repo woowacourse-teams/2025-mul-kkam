@@ -71,12 +71,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         log.info("[REQUEST] {} {} token = {}", methodType, uri, auth);
     }
 
-    private String buildDecodedRequestUri(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String query = decodeQuery(request.getQueryString());
-        return (query == null || query.isBlank()) ? path : path + "?" + query;
-    }
-
     private String decodeQuery(String rawQuery) {
         if (rawQuery == null) {
             return null;
@@ -116,6 +110,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             ContentCachingResponseWrapper responseWrapper
     ) {
         Long accountId = (Long) request.getAttribute("account_id");
+        String uri = buildDecodedRequestUri(request);
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
@@ -134,6 +129,12 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             body = responseWrapper.getContentType() + "NOT JSON";
         }
 
-        log.info("[RESPONSE] accountId = {}, ({}) token = {}, responseBody: {}", accountId, status, auth, body);
+        log.info("[RESPONSE] {} accountId = {}, ({}) token = {}, responseBody: {}", uri, accountId, status, auth, body);
+    }
+
+    private String buildDecodedRequestUri(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        String query = decodeQuery(request.getQueryString());
+        return (query == null || query.isBlank()) ? path : path + "?" + query;
     }
 }
