@@ -16,7 +16,7 @@ jobs:
           checkName: "pr-init-configuration"
           ref: ${{ github.event.pull_request.head.sha }}
           intervalSeconds: 30
-          timeoutSeconds: 600
+          timeoutSeconds: 120
       - name: Validate PR source branch
         run: |
           BASE="${{ github.base_ref }}"
