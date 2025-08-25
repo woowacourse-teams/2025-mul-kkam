@@ -11,19 +11,23 @@ import backend.mulkkam.member.domain.Member;
 public class CupFixtureBuilder {
 
     private final Member member;
-    private final CupEmoji cupEmoji;
+    private CupEmoji cupEmoji;
     private CupNickname cupNickname = new CupNickname("스타벅스");
     private CupAmount cupAmount = new CupAmount(500);
     private CupRank cupRank = new CupRank(1);
     private IntakeType intakeType = IntakeType.WATER;
 
-    private CupFixtureBuilder(Member member, CupEmoji cupEmoji) {
+    private CupFixtureBuilder(Member member) {
         this.member = member;
-        this.cupEmoji = cupEmoji;
     }
 
-    public static CupFixtureBuilder withMemberAndCupEmoji(Member member, CupEmoji cupEmoji) {
-        return new CupFixtureBuilder(member, cupEmoji);
+    public static CupFixtureBuilder withMember(Member member) {
+        return new CupFixtureBuilder(member);
+    }
+
+    public CupFixtureBuilder cupEmoji(CupEmoji cupEmoji) {
+        this.cupEmoji = cupEmoji;
+        return this;
     }
 
     public CupFixtureBuilder cupNickname(CupNickname cupNickname) {

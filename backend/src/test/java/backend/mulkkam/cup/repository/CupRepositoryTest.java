@@ -31,12 +31,11 @@ class CupRepositoryTest {
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
 
-    private CupEmoji savedCupEmoji;
+    private CupEmoji cupEmoji = new CupEmoji("http://example.com");;
 
     @BeforeEach
     void setUp() {
-        CupEmoji cupEmoji = new CupEmoji("http://example.com");
-        savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+        this.cupEmoji = cupEmojiRepository.save(cupEmoji);
     }
 
     @DisplayName("사용자의 컵을 조회할 때에")
@@ -51,11 +50,13 @@ class CupRepositoryTest {
             memberRepository.save(member);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .withMember(member)
+                    .cupEmoji(cupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .withMember(member)
+                    .cupEmoji(cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -84,11 +85,13 @@ class CupRepositoryTest {
             memberRepository.save(member2);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member1, savedCupEmoji)
+                    .withMember(member1)
+                    .cupEmoji(cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member2, savedCupEmoji)
+                    .withMember(member2)
+                    .cupEmoji(cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 

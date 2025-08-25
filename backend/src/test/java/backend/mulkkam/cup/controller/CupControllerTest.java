@@ -38,13 +38,14 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
 import backend.mulkkam.support.CupFixtureBuilder;
 import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+
+import java.util.List;
 
 class CupControllerTest extends ControllerTest {
 
@@ -136,16 +137,19 @@ class CupControllerTest extends ControllerTest {
         void setUp() {
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             List<Cup> cups = List.of(
-                    CupFixtureBuilder.withMemberAndCupEmoji(savedMember, cupEmoji)
+                    CupFixtureBuilder.withMember(savedMember)
                             .cupNickname(new CupNickname("cup1"))
+                            .cupEmoji(cupEmoji)
                             .cupRank(new CupRank(1))
                             .build(),
-                    CupFixtureBuilder.withMemberAndCupEmoji(savedMember, cupEmoji)
+                    CupFixtureBuilder.withMember(savedMember)
                             .cupNickname(new CupNickname("cup2"))
+                            .cupEmoji(cupEmoji)
                             .cupRank(new CupRank(2))
                             .build(),
-                    CupFixtureBuilder.withMemberAndCupEmoji(savedMember, cupEmoji)
+                    CupFixtureBuilder.withMember(savedMember)
                             .cupNickname(new CupNickname("cup3"))
+                            .cupEmoji(cupEmoji)
                             .cupRank(new CupRank(3))
                             .build()
             );
@@ -276,7 +280,8 @@ class CupControllerTest extends ControllerTest {
 
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(savedOtherMember, cupEmoji)
+                    .withMember(savedOtherMember)
+                    .cupEmoji(cupEmoji)
                     .cupNickname(new CupNickname("otherCup"))
                     .build();
             cupRepository.save(otherCup);
@@ -337,8 +342,9 @@ class CupControllerTest extends ControllerTest {
         @BeforeEach
         void setUp() {
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, cupEmoji)
+            Cup cup = CupFixtureBuilder.withMember(savedMember)
                     .cupNickname(new CupNickname("c0c0m0b"))
+                    .cupEmoji(cupEmoji)
                     .build();
             Cup savedCup = cupRepository.save(cup);
             savedCupId = savedCup.getId();
@@ -394,8 +400,9 @@ class CupControllerTest extends ControllerTest {
             oauthAccountRepository.save(oauthAccount);
 
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
-            Cup otherCup = CupFixtureBuilder.withMemberAndCupEmoji(savedOtherMember, cupEmoji)
+            Cup otherCup = CupFixtureBuilder.withMember(savedOtherMember)
                     .cupNickname(new CupNickname("otherCup"))
+                    .cupEmoji(cupEmoji)
                     .build();
 
             Cup savedOtherCup = cupRepository.save(otherCup);
@@ -428,8 +435,9 @@ class CupControllerTest extends ControllerTest {
         @BeforeEach
         void setUp() {
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(savedMember, cupEmoji)
+            Cup cup = CupFixtureBuilder.withMember(savedMember)
                     .cupNickname(new CupNickname("c0c0m0b"))
+                    .cupEmoji(cupEmoji)
                     .build();
             Cup savedCup = cupRepository.save(cup);
             savedCupId = savedCup.getId();
@@ -471,7 +479,8 @@ class CupControllerTest extends ControllerTest {
 
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(savedOtherMember, cupEmoji)
+                    .withMember(savedOtherMember)
+                    .cupEmoji(cupEmoji)
                     .cupNickname(new CupNickname("otherCup"))
                     .build();
 
@@ -504,7 +513,8 @@ class CupControllerTest extends ControllerTest {
                     new CupEmoji("https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c"));
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(savedMember, cupEmoji)
+                    .withMember(savedMember)
+                    .cupEmoji(cupEmoji)
                     .build();
             cupRepository.save(cup);
 

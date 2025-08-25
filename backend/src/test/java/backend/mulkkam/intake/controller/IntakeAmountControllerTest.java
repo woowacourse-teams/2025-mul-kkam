@@ -15,6 +15,7 @@ import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.ControllerTest;
@@ -46,20 +47,20 @@ class IntakeAmountControllerTest extends ControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    private String token;
+    private final Member member = MemberFixtureBuilder
+            .builder()
+            .weight(70.0)
+            .targetAmount(new TargetAmount(1500))
+            .build();;
 
-    private Member member;
+    private final OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
+
+    private String token;
 
     @BeforeEach
     void setUp() {
         databaseCleaner.clean();
-        member = MemberFixtureBuilder
-                .builder()
-                .weight(70.0)
-                .targetAmount(new TargetAmount(1500))
-                .build();
         memberRepository.save(member);
-        OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
@@ -90,9 +91,9 @@ class IntakeAmountControllerTest extends ControllerTest {
         @Test
         void success_whenGivenNullMemberWeight() throws Exception {
             // given
-            databaseCleaner.clean();
             Member member = MemberFixtureBuilder
                     .builder()
+                    .memberNickname(new MemberNickname("test2"))
                     .weight(null)
                     .build();
             memberRepository.save(member);
@@ -247,7 +248,6 @@ class IntakeAmountControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.amount()).isEqualTo(1500);
             });
-
         }
     }
 }
