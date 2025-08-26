@@ -1,5 +1,7 @@
 package backend.mulkkam.version.repository;
 
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
 import backend.mulkkam.support.AppMinimumVersionFixtureBuilder;
 import backend.mulkkam.version.domain.AppMinimumVersion;
 import java.time.LocalDate;
@@ -11,8 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DataJpaTest
 class AppMinimumVersionRepositoryTest {
@@ -45,7 +45,7 @@ class AppMinimumVersionRepositoryTest {
             appMinimumVersionRepository.save(secondSaved);
 
             // when
-            Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findLatestAppMinimumVersion();
+            Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
 
             // then
             assertSoftly(softly -> {

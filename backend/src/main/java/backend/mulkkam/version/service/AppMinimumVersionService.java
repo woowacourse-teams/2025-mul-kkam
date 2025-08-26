@@ -19,7 +19,7 @@ public class AppMinimumVersionService {
     private final AppMinimumVersionRepository appMinimumVersionRepository;
 
     public AppMinimumVersionResponse read() {
-        Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findLatestAppMinimumVersion();
+        Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
         return latestAppMinimumVersion
                 .map(AppMinimumVersionResponse::new)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_APP_MINIMUM_VERSION));
