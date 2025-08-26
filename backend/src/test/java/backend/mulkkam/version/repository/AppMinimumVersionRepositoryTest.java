@@ -28,21 +28,21 @@ class AppMinimumVersionRepositoryTest {
         @Test
         void success_withAlreadySavedMultipleVersions() {
             // given
-            AppMinimumVersion firstSaved = AppMinimumVersionFixtureBuilder.builder()
+            AppMinimumVersion firstAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
                     .updatedAt(LocalDateTime.of(
                             LocalDate.of(2025, 12, 30),
                             LocalTime.of(15, 30)
                     ))
                     .build();
-            appMinimumVersionRepository.save(firstSaved);
+            appMinimumVersionRepository.save(firstAppMinimumVersion);
 
-            AppMinimumVersion secondSaved = AppMinimumVersionFixtureBuilder.builder()
+            AppMinimumVersion secondAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
                     .updatedAt(LocalDateTime.of(
                             LocalDate.of(2025, 12, 31),
                             LocalTime.of(15, 30)
                     ))
                     .build();
-            appMinimumVersionRepository.save(secondSaved);
+            AppMinimumVersion savedSecondAppMinimumVersion = appMinimumVersionRepository.save(secondAppMinimumVersion);
 
             // when
             Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
@@ -50,7 +50,7 @@ class AppMinimumVersionRepositoryTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(latestAppMinimumVersion).isPresent();
-                softly.assertThat(latestAppMinimumVersion.get().getId()).isEqualTo(secondSaved.getId());
+                softly.assertThat(latestAppMinimumVersion.get().getId()).isEqualTo(savedSecondAppMinimumVersion.getId());
             });
         }
     }
