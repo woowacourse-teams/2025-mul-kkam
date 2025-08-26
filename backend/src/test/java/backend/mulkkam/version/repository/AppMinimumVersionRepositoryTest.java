@@ -28,21 +28,22 @@ class AppMinimumVersionRepositoryTest {
         @Test
         void success_withAlreadySavedMultipleVersions() {
             // given
+            LocalDateTime localDateTime = LocalDateTime.of(
+                    LocalDate.of(2025, 12, 31),
+                    LocalTime.of(15, 30)
+            );
             AppMinimumVersion firstAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
+                    .updatedAt(localDateTime)
+                    .build();
+            AppMinimumVersion savedFirstAppMinimumVersion = appMinimumVersionRepository.save(firstAppMinimumVersion);
+
+            AppMinimumVersion secondAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
                     .updatedAt(LocalDateTime.of(
                             LocalDate.of(2025, 12, 30),
                             LocalTime.of(15, 30)
                     ))
                     .build();
-            appMinimumVersionRepository.save(firstAppMinimumVersion);
-
-            AppMinimumVersion secondAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
-                    .updatedAt(LocalDateTime.of(
-                            LocalDate.of(2025, 12, 31),
-                            LocalTime.of(15, 30)
-                    ))
-                    .build();
-            AppMinimumVersion savedSecondAppMinimumVersion = appMinimumVersionRepository.save(secondAppMinimumVersion);
+            appMinimumVersionRepository.save(secondAppMinimumVersion);
 
             // when
             Optional<AppMinimumVersion> foundLatestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
@@ -50,7 +51,8 @@ class AppMinimumVersionRepositoryTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(foundLatestAppMinimumVersion).isPresent();
-                softly.assertThat(foundLatestAppMinimumVersion.get().getId()).isEqualTo(savedSecondAppMinimumVersion.getId());
+                softly.assertThat(foundLatestAppMinimumVersion.get().getId()).isEqualTo(savedFirstAppMinimumVersion.getId());
+                softly.assertThat(foundLatestAppMinimumVersion.get().getUpdatedAt()).isEqualTo(localDateTime);
             });
         }
     }
