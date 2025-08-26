@@ -10,7 +10,6 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -40,7 +39,6 @@ public class WeatherService {
     private final IntakeRecommendedAmountService intakeRecommendedAmountService;
     private final AverageTemperatureRepository averageTemperatureRepository;
     private final MemberRepository memberRepository;
-    private final IntakeHistoryRepository intakeHistoryRepository;
 
 
     @Transactional
@@ -73,10 +71,6 @@ public class WeatherService {
     ) {
         ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
                 member.getId(), averageTemperature.getTemperature());
-        Optional<IntakeHistory> intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member,
-                LocalDate.now());
-
-        TargetAmount targetAmount = getTargetAmount(member, intakeHistory, extraIntakeAmount);
 
         return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
                 String.format("오늘 날씨의 평균은 %d도입니다. %dml를 추가하는 것을 추천해요. 반영할까요?",
