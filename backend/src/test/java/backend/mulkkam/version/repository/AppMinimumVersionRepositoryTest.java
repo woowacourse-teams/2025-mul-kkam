@@ -45,12 +45,12 @@ class AppMinimumVersionRepositoryTest {
             AppMinimumVersion savedSecondAppMinimumVersion = appMinimumVersionRepository.save(secondAppMinimumVersion);
 
             // when
-            Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
+            Optional<AppMinimumVersion> foundLatestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(latestAppMinimumVersion).isPresent();
-                softly.assertThat(latestAppMinimumVersion.get().getId()).isEqualTo(savedSecondAppMinimumVersion.getId());
+                softly.assertThat(foundLatestAppMinimumVersion).isPresent();
+                softly.assertThat(foundLatestAppMinimumVersion.get().getId()).isEqualTo(savedSecondAppMinimumVersion.getId());
             });
         }
     }
