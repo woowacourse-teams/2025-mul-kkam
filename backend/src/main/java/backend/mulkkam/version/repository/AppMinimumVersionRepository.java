@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface AppMinimumVersionRepository extends JpaRepository<AppMinimumVersion, Long> {
 
     @Query(value = """
-                SELECT a FROM AppMinimumVersion a 
+                SELECT a FROM AppMinimumVersion a
                 ORDER BY a.updatedAt DESC 
                 LIMIT 1
             """)
