@@ -5,6 +5,7 @@ import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.service.IntakeRecommendedAmountService;
 import backend.mulkkam.intake.service.WeatherService;
+import backend.mulkkam.intakenotification.dto.CreateWeatherNotification;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
@@ -56,12 +57,9 @@ public class IntakeNotificationService {
         ExtraIntakeAmount extraIntakeAmount = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
                 member.getId(), averageTemperature.getTemperature());
 
-        return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
-                String.format("오늘 날씨의 평균은 %d도입니다. %dml를 추가하는 것을 추천해요. 반영할까요?",
-                        (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())),
-                member,
-                (int) extraIntakeAmount.value(),
-                todayDateTimeInSeoul
-        );
+        CreateWeatherNotification createWeatherNotification = new CreateWeatherNotification(averageTemperature,
+                extraIntakeAmount, member, todayDateTimeInSeoul);
+
+        return createWeatherNotification.toCreateTokenSuggestionNotificationRequest();
     }
 }
