@@ -8,11 +8,9 @@ import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
@@ -22,7 +20,6 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -53,6 +50,15 @@ public class WeatherService {
         double averageTemperatureForDate = getAverageTemperatureForDate(tomorrowDateInSeoul);
         AverageTemperature averageTemperature = new AverageTemperature(tomorrowDateInSeoul, averageTemperatureForDate);
         averageTemperatureRepository.save(averageTemperature);
+    }
+
+    public double getAverageTemperatureForDate(LocalDate targetDate) {
+        validateTargetDate(targetDate);
+
+        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(SEOUL_CITY_CODE);
+        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, targetDate);
+
+        return convertFromKelvinToCelsius(averageTemperatureForDate);
     }
 
     public void notifyAdditionalIntakeByStoredWeather() {
@@ -91,25 +97,6 @@ public class WeatherService {
                 (int) extraIntakeAmount.value(),
                 todayDateTimeInSeoul
         );
-    }
-
-    private TargetAmount getTargetAmount(
-            Member member,
-            Optional<IntakeHistory> intakeHistory,
-            ExtraIntakeAmount extraIntakeAmount
-    ) {
-        return intakeHistory.map(history -> new TargetAmount(
-                        history.getTargetAmount().value() + (int) extraIntakeAmount.value()))
-                .orElseGet(() -> new TargetAmount(member.getTargetAmount().value() + (int) extraIntakeAmount.value()));
-    }
-
-    public double getAverageTemperatureForDate(LocalDate targetDate) {
-        validateTargetDate(targetDate);
-
-        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(SEOUL_CITY_CODE);
-        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, targetDate);
-
-        return convertFromKelvinToCelsius(averageTemperatureForDate);
     }
 
     private void validateTargetDate(LocalDate targetDate) {
