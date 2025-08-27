@@ -172,7 +172,6 @@ public class NotificationService {
         for (Notification notification : notifications) {
             NotificationResponse notificationResponse = getNotificationResponse(notification);
             notificationResponses.add(notificationResponse);
-
         }
         return notificationResponses;
     }
