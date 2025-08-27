@@ -1,6 +1,5 @@
 package backend.mulkkam.notification.service;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
 import backend.mulkkam.common.dto.MemberDetails;
@@ -12,7 +11,6 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
@@ -33,7 +31,6 @@ public class SuggestionNotificationService {
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public void createAndSendSuggestionNotification(
@@ -75,10 +72,5 @@ public class SuggestionNotificationService {
     private SuggestionNotification getSuggestionNotification(Long id, Long memberId) {
         return suggestionNotificationRepository.findByIdAndNotificationMemberId(id, memberId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_SUGGESTION_NOTIFICATION));
-    }
-
-    private Member getMember(Long id) {
-        return memberRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }

@@ -121,6 +121,7 @@ public class NotificationService {
         }
 
         if (notification.isSuggestion()) {
+
             SuggestionNotification suggestionNotification = getSuggestionNotification(notificationId);
             suggestionNotificationRepository.delete(suggestionNotification);
         }
