@@ -27,8 +27,8 @@ import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -168,12 +168,9 @@ public class NotificationService {
     }
 
     private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
-        List<NotificationResponse> notificationResponses = new ArrayList<>();
-        for (Notification notification : notifications) {
-            NotificationResponse notificationResponse = getNotificationResponse(notification);
-            notificationResponses.add(notificationResponse);
-        }
-        return notificationResponses;
+        return notifications.stream()
+                .map(this::getNotificationResponse)
+                .collect(Collectors.toList());
     }
 
     private NotificationResponse getNotificationResponse(Notification notification) {
