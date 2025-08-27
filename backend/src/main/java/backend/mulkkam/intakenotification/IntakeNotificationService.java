@@ -30,14 +30,15 @@ public class IntakeNotificationService {
 
     public void notifyAdditionalIntakeByStoredWeather() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul"); // TODO 2025. 8. 27. 20:21: import
-        LocalDateTime todayDateTimeInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
-        AverageTemperature averageTemperature = weatherService.getAverageTemperature(todayDateTimeInSeoul.toLocalDate());
+        LocalDateTime nowInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
+        AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
 
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
+        List<Member> members = memberRepository.findAll();
+        if (members.isEmpty()) { return; }
+        for (Member member : members) {
             try {
                 suggestionNotificationService.createAndSendSuggestionNotification(
-                        toCreateSuggestionNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
+                        toCreateSuggestionNotificationRequest(nowInSeoul, averageTemperature, member));
             } catch (AlarmException e) {
                 log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
                         member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934
