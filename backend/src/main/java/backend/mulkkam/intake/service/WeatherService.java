@@ -40,7 +40,6 @@ public class WeatherService {
     private final AverageTemperatureRepository averageTemperatureRepository;
     private final MemberRepository memberRepository;
 
-
     @Transactional
     public void saveTomorrowAverageTemperature() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
@@ -82,6 +81,18 @@ public class WeatherService {
         }
     }
 
+    private void validateTargetDate(LocalDate targetDate) {
+        LocalDate now = LocalDate.now(ZoneId.of(SEOUL_ZONE_ID));
+
+        if (!targetDate.isAfter(now)) {
+            throw new CommonException(INVALID_FORECAST_TARGET_DATE);
+        }
+
+        if (targetDate.isAfter(now.plusDays(AVAILABLE_DATE_RANGE_FOR_FORECAST))) {
+            throw new CommonException(INVALID_FORECAST_TARGET_DATE);
+        }
+    }
+
     private CreateTokenSuggestionNotificationRequest toCreateSuggestionNotificationRequest(
             LocalDateTime todayDateTimeInSeoul,
             AverageTemperature averageTemperature,
@@ -97,18 +108,6 @@ public class WeatherService {
                 (int) extraIntakeAmount.value(),
                 todayDateTimeInSeoul
         );
-    }
-
-    private void validateTargetDate(LocalDate targetDate) {
-        LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
-
-        if (!targetDate.isAfter(now)) {
-            throw new CommonException(INVALID_FORECAST_TARGET_DATE);
-        }
-
-        if (targetDate.isAfter(now.plusDays(AVAILABLE_DATE_RANGE_FOR_FORECAST))) {
-            throw new CommonException(INVALID_FORECAST_TARGET_DATE);
-        }
     }
 
     private double computeAverageTemperatureForDate(
