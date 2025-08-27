@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
@@ -23,9 +24,11 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class WeatherService {
@@ -59,8 +62,17 @@ public class WeatherService {
 
         List<Member> allMember = memberRepository.findAll();
         for (Member member : allMember) {
-            suggestionNotificationService.createAndSendSuggestionNotification(
-                    toCreateSuggestionNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
+            try {
+                suggestionNotificationService.createAndSendSuggestionNotification(
+                        toCreateSuggestionNotificationRequest(todayDateTimeInSeoul, averageTemperature, member));
+            } catch (AlarmException e) {
+                log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
+                        member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934
+                        e.getErrorCode().name(),
+                        e.getErrorCode().getStatus()
+                );
+                // TODO 2025. 8. 27. 20:00: 로깅 리펙토링 필요(errorLoggedByGlobal)
+            }
         }
     }
 
