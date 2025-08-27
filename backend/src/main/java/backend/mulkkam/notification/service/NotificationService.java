@@ -46,6 +46,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
+    private final SuggestionNotificationService suggestionNotificationService;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -121,9 +122,7 @@ public class NotificationService {
         }
 
         if (notification.isSuggestion()) {
-
-            SuggestionNotification suggestionNotification = getSuggestionNotification(notificationId);
-            suggestionNotificationRepository.delete(suggestionNotification);
+            suggestionNotificationService.delete(notificationId);
         }
 
         notificationRepository.delete(notification);
@@ -197,10 +196,5 @@ public class NotificationService {
     private Notification getNotification(Long id) {
         return notificationRepository.findByIdWithMember(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_NOTIFICATION));
-    }
-
-    private SuggestionNotification getSuggestionNotification(Long id) {
-        return suggestionNotificationRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 }

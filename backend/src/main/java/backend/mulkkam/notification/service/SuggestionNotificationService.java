@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
@@ -58,6 +59,11 @@ public class SuggestionNotificationService {
         suggestionNotification.updateApplyTargetAmount(true);
     }
 
+    public void delete(Long id) {
+        SuggestionNotification suggestionNotification = getSuggestionNotification(id);
+        suggestionNotificationRepository.delete(suggestionNotification);
+    }
+
     private void sendNotificationByMember(
             CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest,
             List<Device> devicesByMember
@@ -72,5 +78,10 @@ public class SuggestionNotificationService {
     private SuggestionNotification getSuggestionNotification(Long id, Long memberId) {
         return suggestionNotificationRepository.findByIdAndNotificationMemberId(id, memberId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_SUGGESTION_NOTIFICATION));
+    }
+
+    private SuggestionNotification getSuggestionNotification(Long id) {
+        return suggestionNotificationRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 }
