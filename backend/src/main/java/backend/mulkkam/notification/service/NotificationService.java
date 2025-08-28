@@ -9,7 +9,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -41,7 +41,7 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
 
-    private final FcmService fcmService;
+    private final FcmClient fcmClient;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
@@ -90,7 +90,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+        fcmClient.sendMessageByTopic(sendMessageByFcmTopicRequest);
     }
 
     @Transactional
@@ -189,7 +189,7 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
     }
 

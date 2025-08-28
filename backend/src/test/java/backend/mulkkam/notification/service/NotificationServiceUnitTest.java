@@ -13,7 +13,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -58,7 +58,7 @@ class NotificationServiceUnitTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private FcmService fcmService;
+    private FcmClient fcmClient;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -251,7 +251,7 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(fcmService).sendMessageByToken(
+            verify(fcmClient).sendMessageByToken(
                     argThat(o ->
                             o.title().equals("title") &&
                                     o.body().equals("body") &&

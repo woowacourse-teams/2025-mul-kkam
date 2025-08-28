@@ -6,7 +6,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SuggestionNotificationService {
 
-    private final FcmService fcmService;
+    private final FcmClient fcmClient;
     private final IntakeAmountService intakeAmountService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
@@ -71,7 +71,7 @@ public class SuggestionNotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenSuggestionNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
     }
 
