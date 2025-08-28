@@ -26,6 +26,7 @@ import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -73,40 +74,20 @@ public class NotificationControllerTest extends ControllerTest {
     @Nested
     class ReadNotifications {
 
+        private List<Notification> buildNotifications(Member member, List<LocalDate> createdDates) {
+            return createdDates.stream()
+                    .map(date -> NotificationFixtureBuilder.withMember(member)
+                            .createdAt(date)
+                            .build())
+                    .toList();
+        }
+
         @BeforeEach
         void setUp() {
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build()
-            );
+            List<LocalDate> dates = IntStream.range(0, 10)
+                    .mapToObj(i -> LocalDate.of(2025, 8, 15))
+                    .toList();
+            List<Notification> notifications = buildNotifications(savedMember, dates);
             notificationRepository.saveAll(notifications);
         }
 
