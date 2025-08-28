@@ -38,8 +38,10 @@ public class SuggestionNotificationService {
             CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest) {
         Member member = createTokenSuggestionNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
+
         Notification notification = createTokenSuggestionNotificationRequest.toNotification();
         Notification savedNotification = notificationRepository.save(notification);
+
         suggestionNotificationRepository.save(
                 createTokenSuggestionNotificationRequest.toSuggestionNotification(savedNotification));
 
