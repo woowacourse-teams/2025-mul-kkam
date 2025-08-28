@@ -231,7 +231,7 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.save(notification);
 
             // when
-            String json = mockMvc.perform(delete("/notifications/" + notification.getId())
+            mockMvc.perform(delete("/notifications/" + notification.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isNoContent())
                     .andReturn().getResponse().getContentAsString();
