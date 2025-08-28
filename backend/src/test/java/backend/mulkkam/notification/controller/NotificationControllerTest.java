@@ -70,24 +70,24 @@ public class NotificationControllerTest extends ControllerTest {
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
     }
 
+    private List<Notification> buildUnreadNotifications(Member member, List<LocalDate> createdDates) {
+        return createdDates.stream()
+                .map(date -> NotificationFixtureBuilder.withMember(member)
+                        .createdAt(date)
+                        .build())
+                .toList();
+    }
+
     @DisplayName("알림을 조회할 때")
     @Nested
     class ReadNotifications {
-
-        private List<Notification> buildNotifications(Member member, List<LocalDate> createdDates) {
-            return createdDates.stream()
-                    .map(date -> NotificationFixtureBuilder.withMember(member)
-                            .createdAt(date)
-                            .build())
-                    .toList();
-        }
 
         @BeforeEach
         void setUp() {
             List<LocalDate> dates = IntStream.range(0, 10)
                     .mapToObj(i -> LocalDate.of(2025, 8, 15))
                     .toList();
-            List<Notification> notifications = buildNotifications(savedMember, dates);
+            List<Notification> notifications = buildUnreadNotifications(savedMember, dates);
             notificationRepository.saveAll(notifications);
         }
 
@@ -143,28 +143,13 @@ public class NotificationControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
+            List<LocalDate> dates = IntStream.range(0, 8)
+                    .mapToObj(i -> LocalDate.of(2025, 8, 15))
+                    .toList();
+            List<Notification> unreadNotifications = buildUnreadNotifications(savedMember, dates);
+            notificationRepository.saveAll(unreadNotifications);
+
+            List<Notification> readNotifications = List.of(
                     NotificationFixtureBuilder.withMember(savedMember)
                             .createdAt(LocalDate.of(2025, 8, 15))
                             .isRead(true)
@@ -178,7 +163,7 @@ public class NotificationControllerTest extends ControllerTest {
                             .isRead(true)
                             .build()
             );
-            notificationRepository.saveAll(notifications);
+            notificationRepository.saveAll(readNotifications);
         }
 
         @DisplayName("유효한 요청이면 올바르게 반환한다")
