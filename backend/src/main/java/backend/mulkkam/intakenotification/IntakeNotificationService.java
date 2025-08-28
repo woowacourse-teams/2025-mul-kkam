@@ -34,7 +34,6 @@ public class IntakeNotificationService {
         AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
 
         List<Member> members = memberRepository.findAll();
-        if (members.isEmpty()) { return; }
         for (Member member : members) {
             try {
                 suggestionNotificationService.createAndSendSuggestionNotification(
