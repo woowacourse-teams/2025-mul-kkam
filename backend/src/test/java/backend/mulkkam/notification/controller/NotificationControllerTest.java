@@ -32,12 +32,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 public class NotificationControllerTest extends ControllerTest {
 
     @Autowired
@@ -143,7 +139,7 @@ public class NotificationControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            List<LocalDate> dates = IntStream.range(0, 8)
+            List<LocalDate> dates = IntStream.range(0, 7)
                     .mapToObj(i -> LocalDate.of(2025, 8, 15))
                     .toList();
             List<Notification> unreadNotifications = buildUnreadNotifications(savedMember, dates);
