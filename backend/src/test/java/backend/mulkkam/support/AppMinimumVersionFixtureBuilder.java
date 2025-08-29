@@ -4,6 +4,7 @@ import backend.mulkkam.version.domain.AppMinimumVersion;
 import java.time.LocalDateTime;
 
 public class AppMinimumVersionFixtureBuilder {
+
     private String minimumVersion = "1.0.0";
     private LocalDateTime updatedAt = LocalDateTime.now();
 
