@@ -221,6 +221,12 @@ class NotificationServiceUnitTest {
         @Test
         void success_validInput() {
             // given
+            Device d1 = mock(Device.class);
+            when(d1.getToken()).thenReturn("token-1");
+            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
+            when(notificationRepository.save(any(Notification.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
             CreateTokenNotificationRequest createTokenNotificationRequest = new CreateTokenNotificationRequest(
                     "title",
                     "body",
@@ -229,13 +235,6 @@ class NotificationServiceUnitTest {
                     NotificationType.NOTICE,
                     LocalDateTime.of(2025, 1, 2, 3, 4)
             );
-
-            Device d1 = mock(Device.class);
-            when(d1.getToken()).thenReturn("token-1");
-            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
-
-            when(notificationRepository.save(any(Notification.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // when
             notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
@@ -251,7 +250,7 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(fcmService).sendMessageByToken(
+            verify(fcmService).sendToToken(
                     argThat(o ->
                             o.title().equals("title") &&
                                     o.body().equals("body") &&
