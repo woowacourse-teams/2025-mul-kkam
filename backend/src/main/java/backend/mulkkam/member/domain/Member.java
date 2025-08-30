@@ -11,12 +11,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
+
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -89,8 +90,8 @@ public class Member extends BaseEntity {
         this.targetAmount = newTargetAmount;
     }
 
-    public boolean isSameNickname(MemberNickname memberNickname) {
-        return this.memberNickname.equals(memberNickname);
+    public boolean isSameNickname(String memberNickname) {
+        return activeNickname != null && activeNickname.equals(memberNickname);
     }
 
     public void modifyIsNightNotificationAgreed(boolean isNightNotificationAgreed) {
