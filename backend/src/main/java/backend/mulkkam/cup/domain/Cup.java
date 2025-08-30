@@ -35,7 +35,7 @@ public class Cup extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
@@ -64,7 +64,7 @@ public class Cup extends BaseEntity {
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    @JoinColumn(nullable = false)
+    @JoinColumn(name = "cup_emoji_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private CupEmoji cupEmoji;
 
