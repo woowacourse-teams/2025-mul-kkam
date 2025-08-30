@@ -19,6 +19,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
+import jakarta.persistence.PrePersist;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -30,6 +32,8 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLDelete(sql = "UPDATE intake_history_detail SET deleted_at = NOW() WHERE id = ?")
 @Entity
 public class IntakeHistoryDetail extends BaseEntity {
+
+    public static final String DEFAULT_HISTORY_EMOJI_URL = "https://github.com/user-attachments/assets/df68b91b-772c-4feb-bc2a-59955fe74c57";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +54,15 @@ public class IntakeHistoryDetail extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
     private IntakeAmount intakeAmount;
 
+    @Column(nullable = false)
     private String cupEmojiUrl;
+
+    @PrePersist
+    private void setCupEmojiUrl() {
+        if (cupEmojiUrl == null) {
+            cupEmojiUrl = DEFAULT_HISTORY_EMOJI_URL;
+        }
+    }
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
@@ -82,9 +94,5 @@ public class IntakeHistoryDetail extends BaseEntity {
 
     public boolean isCreatedAt(LocalDate comparedDate) {
         return this.intakeHistory.isCreatedAt(comparedDate);
-    }
-
-    public boolean hasCupEmojiUrl() {
-        return cupEmojiUrl == null;
     }
 }

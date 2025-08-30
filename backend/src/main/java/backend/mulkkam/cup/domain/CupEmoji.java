@@ -20,8 +20,6 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 public class CupEmoji extends BaseEntity {
 
-    private static final String DEFAULT_CUP_EMOJI_URL = "https://github.com/user-attachments/assets/df68b91b-772c-4feb-bc2a-59955fe74c57";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,9 +29,5 @@ public class CupEmoji extends BaseEntity {
 
     public CupEmoji(String url) {
         this.url = url;
-    }
-
-    public static String getDefaultCupEmojiUrl() {
-        return DEFAULT_CUP_EMOJI_URL;
     }
 }
