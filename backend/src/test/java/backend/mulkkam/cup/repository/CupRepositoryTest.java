@@ -50,13 +50,11 @@ class CupRepositoryTest {
             memberRepository.save(member);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -85,13 +83,11 @@ class CupRepositoryTest {
             memberRepository.save(member2);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member1)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member1, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member2)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member2, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 

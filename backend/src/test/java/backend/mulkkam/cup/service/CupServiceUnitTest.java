@@ -76,8 +76,7 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup savedCup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -161,15 +160,15 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup3 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(3))
                     .build();
 
@@ -204,15 +203,13 @@ class CupServiceUnitTest {
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .cupAmount(new CupAmount(500))
                     .build();
 
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .cupAmount(new CupAmount(1000))
                     .build();
@@ -248,18 +245,15 @@ class CupServiceUnitTest {
 
         private final Member member = MemberFixtureBuilder.builder().build();
         private final Cup firstCup = CupFixtureBuilder
-                .withMember(member)
-                .cupEmoji(cupEmoji)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(1))
                 .build();
         private final Cup secondCup = CupFixtureBuilder
-                .withMember(member)
-                .cupEmoji(cupEmoji)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(2))
                 .build();
         private final Cup thirdCup = CupFixtureBuilder
-                .withMember(member)
-                .cupEmoji(cupEmoji)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupRank(new CupRank(3))
                 .build();
 
@@ -317,8 +311,7 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType = IntakeType.WATER;
 
             Cup cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .intakeType(beforeIntakeType)
@@ -371,8 +364,7 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType1 = IntakeType.COFFEE;
 
             Cup cup1 = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1))
                     .intakeType(beforeIntakeType1)
@@ -383,7 +375,7 @@ class CupServiceUnitTest {
             IntakeType beforeIntakeType2 = IntakeType.COFFEE;
 
             Cup cup2 = CupFixtureBuilder
-                    .withMember(member)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
                     .intakeType(beforeIntakeType2)
@@ -442,8 +434,7 @@ class CupServiceUnitTest {
             Integer beforeCupAmount = 500;
 
             Cup cup = CupFixtureBuilder
-                    .withMember(member1)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member1, cupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .buildWithId(1L);

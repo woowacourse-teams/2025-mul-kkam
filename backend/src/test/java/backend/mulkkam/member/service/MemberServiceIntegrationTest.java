@@ -401,8 +401,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupEmojiRepository.save(cupEmoji);
             Cup cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
 
@@ -543,8 +542,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupEmojiRepository.save(cupEmoji);
             Cup cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
 

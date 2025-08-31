@@ -101,8 +101,6 @@ class MemberControllerTest extends ControllerTest {
 
         @BeforeEach
         void setup() {
-            databaseCleaner.clean();
-
             oauthAccount = new OauthAccount("test", KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
@@ -176,8 +174,6 @@ class MemberControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            databaseCleaner.clean();
-
             memberRepository.save(member);
 
             oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -187,8 +183,7 @@ class MemberControllerTest extends ControllerTest {
 
             cupEmojiRepository.save(cupEmoji);
             cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
         }
@@ -243,8 +238,6 @@ class MemberControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            databaseCleaner.clean();
-
             memberRepository.save(member);
 
             oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -254,8 +247,7 @@ class MemberControllerTest extends ControllerTest {
 
             cupEmojiRepository.save(cupEmoji);
             cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
         }
@@ -303,8 +295,6 @@ class MemberControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            databaseCleaner.clean();
-
             memberRepository.save(member);
 
             oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -314,8 +304,7 @@ class MemberControllerTest extends ControllerTest {
 
             cupEmojiRepository.save(cupEmoji);
             cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
         }
@@ -391,7 +380,6 @@ class MemberControllerTest extends ControllerTest {
         @BeforeEach
         void setUp() {
             databaseCleaner.clean();
-
             memberRepository.save(member);
 
             oauthAccount = new OauthAccount(member, "test", KAKAO);
@@ -401,8 +389,7 @@ class MemberControllerTest extends ControllerTest {
 
             cupEmojiRepository.save(cupEmoji);
             cup = CupFixtureBuilder
-                    .withMember(member)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
         }

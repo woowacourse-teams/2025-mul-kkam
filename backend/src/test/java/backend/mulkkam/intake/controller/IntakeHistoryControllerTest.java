@@ -90,7 +90,6 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
         memberRepository.save(member);
 
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
@@ -101,8 +100,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         cupEmojiRepository.save(cupEmoji);
 
         cup = CupFixtureBuilder
-                .withMember(member)
-                .cupEmoji(cupEmoji)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .cupAmount(new CupAmount(1000))
                 .build();
         cupRepository.save(cup);

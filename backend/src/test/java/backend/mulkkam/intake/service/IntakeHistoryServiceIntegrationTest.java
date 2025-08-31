@@ -81,8 +81,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         cupEmojiRepository.save(cupEmoji);
 
         Cup cup = CupFixtureBuilder
-                .withMember(member)
-                .cupEmoji(cupEmoji)
+                .withMemberAndCupEmoji(member, cupEmoji)
                 .build();
         this.cup = cupRepository.save(cup);
     }
@@ -324,8 +323,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             Cup cup = CupFixtureBuilder
-                    .withMember(savedMember)
-                    .cupEmoji(cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, cupEmoji)
                     .build();
             Cup savedCup = cupRepository.save(cup);
 
