@@ -52,10 +52,8 @@ class SuggestionNotificationControllerTest extends ControllerTest {
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
-
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
         member = MemberFixtureBuilder
                 .builder()
                 .build();

@@ -59,7 +59,6 @@ class IntakeAmountControllerTest extends ControllerTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
         memberRepository.save(member);
         oauthAccountRepository.save(oauthAccount);
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
@@ -239,7 +238,9 @@ class IntakeAmountControllerTest extends ControllerTest {
             String json = mockMvc.perform(get("/intake/amount/target")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
-                    .andReturn().getResponse().getContentAsString();
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
 
             IntakeTargetAmountResponse actual = objectMapper.readValue(json,
                     IntakeTargetAmountResponse.class);

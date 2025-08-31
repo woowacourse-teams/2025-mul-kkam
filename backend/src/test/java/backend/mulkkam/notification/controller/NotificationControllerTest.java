@@ -26,6 +26,8 @@ import backend.mulkkam.support.MemberFixtureBuilder;
 import backend.mulkkam.support.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
+
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -57,8 +59,6 @@ public class NotificationControllerTest extends ControllerTest {
 
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
-
         Member member = MemberFixtureBuilder
                 .builder().build();
         savedMember = memberRepository.save(member);
@@ -108,6 +108,11 @@ public class NotificationControllerTest extends ControllerTest {
                             .build()
             );
             notificationRepository.saveAll(notifications);
+        }
+
+        @AfterEach
+        void cleanup() {
+            notificationRepository.deleteAll();
         }
 
         @DisplayName("유효한 요청이면 올바르게 반환한다")
@@ -200,6 +205,11 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.saveAll(notifications);
         }
 
+        @AfterEach
+        void cleanup() {
+            notificationRepository.deleteAll();
+        }
+
         @DisplayName("유효한 요청이면 올바르게 반환한다")
         @Test
         void success_validMember() throws Exception {
@@ -219,6 +229,11 @@ public class NotificationControllerTest extends ControllerTest {
     @DisplayName("알림을 삭제할 때")
     @Nested
     class Delete {
+
+        @AfterEach
+        void cleanup() {
+            notificationRepository.deleteAll();
+        }
 
         @DisplayName("유효한 요청인 경우 정상적으로 처리된다")
         @Test
