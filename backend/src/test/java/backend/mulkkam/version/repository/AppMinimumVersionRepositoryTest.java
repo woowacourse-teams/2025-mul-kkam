@@ -2,7 +2,7 @@ package backend.mulkkam.version.repository;
 
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
-import backend.mulkkam.support.AppMinimumVersionFixtureBuilder;
+import backend.mulkkam.support.fixture.AppMinimumVersionFixtureBuilder;
 import backend.mulkkam.version.domain.AppMinimumVersion;
 import java.time.LocalDate;
 import java.time.LocalDateTime;

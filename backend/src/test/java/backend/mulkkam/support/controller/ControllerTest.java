@@ -1,6 +1,7 @@
-package backend.mulkkam.support;
+package backend.mulkkam.support.controller;
 
 
+import backend.mulkkam.support.DatabaseCleaner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.springframework.beans.factory.annotation.Autowired;

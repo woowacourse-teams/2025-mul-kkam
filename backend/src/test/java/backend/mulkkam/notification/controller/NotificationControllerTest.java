@@ -21,9 +21,9 @@ import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.ControllerTest;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.NotificationFixtureBuilder;
+import backend.mulkkam.support.controller.ControllerTest;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
 

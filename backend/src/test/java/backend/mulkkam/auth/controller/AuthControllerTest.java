@@ -20,7 +20,7 @@ import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
-import backend.mulkkam.support.ControllerTest;
+import backend.mulkkam.support.controller.ControllerTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
