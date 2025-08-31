@@ -13,6 +13,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -35,18 +36,19 @@ import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.MemberFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -431,7 +433,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
                 softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
                 softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl())
-                        .isEqualTo(IntakeHistoryDetail.DEFAULT_HISTORY_EMOJI_URL);
+                        .isEqualTo(CupEmojiUrl.DEFAULT_HISTORY_EMOJI_URL);
             });
         }
     }

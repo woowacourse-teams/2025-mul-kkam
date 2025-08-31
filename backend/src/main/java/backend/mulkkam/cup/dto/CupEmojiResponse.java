@@ -11,7 +11,6 @@ public record CupEmojiResponse(
 ) {
 
     public CupEmojiResponse(CupEmoji cupEmoji) {
-        this(cupEmoji.getId(),
-                cupEmoji.getUrl());
+        this(cupEmoji.getId(), cupEmoji.getUrl().value());
     }
 }
