@@ -7,9 +7,10 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
+import backend.mulkkam.common.infrastructure.fcm.dto.SendTopicEvent;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -30,6 +31,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +48,7 @@ public class NotificationService {
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
-    private final FcmService fcmService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -90,7 +92,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        fcmService.sendToTopic(sendMessageByFcmTopicRequest);
+        publisher.publishEvent(new SendTopicEvent(sendMessageByFcmTopicRequest));
     }
 
     @Transactional
@@ -189,7 +191,7 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmService.sendToToken(sendMessageByFcmTokenRequest);
+            publisher.publishEvent(new SendTokenEvent(sendMessageByFcmTokenRequest));
         }
     }
 

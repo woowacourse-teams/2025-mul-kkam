@@ -13,7 +13,8 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -41,6 +42,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +60,7 @@ class NotificationServiceUnitTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private FcmService fcmService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -221,9 +223,11 @@ class NotificationServiceUnitTest {
         @Test
         void success_validInput() {
             // given
-            Device d1 = mock(Device.class);
-            when(d1.getToken()).thenReturn("token-1");
-            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
+            Device device = mock(Device.class);
+            when(device.getToken()).thenReturn("token-1");
+
+            when(deviceRepository.findAllByMember(member))
+                    .thenReturn(List.of(device));
             when(notificationRepository.save(any(Notification.class)))
                     .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -250,13 +254,14 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(fcmService).sendToToken(
-                    argThat(o ->
-                            o.title().equals("title") &&
-                                    o.body().equals("body") &&
-                                    o.token().equals("token-1") &&
-                                    o.action() == Action.GO_HOME
-                    )
+            verify(applicationEventPublisher).publishEvent(
+                    argThat((SendTokenEvent evt) -> {
+                        SendMessageByFcmTokenRequest r = evt.sendMessageByFcmTokenRequest();
+                        return r.title().equals("title")
+                                && r.body().equals("body")
+                                && r.token().equals("token-1")
+                                && r.action() == Action.GO_HOME;
+                    })
             );
         }
     }
