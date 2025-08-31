@@ -110,11 +110,6 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.saveAll(notifications);
         }
 
-        @AfterEach
-        void cleanup() {
-            notificationRepository.deleteAll();
-        }
-
         @DisplayName("유효한 요청이면 올바르게 반환한다")
         @Test
         void success_validInput() throws Exception {
@@ -205,11 +200,6 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.saveAll(notifications);
         }
 
-        @AfterEach
-        void cleanup() {
-            notificationRepository.deleteAll();
-        }
-
         @DisplayName("유효한 요청이면 올바르게 반환한다")
         @Test
         void success_validMember() throws Exception {
@@ -229,11 +219,6 @@ public class NotificationControllerTest extends ControllerTest {
     @DisplayName("알림을 삭제할 때")
     @Nested
     class Delete {
-
-        @AfterEach
-        void cleanup() {
-            notificationRepository.deleteAll();
-        }
 
         @DisplayName("유효한 요청인 경우 정상적으로 처리된다")
         @Test

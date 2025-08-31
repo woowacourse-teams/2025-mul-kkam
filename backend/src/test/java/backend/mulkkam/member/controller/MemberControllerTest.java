@@ -95,16 +95,34 @@ class MemberControllerTest extends ControllerTest {
     private String token;
     private Cup cup;
 
+    @BeforeEach
+    void setUp() {
+        memberRepository.save(member);
+
+        oauthAccount = new OauthAccount(member, "test", KAKAO);
+        oauthAccountRepository.save(oauthAccount);
+
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+
+        cupEmojiRepository.save(cupEmoji);
+        cup = CupFixtureBuilder
+                .withMemberAndCupEmoji(member, cupEmoji)
+                .build();
+        cupRepository.save(cup);
+    }
+
     @DisplayName("멤버를 생성할 때에")
     @Nested
     class Create {
 
+        private static final String ONBOARDING_OAUTH_ID = "test2";
+        private final OauthAccount onboardingAccount = new OauthAccount(ONBOARDING_OAUTH_ID, KAKAO);
+
         @BeforeEach
         void setup() {
-            oauthAccount = new OauthAccount("test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
+            oauthAccountRepository.save(onboardingAccount);
 
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            token = oauthJwtTokenHandler.createAccessToken(onboardingAccount);
 
             cupEmojiRepository.save(cupEmoji);
         }
@@ -129,7 +147,7 @@ class MemberControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createMemberRequest)))
                     .andExpect(status().isOk());
 
-            Member foundMember = memberRepository.findById(oauthAccount.getId()).orElseThrow();
+            Member foundMember = memberRepository.findById(onboardingAccount.getId()).orElseThrow();
 
             // then
             assertSoftly(softly -> {
@@ -154,7 +172,7 @@ class MemberControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createMemberRequest)))
                     .andExpect(status().isOk());
 
-            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId(ONBOARDING_OAUTH_ID).orElseThrow();
             Member foundMember = foundOauthAccount.getMember();
             List<Cup> cups = cupRepository.findAllByMember(foundMember);
 
@@ -171,22 +189,6 @@ class MemberControllerTest extends ControllerTest {
     @DisplayName("멤버의 정보를 수정할 때에")
     @Nested
     class Modify {
-
-        @BeforeEach
-        void setUp() {
-            memberRepository.save(member);
-
-            oauthAccount = new OauthAccount(member, "test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            cupEmojiRepository.save(cupEmoji);
-            cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
-                    .build();
-            cupRepository.save(cup);
-        }
 
         @DisplayName("야간 알림을 수정한다.")
         @Test
@@ -236,22 +238,6 @@ class MemberControllerTest extends ControllerTest {
     @Nested
     class Get {
 
-        @BeforeEach
-        void setUp() {
-            memberRepository.save(member);
-
-            oauthAccount = new OauthAccount(member, "test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            cupEmojiRepository.save(cupEmoji);
-            cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
-                    .build();
-            cupRepository.save(cup);
-        }
-
         @DisplayName("야간 알림과 마케팅 수신 동의 세팅을 가져온다.")
         @Test
         void success_whenModifyIsNightNotificationAgreed() throws Exception {
@@ -292,22 +278,6 @@ class MemberControllerTest extends ControllerTest {
     @DisplayName("회원 탈퇴 시")
     @Nested
     class Delete {
-
-        @BeforeEach
-        void setUp() {
-            memberRepository.save(member);
-
-            oauthAccount = new OauthAccount(member, "test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            cupEmojiRepository.save(cupEmoji);
-            cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
-                    .build();
-            cupRepository.save(cup);
-        }
 
         @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버가 삭제된다")
         @Test
@@ -376,23 +346,6 @@ class MemberControllerTest extends ControllerTest {
     @DisplayName("회원 닉네임 중복 검사 할 때에")
     @Nested
     class CheckForDuplicates {
-
-        @BeforeEach
-        void setUp() {
-            databaseCleaner.clean();
-            memberRepository.save(member);
-
-            oauthAccount = new OauthAccount(member, "test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            cupEmojiRepository.save(cupEmoji);
-            cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
-                    .build();
-            cupRepository.save(cup);
-        }
 
         @DisplayName("닉네임 중복 검사하려는 멤버의 기존 닉네임과 중복된다면 예외가 발생한다")
         @Test
