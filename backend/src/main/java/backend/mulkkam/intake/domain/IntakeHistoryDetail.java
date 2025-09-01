@@ -3,6 +3,7 @@ package backend.mulkkam.intake.domain;
 import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
@@ -19,6 +20,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
@@ -50,7 +52,8 @@ public class IntakeHistoryDetail extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
     private IntakeAmount intakeAmount;
 
-    private String cupEmojiUrl;
+    @AttributeOverride(name = "value", column = @Column(name = "cup_emoji_url", nullable = false))
+    private CupEmojiUrl cupEmojiUrl;
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
@@ -74,6 +77,7 @@ public class IntakeHistoryDetail extends BaseEntity {
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
         this.intakeAmount = new IntakeAmount(intakeType.calculateHydration(intakeAmount));
+        this.cupEmojiUrl = CupEmojiUrl.getDefault();
     }
 
     public boolean isOwnedBy(Member comparedMember) {
@@ -82,9 +86,5 @@ public class IntakeHistoryDetail extends BaseEntity {
 
     public boolean isCreatedAt(LocalDate comparedDate) {
         return this.intakeHistory.isCreatedAt(comparedDate);
-    }
-
-    public boolean hasCupEmojiUrl() {
-        return cupEmojiUrl == null;
     }
 }

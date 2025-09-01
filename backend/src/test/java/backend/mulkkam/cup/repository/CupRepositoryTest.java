@@ -8,8 +8,8 @@ import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,12 +31,11 @@ class CupRepositoryTest {
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
 
-    private CupEmoji savedCupEmoji;
+    private CupEmoji cupEmoji = new CupEmoji("http://example.com");;
 
     @BeforeEach
     void setUp() {
-        CupEmoji cupEmoji = new CupEmoji("http://example.com");
-        savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+        this.cupEmoji = cupEmojiRepository.save(cupEmoji);
     }
 
     @DisplayName("사용자의 컵을 조회할 때에")
@@ -51,11 +50,11 @@ class CupRepositoryTest {
             memberRepository.save(member);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, savedCupEmoji)
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
@@ -84,11 +83,11 @@ class CupRepositoryTest {
             memberRepository.save(member2);
 
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member1, savedCupEmoji)
+                    .withMemberAndCupEmoji(member1, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member2, savedCupEmoji)
+                    .withMemberAndCupEmoji(member2, cupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 

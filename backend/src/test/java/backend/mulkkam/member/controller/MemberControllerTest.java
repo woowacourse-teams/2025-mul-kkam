@@ -15,7 +15,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -37,13 +36,12 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
-import backend.mulkkam.support.ControllerTest;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import java.util.List;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.controller.ControllerTest;
+import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,6 +50,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -67,63 +67,78 @@ class MemberControllerTest extends ControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    AccountRefreshTokenRepository accountRefreshTokenRepository;
+    private AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Autowired
-    CupRepository cupRepository;
+    private CupRepository cupRepository;
 
     @Autowired
-    IntakeHistoryRepository intakeHistoryRepository;
+    private IntakeHistoryRepository intakeHistoryRepository;
 
     @Autowired
-    IntakeHistoryDetailRepository intakeHistoryDetailRepository;
-
-    private Member member;
-    private String token;
-    private Cup savedCup;
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
 
+    private final Member member = MemberFixtureBuilder
+            .builder()
+            .isNightNotificationAgreed(true)
+            .isMarketingNotificationAgreed(true)
+            .weight(null)
+            .gender(null)
+            .build();
+    private final CupEmoji cupEmoji = new CupEmoji("http://cup-emoji.com");
+
+    private OauthAccount oauthAccount;
+
+    private String token;
+    private Cup cup;
+
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
-
-        member = MemberFixtureBuilder
-                .builder()
-                .isNightNotificationAgreed(true)
-                .isMarketingNotificationAgreed(true)
-                .weight(null)
-                .gender(null)
-                .build();
         memberRepository.save(member);
-        OauthAccount oauthAccount = new OauthAccount(member, "test", KAKAO);
+
+        oauthAccount = new OauthAccount(member, "test", KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
-        CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
-        Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji).build();
-        savedCup = cupRepository.save(cup);
+        cupEmojiRepository.save(cupEmoji);
+        cup = CupFixtureBuilder
+                .withMemberAndCupEmoji(member, cupEmoji)
+                .build();
+        cupRepository.save(cup);
     }
 
     @DisplayName("멤버를 생성할 때에")
     @Nested
     class Create {
 
+        private static final String ONBOARDING_OAUTH_ID = "test2";
+        private final OauthAccount onboardingAccount = new OauthAccount(ONBOARDING_OAUTH_ID, KAKAO);
+
+        @BeforeEach
+        void setup() {
+            oauthAccountRepository.save(onboardingAccount);
+
+            token = oauthJwtTokenHandler.createAccessToken(onboardingAccount);
+
+            cupEmojiRepository.save(cupEmoji);
+        }
+
         @DisplayName("몸무게 및 성별이 NULL이여도 저장된다.")
         @Test
         void success_whenWeightAndGenderCanBeNull() throws Exception {
             // given
-            databaseCleaner.clean();
-
-            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", null, null, 1500, true,
-                    true);
-            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
-            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
+            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
+                    "test2",
+                    null,
+                    null,
+                    1500,
+                    true,
+                    true
+            );
 
             // when
             mockMvc.perform(post("/members")
@@ -132,8 +147,7 @@ class MemberControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createMemberRequest)))
                     .andExpect(status().isOk());
 
-            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
-            Member foundMember = memberRepository.findById(foundOauthAccount.getId()).orElseThrow();
+            Member foundMember = memberRepository.findById(onboardingAccount.getId()).orElseThrow();
 
             // then
             assertSoftly(softly -> {
@@ -146,12 +160,6 @@ class MemberControllerTest extends ControllerTest {
         @DisplayName("기본 컵 3개도 저장된다.")
         @Test
         void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
-            // given
-            databaseCleaner.clean();
-
-            OauthAccount oauthAccount = new OauthAccount("test", KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
             cupEmojiRepository.save(new CupEmoji("http://example1.com"));
             cupEmojiRepository.save(new CupEmoji("http://example2.com"));
             CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
@@ -164,7 +172,7 @@ class MemberControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createMemberRequest)))
                     .andExpect(status().isOk());
 
-            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId("test").orElseThrow();
+            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId(ONBOARDING_OAUTH_ID).orElseThrow();
             Member foundMember = foundOauthAccount.getMember();
             List<Cup> cups = cupRepository.findAllByMember(foundMember);
 
@@ -271,36 +279,16 @@ class MemberControllerTest extends ControllerTest {
     @Nested
     class Delete {
 
-        @BeforeEach
-        void setUp() {
-            databaseCleaner.clean();
-        }
-
         @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버가 삭제된다")
         @Test
         void success_withValidToken() throws Exception {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            Member savedMember = memberRepository.save(member);
-
-            OauthAccount oauthAccount = new OauthAccount(savedMember, "temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
                     .withOauthAccount(oauthAccount)
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
             String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
-
-            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://cup-emoji.com"));
-
-            Cup cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, savedCupEmoji)
-                    .build();
-            cupRepository.save(cup);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -309,7 +297,7 @@ class MemberControllerTest extends ControllerTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                            .buildWithCup(savedCup);
+                    .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -332,21 +320,10 @@ class MemberControllerTest extends ControllerTest {
         @Test
         void success_whenNicknameCanBeNicknameOfDeletedMember() throws Exception {
             // given
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .memberNickname(new MemberNickname("체체"))
-                    .build();
-            Member savedMember = memberRepository.save(member);
-
-            OauthAccount oauthAccount = new OauthAccount(savedMember, "temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             AccountRefreshToken accountRefreshToken = AccountRefreshTokenFixtureBuilder
                     .withOauthAccount(oauthAccount)
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
-
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
             // when
             mockMvc.perform(delete("/members")

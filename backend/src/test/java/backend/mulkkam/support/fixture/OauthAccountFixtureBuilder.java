@@ -1,4 +1,4 @@
-package backend.mulkkam.support;
+package backend.mulkkam.support.fixture;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;

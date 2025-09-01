@@ -3,6 +3,9 @@ spring:
     name: mulkkam
   profiles:
     include: private
+  test:
+    database:
+      replace: NONE
   datasource:
     url: jdbc:h2:mem:testdb;MODE=MySQL
     driver-class-name: org.h2.Driver

@@ -1,6 +1,8 @@
 package backend.mulkkam.cup.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
+import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -20,20 +22,18 @@ import org.hibernate.annotations.SQLRestriction;
 @Entity
 public class CupEmoji extends BaseEntity {
 
-    private static final String DEFAULT_CUP_EMOJI_URL = "https://github.com/user-attachments/assets/df68b91b-772c-4feb-bc2a-59955fe74c57";
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "url", nullable = false)
-    private String url;
+    @AttributeOverride(name = "value", column = @Column(name = "url", nullable = false))
+    private CupEmojiUrl url;
 
     public CupEmoji(String url) {
-        this.url = url;
+        this.url = new CupEmojiUrl(url);
     }
 
-    public static String getDefaultCupEmojiUrl() {
-        return DEFAULT_CUP_EMOJI_URL;
+    public CupEmoji(CupEmojiUrl cupEmojiUrl) {
+        this.url = cupEmojiUrl;
     }
 }

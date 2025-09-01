@@ -85,7 +85,7 @@ public class MemberService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        if (member.isSameNickname(new MemberNickname(nickname))) {
+        if (member.isSameNickname(nickname)) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
         validateDuplicateNickname(nickname);

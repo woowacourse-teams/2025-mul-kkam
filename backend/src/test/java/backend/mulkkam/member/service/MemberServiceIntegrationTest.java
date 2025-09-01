@@ -42,13 +42,13 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.OauthAccountFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -93,6 +93,8 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
+
+    private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -397,10 +399,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
-            CupEmoji cupEmoji = new CupEmoji("http://example.com");
-            CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji).build();
-            Cup savedCup = cupRepository.save(cup);
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .build();
+            cupRepository.save(cup);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -413,7 +416,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .buildWithCup(savedCup);
+                    .buildWithCup(cup);
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -537,10 +540,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
-            CupEmoji savedCupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
-            Cup cup = CupFixtureBuilder.withMemberAndCupEmoji(member, savedCupEmoji)
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
-            Cup savedCup = cupRepository.save(cup);
+            cupRepository.save(cup);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder.withMember(member)
                     .build();
@@ -548,7 +552,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .buildWithCup(savedCup);
+                    .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             Device device = new Device("token", "id", member);
@@ -564,7 +568,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             assertSoftly(softly -> {
                 softly.assertThat(accountRefreshTokenRepository.findById(accountRefreshToken.getId())).isEmpty();
                 softly.assertThat(oauthAccountRepository.findById(oauthAccount.getId())).isEmpty();
-                softly.assertThat(cupRepository.findById(savedCup.getId())).isEmpty();
+                softly.assertThat(cupRepository.findById(cup.getId())).isEmpty();
                 softly.assertThat(intakeHistoryRepository.findById(intakeHistory.getId())).isEmpty();
                 softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();

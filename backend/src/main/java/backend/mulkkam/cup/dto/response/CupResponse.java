@@ -26,7 +26,7 @@ public record CupResponse(
                 cup.getCupAmount().value(),
                 cup.getCupRank().value(),
                 cup.getIntakeType(),
-                cup.getCupEmoji().getUrl()
+                cup.getCupEmoji().getUrl().value()
         );
     }
 }

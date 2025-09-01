@@ -15,6 +15,7 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
@@ -26,11 +27,11 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 import java.util.List;
 import java.util.Optional;
-import org.junit.jupiter.api.BeforeEach;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -54,14 +55,8 @@ class CupServiceUnitTest {
     @InjectMocks
     private CupService cupService;
 
-    private Long cupEmojiId;
-    private CupEmoji cupEmoji;
-
-    @BeforeEach
-    void setUp() {
-        cupEmojiId = 1L;
-        cupEmoji = new CupEmoji(cupEmojiId, "https://cup.com");
-    }
+    private final Long cupEmojiId = 1L;
+    private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, new CupEmojiUrl("https://cup.com"));;
 
     @DisplayName("컵을 생성할 때")
     @Nested
@@ -416,7 +411,7 @@ class CupServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(cup1.getNickname().value()).isEqualTo(afterCupNickName);
                 softly.assertThat(cup1.getCupAmount().value()).isEqualTo(afterCupAmount);
-                softly.assertThat(cup1.getCupEmoji().getUrl()).isEqualTo("http://example.com");
+                softly.assertThat(cup1.getCupEmoji().getUrl().value()).isEqualTo("http://example.com");
                 softly.assertThat(cup2.getNickname().value()).isEqualTo(beforeCupNickName2);
                 softly.assertThat(cup2.getCupAmount().value()).isEqualTo(beforeCupAmount2);
             });

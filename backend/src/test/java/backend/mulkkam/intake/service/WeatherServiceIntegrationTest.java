@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
