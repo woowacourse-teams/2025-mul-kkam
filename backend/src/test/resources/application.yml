@@ -23,14 +23,3 @@ spring:
 open-weather:
   api:
     key: temp
-
-logging:
-  level:
-    org:
-      springframework:
-        transaction: TRACE
-        jdbc:
-          datasource:
-            org.springframework.jdbc.datasource.DataSourceTransactionManager: TRACE
-      hibernate:
-        SQL: DEBUG
