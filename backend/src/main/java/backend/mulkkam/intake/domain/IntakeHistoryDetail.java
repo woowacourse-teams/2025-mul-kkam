@@ -52,6 +52,7 @@ public class IntakeHistoryDetail extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
     private IntakeAmount intakeAmount;
 
+    @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "cup_emoji_url", nullable = false))
     private CupEmojiUrl cupEmojiUrl;
 
