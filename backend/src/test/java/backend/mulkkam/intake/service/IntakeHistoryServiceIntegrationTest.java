@@ -523,8 +523,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> intakeHistoryService.deleteDetailHistory(intakeHistory.getId(),
-                            new MemberDetails(member)))
+                    () -> intakeHistoryService.deleteDetailHistory(
+                            intakeHistoryDetail.getId(),
+                            new MemberDetails(member)
+                    ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
         }
