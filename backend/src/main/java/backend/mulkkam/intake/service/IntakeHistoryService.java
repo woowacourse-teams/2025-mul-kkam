@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
@@ -58,12 +59,21 @@ public class IntakeHistoryService {
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
 
         Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
+        if (!cup.isOwnedBy(member)) {
+            throw new CommonException(NOT_PERMITTED_FOR_CUP);
+        }
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(intakeHistory,
-                cup);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(
+                intakeHistory,
+                cup
+        );
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
-        return getCreateIntakeHistoryResponse(intakeDate, member, intakeHistory,
-                intakeHistoryDetail.getIntakeAmount().value());
+        return getCreateIntakeHistoryResponse(
+                intakeDate,
+                member,
+                intakeHistory,
+                intakeHistoryDetail.getIntakeAmount().value()
+        );
     }
 
     @Transactional
