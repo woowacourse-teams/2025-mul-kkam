@@ -65,7 +65,7 @@ public class IntakeHistoryDetail extends BaseEntity {
         this.intakeHistory = intakeHistory;
         this.intakeType = cup.getIntakeType();
         this.intakeAmount = new IntakeAmount(cup.calculateHydration());
-        this.cupEmojiUrl = cup.getCupEmoji().getUrl();
+        this.cupEmojiUrl = getCupEmojiUrl(cup);
     }
 
     public IntakeHistoryDetail(
@@ -79,6 +79,13 @@ public class IntakeHistoryDetail extends BaseEntity {
         this.intakeType = intakeType;
         this.intakeAmount = new IntakeAmount(intakeType.calculateHydration(intakeAmount));
         this.cupEmojiUrl = CupEmojiUrl.getDefault();
+    }
+
+    private CupEmojiUrl getCupEmojiUrl(Cup cup) {
+        if (cup.getCupEmoji() == null) {
+            return CupEmojiUrl.getDefault();
+        }
+        return cup.getCupEmoji().getUrl();
     }
 
     public boolean isOwnedBy(Member comparedMember) {
