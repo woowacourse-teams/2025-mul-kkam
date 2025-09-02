@@ -28,7 +28,6 @@ class IntakeRecommendedTargetAmountServiceIntegrationTest extends ServiceIntegra
         @Test
         void success_withHighAverageTemperature() {
             // given
-            Long memberId = 1L;
             double weight = 70.0;
             double averageTemperature = 27.0;
 
@@ -38,8 +37,10 @@ class IntakeRecommendedTargetAmountServiceIntegrationTest extends ServiceIntegra
             memberRepository.save(member);
 
             // when
-            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(memberId,
-                    averageTemperature);
+            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
+                    member.getId(),
+                    averageTemperature
+            );
 
             // then
             ExtraIntakeAmount expected = new ExtraIntakeAmount(350);
@@ -50,7 +51,6 @@ class IntakeRecommendedTargetAmountServiceIntegrationTest extends ServiceIntegra
         @Test
         void success_withLowAverageTemperature() {
             // given
-            Long memberId = 1L;
             Double weight = 70.0;
             double averageTemperature = 26.0;
 
@@ -60,8 +60,10 @@ class IntakeRecommendedTargetAmountServiceIntegrationTest extends ServiceIntegra
             memberRepository.save(member);
 
             // when
-            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(memberId,
-                    averageTemperature);
+            ExtraIntakeAmount actual = intakeRecommendedAmountService.calculateExtraIntakeAmountBasedOnWeather(
+                    member.getId(),
+                    averageTemperature
+            );
             // then
             assertThat(actual).isEqualTo(new ExtraIntakeAmount(0));
         }
