@@ -1,2 +1,2 @@
 ALTER TABLE cup
-    ALTER COLUMN emoji NULL;
+    ALTER COLUMN emoji SET NULL;
