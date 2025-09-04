@@ -4,12 +4,19 @@ on:
   pull_request:
     branches: [ develop ]
     types: [ opened, synchronize, reopened, edited ]
-
 jobs:
   guard:
     if: github.base_ref == 'develop'
     runs-on: ubuntu-24.04
     steps:
+      - name: Wait for pr-init-configuration
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "pr-init-configuration"
+          ref: ${{ github.event.pull_request.head.sha }}
+          intervalSeconds: 30
+          timeoutSeconds: 120
       - name: Validate PR source branch
         run: |
           BASE="${{ github.base_ref }}"

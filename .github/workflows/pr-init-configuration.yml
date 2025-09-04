@@ -1,0 +1,167 @@
+name: pr-init-configuration--base-assign-reviewer-label
+
+on:
+  pull_request_target:
+    types: [opened]
+
+permissions:
+  pull-requests: write
+  contents: read
+  issues: write
+
+jobs:
+  sync-pr:
+    name: sync-pr
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Get Branch Name
+        id: get_branch
+        run: |
+          echo "branch_name=${{ github.event.pull_request.head.ref }}" >> "$GITHUB_OUTPUT"
+
+      - name: Extract Issue Number
+        id: extract_issue
+        run: |
+          ISSUE_NUMBER="$(echo "${{ steps.get_branch.outputs.branch_name }}" | grep -oP '(?<=/)\d+(?=[^0-9]*$)' || true)"
+          echo "issue_number=${ISSUE_NUMBER}" >> "$GITHUB_OUTPUT"
+
+      - name: Get Issue Title
+        id: get_issue
+        if: steps.extract_issue.outputs.issue_number != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const issueNumber = process.env.ISSUE_NUMBER;
+            const issue = await github.rest.issues.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issueNumber,
+            });
+            core.setOutput('issue_title', issue.data.title);
+        env:
+          ISSUE_NUMBER: ${{ steps.extract_issue.outputs.issue_number }}
+
+      - name: Decide Base/Team and Update Base
+        id: decide_base
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const TEAM_MEMBERS = {
+              AN: ['junseo511', 'devfeijoa', 'hwannow'],
+              BE: ['CheChe903', 'Jin409', '2Jin1031', 'minSsan'],
+            };
+
+            const author = context.payload.pull_request.user.login;
+            const originalBase = context.payload.pull_request.base.ref;
+            // If PR targets develop-be or develop-an, skip any base update logic
+            if (originalBase === 'develop-be' || originalBase === 'develop-an') {
+              core.info("PR base is 'develop-be' or 'develop-an'; skipping base change logic");
+              // Still compute outputs for downstream steps
+              let team = '';
+              for (const [label, members] of Object.entries(TEAM_MEMBERS)) {
+                if (members.includes(author)) { team = label; break; }
+              }
+              core.setOutput('team', team);
+              core.setOutput('base_branch', originalBase);
+              core.setOutput('team_members', JSON.stringify(TEAM_MEMBERS));
+              return;
+            }
+
+            // find team
+            let team = '';
+            for (const [label, members] of Object.entries(TEAM_MEMBERS)) {
+              if (members.includes(author)) { team = label; break; }
+            }
+
+            // decide base
+            let base = 'develop';
+            if (team === 'AN') base = 'develop-an';
+            else if (team === 'BE') base = 'develop-be';
+
+            // update base if different
+            if (context.payload.pull_request.base.ref !== base) {
+              await github.rest.pulls.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.issue.number,
+                base
+              });
+              core.info(`Base updated to '${base}'`);
+            } else {
+              core.info(`Base already '${base}', skipping update`);
+            }
+
+            // outputs for later steps
+            core.setOutput('team', team);
+            core.setOutput('base_branch', base);
+            core.setOutput('team_members', JSON.stringify(TEAM_MEMBERS));
+
+      - name: Update Pull Request Title
+        if: steps.get_issue.outputs.issue_title != ''
+        uses: actions/github-script@v6
+        with:
+          script: |
+            await github.rest.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              title: process.env.ISSUE_TITLE
+            });
+        env:
+          ISSUE_TITLE: ${{ steps.get_issue.outputs.issue_title }}
+
+      - name: Auto label, reviewers, assignee
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const prNumber = context.issue.number;
+
+            const author = context.payload.pull_request.user.login;
+            const team = process.env.TEAM;
+            const TEAM_MEMBERS = JSON.parse(process.env.TEAM_MEMBERS_JSON);
+
+            // Add label by team
+            if (team) {
+              await github.rest.issues.addLabels({
+                owner,
+                repo,
+                issue_number: prNumber,
+                labels: [team],
+              });
+              core.info(`Label '${team}' added`);
+            } else {
+              core.info('No team determined, skipping label');
+            }
+
+            // Compute reviewers: same team except author
+            let reviewers = [];
+            if (team && TEAM_MEMBERS[team]) {
+              reviewers = TEAM_MEMBERS[team].filter(u => u !== author);
+            }
+
+            if (reviewers.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner,
+                repo,
+                pull_number: prNumber,
+                reviewers,
+              });
+              core.info(`Requested reviewers: ${reviewers.join(', ')}`);
+            } else {
+              core.info('No reviewers to request');
+            }
+
+            // Assign the author to the PR
+            await github.rest.issues.addAssignees({
+              owner,
+              repo,
+              issue_number: prNumber,
+              assignees: [author],
+            });
+            core.info(`Assignee set to author: ${author}`);
+        env:
+          TEAM: ${{ steps.decide_base.outputs.team }}
+          TEAM_MEMBERS_JSON: ${{ steps.decide_base.outputs.team_members }}
