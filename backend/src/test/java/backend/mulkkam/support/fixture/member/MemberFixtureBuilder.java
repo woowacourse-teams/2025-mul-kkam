@@ -1,4 +1,4 @@
-package backend.mulkkam.support.fixture;
+package backend.mulkkam.support.fixture.member;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;

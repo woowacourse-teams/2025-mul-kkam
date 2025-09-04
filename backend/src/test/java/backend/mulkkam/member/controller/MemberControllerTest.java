@@ -21,6 +21,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -41,7 +42,8 @@ import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.ArrayList;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -131,13 +133,16 @@ class MemberControllerTest extends ControllerTest {
         @Test
         void success_whenWeightAndGenderCanBeNull() throws Exception {
             // given
+            List<CreateCupRequest> createCupRequests = new ArrayList<>();
+
             CreateMemberRequest createMemberRequest = new CreateMemberRequest(
                     "test2",
                     null,
                     null,
                     1500,
                     true,
-                    true
+                    true,
+                    createCupRequests
             );
 
             // when
