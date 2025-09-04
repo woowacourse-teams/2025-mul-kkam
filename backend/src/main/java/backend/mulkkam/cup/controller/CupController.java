@@ -57,7 +57,7 @@ public class CupController {
     @ApiResponse(responseCode = "404", description = "존재하지 않는 음용 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Void> createAtLastRank(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @RequestBody CreateCupWithoutRankRequest registerCupRequest

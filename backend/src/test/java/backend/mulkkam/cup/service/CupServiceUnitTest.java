@@ -60,7 +60,7 @@ class CupServiceUnitTest {
 
     @DisplayName("컵을 생성할 때")
     @Nested
-    class Create {
+    class CreateAtLastRank {
 
         @DisplayName("정상적으로 생성한다")
         @Test
