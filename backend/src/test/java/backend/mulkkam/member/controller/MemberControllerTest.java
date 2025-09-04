@@ -29,7 +29,6 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
@@ -37,13 +36,15 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import java.util.ArrayList;
+import backend.mulkkam.support.fixture.member.dto.CreateMemberRequestFixtureBuilder;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,8 +53,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import java.util.List;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -119,6 +118,8 @@ class MemberControllerTest extends ControllerTest {
 
         private static final String ONBOARDING_OAUTH_ID = "test2";
         private final OauthAccount onboardingAccount = new OauthAccount(ONBOARDING_OAUTH_ID, KAKAO);
+        private CreateMemberRequest createMemberRequest;
+        private List<CreateCupRequest> createCupRequests;
 
         @BeforeEach
         void setup() {
@@ -126,24 +127,38 @@ class MemberControllerTest extends ControllerTest {
 
             token = oauthJwtTokenHandler.createAccessToken(onboardingAccount);
 
-            cupEmojiRepository.save(cupEmoji);
+            CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+
+            createCupRequests = List.of(
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(1)
+                            .build()
+                    ,
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(2)
+                            .build()
+                    ,
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(3)
+                            .build()
+            );
+            createMemberRequest = CreateMemberRequestFixtureBuilder
+                    .withCreateCupRequests(createCupRequests)
+                    .build();
         }
 
         @DisplayName("몸무게 및 성별이 NULL이여도 저장된다.")
         @Test
         void success_whenWeightAndGenderCanBeNull() throws Exception {
             // given
-            List<CreateCupRequest> createCupRequests = new ArrayList<>();
-
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    "test2",
-                    null,
-                    null,
-                    1500,
-                    true,
-                    true,
-                    createCupRequests
-            );
+            CreateMemberRequest createMemberRequest = CreateMemberRequestFixtureBuilder
+                    .withCreateCupRequests(createCupRequests)
+                    .weight(null)
+                    .gender(null)
+                    .build();
 
             // when
             mockMvc.perform(post("/members")
@@ -158,18 +173,13 @@ class MemberControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(foundMember.getPhysicalAttributes().getGender()).isNull();
                 softly.assertThat(foundMember.getPhysicalAttributes().getWeight()).isNull();
-                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo("test2");
+                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo(createMemberRequest.memberNickname());
             });
         }
 
         @DisplayName("기본 컵 3개도 저장된다.")
         @Test
         void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
-            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
-            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
-                    true);
-
             // when
             mockMvc.perform(post("/members")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
@@ -184,9 +194,9 @@ class MemberControllerTest extends ControllerTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(cups.size()).isEqualTo(3);
-                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
-                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
-                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
+                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo(createCupRequests.getFirst().cupNickname());
+                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo(createCupRequests.get(1).cupNickname());
+                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo(createCupRequests.get(2).cupNickname());
             });
         }
     }

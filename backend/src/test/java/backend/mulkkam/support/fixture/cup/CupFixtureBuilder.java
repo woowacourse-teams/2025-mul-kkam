@@ -1,4 +1,4 @@
-package backend.mulkkam.support.fixture;
+package backend.mulkkam.support.fixture.cup;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;

@@ -29,7 +29,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
