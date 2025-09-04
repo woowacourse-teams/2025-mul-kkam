@@ -10,11 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Ensure PR source branch matches v*.*.*
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          PATTERN: '^v[0-9]+\.[0-9]+\.[0-9]+$'
+        shell: bash
         run: |
-          HEAD_REF="${{ github.head_ref }}"
-          if [[ "$HEAD_REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "OK: head_ref=$HEAD_REF matches release pattern."
+          set -Eeuo pipefail
+          if [[ "${HEAD_REF}" =~ ${PATTERN} ]]; then
+            echo "OK: head_ref=${HEAD_REF} matches release pattern."
           else
-            echo "BLOCKED: Only branches like v1.2.3 can merge to main. Got: $HEAD_REF"
+            msg="BLOCKED: Only branches like v1.2.3 can merge to main. Got: ${HEAD_REF}"
+            echo "${msg}"
+            echo "${msg}" >> "${GITHUB_STEP_SUMMARY}"
             exit 1
           fi
