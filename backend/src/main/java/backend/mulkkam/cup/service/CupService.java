@@ -3,6 +3,7 @@ package backend.mulkkam.cup.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_COUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP_EMOJI;
@@ -18,6 +19,7 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CreateCup;
 import backend.mulkkam.cup.dto.CupRankDto;
+import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
@@ -29,7 +31,9 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,13 +59,26 @@ public class CupService {
         return new CupsResponse(cups);
     }
 
+    public void createAll(
+            List<CreateCupRequest> cupRequests,
+            Member member
+    ) {
+        List<CreateCup> createCups = toCreateCups(cupRequests);
+        List<CupRank> cupRanks = createCups.stream()
+                .map(CreateCup::cupRank)
+                .toList();
+        validateDistinctRanks(cupRanks);
+
+        createCups.forEach(createCup -> create(createCup, member));
+    }
+
     public CupResponse createAtLastRank(
             CreateCupWithoutRankRequest createCupWithoutRankRequest,
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
         CupEmoji cupEmoji = getCupEmoji(createCupWithoutRankRequest.cupEmojiId());
-        CreateCup createCup = createCupWithoutRankRequest.toCreateCupRequest(calculateNextCupRank(member), cupEmoji);
+        CreateCup createCup = createCupWithoutRankRequest.toCreateCup(calculateNextCupRank(member), cupEmoji);
 
         return create(createCup, member);
     }
@@ -150,6 +167,16 @@ public class CupService {
         return new CupRank(cupCount + 1);
     }
 
+    private List<CreateCup> toCreateCups(List<CreateCupRequest> cupRequests) {
+        List<CreateCup> createCups = new ArrayList<>();
+        for (CreateCupRequest createCupRequest : cupRequests) {
+            CupRank cupRank = new CupRank(createCupRequest.cupRank());
+            CupEmoji cupEmoji = getCupEmoji(createCupRequest.cupEmojiId());
+            createCups.add(createCupRequest.toCreateCup(cupRank, cupEmoji));
+        }
+        return createCups;
+    }
+
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {
         Map<Long, CupRank> ranks = new HashMap<>();
         for (CupRankDto cup : cupRanks) {
@@ -159,6 +186,14 @@ public class CupService {
             ranks.put(cup.id(), new CupRank(cup.rank()));
         }
         return ranks;
+    }
+
+    private void validateDistinctRanks(List<CupRank> cupRanks) {
+        Set<CupRank> distinctCupRanks = new HashSet<>(cupRanks);
+
+        if (distinctCupRanks.size() != cupRanks.size()) {
+            throw new CommonException(DUPLICATED_CUP_RANKS);
+        }
     }
 
     private List<Cup> getAllByIdsAndMemberId(
