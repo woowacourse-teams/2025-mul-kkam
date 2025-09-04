@@ -1,0 +1,7 @@
+CREATE TABLE cup_emoji
+(
+    id         BIGINT PRIMARY KEY AUTO_INCREMENT,
+    url        VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    deleted_at TIMESTAMP    NULL
+);

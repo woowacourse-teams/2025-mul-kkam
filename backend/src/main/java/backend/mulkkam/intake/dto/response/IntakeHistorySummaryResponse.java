@@ -39,13 +39,6 @@ public record IntakeHistorySummaryResponse(
     }
 
     public IntakeHistorySummaryResponse(LocalDate date) {
-        this(
-                date,
-                0,
-                0,
-                0.0,
-                0,
-                Collections.emptyList()
-        );
+        this(date, 0);
     }
 }

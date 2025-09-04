@@ -93,10 +93,10 @@ public class IntakeAmountService {
 
     private void updateTargetAmountSnapshot(Member member) {
         LocalDate today = LocalDate.now();
-        Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
+        Optional<TargetAmountSnapshot> foundTargetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
                 member.getId(), today);
-        if (targetAmountSnapshot.isPresent()) {
-            targetAmountSnapshot.get().updateTargetAmount(member.getTargetAmount());
+        if (foundTargetAmountSnapshot.isPresent()) {
+            foundTargetAmountSnapshot.get().updateTargetAmount(member.getTargetAmount());
             return;
         }
         targetAmountSnapshotRepository.save(new TargetAmountSnapshot(member, today, member.getTargetAmount()));

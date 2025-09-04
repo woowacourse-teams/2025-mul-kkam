@@ -1,7 +1,9 @@
 package backend.mulkkam.intake.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.AttributeOverride;
@@ -18,15 +20,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.time.LocalTime;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -42,28 +40,52 @@ public class IntakeHistoryDetail extends BaseEntity {
     @Column(nullable = false)
     private LocalTime intakeTime;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
-    private IntakeAmount intakeAmount;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(nullable = false)
+    private IntakeHistory intakeHistory;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private IntakeType intakeType;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(nullable = false)
-    private IntakeHistory intakeHistory;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "intake_amount", nullable = false))
+    private IntakeAmount intakeAmount;
+
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "cup_emoji_url", nullable = false))
+    private CupEmojiUrl cupEmojiUrl;
 
     public IntakeHistoryDetail(
             LocalTime intakeTime,
-            IntakeAmount intakeAmount,
-            IntakeType intakeType,
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            Cup cup
     ) {
         this.intakeTime = intakeTime;
-        this.intakeAmount = intakeAmount;
-        this.intakeType = intakeType;
         this.intakeHistory = intakeHistory;
+        this.intakeType = cup.getIntakeType();
+        this.intakeAmount = new IntakeAmount(cup.calculateHydration());
+        this.cupEmojiUrl = getCupEmojiUrl(cup);
+    }
+
+    public IntakeHistoryDetail(
+            LocalTime intakeTime,
+            IntakeHistory intakeHistory,
+            IntakeType intakeType,
+            int intakeAmount
+    ) {
+        this.intakeTime = intakeTime;
+        this.intakeHistory = intakeHistory;
+        this.intakeType = intakeType;
+        this.intakeAmount = new IntakeAmount(intakeType.calculateHydration(intakeAmount));
+        this.cupEmojiUrl = CupEmojiUrl.getDefault();
+    }
+
+    private CupEmojiUrl getCupEmojiUrl(Cup cup) {
+        if (cup.getCupEmoji() == null) {
+            return CupEmojiUrl.getDefault();
+        }
+        return cup.getCupEmoji().getUrl();
     }
 
     public boolean isOwnedBy(Member comparedMember) {

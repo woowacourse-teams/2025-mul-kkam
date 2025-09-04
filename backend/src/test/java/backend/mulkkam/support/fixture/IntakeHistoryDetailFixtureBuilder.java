@@ -1,5 +1,6 @@
-package backend.mulkkam.support;
+package backend.mulkkam.support.fixture;
 
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -12,6 +13,7 @@ public class IntakeHistoryDetailFixtureBuilder {
     private LocalTime time = LocalTime.of(10, 0, 0);
     private IntakeAmount intakeAmount = new IntakeAmount(1_000);
     private IntakeType intakeType = IntakeType.WATER;
+    private String cupEmojiUrl = "http://example.com";
 
     private IntakeHistoryDetailFixtureBuilder(IntakeHistory intakeHistory) {
         this.intakeHistory = intakeHistory;
@@ -36,12 +38,26 @@ public class IntakeHistoryDetailFixtureBuilder {
         return this;
     }
 
-    public IntakeHistoryDetail build() {
+    public IntakeHistoryDetailFixtureBuilder cupEmojiUrl(String cupEmojiUrl) {
+        this.cupEmojiUrl = cupEmojiUrl;
+        return this;
+    }
+
+    public IntakeHistoryDetail buildWithCup(Cup cup) {
         return new IntakeHistoryDetail(
                 this.time,
-                this.intakeAmount,
+                this.intakeHistory,
                 this.intakeType,
-                this.intakeHistory
+                cup.getCupAmount().value()
+        );
+    }
+
+    public IntakeHistoryDetail buildWithInput() {
+        return new IntakeHistoryDetail(
+                this.time,
+                this.intakeHistory,
+                this.intakeType,
+                this.intakeAmount.value()
         );
     }
 }

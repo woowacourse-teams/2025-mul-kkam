@@ -1,7 +1,7 @@
 package backend.mulkkam.version.controller;
 
-import backend.mulkkam.support.AppMinimumVersionFixtureBuilder;
-import backend.mulkkam.support.ControllerTest;
+import backend.mulkkam.support.fixture.AppMinimumVersionFixtureBuilder;
+import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.version.domain.AppMinimumVersion;
 import backend.mulkkam.version.dto.AppMinimumVersionResponse;
 import backend.mulkkam.version.repository.AppMinimumVersionRepository;

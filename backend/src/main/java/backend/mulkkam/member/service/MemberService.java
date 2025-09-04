@@ -11,6 +11,8 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -62,6 +64,7 @@ public class MemberService {
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final CupEmojiRepository cupEmojiRepository;
 
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -82,7 +85,7 @@ public class MemberService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        if (member.isSameNickname(new MemberNickname(nickname))) {
+        if (member.isSameNickname(nickname)) {
             throw new CommonException(SAME_AS_BEFORE_NICKNAME);
         }
         validateDuplicateNickname(nickname);
@@ -126,7 +129,9 @@ public class MemberService {
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
-        cupRepository.saveAll(CupFactory.createDefaultCups(member));
+
+        List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
+        cupRepository.saveAll(CupFactory.createDefaultCups(member, cupEmojis));
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
@@ -184,12 +189,11 @@ public class MemberService {
 
         oauthAccountRepository.findByMember(member)
                 .ifPresent((this::deleteRefreshTokenAndAccount));
-
-        cupRepository.deleteByMember(member);
         deviceRepository.deleteByMember(member);
 
         List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
         intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
+        cupRepository.deleteByMember(member);
 
         intakeHistoryRepository.deleteByMember(member);
 

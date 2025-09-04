@@ -49,8 +49,7 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             Boolean alreadyErrorLogging = (Boolean) request.getAttribute("errorLoggedByGlobal");
             if (alreadyErrorLogging == null || !alreadyErrorLogging) {
 
-                printResponseHeader(request, response);
-                printResponseBody(wrappingResponse);
+                printResponse(request, response, wrappingResponse);
             }
             wrappingResponse.copyBodyToResponse();
         } finally {
@@ -70,12 +69,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             auth = maskAuthorization(auth);
         }
         log.info("[REQUEST] {} {} token = {}", methodType, uri, auth);
-    }
-
-    private String buildDecodedRequestUri(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        String query = decodeQuery(request.getQueryString());
-        return (query == null || query.isBlank()) ? path : path + "?" + query;
     }
 
     private String decodeQuery(String rawQuery) {
@@ -111,31 +104,37 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         return t.substring(0, 6) + "..." + t.substring(t.length() - 4);
     }
 
-    private void printResponseHeader(
+    private void printResponse(
             HttpServletRequest request,
-            HttpServletResponse response
+            HttpServletResponse response,
+            ContentCachingResponseWrapper responseWrapper
     ) {
         Long accountId = (Long) request.getAttribute("account_id");
+        String uri = buildDecodedRequestUri(request);
         String auth = response.getHeader("Authorization");
         HttpStatus status = HttpStatus.valueOf(response.getStatus());
         if (maskAuth) {
             auth = maskAuthorization(auth);
         }
-        log.info("[RESPONSE] accountId = {}, ({}) token = {}", accountId, status, auth);
-    }
 
-    private void printResponseBody(ContentCachingResponseWrapper responseWrapper) {
+        String body;
         try {
-            String body = objectMapper.readTree(responseWrapper.getContentAsByteArray())
+            body = objectMapper.readTree(responseWrapper.getContentAsByteArray())
                     .toPrettyString()
                     .replaceAll("\\R\\s*\\}$", "}");
-            log.info("ResponseBody: {}", body);
             if (body.isEmpty()) {
                 body = "NONE";
             }
-            log.info("↓\nResponseBody: {}", body);
         } catch (IOException e) {
-            log.info("↓\nResponseBody: {}", responseWrapper.getContentType() + "NOT JSON");
+            body = responseWrapper.getContentType() + "NOT JSON";
         }
+
+        log.info("[RESPONSE] {} accountId = {}, ({}) token = {}, responseBody: {}", uri, accountId, status, auth, body);
+    }
+
+    private String buildDecodedRequestUri(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        String query = decodeQuery(request.getQueryString());
+        return (query == null || query.isBlank()) ? path : path + "?" + query;
     }
 }

@@ -17,10 +17,10 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import backend.mulkkam.support.ControllerTest;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.NotificationFixtureBuilder;
-import backend.mulkkam.support.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.controller.ControllerTest;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,10 +52,8 @@ class SuggestionNotificationControllerTest extends ControllerTest {
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
-
     @BeforeEach
     void setUp() {
-        databaseCleaner.clean();
         member = MemberFixtureBuilder
                 .builder()
                 .build();

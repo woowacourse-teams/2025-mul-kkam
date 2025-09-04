@@ -1,6 +1,8 @@
 package backend.mulkkam.version.repository;
 
-import backend.mulkkam.support.AppMinimumVersionFixtureBuilder;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import backend.mulkkam.support.fixture.AppMinimumVersionFixtureBuilder;
 import backend.mulkkam.version.domain.AppMinimumVersion;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,8 +13,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 @DataJpaTest
 class AppMinimumVersionRepositoryTest {
@@ -28,29 +28,31 @@ class AppMinimumVersionRepositoryTest {
         @Test
         void success_withAlreadySavedMultipleVersions() {
             // given
-            AppMinimumVersion firstSaved = AppMinimumVersionFixtureBuilder.builder()
+            LocalDateTime localDateTime = LocalDateTime.of(
+                    LocalDate.of(2025, 12, 31),
+                    LocalTime.of(15, 30)
+            );
+            AppMinimumVersion firstAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
+                    .updatedAt(localDateTime)
+                    .build();
+            AppMinimumVersion savedFirstAppMinimumVersion = appMinimumVersionRepository.save(firstAppMinimumVersion);
+
+            AppMinimumVersion secondAppMinimumVersion = AppMinimumVersionFixtureBuilder.builder()
                     .updatedAt(LocalDateTime.of(
                             LocalDate.of(2025, 12, 30),
                             LocalTime.of(15, 30)
                     ))
                     .build();
-            appMinimumVersionRepository.save(firstSaved);
-
-            AppMinimumVersion secondSaved = AppMinimumVersionFixtureBuilder.builder()
-                    .updatedAt(LocalDateTime.of(
-                            LocalDate.of(2025, 12, 31),
-                            LocalTime.of(15, 30)
-                    ))
-                    .build();
-            appMinimumVersionRepository.save(secondSaved);
+            appMinimumVersionRepository.save(secondAppMinimumVersion);
 
             // when
-            Optional<AppMinimumVersion> latestAppMinimumVersion = appMinimumVersionRepository.findLatestAppMinimumVersion();
+            Optional<AppMinimumVersion> foundLatestAppMinimumVersion = appMinimumVersionRepository.findFirstByOrderByUpdatedAtDesc();
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(latestAppMinimumVersion).isPresent();
-                softly.assertThat(latestAppMinimumVersion.get().getId()).isEqualTo(secondSaved.getId());
+                softly.assertThat(foundLatestAppMinimumVersion).isPresent();
+                softly.assertThat(foundLatestAppMinimumVersion.get().getId()).isEqualTo(savedFirstAppMinimumVersion.getId());
+                softly.assertThat(foundLatestAppMinimumVersion.get().getUpdatedAt()).isEqualTo(localDateTime);
             });
         }
     }

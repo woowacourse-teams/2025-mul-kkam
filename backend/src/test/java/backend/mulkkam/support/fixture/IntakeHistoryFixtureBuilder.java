@@ -1,4 +1,4 @@
-package backend.mulkkam.support;
+package backend.mulkkam.support.fixture;
 
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.member.domain.Member;

@@ -17,14 +17,28 @@ public record IntakeHistoryDetailResponse(
         int intakeAmount,
 
         @Schema(description = "음용 타입", example = "WATER")
-        IntakeType intakeType
+        IntakeType intakeType,
+
+        @Schema(description = "컵 이미지 url", example = "http://example.com")
+        String cupEmojiUrl
 ) {
     public IntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail) {
         this(
                 intakeDetail.getId(),
                 intakeDetail.getIntakeTime(),
                 intakeDetail.getIntakeAmount().value(),
-                intakeDetail.getIntakeType()
+                intakeDetail.getIntakeType(),
+                intakeDetail.getCupEmojiUrl().value()
+        );
+    }
+
+    public IntakeHistoryDetailResponse(IntakeHistoryDetail intakeDetail, String cupEmojiUrl) {
+        this(
+                intakeDetail.getId(),
+                intakeDetail.getIntakeTime(),
+                intakeDetail.getIntakeAmount().value(),
+                intakeDetail.getIntakeType(),
+                cupEmojiUrl
         );
     }
 }
