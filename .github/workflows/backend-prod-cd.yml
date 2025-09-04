@@ -3,7 +3,7 @@ name: backend-prod-cd
 on:
   push:
     branches:
-      - 'release/v*.*.*'
+      - 'v*.*.*'
 
 jobs:
   build-and-push:
@@ -19,11 +19,11 @@ jobs:
         id: ver
         shell: bash
         run: |
-          BRANCH="${GITHUB_REF_NAME}"                   
-          if [[ ! "$BRANCH" =~ ^release/v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Unsupported branch: $BRANCH"; exit 1   
+          BRANCH="${GITHUB_REF_NAME}"
+          if [[ ! "$BRANCH" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Unsupported branch: $BRANCH"; exit 1
           fi
-          VERSION="${BRANCH#release/}"                  
+          VERSION="$BRANCH"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Resolved VERSION=$VERSION"
 
@@ -64,7 +64,7 @@ jobs:
     runs-on: [ self-hosted, linux, prod ]
     needs: build-and-push
     env:
-      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}   # build에서 전달한 vX.Y.Z
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
     steps:
       - name: Stop and remove existing container
         run: |
@@ -91,7 +91,6 @@ jobs:
           EOF
           echo "Injected IMAGE_TAG=${IMAGE_TAG}"
 
-      # compose가 image: mulkkam/mulkkam-prod:${IMAGE_TAG} 를 읽어 해당 태그로 실행
       - name: Stop existing services
         working-directory: /home/ubuntu/mulkkam
         run: sudo docker compose stop backend-app
