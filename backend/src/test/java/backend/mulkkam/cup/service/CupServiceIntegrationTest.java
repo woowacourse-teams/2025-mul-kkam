@@ -73,6 +73,27 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @DisplayName("정상적으로 저장한다")
         @Test
         void success_validData() {
+            // when
+            CupResponse cupResponse = cupService.create(createCup, savedMember);
+
+            // then
+            List<Cup> actual = cupRepository.findAllByMember(savedMember);
+
+            assertSoftly(softly -> {
+                softly.assertThat(cupResponse.cupRank()).isEqualTo(1);
+                softly.assertThat(cupResponse.emojiUrl()).isEqualTo(savedCupEmoji.getUrl().value());
+                softly.assertThat(actual.size()).isEqualTo(1);
+            });
+        }
+    }
+
+    @DisplayName("랭크 없이 컵을 생성할 때에")
+    @Nested
+    class CreateAtLastRank {
+
+        @DisplayName("랭크는 마지막 랭크로 정상적으로 저장한다")
+        @Test
+        void success_validData() {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
