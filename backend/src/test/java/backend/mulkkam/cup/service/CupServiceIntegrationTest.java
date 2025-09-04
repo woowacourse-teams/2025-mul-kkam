@@ -61,7 +61,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
     @DisplayName("컵을 생성할 때에")
     @Nested
-    class Create {
+    class CreateAtLastRank {
 
         private final Member member = MemberFixtureBuilder.builder().build();
 
