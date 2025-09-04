@@ -4,6 +4,11 @@
 
 개인별 물 섭취량 관리 서비스
 
+# 백엔드
+## 인프라 다이어그램
+<img width="1368" height="892" alt="image" src="https://github.com/user-attachments/assets/fb610be3-f418-454e-a4c2-fbfb4e575f39" />
+
+
 ## 팀원 소개
 
 |<img src="https://github.com/junseo511.png" width="125" />|<img src="https://github.com/hwannow.png" width="125" />|<img src="https://github.com/devfeijoa.png" width="125" />|<img src="https://github.com/CheChe903.png" width="125" />|<img src="https://github.com/2Jin1031.png" width="125" />|<img src="https://github.com/minSsan.png" width="125" />|<img src="https://github.com/Jin409.png" width="125" />|

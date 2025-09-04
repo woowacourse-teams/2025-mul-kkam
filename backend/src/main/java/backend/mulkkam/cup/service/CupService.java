@@ -5,11 +5,13 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -22,6 +24,7 @@ import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.member.domain.Member;
@@ -44,6 +47,7 @@ public class CupService {
 
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
+    private final CupEmojiRepository cupEmojiRepository;
 
     public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -53,12 +57,13 @@ public class CupService {
 
     @Transactional
     public CupResponse create(
-            CreateCupRequest registerCupRequest,
+            CreateCupRequest createCupRequest,
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeType intakeType = IntakeType.findByName(registerCupRequest.intakeType());
-        Cup cup = registerCupRequest.toCup(member, calculateNextCupRank(member), intakeType);
+        IntakeType intakeType = IntakeType.findByName(createCupRequest.intakeType());
+        CupEmoji cupEmoji = getCupEmoji(createCupRequest.cupEmojiId());
+        Cup cup = createCupRequest.toCup(member, calculateNextCupRank(member), intakeType, cupEmoji);
 
         Cup createdCup = cupRepository.save(cup);
 
@@ -101,13 +106,14 @@ public class CupService {
     ) {
         Cup cup = getCup(cupId);
         Member member = getMember(memberDetails.id());
+        CupEmoji cupEmoji = getCupEmoji(updateCupRequest.cupEmojiId());
 
         validateCupOwnership(member, cup);
         cup.update(
                 new CupNickname(updateCupRequest.cupNickname()),
                 new CupAmount(updateCupRequest.cupAmount()),
                 updateCupRequest.intakeType(),
-                updateCupRequest.emoji()
+                cupEmoji
         );
     }
 
@@ -132,7 +138,9 @@ public class CupService {
     public void reset(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         cupRepository.deleteByMember(member);
-        cupRepository.saveAll(CupFactory.createDefaultCups(member));
+
+        List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
+        cupRepository.saveAll(CupFactory.createDefaultCups(member, cupEmojis));
     }
 
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {
@@ -192,6 +200,11 @@ public class CupService {
         if (!cup.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
+    }
+
+    private CupEmoji getCupEmoji(Long emojiId) {
+        return cupEmojiRepository.findById(emojiId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP_EMOJI));
     }
 
     private Cup getCup(final Long id) {

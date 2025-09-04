@@ -24,8 +24,8 @@ import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -107,7 +107,7 @@ class NotificationServiceUnitTest {
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
-                results.forEach(r -> softly.assertThat(r.isRead()).isTrue());
+                results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
             });
         }

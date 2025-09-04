@@ -12,14 +12,13 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.NotificationFixtureBuilder;
-import backend.mulkkam.support.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -56,21 +55,22 @@ class SuggestionNotificationUnitServiceTest {
         void success_validInput() {
             // given
             Notification notification = NotificationFixtureBuilder.withMember(member)
-                .build();
+                    .build();
             SuggestionNotification suggestionNotification = SuggestionNotificationFixtureBuilder
-                .withNotification(notification)
-                .recommendedTargetAmount(2000)
-                .build();
+                    .withNotification(notification)
+                    .recommendedTargetAmount(2_000)
+                    .build();
 
             when(suggestionNotificationRepository.findByIdAndNotificationMemberId(10L, memberId))
-                .thenReturn(Optional.of(suggestionNotification));
+                    .thenReturn(Optional.of(suggestionNotification));
 
             // when
             suggestionNotificationService.applyTargetAmount(10L, new MemberDetails(memberId));
 
             // then
             verify(intakeAmountService, times(1))
-                .modifyDailyTargetBySuggested(new MemberDetails(memberId), new ModifyIntakeTargetAmountByRecommendRequest(new TargetAmount(2000)));
+                    .modifyDailyTargetBySuggested(new MemberDetails(memberId),
+                            new ModifyIntakeTargetAmountByRecommendRequest(2_000));
             assertThat(suggestionNotification.isApplyTargetAmount()).isTrue();
         }
 
@@ -89,7 +89,8 @@ class SuggestionNotificationUnitServiceTest {
         @Test
         void error_byNonExistingSuggestionNotificationId() {
             // given
-            when(suggestionNotificationRepository.findByIdAndNotificationMemberId(999L, memberId)).thenReturn(Optional.empty());
+            when(suggestionNotificationRepository.findByIdAndNotificationMemberId(999L, memberId)).thenReturn(
+                    Optional.empty());
 
             // when & then
             assertThatThrownBy(

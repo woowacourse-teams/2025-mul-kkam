@@ -6,6 +6,6 @@ public record UpdateCupRequest(
         String cupNickname,
         Integer cupAmount,
         IntakeType intakeType,
-        String emoji
+        Long cupEmojiId
 ) {
 }

@@ -1,9 +1,6 @@
 package backend.mulkkam.notification.domain;
 
-import backend.mulkkam.member.domain.vo.TargetAmount;
-import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -20,12 +17,11 @@ public class SuggestionNotification {
 
     @Id
     private Long id;
+    
+    @Column(nullable = false)
+    private int recommendedTargetAmount;
 
-    @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "recommended_target_amount"))
-    private TargetAmount recommendedTargetAmount;
-
-    @Column
+    @Column(nullable = false)
     private boolean applyTargetAmount;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -34,7 +30,7 @@ public class SuggestionNotification {
     private Notification notification;
 
     public SuggestionNotification(
-            TargetAmount recommendedTargetAmount,
+            int recommendedTargetAmount,
             boolean applyTargetAmount,
             Notification notification
     ) {

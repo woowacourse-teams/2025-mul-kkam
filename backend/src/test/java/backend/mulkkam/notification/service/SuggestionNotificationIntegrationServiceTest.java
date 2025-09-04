@@ -14,10 +14,10 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.NotificationFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
-import backend.mulkkam.support.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -61,20 +61,22 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
                     .build();
             SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.save(
                     SuggestionNotificationFixtureBuilder.withNotification(notification)
-                            .recommendedTargetAmount(2000)
+                            .recommendedTargetAmount(2_000)
                             .build());
 
             // when
-            suggestionNotificationService.applyTargetAmount(savedSuggestionNotification.getId(), new MemberDetails(savedMember.getId()));
+            suggestionNotificationService.applyTargetAmount(savedSuggestionNotification.getId(),
+                    new MemberDetails(savedMember.getId()));
 
             // then
-            SuggestionNotification actual = suggestionNotificationRepository.findById(savedSuggestionNotification.getId()).get();
+            SuggestionNotification actual = suggestionNotificationRepository.findById(
+                    savedSuggestionNotification.getId()).get();
             List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(savedMember);
 
             assertSoftly(softly -> {
                 softly.assertThat(actual.isApplyTargetAmount()).isTrue();
                 softly.assertThat(intakeHistories.getFirst().getTargetAmount())
-                        .isEqualTo(new TargetAmount(2000));
+                        .isEqualTo(new TargetAmount(3_000));
             });
         }
 

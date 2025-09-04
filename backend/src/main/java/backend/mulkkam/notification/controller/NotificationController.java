@@ -6,6 +6,7 @@ import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -18,8 +19,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +36,7 @@ public class NotificationController {
 
     private final ActivityService activityService;
     private final NotificationService notificationService;
+    private final NotificationRepository notificationRepository;
 
     @Operation(summary = "알림 목록 조회", description = "특정 시점 이후의 알림 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadNotificationsResponse.class)))
@@ -77,8 +81,22 @@ public class NotificationController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        GetUnreadNotificationsCountResponse getNotificationsCountResponse = notificationService.getNotificationsCount(
+        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
                 memberDetails);
-        return ResponseEntity.ok(getNotificationsCountResponse);
+        return ResponseEntity.ok(getUnreadNotificationsCountResponse);
+    }
+
+    @Operation(summary = "알림 삭제", description = "사용자의 알림을 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "삭제 성공")
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 id")
+    @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long id,
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        notificationService.delete(memberDetails, id);
+        return ResponseEntity.noContent().build();
     }
 }

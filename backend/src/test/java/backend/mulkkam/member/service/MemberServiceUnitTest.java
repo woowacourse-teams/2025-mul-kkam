@@ -20,7 +20,7 @@ import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -154,7 +154,7 @@ public class MemberServiceUnitTest {
                     .buildWithId(memberId);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(false);
+            when(memberRepository.existsByActiveNickname(newNickname)).thenReturn(false);
 
             // when & then
             assertThatCode(() -> memberService.validateDuplicateNickname(
@@ -176,7 +176,7 @@ public class MemberServiceUnitTest {
                     .memberNickname(new MemberNickname(oldNickname))
                     .buildWithId(memberId);
 
-            when(memberRepository.existsByMemberNicknameValue(newNickname)).thenReturn(true);
+            when(memberRepository.existsByActiveNickname(newNickname)).thenReturn(true);
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when & then

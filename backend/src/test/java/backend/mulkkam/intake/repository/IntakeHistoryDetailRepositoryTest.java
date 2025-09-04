@@ -6,18 +6,18 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.List;
 
 @DataJpaTest
 public class IntakeHistoryDetailRepositoryTest {
@@ -31,6 +31,16 @@ public class IntakeHistoryDetailRepositoryTest {
     @Autowired
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
+    private Member savedMember;
+
+    @BeforeEach
+    void setUp() {
+        Member member = MemberFixtureBuilder
+                .builder()
+                .build();
+        savedMember = memberRepository.save(member);
+    }
+
     @DisplayName("음용 세부 기록을 조회할 때에")
     @Nested
     class FindAll {
@@ -40,19 +50,15 @@ public class IntakeHistoryDetailRepositoryTest {
         void success_memberAndDateAreValid() {
             // given
             LocalDate date = LocalDate.of(2025, 7, 15);
-            Member member = MemberFixtureBuilder
-                    .builder()
-                    .build();
-            memberRepository.save(member);
 
             IntakeHistory firstIntakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(date)
                     .build();
             intakeHistoryRepository.save(firstIntakeHistory);
 
             IntakeHistory secondIntakeHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
+                    .withMember(savedMember)
                     .date(date.plusDays(1))
                     .build();
             intakeHistoryRepository.save(secondIntakeHistory);
@@ -60,37 +66,38 @@ public class IntakeHistoryDetailRepositoryTest {
             IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(10, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(firstIntakeHistory)
                     .time(LocalTime.of(11, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(15, 0))
-                    .build();
+                    .buildWithInput();
 
             IntakeHistoryDetail fourthIntakeDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(secondIntakeHistory)
                     .time(LocalTime.of(13, 0))
-                    .build();
+                    .buildWithInput();
 
             intakeHistoryDetailRepository.saveAll(
                     List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail, fourthIntakeDetail));
 
             // when
             List<IntakeHistoryDetail> firstDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                    member,
+                    savedMember,
                     date,
                     date
             );
             List<IntakeHistoryDetail> secondDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                    member,
+                    savedMember,
                     date.plusDays(1),
                     date.plusDays(1));
-            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(member,
+            List<IntakeHistoryDetail> allDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
+                    savedMember,
                     date,
                     date.plusDays(1));
 
@@ -101,6 +108,5 @@ public class IntakeHistoryDetailRepositoryTest {
                 softly.assertThat(allDetails).hasSize(4);
             });
         }
-
     }
 }

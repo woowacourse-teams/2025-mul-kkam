@@ -3,7 +3,6 @@ package backend.mulkkam.notification.dto;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
@@ -13,7 +12,7 @@ public record CreateTokenSuggestionNotificationRequest(
         String title,
         String body,
         Member member,
-        TargetAmount recommendedTargetAmount,
+        int recommendedTargetAmount,
         LocalDateTime createdAt
 ) {
 

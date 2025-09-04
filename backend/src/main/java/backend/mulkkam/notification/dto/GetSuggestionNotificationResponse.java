@@ -38,7 +38,7 @@ public record GetSuggestionNotificationResponse(
                 notification.getNotificationType().name(),
                 notification.getCreatedAt(),
                 notification.isRead(),
-                suggestionNotification.getRecommendedTargetAmount().value(),
+                suggestionNotification.getRecommendedTargetAmount(),
                 suggestionNotification.isApplyTargetAmount()
         );
     }

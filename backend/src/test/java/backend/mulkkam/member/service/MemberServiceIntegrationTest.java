@@ -18,6 +18,8 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -40,13 +42,13 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.OauthAccountFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -88,6 +90,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -299,6 +306,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            cupEmojiRepository.saveAll(
+                    List.of(
+                            new CupEmoji("http://example1.com"),
+                            new CupEmoji("http://example2.com")
+                    )
+            );
 
             // when
             memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
@@ -386,6 +399,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .build();
+            cupRepository.save(cup);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
@@ -397,7 +416,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithCup(cup);
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -521,7 +540,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
-            Cup cup = CupFixtureBuilder.withMember(member)
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
 
@@ -531,7 +552,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .build();
+                    .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             Device device = new Device("token", "id", member);
