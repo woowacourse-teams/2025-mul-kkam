@@ -70,10 +70,7 @@ class AccountDeleteDialogFragment :
 
             debounceRunnable =
                 Runnable {
-                    val comment =
-                        binding.etDeleteAccountConfirm.text
-                            .toString()
-                            .trim()
+                    val comment = binding.etDeleteAccountConfirm.text.toString()
 
                     binding.tvConfirm.isEnabled =
                         comment == getString(R.string.setting_account_info_delete_comment)
