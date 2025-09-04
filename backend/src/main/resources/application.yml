@@ -1,0 +1,21 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: mulkkam
+
+  profiles:
+    include: private
+    active: local
+
+management:
+  metrics:
+    enable:
+      all: false
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - metrics

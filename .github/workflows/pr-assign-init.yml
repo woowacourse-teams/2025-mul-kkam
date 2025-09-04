@@ -1,0 +1,53 @@
+name: Auto Assign Reviewers & Assignee
+
+on:
+  pull_request:
+    types: [opened, labeled, unlabeled, reopened, ready_for_review]
+
+jobs:
+  assign-reviewers-and-assignee:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign reviewers & assignee
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const androidTeam = ['junseo511', 'devfeijoa', 'hwannow'];
+            const backendTeam = ['CheChe903', 'Jin409', '2Jin1031', 'minSsan'];
+
+            const author = context.payload.pull_request.user.login;
+            const labels = context.payload.pull_request.labels.map(label => label.name);
+
+            const reviewersSet = new Set();
+
+            if (labels.includes('AN')) {
+              androidTeam.forEach(user => {
+                if (user !== author) reviewersSet.add(user);
+              });
+            }
+
+            if (labels.includes('BE')) {
+              backendTeam.forEach(user => {
+                if (user !== author) reviewersSet.add(user);
+              });
+            }
+
+            const reviewers = Array.from(reviewersSet);
+
+            if (reviewers.length > 0) {
+              await github.rest.pulls.requestReviewers({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                pull_number: context.payload.pull_request.number,
+                reviewers
+              });
+            }
+
+            await github.rest.issues.addAssignees({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              assignees: [author]
+            });

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    android:paddingHorizontal="24dp"
+    android:paddingVertical="20dp">
+
+    <ImageView
+        android:id="@+id/iv_notification_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_common_rectangle_12dp"
+        android:backgroundTint="@color/primary_10"
+        android:src="@drawable/ic_notification_sun"
+        android:padding="7dp"
+        app:layout_constraintStart_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:src="@drawable/ic_notification_sun" />
+
+    <View
+        android:id="@+id/view_unread_alarm"
+        android:layout_width="6dp"
+        android:layout_height="6dp"
+        android:layout_marginTop="2dp"
+        android:background="@drawable/bg_common_circle"
+        android:backgroundTint="@color/secondary_200"
+        app:layout_constraintEnd_toEndOf="@id/iv_notification_type"
+        app:layout_constraintTop_toTopOf="@id/iv_notification_type" />
+
+    <TextView
+        android:id="@+id/tv_notification_title"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textAppearance="@style/body5"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/iv_notification_type"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="오늘의 기온은 37도예요. 너무 덥지 않나요? 평소보다 물을 400ml 더 드셔보는건 어떠신가요?" />
+
+    <TextView
+        android:id="@+id/tv_notification_date_time"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textAppearance="@style/body5"
+        android:textColor="@color/gray_200"
+        app:layout_constraintStart_toStartOf="@id/tv_notification_title"
+        app:layout_constraintTop_toBottomOf="@id/tv_notification_title"
+        tools:text="23시간 전" />
+
+    <TextView
+        android:id="@+id/tv_suggestion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_notification_target_amount_button"
+        android:clickable="true"
+        android:focusable="true"
+        android:paddingHorizontal="12dp"
+        android:paddingVertical="8dp"
+        android:text="@string/home_notification_apply_target_amount"
+        android:textAppearance="@style/label2"
+        android:textColor="@color/black"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_notification_date_time"
+        tools:visibility="visible" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

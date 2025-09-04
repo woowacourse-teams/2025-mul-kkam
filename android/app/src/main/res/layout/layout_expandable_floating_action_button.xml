@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:id="@+id/ll_menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="6dp"
+        android:layout_marginEnd="-4dp"
+        android:gravity="end|bottom"
+        android:minHeight="1000dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/fab_drink"
+        app:layout_constraintEnd_toEndOf="@id/fab_drink" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_drink"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:backgroundTint="@color/white"
+        android:foreground="@drawable/bg_common_circle_stroke"
+        android:foregroundTint="@color/gray_200"
+        android:src="@drawable/ic_home_drink"
+        app:elevation="2dp"
+        app:fabCustomSize="80dp"
+        app:hoveredFocusedTranslationZ="4dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:maxImageSize="32dp"
+        app:pressedTranslationZ="4dp"
+        app:rippleColor="@color/gray_50"
+        app:shapeAppearanceOverlay="@style/ShapeAppearance.Fab.Rounded"
+        app:tint="@null" />
+</androidx.constraintlayout.widget.ConstraintLayout>
