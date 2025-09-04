@@ -1,11 +1,6 @@
 package backend.mulkkam.cup.dto.request;
 
-import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
-import backend.mulkkam.cup.domain.vo.CupAmount;
-import backend.mulkkam.cup.domain.vo.CupNickname;
-import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.CreateCup;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
