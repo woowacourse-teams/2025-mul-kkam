@@ -12,13 +12,13 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
-import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import backend.mulkkam.cup.dto.CreateCup;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
@@ -55,27 +55,26 @@ public class CupService {
         return new CupsResponse(cups);
     }
 
-    @Transactional
-    public CupResponse create(
-            CreateCupRequest createCupRequest,
+    public CupResponse createAtLastRank(
+            CreateCupWithoutRankRequest createCupWithoutRankRequest,
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeType intakeType = IntakeType.findByName(createCupRequest.intakeType());
-        CupEmoji cupEmoji = getCupEmoji(createCupRequest.cupEmojiId());
-        Cup cup = createCupRequest.toCup(member, calculateNextCupRank(member), intakeType, cupEmoji);
+        CupEmoji cupEmoji = getCupEmoji(createCupWithoutRankRequest.cupEmojiId());
+        CreateCup createCup = createCupWithoutRankRequest.toCreateCupRequest(calculateNextCupRank(member), cupEmoji);
 
-        Cup createdCup = cupRepository.save(cup);
-
-        return new CupResponse(createdCup);
+        return create(createCup, member);
     }
 
-    private CupRank calculateNextCupRank(Member member) {
-        final int cupCount = cupRepository.countByMemberId(member.getId());
-        if (cupCount >= MAX_CUP_COUNT) {
-            throw new CommonException(INVALID_CUP_COUNT);
-        }
-        return new CupRank(cupCount + 1);
+    @Transactional
+    public CupResponse create(
+            CreateCup createCup,
+            Member member
+    ) {
+        Cup cup = createCup.toCup(member);
+        cupRepository.save(cup);
+
+        return new CupResponse(cup);
     }
 
     @Transactional
@@ -141,6 +140,14 @@ public class CupService {
 
         List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
         cupRepository.saveAll(CupFactory.createDefaultCups(member, cupEmojis));
+    }
+
+    private CupRank calculateNextCupRank(Member member) {
+        final int cupCount = cupRepository.countByMemberId(member.getId());
+        if (cupCount >= MAX_CUP_COUNT) {
+            throw new CommonException(INVALID_CUP_COUNT);
+        }
+        return new CupRank(cupCount + 1);
     }
 
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {

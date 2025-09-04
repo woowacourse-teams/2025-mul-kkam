@@ -2,7 +2,7 @@ package backend.mulkkam.cup.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
@@ -60,9 +60,9 @@ public class CupController {
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @RequestBody CreateCupRequest registerCupRequest
+            @RequestBody CreateCupWithoutRankRequest registerCupRequest
     ) {
-        cupService.create(
+        cupService.createAtLastRank(
                 registerCupRequest,
                 memberDetails
         );

@@ -26,7 +26,7 @@ import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
@@ -93,13 +93,13 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "WATER", savedCupEmojiId);
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = new CreateCupWithoutRankRequest("머그컵", 350, "WATER", savedCupEmojiId);
 
             // when & then
             mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(createCupRequest)))
+                            .content(objectMapper.writeValueAsString(createCupWithoutRankRequest)))
                     .andDo(print())
                     .andExpect(status().isOk());
         }
@@ -108,13 +108,13 @@ class CupControllerTest extends ControllerTest {
         @Test
         void error_invalidIntakeType() throws Exception {
             // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", savedCupEmojiId);
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = new CreateCupWithoutRankRequest("머그컵", 350, "CAR", savedCupEmojiId);
 
             // when & then
             String json = mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(createCupRequest)))
+                            .content(objectMapper.writeValueAsString(createCupWithoutRankRequest)))
                     .andDo(print())
                     .andReturn().getResponse().getContentAsString();
 

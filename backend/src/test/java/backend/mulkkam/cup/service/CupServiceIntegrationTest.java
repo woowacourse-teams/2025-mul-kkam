@@ -18,7 +18,7 @@ import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
@@ -76,10 +76,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            CreateCupRequest cupRegisterRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest cupRegisterRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
 
             // when
-            CupResponse cupResponse = cupService.create(cupRegisterRequest, new MemberDetails(member));
+            CupResponse cupResponse = cupService.createAtLastRank(cupRegisterRequest, new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -115,10 +115,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupService.delete(thirdCup.getId(), new MemberDetails(member));
 
-            CreateCupRequest request = new CreateCupRequest("new", 100, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest request = new CreateCupWithoutRankRequest("new", 100, "WATER", cupEmoji.getId());
 
             // when
-            cupService.create(request, new MemberDetails(member));
+            cupService.createAtLastRank(request, new MemberDetails(member));
 
             // then
             assertSoftly(softly -> {
@@ -134,10 +134,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = -100;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(
+            assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(member))).isInstanceOf(
                             CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
@@ -148,10 +148,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 0;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
@@ -160,18 +160,18 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest("스타벅스1", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest1 = new CreateCupRequest("스타벅스2", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest2 = new CreateCupRequest("스타벅스3", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest3 = new CreateCupRequest("스타벅스4", 500, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest("스타벅스1", 500, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest1 = new CreateCupWithoutRankRequest("스타벅스2", 500, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest2 = new CreateCupWithoutRankRequest("스타벅스3", 500, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest3 = new CreateCupWithoutRankRequest("스타벅스4", 500, "WATER", cupEmoji.getId());
 
             // when
-            cupService.create(registerCupRequest1, new MemberDetails(member));
-            cupService.create(registerCupRequest2, new MemberDetails(member));
-            cupService.create(registerCupRequest3, new MemberDetails(member));
+            cupService.createAtLastRank(registerCupRequest1, new MemberDetails(member));
+            cupService.createAtLastRank(registerCupRequest2, new MemberDetails(member));
+            cupService.createAtLastRank(registerCupRequest3, new MemberDetails(member));
 
             // then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_COUNT.name());
         }
