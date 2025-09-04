@@ -65,20 +65,17 @@ class NicknameFragment :
         with(binding) {
             tvNext.setSingleClickListener {
                 binding.root.hideKeyboard()
-                parentViewModel.updateNickname(getTrimmedNickname())
+                parentViewModel.updateNickname(getNickname())
                 parentViewModel.moveToNextStep()
             }
 
             tvCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameAvailability(getTrimmedNickname())
+                viewModel.checkNicknameAvailability(getNickname())
             }
         }
     }
 
-    private fun getTrimmedNickname(): String =
-        binding.etInputNickname.text
-            .toString()
-            .trim()
+    private fun getNickname(): String = binding.etInputNickname.text.toString()
 
     private fun initObservers() {
         with(viewModel) {
@@ -168,10 +165,7 @@ class NicknameFragment :
 
             debounceRunnable =
                 Runnable {
-                    val nickname =
-                        binding.etInputNickname.text
-                            .toString()
-                            .trim()
+                    val nickname = binding.etInputNickname.text.toString()
 
                     viewModel.updateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }
