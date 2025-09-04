@@ -7,6 +7,7 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CreateCup;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "컵 생성 요청")
 public record CreateCupRequest(
@@ -16,7 +17,7 @@ public record CreateCupRequest(
         @Schema(description = "컵 용량", example = "500")
         Integer cupAmount,
 
-        @Schema(description = "컵 랭크", example = "1")
+        @NotNull @Schema(description = "컵 랭크", example = "1")
         Integer cupRank,
 
         @Schema(description = "음료 종류", implementation = IntakeType.class)

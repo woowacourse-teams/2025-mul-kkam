@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -140,7 +141,7 @@ public class MemberController {
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
             OauthAccountDetails accountDetails,
-            @RequestBody CreateMemberRequest createMemberRequest
+            @Valid  @RequestBody CreateMemberRequest createMemberRequest
     ) {
         memberService.create(accountDetails, createMemberRequest);
         return ResponseEntity.ok().build();
