@@ -35,7 +35,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;

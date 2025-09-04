@@ -46,7 +46,7 @@ import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;

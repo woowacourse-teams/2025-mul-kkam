@@ -32,7 +32,7 @@ import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
