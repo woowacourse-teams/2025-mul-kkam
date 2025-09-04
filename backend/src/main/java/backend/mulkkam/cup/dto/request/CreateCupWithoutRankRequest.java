@@ -9,15 +9,12 @@ import backend.mulkkam.cup.dto.CreateCup;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "컵 생성 요청")
-public record CreateCupRequest(
+public record CreateCupWithoutRankRequest(
         @Schema(description = "컵 이름", example = "스타벅스 텀블러")
         String cupNickname,
 
         @Schema(description = "컵 용량", example = "500")
         Integer cupAmount,
-
-        @Schema(description = "컵 랭크", example = "1")
-        Integer cupRank,
 
         @Schema(description = "음료 종류", implementation = IntakeType.class)
         String intakeType,
