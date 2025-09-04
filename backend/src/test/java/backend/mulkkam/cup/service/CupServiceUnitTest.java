@@ -18,7 +18,7 @@ import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
@@ -68,7 +68,7 @@ class CupServiceUnitTest {
             // given
             String cupNickname = "스타벅스";
             Integer cupAmount = 500;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(
                     cupNickname,
                     cupAmount,
                     "WATER",
@@ -86,7 +86,7 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
-            CupResponse cupResponse = cupService.create(
+            CupResponse cupResponse = cupService.createAtLastRank(
                     registerCupRequest,
                     new MemberDetails(member)
             );
@@ -102,7 +102,7 @@ class CupServiceUnitTest {
         @Test
         void error_amountLessThan0() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(
                     "스타벅스",
                     -100,
                     "WATER",
@@ -114,7 +114,7 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
+            assertThatThrownBy(() -> cupService.createAtLastRank(
                     registerCupRequest,
                     new MemberDetails(member)
             ))
@@ -126,7 +126,7 @@ class CupServiceUnitTest {
         @Test
         void error_amountIsEqualTo0() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(
                     "스타벅스",
                     0,
                     "WATER",
@@ -140,7 +140,7 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
+            assertThatThrownBy(() -> cupService.createAtLastRank(
                     registerCupRequest,
                     new MemberDetails(member)
             ))
@@ -152,7 +152,7 @@ class CupServiceUnitTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
+            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(
                     "스타벅스",
                     500,
                     "WATER",
@@ -184,7 +184,7 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
+            assertThatThrownBy(() -> cupService.createAtLastRank(
                     registerCupRequest,
                     new MemberDetails(member)
             ))
