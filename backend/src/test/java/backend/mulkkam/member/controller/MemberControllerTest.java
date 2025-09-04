@@ -167,17 +167,23 @@ class MemberControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createMemberRequest)))
                     .andExpect(status().isOk());
 
-            Member foundMember = memberRepository.findById(onboardingAccount.getId()).orElseThrow();
-
             // then
+            Member member = memberRepository.findById(onboardingAccount.getId()).orElseThrow();
+            List<Cup> cups = cupRepository.findAllByMember(member);
+            List<Integer> cupRanks = cups.stream()
+                    .map(cup -> cup.getCupRank().value())
+                    .toList();
+
             assertSoftly(softly -> {
-                softly.assertThat(foundMember.getPhysicalAttributes().getGender()).isNull();
-                softly.assertThat(foundMember.getPhysicalAttributes().getWeight()).isNull();
-                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo(createMemberRequest.memberNickname());
+                softly.assertThat(member.getPhysicalAttributes().getGender()).isNull();
+                softly.assertThat(member.getPhysicalAttributes().getWeight()).isNull();
+                softly.assertThat(member.getMemberNickname().value()).isEqualTo(createMemberRequest.memberNickname());
+                softly.assertThat(cups.size()).isEqualTo(createCupRequests.size());
+                softly.assertThat(cupRanks).containsAll(List.of(1, 2, 3));
             });
         }
 
-        @DisplayName("기본 컵 3개도 저장된다.")
+        @DisplayName("온보딩 시 요청한 컵들이 함께 저장된다")
         @Test
         void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
             // when
@@ -192,11 +198,13 @@ class MemberControllerTest extends ControllerTest {
             List<Cup> cups = cupRepository.findAllByMember(foundMember);
 
             // then
+            List<Integer> cupRanks = cups.stream()
+                    .map(cup -> cup.getCupRank().value())
+                    .toList();
+
             assertSoftly(softly -> {
-                softly.assertThat(cups.size()).isEqualTo(3);
-                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo(createCupRequests.getFirst().cupNickname());
-                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo(createCupRequests.get(1).cupNickname());
-                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo(createCupRequests.get(2).cupNickname());
+                softly.assertThat(cups.size()).isEqualTo(createCupRequests.size());
+                softly.assertThat(cupRanks).containsAll(List.of(1, 2, 3));
             });
         }
     }
