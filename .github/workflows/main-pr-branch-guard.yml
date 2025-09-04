@@ -1,0 +1,20 @@
+name: main-pr-branch-guard.yml
+
+on:
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  release-branch-only:
+    name: release-branch-only
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ensure PR source branch matches v*.*.*
+        run: |
+          HEAD_REF="${{ github.head_ref }}"
+          if [[ "$HEAD_REF" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "OK: head_ref=$HEAD_REF matches release pattern."
+          else
+            echo "BLOCKED: Only branches like v1.2.3 can merge to main. Got: $HEAD_REF"
+            exit 1
+          fi
