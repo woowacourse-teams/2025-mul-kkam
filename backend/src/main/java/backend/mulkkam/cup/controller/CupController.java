@@ -58,12 +58,12 @@ public class CupController {
             @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
     @PostMapping
     public ResponseEntity<Void> createAtLastRank(
+            @RequestBody CreateCupWithoutRankRequest createCupWithoutRankRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody CreateCupWithoutRankRequest registerCupRequest
+            MemberDetails memberDetails
     ) {
         cupService.createAtLastRank(
-                registerCupRequest,
+                createCupWithoutRankRequest,
                 memberDetails
         );
         return ResponseEntity.ok().build();
