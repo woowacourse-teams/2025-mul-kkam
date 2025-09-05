@@ -32,6 +32,8 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
 
     private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
 
+    private var dropUnlockTime: Long = 0L
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -60,8 +62,8 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
                 showEditBottomSheetDialog(null)
             }
 
-            override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
-                viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
+            override fun onDropAttempt(newCupItems: List<SettingCupsItem.CupItem>) {
+                performCupDrop(newCupItems)
             }
         }
 
@@ -70,6 +72,33 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         SettingCupFragment
             .newInstance(cup)
             .show(supportFragmentManager, SettingCupFragment.TAG)
+    }
+
+    private fun performCupDrop(newCupItems: List<SettingCupsItem.CupItem>) {
+        val now = System.currentTimeMillis()
+        val isLocked = now < dropUnlockTime
+
+        if (isLocked) {
+            revertToCurrentOrder()
+            return
+        }
+
+        val cups = newCupItems.map { it.value }
+        viewModel.updateCupOrder(cups)
+
+        dropUnlockTime = now + REORDER_RANK_DELAY
+    }
+
+    private fun revertToCurrentOrder() {
+        val state = viewModel.cupsUiState.value
+        if (state is MulKkamUiState.Success) {
+            val items =
+                buildList {
+                    addAll(state.data.cups.map { SettingCupsItem.CupItem(it) })
+                    if (state.data.isAddable) add(SettingCupsItem.AddItem)
+                }
+            settingCupsAdapter.submitList(items)
+        }
     }
 
     private fun initObserver() {
@@ -153,6 +182,8 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     }
 
     companion object {
+        private const val REORDER_RANK_DELAY: Long = 2000L
+
         fun newIntent(context: Context): Intent = Intent(context, SettingCupsActivity::class.java)
     }
 }
