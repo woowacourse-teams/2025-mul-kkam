@@ -29,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @Tag(name = "컵", description = "사용자 컵 관리 API")
 @RequiredArgsConstructor
 @RequestMapping("/cups")
@@ -43,7 +41,7 @@ public class CupController {
     @ApiResponse(responseCode = "200", description = "성공 응답", content = @Content(schema = @Schema(implementation = DefaultCupsResponse.class)))
     @GetMapping("/default")
     public DefaultCupsResponse readDefault() {
-        return new DefaultCupsResponse(1, List.of());
+        return cupService.readDefaultCups();
     }
 
     @Operation(summary = "사용자의 컵 리스트 반환", description = "사용자가 생성한 커스텀 컵 리스트를 반환합니다.")
