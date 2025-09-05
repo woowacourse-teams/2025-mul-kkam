@@ -7,6 +7,7 @@ public enum ForbiddenErrorCode implements ErrorCode {
     NOT_PERMITTED_FOR_CUP,
     NOT_PERMITTED_FOR_INTAKE_HISTORY,
     NOT_PERMITTED_FOR_NOTIFICATION,
+    NOT_PERMITTED_FOR_DEVICE,
     ;
 
     private static final HttpStatus status = HttpStatus.FORBIDDEN;

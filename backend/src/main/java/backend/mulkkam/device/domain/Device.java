@@ -51,4 +51,8 @@ public class Device extends BaseEntity {
     public void nullifyToken() {
         this.token = null;
     }
+
+    public boolean isOwnedBy(Member comparedMember) {
+        return this.member.equals(comparedMember);
+    }
 }
