@@ -73,6 +73,7 @@ public class CupService {
         createCups.forEach(createCup -> create(createCup, member));
     }
 
+    @Transactional
     public CupResponse createAtLastRank(
             CreateCupWithoutRankRequest createCupWithoutRankRequest,
             MemberDetails memberDetails
