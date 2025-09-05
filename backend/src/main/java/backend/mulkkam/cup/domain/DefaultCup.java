@@ -20,7 +20,7 @@ public enum DefaultCup {
             new CupNickname("스타벅스 톨"),
             new CupAmount(354),
             new CupRank(2),
-            IntakeType.WATER,
+            IntakeType.COFFEE,
             CupEmojiUrl.getDefaultByType(IntakeType.COFFEE)
     ),
     ;
