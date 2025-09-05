@@ -48,7 +48,7 @@ class SettingCupsViewModel : ViewModel() {
         val isReordering = cupsReorderUiState.value is MulKkamUiState.Loading
 
         if (newOrder == currentCups.cups || isReordering) {
-            _cupsUiState.value = MulKkamUiState.Success(currentCups)
+            _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
             return
         }
 
@@ -65,7 +65,7 @@ class SettingCupsViewModel : ViewModel() {
                 }
                 _cupsReorderUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
-                _cupsUiState.value = MulKkamUiState.Success(currentCups)
+                _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
                 _cupsReorderUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
