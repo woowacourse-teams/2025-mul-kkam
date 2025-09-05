@@ -53,6 +53,6 @@ public class Device extends BaseEntity {
     }
 
     public boolean isOwnedBy(Member comparedMember) {
-        return this.member.equals(comparedMember);
+        return this.member.getId().equals(comparedMember.getId());
     }
 }
