@@ -26,8 +26,8 @@ class SettingCupsAdapter(
     }
 
     override fun onItemDrop() {
-        val proposed = mutableItems.filterIsInstance<SettingCupsItem.CupItem>()
-        handler.onDropAttempt(proposed)
+        val cupsOrder = mutableItems.filterIsInstance<SettingCupsItem.CupItem>()
+        handler.onDropAttempt(cupsOrder)
     }
 
     override fun onCreateViewHolder(
