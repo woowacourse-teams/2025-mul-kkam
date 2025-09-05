@@ -8,8 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.when;
 
-import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
-import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -35,12 +33,6 @@ public class MemberServiceUnitTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private OauthAccountRepository oauthAccountRepository;
-
-    @Mock
-    private AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @InjectMocks
     private MemberService memberService;
