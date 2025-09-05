@@ -1,0 +1,2 @@
+ALTER TABLE device
+    ALTER COLUMN token SET NULL;
