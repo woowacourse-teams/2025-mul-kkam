@@ -1,7 +1,7 @@
 name: backend-ci.yml
 on:
   pull_request:
-    branches: ["develop", "develop-be"]
+    branches: [ "develop", "develop-be" ]
     paths:
       - "backend/**"
 
@@ -102,8 +102,8 @@ jobs:
             has_violation=1
             fi
           done
-            
-  
+          
+          
           if [ "$has_violation" -ne 0 ]; then
             echo "[FAIL] DROP detected in changed migration files."
             exit 1
@@ -118,5 +118,5 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE: ${{ secrets.ACCESS_TOKEN_EXPIRE }}
           REFRESH_TOKEN_EXPIRE: ${{ secrets.REFRESH_TOKEN_EXPIRE }}
-        run: SPRING_PROFILES_ACTIVE=ci ./gradlew clean test --stacktrace
+        run: SPRING_PROFILES_ACTIVE=ci ./gradlew clean test
         working-directory: ./backend
