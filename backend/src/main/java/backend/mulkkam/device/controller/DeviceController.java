@@ -40,9 +40,10 @@ public class DeviceController {
     }
 
     @Operation(summary = "현재 기기의 FCM 토큰 삭제", description = "기기의 FCM 토큰을 NULL로 설정")
-    @ApiResponse(responseCode = "204", description = "삭제(무효화) 완료")
+    @ApiResponse(responseCode = "200", description = "삭제(무효화) 완료")
     @ApiResponse(responseCode = "401", description = "인증 실패")
-    @ApiResponse(responseCode = "404", description = "기기 없음(선택, 노출하지 않아도 됨)")
+    @ApiResponse(responseCode = "403", description = "권한 없음")
+    @ApiResponse(responseCode = "404", description = "기기 없음")
     @DeleteMapping("/fcm-token")
     public ResponseEntity<Void> deleteFcmToken(
             @Parameter(hidden = true)
