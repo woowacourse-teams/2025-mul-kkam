@@ -2,6 +2,7 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
@@ -11,10 +12,12 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
-import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -24,7 +27,6 @@ import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
@@ -41,12 +43,14 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -129,9 +133,7 @@ public class MemberService {
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
-
-        List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
-        cupRepository.saveAll(CupFactory.createDefaultCups(member, cupEmojis));
+        cupRepository.saveAll(getDefaultCups(member));
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
@@ -246,5 +248,28 @@ public class MemberService {
                 .filter(notification -> notification.getNotificationType().equals(NotificationType.SUGGESTION))
                 .map(Notification::getId)
                 .toList();
+    }
+
+    // TODO: CupService 내부 로직과 중복 - 서비스로 묶는 리팩터링시 적용
+    private List<Cup> getDefaultCups(Member member) {
+        return Arrays.stream(DefaultCup.values())
+                .map(defaultCup -> {
+                    CupEmoji emoji = getCupEmoji(defaultCup);
+                    return new Cup(
+                            member,
+                            defaultCup.getNickname(),
+                            defaultCup.getAmount(),
+                            defaultCup.getRank(),
+                            defaultCup.getIntakeType(),
+                            emoji
+                    );
+                })
+                .toList();
+    }
+
+    private CupEmoji getCupEmoji(DefaultCup defaultCup) {
+        CupEmojiUrl cupEmojiUrl = defaultCup.getCupEmojiUrl();
+        return cupEmojiRepository.findByUrl(cupEmojiUrl)
+                .orElseThrow(() -> new CommonException(NOT_EXIST_DEFAULT_CUP_EMOJI));
     }
 }
