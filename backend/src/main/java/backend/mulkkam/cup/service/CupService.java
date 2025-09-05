@@ -247,12 +247,6 @@ public class CupService {
         }
     }
 
-    private CupEmoji getCupEmoji(DefaultCup defaultCup) {
-        CupEmojiUrl cupEmojiUrl = defaultCup.getCupEmojiUrl();
-        return cupEmojiRepository.findByUrl(cupEmojiUrl)
-                .orElseThrow(() -> new CommonException(NOT_EXIST_DEFAULT_CUP_EMOJI));
-    }
-
     private CupEmoji getCupEmoji(Long emojiId) {
         return cupEmojiRepository.findById(emojiId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP_EMOJI));
