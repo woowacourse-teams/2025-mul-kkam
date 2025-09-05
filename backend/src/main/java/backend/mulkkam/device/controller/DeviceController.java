@@ -32,9 +32,9 @@ public class DeviceController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping
     public ResponseEntity<Void> register(
+            @RequestBody RegisterDeviceRequest registerDeviceRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody RegisterDeviceRequest registerDeviceRequest) {
+            MemberDetails memberDetails) {
         deviceService.register(registerDeviceRequest, memberDetails);
         return ResponseEntity.ok().build();
     }
@@ -45,10 +45,10 @@ public class DeviceController {
     @ApiResponse(responseCode = "404", description = "기기 없음")
     @DeleteMapping("/fcm-token")
     public ResponseEntity<Void> deleteFcmToken(
-            @Parameter(hidden = true)
-            MemberDetails memberDetails,
             @RequestHeader("X-Device-Id")
-            String deviceId
+            String deviceId,
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
     ) {
         deviceService.deleteFcmToken(deviceId, memberDetails);
         return ResponseEntity.ok().build();
