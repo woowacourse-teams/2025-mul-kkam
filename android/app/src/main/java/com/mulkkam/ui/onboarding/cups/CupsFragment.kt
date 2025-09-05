@@ -19,6 +19,7 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class CupsFragment :
     BindingFragment<FragmentCupsBinding>(
@@ -69,6 +70,7 @@ class CupsFragment :
 
         initTextAppearance()
         initObserver()
+        initClickListener()
     }
 
     private fun initTextAppearance() {
@@ -139,6 +141,13 @@ class CupsFragment :
                         getString(R.string.network_check_error),
                         R.drawable.ic_alert_circle,
                     ).show()
+        }
+    }
+
+    private fun initClickListener() {
+        binding.tvComplete.setSingleClickListener {
+            // TODO: parentViewModel에 저장하는 로직 필요
+            parentViewModel.completeOnboarding()
         }
     }
 }
