@@ -2,6 +2,7 @@ package com.mulkkam.ui.onboarding.cups
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -9,6 +10,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentCupsBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -16,11 +18,13 @@ import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingFragment
+import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 
 class CupsFragment :
     BindingFragment<FragmentCupsBinding>(
         FragmentCupsBinding::inflate,
     ) {
+    private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: CupsViewModel by viewModels()
     private val settingCupsAdapter: SettingCupsAdapter by lazy {
         SettingCupsAdapter(handler)
@@ -63,7 +67,17 @@ class CupsFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        initTextAppearance()
         initObserver()
+    }
+
+    private fun initTextAppearance() {
+        binding.tvViewLabel.text =
+            getString(R.string.cups_input_hint, parentViewModel.onboardingInfo.nickname?.name).getAppearanceSpannable(
+                requireContext(),
+                R.style.title1,
+                getString(R.string.cups_input_hint_highlight),
+            )
     }
 
     private fun initObserver() {
