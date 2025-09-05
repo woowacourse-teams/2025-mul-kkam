@@ -1,6 +1,7 @@
 package backend.mulkkam.common.resolver;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.ONBOARDING_HAS_NOT_FINISHED;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
@@ -38,6 +39,10 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
         Long accountId = (Long) request.getAttribute("account_id");
         OauthAccount account = oauthAccountRepository.findByIdWithMember(accountId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
+
+        if (account.getMember() == null) {
+            throw new CommonException(ONBOARDING_HAS_NOT_FINISHED);
+        }
 
         return new MemberDetails(account.getMember().getId());
     }
