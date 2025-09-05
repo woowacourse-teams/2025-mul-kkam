@@ -433,7 +433,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
                 softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
                 softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl())
-                        .isEqualTo(CupEmojiUrl.DEFAULT_HISTORY_EMOJI_URL);
+                        .isEqualTo(CupEmojiUrl.getDefaultByType(WATER).value());
             });
         }
     }

@@ -19,6 +19,8 @@ import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
@@ -306,12 +308,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
-            cupEmojiRepository.saveAll(
-                    List.of(
-                            new CupEmoji("http://example1.com"),
-                            new CupEmoji("http://example2.com")
-                    )
-            );
+            saveDefaultCupEmojis();
 
             // when
             memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
@@ -574,6 +571,13 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();
                 softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
             });
+        }
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
+            cupEmojiRepository.save(new CupEmoji(url));
         }
     }
 }

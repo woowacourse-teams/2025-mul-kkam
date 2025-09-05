@@ -21,11 +21,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
+            /* before signup */
             HttpEndpoint.exact("/auth/kakao", HttpMethod.POST),
             HttpEndpoint.exact("/auth/token/reissue", HttpMethod.POST),
+            HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
+            HttpEndpoint.exact("/cups/default", HttpMethod.GET),
+
+            /* swagger */
             HttpEndpoint.prefix("/swagger-ui", HttpMethod.GET),
             HttpEndpoint.prefix("/v3/api-docs", HttpMethod.GET),
-            HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
+
+            /* etc - for additional functions */
             HttpEndpoint.prefix("/actuator", HttpMethod.GET),
             HttpEndpoint.prefix("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST),
             HttpEndpoint.prefix("/versions", HttpMethod.GET)
