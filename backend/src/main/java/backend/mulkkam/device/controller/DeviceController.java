@@ -39,7 +39,7 @@ public class DeviceController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "현재 기기의 FCM 토큰 삭제", description = "기기의 FCM 토큰을 NULL로 설정")
+    @Operation(summary = "현재 기기의 FCM 토큰 삭제", description = "기기의 FCM 토큰을 NULL로 설정 합니다.")
     @ApiResponse(responseCode = "200", description = "삭제(무효화) 완료")
     @ApiResponse(responseCode = "401", description = "인증 실패")
     @ApiResponse(responseCode = "404", description = "기기 없음")
@@ -48,7 +48,8 @@ public class DeviceController {
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @RequestHeader("X-Device-Id")
-            String deviceId) {
+            String deviceId
+    ) {
         deviceService.deleteFcmToken(deviceId, memberDetails);
         return ResponseEntity.ok().build();
     }
