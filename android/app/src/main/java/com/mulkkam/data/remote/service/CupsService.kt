@@ -17,6 +17,9 @@ interface CupsService {
     @GET("/cups")
     suspend fun getCups(): Result<CupsResponse>
 
+    @GET("/cups/default")
+    suspend fun getCupsDefault(): Result<CupsResponse>
+
     @POST("/cups")
     suspend fun postCup(
         @Body newCupRequest: NewCupRequest,
