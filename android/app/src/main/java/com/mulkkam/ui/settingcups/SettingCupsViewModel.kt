@@ -13,7 +13,6 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import com.mulkkam.ui.settingcups.model.toUi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SettingCupsViewModel : ViewModel() {
@@ -45,15 +44,16 @@ class SettingCupsViewModel : ViewModel() {
     }
 
     fun updateCupOrder(newOrder: List<CupUiModel>) {
-        val currentOrder = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val isReordering = cupsReorderUiState.value is MulKkamUiState.Loading
 
-        if (newOrder == currentOrder || isReordering) {
-            _cupsUiState.value = cupsUiState.value
+        if (newOrder == currentCups.cups || isReordering) {
+            _cupsUiState.value = MulKkamUiState.Success(currentCups)
             return
         }
 
         val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
+        _cupsUiState.value = MulKkamUiState.Success(reorderedCups.toUi())
 
         viewModelScope.launch {
             _cupsReorderUiState.value = MulKkamUiState.Loading
@@ -63,11 +63,10 @@ class SettingCupsViewModel : ViewModel() {
                 if (reorderedCups != cups) {
                     _cupsUiState.value = MulKkamUiState.Success(cups.toUi())
                 }
-                delay(REORDER_DELAY_TIME)
                 _cupsReorderUiState.value = MulKkamUiState.Success(Unit)
-            }.onFailure { t ->
-                _cupsUiState.value = cupsUiState.value
-                _cupsReorderUiState.value = MulKkamUiState.Failure(t.toMulKkamError())
+            }.onFailure {
+                _cupsUiState.value = MulKkamUiState.Success(currentCups)
+                _cupsReorderUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -84,9 +83,5 @@ class SettingCupsViewModel : ViewModel() {
                 _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
-    }
-
-    companion object {
-        private const val REORDER_DELAY_TIME: Long = 2000L
     }
 }
