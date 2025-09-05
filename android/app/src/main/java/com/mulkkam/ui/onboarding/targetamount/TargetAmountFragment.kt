@@ -89,7 +89,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                         .toIntOrNull()
                     ?: 0
             parentViewModel.updateTargetAmount(amount)
-            parentViewModel.completeOnboarding()
+            parentViewModel.moveToNextStep()
         }
     }
 
