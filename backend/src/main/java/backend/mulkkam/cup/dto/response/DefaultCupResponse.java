@@ -1,5 +1,7 @@
 package backend.mulkkam.cup.dto.response;
 
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.dto.CupEmojiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -15,4 +17,14 @@ public record DefaultCupResponse(
         IntakeType intakeType,
         CupEmojiResponse emoji
 ) {
+
+    public DefaultCupResponse(DefaultCup defaultCup, CupEmoji cupEmoji) {
+            this(
+                    defaultCup.getNickname().value(),
+                    defaultCup.getAmount().value(),
+                    defaultCup.getRank().value(),
+                    defaultCup.getIntakeType(),
+                    new CupEmojiResponse(cupEmoji)
+            );
+    }
 }
