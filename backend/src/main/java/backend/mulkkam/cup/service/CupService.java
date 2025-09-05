@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -55,14 +56,51 @@ public class CupService {
     private final MemberRepository memberRepository;
     private final CupEmojiRepository cupEmojiRepository;
 
-    public DefaultCupsResponse readDefaultCups() {
-        List<DefaultCupResponse> defaultCups = Arrays.stream(DefaultCup.values())
+    @Transactional
+    public void reset(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+        cupRepository.deleteByMember(member);
+        cupRepository.saveAll(getDefaultCups(member));
+    }
+
+    private List<Cup> getDefaultCups(Member member) {
+        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+        return Arrays.stream(DefaultCup.values())
                 .map(defaultCup -> {
-                    CupEmoji emoji = getCupEmoji(defaultCup);
-                    return new DefaultCupResponse(defaultCup, emoji);
+                    CupEmoji emoji = emojiByUrl.get(defaultCup.getCupEmojiUrl());
+                    return new Cup(
+                            member,
+                            defaultCup.getNickname(),
+                            defaultCup.getAmount(),
+                            defaultCup.getRank(),
+                            defaultCup.getIntakeType(),
+                            emoji
+                    );
                 })
                 .toList();
+    }
+
+    public DefaultCupsResponse readDefaultCups() {
+        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+
+        List<DefaultCupResponse> defaultCups = Arrays.stream(DefaultCup.values())
+                .map(defaultCup -> new DefaultCupResponse(defaultCup, emojiByUrl.get(defaultCup.getCupEmojiUrl())))
+                .toList();
         return new DefaultCupsResponse(defaultCups.size(), defaultCups);
+    }
+
+    private Map<CupEmojiUrl, CupEmoji> getDefaultEmojiByUrl() {
+        List<CupEmoji> defaultEmojis = getDefaultCupEmojis();
+        return defaultEmojis.stream()
+                .collect(Collectors.toMap(CupEmoji::getUrl, Function.identity()));
+    }
+
+    private List<CupEmoji> getDefaultCupEmojis() {
+        List<CupEmojiUrl> defaultEmojiUrls = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCupEmojiUrl)
+                .distinct()
+                .toList();
+        return cupEmojiRepository.findAllByUrlIn(defaultEmojiUrls);
     }
 
     public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
@@ -150,13 +188,6 @@ public class CupService {
                 .forEach(Cup::promoteRank);
     }
 
-    @Transactional
-    public void reset(MemberDetails memberDetails) {
-        Member member = getMember(memberDetails.id());
-        cupRepository.deleteByMember(member);
-        cupRepository.saveAll(getDefaultCups(member));
-    }
-
     private Map<Long, CupRank> buildCupRankMapById(List<CupRankDto> cupRanks) {
         Map<Long, CupRank> ranks = new HashMap<>();
         for (CupRankDto cup : cupRanks) {
@@ -214,22 +245,6 @@ public class CupService {
         if (!cup.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
-    }
-
-    private List<Cup> getDefaultCups(Member member) {
-        return Arrays.stream(DefaultCup.values())
-                .map(defaultCup -> {
-                    CupEmoji emoji = getCupEmoji(defaultCup);
-                    return new Cup(
-                            member,
-                            defaultCup.getNickname(),
-                            defaultCup.getAmount(),
-                            defaultCup.getRank(),
-                            defaultCup.getIntakeType(),
-                            emoji
-                    );
-                })
-                .toList();
     }
 
     private CupEmoji getCupEmoji(DefaultCup defaultCup) {
