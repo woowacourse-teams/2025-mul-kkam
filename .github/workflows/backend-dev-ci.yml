@@ -102,8 +102,6 @@ jobs:
             has_violation=1
             fi
           done
-          
-          
           if [ "$has_violation" -ne 0 ]; then
             echo "[FAIL] DROP detected in changed migration files."
             exit 1
