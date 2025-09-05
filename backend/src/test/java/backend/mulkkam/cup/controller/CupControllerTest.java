@@ -10,6 +10,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -33,6 +34,8 @@ import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
+import backend.mulkkam.cup.dto.response.DefaultCupResponse;
+import backend.mulkkam.cup.dto.response.DefaultCupsResponse;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
@@ -42,6 +45,7 @@ import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,6 +97,36 @@ class CupControllerTest extends ControllerTest {
         for (IntakeType intakeType : IntakeType.values()) {
             CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
             cupEmojiRepository.save(new CupEmoji(url));
+        }
+    }
+
+    @DisplayName("컵을 조회한다")
+    @Nested
+    class Read {
+
+        @DisplayName("모든 기본 컵을 반환한다.")
+        @Test
+        void success_void() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/cups/default"))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            DefaultCupsResponse response = objectMapper.readValue(json, DefaultCupsResponse.class);
+            List<String> actualNames = response.cups()
+                    .stream()
+                    .map(DefaultCupResponse::cupNickname)
+                    .toList();
+            List<String> expectedNames = Arrays.stream(DefaultCup.values())
+                    .map(DefaultCup::getNickname)
+                    .map(CupNickname::value)
+                    .toList();
+
+            // then
+            assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
         }
     }
 
