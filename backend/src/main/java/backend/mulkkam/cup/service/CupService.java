@@ -59,6 +59,7 @@ public class CupService {
         return new CupsResponse(cups);
     }
 
+    @Transactional
     public void createAll(
             List<CreateCupRequest> cupRequests,
             Member member
