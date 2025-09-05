@@ -4,6 +4,7 @@ import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -26,6 +27,7 @@ public class CupEmoji extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "url", nullable = false))
     private CupEmojiUrl url;
 
