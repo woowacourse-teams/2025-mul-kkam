@@ -1,6 +1,5 @@
 package backend.mulkkam.device.service;
 
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_DEVICE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_DEVICE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
@@ -45,12 +44,8 @@ public class DeviceService {
     ) {
         Member member = getMember(memberDetails.id());
 
-        Device device = deviceRepository.findByDeviceId(deviceId)
+        Device device = deviceRepository.findByDeviceIdAndMemberId(deviceId, member.getId())
                 .orElseThrow((() -> new CommonException(NOT_FOUND_DEVICE)));
-        if (!device.isOwnedBy(member)) {
-            throw new CommonException(NOT_PERMITTED_FOR_DEVICE);
-        }
-
         device.nullifyToken();
     }
 
