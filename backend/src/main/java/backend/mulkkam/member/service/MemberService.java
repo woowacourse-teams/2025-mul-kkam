@@ -3,30 +3,21 @@ package backend.mulkkam.member.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.cup.dto.CreateCup;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.repository.CupRepository;
-import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
-import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
@@ -41,7 +32,6 @@ import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -64,7 +54,6 @@ public class MemberService {
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
-    private final CupService cupService;
 
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -111,32 +100,6 @@ public class MemberService {
     public MemberNicknameResponse getNickname(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new MemberNicknameResponse(member.getMemberNickname());
-    }
-
-    @Transactional
-    public void create(
-            OauthAccountDetails accountDetails,
-            CreateMemberRequest createMemberRequest
-    ) {
-        Member member = createMemberRequest.toMember();
-        memberRepository.save(member);
-        OauthAccount account = getOauthAccount(accountDetails);
-        account.modifyMember(member);
-
-        TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
-                member,
-                LocalDate.now(),
-                new TargetAmount(createMemberRequest.targetIntakeAmount())
-        );
-        targetAmountSnapshotRepository.save(targetAmountSnapshot);
-
-        cupService.createAll(createMemberRequest.createCupRequests(), member);
-    }
-
-    public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
-        OauthAccount oauthAccount = getOauthAccount(accountDetails);
-        boolean finishedOnboarding = oauthAccount.finishedOnboarding();
-        return new OnboardingStatusResponse(finishedOnboarding);
     }
 
     public ProgressInfoResponse getProgressInfo(
@@ -233,11 +196,6 @@ public class MemberService {
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
-    }
-
-    private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
-        return oauthAccountRepository.findById(accountDetails.id())
-                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
     }
 
     private List<Long> findSuggestionNotificationIdsByMember(Member member) {
