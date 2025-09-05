@@ -20,7 +20,7 @@ import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
