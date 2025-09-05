@@ -31,11 +31,15 @@ public class CupEmoji extends BaseEntity {
     @AttributeOverride(name = "value", column = @Column(name = "url", nullable = false))
     private CupEmojiUrl url;
 
-    public CupEmoji(String url) {
-        this.url = new CupEmojiUrl(url);
+    public CupEmoji(CupEmojiUrl cupEmojiUrl) {
+        if (cupEmojiUrl == null) {
+            this.url = CupEmojiUrl.getDefaultByType(IntakeType.WATER);
+            return;
+        }
+        this.url = cupEmojiUrl;
     }
 
-    public CupEmoji(CupEmojiUrl cupEmojiUrl) {
-        this.url = cupEmojiUrl;
+    public CupEmoji(String url) {
+        this.url = new CupEmojiUrl(url);
     }
 }
