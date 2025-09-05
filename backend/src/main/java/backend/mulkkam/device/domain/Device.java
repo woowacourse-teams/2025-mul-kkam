@@ -28,7 +28,7 @@ public class Device extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String token;
 
     @Column(nullable = false, unique = true, length = 50)
@@ -46,5 +46,9 @@ public class Device extends BaseEntity {
 
     public void modifyToken(String token) {
         this.token = token;
+    }
+
+    public void nullifyToken() {
+        this.token = null;
     }
 }

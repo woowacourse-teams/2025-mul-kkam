@@ -1,5 +1,6 @@
 package backend.mulkkam.device.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_DEVICE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
@@ -34,6 +35,18 @@ public class DeviceService {
                     Device device = registerDeviceRequest.toDevice(member);
                     deviceRepository.save(device);
                 });
+    }
+
+    @Transactional
+    public void deleteFcmToken(
+            String deviceId,
+            MemberDetails memberDetails
+    ) {
+        Member member = getMember(memberDetails.id());
+
+        Device device = deviceRepository.findByDeviceIdAndMemberId(deviceId, member.getId())
+                .orElseThrow((() -> new CommonException(NOT_FOUND_DEVICE)));
+        device.nullifyToken();
     }
 
     private Member getMember(Long id) {
