@@ -98,8 +98,10 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
 
         debounceRunnable =
             Runnable {
-                val latest = newCupItems.map { it.value }
-                viewModel.updateCupOrder(latest)
+                val cups = newCupItems.map { it.value }
+                viewModel.updateCupOrder(cups)
+
+                setResult(RESULT_CANCELED)
             }.also { runnable ->
                 debounceHandler.postDelayed(runnable, REORDER_RANK_DELAY)
             }
