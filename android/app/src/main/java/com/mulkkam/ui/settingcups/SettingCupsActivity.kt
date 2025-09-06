@@ -3,6 +3,8 @@ package com.mulkkam.ui.settingcups
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -30,9 +32,10 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         ItemTouchHelper(CupsItemTouchHelperCallback(settingCupsAdapter))
     }
 
-    private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
 
-    private var dropUnlockTime: Long = 0L
+    private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +66,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             }
 
             override fun onDropAttempt(newCupItems: List<SettingCupsItem.CupItem>) {
-                performCupDrop(newCupItems)
+                reorderCups(newCupItems)
             }
         }
 
@@ -74,31 +77,19 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             .show(supportFragmentManager, SettingCupFragment.TAG)
     }
 
-    private fun performCupDrop(newCupItems: List<SettingCupsItem.CupItem>) {
-        val now = System.currentTimeMillis()
-        val isLocked = now < dropUnlockTime
-
-        if (isLocked) {
-            revertToCurrentOrder()
-            return
-        }
-
+    private fun reorderCups(newCupItems: List<SettingCupsItem.CupItem>) {
         val cups = newCupItems.map { it.value }
-        viewModel.updateCupOrder(cups)
+        viewModel.applyOptimisticCupOrder(cups)
 
-        dropUnlockTime = now + REORDER_RANK_DELAY
-    }
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
 
-    private fun revertToCurrentOrder() {
-        val state = viewModel.cupsUiState.value
-        if (state is MulKkamUiState.Success) {
-            val items =
-                buildList {
-                    addAll(state.data.cups.map { SettingCupsItem.CupItem(it) })
-                    if (state.data.isAddable) add(SettingCupsItem.AddItem)
-                }
-            settingCupsAdapter.submitList(items)
-        }
+        debounceRunnable =
+            Runnable {
+                val latest = newCupItems.map { it.value }
+                viewModel.updateCupOrder(latest)
+            }.also { runnable ->
+                debounceHandler.postDelayed(runnable, REORDER_RANK_DELAY)
+            }
     }
 
     private fun initObserver() {
@@ -179,6 +170,12 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         SettingCupsResetDialogFragment
             .newInstance()
             .show(supportFragmentManager, SettingCupFragment.TAG)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+        debounceRunnable = null
     }
 
     companion object {

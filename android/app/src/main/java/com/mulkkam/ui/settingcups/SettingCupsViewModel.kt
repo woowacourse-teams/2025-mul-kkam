@@ -53,8 +53,6 @@ class SettingCupsViewModel : ViewModel() {
         }
 
         val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
-        _cupsUiState.value = MulKkamUiState.Success(reorderedCups.toUi())
-
         viewModelScope.launch {
             _cupsReorderUiState.value = MulKkamUiState.Loading
             runCatching {
@@ -83,5 +81,10 @@ class SettingCupsViewModel : ViewModel() {
                 _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
+    }
+
+    fun applyOptimisticCupOrder(newOrder: List<CupUiModel>) {
+        val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
+        _cupsUiState.value = MulKkamUiState.Success(reorderedCups.toUi())
     }
 }
