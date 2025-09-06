@@ -81,6 +81,19 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         val cups = newCupItems.map { it.value }
         viewModel.applyOptimisticCupOrder(cups)
 
+        saveOrderResult(cups)
+        saveCupOrder(newCupItems)
+    }
+
+    private fun saveOrderResult(cups: List<CupUiModel>) {
+        val data =
+            Intent().apply {
+                putParcelableArrayListExtra(EXTRA_KEY_LATEST_CUPS_ORDER, ArrayList(cups))
+            }
+        setResult(RESULT_OK, data)
+    }
+
+    private fun saveCupOrder(newCupItems: List<SettingCupsItem.CupItem>) {
         debounceRunnable?.let(debounceHandler::removeCallbacks)
 
         debounceRunnable =
@@ -179,6 +192,7 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     }
 
     companion object {
+        const val EXTRA_KEY_LATEST_CUPS_ORDER: String = "EXTRA_KEY_LATEST_CUPS_ORDER"
         private const val REORDER_RANK_DELAY: Long = 2000L
 
         fun newIntent(context: Context): Intent = Intent(context, SettingCupsActivity::class.java)
