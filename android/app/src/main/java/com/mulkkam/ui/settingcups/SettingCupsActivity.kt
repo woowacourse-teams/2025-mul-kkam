@@ -3,6 +3,8 @@ package com.mulkkam.ui.settingcups
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -29,6 +31,9 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
     private val itemTouchHelper: ItemTouchHelper by lazy {
         ItemTouchHelper(CupsItemTouchHelperCallback(settingCupsAdapter))
     }
+
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
 
     private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
 
@@ -60,8 +65,8 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
                 showEditBottomSheetDialog(null)
             }
 
-            override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
-                viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
+            override fun onDropAttempt(newCupItems: List<SettingCupsItem.CupItem>) {
+                reorderCups(newCupItems)
             }
         }
 
@@ -70,6 +75,36 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         SettingCupFragment
             .newInstance(cup)
             .show(supportFragmentManager, SettingCupFragment.TAG)
+    }
+
+    private fun reorderCups(newCupItems: List<SettingCupsItem.CupItem>) {
+        val cups = newCupItems.map { it.value }
+        viewModel.applyOptimisticCupOrder(cups)
+
+        saveOrderResult(cups)
+        saveCupOrder(newCupItems)
+    }
+
+    private fun saveOrderResult(cups: List<CupUiModel>) {
+        val data =
+            Intent().apply {
+                putParcelableArrayListExtra(EXTRA_KEY_LATEST_CUPS_ORDER, ArrayList(cups))
+            }
+        setResult(RESULT_OK, data)
+    }
+
+    private fun saveCupOrder(newCupItems: List<SettingCupsItem.CupItem>) {
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+
+        debounceRunnable =
+            Runnable {
+                val cups = newCupItems.map { it.value }
+                viewModel.updateCupOrder(cups)
+
+                setResult(RESULT_CANCELED)
+            }.also { runnable ->
+                debounceHandler.postDelayed(runnable, REORDER_RANK_DELAY)
+            }
     }
 
     private fun initObserver() {
@@ -152,7 +187,16 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             .show(supportFragmentManager, SettingCupFragment.TAG)
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        debounceRunnable?.let(debounceHandler::removeCallbacks)
+        debounceRunnable = null
+    }
+
     companion object {
+        const val EXTRA_KEY_LATEST_CUPS_ORDER: String = "EXTRA_KEY_LATEST_CUPS_ORDER"
+        private const val REORDER_RANK_DELAY: Long = 2000L
+
         fun newIntent(context: Context): Intent = Intent(context, SettingCupsActivity::class.java)
     }
 }
