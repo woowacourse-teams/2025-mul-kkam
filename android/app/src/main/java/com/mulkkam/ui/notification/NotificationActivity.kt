@@ -13,7 +13,6 @@ import com.mulkkam.databinding.ActivityNotificationBinding
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.adapter.NotificationAdapter
 import com.mulkkam.ui.notification.adapter.NotificationItemTouchHelperCallback

@@ -8,7 +8,6 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingAccountInfoBinding
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.login.LoginActivity
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
