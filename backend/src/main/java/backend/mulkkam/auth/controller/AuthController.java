@@ -1,6 +1,6 @@
 package backend.mulkkam.auth.controller;
 
-import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
 import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
@@ -40,7 +40,7 @@ public class AuthController {
     @PostMapping("/kakao")
     public OauthLoginResponse signInWithKakao(
             @RequestBody
-            KakaoSigninRequest kakaoSigninRequest
+            KakaoSignInRequest kakaoSigninRequest
     ) {
         return kakaoAuthService.signIn(kakaoSigninRequest);
     }

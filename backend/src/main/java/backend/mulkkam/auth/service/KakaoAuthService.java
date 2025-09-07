@@ -3,7 +3,7 @@ package backend.mulkkam.auth.service;
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.infrastructure.KakaoRestClient;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
@@ -28,7 +28,7 @@ public class KakaoAuthService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
-    public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
+    public OauthLoginResponse signIn(KakaoSignInRequest kakaoSigninRequest) {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();

@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
 import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
@@ -134,13 +134,13 @@ class AuthControllerTest extends ControllerTest {
         @Test
         void success_whenSameOauthAccountAndDiffDevice() throws Exception {
             // when
-            KakaoSigninRequest kakaoSigninRequest1 = new KakaoSigninRequest(oauthAccessToken, "1");
+            KakaoSignInRequest kakaoSigninRequest1 = new KakaoSignInRequest(oauthAccessToken, "1");
             mockMvc.perform(post("/auth/kakao")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(kakaoSigninRequest1)))
                     .andExpect(status().isOk());
 
-            KakaoSigninRequest kakaoSigninRequest2 = new KakaoSigninRequest(oauthAccessToken, "2");
+            KakaoSignInRequest kakaoSigninRequest2 = new KakaoSignInRequest(oauthAccessToken, "2");
             mockMvc.perform(post("/auth/kakao")
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(kakaoSigninRequest2)))
@@ -263,7 +263,7 @@ class AuthControllerTest extends ControllerTest {
     }
 
     private OauthLoginResponse doLogin() throws Exception {
-        KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
+        KakaoSignInRequest loginRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);
 
         String content = mockMvc.perform(post("/auth/kakao")
                         .contentType(MediaType.APPLICATION_JSON)
