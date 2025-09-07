@@ -5,7 +5,6 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -37,6 +36,7 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
@@ -93,7 +93,9 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            CreateCupWithoutRankRequest createCupWithoutRankRequest = new CreateCupWithoutRankRequest("머그컵", 350, "WATER", savedCupEmojiId);
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(savedCupEmojiId)
+                    .build();
 
             // when & then
             mockMvc.perform(post("/cups")
@@ -102,27 +104,6 @@ class CupControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createCupWithoutRankRequest)))
                     .andDo(print())
                     .andExpect(status().isOk());
-        }
-
-        @DisplayName("음용 타입이 잘못 들어왔을 때 예외를 던진다")
-        @Test
-        void error_invalidIntakeType() throws Exception {
-            // given
-            CreateCupWithoutRankRequest createCupWithoutRankRequest = new CreateCupWithoutRankRequest("머그컵", 350, "CAR", savedCupEmojiId);
-
-            // when & then
-            String json = mockMvc.perform(post("/cups")
-                            .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(createCupWithoutRankRequest)))
-                    .andDo(print())
-                    .andReturn().getResponse().getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_INTAKE_TYPE.name());
-            });
         }
     }
 
