@@ -17,7 +17,6 @@ import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.CreateCup;
 import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
@@ -31,7 +30,6 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
-import backend.mulkkam.support.fixture.cup.dto.CreateCupFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.dto.CreateCupRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
@@ -117,36 +115,6 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                         softly.assertThat(cupRanks).containsAll(List.of(1, 2, 3));
                     }
             );
-        }
-    }
-
-    @DisplayName("컵을 생성할 때")
-    @Nested
-    class Create {
-
-        private CreateCup createCup;
-
-        @BeforeEach
-        void setUp() {
-            createCup = CreateCupFixtureBuilder
-                    .withCupEmoji(savedCupEmoji)
-                    .build();
-        }
-
-        @DisplayName("정상적으로 저장한다")
-        @Test
-        void success_validData() {
-            // when
-            CupResponse cupResponse = cupService.create(createCup, savedMember);
-
-            // then
-            List<Cup> actual = cupRepository.findAllByMember(savedMember);
-
-            assertSoftly(softly -> {
-                softly.assertThat(cupResponse.cupRank()).isEqualTo(1);
-                softly.assertThat(cupResponse.emojiUrl()).isEqualTo(savedCupEmoji.getUrl().value());
-                softly.assertThat(actual.size()).isEqualTo(1);
-            });
         }
     }
 
