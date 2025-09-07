@@ -40,8 +40,8 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.controller.ControllerTest;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
@@ -171,6 +171,7 @@ class MemberControllerTest extends ControllerTest {
                 softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo("test2");
             });
         }
+
         @DisplayName("기본 컵 3개도 저장된다.")
         @Test
         void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
@@ -198,7 +199,6 @@ class MemberControllerTest extends ControllerTest {
     @DisplayName("멤버의 정보를 수정할 때에")
     @Nested
     class Modify {
-
 
         @DisplayName("야간 알림을 수정한다.")
         @Test
@@ -241,12 +241,11 @@ class MemberControllerTest extends ControllerTest {
                     softly.assertThat(foundMember.isMarketingNotificationAgreed()).isFalse()
             );
         }
-
     }
+
     @DisplayName("멤버의 정보를 조회할 때에")
     @Nested
     class Get {
-
 
         @DisplayName("야간 알림과 마케팅 수신 동의 세팅을 가져온다.")
         @Test
@@ -282,12 +281,11 @@ class MemberControllerTest extends ControllerTest {
                 softly.assertThat(actual.gender()).isNull();
             });
         }
-
     }
+
     @DisplayName("회원 탈퇴 시")
     @Nested
     class Delete {
-
 
         @DisplayName("유효한 토큰으로 요청하면 정상적으로 멤버가 삭제된다")
         @Test
@@ -325,6 +323,7 @@ class MemberControllerTest extends ControllerTest {
                 assertThat(intakeHistoryDetailRepository.findAll()).isEmpty();
             });
         }
+
         @DisplayName("삭제된 멤버의 닉네임으로 저장이 가능하다.")
         @Test
         void success_whenNicknameCanBeNicknameOfDeletedMember() throws Exception {
@@ -350,8 +349,8 @@ class MemberControllerTest extends ControllerTest {
                         .doesNotThrowAnyException();
             });
         }
-
     }
+
     @DisplayName("회원 닉네임 중복 검사 할 때에")
     @Nested
     class CheckForDuplicates {
@@ -373,6 +372,7 @@ class MemberControllerTest extends ControllerTest {
                 softly.assertThat(actual.getCode()).isEqualTo(SAME_AS_BEFORE_NICKNAME.name());
             });
         }
+
         @DisplayName("멤버의 닉네임이 이미 존재하는 닉네임이라면 예외가 발생한다")
         @Test
         void error_existingNickname() throws Exception {
