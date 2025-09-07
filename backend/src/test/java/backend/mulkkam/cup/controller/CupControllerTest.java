@@ -44,16 +44,15 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.MemberFixtureBuilder;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+
+import java.util.Arrays;
+import java.util.List;
 
 class CupControllerTest extends ControllerTest {
 
@@ -76,7 +75,7 @@ class CupControllerTest extends ControllerTest {
 
     private String token;
 
-    private Long savedCupEmojiId;
+    private CupEmoji savedCupEmoji;
 
     @BeforeEach
     void setUp() {
@@ -90,7 +89,7 @@ class CupControllerTest extends ControllerTest {
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
         saveDefaultCupEmojis();
-        savedCupEmojiId = cupEmojiRepository.findAll().getFirst().getId();
+        savedCupEmoji = cupEmojiRepository.findAll().getFirst();
     }
 
     private void saveDefaultCupEmojis() {
@@ -100,9 +99,9 @@ class CupControllerTest extends ControllerTest {
         }
     }
 
-    @DisplayName("컵을 조회한다")
+    @DisplayName("사용자 기본 컵 리스트 조회")
     @Nested
-    class Read {
+    class ReadDefault {
 
         @DisplayName("모든 기본 컵을 반환한다.")
         @Test
@@ -138,7 +137,7 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "WATER", savedCupEmojiId);
+            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "WATER", savedCupEmoji.getId());
 
             // when & then
             mockMvc.perform(post("/cups")
@@ -153,7 +152,7 @@ class CupControllerTest extends ControllerTest {
         @Test
         void error_invalidIntakeType() throws Exception {
             // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", savedCupEmojiId);
+            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(post("/cups")
@@ -391,7 +390,7 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmojiId);
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
 
             // when & then
             mockMvc.perform(patch("/cups/" + savedCupId)
@@ -406,7 +405,7 @@ class CupControllerTest extends ControllerTest {
         @Test
         void error_notFoundCup() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmojiId);
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
@@ -444,7 +443,7 @@ class CupControllerTest extends ControllerTest {
             Cup savedOtherCup = cupRepository.save(otherCup);
             Long savedOtherCupId = savedOtherCup.getId();
 
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmojiId);
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + savedOtherCupId)
@@ -543,10 +542,8 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_whenResettingDefaultCupsDeletesExistingCups() throws Exception {
             // given
-            CupEmoji cupEmoji = cupEmojiRepository.findAll().stream().findFirst()
-                    .orElseThrow(() -> new RuntimeException("there is no cup emoji fixture"));
             Cup cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(savedMember, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .build();
             cupRepository.save(cup);
 
@@ -556,8 +553,12 @@ class CupControllerTest extends ControllerTest {
                     .andExpect(status().isOk());
 
             List<Cup> cups = cupRepository.findAllByMember(savedMember);
-            List<CupNickname> actualNames = cups.stream().map(Cup::getNickname).toList();
-            List<CupNickname> expectedNames = Arrays.stream(DefaultCup.values()).map(DefaultCup::getNickname).toList();
+            List<CupNickname> actualNames = cups.stream()
+                    .map(Cup::getNickname)
+                    .toList();
+            List<CupNickname> expectedNames = Arrays.stream(DefaultCup.values())
+                    .map(DefaultCup::getNickname)
+                    .toList();
 
             // then
             assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
