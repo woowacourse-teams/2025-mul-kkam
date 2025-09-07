@@ -1,6 +1,7 @@
 package backend.mulkkam.support.fixture.member.dto;
 
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import java.util.List;
@@ -25,8 +26,25 @@ public class CreateMemberRequestFixtureBuilder {
         this.createCupRequests = createCupRequests;
     }
 
+    private CreateMemberRequestFixtureBuilder(Member member, List<CreateCupRequest> createCupRequests) {
+        this.memberNickname = member.getActiveNickname();
+        this.gender = member.getPhysicalAttributes().getGender();
+        this.weight = member.getPhysicalAttributes().getWeight();
+        this.targetAmount = member.getTargetAmount().value();
+        this.isMarketingNotificationAgreed = member.isMarketingNotificationAgreed();
+        this.isNightNotificationAgreed = member.isNightNotificationAgreed();
+        this.createCupRequests = createCupRequests;
+    }
+
     public static CreateMemberRequestFixtureBuilder withCreateCupRequests(List<CreateCupRequest> createCupRequests) {
         return new CreateMemberRequestFixtureBuilder(createCupRequests);
+    }
+
+    public static CreateMemberRequestFixtureBuilder withMemberAndCreateCupRequests(
+            Member member,
+            List<CreateCupRequest> createCupRequests
+    ) {
+        return new CreateMemberRequestFixtureBuilder(member, createCupRequests);
     }
 
     public CreateMemberRequestFixtureBuilder memberNickname(String memberNickname) {
