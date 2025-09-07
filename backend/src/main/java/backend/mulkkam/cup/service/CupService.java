@@ -18,6 +18,7 @@ import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CreateCup;
+import backend.mulkkam.cup.dto.CreateCupRanked;
 import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
@@ -83,9 +84,9 @@ public class CupService {
     ) {
         Member member = getMember(memberDetails.id());
         CupEmoji cupEmoji = getCupEmoji(createCupWithoutRankRequest.cupEmojiId());
-        CreateCup createCup = createCupWithoutRankRequest.toCreateCup(calculateNextCupRank(member), cupEmoji);
+        CreateCupRanked createCupRanked = createCupWithoutRankRequest.toCreateCupRanked(calculateNextCupRank(member), cupEmoji);
 
-        Cup cup = createCup.toCup(member);
+        Cup cup = createCupRanked.toCup(member);
         cupRepository.save(cup);
 
         return new CupResponse(cup);
