@@ -21,6 +21,10 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
+import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -36,8 +40,8 @@ import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.controller.ControllerTest;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
@@ -51,6 +55,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootTest
@@ -88,7 +93,7 @@ class MemberControllerTest extends ControllerTest {
             .weight(null)
             .gender(null)
             .build();
-    private final CupEmoji cupEmoji = new CupEmoji("http://cup-emoji.com");
+    private CupEmoji cupEmoji;
 
     private OauthAccount oauthAccount;
 
@@ -104,11 +109,20 @@ class MemberControllerTest extends ControllerTest {
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
-        cupEmojiRepository.save(cupEmoji);
+        saveDefaultCupEmojis();
+
+        cupEmoji = cupEmojiRepository.findAll().getFirst();
         cup = CupFixtureBuilder
                 .withMemberAndCupEmoji(member, cupEmoji)
                 .build();
         cupRepository.save(cup);
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
+            cupEmojiRepository.save(new CupEmoji(url));
+        }
     }
 
     @DisplayName("멤버를 생성할 때에")
@@ -116,6 +130,7 @@ class MemberControllerTest extends ControllerTest {
     class Create {
 
         private static final String ONBOARDING_OAUTH_ID = "test2";
+
         private final OauthAccount onboardingAccount = new OauthAccount(ONBOARDING_OAUTH_ID, KAKAO);
 
         @BeforeEach
@@ -160,8 +175,6 @@ class MemberControllerTest extends ControllerTest {
         @DisplayName("기본 컵 3개도 저장된다.")
         @Test
         void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
-            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
-            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
             CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
                     true);
 
@@ -175,14 +188,11 @@ class MemberControllerTest extends ControllerTest {
             OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId(ONBOARDING_OAUTH_ID).orElseThrow();
             Member foundMember = foundOauthAccount.getMember();
             List<Cup> cups = cupRepository.findAllByMember(foundMember);
+            List<CupNickname> actualNames = cups.stream().map(Cup::getNickname).toList();
+            List<CupNickname> expectedNames = Arrays.stream(DefaultCup.values()).map(DefaultCup::getNickname).toList();
 
             // then
-            assertSoftly(softly -> {
-                softly.assertThat(cups.size()).isEqualTo(3);
-                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
-                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
-                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
-            });
+            assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
         }
     }
 
@@ -210,7 +220,6 @@ class MemberControllerTest extends ControllerTest {
                     softly.assertThat(foundMember.isNightNotificationAgreed()).isFalse()
             );
         }
-
         @DisplayName("마케팅 알림을 수정한다.")
         @Test
         void success_whenModifyIsMarketingNotificationAgreed() throws Exception {
@@ -255,7 +264,6 @@ class MemberControllerTest extends ControllerTest {
                 softly.assertThat(actual.isMarketingNotificationAgreed()).isTrue();
             });
         }
-
         @DisplayName("몸무게 및 성별이 null이라면 null로 반환한다.")
         @Test
         void success_whenWeightAndGenderCanBeNull() throws Exception {
