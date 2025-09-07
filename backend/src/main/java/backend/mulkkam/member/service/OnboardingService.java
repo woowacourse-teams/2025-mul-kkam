@@ -33,9 +33,11 @@ public class OnboardingService {
             OauthAccountDetails accountDetails,
             CreateMemberRequest createMemberRequest
     ) {
+        OauthAccount account = getOauthAccount(accountDetails);
+
         Member member = createMemberRequest.toMember();
         memberRepository.save(member);
-        OauthAccount account = getOauthAccount(accountDetails);
+
         account.modifyMember(member);
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
