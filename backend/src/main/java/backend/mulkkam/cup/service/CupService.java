@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -67,24 +68,13 @@ public class CupService {
         return Arrays.stream(DefaultCup.values())
                 .map(defaultCup -> {
                     CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
-                    if (emojiByUrl.containsKey(emojiUrl)) {
-                        return new Cup(
-                                member,
-                                defaultCup.getNickname(),
-                                defaultCup.getAmount(),
-                                defaultCup.getRank(),
-                                defaultCup.getIntakeType(),
-                                emojiByUrl.get(emojiUrl)
-                        );
-                    }
-                    CupEmoji emoji = cupEmojiRepository.save(new CupEmoji(defaultCup.getCupEmojiUrl()));
                     return new Cup(
                             member,
                             defaultCup.getNickname(),
                             defaultCup.getAmount(),
                             defaultCup.getRank(),
                             defaultCup.getIntakeType(),
-                            emoji
+                            emojiByUrl.get(emojiUrl)
                     );
                 })
                 .toList();
@@ -100,12 +90,21 @@ public class CupService {
     }
 
     private Map<CupEmojiUrl, CupEmoji> getDefaultEmojiByUrl() {
-        List<CupEmoji> defaultEmojis = getDefaultCupEmojis();
-        return defaultEmojis.stream()
+        List<CupEmoji> defaultEmojis = getSavedDefaultCupEmojis();
+
+        Map<CupEmojiUrl, CupEmoji> result = defaultEmojis.stream()
                 .collect(Collectors.toMap(CupEmoji::getUrl, Function.identity()));
+        Set<CupEmojiUrl> expectedDefaultEmojis = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCupEmojiUrl)
+                .collect(Collectors.toSet());
+
+        if (result.keySet().containsAll(expectedDefaultEmojis)) {
+            return result;
+        }
+        throw new CommonException(NOT_EXIST_DEFAULT_CUP_EMOJI);
     }
 
-    private List<CupEmoji> getDefaultCupEmojis() {
+    private List<CupEmoji> getSavedDefaultCupEmojis() {
         List<CupEmojiUrl> defaultEmojiUrls = Arrays.stream(DefaultCup.values())
                 .map(DefaultCup::getCupEmojiUrl)
                 .distinct()
