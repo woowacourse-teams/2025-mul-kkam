@@ -257,7 +257,18 @@ public class MemberService {
         Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
         return Arrays.stream(DefaultCup.values())
                 .map(defaultCup -> {
-                    CupEmoji emoji = emojiByUrl.get(defaultCup.getCupEmojiUrl());
+                    CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
+                    if (emojiByUrl.containsKey(emojiUrl)) {
+                        return new Cup(
+                                member,
+                                defaultCup.getNickname(),
+                                defaultCup.getAmount(),
+                                defaultCup.getRank(),
+                                defaultCup.getIntakeType(),
+                                emojiByUrl.get(emojiUrl)
+                        );
+                    }
+                    CupEmoji emoji = cupEmojiRepository.save(new CupEmoji(defaultCup.getCupEmojiUrl()));
                     return new Cup(
                             member,
                             defaultCup.getNickname(),

@@ -4,7 +4,6 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
-import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -67,7 +66,18 @@ public class CupService {
         Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
         return Arrays.stream(DefaultCup.values())
                 .map(defaultCup -> {
-                    CupEmoji emoji = emojiByUrl.get(defaultCup.getCupEmojiUrl());
+                    CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
+                    if (emojiByUrl.containsKey(emojiUrl)) {
+                        return new Cup(
+                                member,
+                                defaultCup.getNickname(),
+                                defaultCup.getAmount(),
+                                defaultCup.getRank(),
+                                defaultCup.getIntakeType(),
+                                emojiByUrl.get(emojiUrl)
+                        );
+                    }
+                    CupEmoji emoji = cupEmojiRepository.save(new CupEmoji(defaultCup.getCupEmojiUrl()));
                     return new Cup(
                             member,
                             defaultCup.getNickname(),
