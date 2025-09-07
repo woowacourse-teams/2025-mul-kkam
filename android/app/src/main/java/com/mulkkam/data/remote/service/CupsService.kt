@@ -3,6 +3,7 @@ package com.mulkkam.data.remote.service
 import com.mulkkam.data.remote.model.request.cups.CupsRankRequest
 import com.mulkkam.data.remote.model.request.cups.NewCupRequest
 import com.mulkkam.data.remote.model.response.cups.CupEmojisResponse
+import com.mulkkam.data.remote.model.response.cups.CupsDefaultResponse
 import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
 import com.mulkkam.data.remote.model.response.cups.CupsResponse
 import retrofit2.http.Body
@@ -18,7 +19,7 @@ interface CupsService {
     suspend fun getCups(): Result<CupsResponse>
 
     @GET("/cups/default")
-    suspend fun getCupsDefault(): Result<CupsResponse>
+    suspend fun getCupsDefault(): Result<CupsDefaultResponse>
 
     @POST("/cups")
     suspend fun postCup(
