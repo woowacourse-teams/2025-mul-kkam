@@ -33,6 +33,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.dto.CreateCupFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.dto.CreateCupRequestFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.util.Comparator;
@@ -59,6 +60,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
     private Member savedMember;
     private CupEmoji savedCupEmoji;
+    private Long saveCupEmojiId;
 
     @BeforeEach
     void setUp() {
@@ -69,6 +71,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         CupEmoji cupEmoji = new CupEmoji(
                 "https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c");
         savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+        saveCupEmojiId = savedCupEmoji.getId();
     }
 
     @DisplayName("컵 리스트를 생성할 때에")
@@ -155,10 +158,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_validData() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = 500;
-            CreateCupWithoutRankRequest cupRegisterRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount,
-                    "WATER", savedCupEmoji.getId());
+            CreateCupWithoutRankRequest cupRegisterRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
 
             // when
             CupResponse cupResponse = cupService.createAtLastRank(cupRegisterRequest, new MemberDetails(savedMember));
@@ -170,8 +172,8 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     .orElseThrow();
 
             assertSoftly(softly -> {
-                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupNickname);
-                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupAmount);
+                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupRegisterRequest.cupNickname());
+                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupRegisterRequest.cupAmount());
                 softly.assertThat(cupResponse.intakeType()).isEqualTo(IntakeType.WATER);
                 softly.assertThat(cupRepository.findById(cupResponse.id())).isPresent();
                 softly.assertThat(cupResponse.cupRank())
@@ -204,8 +206,9 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             cupService.delete(thirdCup.getId(), new MemberDetails(savedMember));
 
-            CreateCupWithoutRankRequest request = new CreateCupWithoutRankRequest("new", 100, "WATER",
-                    savedCupEmoji.getId());
+            CreateCupWithoutRankRequest request = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
 
             // when
             cupService.createAtLastRank(request, new MemberDetails(savedMember));
@@ -222,10 +225,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountLessThan0() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = -100;
-            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount,
-                    "WATER", savedCupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .cupAmount(-100)
+                    .build();
 
             // when & then
             assertThatThrownBy(
@@ -238,10 +241,10 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsEqualTo0() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = 0;
-            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest(cupNickname, cupAmount,
-                    "WATER", savedCupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .cupAmount(0)
+                    .build();
 
             // when & then
             assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(savedMember)))
@@ -253,14 +256,18 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupWithoutRankRequest registerCupRequest = new CreateCupWithoutRankRequest("스타벅스1", 500, "WATER",
-                    savedCupEmoji.getId());
-            CreateCupWithoutRankRequest registerCupRequest1 = new CreateCupWithoutRankRequest("스타벅스2", 500, "WATER",
-                    savedCupEmoji.getId());
-            CreateCupWithoutRankRequest registerCupRequest2 = new CreateCupWithoutRankRequest("스타벅스3", 500, "WATER",
-                    savedCupEmoji.getId());
-            CreateCupWithoutRankRequest registerCupRequest3 = new CreateCupWithoutRankRequest("스타벅스4", 500, "WATER",
-                    savedCupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest1 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest2 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest3 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
 
             // when
             cupService.createAtLastRank(registerCupRequest1, new MemberDetails(savedMember));
