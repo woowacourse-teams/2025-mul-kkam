@@ -55,7 +55,6 @@ public class MemberService {
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
 
-
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new MemberResponse(member);
