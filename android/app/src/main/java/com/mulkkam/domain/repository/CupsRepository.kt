@@ -4,14 +4,13 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupEmoji
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.domain.model.cups.PreCups
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamResult
 
 interface CupsRepository {
     suspend fun getCups(): MulKkamResult<Cups>
 
-    suspend fun getCupsDefault(): MulKkamResult<PreCups>
+    suspend fun getCupsDefault(): MulKkamResult<Cups>
 
     suspend fun postCup(
         name: CupName,

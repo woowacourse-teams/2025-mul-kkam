@@ -10,7 +10,6 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupEmoji
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.domain.model.cups.PreCups
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
@@ -27,7 +26,7 @@ class CupsRepositoryImpl(
         )
     }
 
-    override suspend fun getCupsDefault(): MulKkamResult<PreCups> {
+    override suspend fun getCupsDefault(): MulKkamResult<Cups> {
         val result = cupsService.getCupsDefault()
 
         return result.fold(

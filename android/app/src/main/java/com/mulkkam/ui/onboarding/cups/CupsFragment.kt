@@ -69,6 +69,7 @@ class CupsFragment :
         super.onViewCreated(view, savedInstanceState)
 
         initTextAppearance()
+        initAdapter()
         initObserver()
         initClickListener()
     }
@@ -80,6 +81,10 @@ class CupsFragment :
                 R.style.title1,
                 getString(R.string.cups_input_hint_highlight),
             )
+    }
+
+    private fun initAdapter() {
+        binding.rvCups.adapter = settingCupsAdapter
     }
 
     private fun initObserver() {
