@@ -64,9 +64,6 @@ jobs:
       - name: Create .env file
         run: |
           cat <<EOF > ~/mulkkam/.env
-          DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}
-          DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}
-          DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}
           LOG_PATH=${{ secrets.LOG_PATH }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
@@ -75,12 +72,12 @@ jobs:
           FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
           SPRING_PROFILES_ACTIVE=dev
-          DEV_DB_RO=${{ secrets.DEV_DB_RO }}
-          DEV_DB_RO_PASSWORD=${{ secrets.DEV_DB_RO_PASSWORD }}
-          DEV_DB_RW=${{ secrets.DEV_DB_RW }}
-          DEV_DB_RW_PASSWORD=${{ secrets.DEV_DB_RW_PASSWORD }}
-          DEV_DB_MIG=${{ secrets.DEV_DB_MIG }}
-          DEV_DB_MIG_PASSWORD=${{ secrets.DEV_DB_MIG_PASSWORD }}
+          DEV_DATASOURCE_URL=${{ secrets.DEV_DATASOURCE_URL }}
+          DEV_DATASOURCE_RW_USERNAME=${{ secrets.DEV_DATASOURCE_RW_USERNAME }}
+          DEV_DATASOURCE_RW_PASSWORD=${{ secrets.DEV_DATASOURCE_RW_PASSWORD }}
+          DEV_DATASOURCE_MIGRATION_USERNAME=${{ secrets.DEV_DATASOURCE_MIGRATION_USERNAME }}
+          DEV_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.DEV_DATASOURCE_MIGRATION_PASSWORD }}
+          
           EOF
 
       - name: Stop existing services

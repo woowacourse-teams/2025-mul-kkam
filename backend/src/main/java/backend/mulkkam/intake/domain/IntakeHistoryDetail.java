@@ -78,12 +78,12 @@ public class IntakeHistoryDetail extends BaseEntity {
         this.intakeHistory = intakeHistory;
         this.intakeType = intakeType;
         this.intakeAmount = new IntakeAmount(intakeType.calculateHydration(intakeAmount));
-        this.cupEmojiUrl = CupEmojiUrl.getDefault();
+        this.cupEmojiUrl = CupEmojiUrl.getDefaultByType(intakeType);
     }
 
     private CupEmojiUrl getCupEmojiUrl(Cup cup) {
         if (cup.getCupEmoji() == null) {
-            return CupEmojiUrl.getDefault();
+            return CupEmojiUrl.getDefaultByType(intakeType);
         }
         return cup.getCupEmoji().getUrl();
     }
