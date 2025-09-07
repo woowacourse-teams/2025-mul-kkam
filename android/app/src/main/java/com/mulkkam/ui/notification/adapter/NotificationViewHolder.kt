@@ -104,9 +104,7 @@ class NotificationViewHolder(
                 .makeText(
                     binding.root.context,
                     getString(binding.root.context, R.string.home_notification_apply_failed),
-                ).apply {
-                    setGravityY(TOAST_BOTTOM_NAV_OFFSET)
-                }.show()
+                ).show()
         }
     }
 

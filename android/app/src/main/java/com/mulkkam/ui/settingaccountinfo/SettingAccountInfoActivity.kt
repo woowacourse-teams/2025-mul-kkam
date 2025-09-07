@@ -58,18 +58,14 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         viewModel.onDeleteAccount.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_delete_success))
-                .apply {
-                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                }.show()
+                .show()
             moveToLogin()
         }
 
         viewModel.onLogout.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_logout_success))
-                .apply {
-                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                }.show()
+                .show()
             moveToLogin()
         }
     }

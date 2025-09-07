@@ -63,9 +63,7 @@ class NotificationActivity :
             if (it is MulKkamUiState.Success) {
                 CustomToast
                     .makeText(this, getString(R.string.home_notification_apply_success))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
             }
         }
 
@@ -98,18 +96,14 @@ class NotificationActivity :
             is MulKkamUiState.Success<Unit> -> {
                 CustomToast
                     .makeText(this, getString(R.string.home_notification_delete_success))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
             }
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> {
                 CustomToast
                     .makeText(this, getString(R.string.home_notification_delete_failed))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
+                    .show()
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.mulkkam.ui.custom.toast
 
 import android.content.Context
+import android.content.res.Resources
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.Toast
@@ -42,7 +43,7 @@ class CustomToast private constructor(
 
             toast.view = binding.root
             toast.duration = Toast.LENGTH_SHORT
-            toast.setGravity(Gravity.FILL_HORIZONTAL, 0, 0)
+            toast.setGravity(Gravity.FILL_HORIZONTAL or Gravity.BOTTOM, 0, 0)
 
             return CustomToast(toast, binding)
         }
