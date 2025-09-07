@@ -13,7 +13,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

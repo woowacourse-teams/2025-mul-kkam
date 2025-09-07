@@ -8,8 +8,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.Mockito.when;
 
-import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
-import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -20,7 +18,7 @@ import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -35,12 +33,6 @@ public class MemberServiceUnitTest {
 
     @Mock
     private MemberRepository memberRepository;
-
-    @Mock
-    private OauthAccountRepository oauthAccountRepository;
-
-    @Mock
-    private AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @InjectMocks
     private MemberService memberService;

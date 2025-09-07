@@ -19,6 +19,7 @@ import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
@@ -28,9 +29,12 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupRequestFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.util.Comparator;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -52,41 +56,96 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
 
-    private final CupEmoji cupEmoji = new CupEmoji("https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c");
+    private Member savedMember;
+    private CupEmoji savedCupEmoji;
+    private Long saveCupEmojiId;
 
     @BeforeEach
     void setUp() {
-        cupEmojiRepository.save(cupEmoji);
+        Member member = MemberFixtureBuilder.builder()
+                .build();
+        savedMember = memberRepository.save(member);
+
+        CupEmoji cupEmoji = new CupEmoji(
+                "https://github.com/user-attachments/assets/783767ab-ee37-4079-8e38-e08884a8de1c");
+        savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+        saveCupEmojiId = savedCupEmoji.getId();
     }
 
-    @DisplayName("컵을 생성할 때에")
+    @DisplayName("컵 리스트를 생성할 때에")
     @Nested
-    class Create {
+    class CreateAll {
 
-        private final Member member = MemberFixtureBuilder.builder().build();
+        private List<CreateCupRequest> createCupRequests;
 
         @BeforeEach
-        void setup() {
-            memberRepository.save(member);
+        void setUp() {
+            createCupRequests = List.of(
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(1)
+                            .build()
+                    ,
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(2)
+                            .build()
+                    ,
+                    CreateCupRequestFixtureBuilder
+                            .withCupEmojiId(savedCupEmoji.getId())
+                            .cupRank(3)
+                            .build()
+            );
         }
 
         @DisplayName("정상적으로 저장한다")
         @Test
         void success_validData() {
-            // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = 500;
-            CreateCupRequest cupRegisterRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
-
             // when
-            CupResponse cupResponse = cupService.create(cupRegisterRequest, new MemberDetails(member));
+            cupService.createAll(createCupRequests, savedMember);
 
             // then
+            List<Cup> cups = cupRepository.findAllByMember(savedMember);
+            List<Integer> cupRanks = cups.stream()
+                    .map(cup -> cup.getCupRank().value())
+                    .toList();
+
             assertSoftly(softly -> {
-                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupNickname);
-                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupAmount);
+                        softly.assertThat(cups.size()).isEqualTo(createCupRequests.size());
+                        softly.assertThat(cupRanks).containsAll(List.of(1, 2, 3));
+                    }
+            );
+        }
+    }
+
+    @DisplayName("랭크 없이 컵을 생성할 때에")
+    @Nested
+    class CreateAtLastRank {
+
+        @DisplayName("랭크는 마지막 랭크로 정상적으로 저장한다")
+        @Test
+        void success_validData() {
+            // given
+            CreateCupWithoutRankRequest cupRegisterRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+
+            // when
+            CupResponse cupResponse = cupService.createAtLastRank(cupRegisterRequest, new MemberDetails(savedMember));
+
+            // then
+            CupRank actualMaxCupRank = cupRepository.findAllByMember(savedMember).stream()
+                    .map(Cup::getCupRank)
+                    .max(Comparator.comparingInt(CupRank::value))
+                    .orElseThrow();
+
+            assertSoftly(softly -> {
+                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupRegisterRequest.cupNickname());
+                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupRegisterRequest.cupAmount());
                 softly.assertThat(cupResponse.intakeType()).isEqualTo(IntakeType.WATER);
                 softly.assertThat(cupRepository.findById(cupResponse.id())).isPresent();
+                softly.assertThat(cupResponse.cupRank())
+                        .isEqualTo(actualMaxCupRank.value());
             });
         }
 
@@ -95,17 +154,17 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         void success_createAfterDeleted() {
             // given
             Cup firstCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
 
             Cup secondCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
 
             Cup thirdCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(3))
                     .build();
 
@@ -113,16 +172,18 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             cupRepository.save(secondCup);
             cupRepository.save(thirdCup);
 
-            cupService.delete(thirdCup.getId(), new MemberDetails(member));
+            cupService.delete(thirdCup.getId(), new MemberDetails(savedMember));
 
-            CreateCupRequest request = new CreateCupRequest("new", 100, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest request = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
 
             // when
-            cupService.create(request, new MemberDetails(member));
+            cupService.createAtLastRank(request, new MemberDetails(savedMember));
 
             // then
             assertSoftly(softly -> {
-                List<Cup> cups = cupRepository.findAllByMember(member);
+                List<Cup> cups = cupRepository.findAllByMember(savedMember);
                 softly.assertThat(cups).hasSize(3);
                 softly.assertThat(cups.stream().map(Cup::getCupRank)).doesNotHaveDuplicates();
             });
@@ -132,12 +193,14 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountLessThan0() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = -100;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .cupAmount(-100)
+                    .build();
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member))).isInstanceOf(
+            assertThatThrownBy(
+                    () -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(savedMember))).isInstanceOf(
                             CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
@@ -146,12 +209,13 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_amountIsEqualTo0() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = 0;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(cupNickname, cupAmount, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .cupAmount(0)
+                    .build();
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_AMOUNT.name());
         }
@@ -160,18 +224,26 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest("스타벅스1", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest1 = new CreateCupRequest("스타벅스2", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest2 = new CreateCupRequest("스타벅스3", 500, "WATER", cupEmoji.getId());
-            CreateCupRequest registerCupRequest3 = new CreateCupRequest("스타벅스4", 500, "WATER", cupEmoji.getId());
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest1 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest2 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
+            CreateCupWithoutRankRequest registerCupRequest3 = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(saveCupEmojiId)
+                    .build();
 
             // when
-            cupService.create(registerCupRequest1, new MemberDetails(member));
-            cupService.create(registerCupRequest2, new MemberDetails(member));
-            cupService.create(registerCupRequest3, new MemberDetails(member));
+            cupService.createAtLastRank(registerCupRequest1, new MemberDetails(savedMember));
+            cupService.createAtLastRank(registerCupRequest2, new MemberDetails(savedMember));
+            cupService.createAtLastRank(registerCupRequest3, new MemberDetails(savedMember));
 
             // then
-            assertThatThrownBy(() -> cupService.create(registerCupRequest, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.createAtLastRank(registerCupRequest, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_CUP_COUNT.name());
         }
@@ -185,23 +257,20 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExistedMemberId() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
-
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
 
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             List<Cup> cups = List.of(cup1, cup2);
             cupRepository.saveAll(cups);
 
             // when
-            CupsResponse cupsResponse = cupService.readSortedCupsByMember(new MemberDetails(member));
+            CupsResponse cupsResponse = cupService.readSortedCupsByMember(new MemberDetails(savedMember));
 
             CupResponse firstCup = cupsResponse.cups().getFirst();
             CupResponse secondCup = cupsResponse.cups().get(1);
@@ -227,15 +296,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withValidData() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
-
             String beforeCupNickName = "변경 전";
             Integer beforeCupAmount = 500;
             IntakeType beforeIntakeType = IntakeType.WATER;
 
             Cup cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupAmount(new CupAmount(beforeCupAmount))
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .intakeType(beforeIntakeType)
@@ -250,11 +316,11 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    cupEmoji.getId()
+                    savedCupEmoji.getId()
             );
 
             // when
-            cupService.update(savedCup.getId(), new MemberDetails(member), updateCupRequest);
+            cupService.update(savedCup.getId(), new MemberDetails(savedMember), updateCupRequest);
 
             Cup changedCup = cupRepository.findById(savedCup.getId()).orElseThrow();
 
@@ -269,15 +335,12 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_whenCertainCupChanges() {
             // given
-            Member member = MemberFixtureBuilder.builder().build();
-            memberRepository.save(member);
-
             String beforeCupNickName1 = "변경 전1";
             Integer beforeCupAmount1 = 300;
             IntakeType beforeIntakeType1 = IntakeType.WATER;
 
             Cup cup1 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName1))
                     .cupAmount(new CupAmount(beforeCupAmount1)).
                     intakeType(beforeIntakeType1)
@@ -288,7 +351,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeType beforeIntakeType2 = IntakeType.WATER;
 
             Cup cup2 = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName2))
                     .cupAmount(new CupAmount(beforeCupAmount2))
                     .intakeType(beforeIntakeType2)
@@ -303,11 +366,11 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     afterCupNickName,
                     afterCupAmount,
                     afterIntakeType,
-                    cupEmoji.getId()
+                    savedCupEmoji.getId()
             );
 
             // when
-            cupService.update(cup1.getId(), new MemberDetails(member), updateCupRequest);
+            cupService.update(cup1.getId(), new MemberDetails(savedMember), updateCupRequest);
 
             Cup changedCup1 = cupRepository.findById(cup1.getId()).orElseThrow();
             Cup changedCup2 = cupRepository.findById(cup2.getId()).orElseThrow();
@@ -334,7 +397,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             Integer beforeCupAmount = 500;
 
             Cup cup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member1, cupEmoji)
+                    .withMemberAndCupEmoji(member1, savedCupEmoji)
                     .cupNickname(new CupNickname(beforeCupNickName))
                     .cupAmount(new CupAmount(beforeCupAmount)).build();
 
@@ -347,7 +410,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
                     afterCupNickName,
                     afterCupAmount,
                     IntakeType.WATER,
-                    cupEmoji.getId()
+                    savedCupEmoji.getId()
             );
 
             // when & then
@@ -360,27 +423,23 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @DisplayName("컵을 삭제할 때")
     @Nested
     class Delete {
-
-        private Member savedMember;
         private Cup savedFirstCup;
         private Cup savedSecondCup;
         private Cup savedThirdCup;
 
         @BeforeEach
         void setup() {
-            Member member = MemberFixtureBuilder.builder().build();
-            savedMember = memberRepository.save(member);
 
             Cup firstCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(1))
                     .build();
             Cup secondCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(2))
                     .build();
             Cup thirdCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupRank(new CupRank(3))
                     .build();
             savedFirstCup = cupRepository.save(firstCup);
@@ -427,29 +486,22 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class UpdateRanks {
 
-        private final Member member = MemberFixtureBuilder.builder().build();
-
-        @BeforeEach
-        void setup() {
-            memberRepository.save(member);
-        }
-
         @DisplayName("중복되지 않는 식별자 및 우선순위로 자신의 컵을 수정할 수 있다.")
         @Test
         void success_ifModifyMyCups() {
             // given
             Cup firstCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupNickname(new CupNickname("first"))
                     .cupRank(new CupRank(1))
                     .build();
             Cup secondCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupNickname(new CupNickname("second"))
                     .cupRank(new CupRank(2))
                     .build();
             Cup thirdCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .withMemberAndCupEmoji(savedMember, savedCupEmoji)
                     .cupNickname(new CupNickname("third"))
                     .cupRank(new CupRank(3)).build();
 
@@ -460,7 +512,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertSoftly(softly -> {
-                softly.assertThatCode(() -> cupService.updateRanks(request, new MemberDetails(member)))
+                softly.assertThatCode(() -> cupService.updateRanks(request, new MemberDetails(savedMember)))
                         .doesNotThrowAnyException();
                 softly.assertThat(cupRepository.findById(firstCup.getId()).get().getCupRank())
                         .isEqualTo(new CupRank(3));
@@ -479,7 +531,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_CUP.name());
         }
@@ -492,7 +544,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(DUPLICATED_CUP.name());
         }
@@ -505,7 +557,7 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             UpdateCupRanksRequest request = new UpdateCupRanksRequest(cupRanks);
 
             // when & then
-            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(member)))
+            assertThatThrownBy(() -> cupService.updateRanks(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(DUPLICATED_CUP_RANKS.name());
         }
@@ -520,15 +572,15 @@ class CupServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.saveAll(List.of(me, other));
 
             Cup firstCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(me, cupEmoji)
+                    .withMemberAndCupEmoji(me, savedCupEmoji)
                     .cupNickname(new CupNickname("first"))
                     .build();
             Cup secondCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(other, cupEmoji)
+                    .withMemberAndCupEmoji(other, savedCupEmoji)
                     .cupNickname(new CupNickname("second"))
                     .build();
             Cup thirdCup = CupFixtureBuilder
-                    .withMemberAndCupEmoji(other, cupEmoji)
+                    .withMemberAndCupEmoji(other, savedCupEmoji)
                     .cupNickname(new CupNickname("third"))
                     .build();
 

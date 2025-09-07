@@ -2,34 +2,22 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_OAUTH_ACCOUNT;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.cup.domain.Cup;
-import backend.mulkkam.cup.domain.CupEmoji;
-import backend.mulkkam.cup.domain.DefaultCup;
-import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
-import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
-import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
@@ -43,18 +31,12 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -72,7 +54,6 @@ public class MemberService {
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
-    private final CupEmojiRepository cupEmojiRepository;
 
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -119,31 +100,6 @@ public class MemberService {
     public MemberNicknameResponse getNickname(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new MemberNicknameResponse(member.getMemberNickname());
-    }
-
-    @Transactional
-    public void create(
-            OauthAccountDetails accountDetails,
-            CreateMemberRequest createMemberRequest
-    ) {
-        Member member = createMemberRequest.toMember();
-        memberRepository.save(member);
-        OauthAccount account = getOauthAccount(accountDetails);
-        account.modifyMember(member);
-
-        TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
-                member,
-                LocalDate.now(),
-                new TargetAmount(createMemberRequest.targetIntakeAmount())
-        );
-        targetAmountSnapshotRepository.save(targetAmountSnapshot);
-        cupRepository.saveAll(getDefaultCups(member));
-    }
-
-    public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
-        OauthAccount oauthAccount = getOauthAccount(accountDetails);
-        boolean finishedOnboarding = oauthAccount.finishedOnboarding();
-        return new OnboardingStatusResponse(finishedOnboarding);
     }
 
     public ProgressInfoResponse getProgressInfo(
@@ -242,56 +198,10 @@ public class MemberService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 
-    private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {
-        return oauthAccountRepository.findById(accountDetails.id())
-                .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
-    }
-
     private List<Long> findSuggestionNotificationIdsByMember(Member member) {
         return notificationRepository.findAllByMember(member).stream()
                 .filter(notification -> notification.getNotificationType().equals(NotificationType.SUGGESTION))
                 .map(Notification::getId)
                 .toList();
-    }
-
-    // TODO: CupService 내부 로직과 중복 - 서비스로 묶는 리팩터링시 적용
-    private List<Cup> getDefaultCups(Member member) {
-        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
-        return Arrays.stream(DefaultCup.values())
-                .map(defaultCup -> {
-                    CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
-                    return new Cup(
-                            member,
-                            defaultCup.getNickname(),
-                            defaultCup.getAmount(),
-                            defaultCup.getRank(),
-                            defaultCup.getIntakeType(),
-                            emojiByUrl.get(emojiUrl)
-                    );
-                })
-                .toList();
-    }
-
-    private Map<CupEmojiUrl, CupEmoji> getDefaultEmojiByUrl() {
-        List<CupEmoji> defaultEmojis = getSavedDefaultCupEmojis();
-
-        Map<CupEmojiUrl, CupEmoji> result = defaultEmojis.stream()
-                .collect(Collectors.toMap(CupEmoji::getUrl, Function.identity()));
-        Set<CupEmojiUrl> expectedDefaultEmojis = Arrays.stream(DefaultCup.values())
-                .map(DefaultCup::getCupEmojiUrl)
-                .collect(Collectors.toSet());
-
-        if (result.keySet().containsAll(expectedDefaultEmojis)) {
-            return result;
-        }
-        throw new CommonException(NOT_EXIST_DEFAULT_CUP_EMOJI);
-    }
-
-    private List<CupEmoji> getSavedDefaultCupEmojis() {
-        List<CupEmojiUrl> defaultEmojiUrls = Arrays.stream(DefaultCup.values())
-                .map(DefaultCup::getCupEmojiUrl)
-                .distinct()
-                .toList();
-        return cupEmojiRepository.findAllByUrlIn(defaultEmojiUrls);
     }
 }

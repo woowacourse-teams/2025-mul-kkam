@@ -6,7 +6,6 @@ import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLI
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -31,7 +30,7 @@ import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
@@ -43,18 +42,17 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.Arrays;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
 
 class CupControllerTest extends ControllerTest {
 
@@ -153,42 +151,23 @@ class CupControllerTest extends ControllerTest {
 
     @DisplayName("컵을 생성한다")
     @Nested
-    class Create {
+    class CreateAtLastRank {
 
         @DisplayName("요청하는 컵 데이터가 올바르게 들어왔을 때 컵을 생성한다")
         @Test
         void success_validInput() throws Exception {
             // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "WATER", savedCupEmoji.getId());
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(savedCupEmoji.getId())
+                    .build();
 
             // when & then
             mockMvc.perform(post("/cups")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(createCupRequest)))
+                            .content(objectMapper.writeValueAsString(createCupWithoutRankRequest)))
                     .andDo(print())
                     .andExpect(status().isOk());
-        }
-
-        @DisplayName("음용 타입이 잘못 들어왔을 때 예외를 던진다")
-        @Test
-        void error_invalidIntakeType() throws Exception {
-            // given
-            CreateCupRequest createCupRequest = new CreateCupRequest("머그컵", 350, "CAR", savedCupEmoji.getId());
-
-            // when & then
-            String json = mockMvc.perform(post("/cups")
-                            .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .content(objectMapper.writeValueAsString(createCupRequest)))
-                    .andDo(print())
-                    .andReturn().getResponse().getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_INTAKE_TYPE.name());
-            });
         }
     }
 
