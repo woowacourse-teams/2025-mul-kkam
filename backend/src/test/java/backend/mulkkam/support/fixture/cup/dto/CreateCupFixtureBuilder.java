@@ -1,5 +1,6 @@
 package backend.mulkkam.support.fixture.cup.dto;
 
+import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupAmount;
@@ -23,8 +24,20 @@ public class CreateCupFixtureBuilder {
         this.cupEmoji = cupEmoji;
     }
 
+    private CreateCupFixtureBuilder(Cup cup) {
+        this.cupNickname =  cup.getNickname();
+        this.cupAmount = cup.getCupAmount();
+        this.cupRank = cup.getCupRank();
+        this.intakeType = cup.getIntakeType();
+        this.cupEmoji = cup.getCupEmoji();
+    }
+
     public static CreateCupFixtureBuilder withCupEmoji(CupEmoji cupEmoji) {
         return new CreateCupFixtureBuilder(cupEmoji);
+    }
+
+    public static CreateCupFixtureBuilder withCup(Cup cup) {
+        return new CreateCupFixtureBuilder(cup);
     }
 
     public CreateCupFixtureBuilder cupNickname(String cupNickname) {
