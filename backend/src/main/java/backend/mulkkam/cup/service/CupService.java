@@ -70,7 +70,10 @@ public class CupService {
                 .toList();
         validateDistinctRanks(cupRanks);
 
-        createCups.forEach(createCup -> create(createCup, member));
+        List<Cup> cups = createCups.stream()
+                .map(o -> o.toCup(member))
+                .toList();
+        cupRepository.saveAll(cups);
     }
 
     @Transactional
@@ -82,14 +85,6 @@ public class CupService {
         CupEmoji cupEmoji = getCupEmoji(createCupWithoutRankRequest.cupEmojiId());
         CreateCup createCup = createCupWithoutRankRequest.toCreateCup(calculateNextCupRank(member), cupEmoji);
 
-        return create(createCup, member);
-    }
-
-    @Transactional
-    public CupResponse create(
-            CreateCup createCup,
-            Member member
-    ) {
         Cup cup = createCup.toCup(member);
         cupRepository.save(cup);
 
