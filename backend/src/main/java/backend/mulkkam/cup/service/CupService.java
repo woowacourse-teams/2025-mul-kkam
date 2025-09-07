@@ -5,6 +5,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -13,8 +14,10 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
 import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CreateCup;
@@ -27,17 +30,20 @@ import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.dto.response.DefaultCupResponse;
+import backend.mulkkam.cup.dto.response.DefaultCupsResponse;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
-import backend.mulkkam.cup.support.CupFactory;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -53,6 +59,62 @@ public class CupService {
     private final CupRepository cupRepository;
     private final MemberRepository memberRepository;
     private final CupEmojiRepository cupEmojiRepository;
+
+    @Transactional
+    public void reset(MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+        cupRepository.deleteByMember(member);
+        cupRepository.saveAll(getDefaultCups(member));
+    }
+
+    private List<Cup> getDefaultCups(Member member) {
+        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+        return Arrays.stream(DefaultCup.values())
+                .map(defaultCup -> {
+                    CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
+                    return new Cup(
+                            member,
+                            defaultCup.getNickname(),
+                            defaultCup.getAmount(),
+                            defaultCup.getRank(),
+                            defaultCup.getIntakeType(),
+                            emojiByUrl.get(emojiUrl)
+                    );
+                })
+                .toList();
+    }
+
+    public DefaultCupsResponse readDefaultCups() {
+        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+
+        List<DefaultCupResponse> defaultCups = Arrays.stream(DefaultCup.values())
+                .map(defaultCup -> new DefaultCupResponse(defaultCup, emojiByUrl.get(defaultCup.getCupEmojiUrl())))
+                .toList();
+        return new DefaultCupsResponse(defaultCups);
+    }
+
+    private Map<CupEmojiUrl, CupEmoji> getDefaultEmojiByUrl() {
+        List<CupEmoji> defaultEmojis = getSavedDefaultCupEmojis();
+
+        Map<CupEmojiUrl, CupEmoji> result = defaultEmojis.stream()
+                .collect(Collectors.toMap(CupEmoji::getUrl, Function.identity()));
+        Set<CupEmojiUrl> expectedDefaultEmojis = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCupEmojiUrl)
+                .collect(Collectors.toSet());
+
+        if (result.keySet().containsAll(expectedDefaultEmojis)) {
+            return result;
+        }
+        throw new CommonException(NOT_EXIST_DEFAULT_CUP_EMOJI);
+    }
+
+    private List<CupEmoji> getSavedDefaultCupEmojis() {
+        List<CupEmojiUrl> defaultEmojiUrls = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCupEmojiUrl)
+                .distinct()
+                .toList();
+        return cupEmojiRepository.findAllByUrlIn(defaultEmojiUrls);
+    }
 
     public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -148,14 +210,7 @@ public class CupService {
                 .forEach(Cup::promoteRank);
     }
 
-    @Transactional
-    public void reset(MemberDetails memberDetails) {
-        Member member = getMember(memberDetails.id());
-        cupRepository.deleteByMember(member);
 
-        List<CupEmoji> cupEmojis = cupEmojiRepository.findAll();
-        cupRepository.saveAll(CupFactory.createDefaultCups(member, cupEmojis));
-    }
 
     private CupRank calculateNextCupRank(Member member) {
         final int cupCount = cupRepository.countByMemberId(member.getId());

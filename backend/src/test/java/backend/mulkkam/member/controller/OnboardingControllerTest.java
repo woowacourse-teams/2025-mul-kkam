@@ -8,15 +8,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
-import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -45,16 +42,7 @@ class OnboardingControllerTest extends ControllerTest {
     private MemberRepository memberRepository;
 
     @Autowired
-    private AccountRefreshTokenRepository accountRefreshTokenRepository;
-
-    @Autowired
     private CupRepository cupRepository;
-
-    @Autowired
-    private IntakeHistoryRepository intakeHistoryRepository;
-
-    @Autowired
-    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;

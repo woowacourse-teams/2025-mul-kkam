@@ -20,6 +20,8 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -45,7 +47,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
+@AutoConfigureMockMvc
 class MemberControllerTest extends ControllerTest {
 
     @Autowired
@@ -79,12 +85,12 @@ class MemberControllerTest extends ControllerTest {
             .weight(null)
             .gender(null)
             .build();
-    private final CupEmoji cupEmoji = new CupEmoji("http://cup-emoji.com");
+    private CupEmoji cupEmoji;
 
     private OauthAccount oauthAccount;
 
     private String token;
-    private Cup cup;
+    private Cup savedCup;
 
     @BeforeEach
     void setUp() {
@@ -95,11 +101,21 @@ class MemberControllerTest extends ControllerTest {
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
-        cupEmojiRepository.save(cupEmoji);
-        cup = CupFixtureBuilder
+        saveDefaultCupEmojis();
+
+        cupEmoji = cupEmojiRepository.findAll().getFirst();
+
+        Cup cup = CupFixtureBuilder
                 .withMemberAndCupEmoji(member, cupEmoji)
                 .build();
-        cupRepository.save(cup);
+        savedCup = cupRepository.save(cup);
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
+            cupEmojiRepository.save(new CupEmoji(url));
+        }
     }
 
     @DisplayName("멤버의 정보를 수정할 때에")
@@ -213,7 +229,7 @@ class MemberControllerTest extends ControllerTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .buildWithCup(cup);
+                    .buildWithCup(savedCup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
