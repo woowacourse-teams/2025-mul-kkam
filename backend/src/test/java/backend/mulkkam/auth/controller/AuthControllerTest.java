@@ -1,6 +1,5 @@
 package backend.mulkkam.auth.controller;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_ALREADY_USED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_IS_EXPIRED;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -9,9 +8,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
@@ -24,6 +25,8 @@ import backend.mulkkam.support.controller.ControllerTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,15 +41,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.security.Key;
-import java.util.Date;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest extends ControllerTest {
 
     private final String oauthAccessToken = "abcdefg";
+    private final String deviceUuid = "asd";
     private final KakaoUserInfo userInfo = new KakaoUserInfo("abc");
 
     @Value("${security.jwt.secret-key}")
@@ -78,13 +79,17 @@ class AuthControllerTest extends ControllerTest {
             OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
                     .orElseThrow();
 
+            LogoutRequest logoutRequest = new LogoutRequest(deviceUuid);
+
             // when
             mockMvc.perform(post("/auth/logout")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken())
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(logoutRequest)))
                     .andExpect(status().isNoContent());
 
             // then
-            assertThat(accountRefreshTokenRepository.findByAccount(account)).isEmpty();
+            assertThat(accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, deviceUuid)).isEmpty();
         }
 
         @DisplayName("액세스 토큰이 존재하지 않는 경우 401 에러가 발생한다.")
@@ -122,6 +127,37 @@ class AuthControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(response.accessToken()).isNotEqualTo(loginResponse.accessToken());
                 softly.assertThat(response.refreshToken()).isNotEqualTo(loginResponse.refreshToken());
+            });
+        }
+
+        @DisplayName("oauth 계정이 같아도, 디바이스가 다르면 저장된다.")
+        @Test
+        void success_whenSameOauthAccountAndDiffDevice() throws Exception {
+            // when
+            KakaoSigninRequest kakaoSigninRequest1 = new KakaoSigninRequest(oauthAccessToken, "1");
+            mockMvc.perform(post("/auth/kakao")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(kakaoSigninRequest1)))
+                    .andExpect(status().isOk());
+
+            KakaoSigninRequest kakaoSigninRequest2 = new KakaoSigninRequest(oauthAccessToken, "2");
+            mockMvc.perform(post("/auth/kakao")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(kakaoSigninRequest2)))
+                    .andExpect(status().isOk());
+
+            // then
+            OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
+                    .orElseThrow();
+
+            AccountRefreshToken savedTokens1 = accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, "1")
+                    .orElseThrow();
+            AccountRefreshToken savedTokens2 = accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, "2")
+                    .orElseThrow();
+
+            assertSoftly(softly -> {
+                softly.assertThat(savedTokens1.getDeviceUuid()).isEqualTo("1");
+                softly.assertThat(savedTokens2.getDeviceUuid()).isEqualTo("2");
             });
         }
 
@@ -171,7 +207,7 @@ class AuthControllerTest extends ControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_ALREADY_USED.name());
+            assertThat(response.getCode()).isEqualTo(UNAUTHORIZED.name());
         }
 
         @DisplayName("리프레시 토큰이 만료된 경우 재발급을 받을 수 없다.")
@@ -227,7 +263,7 @@ class AuthControllerTest extends ControllerTest {
     }
 
     private OauthLoginResponse doLogin() throws Exception {
-        KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
+        KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
 
         String content = mockMvc.perform(post("/auth/kakao")
                         .contentType(MediaType.APPLICATION_JSON)

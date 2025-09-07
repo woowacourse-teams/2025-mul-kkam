@@ -24,7 +24,6 @@ import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
@@ -207,8 +206,7 @@ public class MemberService {
     }
 
     private void deleteRefreshTokenAndAccount(OauthAccount account) {
-        accountRefreshTokenRepository.findByAccount(account)
-                .ifPresent(accountRefreshTokenRepository::delete);
+        accountRefreshTokenRepository.deleteAllByAccount(account);
         oauthAccountRepository.delete(account);
     }
 

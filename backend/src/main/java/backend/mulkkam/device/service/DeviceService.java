@@ -26,7 +26,7 @@ public class DeviceService {
             RegisterDeviceRequest registerDeviceRequest,
             MemberDetails memberDetails
     ) {
-        deviceRepository.findByDeviceIdAndMemberId(registerDeviceRequest.deviceId(), memberDetails.id())
+        deviceRepository.findByDeviceUuidAndMemberId(registerDeviceRequest.deviceUuid(), memberDetails.id())
                 .ifPresentOrElse((device) -> {
                     device.modifyToken(registerDeviceRequest.token());
                 }, () -> {

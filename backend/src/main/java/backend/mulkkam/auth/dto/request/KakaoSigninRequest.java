@@ -8,6 +8,9 @@ public record KakaoSigninRequest(
                 example = "v7dm1Q...abc",
                 requiredMode = Schema.RequiredMode.REQUIRED
         )
-        String oauthAccessToken
+        String oauthAccessToken,
+
+        @Schema(description = "디바이스 uuid")
+        String deviceUuid
 ) {
 }

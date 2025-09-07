@@ -10,12 +10,11 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -39,24 +38,25 @@ public class KakaoAuthService {
         String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
         String refreshToken = jwtTokenHandler.createRefreshToken(oauthAccount);
 
-        updateAccountRefreshToken(oauthAccount, refreshToken);
+        updateAccountRefreshToken(oauthAccount, refreshToken, kakaoSigninRequest.deviceUuid());
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
     }
 
     private void updateAccountRefreshToken(
             OauthAccount oauthAccount,
-            String refreshToken
+            String refreshToken,
+            String deviceUuid
     ) {
-        Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
-                oauthAccount);
+        Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccountAndDeviceUuid(
+                oauthAccount, deviceUuid);
 
         if (foundAccountRefreshToken.isPresent()) {
             foundAccountRefreshToken.get().reissueToken(refreshToken);
             return;
         }
 
-        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken);
+        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken, deviceUuid);
         accountRefreshTokenRepository.save(accountRefreshToken);
     }
 }

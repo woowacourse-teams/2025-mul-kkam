@@ -14,13 +14,12 @@ import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.util.List;
 
 public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -49,10 +48,11 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String oauthAccessToken = "temp";
             String oauthId = "memberId";
+            String deviceUuid = "deviceUuid";
             when(kakaoRestClient.getUserInfo(oauthAccessToken))
                     .thenReturn(new KakaoUserInfo(oauthId));
 
-            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken);
+            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
 
             String refreshToken = "refreshToken";
             when(oauthJwtTokenHandler.createRefreshToken(any()))
@@ -84,10 +84,11 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
                     .thenReturn(new KakaoUserInfo(oauthId));
 
             String refreshToken = "refreshToken";
+            String deviceUuid = "deviceUuid";
             when(oauthJwtTokenHandler.createRefreshToken(any()))
                     .thenReturn(refreshToken);
 
-            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken);
+            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
 
             List<OauthAccount> oauthAccountsBeforeUpdated = oauthAccountRepository.findAll();
 
@@ -114,10 +115,11 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
                     .thenReturn(new KakaoUserInfo(oauthId));
 
             String refreshToken = "refreshToken";
+            String deviceUuid = "deviceUuid";
             when(oauthJwtTokenHandler.createRefreshToken(any()))
                     .thenReturn(refreshToken);
 
-            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken);
+            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
 
             // when
             kakaoAuthService.signIn(kakaoSigninRequest);
@@ -137,21 +139,24 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             String oauthAccessToken = "temp";
             String oauthId = "memberId";
+            String deviceUuid = "deviceUuid";
 
             OauthAccount oauthAccount = new OauthAccount(oauthId, OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
-            AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, "originRefreshToken");
+            AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, "originRefreshToken",
+                    deviceUuid);
             accountRefreshTokenRepository.save(accountRefreshToken);
 
             when(kakaoRestClient.getUserInfo(oauthAccessToken))
                     .thenReturn(new KakaoUserInfo(oauthId));
 
             String newRefreshToken = "newRefreshToken";
+
             when(oauthJwtTokenHandler.createRefreshToken(any()))
                     .thenReturn(newRefreshToken);
 
-            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken);
+            KakaoSigninRequest kakaoSigninRequest = new KakaoSigninRequest(oauthAccessToken, deviceUuid);
 
             // when
             kakaoAuthService.signIn(kakaoSigninRequest);

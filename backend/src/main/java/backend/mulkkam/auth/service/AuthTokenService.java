@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.U
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
@@ -27,18 +28,20 @@ public class AuthTokenService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
-    public void logout(OauthAccountDetails accountDetails) {
-        accountRefreshTokenRepository.deleteByAccountId(accountDetails.id());
+    public void logout(
+            OauthAccountDetails accountDetails,
+            LogoutRequest logoutRequest
+    ) {
+        //TODO: 안드측 로그아웃 어떻게 하는 지 확인 후 로직 변경
+        accountRefreshTokenRepository.deleteByAccountIdAndDeviceUuid(accountDetails.id(), logoutRequest.deviceUuid());
     }
 
     @Transactional
     public ReissueTokenResponse reissueToken(ReissueTokenRequest request) {
         String refreshToken = request.refreshToken();
         OauthAccount account = getAccountByToken(refreshToken);
-
-        AccountRefreshToken saved = loadRefreshToken(account);
+        AccountRefreshToken saved = loadRefreshToken(refreshToken);
         validateRequestToken(saved, refreshToken);
-
         String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account);
         String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account);
 
@@ -60,8 +63,10 @@ public class AuthTokenService {
         }
     }
 
-    private AccountRefreshToken loadRefreshToken(OauthAccount account) {
-        return accountRefreshTokenRepository.findByAccount(account)
+    private AccountRefreshToken loadRefreshToken(
+            String refreshToken
+    ) {
+        return accountRefreshTokenRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new CommonException(UNAUTHORIZED));
     }
 

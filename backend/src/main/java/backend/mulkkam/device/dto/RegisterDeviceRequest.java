@@ -9,10 +9,10 @@ public record RegisterDeviceRequest(
         @Schema(description = "FCM 토큰 - 디바이스 하나 당 하나의 토큰만 가질 수 있음")
         String token,
         @Schema(description = "디바이스 기기 UUID")
-        String deviceId
+        String deviceUuid
 ) {
 
     public Device toDevice(Member member) {
-        return new Device(token, deviceId, member);
+        return new Device(token, deviceUuid, member);
     }
 }

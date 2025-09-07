@@ -7,6 +7,7 @@ public class AccountRefreshTokenFixtureBuilder {
 
     private final OauthAccount oauthAccount;
     private String refreshToken = "refreshToken";
+    private String deviceUuid = "deviceUuid";
 
     private AccountRefreshTokenFixtureBuilder(OauthAccount oauthAccount) {
         this.oauthAccount = oauthAccount;
@@ -21,10 +22,16 @@ public class AccountRefreshTokenFixtureBuilder {
         return this;
     }
 
+    public AccountRefreshTokenFixtureBuilder deviceUuid(String deviceUuid) {
+        this.deviceUuid = deviceUuid;
+        return this;
+    }
+
     public AccountRefreshToken build() {
         return new AccountRefreshToken(
                 oauthAccount,
-                refreshToken
+                refreshToken,
+                deviceUuid
         );
     }
 }
