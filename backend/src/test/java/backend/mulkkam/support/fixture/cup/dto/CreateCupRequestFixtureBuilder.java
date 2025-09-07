@@ -9,13 +9,13 @@ public class CreateCupRequestFixtureBuilder {
     private String cupNickname;
     private Integer cupAmount;
     private Integer cupRank;
-    private String intakeType;
+    private IntakeType intakeType;
 
     private CreateCupRequestFixtureBuilder(Long cupEmojiId) {
         this.cupNickname = "우테코 텀블러";
         this.cupAmount = 1_500;
         this.cupRank = 1;
-        this.intakeType = IntakeType.WATER.name();
+        this.intakeType = IntakeType.WATER;
         this.cupEmojiId = cupEmojiId;
     }
 
@@ -39,7 +39,7 @@ public class CreateCupRequestFixtureBuilder {
     }
 
     public CreateCupRequestFixtureBuilder intakeType(IntakeType intakeType) {
-        this.intakeType = intakeType.name();
+        this.intakeType = intakeType;
         return this;
     }
 
