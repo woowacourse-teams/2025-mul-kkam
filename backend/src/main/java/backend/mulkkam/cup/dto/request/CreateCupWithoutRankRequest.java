@@ -17,7 +17,7 @@ public record CreateCupWithoutRankRequest(
         Integer cupAmount,
 
         @Schema(description = "음료 종류", implementation = IntakeType.class)
-        String intakeType,
+        IntakeType intakeType,
 
         @Schema(description = "컵 이모지 id", example = "1")
         Long cupEmojiId
@@ -30,7 +30,7 @@ public record CreateCupWithoutRankRequest(
                 new CupNickname(cupNickname),
                 new CupAmount(cupAmount),
                 cupRank,
-                IntakeType.findByName(intakeType),
+                intakeType,
                 cupEmoji
         );
     }
