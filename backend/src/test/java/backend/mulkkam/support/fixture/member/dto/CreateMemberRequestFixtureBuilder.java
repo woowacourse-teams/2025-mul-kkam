@@ -13,7 +13,7 @@ public class CreateMemberRequestFixtureBuilder {
     private int targetAmount;
     private boolean isMarketingNotificationAgreed;
     private boolean isNightNotificationAgreed;
-    private List<CreateCupRequest> createCupRequests;
+    private final List<CreateCupRequest> createCupRequests;
 
     private CreateMemberRequestFixtureBuilder(List<CreateCupRequest> createCupRequests) {
         this.memberNickname = "칼리";
