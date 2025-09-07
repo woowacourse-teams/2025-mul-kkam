@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALL_MEMBER_CUPS_INCLUDED;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.NOT_EXIST_DEFAULT_CUP_EMOJI;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +52,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -126,6 +128,26 @@ class CupControllerTest extends ControllerTest {
 
             // then
             assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
+        }
+
+        @DisplayName("기본 이모지가 DB에 저장되어 있지 않은 경우, 500 에러가 발생한다.")
+        @Test
+        void error_notExistDefaultEmojiInDB() throws Exception {
+            // given
+            cupEmojiRepository.deleteAll();
+
+            // when
+            String json = mockMvc.perform(get("/cups/default"))
+                    .andDo(print())
+                    .andExpect(status().is5xxServerError())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(NOT_EXIST_DEFAULT_CUP_EMOJI.name());
         }
     }
 
