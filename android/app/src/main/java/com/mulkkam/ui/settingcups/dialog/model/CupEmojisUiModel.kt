@@ -8,6 +8,9 @@ data class CupEmojisUiModel(
     val selectedCupEmojiId: Long?
         get() = cupEmojis.firstOrNull { it.isSelected }?.id
 
+    val selectedCupEmojiUrl: String?
+        get() = cupEmojis.firstOrNull { it.isSelected }?.cupEmojiUrl
+
     fun selectCupEmoji(cupEmojiId: Long): CupEmojisUiModel =
         copy(
             cupEmojis =

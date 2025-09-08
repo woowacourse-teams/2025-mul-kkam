@@ -22,12 +22,12 @@ class SettingCupsAdapter(
     ) {
         val movedItem = mutableItems.removeAt(fromPosition)
         mutableItems.add(toPosition, movedItem)
-        notifyItemMoved(fromPosition, toPosition)
+        super.submitList(mutableItems.toList())
     }
 
     override fun onItemDrop() {
         val cupsOrder = mutableItems.filterIsInstance<SettingCupsItem.CupItem>()
-        handler.onCupsOrderChanged(cupsOrder)
+        handler.onDropAttempt(cupsOrder)
     }
 
     override fun onCreateViewHolder(
@@ -55,6 +55,6 @@ class SettingCupsAdapter(
     interface Handler :
         CupViewHolder.Handler,
         AddViewHolder.Handler {
-        fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>)
+        fun onDropAttempt(newCupItems: List<SettingCupsItem.CupItem>)
     }
 }

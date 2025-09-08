@@ -46,7 +46,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun initClickListeners() {
         with(binding) {
             btnCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameAvailability(getTrimmedNickname())
+                viewModel.checkNicknameAvailability(getNickname())
             }
 
             ivBack.setSingleClickListener {
@@ -54,15 +54,12 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
 
             tvSaveNickname.setSingleClickListener {
-                viewModel.saveNickname(getTrimmedNickname())
+                viewModel.saveNickname(getNickname())
             }
         }
     }
 
-    private fun getTrimmedNickname(): String =
-        binding.etInputNickname.text
-            .toString()
-            .trim()
+    private fun getNickname(): String = binding.etInputNickname.text.toString()
 
     private fun initObservers() {
         viewModel.originalNicknameUiState.observe(this) { originalNicknameUiState ->
@@ -202,10 +199,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
             debounceRunnable =
                 Runnable {
-                    val nickname =
-                        binding.etInputNickname.text
-                            .toString()
-                            .trim()
+                    val nickname = binding.etInputNickname.text.toString()
 
                     viewModel.updateNickname(nickname)
                 }.apply { debounceHandler.postDelayed(this, 100L) }

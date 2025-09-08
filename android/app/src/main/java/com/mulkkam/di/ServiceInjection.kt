@@ -8,6 +8,7 @@ import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
 import com.mulkkam.data.remote.service.NotificationsService
+import com.mulkkam.data.remote.service.OnboardingService
 import com.mulkkam.data.remote.service.VersionsService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
@@ -47,5 +48,9 @@ object ServiceInjection {
 
     val versionsService: VersionsService by lazy {
         retrofit.create(VersionsService::class.java)
+    }
+
+    val onboardingService: OnboardingService by lazy {
+        retrofit.create(OnboardingService::class.java)
     }
 }

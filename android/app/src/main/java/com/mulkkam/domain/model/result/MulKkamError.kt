@@ -66,6 +66,18 @@ sealed class MulKkamError : Throwable() {
         data object InvalidToken : AccountError() {
             private fun readResolve(): Any = InvalidToken
         }
+
+        data object Unauthorized : AccountError() {
+            private fun readResolve(): Any = Unauthorized
+        }
+
+        data object RefreshTokenExpired : AccountError() {
+            private fun readResolve(): Any = RefreshTokenExpired
+        }
+
+        data object RefreshTokenAlreadyUsed : AccountError() {
+            private fun readResolve(): Any = RefreshTokenAlreadyUsed
+        }
     }
 
     // 기록 관련 에러
