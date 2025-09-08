@@ -43,7 +43,7 @@ class SettingCupFragment :
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
-    private var hydrationTooltip: MulkkamTooltip? = null
+    private var intakeTypeTooltip: MulkkamTooltip? = null
 
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
@@ -77,13 +77,13 @@ class SettingCupFragment :
         }
 
     private fun toggleIntakeTypeTooltip(anchor: View) {
-        hydrationTooltip?.let {
+        intakeTypeTooltip?.let {
             it.dismiss()
-            hydrationTooltip = null
+            intakeTypeTooltip = null
             return
         }
 
-        hydrationTooltip =
+        intakeTypeTooltip =
             MulkkamTooltip(
                 anchor = anchor,
                 title = getString(R.string.tooltip_title),

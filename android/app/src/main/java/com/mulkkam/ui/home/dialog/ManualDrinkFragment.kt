@@ -34,7 +34,7 @@ class ManualDrinkFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
 
-    private var hydrationTooltip: MulkkamTooltip? = null
+    private var intakeTypeTooltip: MulkkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -67,13 +67,13 @@ class ManualDrinkFragment :
         }
 
     private fun toggleIntakeTypeTooltip(anchor: View) {
-        hydrationTooltip?.let {
+        intakeTypeTooltip?.let {
             it.dismiss()
-            hydrationTooltip = null
+            intakeTypeTooltip = null
             return
         }
 
-        hydrationTooltip =
+        intakeTypeTooltip =
             MulkkamTooltip(
                 anchor = anchor,
                 title = getString(R.string.tooltip_title),
