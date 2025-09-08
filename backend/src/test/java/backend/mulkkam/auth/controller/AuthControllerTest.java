@@ -1,5 +1,6 @@
 package backend.mulkkam.auth.controller;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_ALREADY_USED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.REFRESH_TOKEN_IS_EXPIRED;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.UNAUTHORIZED;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -111,8 +112,11 @@ class AuthControllerTest extends ControllerTest {
             // given
             OauthLoginResponse loginResponse = doLogin();
 
+            OauthAccount oauthAccount = new OauthAccount(userInfo.oauthMemberId(), OauthProvider.KAKAO);
+            oauthAccountRepository.save(oauthAccount);
+
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
+            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken(), deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -168,7 +172,7 @@ class AuthControllerTest extends ControllerTest {
             String invalidToken = "invalid";
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(invalidToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(invalidToken, deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -189,7 +193,7 @@ class AuthControllerTest extends ControllerTest {
             // given
             OauthLoginResponse loginResponse = doLogin();
 
-            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
+            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken(), deviceUuid);
 
             mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -207,7 +211,7 @@ class AuthControllerTest extends ControllerTest {
             FailureBody response = objectMapper.readValue(resultContent, FailureBody.class);
 
             // then
-            assertThat(response.getCode()).isEqualTo(UNAUTHORIZED.name());
+            assertThat(response.getCode()).isEqualTo(REFRESH_TOKEN_ALREADY_USED.name());
         }
 
         @DisplayName("리프레시 토큰이 만료된 경우 재발급을 받을 수 없다.")
@@ -220,7 +224,7 @@ class AuthControllerTest extends ControllerTest {
             String expiredRefreshToken = generateExpiredRefreshToken(account);
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(expiredRefreshToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(expiredRefreshToken, deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -245,7 +249,7 @@ class AuthControllerTest extends ControllerTest {
             String refreshToken = generateRefreshToken(notSavedAccount);
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(refreshToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(refreshToken, deviceUuid);
             String requestContent = objectMapper.writeValueAsString(request);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")

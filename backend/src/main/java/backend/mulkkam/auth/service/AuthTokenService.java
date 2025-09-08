@@ -32,7 +32,6 @@ public class AuthTokenService {
             OauthAccountDetails accountDetails,
             LogoutRequest logoutRequest
     ) {
-        //TODO: 안드측 로그아웃 어떻게 하는 지 확인 후 로직 변경
         accountRefreshTokenRepository.deleteByAccountIdAndDeviceUuid(accountDetails.id(), logoutRequest.deviceUuid());
     }
 
@@ -40,7 +39,7 @@ public class AuthTokenService {
     public ReissueTokenResponse reissueToken(ReissueTokenRequest request) {
         String refreshToken = request.refreshToken();
         OauthAccount account = getAccountByToken(refreshToken);
-        AccountRefreshToken saved = loadRefreshToken(refreshToken);
+        AccountRefreshToken saved = loadRefreshToken(account, request.deviceUuid());
         validateRequestToken(saved, refreshToken);
         String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account);
         String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account);
@@ -64,9 +63,10 @@ public class AuthTokenService {
     }
 
     private AccountRefreshToken loadRefreshToken(
-            String refreshToken
+            OauthAccount oauthAccount,
+            String deviceUuid
     ) {
-        return accountRefreshTokenRepository.findByRefreshToken(refreshToken)
+        return accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
                 .orElseThrow(() -> new CommonException(UNAUTHORIZED));
     }
 
