@@ -10,6 +10,7 @@ import com.mulkkam.data.repository.NicknameRepositoryImpl
 import com.mulkkam.data.repository.NotificationRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
 import com.mulkkam.data.repository.VersionsRepositoryImpl
+import com.mulkkam.di.PreferenceInjection.devicesPreference
 import com.mulkkam.di.PreferenceInjection.membersPreference
 import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection.authService
@@ -62,7 +63,7 @@ object RepositoryInjection {
     }
 
     val devicesRepository: DevicesRepository by lazy {
-        DevicesRepositoryImpl(devicesService)
+        DevicesRepositoryImpl(devicesService, devicesPreference)
     }
 
     val notificationRepository: NotificationRepository by lazy {

@@ -70,16 +70,30 @@ class MainViewModel : ViewModel() {
         calorieChecker.checkCalorie(DEFAULT_CHECK_CALORIE_INTERVAL_HOURS)
     }
 
-    fun saveDeviceInfo(deviceId: String) {
+    fun saveNotificationPermission(
+        deviceId: String,
+        isCurrentlyGranted: Boolean,
+    ) {
         viewModelScope.launch {
             runCatching {
-                devicesRepository
-                    .postDevice(
-                        fcmToken = fcmToken.getValue() ?: return@launch,
-                        deviceId = deviceId,
-                    ).getOrError()
-            }.onSuccess {
-                tokenRepository.deleteFcmToken()
+                devicesRepository.getNotificationGranted().getOrError()
+            }.onSuccess { previouslyGranted ->
+                if (previouslyGranted == isCurrentlyGranted) return@launch
+
+                if (isCurrentlyGranted) {
+                    runCatching {
+                        devicesRepository
+                            .postDevice(
+                                fcmToken = fcmToken.getValue() ?: return@launch,
+                                deviceId = deviceId,
+                            ).getOrError()
+                    }.onSuccess {
+                        devicesRepository.saveNotificationGranted(isCurrentlyGranted)
+                    }
+                } else {
+                    runCatching { devicesRepository.deleteDevice(deviceId) }
+                    runCatching { devicesRepository.saveNotificationGranted(isCurrentlyGranted) }
+                }
             }
         }
     }

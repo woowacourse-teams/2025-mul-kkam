@@ -7,4 +7,10 @@ interface DevicesRepository {
         fcmToken: String,
         deviceId: String,
     ): MulKkamResult<Unit>
+
+    suspend fun deleteDevice(deviceId: String): MulKkamResult<Unit>
+
+    suspend fun saveNotificationGranted(granted: Boolean): MulKkamResult<Unit>
+
+    suspend fun getNotificationGranted(): MulKkamResult<Boolean>
 }
