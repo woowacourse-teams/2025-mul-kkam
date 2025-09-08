@@ -32,7 +32,7 @@ public class KakaoAuthService {
 
     @Transactional
     public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
-        KakaoUserInfo userInfo = new KakaoUserInfo("temp");
+        KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();
         OauthAccount oauthAccount = oauthAccountRepository
