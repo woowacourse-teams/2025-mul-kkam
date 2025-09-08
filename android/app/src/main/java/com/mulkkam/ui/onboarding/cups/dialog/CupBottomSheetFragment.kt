@@ -57,7 +57,6 @@ class CupBottomSheetFragment :
         initInputListeners()
         initDoneListener()
         initChips()
-        initDeleteButton()
     }
 
     private fun initRecyclerView() {
@@ -96,6 +95,7 @@ class CupBottomSheetFragment :
 
             editType.observe(viewLifecycleOwner) { settingWaterCupEditType ->
                 settingWaterCupEditType?.let { showTitle(it) }
+                binding.tvDelete.visibility = if (settingWaterCupEditType == SettingWaterCupEditType.ADD) View.GONE else View.VISIBLE
             }
 
             cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->
@@ -208,8 +208,6 @@ class CupBottomSheetFragment :
 
             if (cup.isRepresentative) {
                 tvDelete.visibility = View.GONE
-            } else {
-                tvDelete.visibility = View.VISIBLE
             }
             if (isCupNameChanged && isCupNameValid) {
                 etName.setText(cup.name)
@@ -289,14 +287,6 @@ class CupBottomSheetFragment :
                 IntakeType.COFFEE,
             ),
         )
-    }
-
-    private fun initDeleteButton() {
-        binding.tvDelete.visibility =
-            when (cup == null) {
-                true -> View.GONE
-                false -> View.VISIBLE
-            }
     }
 
     companion object {
