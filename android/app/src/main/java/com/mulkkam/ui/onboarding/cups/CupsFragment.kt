@@ -100,17 +100,13 @@ class CupsFragment :
 
     private fun initAdapter() {
         binding.rvCups.adapter = settingCupsAdapter
+        binding.rvCups.itemAnimator = null
+        itemTouchHelper.attachToRecyclerView(binding.rvCups)
     }
 
     private fun initObserver() {
-        with(viewModel) {
-            cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
-                handleCupsUiState(cupsUiState)
-            }
-
-            cupsResetUiState.observe(viewLifecycleOwner) { cupsResetUiState ->
-                handleCupsResetUiState(cupsResetUiState)
-            }
+        viewModel.cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
+            handleCupsUiState(cupsUiState)
         }
     }
 
@@ -139,29 +135,6 @@ class CupsFragment :
             }
         settingCupsAdapter.submitList(cupItems)
         binding.sflCups.visibility = View.GONE
-    }
-
-    private fun handleCupsResetUiState(cupsResetUiState: MulKkamUiState<Unit>) {
-        when (cupsResetUiState) {
-            is MulKkamUiState.Success<Unit> -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.setting_cups_reset_success),
-                        R.drawable.ic_terms_all_check_on,
-                    ).show()
-            }
-
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Failure ->
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.network_check_error),
-                        R.drawable.ic_alert_circle,
-                    ).show()
-        }
     }
 
     private fun initClickListener() {

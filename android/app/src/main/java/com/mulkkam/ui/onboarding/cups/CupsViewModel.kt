@@ -19,9 +19,6 @@ class CupsViewModel : ViewModel() {
     private var _cupsUiState: MutableLiveData<MulKkamUiState<CupsUiModel>> = MutableLiveData(MulKkamUiState.Idle)
     val cupsUiState: LiveData<MulKkamUiState<CupsUiModel>> get() = _cupsUiState
 
-    private var _cupsResetUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData(MulKkamUiState.Idle)
-    val cupsResetUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsResetUiState
-
     init {
         loadCups()
     }
