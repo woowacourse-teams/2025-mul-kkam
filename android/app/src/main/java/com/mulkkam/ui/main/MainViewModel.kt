@@ -75,26 +75,46 @@ class MainViewModel : ViewModel() {
         isCurrentlyGranted: Boolean,
     ) {
         viewModelScope.launch {
-            runCatching {
-                devicesRepository.getNotificationGranted().getOrError()
-            }.onSuccess { previouslyGranted ->
-                if (previouslyGranted == isCurrentlyGranted) return@launch
+            val previouslyGranted =
+                runCatching {
+                    devicesRepository.getNotificationGranted().getOrError()
+                }.getOrNull() ?: return@launch
 
-                if (isCurrentlyGranted) {
-                    runCatching {
-                        devicesRepository
-                            .postDevice(
-                                fcmToken = fcmToken.getValue() ?: return@launch,
-                                deviceId = deviceId,
-                            ).getOrError()
-                    }.onSuccess {
-                        devicesRepository.saveNotificationGranted(isCurrentlyGranted)
-                    }
-                } else {
-                    runCatching { devicesRepository.deleteDevice(deviceId) }
-                    runCatching { devicesRepository.saveNotificationGranted(isCurrentlyGranted) }
-                }
+            if (previouslyGranted == isCurrentlyGranted) return@launch
+
+            if (isCurrentlyGranted) {
+                handlePermissionGranted(deviceId, isCurrentlyGranted)
+            } else {
+                handlePermissionNotGranted(deviceId, isCurrentlyGranted)
             }
+        }
+    }
+
+    private fun handlePermissionGranted(
+        deviceId: String,
+        isGranted: Boolean,
+    ) {
+        viewModelScope.launch {
+            val token = fcmToken.getValue() ?: return@launch
+            runCatching {
+                devicesRepository
+                    .postDevice(
+                        fcmToken = token,
+                        deviceId = deviceId,
+                    ).getOrError()
+            }.onSuccess {
+                devicesRepository.saveNotificationGranted(isGranted)
+            }
+        }
+    }
+
+    private fun handlePermissionNotGranted(
+        deviceId: String,
+        isGranted: Boolean,
+    ) {
+        viewModelScope.launch {
+            runCatching { devicesRepository.deleteDevice(deviceId) }
+            runCatching { devicesRepository.saveNotificationGranted(isGranted) }
         }
     }
 
