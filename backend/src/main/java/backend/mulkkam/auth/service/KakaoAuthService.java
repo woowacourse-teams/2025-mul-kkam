@@ -13,6 +13,7 @@ import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,6 +58,11 @@ public class KakaoAuthService {
         }
 
         AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken, deviceUuid);
-        accountRefreshTokenRepository.save(accountRefreshToken);
+        try {
+            accountRefreshTokenRepository.save(accountRefreshToken);
+        } catch (DataIntegrityViolationException e) {
+            accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
+                    .ifPresent(token -> token.reissueToken(refreshToken));
+        }
     }
 }

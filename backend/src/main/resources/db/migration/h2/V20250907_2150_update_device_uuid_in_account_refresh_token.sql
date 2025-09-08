@@ -1,5 +1,5 @@
 UPDATE account_refresh_token art
-SET device_uuid = (SELECT d.deviceUuid
+SET device_uuid = (SELECT d.device_uuid
                    FROM device d
                             JOIN oauth_account doa ON doa.id = d.oauth_account_id
                    WHERE d.id = art.device_id
