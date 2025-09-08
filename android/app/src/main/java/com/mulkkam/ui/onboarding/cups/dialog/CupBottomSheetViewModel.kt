@@ -83,12 +83,6 @@ class CupBottomSheetViewModel : ViewModel() {
             addSource(hasChanges) { update() }
         }
 
-    private val _saveSuccess = MutableSingleLiveData<Unit>()
-    val saveSuccess: SingleLiveData<Unit> get() = _saveSuccess
-
-    private val _deleteSuccess = MutableSingleLiveData<Unit>()
-    val deleteSuccess: SingleLiveData<Unit> get() = _deleteSuccess
-
     init {
         loadCupEmojis()
     }
@@ -156,18 +150,6 @@ class CupBottomSheetViewModel : ViewModel() {
 
     fun updateIntakeType(intakeType: IntakeType) {
         _cup.value = _cup.value?.copy(intakeType = intakeType)
-    }
-
-    fun deleteCup() {
-        viewModelScope.launch {
-            val cupId = cup.value?.id ?: return@launch
-
-            runCatching {
-                cupsRepository.deleteCup(cupId).getOrError()
-            }.onSuccess {
-                _deleteSuccess.setValue(Unit)
-            }
-        }
     }
 
     fun selectEmoji(emojiId: Long) {

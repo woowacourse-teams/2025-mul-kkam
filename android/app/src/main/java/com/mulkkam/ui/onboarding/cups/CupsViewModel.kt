@@ -56,8 +56,4 @@ class CupsViewModel : ViewModel() {
 
         _cupsUiState.value = MulKkamUiState.Success(CupsUiModel(newCups, false))
     }
-
-    companion object {
-        private const val REORDER_DELAY_TIME: Long = 2000L
-    }
 }

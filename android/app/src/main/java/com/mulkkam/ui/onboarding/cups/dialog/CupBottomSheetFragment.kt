@@ -104,22 +104,6 @@ class CupBottomSheetFragment :
                 binding.tvSave.isEnabled = available == true
             }
 
-            saveSuccess.observe(viewLifecycleOwner) {
-                CustomToast
-                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
-                    .show()
-                settingCupsViewModel.loadCups()
-                dismiss()
-            }
-
-            deleteSuccess.observe(viewLifecycleOwner) {
-                CustomToast
-                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
-                    .show()
-                settingCupsViewModel.loadCups()
-                dismiss()
-            }
-
             cupEmojisUiState.observe(viewLifecycleOwner) { cupEmojisUiState ->
                 if (cupEmojisUiState is MulKkamUiState<CupEmojisUiModel>) {
                     adapter.submitList(cupEmojisUiState.toSuccessDataOrNull()?.cupEmojis)

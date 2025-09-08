@@ -72,10 +72,14 @@ class CupsFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
+        initResultLauncher()
         initTextAppearance()
         initAdapter()
         initObserver()
         initClickListener()
+    }
+
+    private fun initResultLauncher() {
         parentFragmentManager.setFragmentResultListener(
             REQUEST_KEY_CUP,
             viewLifecycleOwner,
