@@ -18,88 +18,100 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_icon"
-        android:layout_width="32dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="6dp"
-        app:layout_constraintBottom_toBottomOf="@id/iv_move"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/cl_edit"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/iv_move"
-        app:layout_constraintTop_toTopOf="@id/iv_move"
-        tools:background="@drawable/bg_common_rectangle_12dp"
-        tools:backgroundTint="@color/primary_100"
-        tools:src="@drawable/ic_app" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="12dp"
-        android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="@id/iv_icon"
-        app:layout_constraintStart_toEndOf="@id/iv_icon"
-        app:layout_constraintTop_toTopOf="@id/iv_icon">
+        <ImageView
+            android:id="@+id/iv_icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="6dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:background="@drawable/bg_common_rectangle_12dp"
+            tools:backgroundTint="@color/primary_100"
+            tools:src="@drawable/ic_app" />
 
         <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@id/iv_icon"
+            app:layout_constraintStart_toEndOf="@id/iv_icon"
+            app:layout_constraintTop_toTopOf="@id/iv_icon">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/tv_setting_cup_representative"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="6dp"
+                    android:background="@drawable/bg_common_rectangle_4dp"
+                    android:backgroundTint="@color/black"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="2dp"
+                    android:text="@string/setting_cup_representative"
+                    android:textAppearance="@style/label2"
+                    android:textColor="@color/white" />
+
+                <TextView
+                    android:id="@+id/tv_setting_water_cup_tag_type"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/bg_common_rectangle_4dp"
+                    android:backgroundTint="@color/primary_200"
+                    android:paddingHorizontal="4dp"
+                    android:paddingVertical="2dp"
+                    android:text="@string/setting_cups_label_water"
+                    android:textAppearance="@style/label2"
+                    android:textColor="@color/white" />
+            </LinearLayout>
 
             <TextView
-                android:id="@+id/tv_setting_cup_representative"
+                android:id="@+id/tv_nickname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_common_rectangle_4dp"
-                android:backgroundTint="@color/black"
-                android:paddingHorizontal="4dp"
-                android:paddingVertical="2dp"
-                android:text="@string/setting_cup_representative"
-                android:textAppearance="@style/label2"
-                android:textColor="@color/white" />
-
-            <TextView
-                android:id="@+id/tv_setting_water_cup_tag_type"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/bg_common_rectangle_4dp"
-                android:backgroundTint="@color/primary_200"
-                android:paddingHorizontal="4dp"
-                android:paddingVertical="2dp"
-                android:text="@string/setting_cups_label_water"
-                android:textAppearance="@style/label2"
-                android:textColor="@color/white" />
+                android:layout_marginTop="2dp"
+                android:textAppearance="@style/body4"
+                android:textColor="@color/black"
+                tools:text="우리집 물컵" />
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_nickname"
+            android:id="@+id/tv_increment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
+            android:layout_marginEnd="6dp"
+            android:text="@string/setting_cups_increment"
             android:textAppearance="@style/body4"
-            android:textColor="@color/black"
-            tools:text="우리집 물컵" />
-    </LinearLayout>
+            android:textColor="@color/primary_200"
+            app:layout_constraintBottom_toBottomOf="@id/iv_edit"
+            app:layout_constraintEnd_toStartOf="@id/iv_edit"
+            app:layout_constraintTop_toTopOf="@id/iv_edit"
+            tools:text="+ 200ml" />
 
-    <TextView
-        android:id="@+id/tv_increment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="6dp"
-        android:text="@string/setting_cups_increment"
-        android:textAppearance="@style/body4"
-        android:textColor="@color/primary_200"
-        app:layout_constraintBottom_toBottomOf="@id/iv_edit"
-        app:layout_constraintEnd_toStartOf="@id/iv_edit"
-        app:layout_constraintTop_toTopOf="@id/iv_edit"
-        tools:text="+ 200ml" />
+        <ImageView
+            android:id="@+id/iv_edit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="18dp"
+            android:padding="8dp"
+            android:src="@drawable/btn_setting_cups_edit"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/iv_edit"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginEnd="18dp"
-        android:padding="8dp"
-        android:src="@drawable/btn_setting_cups_edit"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
