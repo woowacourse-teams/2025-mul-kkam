@@ -42,9 +42,8 @@ class CupsViewModel : ViewModel() {
         _cupsUiState.value = MulKkamUiState.Success(reorderedCups.toUi())
     }
 
-    fun updateCup(updatedCup: CupUiModel?) {
+    fun updateCup(updatedCup: CupUiModel) {
         val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
-        if (updatedCup == null) return
 
         val newCups =
             currentCups.map { cup ->
@@ -62,11 +61,25 @@ class CupsViewModel : ViewModel() {
 
     fun deleteCup(rank: Int) {
         val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
-        _cupsUiState.value = MulKkamUiState.Success(Cups(currentCups.filter { it.rank != rank }.map { it.toDomain() }).toUi())
+        val updatedCups =
+            currentCups
+                .asSequence()
+                .filterNot { it.rank == rank }
+                .map { it.toDomain() }
+                .toList()
+
+        _cupsUiState.value =
+            MulKkamUiState.Success(
+                Cups(updatedCups).toUi(),
+            )
     }
 
     fun addCup(newCup: CupUiModel) {
-        val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
-        _cupsUiState.value = MulKkamUiState.Success(Cups(currentCups.plus(newCup).map { it.toDomain() }).toUi())
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
+        val addedCups = currentCups.copy(cups = currentCups.cups + newCup)
+        val updatedCups =
+            Cups(addedCups.cups.map { it.toDomain() }).reorderRanks().toUi()
+
+        _cupsUiState.value = MulKkamUiState.Success(updatedCups)
     }
 }
