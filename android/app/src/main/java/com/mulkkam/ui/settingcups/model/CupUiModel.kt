@@ -41,6 +41,7 @@ fun Cup.toUi(): CupUiModel =
         intakeType = intakeType,
         emoji = emoji,
         isRepresentative = isRepresentative,
+        emojiId = emojiId,
     )
 
 fun CupUiModel.toDomain(): Cup {
@@ -54,5 +55,6 @@ fun CupUiModel.toDomain(): Cup {
         rank = rank,
         intakeType = intakeType,
         emoji = emoji,
+        emojiId = emojiId,
     )
 }

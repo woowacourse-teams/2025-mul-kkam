@@ -10,6 +10,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentCupsBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment
 import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment.Companion.BUNDLE_KEY_CUP
@@ -161,7 +162,11 @@ class CupsFragment :
 
     private fun initClickListener() {
         binding.tvComplete.setSingleClickListener {
-            // TODO: parentViewModel에 저장하는 로직 필요
+            parentViewModel.updateCups(
+                viewModel.cupsUiState.value
+                    ?.toSuccessDataOrNull()
+                    ?.cups ?: emptyList(),
+            )
             parentViewModel.completeOnboarding()
         }
     }

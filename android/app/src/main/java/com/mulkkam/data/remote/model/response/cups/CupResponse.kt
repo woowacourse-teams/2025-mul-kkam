@@ -19,7 +19,7 @@ data class CupResponse(
     val cupRank: Int,
     @SerialName("intakeType")
     val intakeType: String,
-    @SerialName("emoji")
+    @SerialName("emojiUrl")
     val emoji: String,
 )
 
