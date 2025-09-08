@@ -17,6 +17,7 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.ui.custom.MulkkamTooltip
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.model.MulKkamUiState
@@ -41,6 +42,8 @@ class SettingCupFragment :
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
+
+    private var hydrationTooltip: MulkkamTooltip? = null
 
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
@@ -71,7 +74,23 @@ class SettingCupFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { viewModel.saveCup() }
             tvDelete.setSingleClickListener { viewModel.deleteCup() }
+            ivIntakeTypeInfo.setSingleClickListener { toggleIntakeTypeTooltip(it) }
         }
+
+    private fun toggleIntakeTypeTooltip(anchor: View) {
+        hydrationTooltip?.let {
+            it.dismiss()
+            hydrationTooltip = null
+            return
+        }
+
+        hydrationTooltip =
+            MulkkamTooltip(
+                anchor = anchor,
+                title = getString(R.string.tooltip_title),
+                message = getText(R.string.tooltip_intake_type),
+            ).also { it.show() }
+    }
 
     private fun initObservers() =
         with(viewModel) {

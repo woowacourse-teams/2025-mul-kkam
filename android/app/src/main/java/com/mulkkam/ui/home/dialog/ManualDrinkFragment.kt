@@ -15,6 +15,7 @@ import com.mulkkam.databinding.FragmentManualDrinkBinding
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.ui.custom.MulkkamTooltip
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.model.MulKkamUiState
@@ -32,6 +33,8 @@ class ManualDrinkFragment :
 
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
+
+    private var hydrationTooltip: MulkkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -58,7 +61,25 @@ class ManualDrinkFragment :
                 )
                 dismiss()
             }
+            ivIntakeTypeInfo.setSingleClickListener { anchor ->
+                toggleIntakeTypeTooltip(anchor)
+            }
         }
+
+    private fun toggleIntakeTypeTooltip(anchor: View) {
+        hydrationTooltip?.let {
+            it.dismiss()
+            hydrationTooltip = null
+            return
+        }
+
+        hydrationTooltip =
+            MulkkamTooltip(
+                anchor = anchor,
+                title = getString(R.string.tooltip_title),
+                message = getText(R.string.tooltip_intake_type),
+            ).also { it.show() }
+    }
 
     private fun initObservers() =
         with(viewModel) {

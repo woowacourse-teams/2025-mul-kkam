@@ -128,6 +128,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_nickname_validation_message" />
 
+    <ImageView
+        android:id="@+id/iv_intake_type_info"
+        android:layout_width="22dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="4dp"
+        android:src="@drawable/ic_info_circle"
+        app:layout_constraintBottom_toBottomOf="@id/tv_intake_type"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintStart_toEndOf="@id/tv_intake_type"
+        app:layout_constraintTop_toTopOf="@id/tv_intake_type"
+        app:tint="@color/gray_300" />
+
     <com.mulkkam.ui.custom.chip.MulKkamChipGroup
         android:id="@+id/mcg_intake_type"
         android:layout_width="0dp"
