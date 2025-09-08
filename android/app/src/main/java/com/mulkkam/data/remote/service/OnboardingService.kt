@@ -12,6 +12,6 @@ interface OnboardingService {
         @Body member: OnboardingRequest,
     ): Result<Unit>
 
-    @GET("/onboarding/check/onboarding")
+    @GET("/onboarding/check")
     suspend fun getOnboardingCheck(): Result<OnboardingCheckResponse>
 }
