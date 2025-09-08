@@ -1,5 +1,7 @@
 package com.mulkkam.data.remote.model.request.onboarding
 
+import com.mulkkam.data.remote.model.request.cups.NewCupRequest
+import com.mulkkam.data.remote.model.request.cups.toData
 import com.mulkkam.domain.model.members.OnboardingInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -19,7 +21,7 @@ data class OnboardingRequest(
     @SerialName("isNightNotificationAgreed")
     val isNightNotificationAgreed: Boolean,
     @SerialName("createCupRequests")
-    val createCupRequests: List<CreateCupRequest>,
+    val createCupRequests: List<NewCupRequest>,
 )
 
 fun OnboardingInfo.toData(): OnboardingRequest =

@@ -1,5 +1,6 @@
 package com.mulkkam.data.remote.model.request.cups
 
+import com.mulkkam.domain.model.cups.Cup
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,4 +14,15 @@ data class NewCupRequest(
     val intakeType: String,
     @SerialName("cupEmojiId")
     val cupEmojiId: Long,
+    @SerialName("cupRank")
+    val cupRank: Int? = null,
 )
+
+fun Cup.toData(): NewCupRequest =
+    NewCupRequest(
+        cupNickname = name.value,
+        cupAmount = amount.value,
+        cupRank = rank,
+        intakeType = intakeType.name,
+        cupEmojiId = emojiId,
+    )
