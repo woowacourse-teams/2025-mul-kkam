@@ -85,10 +85,8 @@ public class CupService {
     }
 
     public DefaultCupsResponse readDefaultCups() {
-        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
-
         List<DefaultCupResponse> defaultCups = Arrays.stream(DefaultCup.values())
-                .map(defaultCup -> new DefaultCupResponse(defaultCup, emojiByUrl.get(defaultCup.getCupEmojiUrl())))
+                .map(defaultCup -> new DefaultCupResponse(defaultCup, (defaultCup.getCupEmojiUrl())))
                 .toList();
         return new DefaultCupsResponse(defaultCups);
     }

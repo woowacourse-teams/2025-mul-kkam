@@ -127,26 +127,6 @@ class CupControllerTest extends ControllerTest {
             // then
             assertThat(actualNames).containsExactlyInAnyOrderElementsOf(expectedNames);
         }
-
-        @DisplayName("기본 이모지가 DB에 저장되어 있지 않은 경우, 500 에러가 발생한다.")
-        @Test
-        void error_notExistDefaultEmojiInDB() throws Exception {
-            // given
-            cupEmojiRepository.deleteAll();
-
-            // when
-            String json = mockMvc.perform(get("/cups/default"))
-                    .andDo(print())
-                    .andExpect(status().is5xxServerError())
-                    .andReturn()
-                    .getResponse()
-                    .getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            // then
-            assertThat(actual.getCode()).isEqualTo(NOT_EXIST_DEFAULT_CUP_EMOJI.name());
-        }
     }
 
     @DisplayName("컵을 생성한다")
