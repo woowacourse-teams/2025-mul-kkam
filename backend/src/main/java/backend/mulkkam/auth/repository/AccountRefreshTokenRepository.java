@@ -9,9 +9,6 @@ public interface AccountRefreshTokenRepository extends JpaRepository<AccountRefr
 
     Optional<AccountRefreshToken> findByAccountAndDeviceUuid(OauthAccount account, String deviceUuid);
 
-
-    Optional<AccountRefreshToken> findByRefreshToken(String refreshToken);
-
     void deleteAllByAccount(OauthAccount account);
 
     void deleteByAccountIdAndDeviceUuid(Long accountId, String deviceUuid);
