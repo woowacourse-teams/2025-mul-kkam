@@ -53,7 +53,7 @@ class CupsFragment :
                 showEditBottomSheetDialog(null)
             }
 
-            override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
+            override fun onDropAttempt(newOrder: List<SettingCupsItem.CupItem>) {
                 viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
             }
         }

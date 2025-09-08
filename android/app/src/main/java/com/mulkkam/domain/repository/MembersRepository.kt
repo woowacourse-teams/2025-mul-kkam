@@ -11,8 +11,6 @@ import com.mulkkam.ui.model.UserAuthState
 import java.time.LocalDate
 
 interface MembersRepository {
-    suspend fun postMembers(onboardingInfo: OnboardingInfo): MulKkamResult<Unit>
-
     suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit>
 
     suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit>
@@ -25,8 +23,6 @@ interface MembersRepository {
         gender: Gender,
         weight: BioWeight,
     ): MulKkamResult<Unit>
-
-    suspend fun getMembersCheckOnboarding(): MulKkamResult<UserAuthState>
 
     suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo>
 

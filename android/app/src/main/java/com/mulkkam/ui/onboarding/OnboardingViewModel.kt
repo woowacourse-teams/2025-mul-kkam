@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.Nickname
@@ -56,7 +57,7 @@ class OnboardingViewModel : ViewModel() {
         if (saveOnboardingUiState.value is MulKkamUiState.Loading) return
         _saveOnboardingUiState.value = MulKkamUiState.Loading
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.postMembers(onboardingInfo)
+            val result = onboardingRepository.postOnboarding(onboardingInfo)
             runCatching {
                 result.getOrError()
                 _saveOnboardingUiState.value = MulKkamUiState.Success(Unit)

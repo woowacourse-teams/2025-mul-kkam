@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.membersRepository
+import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -41,7 +42,7 @@ class SplashViewModel : ViewModel() {
     private fun updateAuthStateWithOnboarding() {
         viewModelScope.launch {
             runCatching {
-                membersRepository.getMembersCheckOnboarding().getOrError()
+                onboardingRepository.getOnboardingCheck().getOrError()
             }.onSuccess { userAuthState ->
                 _authUiState.value = MulKkamUiState.Success<UserAuthState>(userAuthState)
             }.onFailure {

@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.di.RepositoryInjection.versionsRepository
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -74,7 +75,7 @@ class LoginViewModel : ViewModel() {
     private fun updateAuthStateWithOnboarding() {
         viewModelScope.launch {
             runCatching {
-                RepositoryInjection.membersRepository.getMembersCheckOnboarding().getOrError()
+                onboardingRepository.getOnboardingCheck().getOrError()
             }.onSuccess { userAuthState ->
                 _authUiState.value = MulKkamUiState.Success(userAuthState)
             }.onFailure {
