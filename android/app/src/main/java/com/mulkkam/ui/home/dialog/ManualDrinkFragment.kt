@@ -15,8 +15,8 @@ import com.mulkkam.databinding.FragmentManualDrinkBinding
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.custom.MulkkamTooltip
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
+import com.mulkkam.ui.custom.tooltip.MulkkamTooltip
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment

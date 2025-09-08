@@ -17,9 +17,9 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.custom.MulkkamTooltip
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.custom.tooltip.MulkkamTooltip
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel

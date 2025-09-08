@@ -1,4 +1,4 @@
-package com.mulkkam.ui.custom
+package com.mulkkam.ui.custom.tooltip
 
 import android.graphics.Color
 import android.view.Gravity
