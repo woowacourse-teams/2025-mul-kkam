@@ -216,6 +216,4 @@
     <string name="app_update_description">지금 바로 확인하러 가볼까요?</string>
     <string name="app_update_title">새 기능이 추가되었어요</string>
     <string name="app_update_title_highlighted">새 기능</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
