@@ -44,7 +44,7 @@ public class OnboardingController {
 
     @Operation(summary = "온보딩 상태 확인", description = "회원의 온보딩 완료 여부를 확인합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = OnboardingStatusResponse.class)))
-    @GetMapping("/check/onboarding")
+    @GetMapping("/check")
     public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(
             @Parameter(hidden = true)
             OauthAccountDetails accountDetails
