@@ -8,7 +8,6 @@ import android.view.View
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.core.os.bundleOf
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
@@ -21,7 +20,7 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.SettingCupsViewModel
+import com.mulkkam.ui.onboarding.cups.CupsViewModel
 import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
 import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -38,6 +37,7 @@ class CupBottomSheetFragment :
         FragmentSettingCupBinding::inflate,
     ) {
     private val viewModel: CupBottomSheetViewModel by activityViewModels()
+    private val cupsViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
@@ -68,18 +68,25 @@ class CupBottomSheetFragment :
     private fun initClickListeners() =
         with(binding) {
             ivClose.setSingleClickListener { dismiss() }
-            tvSave.setSingleClickListener {
-                val updatedCup = viewModel.cup.value
-                val bundle = bundleOf(BUNDLE_KEY_CUP to updatedCup)
-
-                parentFragmentManager.setFragmentResult(REQUEST_KEY_CUP, bundle)
-                dismiss()
-            }
-            tvDelete.setSingleClickListener {
-                // TODO: 삭제 구현
-                // viewModel.deleteCup()
-            }
+            tvSave.setSingleClickListener { handleSaveClick() }
+            tvDelete.setSingleClickListener { handleDeleteClick() }
         }
+
+    private fun handleSaveClick() {
+        val updatedCup = viewModel.cup.value ?: return
+        val editType = viewModel.editType.value ?: return
+        when (editType) {
+            SettingWaterCupEditType.ADD -> cupsViewModel.addCup(updatedCup)
+            SettingWaterCupEditType.EDIT -> cupsViewModel.updateCup(updatedCup)
+        }
+        dismiss()
+    }
+
+    private fun handleDeleteClick() {
+        val rank = viewModel.cup.value?.rank ?: return
+        cupsViewModel.deleteCup(rank)
+        dismiss()
+    }
 
     private fun initObservers() =
         with(viewModel) {
@@ -295,9 +302,6 @@ class CupBottomSheetFragment :
     companion object {
         const val TAG: String = "SETTING_WATER_CUP_FRAGMENT"
         private const val ARG_CUP: String = "CUP"
-
-        const val BUNDLE_KEY_CUP: String = "KEY_CUP"
-        const val REQUEST_KEY_CUP: String = "REQUEST_KEY_CUP"
 
         fun newInstance(cup: CupUiModel?): CupBottomSheetFragment =
             CupBottomSheetFragment().apply {

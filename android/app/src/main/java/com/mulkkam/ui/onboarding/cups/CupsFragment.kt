@@ -3,7 +3,6 @@ package com.mulkkam.ui.onboarding.cups
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
@@ -13,8 +12,6 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment
-import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment.Companion.BUNDLE_KEY_CUP
-import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment.Companion.REQUEST_KEY_CUP
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -30,7 +27,7 @@ class CupsFragment :
         FragmentCupsBinding::inflate,
     ) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
-    private val viewModel: CupsViewModel by viewModels()
+    private val viewModel: CupsViewModel by activityViewModels()
     private val settingCupsAdapter: SettingCupsAdapter by lazy {
         SettingCupsAdapter(handler)
     }
@@ -72,21 +69,10 @@ class CupsFragment :
     ) {
         super.onViewCreated(view, savedInstanceState)
 
-        initResultLauncher()
         initTextAppearance()
         initAdapter()
         initObserver()
         initClickListener()
-    }
-
-    private fun initResultLauncher() {
-        parentFragmentManager.setFragmentResultListener(
-            REQUEST_KEY_CUP,
-            viewLifecycleOwner,
-        ) { _, bundle ->
-            val updatedCup = bundle.getParcelable<CupUiModel>(BUNDLE_KEY_CUP)
-            viewModel.updateCup(updatedCup)
-        }
     }
 
     private fun initTextAppearance() {

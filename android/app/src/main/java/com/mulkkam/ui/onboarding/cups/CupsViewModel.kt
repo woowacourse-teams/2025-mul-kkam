@@ -51,6 +51,22 @@ class CupsViewModel : ViewModel() {
                 if (cup.rank == updatedCup.rank) updatedCup else cup
             }
 
-        _cupsUiState.value = MulKkamUiState.Success(CupsUiModel(newCups, false))
+        _cupsUiState.value =
+            MulKkamUiState.Success(
+                CupsUiModel(
+                    newCups,
+                    cupsUiState.value?.toSuccessDataOrNull()?.isAddable == true,
+                ),
+            )
+    }
+
+    fun deleteCup(rank: Int) {
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+        _cupsUiState.value = MulKkamUiState.Success(Cups(currentCups.filter { it.rank != rank }.map { it.toDomain() }).toUi())
+    }
+
+    fun addCup(newCup: CupUiModel) {
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+        _cupsUiState.value = MulKkamUiState.Success(Cups(currentCups.plus(newCup).map { it.toDomain() }).toUi())
     }
 }
