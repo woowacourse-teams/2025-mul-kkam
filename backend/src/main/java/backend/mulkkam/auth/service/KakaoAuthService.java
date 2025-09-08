@@ -49,10 +49,10 @@ public class KakaoAuthService {
 
     private OauthAccount createSafely(String oauthId) {
         try {
-            return oauthAccountRepository.saveAndFlush(new OauthAccount(oauthId, OauthProvider.KAKAO));
+            return oauthAccountRepository.saveAndFlush(new OauthAccount(oauthId, KAKAO_OAUTH_PROVIDER));
         } catch (DataIntegrityViolationException e) {
             return oauthAccountRepository
-                    .findByOauthIdAndOauthProvider(oauthId, OauthProvider.KAKAO)
+                    .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
                     .orElseThrow(() -> e);
         }
     }
