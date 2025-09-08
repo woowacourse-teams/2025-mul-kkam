@@ -5,17 +5,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
-import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import kotlinx.coroutines.launch
 

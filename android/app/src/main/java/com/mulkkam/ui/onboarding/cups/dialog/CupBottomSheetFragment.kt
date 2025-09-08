@@ -19,7 +19,6 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
-import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
@@ -40,7 +39,6 @@ class CupBottomSheetFragment :
     ) {
     private val viewModel: CupBottomSheetViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
-    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     private val debounceHandler = Handler(Looper.getMainLooper())
@@ -77,7 +75,10 @@ class CupBottomSheetFragment :
                 parentFragmentManager.setFragmentResult(REQUEST_KEY_CUP, bundle)
                 dismiss()
             }
-            tvDelete.setSingleClickListener { viewModel.deleteCup() }
+            tvDelete.setSingleClickListener {
+                // TODO: 삭제 구현
+                // viewModel.deleteCup()
+            }
         }
 
     private fun initObservers() =
@@ -176,7 +177,11 @@ class CupBottomSheetFragment :
             is MulKkamUiState.Failure -> {
                 val message =
                     if (state.error is MulKkamError.SettingCupsError.InvalidAmount) {
-                        getString(R.string.setting_cup_invalid_range, CupAmount.MIN_ML, CupAmount.MAX_ML)
+                        getString(
+                            R.string.setting_cup_invalid_range,
+                            CupAmount.MIN_ML,
+                            CupAmount.MAX_ML,
+                        )
                     } else {
                         ""
                     }

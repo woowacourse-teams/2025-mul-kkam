@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.domain.model.result.MulKkamError

@@ -4,10 +4,8 @@ import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
-import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
-import com.mulkkam.ui.model.UserAuthState
 import java.time.LocalDate
 
 interface MembersRepository {
