@@ -72,9 +72,7 @@ class CupBottomSheetFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { handleSaveClick() }
             tvDelete.setSingleClickListener { handleDeleteClick() }
-            ivIntakeTypeInfo.setSingleClickListener { anchor ->
-                toggleIntakeTypeTooltip(anchor)
-            }
+            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
         }
 
     private fun handleSaveClick() {
@@ -93,19 +91,20 @@ class CupBottomSheetFragment :
         dismiss()
     }
 
-    private fun toggleIntakeTypeTooltip(anchor: View) {
-        intakeTypeTooltip?.let {
-            it.dismiss()
-            intakeTypeTooltip = null
-            return
+    private fun showIntakeTypeTooltip(anchor: View) {
+        if (intakeTypeTooltip == null) {
+            intakeTypeTooltip =
+                MulkkamTooltip(
+                    anchor = anchor,
+                    title = getString(R.string.tooltip_title),
+                    message = getText(R.string.tooltip_intake_type),
+                ).also { it.show() }
+        } else {
+            intakeTypeTooltip?.let {
+                it.dismiss()
+                it.show()
+            }
         }
-
-        intakeTypeTooltip =
-            MulkkamTooltip(
-                anchor = anchor,
-                title = getString(R.string.tooltip_title),
-                message = getText(R.string.tooltip_intake_type),
-            ).also { it.show() }
     }
 
     private fun initObservers() =

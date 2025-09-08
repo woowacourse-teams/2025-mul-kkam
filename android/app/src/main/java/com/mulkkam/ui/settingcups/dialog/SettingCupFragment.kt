@@ -43,10 +43,10 @@ class SettingCupFragment :
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
-    private var intakeTypeTooltip: MulkkamTooltip? = null
-
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
+
+    private var intakeTypeTooltip: MulkkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -73,22 +73,23 @@ class SettingCupFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { viewModel.saveCup() }
             tvDelete.setSingleClickListener { viewModel.deleteCup() }
-            ivIntakeTypeInfo.setSingleClickListener { toggleIntakeTypeTooltip(it) }
+            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
         }
 
-    private fun toggleIntakeTypeTooltip(anchor: View) {
-        intakeTypeTooltip?.let {
-            it.dismiss()
-            intakeTypeTooltip = null
-            return
+    private fun showIntakeTypeTooltip(anchor: View) {
+        if (intakeTypeTooltip == null) {
+            intakeTypeTooltip =
+                MulkkamTooltip(
+                    anchor = anchor,
+                    title = getString(R.string.tooltip_title),
+                    message = getText(R.string.tooltip_intake_type),
+                ).also { it.show() }
+        } else {
+            intakeTypeTooltip?.let {
+                it.dismiss()
+                it.show()
+            }
         }
-
-        intakeTypeTooltip =
-            MulkkamTooltip(
-                anchor = anchor,
-                title = getString(R.string.tooltip_title),
-                message = getText(R.string.tooltip_intake_type),
-            ).also { it.show() }
     }
 
     private fun initObservers() =
