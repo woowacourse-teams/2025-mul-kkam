@@ -72,18 +72,16 @@ class CupsViewModel : ViewModel() {
         }
     }
 
-    fun resetCups() {
-        viewModelScope.launch {
-            _cupsResetUiState.value = MulKkamUiState.Loading
-            runCatching {
-                cupsRepository.resetCups().getOrError()
-            }.onSuccess {
-                _cupsResetUiState.value = MulKkamUiState.Success(Unit)
-                loadCups()
-            }.onFailure {
-                _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+    fun updateCup(updatedCup: CupUiModel?) {
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+        if (updatedCup == null) return
+
+        val newCups =
+            currentCups.map { cup ->
+                if (cup.rank == updatedCup.rank) updatedCup else cup
             }
-        }
+
+        _cupsUiState.value = MulKkamUiState.Success(CupsUiModel(newCups, false))
     }
 
     companion object {

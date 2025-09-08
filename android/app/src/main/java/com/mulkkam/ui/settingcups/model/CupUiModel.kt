@@ -16,6 +16,7 @@ data class CupUiModel(
     val intakeType: IntakeType,
     val emoji: String,
     val isRepresentative: Boolean,
+    val emojiId: Long = 0L,
 ) : Parcelable {
     companion object {
         val EMPTY_CUP_UI_MODEL =

@@ -11,6 +11,9 @@ import com.mulkkam.databinding.FragmentCupsBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.OnboardingViewModel
+import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment
+import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment.Companion.BUNDLE_KEY_CUP
+import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment.Companion.REQUEST_KEY_CUP
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -57,7 +60,7 @@ class CupsFragment :
 
     private fun showEditBottomSheetDialog(cup: CupUiModel?) {
         if (parentFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
-        SettingCupFragment
+        CupBottomSheetFragment
             .newInstance(cup)
             .show(parentFragmentManager, SettingCupFragment.TAG)
     }
@@ -72,6 +75,13 @@ class CupsFragment :
         initAdapter()
         initObserver()
         initClickListener()
+        parentFragmentManager.setFragmentResultListener(
+            REQUEST_KEY_CUP,
+            viewLifecycleOwner,
+        ) { _, bundle ->
+            val updatedCup = bundle.getParcelable<CupUiModel>(BUNDLE_KEY_CUP)
+            viewModel.updateCup(updatedCup)
+        }
     }
 
     private fun initTextAppearance() {
