@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.dialog
+package com.mulkkam.ui.onboarding.cups.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
@@ -18,10 +18,9 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
-import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.SettingCupsViewModel
+import com.mulkkam.ui.onboarding.cups.CupsViewModel
 import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
 import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -33,13 +32,13 @@ import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
-class SettingCupFragment :
+class CupBottomSheetFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: SettingCupViewModel by activityViewModels()
+    private val viewModel: CupBottomSheetViewModel by activityViewModels()
+    private val cupsViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
-    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     private val debounceHandler = Handler(Looper.getMainLooper())
@@ -68,9 +67,25 @@ class SettingCupFragment :
     private fun initClickListeners() =
         with(binding) {
             ivClose.setSingleClickListener { dismiss() }
-            tvSave.setSingleClickListener { viewModel.saveCup() }
-            tvDelete.setSingleClickListener { viewModel.deleteCup() }
+            tvSave.setSingleClickListener { handleSaveClick() }
+            tvDelete.setSingleClickListener { handleDeleteClick() }
         }
+
+    private fun handleSaveClick() {
+        val updatedCup = viewModel.cup.value ?: return
+        val editType = viewModel.editType.value ?: return
+        when (editType) {
+            SettingWaterCupEditType.ADD -> cupsViewModel.addCup(updatedCup)
+            SettingWaterCupEditType.EDIT -> cupsViewModel.updateCup(updatedCup)
+        }
+        dismiss()
+    }
+
+    private fun handleDeleteClick() {
+        val rank = viewModel.cup.value?.rank ?: return
+        cupsViewModel.deleteCup(rank)
+        dismiss()
+    }
 
     private fun initObservers() =
         with(viewModel) {
@@ -95,22 +110,6 @@ class SettingCupFragment :
 
             isSaveAvailable.observe(viewLifecycleOwner) { available ->
                 binding.tvSave.isEnabled = available == true
-            }
-
-            saveSuccess.observe(viewLifecycleOwner) {
-                CustomToast
-                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
-                    .show()
-                settingCupsViewModel.loadCups()
-                dismiss()
-            }
-
-            deleteSuccess.observe(viewLifecycleOwner) {
-                CustomToast
-                    .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
-                    .show()
-                settingCupsViewModel.loadCups()
-                dismiss()
             }
 
             cupEmojisUiState.observe(viewLifecycleOwner) { cupEmojisUiState ->
@@ -185,7 +184,11 @@ class SettingCupFragment :
             is MulKkamUiState.Failure -> {
                 val message =
                     if (state.error is MulKkamError.SettingCupsError.InvalidAmount) {
-                        getString(R.string.setting_cup_invalid_range, CupAmount.MIN_ML, CupAmount.MAX_ML)
+                        getString(
+                            R.string.setting_cup_invalid_range,
+                            CupAmount.MIN_ML,
+                            CupAmount.MAX_ML,
+                        )
                     } else {
                         ""
                     }
@@ -290,8 +293,8 @@ class SettingCupFragment :
         const val TAG: String = "SETTING_WATER_CUP_FRAGMENT"
         private const val ARG_CUP: String = "CUP"
 
-        fun newInstance(cup: CupUiModel?): SettingCupFragment =
-            SettingCupFragment().apply {
+        fun newInstance(cup: CupUiModel?): CupBottomSheetFragment =
+            CupBottomSheetFragment().apply {
                 arguments =
                     Bundle().apply {
                         putParcelable(ARG_CUP, cup)

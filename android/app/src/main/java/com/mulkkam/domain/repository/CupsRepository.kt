@@ -10,6 +10,8 @@ import com.mulkkam.domain.model.result.MulKkamResult
 interface CupsRepository {
     suspend fun getCups(): MulKkamResult<Cups>
 
+    suspend fun getCupsDefault(): MulKkamResult<Cups>
+
     suspend fun postCup(
         name: CupName,
         amount: CupAmount,

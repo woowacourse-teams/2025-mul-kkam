@@ -7,7 +7,6 @@ import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreed
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
-import com.mulkkam.data.remote.model.request.members.toData
 import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.MembersService
@@ -15,12 +14,10 @@ import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
-import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
-import com.mulkkam.ui.model.UserAuthState
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -28,14 +25,6 @@ class MembersRepositoryImpl(
     private val membersService: MembersService,
     private val membersPreference: MembersPreference,
 ) : MembersRepository {
-    override suspend fun postMembers(onboardingInfo: OnboardingInfo): MulKkamResult<Unit> {
-        val result = membersService.postMembers(onboardingInfo.toData())
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { throw it.toResponseError().toDomain() },
-        )
-    }
-
     override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
         val result = membersService.getMembersNicknameValidation(nickname)
         return result.fold(
@@ -81,14 +70,6 @@ class MembersRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getMembersCheckOnboarding(): MulKkamResult<UserAuthState> {
-        val result = membersService.getMembersCheckOnboarding()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = UserAuthState.from(it.finishedOnboarding)) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
