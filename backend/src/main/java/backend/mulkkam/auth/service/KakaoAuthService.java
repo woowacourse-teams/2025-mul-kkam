@@ -1,5 +1,7 @@
 package backend.mulkkam.auth.service;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.REQUEST_CONFLICT;
+
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
@@ -9,6 +11,7 @@ import backend.mulkkam.auth.infrastructure.KakaoRestClient;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -37,32 +40,34 @@ public class KakaoAuthService {
                 .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
 
         String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
-        String refreshToken = jwtTokenHandler.createRefreshToken(oauthAccount);
-
-        updateAccountRefreshToken(oauthAccount, refreshToken, kakaoSigninRequest.deviceUuid());
+        String refreshToken = updateAccountRefreshToken(oauthAccount, jwtTokenHandler.createRefreshToken(oauthAccount),
+                kakaoSigninRequest.deviceUuid());
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
     }
 
-    private void updateAccountRefreshToken(
+    private String updateAccountRefreshToken(
             OauthAccount oauthAccount,
-            String refreshToken,
+            String newRefreshToken,
             String deviceUuid
     ) {
-        Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccountAndDeviceUuid(
-                oauthAccount, deviceUuid);
+        Optional<AccountRefreshToken> existingTokenOpt =
+                accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid);
 
-        if (foundAccountRefreshToken.isPresent()) {
-            foundAccountRefreshToken.get().reissueToken(refreshToken);
-            return;
+        if (existingTokenOpt.isPresent()) {
+            AccountRefreshToken existingToken = existingTokenOpt.get();
+            existingToken.reissueToken(newRefreshToken);
+            return existingToken.getRefreshToken();
         }
 
-        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken, deviceUuid);
+        AccountRefreshToken candidateToken = new AccountRefreshToken(oauthAccount, newRefreshToken, deviceUuid);
         try {
-            accountRefreshTokenRepository.save(accountRefreshToken);
+            AccountRefreshToken persistedToken = accountRefreshTokenRepository.save(candidateToken);
+            return persistedToken.getRefreshToken();
         } catch (DataIntegrityViolationException e) {
-            accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
-                    .ifPresent(token -> token.reissueToken(refreshToken));
+            return accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
+                    .orElseThrow(() -> new CommonException(REQUEST_CONFLICT))
+                    .getRefreshToken();
         }
     }
 }
