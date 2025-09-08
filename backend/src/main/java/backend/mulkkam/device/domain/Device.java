@@ -31,7 +31,7 @@ public class Device extends BaseEntity {
     @Column
     private String token;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @Column
     private String deviceUuid;
 
     @JoinColumn(nullable = false)
