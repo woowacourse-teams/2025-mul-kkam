@@ -2,8 +2,6 @@ package com.mulkkam.ui.home.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -30,9 +28,6 @@ class ManualDrinkFragment :
     ) {
     private val parentViewModel: HomeViewModel by activityViewModels()
     private val viewModel: ManualDrinkViewModel by activityViewModels()
-
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
 
     private var intakeTypeTooltip: MulKkamTooltip? = null
 
@@ -105,17 +100,9 @@ class ManualDrinkFragment :
                 return@doAfterTextChanged
             }
 
-            debounceAmountUpdate(processed)
+            val amount = processed.toIntOrNull() ?: 0
+            viewModel.updateAmount(amount)
         }
-    }
-
-    private fun debounceAmountUpdate(text: String) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-        debounceRunnable =
-            Runnable {
-                val amount = text.toIntOrNull() ?: 0
-                viewModel.updateAmount(amount)
-            }.also { debounceHandler.postDelayed(it, 100L) }
     }
 
     private fun updateEditText(
