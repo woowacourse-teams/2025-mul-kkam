@@ -51,11 +51,11 @@ public class KakaoAuthService {
             String newRefreshToken,
             String deviceUuid
     ) {
-        Optional<AccountRefreshToken> existingTokenOpt =
+        Optional<AccountRefreshToken> foundRefreshToken =
                 accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid);
 
-        if (existingTokenOpt.isPresent()) {
-            AccountRefreshToken existingToken = existingTokenOpt.get();
+        if (foundRefreshToken.isPresent()) {
+            AccountRefreshToken existingToken = foundRefreshToken.get();
             existingToken.reissueToken(newRefreshToken);
             return existingToken.getRefreshToken();
         }
