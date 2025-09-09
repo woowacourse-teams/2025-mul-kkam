@@ -78,7 +78,7 @@ class HistoryFragment :
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        historyAdapter.setSingleClickListener =
+        historyAdapter.onItemClickListener =
             HistoryViewHolder.Handler { history ->
                 if (viewModel.waterIntakeState.value !is WaterIntakeState.Present) {
                     CustomSnackBar
