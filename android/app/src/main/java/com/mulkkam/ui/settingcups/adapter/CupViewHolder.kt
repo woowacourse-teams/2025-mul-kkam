@@ -54,7 +54,7 @@ class CupViewHolder(
         }
 
     private fun initClickListeners(item: SettingCupsItem.CupItem) =
-        binding.ivEdit.setSingleClickListener {
+        binding.clEdit.setSingleClickListener {
             handler.onEditClick(item.value)
         }
 
