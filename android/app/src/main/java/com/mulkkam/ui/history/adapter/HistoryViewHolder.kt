@@ -9,19 +9,20 @@ import com.mulkkam.databinding.ItemIntakeHistoryBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
+import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class HistoryViewHolder(
     private val binding: ItemIntakeHistoryBinding,
-    private val setSingleClickListener: Handler?,
+    private val onItemClickListener: Handler?,
 ) : RecyclerView.ViewHolder(binding.root) {
     private var clickedIntakeHistory: IntakeHistory? = null
 
     init {
-        binding.root.setOnClickListener {
+        binding.root.setSingleClickListener {
             clickedIntakeHistory?.let { history ->
-                setSingleClickListener?.onItemClicked(history)
+                onItemClickListener?.onItemClicked(history)
             }
         }
     }
@@ -57,11 +58,11 @@ class HistoryViewHolder(
 
         fun from(
             parent: ViewGroup,
-            setSingleClickListener: Handler,
+            onItemClickListener: Handler,
         ): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)
-            return HistoryViewHolder(binding, setSingleClickListener)
+            return HistoryViewHolder(binding, onItemClickListener)
         }
     }
 }

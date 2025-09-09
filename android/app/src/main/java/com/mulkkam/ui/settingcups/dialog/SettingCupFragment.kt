@@ -19,6 +19,7 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.custom.tooltip.MulKkamTooltip
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
@@ -45,6 +46,8 @@ class SettingCupFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
 
+    private var intakeTypeTooltip: MulKkamTooltip? = null
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -70,7 +73,24 @@ class SettingCupFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { viewModel.saveCup() }
             tvDelete.setSingleClickListener { viewModel.deleteCup() }
+            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
         }
+
+    private fun showIntakeTypeTooltip(anchor: View) {
+        if (intakeTypeTooltip == null) {
+            intakeTypeTooltip =
+                MulKkamTooltip(
+                    anchor = anchor,
+                    title = getString(R.string.tooltip_title),
+                    message = getText(R.string.tooltip_intake_type),
+                ).also { it.show() }
+        } else {
+            intakeTypeTooltip?.let {
+                it.dismiss()
+                it.show()
+            }
+        }
+    }
 
     private fun initObservers() =
         with(viewModel) {

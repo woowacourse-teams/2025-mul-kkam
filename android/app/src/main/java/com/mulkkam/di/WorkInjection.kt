@@ -29,7 +29,7 @@ object WorkInjection {
     fun init(context: Context) {
         if (_workManager == null) {
             val factory =
-                MulkkamWorkerFactory(
+                MulKkamWorkerFactory(
                     healthRepository = healthRepository,
                     notificationRepository = notificationRepository,
                     membersRepository = membersRepository,
@@ -49,7 +49,7 @@ object WorkInjection {
     }
 }
 
-private class MulkkamWorkerFactory(
+private class MulKkamWorkerFactory(
     private val healthRepository: HealthRepository,
     private val notificationRepository: NotificationRepository,
     private val membersRepository: MembersRepository,

@@ -18,6 +18,7 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
+import com.mulkkam.ui.custom.tooltip.MulKkamTooltip
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
@@ -44,6 +45,8 @@ class CupBottomSheetFragment :
     private val debounceHandler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
 
+    private var intakeTypeTooltip: MulKkamTooltip? = null
+
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
@@ -69,6 +72,7 @@ class CupBottomSheetFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { handleSaveClick() }
             tvDelete.setSingleClickListener { handleDeleteClick() }
+            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
         }
 
     private fun handleSaveClick() {
@@ -85,6 +89,22 @@ class CupBottomSheetFragment :
         val rank = viewModel.cup.value?.rank ?: return
         cupsViewModel.deleteCup(rank)
         dismiss()
+    }
+
+    private fun showIntakeTypeTooltip(anchor: View) {
+        if (intakeTypeTooltip == null) {
+            intakeTypeTooltip =
+                MulKkamTooltip(
+                    anchor = anchor,
+                    title = getString(R.string.tooltip_title),
+                    message = getText(R.string.tooltip_intake_type),
+                ).also { it.show() }
+        } else {
+            intakeTypeTooltip?.let {
+                it.dismiss()
+                it.show()
+            }
+        }
     }
 
     private fun initObservers() =
