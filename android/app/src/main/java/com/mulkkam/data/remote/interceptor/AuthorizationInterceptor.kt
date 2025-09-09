@@ -3,7 +3,6 @@ package com.mulkkam.data.remote.interceptor
 import com.mulkkam.data.remote.model.error.ResponseError
 import com.mulkkam.data.remote.model.request.auth.AuthReissueRequest
 import com.mulkkam.di.PreferenceInjection
-import com.mulkkam.di.RepositoryInjection.authRepository
 import com.mulkkam.di.ServiceInjection.authService
 import com.mulkkam.domain.model.result.toMulKkamResult
 import kotlinx.coroutines.runBlocking
