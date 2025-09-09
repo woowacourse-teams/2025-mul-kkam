@@ -10,18 +10,20 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class KakaoAuthService {
+
+    private static final OauthProvider KAKAO_OAUTH_PROVIDER = OauthProvider.KAKAO;
 
     private final KakaoRestClient kakaoRestClient;
     private final OauthJwtTokenHandler jwtTokenHandler;
@@ -33,8 +35,9 @@ public class KakaoAuthService {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();
-        OauthAccount oauthAccount = oauthAccountRepository.findByOauthId(oauthId)
-                .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
+        OauthAccount oauthAccount = oauthAccountRepository
+                .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
+                .orElseGet(() -> createSafely(oauthId));
 
         String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
         String refreshToken = jwtTokenHandler.createRefreshToken(oauthAccount);
@@ -42,6 +45,16 @@ public class KakaoAuthService {
         updateAccountRefreshToken(oauthAccount, refreshToken);
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
+    }
+
+    private OauthAccount createSafely(String oauthId) {
+        try {
+            return oauthAccountRepository.saveAndFlush(new OauthAccount(oauthId, KAKAO_OAUTH_PROVIDER));
+        } catch (DataIntegrityViolationException e) {
+            return oauthAccountRepository
+                    .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
+                    .orElseThrow(() -> e);
+        }
     }
 
     private void updateAccountRefreshToken(

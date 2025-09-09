@@ -77,13 +77,15 @@ class CupControllerTest extends ControllerTest {
 
     private CupEmoji savedCupEmoji;
 
+    private OauthAccount oauthAccount;
+
     @BeforeEach
     void setUp() {
         Member member = MemberFixtureBuilder
                 .builder().build();
         savedMember = memberRepository.save(member);
 
-        OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
+        oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
@@ -314,9 +316,6 @@ class CupControllerTest extends ControllerTest {
                     .build();
             Member savedOtherMember = memberRepository.save(otherMember);
 
-            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder
                     .withMemberAndCupEmoji(savedOtherMember, cupEmoji)
@@ -389,7 +388,8 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             mockMvc.perform(patch("/cups/" + savedCupId)
@@ -404,7 +404,8 @@ class CupControllerTest extends ControllerTest {
         @Test
         void error_notFoundCup() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
@@ -431,9 +432,6 @@ class CupControllerTest extends ControllerTest {
                     .build();
             Member savedOtherMember = memberRepository.save(otherMember);
 
-            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder.withMemberAndCupEmoji(savedOtherMember, cupEmoji)
                     .cupNickname(new CupNickname("otherCup"))
@@ -442,7 +440,8 @@ class CupControllerTest extends ControllerTest {
             Cup savedOtherCup = cupRepository.save(otherCup);
             Long savedOtherCupId = savedOtherCup.getId();
 
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + savedOtherCupId)
