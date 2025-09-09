@@ -2,8 +2,6 @@ package com.mulkkam.ui.settingcups.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -42,9 +40,6 @@ class SettingCupFragment :
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
-
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
 
     private var intakeTypeTooltip: MulKkamTooltip? = null
 
@@ -257,7 +252,7 @@ class SettingCupFragment :
                     return@doAfterTextChanged
                 }
 
-                debounceAmountUpdate(processedText)
+                viewModel.updateAmount(processedText.toIntOrNull() ?: 0)
             }
         }
 
@@ -267,17 +262,6 @@ class SettingCupFragment :
     ) {
         editText.setText(newText)
         editText.setSelection(newText.length)
-    }
-
-    private fun debounceAmountUpdate(text: String) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-
-        debounceRunnable =
-            Runnable {
-                viewModel.updateAmount(text.toIntOrNull() ?: 0)
-            }.apply {
-                debounceHandler.postDelayed(this, 100L)
-            }
     }
 
     private fun initDoneListener() {

@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.core.view.isVisible
@@ -29,9 +27,6 @@ import java.util.Locale
 
 class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountBinding>(ActivitySettingTargetAmountBinding::inflate) {
     private val viewModel: SettingTargetAmountViewModel by viewModels()
-
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -180,7 +175,8 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
                 return@doAfterTextChanged
             }
 
-            debounceTargetAmountUpdate(processedText)
+            val targetAmount = processedText.toIntOrNull() ?: 0
+            viewModel.updateTargetAmount(targetAmount)
         }
     }
 
@@ -192,16 +188,6 @@ class SettingTargetAmountActivity : BindingActivity<ActivitySettingTargetAmountB
             setText(newText)
             setSelection(newText.length)
         }
-    }
-
-    private fun debounceTargetAmountUpdate(text: String) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-
-        debounceRunnable =
-            Runnable {
-                val targetAmount = text.toIntOrNull() ?: 0
-                viewModel.updateTargetAmount(targetAmount)
-            }.apply { debounceHandler.postDelayed(this, 100L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =
