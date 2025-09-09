@@ -11,7 +11,7 @@ import androidx.core.graphics.drawable.toDrawable
 import com.mulkkam.databinding.LayoutTooltipMulkkamBinding
 import com.mulkkam.ui.util.extensions.dpToPx
 
-class MulkkamTooltip(
+class MulKkamTooltip(
     private val anchor: View,
     private val title: CharSequence,
     private val message: CharSequence,
@@ -44,6 +44,7 @@ class MulkkamTooltip(
                 isOutsideTouchable = true
                 setBackgroundDrawable(Color.TRANSPARENT.toDrawable())
                 elevation = 8f.dpToPx(anchor.context)
+                animationStyle = android.R.style.Animation_InputMethod
             }
         return popupWindow
     }
