@@ -1,13 +1,17 @@
 package com.mulkkam.ui.main
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -45,7 +49,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         handleNotificationEvent()
         initDoubleBackToExit()
         initObservers()
-        loadDeviceId()
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
@@ -142,10 +145,12 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 }
             }
 
-            fcmToken.observe(this@MainActivity) { token ->
-                token?.let {
-                    viewModel.saveDeviceInfo(loadDeviceId())
-                }
+            fcmToken.observe(this@MainActivity) {
+                val currentGranted = hasNotificationPermission()
+                viewModel.saveNotificationPermission(
+                    deviceId = loadDeviceId(),
+                    isCurrentlyGranted = currentGranted,
+                )
             }
 
             onFirstLaunch.observe(this@MainActivity) {
@@ -178,6 +183,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             this.contentResolver,
             Settings.Secure.ANDROID_ID,
         )
+
+    private fun hasNotificationPermission(): Boolean =
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> true
+            else ->
+                ContextCompat.checkSelfPermission(
+                    this,
+                    POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+        }
 
     override fun onStop() {
         super.onStop()

@@ -10,7 +10,6 @@ import okhttp3.Interceptor
 import okhttp3.Response
 import org.json.JSONObject
 import java.net.HttpURLConnection
-import kotlin.text.format
 
 class AuthorizationInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
