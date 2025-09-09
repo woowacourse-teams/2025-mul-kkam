@@ -31,9 +31,10 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            String deviceUuid = "deviceUuid";
 
             // when
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
             Long actual = oauthJwtTokenHandler.getAccountId(token);
 
             // then
@@ -50,8 +51,10 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
         void success_createdToken() throws InvalidTokenException {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
+            String deviceUuid = "deviceUuid";
+
             oauthAccountRepository.save(oauthAccount);
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
             // when
             Long actual = oauthJwtTokenHandler.getAccountId(token);

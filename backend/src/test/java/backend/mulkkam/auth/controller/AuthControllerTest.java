@@ -13,7 +13,6 @@ import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
-import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
@@ -79,14 +78,9 @@ class AuthControllerTest extends ControllerTest {
             OauthLoginResponse loginResponse = doLogin();
             OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
                     .orElseThrow();
-
-            LogoutRequest logoutRequest = new LogoutRequest(deviceUuid);
-
             // when
             mockMvc.perform(post("/auth/logout")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken())
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(logoutRequest)))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
                     .andExpect(status().isNoContent());
 
             // then

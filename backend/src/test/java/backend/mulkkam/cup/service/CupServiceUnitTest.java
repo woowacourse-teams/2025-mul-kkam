@@ -32,7 +32,6 @@ import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtur
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
 import java.util.Optional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -57,7 +56,8 @@ class CupServiceUnitTest {
     private CupService cupService;
 
     private final Long cupEmojiId = 1L;
-    private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, new CupEmojiUrl("https://cup.com"));;
+    private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, new CupEmojiUrl("https://cup.com"));
+    ;
 
     @DisplayName("컵을 생성할 때")
     @Nested

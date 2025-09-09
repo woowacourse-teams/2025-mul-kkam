@@ -6,7 +6,7 @@ public record ReissueTokenRequest(
         @Schema(description = "로그인시 발급받은 리프레시 토큰", example = "eyh...")
         String refreshToken,
 
-        @Schema(description = "디바이스 uuid")
+        @Schema(description = "랜덤 uuid")
         String deviceUuid
 ) {
 }

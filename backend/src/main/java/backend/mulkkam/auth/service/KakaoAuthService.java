@@ -39,8 +39,9 @@ public class KakaoAuthService {
         OauthAccount oauthAccount = oauthAccountRepository.findByOauthId(oauthId)
                 .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
 
-        String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
-        String refreshToken = updateAccountRefreshToken(oauthAccount, jwtTokenHandler.createRefreshToken(oauthAccount),
+        String accessToken = jwtTokenHandler.createAccessToken(oauthAccount, kakaoSigninRequest.deviceUuid());
+        String refreshToken = updateAccountRefreshToken(oauthAccount,
+                jwtTokenHandler.createRefreshToken(oauthAccount, kakaoSigninRequest.deviceUuid()),
                 kakaoSigninRequest.deviceUuid());
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());

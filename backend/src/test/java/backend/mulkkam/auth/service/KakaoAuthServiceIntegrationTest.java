@@ -55,7 +55,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
             KakaoSignInRequest kakaoSigninRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);
 
             String refreshToken = "refreshToken";
-            when(oauthJwtTokenHandler.createRefreshToken(any()))
+            when(oauthJwtTokenHandler.createRefreshToken(any(), any()))
                     .thenReturn(refreshToken);
 
             // when
@@ -85,7 +85,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
 
             String refreshToken = "refreshToken";
             String deviceUuid = "deviceUuid";
-            when(oauthJwtTokenHandler.createRefreshToken(any()))
+            when(oauthJwtTokenHandler.createRefreshToken(any(), any()))
                     .thenReturn(refreshToken);
 
             KakaoSignInRequest kakaoSigninRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);
@@ -116,7 +116,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
 
             String refreshToken = "refreshToken";
             String deviceUuid = "deviceUuid";
-            when(oauthJwtTokenHandler.createRefreshToken(any()))
+            when(oauthJwtTokenHandler.createRefreshToken(any(), any()))
                     .thenReturn(refreshToken);
 
             KakaoSignInRequest kakaoSigninRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);
@@ -153,7 +153,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
 
             String newRefreshToken = "newRefreshToken";
 
-            when(oauthJwtTokenHandler.createRefreshToken(any()))
+            when(oauthJwtTokenHandler.createRefreshToken(any(), any()))
                     .thenReturn(newRefreshToken);
 
             KakaoSignInRequest kakaoSigninRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);

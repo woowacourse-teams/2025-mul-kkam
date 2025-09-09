@@ -29,11 +29,11 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import com.fasterxml.jackson.core.type.TypeReference;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -94,7 +94,9 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        String deviceUuid = "deviceUuid";
+
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
         CupEmoji cupEmoji = new CupEmoji("http://example.com");
         cupEmojiRepository.save(cupEmoji);

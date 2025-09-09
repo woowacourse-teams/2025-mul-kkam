@@ -8,12 +8,11 @@ import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-
-import javax.annotation.Nullable;
 import java.util.Date;
 import java.util.UUID;
+import javax.annotation.Nullable;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 @Component
 public class OauthJwtTokenHandler {
@@ -54,6 +53,15 @@ public class OauthJwtTokenHandler {
         }
     }
 
+    public @Nullable String getDeviceUuid(String token) throws InvalidTokenException {
+        try {
+            Claims claims = getClaims(token);
+            return claims.get("deviceUuid", String.class);
+        } catch (NumberFormatException e) {
+            throw new InvalidTokenException();
+        }
+    }
+
     private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
@@ -62,23 +70,32 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    public String createAccessToken(OauthAccount account) {
-        Claims claims = generateClaims(account);
+    public String createAccessToken(
+            OauthAccount account,
+            String deviceUuid
+    ) {
+        Claims claims = generateClaims(account, deviceUuid);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + accessExpireInMilliseconds);
         return getCompactedJwt(claims, now, validity);
     }
 
-    public String createRefreshToken(OauthAccount account) {
-        Claims claims = generateClaims(account);
+    public String createRefreshToken(
+            OauthAccount account,
+            String deviceUuid
+    ) {
+        Claims claims = generateClaims(account, deviceUuid);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + refreshExpireInMilliseconds);
         return getCompactedJwt(claims, now, validity);
     }
 
-    private Claims generateClaims(OauthAccount account) {
+    private Claims generateClaims(
+            OauthAccount account,
+            String deviceUuid
+    ) {
         Long memberId = null;
         if (account.finishedOnboarding()) {
             memberId = account.getMember().getId();
@@ -87,6 +104,7 @@ public class OauthJwtTokenHandler {
                 .subject(account.getId().toString())
                 .id(UUID.randomUUID().toString())
                 .add("memberId", memberId)
+                .add("deviceUuid", deviceUuid)
                 .build();
     }
 

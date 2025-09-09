@@ -6,7 +6,6 @@ import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.U
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
@@ -29,10 +28,9 @@ public class AuthTokenService {
 
     @Transactional
     public void logout(
-            OauthAccountDetails accountDetails,
-            LogoutRequest logoutRequest
+            OauthAccountDetails accountDetails
     ) {
-        accountRefreshTokenRepository.deleteByAccountIdAndDeviceUuid(accountDetails.id(), logoutRequest.deviceUuid());
+        accountRefreshTokenRepository.deleteByAccountIdAndDeviceUuid(accountDetails.id(), accountDetails.deviceUuid());
     }
 
     @Transactional
@@ -41,8 +39,8 @@ public class AuthTokenService {
         OauthAccount account = getAccountByToken(refreshToken);
         AccountRefreshToken saved = loadRefreshToken(account, request.deviceUuid());
         validateRequestToken(saved, refreshToken);
-        String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account);
-        String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account);
+        String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account, request.deviceUuid());
+        String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account, request.deviceUuid());
 
         saved.reissueToken(reissuedRefreshToken);
         return new ReissueTokenResponse(reissuedAccessToken, reissuedRefreshToken);

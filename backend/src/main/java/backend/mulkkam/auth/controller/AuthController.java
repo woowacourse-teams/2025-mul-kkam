@@ -1,7 +1,6 @@
 package backend.mulkkam.auth.controller;
 
 import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
-import backend.mulkkam.auth.dto.request.LogoutRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
@@ -65,10 +64,9 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<Void> logout(
             @Parameter(hidden = true)
-            OauthAccountDetails oauthAccountDetails,
-            @RequestBody LogoutRequest logoutRequest
+            OauthAccountDetails oauthAccountDetails
     ) {
-        authTokenService.logout(oauthAccountDetails, logoutRequest);
+        authTokenService.logout(oauthAccountDetails);
         return ResponseEntity.noContent().build();
     }
 }

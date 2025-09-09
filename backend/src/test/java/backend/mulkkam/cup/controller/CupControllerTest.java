@@ -86,7 +86,9 @@ class CupControllerTest extends ControllerTest {
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        String deviceUuid = "deviceUuid";
+
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
         saveDefaultCupEmojis();
         savedCupEmoji = cupEmojiRepository.findAll().getFirst();
@@ -389,7 +391,8 @@ class CupControllerTest extends ControllerTest {
         @Test
         void success_validInput() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             mockMvc.perform(patch("/cups/" + savedCupId)
@@ -404,7 +407,8 @@ class CupControllerTest extends ControllerTest {
         @Test
         void error_notFoundCup() throws Exception {
             // given
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + Long.MAX_VALUE)
@@ -442,7 +446,8 @@ class CupControllerTest extends ControllerTest {
             Cup savedOtherCup = cupRepository.save(otherCup);
             Long savedOtherCupId = savedOtherCup.getId();
 
-            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER, savedCupEmoji.getId());
+            UpdateCupRequest updateCupRequest = new UpdateCupRequest("c0c0m0a", 100, IntakeType.WATER,
+                    savedCupEmoji.getId());
 
             // when & then
             String json = mockMvc.perform(patch("/cups/" + savedOtherCupId)

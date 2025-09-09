@@ -3,8 +3,10 @@ package backend.mulkkam.common.config;
 import backend.mulkkam.common.filter.HttpLoggingFilter;
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
 import backend.mulkkam.common.interceptor.ApiPerformanceInterceptor;
+import backend.mulkkam.common.resolver.MemberAndDeviceUuidResolver;
 import backend.mulkkam.common.resolver.MemberResolver;
 import backend.mulkkam.common.resolver.OauthAccountResolver;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
@@ -15,8 +17,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
 @RequiredArgsConstructor
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
@@ -24,6 +24,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final OauthAccountResolver oauthAccountResolver;
     private final MemberResolver memberResolver;
+    private final MemberAndDeviceUuidResolver memberAndDeviceUuidResolver;
     private final ApiPerformanceInterceptor apiPerformanceInterceptor;
     private final HttpLoggingFilter httpLoggingFilter;
 
@@ -39,6 +40,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(oauthAccountResolver);
         resolvers.add(memberResolver);
+        resolvers.add(memberAndDeviceUuidResolver);
     }
 
     @Override

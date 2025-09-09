@@ -10,7 +10,7 @@ public record KakaoSignInRequest(
         )
         String oauthAccessToken,
 
-        @Schema(description = "디바이스 uuid")
+        @Schema(description = "랜덤 uuid")
         String deviceUuid
 ) {
 }
