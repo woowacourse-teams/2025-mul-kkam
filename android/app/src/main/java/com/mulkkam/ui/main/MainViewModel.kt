@@ -113,8 +113,11 @@ class MainViewModel : ViewModel() {
         isGranted: Boolean,
     ) {
         viewModelScope.launch {
-            runCatching { devicesRepository.deleteDevice(deviceId) }
-            runCatching { devicesRepository.saveNotificationGranted(isGranted) }
+            runCatching {
+                devicesRepository.deleteDevice(deviceId)
+            }.onSuccess {
+                devicesRepository.saveNotificationGranted(isGranted)
+            }
         }
     }
 
