@@ -58,29 +58,27 @@ class LoginViewModel : ViewModel() {
             runCatching {
                 _authUiState.value = MulKkamUiState.Loading
                 RepositoryInjection.authRepository.postAuthKakao(token).getOrError()
-            }.onSuccess { tokens ->
-                val accessToken = tokens.accessToken
-                val refreshToken = tokens.refreshToken
+            }.onSuccess { authTokenInfo ->
+                val accessToken = authTokenInfo.accessToken
+                val refreshToken = authTokenInfo.refreshToken
 
                 RepositoryInjection.tokenRepository.saveAccessToken(accessToken)
                 RepositoryInjection.tokenRepository.saveRefreshToken(refreshToken)
 
-                updateAuthStateWithOnboarding()
+                updateAuthStateWithOnboarding(authTokenInfo.onboardingCompleted)
             }.onFailure {
                 _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
-    private fun updateAuthStateWithOnboarding() {
-        viewModelScope.launch {
-            runCatching {
-                onboardingRepository.getOnboardingCheck().getOrError()
-            }.onSuccess { userAuthState ->
-                _authUiState.value = MulKkamUiState.Success(userAuthState)
-            }.onFailure {
-                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+    private fun updateAuthStateWithOnboarding(onboardingCompleted: Boolean) {
+        val userAuthState =
+            when (onboardingCompleted) {
+                true -> UserAuthState.ACTIVE_USER
+                false -> UserAuthState.UNONBOARDED
             }
-        }
+
+        _authUiState.value = MulKkamUiState.Success(userAuthState)
     }
 }
