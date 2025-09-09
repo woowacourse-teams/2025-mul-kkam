@@ -15,8 +15,8 @@ public record CupResponse(
         Integer cupRank,
         @Schema(description = "음료 종류", implementation = IntakeType.class)
         IntakeType intakeType,
-        @Schema(description = "이모지", example = "☕️")
-        String emoji
+        @Schema(description = "이모지 url", example = "https:///example/com️")
+        String emojiUrl
 ) {
 
     public CupResponse(Cup cup) {

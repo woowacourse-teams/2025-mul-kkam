@@ -2,7 +2,7 @@ package backend.mulkkam.cup.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
@@ -65,13 +65,13 @@ public class CupController {
     @ApiResponse(responseCode = "404", description = "존재하지 않는 음용 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Void> createAtLastRank(
+            @RequestBody CreateCupWithoutRankRequest createCupWithoutRankRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody CreateCupRequest registerCupRequest
+            MemberDetails memberDetails
     ) {
-        cupService.create(
-                registerCupRequest,
+        cupService.createAtLastRank(
+                createCupWithoutRankRequest,
                 memberDetails
         );
         return ResponseEntity.ok().build();

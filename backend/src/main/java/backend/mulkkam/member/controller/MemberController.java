@@ -1,10 +1,7 @@
 package backend.mulkkam.member.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
@@ -21,6 +18,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
 
 @Tag(name = "회원", description = "회원 관리 API")
 @RequiredArgsConstructor
@@ -129,32 +125,6 @@ public class MemberController {
     ) {
         MemberNicknameResponse memberNicknameResponse = memberService.getNickname(memberDetails);
         return ResponseEntity.ok(memberNicknameResponse);
-    }
-
-    @Operation(summary = "온보딩 정보 생성", description = "OAuth 인증이 완료된 회원의 온보딩 정보를 생성합니다.")
-    @ApiResponse(responseCode = "200", description = "온보딩 정보 생성 성공")
-    @ApiResponse(responseCode = "400", description = "이미 온보딩된 계정", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "이미 온보딩", summary = "OauthAccount에 Member 이미 연결", value = "{\"code\":\"MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT\"}")
-    }))
-    @PostMapping
-    public ResponseEntity<Void> create(
-            @Parameter(hidden = true)
-            OauthAccountDetails accountDetails,
-            @RequestBody CreateMemberRequest createMemberRequest
-    ) {
-        memberService.create(accountDetails, createMemberRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "온보딩 상태 확인", description = "회원의 온보딩 완료 여부를 확인합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = OnboardingStatusResponse.class)))
-    @GetMapping("/check/onboarding")
-    public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(
-            @Parameter(hidden = true)
-            OauthAccountDetails accountDetails
-    ) {
-        OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(accountDetails);
-        return ResponseEntity.ok(onboardingStatusResponse);
     }
 
     @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음용량 달성 진행 정보를 조회합니다.")
