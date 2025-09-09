@@ -340,9 +340,7 @@ class CupControllerTest extends ControllerTest {
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_CUP.name());
-            });
+            assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_CUP.name());
         }
 
         @DisplayName("요청애 랭크가 중복적으로 들어왔을 때 예외를 발생시킨다")
@@ -529,9 +527,7 @@ class CupControllerTest extends ControllerTest {
 
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
-            });
+            assertThat(actual.getCode()).isEqualTo(NOT_FOUND_CUP.name());
         }
     }
 
