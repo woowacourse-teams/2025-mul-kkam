@@ -56,7 +56,11 @@ public class OauthJwtTokenHandler {
     public String getDeviceUuid(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
-            return claims.get("deviceUuid", String.class);
+            String deviceUuid = claims.get("deviceUuid", String.class);
+            if (deviceUuid == null || deviceUuid.isBlank()) {
+                throw new InvalidTokenException();
+            }
+            return deviceUuid;
         } catch (RequiredTypeException e) {
             throw new InvalidTokenException();
         }
