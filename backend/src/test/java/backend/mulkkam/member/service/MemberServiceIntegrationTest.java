@@ -1,7 +1,5 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -11,14 +9,14 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
@@ -32,7 +30,6 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
-import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
@@ -43,11 +40,11 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -283,107 +280,6 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("온보딩 시에")
-    @Nested
-    class Create {
-
-        @DisplayName("정상적으로 회원이 저장된다")
-        @Test
-        void success_validData() {
-            // given
-            String rawNickname = "히로";
-            double weight = 60.0;
-            Gender gender = Gender.FEMALE;
-            int rawTargetIntakeAmount = 1_000;
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    rawNickname,
-                    weight,
-                    gender,
-                    rawTargetIntakeAmount,
-                    true,
-                    false
-            );
-
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-            cupEmojiRepository.saveAll(
-                    List.of(
-                            new CupEmoji("http://example1.com"),
-                            new CupEmoji("http://example2.com")
-                    )
-            );
-
-            // when
-            memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
-
-            // then
-            List<Member> savedMembers = memberRepository.findAll();
-            assertSoftly(softly -> {
-                softly.assertThat(savedMembers.size()).isEqualTo(1);
-                softly.assertThat(savedMembers.getFirst().getMemberNickname())
-                        .isEqualTo(new MemberNickname(rawNickname));
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getWeight()).isEqualTo(weight);
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getGender()).isEqualTo(gender);
-                softly.assertThat(savedMembers.getFirst().getTargetAmount())
-                        .isEqualTo(new TargetAmount(rawTargetIntakeAmount));
-            });
-        }
-
-        @DisplayName("유효하지 않은 닉네임을 사용할 경우 예외를 반환한다")
-        @ParameterizedTest
-        @ValueSource(strings = {"1", " ", "", "1234567891011"})
-        void error_invalidNickname(String invalidNickname) {
-            // given
-            double weight = 60.0;
-            Gender gender = Gender.FEMALE;
-            int rawTargetIntakeAmount = 1_000;
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    invalidNickname,
-                    weight,
-                    gender,
-                    rawTargetIntakeAmount,
-                    true,
-                    false
-            );
-
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            // when & then
-            assertThatThrownBy(
-                    () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_MEMBER_NICKNAME.name());
-        }
-    }
-
-    @DisplayName("유효하지 않은 목표 음용량을 사용할 경우 예외를 반환한다")
-    @ParameterizedTest
-    @ValueSource(ints = {0, -1, -3})
-    void error_invalidTargetAmount(int invalidIntakeAmount) {
-        // given
-        String rawNickname = "히로";
-        double weight = 60.0;
-        Gender gender = Gender.FEMALE;
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                rawNickname,
-                weight,
-                gender,
-                invalidIntakeAmount,
-                true,
-                false
-        );
-
-        OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-        oauthAccountRepository.save(oauthAccount);
-
-        // when & then
-        assertThatThrownBy(
-                () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
-                .isInstanceOf(CommonException.class)
-                .hasMessage(INVALID_TARGET_AMOUNT.name());
-    }
-
     @DisplayName("멤버의 진행 상황을 조회할 때")
     @Nested
     class GetProgressInfo {
@@ -574,6 +470,13 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();
                 softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
             });
+        }
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
+            cupEmojiRepository.save(new CupEmoji(url));
         }
     }
 }

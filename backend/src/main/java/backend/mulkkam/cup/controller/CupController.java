@@ -2,11 +2,12 @@ package backend.mulkkam.cup.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRanksRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupsRanksResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
+import backend.mulkkam.cup.dto.response.DefaultCupsResponse;
 import backend.mulkkam.cup.service.CupService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -36,6 +37,13 @@ public class CupController {
 
     private final CupService cupService;
 
+    @Operation(summary = "사용자 기본 컵 리스트 반환", description = "기본 컵 리스트를 반환합니다.")
+    @ApiResponse(responseCode = "200", description = "성공 응답", content = @Content(schema = @Schema(implementation = DefaultCupsResponse.class)))
+    @GetMapping("/default")
+    public DefaultCupsResponse readDefault() {
+        return cupService.readDefaultCups();
+    }
+
     @Operation(summary = "사용자의 컵 리스트 반환", description = "사용자가 생성한 커스텀 컵 리스트를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공 응답", content = @Content(schema = @Schema(implementation = CupsResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
@@ -57,13 +65,13 @@ public class CupController {
     @ApiResponse(responseCode = "404", description = "존재하지 않는 음용 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
     @PostMapping
-    public ResponseEntity<Void> create(
+    public ResponseEntity<Void> createAtLastRank(
+            @RequestBody CreateCupWithoutRankRequest createCupWithoutRankRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody CreateCupRequest registerCupRequest
+            MemberDetails memberDetails
     ) {
-        cupService.create(
-                registerCupRequest,
+        cupService.createAtLastRank(
+                createCupWithoutRankRequest,
                 memberDetails
         );
         return ResponseEntity.ok().build();

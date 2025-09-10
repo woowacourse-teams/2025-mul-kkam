@@ -18,7 +18,7 @@ import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
-import backend.mulkkam.cup.dto.request.CreateCupRequest;
+import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
 import backend.mulkkam.cup.dto.request.UpdateCupRequest;
 import backend.mulkkam.cup.dto.response.CupResponse;
 import backend.mulkkam.cup.dto.response.CupsResponse;
@@ -27,8 +27,9 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.dto.CreateCupWithoutRankRequestFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,20 +61,16 @@ class CupServiceUnitTest {
 
     @DisplayName("컵을 생성할 때")
     @Nested
-    class Create {
+    class CreateAtLastRank {
 
         @DisplayName("정상적으로 생성한다")
         @Test
         void success_validData() {
             // given
-            String cupNickname = "스타벅스";
-            Integer cupAmount = 500;
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
-                    cupNickname,
-                    cupAmount,
-                    "WATER",
-                    cupEmojiId
-            );
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(cupEmojiId)
+                    .build();
+
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup savedCup = CupFixtureBuilder
@@ -86,15 +83,15 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when
-            CupResponse cupResponse = cupService.create(
-                    registerCupRequest,
+            CupResponse cupResponse = cupService.createAtLastRank(
+                    createCupWithoutRankRequest,
                     new MemberDetails(member)
             );
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupResponse.cupNickname()).isEqualTo(cupNickname);
-                softly.assertThat(cupResponse.cupAmount()).isEqualTo(cupAmount);
+                softly.assertThat(cupResponse.cupNickname()).isEqualTo(createCupWithoutRankRequest.cupNickname());
+                softly.assertThat(cupResponse.cupAmount()).isEqualTo(createCupWithoutRankRequest.cupAmount());
             });
         }
 
@@ -102,20 +99,18 @@ class CupServiceUnitTest {
         @Test
         void error_amountLessThan0() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
-                    "스타벅스",
-                    -100,
-                    "WATER",
-                    cupEmojiId
-            );
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(cupEmojiId)
+                    .cupAmount(-100)
+                    .build();
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             when(cupEmojiRepository.findById(cupEmojiId)).thenReturn(Optional.of(cupEmoji));
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
-                    registerCupRequest,
+            assertThatThrownBy(() -> cupService.createAtLastRank(
+                    createCupWithoutRankRequest,
                     new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
@@ -126,12 +121,10 @@ class CupServiceUnitTest {
         @Test
         void error_amountIsEqualTo0() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
-                    "스타벅스",
-                    0,
-                    "WATER",
-                    cupEmojiId
-            );
+            CreateCupWithoutRankRequest createCupWithoutRankRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(cupEmojiId)
+                    .cupAmount(0)
+                    .build();
             Member member = MemberFixtureBuilder
                     .builder()
                     .buildWithId(1L);
@@ -140,8 +133,8 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
-                    registerCupRequest,
+            assertThatThrownBy(() -> cupService.createAtLastRank(
+                    createCupWithoutRankRequest,
                     new MemberDetails(member)
             ))
                     .isInstanceOf(CommonException.class)
@@ -152,12 +145,10 @@ class CupServiceUnitTest {
         @Test
         void error_memberAlreadyHasThreeCups() {
             // given
-            CreateCupRequest registerCupRequest = new CreateCupRequest(
-                    "스타벅스",
-                    500,
-                    "WATER",
-                    cupEmojiId
-            );
+            CreateCupWithoutRankRequest registerCupRequest = CreateCupWithoutRankRequestFixtureBuilder
+                    .withCupEmojiId(cupEmojiId)
+                    .build();
+
             Member member = MemberFixtureBuilder.builder().buildWithId(1L);
 
             Cup cup1 = CupFixtureBuilder
@@ -184,7 +175,7 @@ class CupServiceUnitTest {
             when(memberRepository.findById(member.getId())).thenReturn(Optional.of(member));
 
             // when & then
-            assertThatThrownBy(() -> cupService.create(
+            assertThatThrownBy(() -> cupService.createAtLastRank(
                     registerCupRequest,
                     new MemberDetails(member)
             ))

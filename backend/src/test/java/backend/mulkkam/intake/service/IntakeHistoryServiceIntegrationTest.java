@@ -32,10 +32,10 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
@@ -433,7 +433,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
                 softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
                 softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl())
-                        .isEqualTo(CupEmojiUrl.DEFAULT_HISTORY_EMOJI_URL);
+                        .isEqualTo(CupEmojiUrl.getDefaultByType(WATER).value());
             });
         }
     }

@@ -1,15 +1,17 @@
 package backend.mulkkam.auth.repository;
 
 import backend.mulkkam.auth.domain.OauthAccount;
+import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.member.domain.Member;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-
-import java.util.Optional;
 
 public interface OauthAccountRepository extends JpaRepository<OauthAccount, Long> {
 
     Optional<OauthAccount> findByOauthId(String oauthId);
+
+    Optional<OauthAccount> findByOauthIdAndOauthProvider(String oauthId, OauthProvider oauthProvider);
 
     @Query("""
                 SELECT o

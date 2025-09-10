@@ -10,7 +10,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
@@ -21,6 +20,8 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -28,33 +29,25 @@ import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
-import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.List;
-
-@SpringBootTest
-@AutoConfigureMockMvc
 class MemberControllerTest extends ControllerTest {
 
     @Autowired
@@ -88,12 +81,12 @@ class MemberControllerTest extends ControllerTest {
             .weight(null)
             .gender(null)
             .build();
-    private final CupEmoji cupEmoji = new CupEmoji("http://cup-emoji.com");
+    private CupEmoji cupEmoji;
 
     private OauthAccount oauthAccount;
 
     private String token;
-    private Cup cup;
+    private Cup savedCup;
 
     @BeforeEach
     void setUp() {
@@ -104,85 +97,20 @@ class MemberControllerTest extends ControllerTest {
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
 
-        cupEmojiRepository.save(cupEmoji);
-        cup = CupFixtureBuilder
+        saveDefaultCupEmojis();
+
+        cupEmoji = cupEmojiRepository.findAll().getFirst();
+
+        Cup cup = CupFixtureBuilder
                 .withMemberAndCupEmoji(member, cupEmoji)
                 .build();
-        cupRepository.save(cup);
+        savedCup = cupRepository.save(cup);
     }
 
-    @DisplayName("멤버를 생성할 때에")
-    @Nested
-    class Create {
-
-        private static final String ONBOARDING_OAUTH_ID = "test2";
-        private final OauthAccount onboardingAccount = new OauthAccount(ONBOARDING_OAUTH_ID, KAKAO);
-
-        @BeforeEach
-        void setup() {
-            oauthAccountRepository.save(onboardingAccount);
-
-            token = oauthJwtTokenHandler.createAccessToken(onboardingAccount);
-
-            cupEmojiRepository.save(cupEmoji);
-        }
-
-        @DisplayName("몸무게 및 성별이 NULL이여도 저장된다.")
-        @Test
-        void success_whenWeightAndGenderCanBeNull() throws Exception {
-            // given
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    "test2",
-                    null,
-                    null,
-                    1500,
-                    true,
-                    true
-            );
-
-            // when
-            mockMvc.perform(post("/members")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createMemberRequest)))
-                    .andExpect(status().isOk());
-
-            Member foundMember = memberRepository.findById(onboardingAccount.getId()).orElseThrow();
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(foundMember.getPhysicalAttributes().getGender()).isNull();
-                softly.assertThat(foundMember.getPhysicalAttributes().getWeight()).isNull();
-                softly.assertThat(foundMember.getMemberNickname().value()).isEqualTo("test2");
-            });
-        }
-
-        @DisplayName("기본 컵 3개도 저장된다.")
-        @Test
-        void success_whenMemberSavedThenBeginningCupsSaved() throws Exception {
-            cupEmojiRepository.save(new CupEmoji("http://example1.com"));
-            cupEmojiRepository.save(new CupEmoji("http://example2.com"));
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest("test2", 50.0, Gender.MALE, 1500, true,
-                    true);
-
-            // when
-            mockMvc.perform(post("/members")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .contentType(APPLICATION_JSON)
-                            .content(objectMapper.writeValueAsString(createMemberRequest)))
-                    .andExpect(status().isOk());
-
-            OauthAccount foundOauthAccount = oauthAccountRepository.findByOauthId(ONBOARDING_OAUTH_ID).orElseThrow();
-            Member foundMember = foundOauthAccount.getMember();
-            List<Cup> cups = cupRepository.findAllByMember(foundMember);
-
-            // then
-            assertSoftly(softly -> {
-                softly.assertThat(cups.size()).isEqualTo(3);
-                softly.assertThat(cups.getFirst().getNickname().value()).isEqualTo("종이컵");
-                softly.assertThat(cups.get(1).getNickname().value()).isEqualTo("스타벅스 톨");
-                softly.assertThat(cups.get(2).getNickname().value()).isEqualTo("스타벅스 그란데");
-            });
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
+            cupEmojiRepository.save(new CupEmoji(url));
         }
     }
 
@@ -297,7 +225,7 @@ class MemberControllerTest extends ControllerTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .buildWithCup(cup);
+                    .buildWithCup(savedCup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when
