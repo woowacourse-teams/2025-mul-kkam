@@ -19,7 +19,7 @@ spring:
   flyway:
     enabled: true
     baseline-on-migrate: true
-    validate-on-migrate: true
+    validate-on-migrate: false
     locations: classpath:db/migration/common, classpath:db/migration/mysql
     clean-disabled: true
     url: ${DEV_DATASOURCE_URL}
@@ -69,3 +69,8 @@ management:
         enabled: true
         step: 1m
         namespace: Mulkkam/Dev
+
+logging:
+  level:
+    org:
+      flywaydb: DEBUG
