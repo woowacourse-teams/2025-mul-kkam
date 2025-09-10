@@ -35,7 +35,8 @@ public class DeviceController {
     public ResponseEntity<Void> register(
             @RequestBody RegisterDeviceRequest registerDeviceRequest,
             @Parameter(hidden = true)
-            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails) {
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
+    ) {
         deviceService.register(registerDeviceRequest, memberAndDeviceUuidDetails);
         return ResponseEntity.ok().build();
     }
