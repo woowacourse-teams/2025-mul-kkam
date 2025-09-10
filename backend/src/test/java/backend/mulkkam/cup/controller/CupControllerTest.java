@@ -77,13 +77,15 @@ class CupControllerTest extends ControllerTest {
 
     private CupEmoji savedCupEmoji;
 
+    private OauthAccount oauthAccount;
+
     @BeforeEach
     void setUp() {
         Member member = MemberFixtureBuilder
                 .builder().build();
         savedMember = memberRepository.save(member);
 
-        OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
+        oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
         String deviceUuid = "deviceUuid";
@@ -316,9 +318,6 @@ class CupControllerTest extends ControllerTest {
                     .build();
             Member savedOtherMember = memberRepository.save(otherMember);
 
-            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder
                     .withMemberAndCupEmoji(savedOtherMember, cupEmoji)
@@ -434,9 +433,6 @@ class CupControllerTest extends ControllerTest {
                     .memberNickname(new MemberNickname("other"))
                     .build();
             Member savedOtherMember = memberRepository.save(otherMember);
-
-            OauthAccount oauthAccount = new OauthAccount(otherMember, "testId", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
 
             CupEmoji cupEmoji = cupEmojiRepository.findById(1L).get();
             Cup otherCup = CupFixtureBuilder.withMemberAndCupEmoji(savedOtherMember, cupEmoji)

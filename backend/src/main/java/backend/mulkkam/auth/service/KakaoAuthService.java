@@ -26,6 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class KakaoAuthService {
 
+    private static final OauthProvider KAKAO_OAUTH_PROVIDER = OauthProvider.KAKAO;
+
     private final KakaoRestClient kakaoRestClient;
     private final OauthJwtTokenHandler jwtTokenHandler;
     private final OauthAccountRepository oauthAccountRepository;
@@ -36,8 +38,9 @@ public class KakaoAuthService {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();
-        OauthAccount oauthAccount = oauthAccountRepository.findByOauthId(oauthId)
-                .orElseGet(() -> oauthAccountRepository.save(new OauthAccount(oauthId, OauthProvider.KAKAO)));
+        OauthAccount oauthAccount = oauthAccountRepository
+                .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
+                .orElseGet(() -> createSafely(oauthId));
 
         String accessToken = jwtTokenHandler.createAccessToken(oauthAccount, kakaoSigninRequest.deviceUuid());
         String refreshToken = updateAccountRefreshToken(oauthAccount,
@@ -45,6 +48,16 @@ public class KakaoAuthService {
                 kakaoSigninRequest.deviceUuid());
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
+    }
+
+    private OauthAccount createSafely(String oauthId) {
+        try {
+            return oauthAccountRepository.saveAndFlush(new OauthAccount(oauthId, KAKAO_OAUTH_PROVIDER));
+        } catch (DataIntegrityViolationException e) {
+            return oauthAccountRepository
+                    .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
+                    .orElseThrow(() -> e);
+        }
     }
 
     private String updateAccountRefreshToken(
