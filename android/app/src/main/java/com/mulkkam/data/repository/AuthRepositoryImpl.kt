@@ -12,11 +12,14 @@ import com.mulkkam.domain.repository.AuthRepository
 class AuthRepositoryImpl(
     private val authService: AuthService,
 ) : AuthRepository {
-    override suspend fun postAuthKakao(oauthAccessToken: String): MulKkamResult<AuthInfo> {
+    override suspend fun postAuthKakao(
+        oauthAccessToken: String,
+        deviceUuid: String,
+    ): MulKkamResult<AuthInfo> {
         val result =
             authService
                 .postAuthKakao(
-                    AuthRequest(oauthAccessToken),
+                    AuthRequest(oauthAccessToken, deviceUuid),
                 )
 
         return result.fold(
