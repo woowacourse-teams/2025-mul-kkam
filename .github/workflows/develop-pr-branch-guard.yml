@@ -1,0 +1,31 @@
+name: develop-pr-branch-guard
+
+on:
+  pull_request:
+    branches: [ develop ]
+    types: [ opened, synchronize, reopened, edited ]
+jobs:
+  guard:
+    if: github.base_ref == 'develop'
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Wait for pr-init-configuration
+        uses: fountainhead/action-wait-for-check@v1.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: "pr-init-configuration"
+          ref: ${{ github.event.pull_request.head.sha }}
+          intervalSeconds: 30
+          timeoutSeconds: 120
+      - name: Validate PR source branch
+        run: |
+          BASE="${{ github.base_ref }}"
+          HEAD="${{ github.head_ref }}"
+          echo "base=${BASE} head=${HEAD}"
+
+          if ! echo "${HEAD}" | grep -Eq '^(develop-be|develop-an)$'; then
+            echo "::error title=Blocked merge::Only develop-be or develop-an can target develop."
+            exit 1
+          fi
+
+          echo "OK: Allowed source branch."

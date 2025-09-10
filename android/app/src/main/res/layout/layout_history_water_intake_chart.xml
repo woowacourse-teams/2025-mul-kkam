@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_common_rectangle_4dp"
+    android:backgroundTint="@color/gray_10">
+
+    <com.mulkkam.ui.custom.progress.GradientDonutChartView
+        android:id="@+id/pc_water_intake"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="4dp"
+        android:layout_marginTop="4dp"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_check"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="10dp"
+        android:src="@drawable/ic_history_check"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="@id/pc_water_intake"
+        app:layout_constraintEnd_toEndOf="@id/pc_water_intake"
+        app:layout_constraintStart_toStartOf="@id/pc_water_intake"
+        app:layout_constraintTop_toTopOf="@id/pc_water_intake" />
+
+    <TextView
+        android:id="@+id/tv_water_goal_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/label2"
+        android:textColor="@color/gray_400"
+        app:layout_constraintBottom_toBottomOf="@id/pc_water_intake"
+        app:layout_constraintEnd_toEndOf="@id/pc_water_intake"
+        app:layout_constraintStart_toStartOf="@id/pc_water_intake"
+        app:layout_constraintTop_toTopOf="@id/pc_water_intake"
+        tools:text="75" />
+
+    <TextView
+        android:id="@+id/tv_day_of_week"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="@style/title3"
+        android:textColor="@color/gray_400"
+        app:layout_constraintEnd_toEndOf="@id/pc_water_intake"
+        app:layout_constraintStart_toStartOf="@id/pc_water_intake"
+        app:layout_constraintTop_toBottomOf="@id/pc_water_intake"
+        tools:text="월" />
+
+    <TextView
+        android:id="@+id/tv_month_day"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:textAppearance="@style/label2"
+        android:textColor="@color/gray_300"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/tv_day_of_week"
+        app:layout_constraintStart_toStartOf="@id/tv_day_of_week"
+        app:layout_constraintTop_toBottomOf="@id/tv_day_of_week"
+        tools:text="7/21" />
+</androidx.constraintlayout.widget.ConstraintLayout>

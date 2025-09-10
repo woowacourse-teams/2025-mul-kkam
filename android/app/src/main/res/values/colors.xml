@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    primary-->
+    <color name="primary_10">#FFEFFCFF</color>
+    <color name="primary_50">#FFC9F0F8</color>
+    <color name="primary_100">#FF90E0EF</color>
+    <color name="primary_200">#FF49CAE4</color>
+    <color name="primary_300">#FF0096C7</color>
+    <color name="primary_400">#FF023E8A</color>
+
+    <!--    secondary-->
+    <color name="secondary_100">#FFFFB7A5</color>
+    <color name="secondary_200">#FFFF866E</color>
+
+    <!--    grayscale-->
+    <color name="gray_10">#FFFAFAFA</color>
+    <color name="gray_50">#FFF0F0F0</color>
+    <color name="gray_100">#FFD9D9D9</color>
+    <color name="gray_200">#FFB3B3B3</color>
+    <color name="gray_300">#FF7C7C7C</color>
+    <color name="gray_400">#FF444444</color>
+    <color name="gray_alert">#CC394258</color>
+
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF121212</color>
+</resources>

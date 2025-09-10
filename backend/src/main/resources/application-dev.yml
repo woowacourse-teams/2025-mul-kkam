@@ -1,0 +1,76 @@
+server:
+  port: 80
+
+spring:
+  datasource:
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_RW_USERNAME}
+    password: ${DEV_DATASOURCE_RW_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    open-in-view: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: false
+    validate-on-migrate: true
+    locations: classpath:db/migration/common, classpath:db/migration/mysql
+    clean-disabled: true
+    url: ${DEV_DATASOURCE_URL}
+    user: ${DEV_DATASOURCE_MIGRATION_USERNAME}
+    password: ${DEV_DATASOURCE_MIGRATION_PASSWORD}
+
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    access:
+      expire-length: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expire-length: ${REFRESH_TOKEN_EXPIRE}
+
+fcm:
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}
+
+open-weather:
+  api:
+    key: ${OPEN_WEATHER_API_KEY}
+
+app:
+  logging:
+    mask-auth: true
+
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+
+management:
+  metrics:
+    enable:
+      jvm.memory.used: true
+      jvm.memory.max: true
+      jvm.gc.pause: true
+      jvm.threads: true
+      hikaricp: true
+      http.server: true
+      process.cpu: true
+
+  cloudwatch:
+    metrics:
+      export:
+        enabled: true
+        step: 1m
+        namespace: Mulkkam/Dev
+
+logging:
+  level:
+    org:
+      flywaydb: DEBUG
