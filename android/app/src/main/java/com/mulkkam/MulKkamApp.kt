@@ -20,11 +20,11 @@ class MulKkamApp : Application() {
         PreferenceInjection.init(this)
         WorkInjection.init(this)
         KakaoSdk.init(this, BuildConfig.KEY_KAKAO)
-        createNotificationChannel()
+        createNotificationChannels()
         initLogger()
     }
 
-    private fun createNotificationChannel() {
+    private fun createNotificationChannels() {
         val channel =
             NotificationChannel(
                 NotificationService.CHANNEL_ID,
