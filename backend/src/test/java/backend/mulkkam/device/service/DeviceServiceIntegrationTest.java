@@ -32,12 +32,12 @@ class DeviceServiceIntegrationTest extends ServiceIntegrationTest {
 
     private Member member;
     private MemberDetails memberDetails;
-    private String deviceId;
+    private String deviceUuid;
     private Device device;
 
     @BeforeEach
     void setup() {
-        deviceId = "deviceId";
+        deviceUuid = "deviceId";
 
         member = MemberFixtureBuilder
                 .builder()
@@ -46,7 +46,7 @@ class DeviceServiceIntegrationTest extends ServiceIntegrationTest {
 
         device = DeviceFixtureBuilder
                 .withMember(member)
-                .deviceId(deviceId)
+                .deviceUuid(deviceUuid)
                 .build();
         deviceRepository.save(device);
 
@@ -61,7 +61,7 @@ class DeviceServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_whenDeviceIdIsExisted() {
             // when
-            deviceService.deleteFcmToken(deviceId, memberDetails);
+            deviceService.deleteFcmToken(deviceUuid, memberDetails);
 
             // then
             Device updatedDevice = deviceRepository.findById(device.getId()).orElse(null);

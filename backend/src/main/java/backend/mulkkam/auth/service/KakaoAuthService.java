@@ -1,14 +1,17 @@
 package backend.mulkkam.auth.service;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.REQUEST_CONFLICT;
+
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.infrastructure.KakaoRestClient;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +34,7 @@ public class KakaoAuthService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
-    public OauthLoginResponse signIn(KakaoSigninRequest kakaoSigninRequest) {
+    public OauthLoginResponse signIn(KakaoSignInRequest kakaoSigninRequest) {
         KakaoUserInfo userInfo = kakaoRestClient.getUserInfo(kakaoSigninRequest.oauthAccessToken());
 
         String oauthId = userInfo.oauthMemberId();
@@ -39,10 +42,10 @@ public class KakaoAuthService {
                 .findByOauthIdAndOauthProvider(oauthId, KAKAO_OAUTH_PROVIDER)
                 .orElseGet(() -> createSafely(oauthId));
 
-        String accessToken = jwtTokenHandler.createAccessToken(oauthAccount);
-        String refreshToken = jwtTokenHandler.createRefreshToken(oauthAccount);
-
-        updateAccountRefreshToken(oauthAccount, refreshToken);
+        String accessToken = jwtTokenHandler.createAccessToken(oauthAccount, kakaoSigninRequest.deviceUuid());
+        String refreshToken = updateAccountRefreshToken(oauthAccount,
+                jwtTokenHandler.createRefreshToken(oauthAccount, kakaoSigninRequest.deviceUuid()),
+                kakaoSigninRequest.deviceUuid());
 
         return new OauthLoginResponse(accessToken, refreshToken, oauthAccount.finishedOnboarding());
     }
@@ -57,19 +60,28 @@ public class KakaoAuthService {
         }
     }
 
-    private void updateAccountRefreshToken(
+    private String updateAccountRefreshToken(
             OauthAccount oauthAccount,
-            String refreshToken
+            String newRefreshToken,
+            String deviceUuid
     ) {
-        Optional<AccountRefreshToken> foundAccountRefreshToken = accountRefreshTokenRepository.findByAccount(
-                oauthAccount);
+        Optional<AccountRefreshToken> foundRefreshToken =
+                accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid);
 
-        if (foundAccountRefreshToken.isPresent()) {
-            foundAccountRefreshToken.get().reissueToken(refreshToken);
-            return;
+        if (foundRefreshToken.isPresent()) {
+            AccountRefreshToken existingToken = foundRefreshToken.get();
+            existingToken.reissueToken(newRefreshToken);
+            return existingToken.getRefreshToken();
         }
 
-        AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, refreshToken);
-        accountRefreshTokenRepository.save(accountRefreshToken);
+        AccountRefreshToken candidateToken = new AccountRefreshToken(oauthAccount, newRefreshToken, deviceUuid);
+        try {
+            AccountRefreshToken persistedToken = accountRefreshTokenRepository.saveAndFlush(candidateToken);
+            return persistedToken.getRefreshToken();
+        } catch (DataIntegrityViolationException e) {
+            return accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
+                    .orElseThrow(() -> new CommonException(REQUEST_CONFLICT))
+                    .getRefreshToken();
+        }
     }
 }

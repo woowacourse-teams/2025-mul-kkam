@@ -169,8 +169,7 @@ public class MemberService {
     }
 
     private void deleteRefreshTokenAndAccount(OauthAccount account) {
-        accountRefreshTokenRepository.findByAccount(account)
-                .ifPresent(accountRefreshTokenRepository::delete);
+        accountRefreshTokenRepository.deleteAllByAccount(account);
         oauthAccountRepository.delete(account);
     }
 

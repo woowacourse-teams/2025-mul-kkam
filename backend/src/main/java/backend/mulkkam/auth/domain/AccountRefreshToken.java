@@ -29,11 +29,15 @@ public class AccountRefreshToken {
     @Column(nullable = false)
     private String refreshToken;
 
+    @Column(nullable = false)
+    private String deviceUuid;
+
     public AccountRefreshToken(
             OauthAccount account,
-            String refreshToken
+            String refreshToken,
+            String deviceUuid
     ) {
-        this(null, account, refreshToken);
+        this(null, account, refreshToken, deviceUuid);
     }
 
     public boolean isMatchWith(String otherToken) {

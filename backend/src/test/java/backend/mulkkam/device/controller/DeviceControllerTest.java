@@ -49,8 +49,9 @@ class DeviceControllerTest extends ControllerTest {
 
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
+        String deviceUuid = "deviceUuid";
 
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
 
     @DisplayName("기기의 FCM 토큰을 삭제할 때")
@@ -65,7 +66,7 @@ class DeviceControllerTest extends ControllerTest {
 
             Device device = DeviceFixtureBuilder
                     .withMember(savedMember)
-                    .deviceId(deviceId)
+                    .deviceUuid(deviceId)
                     .build();
             deviceRepository.save(device);
 

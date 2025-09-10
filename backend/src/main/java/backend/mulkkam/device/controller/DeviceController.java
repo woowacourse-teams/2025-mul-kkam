@@ -1,5 +1,6 @@
 package backend.mulkkam.device.controller;
 
+import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.device.dto.RegisterDeviceRequest;
@@ -34,8 +35,9 @@ public class DeviceController {
     public ResponseEntity<Void> register(
             @RequestBody RegisterDeviceRequest registerDeviceRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails) {
-        deviceService.register(registerDeviceRequest, memberDetails);
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
+    ) {
+        deviceService.register(registerDeviceRequest, memberAndDeviceUuidDetails);
         return ResponseEntity.ok().build();
     }
 

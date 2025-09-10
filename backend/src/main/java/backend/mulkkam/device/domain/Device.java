@@ -31,16 +31,16 @@ public class Device extends BaseEntity {
     @Column
     private String token;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String deviceId;
+    @Column
+    private String deviceUuid;
 
     @JoinColumn(nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    public Device(String token, String deviceId, Member member) {
+    public Device(String token, String deviceUuid, Member member) {
         this.token = token;
-        this.deviceId = deviceId;
+        this.deviceUuid = deviceUuid;
         this.member = member;
     }
 

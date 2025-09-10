@@ -38,7 +38,6 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
         Long accountId = (Long) request.getAttribute("account_id");
         OauthAccount account = oauthAccountRepository.findByIdWithMember(accountId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_OAUTH_ACCOUNT));
-
         return new MemberDetails(account.getMember().getId());
     }
 }

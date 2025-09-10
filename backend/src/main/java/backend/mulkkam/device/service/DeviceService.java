@@ -3,6 +3,7 @@ package backend.mulkkam.device.service;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_DEVICE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
+import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.device.domain.Device;
@@ -25,14 +26,15 @@ public class DeviceService {
     @Transactional
     public void register(
             RegisterDeviceRequest registerDeviceRequest,
-            MemberDetails memberDetails
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
     ) {
-        deviceRepository.findByDeviceIdAndMemberId(registerDeviceRequest.deviceId(), memberDetails.id())
+        deviceRepository.findByDeviceUuidAndMemberId(memberAndDeviceUuidDetails.deviceUuid(),
+                        memberAndDeviceUuidDetails.id())
                 .ifPresentOrElse((device) -> {
                     device.modifyToken(registerDeviceRequest.token());
                 }, () -> {
-                    Member member = getMember(memberDetails.id());
-                    Device device = registerDeviceRequest.toDevice(member);
+                    Member member = getMember(memberAndDeviceUuidDetails.id());
+                    Device device = registerDeviceRequest.toDevice(member, memberAndDeviceUuidDetails.deviceUuid());
                     deviceRepository.save(device);
                 });
     }
@@ -44,7 +46,7 @@ public class DeviceService {
     ) {
         Member member = getMember(memberDetails.id());
 
-        Device device = deviceRepository.findByDeviceIdAndMemberId(deviceId, member.getId())
+        Device device = deviceRepository.findByDeviceUuidAndMemberId(deviceId, member.getId())
                 .orElseThrow((() -> new CommonException(NOT_FOUND_DEVICE)));
         device.nullifyToken();
     }

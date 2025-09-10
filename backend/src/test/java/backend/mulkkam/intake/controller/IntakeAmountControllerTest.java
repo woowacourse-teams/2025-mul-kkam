@@ -51,7 +51,8 @@ class IntakeAmountControllerTest extends ControllerTest {
             .builder()
             .weight(70.0)
             .targetAmount(new TargetAmount(1500))
-            .build();;
+            .build();
+    ;
 
     private final OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
 
@@ -61,7 +62,8 @@ class IntakeAmountControllerTest extends ControllerTest {
     void setUp() {
         memberRepository.save(member);
         oauthAccountRepository.save(oauthAccount);
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        String deviceUuid = "deviceUuid";
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
 
     @DisplayName("목표 음용량을 추천받을 때에")
@@ -98,7 +100,9 @@ class IntakeAmountControllerTest extends ControllerTest {
             memberRepository.save(member);
             OauthAccount oauthAccount = new OauthAccount(member, "testId2", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
-            token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String deviceUuid = "deviceUuid";
+
+            token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
             // when
             String json = mockMvc.perform(get("/intake/amount/recommended")

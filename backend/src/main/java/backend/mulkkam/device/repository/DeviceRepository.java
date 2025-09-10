@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeviceRepository extends JpaRepository<Device, Long> {
 
-    Optional<Device> findByDeviceIdAndMemberId(String deviceId, Long memberId);
+    Optional<Device> findByDeviceUuidAndMemberId(String deviceUuid, Long memberId);
 
     List<Device> findAllByMember(Member member);
 

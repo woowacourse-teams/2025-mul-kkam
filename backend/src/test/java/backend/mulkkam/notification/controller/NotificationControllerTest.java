@@ -22,11 +22,10 @@ import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -64,8 +63,8 @@ public class NotificationControllerTest extends ControllerTest {
 
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
-
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        String deviceUuid = "deviceUuid";
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
 
     @DisplayName("알림을 조회할 때")

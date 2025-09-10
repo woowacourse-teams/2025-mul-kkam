@@ -90,9 +90,10 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
                             new CupEmoji("http://example2.com")
                     )
             );
+            String deviceUuid = "deviceUuid";
 
             // when
-            onboardingService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
+            onboardingService.create(new OauthAccountDetails(oauthAccount.getId(), deviceUuid), createMemberRequest);
 
             // then
             List<Member> savedMembers = memberRepository.findAll();
@@ -100,8 +101,10 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(savedMembers.size()).isEqualTo(1);
                 softly.assertThat(savedMembers.getFirst().getMemberNickname())
                         .isEqualTo(new MemberNickname(createMemberRequest.memberNickname()));
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getWeight()).isEqualTo(createMemberRequest.weight());
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getGender()).isEqualTo(createMemberRequest.gender());
+                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getWeight())
+                        .isEqualTo(createMemberRequest.weight());
+                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getGender())
+                        .isEqualTo(createMemberRequest.gender());
                 softly.assertThat(savedMembers.getFirst().getTargetAmount())
                         .isEqualTo(new TargetAmount(createMemberRequest.targetIntakeAmount()));
             });
@@ -119,10 +122,12 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            String deviceUuid = "deviceUuid";
 
             // when & then
             assertThatThrownBy(
-                    () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
+                    () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId(), deviceUuid),
+                            createMemberRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_MEMBER_NICKNAME.name());
         }
@@ -139,10 +144,12 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
 
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            String deviceUuid = "deviceUuid";
 
             // when & then
             assertThatThrownBy(
-                    () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
+                    () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId(), deviceUuid),
+                            createMemberRequest))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_TARGET_AMOUNT.name());
         }
