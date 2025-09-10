@@ -105,10 +105,7 @@ class AuthControllerTest extends ControllerTest {
         void success_afterLogin() throws Exception {
             // given
             OauthLoginResponse loginResponse = doLogin();
-
-            OauthAccount oauthAccount = new OauthAccount(userInfo.oauthMemberId(), OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
+            
             // when
             ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken(), deviceUuid);
 
