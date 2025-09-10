@@ -6,11 +6,11 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.RequiredTypeException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import java.util.Date;
 import java.util.UUID;
-import javax.annotation.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -44,20 +44,20 @@ public class OauthJwtTokenHandler {
         }
     }
 
-    public @Nullable Long getMemberId(String token) throws InvalidTokenException {
+    public Long getMemberId(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
             return claims.get("memberId", Long.class);
-        } catch (NumberFormatException e) {
+        } catch (RequiredTypeException e) {
             throw new InvalidTokenException();
         }
     }
 
-    public @Nullable String getDeviceUuid(String token) throws InvalidTokenException {
+    public String getDeviceUuid(String token) throws InvalidTokenException {
         try {
             Claims claims = getClaims(token);
             return claims.get("deviceUuid", String.class);
-        } catch (NumberFormatException e) {
+        } catch (RequiredTypeException e) {
             throw new InvalidTokenException();
         }
     }
