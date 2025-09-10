@@ -181,7 +181,8 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
             OauthAccount oauthAccount = new OauthAccount(oauthId, OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
 
-            AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, "originRefreshToken");
+            AccountRefreshToken accountRefreshToken = new AccountRefreshToken(oauthAccount, "originRefreshToken",
+                    "deviceUuid");
             accountRefreshTokenRepository.save(accountRefreshToken);
 
             when(kakaoRestClient.getUserInfo(oauthAccessToken))
