@@ -57,7 +57,6 @@ class CupServiceUnitTest {
 
     private final Long cupEmojiId = 1L;
     private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, new CupEmojiUrl("https://cup.com"));
-    ;
 
     @DisplayName("컵을 생성할 때")
     @Nested
