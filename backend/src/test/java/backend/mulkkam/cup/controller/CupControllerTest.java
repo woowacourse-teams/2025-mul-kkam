@@ -88,7 +88,9 @@ class CupControllerTest extends ControllerTest {
         oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
 
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        String deviceUuid = "deviceUuid";
+
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
         saveDefaultCupEmojis();
         savedCupEmoji = cupEmojiRepository.findAll().getFirst();

@@ -7,7 +7,7 @@ public class DeviceFixtureBuilder {
 
     private final Member member;
     private String token = "token";
-    private String deviceId = "deviceId";
+    private String deviceUuid = "deviceUuid";
 
     private DeviceFixtureBuilder(Member member) {
         this.member = member;
@@ -22,15 +22,24 @@ public class DeviceFixtureBuilder {
         return this;
     }
 
-    public DeviceFixtureBuilder deviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public DeviceFixtureBuilder deviceUuid(String deviceUuid) {
+        this.deviceUuid = deviceUuid;
         return this;
     }
 
     public Device build() {
         return new Device(
                 token,
-                deviceId,
+                deviceUuid,
+                member
+        );
+    }
+
+    public Device buildWithId(Long id) {
+        return new Device(
+                id,
+                token,
+                deviceUuid,
                 member
         );
     }

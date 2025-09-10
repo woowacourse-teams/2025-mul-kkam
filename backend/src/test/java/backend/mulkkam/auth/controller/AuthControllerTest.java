@@ -9,9 +9,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
-import backend.mulkkam.auth.dto.request.KakaoSigninRequest;
+import backend.mulkkam.auth.dto.request.KakaoSignInRequest;
 import backend.mulkkam.auth.dto.request.ReissueTokenRequest;
 import backend.mulkkam.auth.dto.response.OauthLoginResponse;
 import backend.mulkkam.auth.dto.response.ReissueTokenResponse;
@@ -24,6 +25,8 @@ import backend.mulkkam.support.controller.ControllerTest;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import java.security.Key;
+import java.util.Date;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -38,15 +41,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import java.security.Key;
-import java.util.Date;
-
 @SpringBootTest
 @AutoConfigureMockMvc
 @ExtendWith(MockitoExtension.class)
 class AuthControllerTest extends ControllerTest {
 
     private final String oauthAccessToken = "abcdefg";
+    private final String deviceUuid = "asd";
     private final KakaoUserInfo userInfo = new KakaoUserInfo("abc");
 
     @Value("${security.jwt.secret-key}")
@@ -77,14 +78,13 @@ class AuthControllerTest extends ControllerTest {
             OauthLoginResponse loginResponse = doLogin();
             OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
                     .orElseThrow();
-
             // when
             mockMvc.perform(post("/auth/logout")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + loginResponse.accessToken()))
                     .andExpect(status().isNoContent());
 
             // then
-            assertThat(accountRefreshTokenRepository.findByAccount(account)).isEmpty();
+            assertThat(accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, deviceUuid)).isEmpty();
         }
 
         @DisplayName("액세스 토큰이 존재하지 않는 경우 401 에러가 발생한다.")
@@ -105,9 +105,9 @@ class AuthControllerTest extends ControllerTest {
         void success_afterLogin() throws Exception {
             // given
             OauthLoginResponse loginResponse = doLogin();
-
+            
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
+            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken(), deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -125,6 +125,37 @@ class AuthControllerTest extends ControllerTest {
             });
         }
 
+        @DisplayName("oauth 계정이 같아도, 디바이스가 다르면 저장된다.")
+        @Test
+        void success_whenSameOauthAccountAndDiffDevice() throws Exception {
+            // when
+            KakaoSignInRequest kakaoSigninRequest1 = new KakaoSignInRequest(oauthAccessToken, "1");
+            mockMvc.perform(post("/auth/kakao")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(kakaoSigninRequest1)))
+                    .andExpect(status().isOk());
+
+            KakaoSignInRequest kakaoSigninRequest2 = new KakaoSignInRequest(oauthAccessToken, "2");
+            mockMvc.perform(post("/auth/kakao")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(kakaoSigninRequest2)))
+                    .andExpect(status().isOk());
+
+            // then
+            OauthAccount account = oauthAccountRepository.findByOauthId(userInfo.oauthMemberId())
+                    .orElseThrow();
+
+            AccountRefreshToken savedTokens1 = accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, "1")
+                    .orElseThrow();
+            AccountRefreshToken savedTokens2 = accountRefreshTokenRepository.findByAccountAndDeviceUuid(account, "2")
+                    .orElseThrow();
+
+            assertSoftly(softly -> {
+                softly.assertThat(savedTokens1.getDeviceUuid()).isEqualTo("1");
+                softly.assertThat(savedTokens2.getDeviceUuid()).isEqualTo("2");
+            });
+        }
+
         @DisplayName("유효하지 않은 리프레시 토큰으로는 재발급을 받을 수 없다.")
         @Test
         void error_invalidRefreshToken() throws Exception {
@@ -132,7 +163,7 @@ class AuthControllerTest extends ControllerTest {
             String invalidToken = "invalid";
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(invalidToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(invalidToken, deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -153,7 +184,7 @@ class AuthControllerTest extends ControllerTest {
             // given
             OauthLoginResponse loginResponse = doLogin();
 
-            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken());
+            ReissueTokenRequest request = new ReissueTokenRequest(loginResponse.refreshToken(), deviceUuid);
 
             mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -184,7 +215,7 @@ class AuthControllerTest extends ControllerTest {
             String expiredRefreshToken = generateExpiredRefreshToken(account);
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(expiredRefreshToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(expiredRefreshToken, deviceUuid);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
                             .contentType(MediaType.APPLICATION_JSON)
@@ -209,7 +240,7 @@ class AuthControllerTest extends ControllerTest {
             String refreshToken = generateRefreshToken(notSavedAccount);
 
             // when
-            ReissueTokenRequest request = new ReissueTokenRequest(refreshToken);
+            ReissueTokenRequest request = new ReissueTokenRequest(refreshToken, deviceUuid);
             String requestContent = objectMapper.writeValueAsString(request);
 
             String resultContent = mockMvc.perform(post("/auth/token/reissue")
@@ -227,7 +258,7 @@ class AuthControllerTest extends ControllerTest {
     }
 
     private OauthLoginResponse doLogin() throws Exception {
-        KakaoSigninRequest loginRequest = new KakaoSigninRequest(oauthAccessToken);
+        KakaoSignInRequest loginRequest = new KakaoSignInRequest(oauthAccessToken, deviceUuid);
 
         String content = mockMvc.perform(post("/auth/kakao")
                         .contentType(MediaType.APPLICATION_JSON)

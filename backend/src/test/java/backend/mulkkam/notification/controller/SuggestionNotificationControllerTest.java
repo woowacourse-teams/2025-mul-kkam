@@ -18,9 +18,9 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -59,8 +59,9 @@ class SuggestionNotificationControllerTest extends ControllerTest {
                 .build();
         Member savedMember = memberRepository.save(member);
         OauthAccount oauthAccount = new OauthAccount(savedMember, "testId", OauthProvider.KAKAO);
+        String deviceUuid = "deviceUuid";
         oauthAccountRepository.save(oauthAccount);
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
 
     @DisplayName("제안 음용량을 적용할 때")

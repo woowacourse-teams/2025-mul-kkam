@@ -67,8 +67,9 @@ class OnboardingControllerTest extends ControllerTest {
 
         oauthAccount = new OauthAccount(member, "test", KAKAO);
         oauthAccountRepository.save(oauthAccount);
+        String deviceUuid = "deviceUuid";
 
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
         cupEmojiRepository.save(cupEmoji);
         cup = CupFixtureBuilder
@@ -90,8 +91,9 @@ class OnboardingControllerTest extends ControllerTest {
         @BeforeEach
         void setup() {
             oauthAccountRepository.save(onboardingAccount);
+            String deviceUuid = "deviceUuid";
 
-            token = oauthJwtTokenHandler.createAccessToken(onboardingAccount);
+            token = oauthJwtTokenHandler.createAccessToken(onboardingAccount, deviceUuid);
 
             CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
 

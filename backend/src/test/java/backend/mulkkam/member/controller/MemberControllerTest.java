@@ -94,8 +94,9 @@ class MemberControllerTest extends ControllerTest {
 
         oauthAccount = new OauthAccount(member, "test", KAKAO);
         oauthAccountRepository.save(oauthAccount);
+        String deviceUuid = "deviceUuid";
 
-        token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+        token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
         saveDefaultCupEmojis();
 
@@ -215,8 +216,9 @@ class MemberControllerTest extends ControllerTest {
                     .withOauthAccount(oauthAccount)
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
+            String deviceUuid = "deviceUuid";
 
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
