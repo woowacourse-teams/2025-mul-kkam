@@ -76,7 +76,7 @@ public class KakaoAuthService {
 
         AccountRefreshToken candidateToken = new AccountRefreshToken(oauthAccount, newRefreshToken, deviceUuid);
         try {
-            AccountRefreshToken persistedToken = accountRefreshTokenRepository.save(candidateToken);
+            AccountRefreshToken persistedToken = accountRefreshTokenRepository.saveAndFlush(candidateToken);
             return persistedToken.getRefreshToken();
         } catch (DataIntegrityViolationException e) {
             return accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
