@@ -1,0 +1,185 @@
+<resources>
+    <string name="app_name">물깜</string>
+
+    <string name="main_home">홈</string>
+    <string name="main_history">기록</string>
+    <string name="main_setting">설정</string>
+    <string name="main_main_back_press_exit_message">뒤로가기 버튼을 한 번 더 누르면 종료됩니다</string>
+    <string name="main_alarm_permission_granted">알림 권한이 허용되었습니다</string>
+    <string name="main_alarm_permission_denied">알림 권한이 거부되었습니다</string>
+
+    <string name="home_notification">알림</string>
+    <string name="home_notification_apply_target_amount">목표량 반영하기</string>
+    <string name="home_notification_apply_failed">목표량 반영에 실패했어요</string>
+    <string name="home_notification_apply_success">목표량에 반영되었어요</string>
+    <string name="home_notification_just_now">방금 전</string>
+    <string name="home_notification_minutes_ago">%d분 전</string>
+    <string name="home_notification_hours_ago">%d시간 전</string>
+    <string name="home_notification_one_day_ago">하루 전</string>
+    <string name="home_notification_date_format">yyyy.MM.dd</string>
+
+    <string name="home_character_description">하뭉이는 물을 마셔요</string>
+    <string name="home_label">물깜</string>
+    <string name="home_daily_intake_summary">%,dml / %,dml</string>
+    <string name="home_water_streak_message">%s님, %d일동안 물을 잊지 않으셨네요!</string>
+    <string name="home_drink_manual">직접 입력</string>
+
+    <string name="history_view_label">기록</string>
+    <string name="history_daily_chart_label">%s의 기록</string>
+    <string name="history_week_range">%s - %s</string>
+    <string name="history_daily_intake_summary">%,dml / %,dml</string>
+    <string name="history_intake_history_label">상세 내역</string>
+    <string name="history_intake_amount">+%,dml</string>
+    <string name="history_no_intake_histories">해당 날짜는 기록된 일지가 없어요…</string>
+    <string name="history_today_label">Today!</string>
+    <string name="history_week_prev">이전 주</string>
+    <string name="history_week_next">다음 주</string>
+
+    <string name="water_chart_date">%d/%d</string>
+
+    <string name="setting_title">설정</string>
+    <string name="setting_save">저장</string>
+
+    <string name="setting_nickname_toolbar_title">닉네임 설정</string>
+    <string name="setting_nickname_edit_nickname_label">닉네임 변경</string>
+    <string name="setting_nickname_hint_input_nickname">닉네임을 입력해 주세요</string>
+    <string name="setting_nickname_check_duplicate">중복확인</string>
+    <string name="setting_nickname_warning_duplicated_nickname">이미 존재하는 닉네임이에요!</string>
+    <string name="setting_nickname_valid">좋은 닉네임이시네요!</string>
+    <string name="setting_nickname_change_complete">닉네임이 성공적으로 변경되었어요!</string>
+
+    <string name="setting_bio_info_toolbar_title">신체 정보 설정</string>
+    <string name="setting_bio_info_health_connect_label">헬스 커넥트</string>
+    <string name="setting_bio_info_health_connect_description">헬스 커넥트 연동 설정</string>
+    <string name="setting_bio_info_complete_description">신체 정보가 저장되었어요</string>
+
+    <string name="setting_cups_toolbar_title">나의 컵 설정</string>
+    <string name="setting_cups_label_water">물</string>
+    <string name="setting_cups_increment">+ %dml</string>
+    <string name="setting_cups_cup_title">나만의 컵 목록</string>
+    <string name="setting_cup_edit_title">컵 수정</string>
+    <string name="setting_cup_add_title">컵 추가</string>
+    <string name="setting_cup_nickname">컵 이름</string>
+    <string name="setting_cup_amount">용량</string>
+    <string name="setting_cup_save">완료</string>
+    <string name="setting_cups_intake_type_water">물</string>
+    <string name="setting_cups_intake_type_coffee">커피</string>
+    <string name="setting_cups_intake_type_unknown">알 수 없음</string>
+    <string name="setting_cup_intake_type">액체 타입</string>
+    <string name="setting_cup_delete">컵 삭제하기</string>
+    <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
+    <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
+
+    <string name="setting_target_amount_toolbar_title">마시기 목표 설정</string>
+    <string name="setting_target_amount_edit_goal_label">하루 목표량</string>
+    <string name="setting_target_amount_hint_input_goal">목표량을 입력해주세요</string>
+    <string name="setting_target_amount_warning_too_high">목표 섭취량은 %dml 이하로 설정해 주세요</string>
+    <string name="setting_target_amount_warning_too_low">목표 섭취량을 %dml 이상으로 설정해 주세요</string>
+    <string name="setting_target_amount_unit_ml">ml</string>
+    <string name="setting_target_amount_complete_description">마시기 목표 설정이 완료되었습니다</string>
+
+    <string name="setting_feedback_toolbar_title">피드백 및 문의</string>
+    <string name="setting_feedback_description">물깜을 이용하시면서 불편하시거나 궁금한 사항이 있으시다면, 아래 연락처로 편하게 문의주세요.\n\n확인 후 이메일로 답변드리겠습니다.</string>
+    <string name="setting_feedback_description_highlight">물깜을 이용하시면서 불편하시거나 궁금한 사항이 있으시다면, 아래 연락처로 편하게 문의주세요.</string>
+    <string name="setting_feedback_email">mulkkamwater@gmail.com</string>
+
+    <string name="setting_terms_toolbar_title">서비스 운영 정책</string>
+    <string name="setting_terms_agree_service">서비스 이용 약관</string>
+    <string name="setting_terms_agree_privacy">개인정보 수집 및 이용 약관</string>
+    <string name="setting_terms_agree_health_connect">헬스 커넥트 약관</string>
+
+    <string name="setting_section_account">계정 정보 설정</string>
+    <string name="setting_section_water">물 마시기 설정</string>
+    <string name="setting_section_notification">알림 설정</string>
+    <string name="setting_section_support">고객센터</string>
+
+    <string name="setting_item_body_info">신체 정보 설정</string>
+    <string name="setting_item_account_info">회원 정보 설정</string>
+    <string name="setting_item_push_notification">푸시 알림 설정</string>
+    <string name="setting_item_marketing">마케팅 수신 허용</string>
+    <string name="setting_item_night">야간 알림 허용</string>
+    <string name="setting_item_system_notification">시스템 알림 설정</string>
+    <string name="setting_item_feedback">피드백 및 문의</string>
+    <string name="setting_item_terms">서비스 운영 정책</string>
+
+    <string name="setting_account_info">회원 정보 설정</string>
+    <string name="setting_account_info_logout">로그아웃</string>
+    <string name="setting_account_info_delete_account">회원 탈퇴</string>
+    <string name="setting_account_info_delete_label">회원 탈퇴를 진행하시겠어요?</string>
+    <string name="setting_account_info_delete_description">삭제된 기록은 복구되지 않습니다.\n정말로 탈퇴를 진행하시려면\n아래 문구를 그대로 입력해주세요.</string>
+    <string name="setting_account_info_delete_description_highlight">삭제된 기록은 복구되지 않습니다.</string>
+    <string name="setting_account_info_delete_comment">물깜 회원을 탈퇴하겠습니다</string>
+    <string name="setting_account_info_delete_success">회원 탈퇴가 완료되었습니다</string>
+    <string name="setting_account_info_logout_label">로그아웃을 진행하겠어요?</string>
+    <string name="setting_account_info_logout_success">로그아웃 되었습니다</string>
+    <string name="setting_account_info_confirm">확인</string>
+    <string name="setting_account_info_cancel">취소</string>
+
+    <string name="login_kakao">카카오 계정으로 로그인</string>
+
+    <string name="onboarding_next_step">다음</string>
+    <string name="onboarding_complete">완료</string>
+    <string name="onboarding_skip">건너뛰기</string>
+    <string name="onboarding_complete_greeting">%s님 반갑습니다!</string>
+    <string name="onboarding_complete_description">회원가입이 성공적으로 완료되었어요</string>
+
+    <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
+    <string name="terms_agree_hint_highlight">이용약관</string>
+    <string name="terms_agree_all">물깜 약관 전체동의</string>
+    <string name="terms_agree_service">서비스 이용 약관 동의 %s</string>
+    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %s</string>
+    <string name="terms_agree_health_connect">헬스 커넥트 정보 연동 %s</string>
+    <string name="terms_agree_night_notification">야간 알림 수신 동의 %s</string>
+    <string name="terms_agree_marketing">마케팅 정보 수신 동의 %s</string>
+    <string name="terms_required_suffix">(필수)</string>
+    <string name="terms_optional_suffix">(선택)</string>
+
+    <string name="nickname_input_hint">앱에서 사용할\n닉네임을 입력해 주세요</string>
+    <string name="nickname_input_hint_highlight">닉네임</string>
+    <string name="nickname_invalid_length">닉네임은 %d자 이상, %d자 이하만 가능합니다</string>
+    <string name="nickname_invalid_characters">닉네임에 특수 문자나 공백은 사용할 수 없습니다</string>
+    <string name="nickname_duplicated">중복된 닉네임입니다</string>
+    <string name="nickname_invalid">유효하지 않은 닉네임입니다</string>
+    <string name="nickname_same_as_before">이전과 동일한 닉네임입니다</string>
+    <string name="nickname_original_nickname_network_error">기존 정보를 불러오는 데 실패했어요</string>
+
+    <string name="bio_info_input_hint">추천 목표량 계산을 위해\n신체 정보를 입력해 주세요</string>
+    <string name="bio_info_input_hint_highlight">신체 정보</string>
+    <string name="bio_info_gender_label">성별</string>
+    <string name="bio_info_gender_male">남자</string>
+    <string name="bio_info_gender_female">여자</string>
+    <string name="bio_info_weight_label">몸무게</string>
+    <string name="bio_info_weight_hint">몸무게 정보를 입력해 주세요</string>
+    <string name="bio_info_weight_format">%d kg</string>
+
+    <string name="weight_label">몸무게 설정</string>
+    <string name="weight_complete">완료</string>
+
+    <string name="target_amount_input_hint">물 목표 섭취량을 입력해 주세요</string>
+    <string name="target_amount_input_hint_highlight">물 목표 섭취량</string>
+    <string name="target_amount_recommended_water_goal">%s 님의\n하루 물 권장 섭취량은\n%,dml 입니다</string>
+    <string name="target_amount_recommended_description">입력해 주신 성별ㆍ몸무게 정보를 바탕으로 계산했어요.</string>
+    <string name="target_amount_recommended_description_default">입력해 주신 성별ㆍ몸무게 정보가 비어 있어\n표준 남성 기준으로 계산해 보았어요.</string>
+
+    <string name="history_delete_dialog_label">해당 기록을 삭제하시겠어요?</string>
+    <string name="history_delete_dialog_sub_label">삭제된 기록은 복구되지 않습니다.</string>
+    <string name="history_delete_confirm">확인</string>
+    <string name="history_delete_cancel">취소</string>
+    <string name="history_delete_success">기록이 삭제되었습니다.</string>
+    <string name="history_delete_failure_past">과거의 기록은 삭제할 수 없습니다</string>
+
+    <string name="manual_drink_success">%,dml 섭취 완료!</string>
+    <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
+    <string name="manual_drink_label">직접 입력</string>
+    <string name="manual_drink_perform">마시기</string>
+
+    <string name="expandable_floating_menu_intake_unit">%,dml</string>
+
+    <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
+    <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
+
+    <string name="setting_notification_marketing_on">마케팅 수신 동의가 완료되었습니다 (%s)</string>
+    <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
+    <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%s)</string>
+    <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%s)</string>
+</resources>

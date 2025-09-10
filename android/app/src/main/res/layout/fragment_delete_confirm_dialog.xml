@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/white"
+    app:cardCornerRadius="14dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/iv_history_delete_warning_sign"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="28dp"
+            android:src="@drawable/ic_alert_circle"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tv_delete_confirm_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/history_delete_dialog_label"
+            android:textAppearance="@style/title1"
+            android:textColor="@color/gray_400"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/iv_history_delete_warning_sign" />
+
+        <TextView
+            android:id="@+id/tv_delete_confirm_sub_label"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:gravity="center"
+            android:text="@string/history_delete_dialog_sub_label"
+            android:textAppearance="@style/body2"
+            android:textColor="@color/secondary_200"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_delete_confirm_label" />
+
+        <TextView
+            android:id="@+id/btn_delete_confirm"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="18dp"
+            android:layout_marginEnd="6dp"
+            android:layout_marginBottom="28dp"
+            android:background="@drawable/bg_common_rectangle_8dp"
+            android:backgroundTint="@color/primary_100"
+            android:gravity="center"
+            android:paddingVertical="10dp"
+            android:text="@string/history_delete_confirm"
+            android:textAppearance="@style/body4"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btn_delete_cancel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tv_delete_confirm_sub_label" />
+
+        <TextView
+            android:id="@+id/btn_delete_cancel"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginBottom="28dp"
+            android:backgroundTint="@color/gray_50"
+            android:gravity="center"
+            android:text="@string/history_delete_cancel"
+            android:textAppearance="@style/body4"
+            android:textColor="@color/gray_400"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/btn_delete_confirm"
+            app:layout_constraintTop_toTopOf="@id/btn_delete_confirm" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

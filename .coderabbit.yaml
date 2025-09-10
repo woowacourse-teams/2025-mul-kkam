@@ -1,0 +1,102 @@
+# ─────────── 전역(공통) 설정 ───────────
+language: ko-KR
+tone_instructions: "1. 리뷰 시에는 변경 사항의 문제점이나 한계점을 구체적으로 짚어주고, \n 2. 왜 해당 부분이 비효율적이거나 권장되지 않는지 명확한 근거와 함께 설명해주세요. \n 3. 대안을 제시할 땐, 선택지를 제안하면서 각각의 장단점도 논리적으로 설명해주세요. \n 4. 단순 지적보다는 개선 방향에 집중하고, 학습적인 관점에서 이해를 돕는 코멘트를 남겨주세요. \n 5. 지나치게 딱딱하지 않되, 논리의 흐름이 분명하게 전달되도록 해주세요."
+
+# ─────────── 리뷰(Reviews) 전반 ───────────
+reviews:
+  profile: chill
+  high_level_summary: true
+  high_level_summary_placeholder: "🤖 Code Rabbit PR 요약"
+  review_status: true
+  commit_status: true
+
+  # 워크스루/자동화/부가 기능
+  collapse_walkthrough: false
+  changed_files_summary: false
+  sequence_diagrams: false
+  assess_linked_issues: true
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  auto_apply_labels: false
+  suggested_reviewers: false
+  auto_assign_reviewers: false
+  poem: false
+
+  # 경로별 리뷰 지침 및 제외 폴더
+  path_instructions:
+    - path: backend/**
+      instructions: |
+        - 1. 팀 및 공식 컨벤션, 가독성, 예외처리, 테스트/확장/유지보수성, 모듈화, API/DB/보안 설계 기준을 기반으로 리뷰해주세요.
+        - 2. 최신 트렌드, 불필요한 로직, 클린코드, 리팩토링, 서비스/도메인 설계, 공통 예외 처리, 확장성도 함께 확인해주세요.
+        - 3. 각 피드백은 문제점·대안·장단점을 짧고 논리적으로, 예시 코드가 있다면 간결히 포함해 주세요.
+        - 4. 팀 내 스타일 통일성도 확인해주세요.
+        - 5. 미작성한 테스트 코드 케이스가 있다면, 어떤 테스트가 필요한지 제안해주세요. (예: 컨트롤러는 인수 테스트, 나머지는 단위 테스트)
+        - 6. 리뷰 남겨주는 부분은 해당 라인 범위의 코멘트에 작성해주세요.
+
+  # 리뷰 진행/캐시/자동화
+  abort_on_close: true
+  disable_cache: false
+
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    base_branches: [ "develop-be" ]
+
+  finishing_touches:
+    docstrings:
+      enabled: true
+    unit_tests:
+      enabled: true
+
+# ─────────── 채팅(Chat) 설정 ───────────
+chat:
+  auto_reply: true
+
+# ─────────── 지식 기반(Knowledge base) ───────────
+knowledge_base:
+  opt_out: false
+
+  web_search:
+    enabled: true
+
+  code_guidelines:
+    enabled: true
+    filePatterns:
+      - backend/code-style.md
+
+  learnings:
+    scope: auto
+  issues:
+    scope: local
+  pull_requests:
+    scope: local
+
+# ─────────── 코드 생성(Code generation) ───────────
+code_generation:
+  docstrings:
+    language: ko-KR
+    path_instructions:
+      - path: backend/**
+        instructions: |
+          - JavaDoc 공식 형식으로, 한글로 Docstring을 작성해주세요.
+          - 메서드 목적, 파라미터, 반환값, 예외 정보를 명확하게 기술해 주세요.
+          - 외부 API 등 공개 메서드는 상세히, 내부용은 핵심만 요약해 주세요.
+
+  unit_tests:
+    path_instructions:
+      - path: backend/**
+        instructions: |
+          - Controller는 인수테스트(API 엔드포인트 통합 테스트) 나머지 영역은 함수/클래스 단위의 단위 테스트
+          - Given-When-Then 패턴을 적용
+
+# ─────────── 코드 분석 도구(Tools) ───────────
+tools:
+  hadolint:
+    enabled: true
+  gitleaks:
+    enabled: true
+  sqlfluff:
+    enabled: true
+  oxc:
+    enabled: true
