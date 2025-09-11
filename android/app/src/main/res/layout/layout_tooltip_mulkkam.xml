@@ -23,7 +23,7 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/title2"
             android:textColor="@color/primary_200"
-            tools:text="깜빡한 물Tip!" />
+            tools:text="깜빡한 물 Tip!" />
 
         <TextView
             android:id="@+id/tv_tooltip_message"
