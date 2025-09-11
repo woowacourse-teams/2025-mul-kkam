@@ -217,6 +217,6 @@
     <string name="app_update_title">새 기능이 추가되었어요</string>
     <string name="app_update_title_highlighted">새 기능</string>
 
-    <string name="tooltip_title">깜빡한 물Tip!</string>
-    <string name="tooltip_intake_type">Smith et al. (2014) 연구에 따르면, 물과 비교했을 때 중간 정도의 커피 섭취는 체수분이나 탈수 지표에 큰 차이가 없다고 해요.\n\n다만, 다른 연구(Neuhauser-Berthold et al., 1997)에서는 <b>카페인에 익숙하지 않은 사람의 경우 소변의 배설이 늘어날 수 있다</b>고 보고됐어요.\n\n그래서 물깜은 <b>여러분의 물 마신 양을 조금 적게 반영</b>하고 있어요.</string>
+    <string name="tooltip_title">깜빡한 물 Tip!</string>
+    <string name="tooltip_intake_type">물깜은 <b>여러분이 커피를 마시면 95%를 음용량으로 반영</b>하고 있어요.\n\nSmith et al. (2014) 연구에 따르면,\n물과 비교했을 때 중간 정도의 커피 섭취는 체수분이나 탈수 지표에 큰 차이가 없다고 해요.\n\n다만, 다른 연구(Neuhauser-Berthold et al., 1997)에서는 <b>카페인에 익숙하지 않은 사람의 경우 소변의 배설이 늘어날 수 있다</b>고 보고됐어요.</string>
 </resources>
