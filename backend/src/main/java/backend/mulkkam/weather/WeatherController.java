@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/weather")
-public class WeatherController {
+public class WeatherController { // 백엔드 테스트용 controller (삭제 예정)
 
     private final IntakeNotificationService intakeNotificationService;
 
