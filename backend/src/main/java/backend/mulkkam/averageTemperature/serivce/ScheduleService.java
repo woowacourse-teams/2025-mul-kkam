@@ -22,4 +22,10 @@ public class ScheduleService {
     public void notifyAdditionalWaterIntakeByWeather() {
         intakeNotificationService.notifyAdditionalIntakeByStoredWeather();
     }
+
+    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(cron = "0 0 19 * * *")
+    public void notifyRemindNotification() {
+        intakeNotificationService.notifyRemindNotification();
+    }
 }

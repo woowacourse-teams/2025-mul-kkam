@@ -2,13 +2,17 @@ package backend.mulkkam.intakenotification;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.common.exception.AlarmException;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.service.IntakeRecommendedAmountService;
 import backend.mulkkam.intake.service.WeatherService;
 import backend.mulkkam.intakenotification.dto.CreateWeatherNotification;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
+import backend.mulkkam.notification.service.NotificationService;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -26,6 +30,7 @@ public class IntakeNotificationService {
     private final WeatherService weatherService;
     private final IntakeRecommendedAmountService intakeRecommendedAmountService;
     private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationService notificationService;
     private final MemberRepository memberRepository;
 
     public void notifyAdditionalIntakeByStoredWeather() {
@@ -47,6 +52,13 @@ public class IntakeNotificationService {
                 // TODO 2025. 8. 27. 20:00: 로깅 리펙토링 필요(errorLoggedByGlobal)
             }
         }
+    }
+
+    public void notifyRemindNotification() {
+        notificationService.createAndSendTopicNotification(
+                new CreateTopicNotificationRequest("리마인드", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?", "mulkkam", Action.GO_HOME,
+                        NotificationType.REMIND, LocalDateTime.now())
+        );
     }
 
     private CreateTokenSuggestionNotificationRequest toCreateSuggestionNotificationRequest(

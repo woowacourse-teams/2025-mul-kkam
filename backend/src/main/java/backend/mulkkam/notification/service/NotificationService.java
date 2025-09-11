@@ -82,11 +82,10 @@ public class NotificationService {
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
-
     @Transactional
     public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        List<Member> allMember = memberRepository.findAll();
-        for (Member member : allMember) {
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
             Notification notification = createTopicNotificationRequest.toNotification(member);
             notificationRepository.save(notification);
         }

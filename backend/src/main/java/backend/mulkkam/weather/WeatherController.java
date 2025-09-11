@@ -21,4 +21,11 @@ public class WeatherController { // 백엔드 테스트용 controller (삭제 �
         intakeNotificationService.notifyAdditionalIntakeByStoredWeather();
         return ResponseEntity.ok().build();
     }
+
+    @Hidden
+    @PostMapping("/not-weather/remind")
+    public ResponseEntity<Void> create2() {
+        intakeNotificationService.notifyRemindNotification();
+        return ResponseEntity.ok().build();
+    }
 }
