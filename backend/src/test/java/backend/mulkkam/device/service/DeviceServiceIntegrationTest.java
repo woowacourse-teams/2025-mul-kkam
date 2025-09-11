@@ -35,12 +35,12 @@ class DeviceServiceIntegrationTest extends ServiceIntegrationTest {
 
         String deviceUuid = "deviceId";
 
-        final Member member = MemberFixtureBuilder
+        Member member = MemberFixtureBuilder
                 .builder()
                 .build();
         memberRepository.save(member);
 
-        final Device device = DeviceFixtureBuilder
+        Device device = DeviceFixtureBuilder
                 .withMember(member)
                 .deviceUuid(deviceUuid)
                 .build();
