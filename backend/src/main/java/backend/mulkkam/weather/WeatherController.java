@@ -1,6 +1,7 @@
 package backend.mulkkam.weather;
 
 import backend.mulkkam.intakenotification.IntakeNotificationService;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,6 +15,7 @@ public class WeatherController {
 
     private final IntakeNotificationService intakeNotificationService;
 
+    @Hidden
     @PostMapping
     public ResponseEntity<Void> create() {
         intakeNotificationService.notifyAdditionalIntakeByStoredWeather();
