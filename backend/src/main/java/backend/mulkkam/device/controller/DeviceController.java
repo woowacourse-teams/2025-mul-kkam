@@ -1,7 +1,6 @@
 package backend.mulkkam.device.controller;
 
 import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
-import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.service.DeviceService;
@@ -16,7 +15,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -41,18 +39,17 @@ public class DeviceController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "현재 기기의 FCM 토큰 삭제", description = "기기의 FCM 토큰을 NULL로 설정 합니다.")
-    @ApiResponse(responseCode = "200", description = "삭제(무효화) 완료")
+    //TODO: 디바이스 uri 변경
+    @Operation(summary = "기기 삭제", description = "현재 액세스 토큰에 있는 디바이스를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "삭제 완료")
     @ApiResponse(responseCode = "401", description = "인증 실패")
     @ApiResponse(responseCode = "404", description = "기기 없음")
     @DeleteMapping("/fcm-token")
     public ResponseEntity<Void> deleteFcmToken(
-            @RequestHeader("X-Device-Id")
-            String deviceId,
             @Parameter(hidden = true)
-            MemberDetails memberDetails
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
     ) {
-        deviceService.deleteFcmToken(deviceId, memberDetails);
+        deviceService.delete(memberAndDeviceUuidDetails);
         return ResponseEntity.ok().build();
     }
 }
