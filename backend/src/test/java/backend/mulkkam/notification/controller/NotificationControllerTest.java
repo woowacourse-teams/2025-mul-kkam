@@ -26,17 +26,14 @@ import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 public class NotificationControllerTest extends ControllerTest {
 
     @Autowired
@@ -67,44 +64,24 @@ public class NotificationControllerTest extends ControllerTest {
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
 
+    private List<Notification> buildUnreadNotifications(Member member, List<LocalDate> createdDates) {
+        return createdDates.stream()
+                .map(date -> NotificationFixtureBuilder.withMember(member)
+                        .createdAt(date)
+                        .build())
+                .toList();
+    }
+
     @DisplayName("알림을 조회할 때")
     @Nested
     class ReadNotifications {
 
         @BeforeEach
         void setUp() {
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build()
-            );
+            List<LocalDate> dates = IntStream.range(0, 10)
+                    .mapToObj(i -> LocalDate.of(2025, 8, 15))
+                    .toList();
+            List<Notification> notifications = buildUnreadNotifications(savedMember, dates);
             notificationRepository.saveAll(notifications);
         }
 
@@ -160,28 +137,13 @@ public class NotificationControllerTest extends ControllerTest {
 
         @BeforeEach
         void setUp() {
-            List<Notification> notifications = List.of(
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
-                    NotificationFixtureBuilder.withMember(savedMember)
-                            .createdAt(LocalDate.of(2025, 8, 15))
-                            .build(),
+            List<LocalDate> dates = IntStream.range(0, 7)
+                    .mapToObj(i -> LocalDate.of(2025, 8, 15))
+                    .toList();
+            List<Notification> unreadNotifications = buildUnreadNotifications(savedMember, dates);
+            notificationRepository.saveAll(unreadNotifications);
+
+            List<Notification> readNotifications = List.of(
                     NotificationFixtureBuilder.withMember(savedMember)
                             .createdAt(LocalDate.of(2025, 8, 15))
                             .isRead(true)
@@ -195,7 +157,7 @@ public class NotificationControllerTest extends ControllerTest {
                             .isRead(true)
                             .build()
             );
-            notificationRepository.saveAll(notifications);
+            notificationRepository.saveAll(readNotifications);
         }
 
         @DisplayName("유효한 요청이면 올바르게 반환한다")
@@ -229,7 +191,7 @@ public class NotificationControllerTest extends ControllerTest {
             notificationRepository.save(notification);
 
             // when
-            String json = mockMvc.perform(delete("/notifications/" + notification.getId())
+            mockMvc.perform(delete("/notifications/" + notification.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isNoContent())
                     .andReturn().getResponse().getContentAsString();
