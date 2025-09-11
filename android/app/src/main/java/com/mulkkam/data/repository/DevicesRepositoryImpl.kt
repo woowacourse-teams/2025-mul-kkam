@@ -64,8 +64,14 @@ class DevicesRepositoryImpl(
         val uuid = UUID.randomUUID().toString()
         val hashBytes =
             MessageDigest
-                .getInstance("SHA-256")
-                .digest(uuid.toByteArray(StandardCharsets.UTF_8))
-        return hashBytes.take(4).joinToString("") { "%02x".format(it) }
+                .getInstance(HASH_ALGORITHM)
+                .digest(uuid.toByteArray(CHARSET))
+        return hashBytes.take(HASH_LENGTH).joinToString("") { "%02x".format(it) }
+    }
+
+    companion object {
+        private const val HASH_ALGORITHM = "SHA-256"
+        private val CHARSET = StandardCharsets.UTF_8
+        private const val HASH_LENGTH = 4
     }
 }
