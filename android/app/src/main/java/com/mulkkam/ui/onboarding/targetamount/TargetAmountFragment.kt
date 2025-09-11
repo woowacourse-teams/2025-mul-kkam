@@ -2,8 +2,6 @@ package com.mulkkam.ui.onboarding.targetamount
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
@@ -31,9 +29,6 @@ import java.util.Locale
 class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(FragmentTargetAmountBinding::inflate) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: TargetAmountViewModel by viewModels()
-
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
 
     override fun onViewCreated(
         view: View,
@@ -192,7 +187,8 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                 return@doAfterTextChanged
             }
 
-            debounceTargetAmountUpdate(processedText)
+            val targetAmount = processedText.toIntOrNull()
+            viewModel.updateTargetAmount(targetAmount)
         }
     }
 
@@ -202,15 +198,6 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
     ) {
         editText.setText(newText)
         editText.setSelection(newText.length)
-    }
-
-    private fun debounceTargetAmountUpdate(text: String) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-        debounceRunnable =
-            Runnable {
-                val targetAmount = text.toIntOrNull()
-                viewModel.updateTargetAmount(targetAmount)
-            }.also { debounceHandler.postDelayed(it, 100L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =
