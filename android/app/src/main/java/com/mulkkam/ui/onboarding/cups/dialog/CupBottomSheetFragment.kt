@@ -12,7 +12,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
@@ -38,7 +37,7 @@ class CupBottomSheetFragment :
         FragmentSettingCupBinding::inflate,
     ) {
     private val viewModel: CupBottomSheetViewModel by viewModels()
-    private val cupsViewModel: CupsViewModel by activityViewModels()
+    private val parentViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
@@ -76,15 +75,15 @@ class CupBottomSheetFragment :
         val updatedCup = viewModel.cup.value ?: return
         val editType = viewModel.editType.value ?: return
         when (editType) {
-            SettingWaterCupEditType.ADD -> cupsViewModel.addCup(updatedCup)
-            SettingWaterCupEditType.EDIT -> cupsViewModel.updateCup(updatedCup)
+            SettingWaterCupEditType.ADD -> parentViewModel.addCup(updatedCup)
+            SettingWaterCupEditType.EDIT -> parentViewModel.updateCup(updatedCup)
         }
         dismiss()
     }
 
     private fun handleDeleteClick() {
         val rank = viewModel.cup.value?.rank ?: return
-        cupsViewModel.deleteCup(rank)
+        parentViewModel.deleteCup(rank)
         dismiss()
     }
 
@@ -293,6 +292,7 @@ class CupBottomSheetFragment :
                 IntakeType.COFFEE,
             ),
         )
+        intakeAdapter.selectItem(cup?.intakeType ?: IntakeType.WATER)
     }
 
     companion object {

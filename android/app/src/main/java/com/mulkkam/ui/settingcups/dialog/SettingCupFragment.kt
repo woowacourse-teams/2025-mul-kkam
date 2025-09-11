@@ -38,7 +38,7 @@ class SettingCupFragment :
     ) {
     private val viewModel: SettingCupViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
-    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
+    private val parentViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     private var intakeTypeTooltip: MulKkamTooltip? = null
@@ -116,7 +116,7 @@ class SettingCupFragment :
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
                     .show()
-                settingCupsViewModel.loadCups()
+                parentViewModel.loadCups()
                 dismiss()
             }
 
@@ -124,7 +124,7 @@ class SettingCupFragment :
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
                     .show()
-                settingCupsViewModel.loadCups()
+                parentViewModel.loadCups()
                 dismiss()
             }
 
@@ -289,6 +289,7 @@ class SettingCupFragment :
                 IntakeType.COFFEE,
             ),
         )
+        intakeAdapter.selectItem(cup?.intakeType ?: IntakeType.WATER)
     }
 
     companion object {
