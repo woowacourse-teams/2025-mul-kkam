@@ -9,8 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
@@ -35,7 +37,7 @@ class CupBottomSheetFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: CupBottomSheetViewModel by activityViewModels()
+    private val viewModel: CupBottomSheetViewModel by viewModels()
     private val cupsViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }

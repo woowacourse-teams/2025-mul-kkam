@@ -217,6 +217,7 @@ class SettingCupFragment :
             val isCupNameValid = cup.name != EMPTY_CUP_UI_MODEL.name
             val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
+            mcgIntakeType.selectedItems
 
             if (cup.isRepresentative) {
                 tvDelete.visibility = View.GONE

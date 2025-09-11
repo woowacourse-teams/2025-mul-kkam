@@ -103,6 +103,7 @@ class SettingCupViewModel : ViewModel() {
                 cupsRepository.getCupEmojis().getOrError()
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
+                selectEmoji(cup.value?.emojiId ?: return@onSuccess)
             }
         }
     }
