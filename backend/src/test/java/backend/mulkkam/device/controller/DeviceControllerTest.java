@@ -9,6 +9,7 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -16,6 +17,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.DeviceFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -40,6 +42,7 @@ class DeviceControllerTest extends ControllerTest {
 
     private Member savedMember;
     private String token;
+    private String deviceUuid;
 
     @BeforeEach
     void setUp() {
@@ -49,7 +52,7 @@ class DeviceControllerTest extends ControllerTest {
 
         OauthAccount oauthAccount = new OauthAccount(member, "testId", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccount);
-        String deviceUuid = "deviceUuid";
+        deviceUuid = "deviceUuid";
 
         token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
     }
@@ -62,24 +65,26 @@ class DeviceControllerTest extends ControllerTest {
         @Test
         void success_whenDeviceIdIsExited() throws Exception {
             // given
-            String deviceId = "deviceId";
 
             Device device = DeviceFixtureBuilder
                     .withMember(savedMember)
-                    .deviceUuid(deviceId)
+                    .deviceUuid(deviceUuid)
                     .build();
             deviceRepository.save(device);
 
             // when
             mockMvc.perform(delete("/devices/fcm-token")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
-                            .header("X-Device-Id", deviceId))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andDo(print())
                     .andExpect(status().isOk());
 
             // then
-            Device updatedDevice = deviceRepository.findById(device.getId()).get();
-            assertThat(updatedDevice.getToken()).isNull();
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails = new MemberAndDeviceUuidDetails(savedMember,
+                    deviceUuid);
+            Optional<Device> foundDevice = deviceRepository.findByDeviceUuidAndMemberId(
+                    memberAndDeviceUuidDetails.deviceUuid(),
+                    memberAndDeviceUuidDetails.id());
+            assertThat(foundDevice).isEmpty();
         }
     }
 }

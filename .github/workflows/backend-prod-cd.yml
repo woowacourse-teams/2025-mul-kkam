@@ -1,31 +1,39 @@
 name: backend-prod-cd
 
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
-      - 'v*.*.*'
+      - main
 
 jobs:
   build-and-push:
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-24.04
     outputs:
       version: ${{ steps.ver.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
-        with: { fetch-depth: 0 }
+        with:
+          fetch-depth: 0
 
-      - name: Derive version from branch
+      - name: Derive version from PR title
         id: ver
         shell: bash
         run: |
-          BRANCH="${GITHUB_REF_NAME}"
-          if [[ ! "$BRANCH" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Unsupported branch: $BRANCH"; exit 1
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+          
+          if [[ "$PR_TITLE" =~ (v[0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "Resolved VERSION=$VERSION"
+          else
+            echo "Error: PR title does not contain a valid version tag (e.g., v1.2.3)."
+            exit 1
           fi
-          VERSION="$BRANCH"
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "Resolved VERSION=$VERSION"
 
       - name: Set up JDK
         uses: actions/setup-java@v4
