@@ -7,9 +7,10 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
+import backend.mulkkam.common.infrastructure.fcm.dto.SendTopicEvent;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -27,9 +28,10 @@ import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,11 +43,12 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
 
-    private final FcmService fcmService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
+    private final SuggestionNotificationService suggestionNotificationService;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -89,7 +92,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest);
+        publisher.publishEvent(new SendTopicEvent(sendMessageByFcmTopicRequest));
     }
 
     @Transactional
@@ -121,8 +124,7 @@ public class NotificationService {
         }
 
         if (notification.isSuggestion()) {
-            SuggestionNotification suggestionNotification = getSuggestionNotification(notificationId);
-            suggestionNotificationRepository.delete(suggestionNotification);
+            suggestionNotificationService.delete(notificationId);
         }
 
         notificationRepository.delete(notification);
@@ -168,13 +170,9 @@ public class NotificationService {
     }
 
     private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
-        List<NotificationResponse> notificationResponses = new ArrayList<>();
-        for (Notification notification : notifications) {
-            NotificationResponse notificationResponse = getNotificationResponse(notification);
-            notificationResponses.add(notificationResponse);
-
-        }
-        return notificationResponses;
+        return notifications.stream()
+                .map(this::getNotificationResponse)
+                .collect(Collectors.toList());
     }
 
     private NotificationResponse getNotificationResponse(Notification notification) {
@@ -193,17 +191,12 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmService.sendMessageByToken(sendMessageByFcmTokenRequest);
+            publisher.publishEvent(new SendTokenEvent(sendMessageByFcmTokenRequest));
         }
     }
 
     private Notification getNotification(Long id) {
         return notificationRepository.findByIdWithMember(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_NOTIFICATION));
-    }
-
-    private SuggestionNotification getSuggestionNotification(Long id) {
-        return suggestionNotificationRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
     }
 }

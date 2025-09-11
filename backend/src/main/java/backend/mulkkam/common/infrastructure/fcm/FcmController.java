@@ -3,7 +3,7 @@ package backend.mulkkam.common.infrastructure.fcm;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class FcmController {
 
-    private final FcmService fcmService;
+    private final FcmClient fcmClient;
 
     @Operation(summary = "토픽 기반 FCM 메시지 전송", description = "특정 토픽을 구독한 모든 사용자에게 FCM 메시지를 전송합니다.")
     @ApiResponse(responseCode = "200", description = "메시지 전송 성공")
@@ -32,7 +32,7 @@ public class FcmController {
     public ResponseEntity<Void> sendMessageTopic(
             @RequestBody SendMessageByFcmTopicRequest sendFcmTopicMessageRequest
     ){
-        fcmService.sendMessageByTopic(sendFcmTopicMessageRequest);
+        fcmClient.sendMessageByTopic(sendFcmTopicMessageRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -46,7 +46,7 @@ public class FcmController {
     public ResponseEntity<Void> sendMessageToken(
             @RequestBody SendMessageByFcmTokenRequest sendFcmTokenMessageRequest
     ) {
-        fcmService.sendMessageByToken(sendFcmTokenMessageRequest);
+        fcmClient.sendMessageByToken(sendFcmTokenMessageRequest);
         return ResponseEntity.ok().build();
     }
 }

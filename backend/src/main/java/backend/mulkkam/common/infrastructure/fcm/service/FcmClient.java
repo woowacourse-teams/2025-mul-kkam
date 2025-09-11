@@ -8,11 +8,11 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
-@Service
-public class FcmService {
+@Component
+public class FcmClient {
 
     private static final String ACTION = "action";
 
