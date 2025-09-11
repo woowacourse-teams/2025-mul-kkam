@@ -1,12 +1,10 @@
 package com.mulkkam.ui.main.dialog
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
@@ -65,10 +63,7 @@ class MainPermissionDialogFragment :
                 R.string.main_alarm_permission_denied
             }
 
-        parentViewModel.saveNotificationPermission(
-            deviceId = loadDeviceId(),
-            isCurrentlyGranted = granted,
-        )
+        parentViewModel.saveNotificationPermission(isCurrentlyGranted = granted)
 
         CustomToast
             .makeText(requireContext(), getString(messageResId), R.drawable.ic_info_circle)
@@ -77,13 +72,6 @@ class MainPermissionDialogFragment :
             }.show()
         dismiss()
     }
-
-    @SuppressLint("HardwareIds")
-    private fun loadDeviceId(): String =
-        Settings.Secure.getString(
-            requireContext().contentResolver,
-            Settings.Secure.ANDROID_ID,
-        )
 
     override fun onViewCreated(
         view: View,

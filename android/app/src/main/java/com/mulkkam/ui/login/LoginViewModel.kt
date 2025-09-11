@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
-import com.mulkkam.di.RepositoryInjection.onboardingRepository
+import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.versionsRepository
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -57,7 +57,8 @@ class LoginViewModel : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 _authUiState.value = MulKkamUiState.Loading
-                RepositoryInjection.authRepository.postAuthKakao(token).getOrError()
+                val deviceUuid = devicesRepository.getDeviceUuid().getOrError()
+                RepositoryInjection.authRepository.postAuthKakao(token, deviceUuid).getOrError()
             }.onSuccess { authTokenInfo ->
                 val accessToken = authTokenInfo.accessToken
                 val refreshToken = authTokenInfo.refreshToken

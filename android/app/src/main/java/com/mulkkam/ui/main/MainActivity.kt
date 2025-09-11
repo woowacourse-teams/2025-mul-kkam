@@ -1,14 +1,12 @@
 package com.mulkkam.ui.main
 
 import android.Manifest.permission.POST_NOTIFICATIONS
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.Settings
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
@@ -148,7 +146,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             fcmToken.observe(this@MainActivity) {
                 val currentGranted = hasNotificationPermission()
                 viewModel.saveNotificationPermission(
-                    deviceId = loadDeviceId(),
                     isCurrentlyGranted = currentGranted,
                 )
             }
@@ -176,13 +173,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             .newInstance()
             .show(supportFragmentManager, MainPermissionDialogFragment.TAG)
     }
-
-    @SuppressLint("HardwareIds")
-    private fun loadDeviceId(): String =
-        Settings.Secure.getString(
-            this.contentResolver,
-            Settings.Secure.ANDROID_ID,
-        )
 
     private fun hasNotificationPermission(): Boolean =
         when {
