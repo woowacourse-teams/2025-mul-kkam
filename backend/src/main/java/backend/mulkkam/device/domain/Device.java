@@ -13,14 +13,10 @@ import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE device SET deleted_at = NOW() WHERE id = ?")
 @Entity
 public class Device extends BaseEntity {
 
@@ -46,9 +42,5 @@ public class Device extends BaseEntity {
 
     public void modifyToken(String token) {
         this.token = token;
-    }
-
-    public void nullifyToken() {
-        this.token = null;
     }
 }
