@@ -9,7 +9,11 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mulkkam.R
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.di.PreferenceInjection.devicesPreference
+import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +23,16 @@ class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         CoroutineScope(Dispatchers.IO).launch {
-            tokenRepository.saveFcmToken(token)
+            runCatching {
+                tokenRepository.saveFcmToken(token)
+                devicesRepository.postDevice(token)
+            }.onFailure {
+                mulKkamLogger.error(
+                    LogEvent.ERROR,
+                    "FCM Token Save Failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
+                )
+                devicesPreference.saveNotificationGranted(!devicesPreference.isNotificationGranted)
+            }
         }
         subscribeToTopic()
     }
