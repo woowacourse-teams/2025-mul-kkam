@@ -10,7 +10,12 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiCode;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -48,6 +53,9 @@ public class IntakeHistoryService {
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final CupRepository cupRepository;
 
+    // TODO: 서비스 의존 논의 필요
+    private final CupService cupService;
+
     @Transactional
     public CreateIntakeHistoryDetailResponse createByCup(
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest,
@@ -78,16 +86,25 @@ public class IntakeHistoryService {
 
     @Transactional
     public CreateIntakeHistoryDetailResponse createByUserInput(
-            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest,
+            CreateIntakeHistoryDetailByUserInputRequest request,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = createIntakeHistoryDetailByUserInputRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = request.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
         IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+        IntakeType intakeType = request.intakeType();
 
-        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByUserInputRequest.toIntakeDetail(
-                intakeHistory);
+        EmojiCode emojiCode = DefaultCup.of(intakeType)
+                .orElse(DefaultCup.WATER_PAPER_CUP) // default 를 물 타입으로 설정
+                .getCode();
+
+        Map<EmojiCode, CupEmoji> emojiByCode = cupService.getDefaultEmojiByCode();
+        CupEmoji cupEmoji = emojiByCode.get(emojiCode);
+
+        IntakeHistoryDetail intakeHistoryDetail = request.toIntakeDetail(
+                intakeHistory, cupEmoji.getUrl()
+        );
         intakeHistoryDetailRepository.save(intakeHistoryDetail);
         return getCreateIntakeHistoryResponse(
                 intakeDate,

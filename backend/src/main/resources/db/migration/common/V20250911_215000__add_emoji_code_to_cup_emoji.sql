@@ -1,0 +1,2 @@
+ALTER TABLE cup_emoji
+    ADD COLUMN `code` VARCHAR(64) NULL UNIQUE;

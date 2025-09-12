@@ -15,9 +15,9 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiCode;
 import backend.mulkkam.cup.domain.collection.CupRanks;
 import backend.mulkkam.cup.domain.vo.CupAmount;
-import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CreateCup;
@@ -63,43 +63,44 @@ public class CupService {
     @Transactional
     public void reset(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
+        List<Cup> defaultCups = getDefaultCups(member);
         cupRepository.deleteByMember(member);
-        cupRepository.saveAll(getDefaultCups(member));
+        cupRepository.saveAll(defaultCups);
     }
 
     private List<Cup> getDefaultCups(Member member) {
-        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+        Map<EmojiCode, CupEmoji> emojiByCode = getDefaultEmojiByCode();
         return Arrays.stream(DefaultCup.values())
                 .map(defaultCup -> {
-                    CupEmojiUrl emojiUrl = defaultCup.getCupEmojiUrl();
+                    EmojiCode code = defaultCup.getCode();
                     return new Cup(
                             member,
                             defaultCup.getNickname(),
                             defaultCup.getAmount(),
                             defaultCup.getRank(),
                             defaultCup.getIntakeType(),
-                            emojiByUrl.get(emojiUrl)
+                            emojiByCode.get(code)
                     );
                 })
                 .toList();
     }
 
     public DefaultCupsResponse readDefaultCups() {
-        Map<CupEmojiUrl, CupEmoji> emojiByUrl = getDefaultEmojiByUrl();
+        Map<EmojiCode, CupEmoji> emojiByCode = getDefaultEmojiByCode();
 
         List<DefaultCupResponse> defaultCups = Arrays.stream(DefaultCup.values())
-                .map(defaultCup -> new DefaultCupResponse(defaultCup, emojiByUrl.get(defaultCup.getCupEmojiUrl())))
+                .map(defaultCup -> new DefaultCupResponse(defaultCup, emojiByCode.get(defaultCup.getCode())))
                 .toList();
         return new DefaultCupsResponse(defaultCups);
     }
 
-    private Map<CupEmojiUrl, CupEmoji> getDefaultEmojiByUrl() {
+    public Map<EmojiCode, CupEmoji> getDefaultEmojiByCode() {
         List<CupEmoji> defaultEmojis = getSavedDefaultCupEmojis();
 
-        Map<CupEmojiUrl, CupEmoji> result = defaultEmojis.stream()
-                .collect(Collectors.toMap(CupEmoji::getUrl, Function.identity()));
-        Set<CupEmojiUrl> expectedDefaultEmojis = Arrays.stream(DefaultCup.values())
-                .map(DefaultCup::getCupEmojiUrl)
+        Map<EmojiCode, CupEmoji> result = defaultEmojis.stream()
+                .collect(Collectors.toMap(CupEmoji::getCode, Function.identity()));
+        Set<EmojiCode> expectedDefaultEmojis = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCode)
                 .collect(Collectors.toSet());
 
         if (result.keySet().containsAll(expectedDefaultEmojis)) {
@@ -109,11 +110,11 @@ public class CupService {
     }
 
     private List<CupEmoji> getSavedDefaultCupEmojis() {
-        List<CupEmojiUrl> defaultEmojiUrls = Arrays.stream(DefaultCup.values())
-                .map(DefaultCup::getCupEmojiUrl)
+        List<EmojiCode> defaultEmojiCodes = Arrays.stream(DefaultCup.values())
+                .map(DefaultCup::getCode)
                 .distinct()
                 .toList();
-        return cupEmojiRepository.findAllByUrlIn(defaultEmojiUrls);
+        return cupEmojiRepository.findAllByCodeIn(defaultEmojiCodes);
     }
 
     public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
