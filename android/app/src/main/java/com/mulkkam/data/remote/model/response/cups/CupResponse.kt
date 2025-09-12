@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CupResponse(
     @SerialName("id")
-    val id: Long,
+    val id: Long? = null,
     @SerialName("cupNickname")
     val cupNickname: String,
     @SerialName("cupAmount")
@@ -25,7 +25,7 @@ data class CupResponse(
 
 fun CupResponse.toDomain() =
     Cup(
-        id = id,
+        id = id ?: 0L,
         name = CupName(cupNickname),
         amount = CupAmount(cupAmount),
         rank = cupRank,
