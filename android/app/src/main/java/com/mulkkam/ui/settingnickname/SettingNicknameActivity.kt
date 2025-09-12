@@ -6,6 +6,7 @@ import android.content.res.ColorStateList
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
+import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
 import com.mulkkam.domain.model.members.Nickname
@@ -188,8 +189,10 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     }
 
     private fun initNicknameInputWatcher() {
-        val nickname = binding.etInputNickname.text.toString()
-        viewModel.updateNickname(nickname)
+        binding.etInputNickname.doAfterTextChanged {
+            val nickname = binding.etInputNickname.text.toString()
+            viewModel.updateNickname(nickname)
+        }
     }
 
     private fun NicknameError.toMessageRes(): String =
