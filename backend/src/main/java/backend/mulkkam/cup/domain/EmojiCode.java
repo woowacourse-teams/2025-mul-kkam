@@ -45,7 +45,7 @@ public class EmojiCode {
     }
 
     public String getValue() {
-        return String.join(".", emojiType.getText(), intakeType.name().toLowerCase());
+        return String.join(".", emojiType.name().toLowerCase(), intakeType.name().toLowerCase());
     }
 
     public EmojiCode modifyEmojiType(EmojiType emojiType) {
