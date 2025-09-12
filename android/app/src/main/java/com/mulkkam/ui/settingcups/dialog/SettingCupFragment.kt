@@ -2,6 +2,7 @@ package com.mulkkam.ui.settingcups.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -95,7 +96,6 @@ class SettingCupFragment :
 
             editType.observe(viewLifecycleOwner) { settingWaterCupEditType ->
                 settingWaterCupEditType?.let { showTitle(it) }
-                binding.tvDelete.visibility = if (settingWaterCupEditType == SettingWaterCupEditType.ADD) View.GONE else View.VISIBLE
             }
 
             cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->
@@ -217,7 +217,6 @@ class SettingCupFragment :
             val isCupNameValid = cup.name != EMPTY_CUP_UI_MODEL.name
             val isAmountChanged = etAmount.text.toString() != cup.amount.toString()
             val isAmountValid = cup.amount != EMPTY_CUP_UI_MODEL.amount
-            mcgIntakeType.selectedItems
 
             if (cup.isRepresentative) {
                 tvDelete.visibility = View.GONE
