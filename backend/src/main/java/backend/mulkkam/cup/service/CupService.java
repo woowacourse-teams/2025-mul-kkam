@@ -119,7 +119,10 @@ public class CupService {
     public CupsResponse readSortedCupsByMember(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         List<Cup> cups = cupRepository.findAllByMemberOrderByCupRankAsc(member);
-        return new CupsResponse(cups);
+        return new CupsResponse(cups.stream()
+                .map(CupResponse::new)
+                .toList()
+        );
     }
 
     @Transactional
