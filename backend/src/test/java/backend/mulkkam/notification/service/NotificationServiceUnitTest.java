@@ -13,7 +13,6 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -25,8 +24,8 @@ import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -255,13 +254,11 @@ class NotificationServiceUnitTest {
             verify(deviceRepository).findAllByMember(member);
 
             verify(applicationEventPublisher).publishEvent(
-                    argThat((SendTokenEvent evt) -> {
-                        SendMessageByFcmTokenRequest r = evt.sendMessageByFcmTokenRequest();
-                        return r.title().equals("title")
-                                && r.body().equals("body")
-                                && r.token().equals("token-1")
-                                && r.action() == Action.GO_HOME;
-                    })
+                    argThat((SendMessageByFcmTokenRequest evt) ->
+                            evt.title().equals("title")
+                                    && evt.body().equals("body")
+                                    && evt.token().equals("token-1")
+                                    && evt.action() == Action.GO_HOME)
             );
         }
     }
