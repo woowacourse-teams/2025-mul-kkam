@@ -30,7 +30,7 @@ public class CupEmoji extends BaseEntity {
     private Long id;
 
     @Convert(converter = EmojiCodeConverter.class)
-    @Column(name = "code", length = 64)
+    @Column(name = "code", length = 64, unique = true)
     private EmojiCode code;
 
     @Embedded
