@@ -19,8 +19,8 @@ data class CupResponse(
     val cupRank: Int,
     @SerialName("intakeType")
     val intakeType: String,
-    @SerialName("emojiUrl")
-    val emoji: String,
+    @SerialName("emoji")
+    val emoji: CupEmojiResponse,
 )
 
 fun CupResponse.toDomain() =
@@ -30,5 +30,5 @@ fun CupResponse.toDomain() =
         amount = CupAmount(cupAmount),
         rank = cupRank,
         intakeType = IntakeType.from(intakeType),
-        emoji = emoji,
+        emoji = emoji.toDomain(),
     )

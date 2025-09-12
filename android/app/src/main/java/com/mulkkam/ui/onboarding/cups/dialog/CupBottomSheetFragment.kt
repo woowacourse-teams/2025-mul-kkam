@@ -22,7 +22,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
 import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
+import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType

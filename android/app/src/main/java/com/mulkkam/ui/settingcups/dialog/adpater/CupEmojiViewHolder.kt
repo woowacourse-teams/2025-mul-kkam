@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.databinding.ItemCupEmojiBinding
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojiUiModel
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
 import com.mulkkam.ui.util.extensions.setSingleClickListener

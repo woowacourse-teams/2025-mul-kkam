@@ -5,6 +5,7 @@ import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -14,9 +15,8 @@ data class CupUiModel(
     val amount: Int,
     val rank: Int,
     val intakeType: IntakeType,
-    val emoji: String,
+    val emoji: CupEmojiUiModel,
     val isRepresentative: Boolean,
-    val emojiId: Long = 0L,
 ) : Parcelable {
     companion object {
         val EMPTY_CUP_UI_MODEL =
@@ -26,7 +26,7 @@ data class CupUiModel(
                 amount = 0,
                 rank = 0,
                 intakeType = IntakeType.UNKNOWN,
-                emoji = "",
+                emoji = EMPTY_CUP_EMOJI_UI_MODEL,
                 isRepresentative = false,
             )
     }
@@ -39,9 +39,8 @@ fun Cup.toUi(): CupUiModel =
         amount = amount.value,
         rank = rank,
         intakeType = intakeType,
-        emoji = emoji,
+        emoji = emoji.toUi(),
         isRepresentative = isRepresentative,
-        emojiId = emojiId,
     )
 
 fun CupUiModel.toDomain(): Cup {
@@ -54,7 +53,6 @@ fun CupUiModel.toDomain(): Cup {
         amount = amount,
         rank = rank,
         intakeType = intakeType,
-        emoji = emoji,
-        emojiId = emojiId,
+        emoji = emoji.toDomain(),
     )
 }

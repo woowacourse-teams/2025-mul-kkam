@@ -28,6 +28,5 @@ fun CupDefaultResponse.toDomain() =
         amount = CupAmount(cupAmount),
         rank = cupRank,
         intakeType = IntakeType.from(intakeType),
-        emoji = emoji.cupEmojiUrl,
-        emojiId = emoji.id,
+        emoji = emoji.toDomain(),
     )

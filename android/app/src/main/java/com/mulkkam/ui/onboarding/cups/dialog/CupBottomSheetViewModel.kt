@@ -12,11 +12,12 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.dialog.model.toUi
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
+import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.settingcups.model.toUi
 import kotlinx.coroutines.launch
 
 class CupBottomSheetViewModel : ViewModel() {
@@ -41,7 +42,7 @@ class CupBottomSheetViewModel : ViewModel() {
     private val hasChanges: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
-                value = cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmojiId != null
+                value = cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
             }
             addSource(_cupEmojisUiState) { update() }
             addSource(_cup) { update() }
@@ -69,7 +70,7 @@ class CupBottomSheetViewModel : ViewModel() {
                 val isAmountAvailable =
                     if (amountChanged) _amountValidity.value is MulKkamUiState.Success else true
                 val isEmojiSelected =
-                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmojiId != null
+                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
 
                 value = isNameAvailable && isAmountAvailable && isEmojiSelected
             }
@@ -94,7 +95,7 @@ class CupBottomSheetViewModel : ViewModel() {
                 cupsRepository.getCupEmojis().getOrError()
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
-                selectEmoji(cup.value?.emojiId ?: return@onSuccess)
+                selectEmoji(cup.value?.emoji?.id ?: return@onSuccess)
             }
         }
     }
@@ -154,7 +155,6 @@ class CupBottomSheetViewModel : ViewModel() {
     fun selectEmoji(emojiId: Long) {
         val emoji = cupEmojisUiState.value?.toSuccessDataOrNull() ?: return
         _cupEmojisUiState.value = MulKkamUiState.Success<CupEmojisUiModel>(emoji.selectCupEmoji(emojiId))
-        _cup.value = cup.value?.copy(emojiId = emojiId) ?: EMPTY_CUP_UI_MODEL
-        _cup.value = cup.value?.copy(emoji = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmojiUrl ?: "") ?: EMPTY_CUP_UI_MODEL
+        _cup.value = cup.value?.copy(emoji = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji ?: EMPTY_CUP_EMOJI_UI_MODEL)
     }
 }
