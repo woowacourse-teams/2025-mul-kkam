@@ -10,7 +10,7 @@ on:
 
 jobs:
   redeploy:
-    runs-on: [self-hosted, linux, prod]
+    runs-on: [ self-hosted, linux, prod ]
     env:
       IMAGE_TAG: ${{ inputs.version }}
     steps:

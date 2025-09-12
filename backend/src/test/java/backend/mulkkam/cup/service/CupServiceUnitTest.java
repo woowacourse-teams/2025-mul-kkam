@@ -217,7 +217,7 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupsResponse.size()).isEqualTo(2);
+                softly.assertThat(cupsResponse.cups().size()).isEqualTo(2);
                 softly.assertThat(firstCup.cupNickname()).isEqualTo(cup2.getNickname().value());
                 softly.assertThat(firstCup.cupAmount()).isEqualTo(cup2.getCupAmount().value());
                 softly.assertThat(firstCup.cupRank()).isEqualTo(cup2.getCupRank().value());
