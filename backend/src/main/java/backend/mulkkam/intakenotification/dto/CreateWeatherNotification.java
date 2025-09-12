@@ -13,7 +13,7 @@ public record CreateWeatherNotification(
         LocalDateTime todayDateTimeInSeoul
 ) {
     public CreateTokenSuggestionNotificationRequest toCreateTokenSuggestionNotificationRequest() {
-        return new CreateTokenSuggestionNotificationRequest("날씨에 따른 수분 충전",
+        return new CreateTokenSuggestionNotificationRequest("너무 더워요~~",
                 String.format("오늘 평균 기온은 %d도예요. 수분 보충을 위해 %dml를 더 마셔보는 건 어떠세요?",
                         (int) (averageTemperature.getTemperature()), (int) (extraIntakeAmount.value())
                 ),
