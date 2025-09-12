@@ -31,13 +31,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class FcmServiceUnitTest {
+class FcmClientUnitTest {
 
     @Mock
     FirebaseMessaging firebaseMessaging;
 
     @InjectMocks
-    FcmService fcmService;
+    FcmClient fcmClient;
 
     @DisplayName("토큰 형식으로 알림을 보낼 때")
     @Nested
@@ -54,7 +54,7 @@ class FcmServiceUnitTest {
 
             // when & then
             Assertions.assertThatCode(
-                    () -> fcmService.sendMessageByToken(sendMessageByFcmTokenRequest)
+                    () -> fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest)
             ).doesNotThrowAnyException();
 
             ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
@@ -88,7 +88,7 @@ class FcmServiceUnitTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> fcmService.sendMessageByToken(sendMessageByFcmTokenRequest)
+                    () -> fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest)
             ).isInstanceOf(AlarmException.class)
                     .hasMessage(SENDER_ID_MISMATCH.name());
 
@@ -111,7 +111,7 @@ class FcmServiceUnitTest {
 
             // when & then
             Assertions.assertThatCode(
-                    () -> fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest)
+                    () -> fcmClient.sendMessageByTopic(sendMessageByFcmTopicRequest)
             ).doesNotThrowAnyException();
 
             ArgumentCaptor<Message> messageArgumentCaptor = ArgumentCaptor.forClass(Message.class);
@@ -145,7 +145,7 @@ class FcmServiceUnitTest {
 
             // when & then
             assertThatThrownBy(
-                    () -> fcmService.sendMessageByTopic(sendMessageByFcmTopicRequest)
+                    () -> fcmClient.sendMessageByTopic(sendMessageByFcmTopicRequest)
             ).isInstanceOf(AlarmException.class)
                     .hasMessage(SENDER_ID_MISMATCH.name());
 
