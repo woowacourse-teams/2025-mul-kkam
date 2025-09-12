@@ -110,7 +110,12 @@ class CupBottomSheetFragment :
             }
 
             editType.observe(viewLifecycleOwner) { settingWaterCupEditType ->
-                settingWaterCupEditType?.let { showTitle(it) }
+                settingWaterCupEditType?.let {
+                    showTitle(it)
+                    if (it == SettingWaterCupEditType.ADD) {
+                        binding.tvDelete.visibility = View.GONE
+                    }
+                }
             }
 
             cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->

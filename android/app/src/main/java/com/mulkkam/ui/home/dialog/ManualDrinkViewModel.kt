@@ -13,7 +13,7 @@ class ManualDrinkViewModel : ViewModel() {
     private val _amountValidity = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
 
-    private val amountInput: MutableLiveData<Int> = MutableLiveData<Int>(0)
+    private val amountInput: MutableLiveData<Int> = MutableLiveData<Int>()
     private val _intakeType: MutableLiveData<IntakeType> = MutableLiveData<IntakeType>(IntakeType.WATER)
     val intakeType: LiveData<IntakeType> get() = _intakeType
 
