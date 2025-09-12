@@ -63,8 +63,9 @@ public class CupService {
     @Transactional
     public void reset(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
+        List<Cup> defaultCups = getDefaultCups(member);
         cupRepository.deleteByMember(member);
-        cupRepository.saveAll(getDefaultCups(member));
+        cupRepository.saveAll(defaultCups);
     }
 
     private List<Cup> getDefaultCups(Member member) {
