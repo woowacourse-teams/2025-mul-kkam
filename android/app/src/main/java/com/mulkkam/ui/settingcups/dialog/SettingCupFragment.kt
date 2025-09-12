@@ -2,7 +2,6 @@ package com.mulkkam.ui.settingcups.dialog
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
