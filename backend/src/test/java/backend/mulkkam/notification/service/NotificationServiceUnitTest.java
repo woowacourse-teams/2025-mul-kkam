@@ -13,7 +13,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmService;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -24,8 +24,8 @@ import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -41,6 +41,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,7 +59,7 @@ class NotificationServiceUnitTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private FcmService fcmService;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -221,6 +222,14 @@ class NotificationServiceUnitTest {
         @Test
         void success_validInput() {
             // given
+            Device device = mock(Device.class);
+            when(device.getToken()).thenReturn("token-1");
+
+            when(deviceRepository.findAllByMember(member))
+                    .thenReturn(List.of(device));
+            when(notificationRepository.save(any(Notification.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
             CreateTokenNotificationRequest createTokenNotificationRequest = new CreateTokenNotificationRequest(
                     "title",
                     "body",
@@ -229,13 +238,6 @@ class NotificationServiceUnitTest {
                     NotificationType.NOTICE,
                     LocalDateTime.of(2025, 1, 2, 3, 4)
             );
-
-            Device d1 = mock(Device.class);
-            when(d1.getToken()).thenReturn("token-1");
-            when(deviceRepository.findAllByMember(member)).thenReturn(List.of(d1));
-
-            when(notificationRepository.save(any(Notification.class)))
-                    .thenAnswer(invocation -> invocation.getArgument(0));
 
             // when
             notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
@@ -251,13 +253,12 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(fcmService).sendMessageByToken(
-                    argThat(o ->
-                            o.title().equals("title") &&
-                                    o.body().equals("body") &&
-                                    o.token().equals("token-1") &&
-                                    o.action() == Action.GO_HOME
-                    )
+            verify(applicationEventPublisher).publishEvent(
+                    argThat((SendMessageByFcmTokenRequest evt) ->
+                            evt.title().equals("title")
+                                    && evt.body().equals("body")
+                                    && evt.token().equals("token-1")
+                                    && evt.action() == Action.GO_HOME)
             );
         }
     }

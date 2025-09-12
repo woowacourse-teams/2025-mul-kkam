@@ -6,8 +6,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class CupsResponse(
-    @SerialName("size")
-    val size: Int,
     @SerialName("cups")
     val cups: List<CupResponse>,
 )

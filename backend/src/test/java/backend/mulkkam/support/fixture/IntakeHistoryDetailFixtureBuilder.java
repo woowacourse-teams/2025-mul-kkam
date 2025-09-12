@@ -2,6 +2,7 @@ package backend.mulkkam.support.fixture;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -48,7 +49,8 @@ public class IntakeHistoryDetailFixtureBuilder {
                 this.time,
                 this.intakeHistory,
                 this.intakeType,
-                cup.getCupAmount().value()
+                cup.getCupAmount().value(),
+                cup.getCupEmoji().getUrl()
         );
     }
 
@@ -57,7 +59,8 @@ public class IntakeHistoryDetailFixtureBuilder {
                 this.time,
                 this.intakeHistory,
                 this.intakeType,
-                this.intakeAmount.value()
+                this.intakeAmount.value(),
+                new CupEmojiUrl(this.cupEmojiUrl)
         );
     }
 }

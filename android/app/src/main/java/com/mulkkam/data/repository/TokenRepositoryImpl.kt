@@ -1,6 +1,6 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.preference.TokenPreference
+import com.mulkkam.data.local.preference.TokenPreference
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.TokenRepository

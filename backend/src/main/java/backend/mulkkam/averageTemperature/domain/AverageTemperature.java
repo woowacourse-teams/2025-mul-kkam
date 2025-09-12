@@ -24,7 +24,7 @@ public class AverageTemperature {
     @Column(nullable = false)
     private LocalDate date;
 
-    @Column(nullable = false, name = "temperature")
+    @Column(nullable = false)
     private double temperature;
 
     public AverageTemperature(

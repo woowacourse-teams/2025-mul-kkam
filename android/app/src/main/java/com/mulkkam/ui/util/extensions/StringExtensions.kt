@@ -74,3 +74,10 @@ fun SpannableString.getColoredSpannable(
 
     return this
 }
+
+fun String.sanitizeLeadingZeros(): String =
+    if (length > 1 && startsWith("0")) {
+        this.trimStart('0').ifEmpty { "0" }
+    } else {
+        this
+    }

@@ -1,6 +1,7 @@
 package backend.mulkkam.intake.dto.request;
 
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,9 +20,10 @@ public record CreateIntakeHistoryDetailByUserInputRequest(
         int intakeAmount
 ) {
     public IntakeHistoryDetail toIntakeDetail(
-            IntakeHistory intakeHistory
+            IntakeHistory intakeHistory,
+            CupEmojiUrl cupEmojiUrl
     ) {
         LocalTime time = dateTime.toLocalTime();
-        return new IntakeHistoryDetail(time, intakeHistory, intakeType, intakeAmount);
+        return new IntakeHistoryDetail(time, intakeHistory, intakeType, intakeAmount, cupEmojiUrl);
     }
 }

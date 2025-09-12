@@ -18,6 +18,11 @@ android {
             .get()
             .toInt()
 
+    val localProperties = gradleLocalProperties(rootDir, providers)
+    val kakaoKey = localProperties.getProperty("key.kakao") ?: ""
+    val releaseBaseUrl = localProperties.getProperty("release.base.url") ?: ""
+    val debugBaseUrl = localProperties.getProperty("debug.base.url") ?: ""
+
     defaultConfig {
         applicationId = "com.mulkkam"
         minSdk =
@@ -38,36 +43,32 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
-        buildConfigField(
-            "String",
-            "BASE_URL",
-            gradleLocalProperties(rootDir, providers).getProperty("base.url"),
-        )
-
-        val kakaoKey =
-            gradleLocalProperties(rootDir, providers).getProperty("key.kakao") ?: ""
         buildConfigField("String", "KEY_KAKAO", "\"$kakaoKey\"")
 
         manifestPlaceholders["kakaoKey"] = kakaoKey
+
+        proguardFiles(
+            getDefaultProguardFile("proguard-android-optimize.txt"),
+            "proguard-rules.pro",
+        )
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+
+            buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
         }
 
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro",
-            )
+
+            applicationIdSuffix = ".dev"
+            versionNameSuffix = "-dev"
+
+            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
         }
     }
     buildFeatures {
@@ -111,10 +112,10 @@ dependencies {
     testImplementation(libs.mockk)
 
     // 이미지 로딩 및 캐싱 라이브러리
-    implementation(libs.glide)
+    implementation(libs.coil)
+    implementation(libs.coil.svg)
+    implementation(libs.coil.network)
     implementation(libs.lottie)
-    implementation(libs.androidsvg)
-    kapt(libs.glide.compiler)
 
     // 로그인
     implementation(libs.kakao.v2.user)
