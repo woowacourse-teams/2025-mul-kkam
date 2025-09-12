@@ -2,8 +2,6 @@ package com.mulkkam.ui.onboarding.targetamount
 
 import android.content.res.ColorStateList
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.widget.EditText
 import androidx.core.content.ContextCompat.getColor
@@ -23,6 +21,7 @@ import com.mulkkam.ui.util.extensions.applyImeMargin
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.getColoredSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
+import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.util.Locale
@@ -30,9 +29,6 @@ import java.util.Locale
 class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(FragmentTargetAmountBinding::inflate) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: TargetAmountViewModel by viewModels()
-
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
 
     override fun onViewCreated(
         view: View,
@@ -49,7 +45,10 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         binding.tvComplete.applyImeMargin()
 
         viewModel.loadRecommendedTargetAmount(
-            nickname = parentViewModel.onboardingInfo.nickname.orEmpty(),
+            nickname =
+                parentViewModel.onboardingInfo.nickname
+                    ?.name
+                    .orEmpty(),
             gender = parentViewModel.onboardingInfo.gender,
             weight = parentViewModel.onboardingInfo.weight,
         )
@@ -85,7 +84,7 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                         .toIntOrNull()
                     ?: 0
             parentViewModel.updateTargetAmount(amount)
-            parentViewModel.completeOnboarding()
+            parentViewModel.moveToNextStep()
         }
     }
 
@@ -159,12 +158,11 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
         recommendedTargetAmount: Int,
     ) {
         val formattedAmount = String.format(Locale.US, "%,dml", recommendedTargetAmount)
-        val ctx = requireContext()
 
         binding.tvRecommendedTargetAmount.text =
             getString(R.string.target_amount_recommended_water_goal, nickname, recommendedTargetAmount)
-                .getAppearanceSpannable(ctx, R.style.title2, nickname, formattedAmount)
-                .getColoredSpannable(ctx, R.color.primary_200, nickname, formattedAmount)
+                .getAppearanceSpannable(requireContext(), R.style.title2, nickname, formattedAmount)
+                .getColoredSpannable(requireContext(), R.color.primary_200, nickname, formattedAmount)
     }
 
     private fun updateSaveEnabled(enabled: Boolean) {
@@ -182,23 +180,17 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
 
     private fun initTargetAmountInputWatcher() {
         binding.etInputGoal.doAfterTextChanged { editable ->
-            val processedText = sanitizeLeadingZeros(editable.toString())
+            val processedText = editable.toString().sanitizeLeadingZeros()
 
             if (processedText != editable.toString()) {
                 updateEditText(binding.etInputGoal, processedText)
                 return@doAfterTextChanged
             }
 
-            debounceTargetAmountUpdate(processedText)
+            val targetAmount = processedText.toIntOrNull()
+            viewModel.updateTargetAmount(targetAmount)
         }
     }
-
-    private fun sanitizeLeadingZeros(input: String): String =
-        if (input.length > 1 && input.startsWith("0")) {
-            input.trimStart('0').ifEmpty { "0" }
-        } else {
-            input
-        }
 
     private fun updateEditText(
         editText: EditText,
@@ -206,15 +198,6 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
     ) {
         editText.setText(newText)
         editText.setSelection(newText.length)
-    }
-
-    private fun debounceTargetAmountUpdate(text: String) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-        debounceRunnable =
-            Runnable {
-                val targetAmount = text.toIntOrNull()
-                viewModel.updateTargetAmount(targetAmount)
-            }.also { debounceHandler.postDelayed(it, 300L) }
     }
 
     private fun TargetAmountError.toMessageRes(): String =

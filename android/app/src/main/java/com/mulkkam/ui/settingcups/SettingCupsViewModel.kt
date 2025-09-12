@@ -13,7 +13,6 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import com.mulkkam.ui.settingcups.model.toUi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SettingCupsViewModel : ViewModel() {
@@ -22,6 +21,9 @@ class SettingCupsViewModel : ViewModel() {
 
     private var _cupsReorderUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData(MulKkamUiState.Idle)
     val cupsReorderUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsReorderUiState
+
+    private var _cupsResetUiState: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData(MulKkamUiState.Idle)
+    val cupsResetUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsResetUiState
 
     init {
         loadCups()
@@ -42,16 +44,15 @@ class SettingCupsViewModel : ViewModel() {
     }
 
     fun updateCupOrder(newOrder: List<CupUiModel>) {
-        val currentOrder = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+        val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val isReordering = cupsReorderUiState.value is MulKkamUiState.Loading
 
-        if (newOrder == currentOrder || isReordering) {
-            _cupsUiState.value = cupsUiState.value
+        if (newOrder == currentCups.cups || isReordering) {
+            _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
             return
         }
 
         val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
-
         viewModelScope.launch {
             _cupsReorderUiState.value = MulKkamUiState.Loading
             runCatching {
@@ -60,16 +61,30 @@ class SettingCupsViewModel : ViewModel() {
                 if (reorderedCups != cups) {
                     _cupsUiState.value = MulKkamUiState.Success(cups.toUi())
                 }
-                delay(REORDER_DELAY_TIME)
                 _cupsReorderUiState.value = MulKkamUiState.Success(Unit)
-            }.onFailure { t ->
-                _cupsUiState.value = cupsUiState.value
-                _cupsReorderUiState.value = MulKkamUiState.Failure(t.toMulKkamError())
+            }.onFailure {
+                _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
+                _cupsReorderUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
-    companion object {
-        private const val REORDER_DELAY_TIME: Long = 2000L
+    fun resetCups() {
+        viewModelScope.launch {
+            _cupsResetUiState.value = MulKkamUiState.Loading
+            runCatching {
+                cupsRepository.resetCups().getOrError()
+            }.onSuccess {
+                _cupsResetUiState.value = MulKkamUiState.Success(Unit)
+                loadCups()
+            }.onFailure {
+                _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
+    fun applyOptimisticCupOrder(newOrder: List<CupUiModel>) {
+        val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
+        _cupsUiState.value = MulKkamUiState.Success(reorderedCups.toUi())
     }
 }

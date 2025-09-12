@@ -16,10 +16,13 @@ import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.members.TodayProgressInfo
+import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
+import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
@@ -74,17 +77,10 @@ class HomeFragment :
                     todayProgressInfoMulKkamUiState,
                 )
 
-            MulKkamUiState.Loading -> Unit
-            MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.load_info_error),
-                        R.drawable.ic_alert_circle,
-                    ).apply {
-                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                    }.show()
+                handleFailure(todayProgressInfoMulKkamUiState.error)
             }
         }
     }
@@ -147,11 +143,42 @@ class HomeFragment :
         binding.tvHomeCharacterChat.text = comment
     }
 
+    private fun handleFailure(error: MulKkamError) {
+        if (error is MulKkamError.AccountError ||
+            error is MulKkamError.Unknown
+        ) {
+            CustomToast
+                .makeText(
+                    requireContext(),
+                    getString(R.string.authorization_expired),
+                    R.drawable.ic_alert_circle,
+                ).show()
+            navigateToLogin()
+        } else {
+            CustomSnackBar
+                .make(
+                    binding.root,
+                    getString(R.string.load_info_error),
+                    R.drawable.ic_alert_circle,
+                ).apply {
+                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                }.show()
+        }
+    }
+
+    private fun navigateToLogin() {
+        val intent =
+            LoginActivity.newIntent(requireContext()).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+        startActivity(intent)
+    }
+
     private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
         when (cupsUiState) {
             is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Failure -> Unit
         }
     }
@@ -161,12 +188,12 @@ class HomeFragment :
             items =
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(
-                        buttonLabel = cup.nickname,
-                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
+                        buttonLabel = cup.name.value,
+                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji.cupEmojiUrl),
                         iconLabel =
                             getString(
                                 R.string.expandable_floating_menu_intake_unit,
-                                cup.amount,
+                                cup.amount.value,
                             ),
                         data = cup,
                     )
@@ -251,12 +278,18 @@ class HomeFragment :
                 CustomSnackBar
                     .make(
                         binding.root,
-                        getString(R.string.manual_drink_success, drinkUiState.data),
+                        getString(
+                            R.string.manual_drink_success,
+                            drinkUiState.data,
+                        ),
                         R.drawable.ic_terms_all_check_on,
                     ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
+
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading -> Unit
 
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
@@ -268,9 +301,6 @@ class HomeFragment :
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
             }
-
-            MulKkamUiState.Idle -> Unit
-            MulKkamUiState.Loading -> Unit
         }
     }
 

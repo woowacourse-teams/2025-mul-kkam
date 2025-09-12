@@ -3,17 +3,19 @@ package com.mulkkam.ui.notification.adapter
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.domain.model.notification.Notification
-import com.mulkkam.ui.notification.adapter.NotificationViewHolder.NotificationHandler
+import com.mulkkam.ui.notification.adapter.NotificationViewHolder.NotificationApplyHandler
 
 class NotificationAdapter(
-    private val handler: NotificationHandler,
-) : RecyclerView.Adapter<NotificationViewHolder>() {
-    private val notifications: MutableList<Notification> = mutableListOf()
+    private val applyHandler: NotificationApplyHandler,
+    private val deleteHandler: NotificationDeleteHandler,
+) : RecyclerView.Adapter<NotificationViewHolder>(),
+    ItemSwipeListener {
+    val notifications: MutableList<Notification> = mutableListOf()
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): NotificationViewHolder = NotificationViewHolder.from(parent, handler)
+    ): NotificationViewHolder = NotificationViewHolder.from(parent, applyHandler)
 
     override fun onBindViewHolder(
         holder: NotificationViewHolder,
@@ -36,5 +38,15 @@ class NotificationAdapter(
         } else {
             notifyItemRangeInserted(oldSize, newSize - oldSize)
         }
+    }
+
+    override fun onItemSwipe(position: Int) {
+        deleteHandler.onDelete(notifications[position].id)
+        notifications.removeAt(position)
+        notifyItemRemoved(position)
+    }
+
+    fun interface NotificationDeleteHandler {
+        fun onDelete(id: Int)
     }
 }

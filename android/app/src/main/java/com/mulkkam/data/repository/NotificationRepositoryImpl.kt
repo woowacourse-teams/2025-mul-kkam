@@ -3,7 +3,7 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRequest
-import com.mulkkam.data.remote.model.response.notification.toDomain
+import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.NotificationsService
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -41,11 +41,29 @@ class NotificationRepositoryImpl(
         )
     }
 
+    override suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit> {
+        val result = notificationService.postSuggestionNotificationsApproval(id)
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
     override suspend fun getNotificationsUnreadCount(): MulKkamResult<Long> {
         val result = notificationService.getNotificationsUnreadCount()
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.count) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun deleteNotifications(id: Int): MulKkamResult<Unit> {
+        val result = notificationService.deleteNotifications(id)
+
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }

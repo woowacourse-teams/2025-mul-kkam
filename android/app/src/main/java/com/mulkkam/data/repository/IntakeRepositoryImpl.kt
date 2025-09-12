@@ -3,13 +3,16 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
-import com.mulkkam.data.remote.model.request.intake.IntakeHistoryRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
+import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
 import com.mulkkam.data.remote.model.response.intake.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
@@ -32,12 +35,36 @@ class IntakeRepositoryImpl(
         )
     }
 
-    override suspend fun postIntakeHistory(
+    override suspend fun postIntakeHistoryInput(
         dateTime: LocalDateTime,
-        amount: Int,
+        intakeType: IntakeType,
+        amount: CupAmount,
     ): MulKkamResult<IntakeHistoryResult> {
         val result =
-            intakeService.postIntakeHistory(IntakeHistoryRequest(dateTime.toString(), amount))
+            intakeService.postIntakeHistoryInput(
+                IntakeHistoryInputRequest(
+                    dateTime.toString(),
+                    intakeType.name,
+                    amount.value,
+                ),
+            )
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun postIntakeHistoryCup(
+        dateTime: LocalDateTime,
+        cupId: Long,
+    ): MulKkamResult<IntakeHistoryResult> {
+        val result =
+            intakeService.postIntakeHistoryCup(
+                IntakeHistoryCupRequest(
+                    dateTime.toString(),
+                    cupId,
+                ),
+            )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -81,17 +108,6 @@ class IntakeRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit> {
-        val result =
-            intakeService.patchIntakeAmountTargetSuggested(
-                IntakeAmountRequest(amount),
-            )
-        return result.fold(
-            onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
