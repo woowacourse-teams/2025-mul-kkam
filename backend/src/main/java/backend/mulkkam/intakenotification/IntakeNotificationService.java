@@ -56,7 +56,7 @@ public class IntakeNotificationService {
 
     public void notifyRemindNotification() {
         notificationService.createAndSendTopicNotification(
-                new CreateTopicNotificationRequest("리마인드", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?", "mulkkam", Action.GO_HOME,
+                new CreateTopicNotificationRequest("물마실 시간!", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?", "mulkkam", Action.GO_HOME,
                         NotificationType.REMIND, LocalDateTime.now())
         );
     }
