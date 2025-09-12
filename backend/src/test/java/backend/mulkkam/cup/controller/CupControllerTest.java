@@ -25,8 +25,8 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiType;
 import backend.mulkkam.cup.domain.IntakeType;
-import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.domain.vo.CupNickname;
 import backend.mulkkam.cup.domain.vo.CupRank;
 import backend.mulkkam.cup.dto.CupRankDto;
@@ -55,6 +55,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
 class CupControllerTest extends ControllerTest {
+
+    private static final String defaultEmojiUrl = "url";
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -98,8 +100,10 @@ class CupControllerTest extends ControllerTest {
 
     private void saveDefaultCupEmojis() {
         for (IntakeType intakeType : IntakeType.values()) {
-            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
-            cupEmojiRepository.save(new CupEmoji(url));
+            DefaultCup.of(intakeType);
+            CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
+            cupEmoji.setEmojiType(intakeType, EmojiType.DEFAULT);
+            cupEmojiRepository.save(cupEmoji);
         }
     }
 

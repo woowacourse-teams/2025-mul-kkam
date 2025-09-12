@@ -56,7 +56,7 @@ class CupServiceUnitTest {
     private CupService cupService;
 
     private final Long cupEmojiId = 1L;
-    private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, new CupEmojiUrl("https://cup.com"));
+    private final CupEmoji cupEmoji = new CupEmoji(cupEmojiId, null, new CupEmojiUrl("https://cup.com"));
 
     @DisplayName("컵을 생성할 때")
     @Nested
@@ -217,7 +217,7 @@ class CupServiceUnitTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(cupsResponse.size()).isEqualTo(2);
+                softly.assertThat(cupsResponse.cups().size()).isEqualTo(2);
                 softly.assertThat(firstCup.cupNickname()).isEqualTo(cup2.getNickname().value());
                 softly.assertThat(firstCup.cupAmount()).isEqualTo(cup2.getCupAmount().value());
                 softly.assertThat(firstCup.cupRank()).isEqualTo(cup2.getCupRank().value());

@@ -15,8 +15,9 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiType;
 import backend.mulkkam.cup.domain.IntakeType;
-import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
@@ -46,17 +47,17 @@ import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
+
+    private static final String defaultEmojiUrl = "url";
 
     @Autowired
     private MemberService memberService;
@@ -475,8 +476,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     private void saveDefaultCupEmojis() {
         for (IntakeType intakeType : IntakeType.values()) {
-            CupEmojiUrl url = CupEmojiUrl.getDefaultByType(intakeType);
-            cupEmojiRepository.save(new CupEmoji(url));
+            DefaultCup.of(intakeType);
+            CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
+            cupEmoji.setEmojiType(intakeType, EmojiType.DEFAULT);
+            cupEmojiRepository.save(cupEmoji);
         }
     }
 }

@@ -2,8 +2,10 @@ package backend.mulkkam.cup.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
+import backend.mulkkam.cup.support.EmojiCodeConverter;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,19 +29,23 @@ public class CupEmoji extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Convert(converter = EmojiCodeConverter.class)
+    @Column(name = "code", length = 64, unique = true)
+    private EmojiCode code;
+
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "url", nullable = false))
     private CupEmojiUrl url;
 
     public CupEmoji(CupEmojiUrl cupEmojiUrl) {
-        if (cupEmojiUrl == null) {
-            this.url = CupEmojiUrl.getDefaultByType(IntakeType.WATER);
-            return;
-        }
         this.url = cupEmojiUrl;
     }
 
     public CupEmoji(String url) {
-        this.url = new CupEmojiUrl(url);
+        this(new CupEmojiUrl(url));
+    }
+
+    public void setEmojiType(IntakeType intakeType, EmojiType emojiType) {
+        this.code = EmojiCode.of(intakeType, emojiType);
     }
 }

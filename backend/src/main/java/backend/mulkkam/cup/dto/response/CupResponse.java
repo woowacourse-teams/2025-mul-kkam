@@ -2,6 +2,7 @@ package backend.mulkkam.cup.dto.response;
 
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.dto.CupEmojiResponse;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public record CupResponse(
@@ -15,8 +16,7 @@ public record CupResponse(
         Integer cupRank,
         @Schema(description = "음료 종류", implementation = IntakeType.class)
         IntakeType intakeType,
-        @Schema(description = "이모지 url", example = "https:///example/com️")
-        String emojiUrl
+        CupEmojiResponse emoji
 ) {
 
     public CupResponse(Cup cup) {
@@ -26,7 +26,7 @@ public record CupResponse(
                 cup.getCupAmount().value(),
                 cup.getCupRank().value(),
                 cup.getIntakeType(),
-                cup.getCupEmoji().getUrl().value()
+                new CupEmojiResponse(cup.getCupEmoji())
         );
     }
 }

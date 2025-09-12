@@ -13,6 +13,9 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiType;
+import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
@@ -52,6 +55,8 @@ import java.util.Optional;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
+    private static final String defaultEmojiUrl = "url";
+
     @Autowired
     private IntakeHistoryService intakeHistoryService;
 
@@ -81,6 +86,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     void setUp() {
         memberRepository.save(member);
         cupEmojiRepository.save(cupEmoji);
+
+        saveDefaultCupEmojis();
 
         Cup cup = CupFixtureBuilder
                 .withMemberAndCupEmoji(member, cupEmoji)
@@ -420,7 +427,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
-                    new MemberDetails(member));
+                    new MemberDetails(member)
+            );
 
             // then
             DateRangeRequest dateRangeRequest = new DateRangeRequest(date, date);
@@ -429,11 +437,16 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetailResponse intakeHistoryDetailResponse = intakeHistorySummaryResponses.getFirst()
                     .intakeDetails().getFirst();
 
+            CupEmoji expectEmoji = cupEmojiRepository.findAll()
+                    .stream()
+                    .filter(v -> v.getUrl().equals(new CupEmojiUrl(defaultEmojiUrl)))
+                    .findFirst()
+                    .orElseThrow(RuntimeException::new);
+
             assertSoftly(softly -> {
                 softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
                 softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
-                softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl())
-                        .isEqualTo(CupEmojiUrl.getDefaultByType(WATER).value());
+                softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl()).isEqualTo(expectEmoji.getUrl().value());
             });
         }
     }
@@ -529,6 +542,15 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     ))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
+        }
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            DefaultCup.of(intakeType);
+            CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
+            cupEmoji.setEmojiType(intakeType, EmojiType.DEFAULT);
+            cupEmojiRepository.save(cupEmoji);
         }
     }
 }
