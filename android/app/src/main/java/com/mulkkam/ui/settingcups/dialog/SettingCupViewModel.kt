@@ -53,26 +53,15 @@ class SettingCupViewModel : ViewModel() {
     val isSaveAvailable: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
-                val current =
-                    _cup.value ?: run {
-                        value = false
-                        return
-                    }
                 val hasChanged = hasChanges.value == true
                 if (!hasChanged) {
                     value = false
                     return
                 }
 
-                val nameChanged = current.name != originalCup.name
-                val amountChanged = current.amount != originalCup.amount
-
-                val isNameAvailable =
-                    if (nameChanged) _cupNameValidity.value is MulKkamUiState.Success else true
-                val isAmountAvailable =
-                    if (amountChanged) _amountValidity.value is MulKkamUiState.Success else true
-                val isEmojiSelected =
-                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
+                val isNameAvailable = _cupNameValidity.value is MulKkamUiState.Success
+                val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
+                val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
 
                 value = isNameAvailable && isAmountAvailable && isEmojiSelected
             }
@@ -103,7 +92,11 @@ class SettingCupViewModel : ViewModel() {
                 cupsRepository.getCupEmojis().getOrError()
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
-                selectEmoji(cup.value?.emoji?.id ?: return@onSuccess)
+                when (editType.value) {
+                    SettingWaterCupEditType.ADD -> selectEmoji(it.firstOrNull()?.id ?: return@onSuccess)
+                    SettingWaterCupEditType.EDIT -> selectEmoji(cup.value?.emoji?.id ?: return@onSuccess)
+                    null -> return@onSuccess
+                }
             }
         }
     }
