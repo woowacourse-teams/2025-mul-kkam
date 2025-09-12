@@ -7,8 +7,6 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
-import backend.mulkkam.common.infrastructure.fcm.dto.SendTopicEvent;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.device.domain.Device;
@@ -91,7 +89,7 @@ public class NotificationService {
         }
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        publisher.publishEvent(new SendTopicEvent(sendMessageByFcmTopicRequest));
+        publisher.publishEvent(sendMessageByFcmTopicRequest);
     }
 
     @Transactional
@@ -190,7 +188,7 @@ public class NotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            publisher.publishEvent(new SendTokenEvent(sendMessageByFcmTokenRequest));
+            publisher.publishEvent(sendMessageByFcmTokenRequest);
         }
     }
 

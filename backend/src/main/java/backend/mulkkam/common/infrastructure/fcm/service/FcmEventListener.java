@@ -1,7 +1,7 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
-import backend.mulkkam.common.infrastructure.fcm.dto.SendTokenEvent;
-import backend.mulkkam.common.infrastructure.fcm.dto.SendTopicEvent;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
@@ -13,12 +13,12 @@ public class FcmEventListener {
     private final FcmClient fcmClient;
 
     @EventListener
-    public void onTopic(SendTopicEvent sendTopicEvent) {
-        fcmClient.sendMessageByTopic(sendTopicEvent.sendMessageByFcmTopicRequest());
+    public void onTopic(SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest) {
+        fcmClient.sendMessageByTopic(sendMessageByFcmTopicRequest);
     }
 
     @EventListener
-    public void onToken(SendTokenEvent sendTokenEvent) {
-        fcmClient.sendMessageByToken(sendTokenEvent.sendMessageByFcmTokenRequest());
+    public void onToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest) {
+        fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
     }
 }
