@@ -4,8 +4,8 @@ lottie = "6.6.7"
 minSdk = "28"
 shimmer = "0.5.0"
 targetSdk = "36"
-versionCode = "3"
-versionName = "1.0.2"
+versionCode = "4"
+versionName = "2.0.0"
 agp = "8.9.3"
 kotlin = "2.2.0"
 coreKtx = "1.15.0"
@@ -65,9 +65,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
-coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil"}
-coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil"}
-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil"}
+coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
+coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakaoV2User" }
