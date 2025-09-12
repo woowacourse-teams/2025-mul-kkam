@@ -37,7 +37,7 @@ class CupViewHolder(
                     ViewGroup.GONE
                 }
             ivIcon.loadUrl(
-                url = item.value.emoji,
+                url = item.value.emoji.cupEmojiUrl,
                 shape = ImageShape.Rounded(12),
             )
 

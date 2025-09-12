@@ -189,7 +189,7 @@ class HomeFragment :
                 cups.cups.map { cup ->
                     ExtendableFloatingMenuItem(
                         buttonLabel = cup.name.value,
-                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji),
+                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji.cupEmojiUrl),
                         iconLabel =
                             getString(
                                 R.string.expandable_floating_menu_intake_unit,

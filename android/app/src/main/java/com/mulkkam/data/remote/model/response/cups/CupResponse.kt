@@ -10,7 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class CupResponse(
     @SerialName("id")
-    val id: Long,
+    val id: Long? = null,
     @SerialName("cupNickname")
     val cupNickname: String,
     @SerialName("cupAmount")
@@ -19,16 +19,16 @@ data class CupResponse(
     val cupRank: Int,
     @SerialName("intakeType")
     val intakeType: String,
-    @SerialName("emojiUrl")
-    val emoji: String,
+    @SerialName("emoji")
+    val emoji: CupEmojiResponse,
 )
 
 fun CupResponse.toDomain() =
     Cup(
-        id = id,
+        id = id ?: 0L,
         name = CupName(cupNickname),
         amount = CupAmount(cupAmount),
         rank = cupRank,
         intakeType = IntakeType.from(intakeType),
-        emoji = emoji,
+        emoji = emoji.toDomain(),
     )

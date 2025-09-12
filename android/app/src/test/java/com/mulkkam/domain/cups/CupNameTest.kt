@@ -6,7 +6,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
-class CupEmojiNameTest {
+class CupNameTest {
     @Test
     fun `정상적인 이름은 잘 만들어진다`() {
         // given

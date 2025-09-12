@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.cups.CupAmount
@@ -21,7 +22,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
 import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
+import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -35,8 +36,8 @@ class CupBottomSheetFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: CupBottomSheetViewModel by activityViewModels()
-    private val cupsViewModel: CupsViewModel by activityViewModels()
+    private val viewModel: CupBottomSheetViewModel by viewModels()
+    private val parentViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
@@ -74,15 +75,15 @@ class CupBottomSheetFragment :
         val updatedCup = viewModel.cup.value ?: return
         val editType = viewModel.editType.value ?: return
         when (editType) {
-            SettingWaterCupEditType.ADD -> cupsViewModel.addCup(updatedCup)
-            SettingWaterCupEditType.EDIT -> cupsViewModel.updateCup(updatedCup)
+            SettingWaterCupEditType.ADD -> parentViewModel.addCup(updatedCup)
+            SettingWaterCupEditType.EDIT -> parentViewModel.updateCup(updatedCup)
         }
         dismiss()
     }
 
     private fun handleDeleteClick() {
         val rank = viewModel.cup.value?.rank ?: return
-        cupsViewModel.deleteCup(rank)
+        parentViewModel.deleteCup(rank)
         dismiss()
     }
 
@@ -109,8 +110,12 @@ class CupBottomSheetFragment :
             }
 
             editType.observe(viewLifecycleOwner) { settingWaterCupEditType ->
-                settingWaterCupEditType?.let { showTitle(it) }
-                binding.tvDelete.visibility = if (settingWaterCupEditType == SettingWaterCupEditType.ADD) View.GONE else View.VISIBLE
+                settingWaterCupEditType?.let {
+                    showTitle(it)
+                    if (it == SettingWaterCupEditType.ADD) {
+                        binding.tvDelete.visibility = View.GONE
+                    }
+                }
             }
 
             cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->
@@ -291,6 +296,7 @@ class CupBottomSheetFragment :
                 IntakeType.COFFEE,
             ),
         )
+        intakeAdapter.selectItem(cup?.intakeType ?: IntakeType.WATER)
     }
 
     companion object {

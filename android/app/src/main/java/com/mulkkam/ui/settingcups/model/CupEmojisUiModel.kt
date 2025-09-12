@@ -1,15 +1,12 @@
-package com.mulkkam.ui.settingcups.dialog.model
+package com.mulkkam.ui.settingcups.model
 
 import com.mulkkam.domain.model.cups.CupEmoji
 
 data class CupEmojisUiModel(
     val cupEmojis: List<CupEmojiUiModel>,
 ) {
-    val selectedCupEmojiId: Long?
-        get() = cupEmojis.firstOrNull { it.isSelected }?.id
-
-    val selectedCupEmojiUrl: String?
-        get() = cupEmojis.firstOrNull { it.isSelected }?.cupEmojiUrl
+    val selectedCupEmoji: CupEmojiUiModel?
+        get() = cupEmojis.firstOrNull { it.isSelected }
 
     fun selectCupEmoji(cupEmojiId: Long): CupEmojisUiModel =
         copy(

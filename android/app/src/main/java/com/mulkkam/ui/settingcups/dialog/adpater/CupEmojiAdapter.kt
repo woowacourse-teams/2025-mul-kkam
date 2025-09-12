@@ -2,7 +2,7 @@ package com.mulkkam.ui.settingcups.dialog.adpater
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojiUiModel
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 
 class CupEmojiAdapter(
     private val handler: CupEmojiViewHolder.Handler,

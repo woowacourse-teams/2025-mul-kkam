@@ -9,6 +9,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingCupBinding
 import com.mulkkam.domain.model.cups.CupAmount
@@ -22,7 +23,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
-import com.mulkkam.ui.settingcups.dialog.model.CupEmojisUiModel
+import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
@@ -36,9 +37,9 @@ class SettingCupFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,
     ) {
-    private val viewModel: SettingCupViewModel by activityViewModels()
+    private val viewModel: SettingCupViewModel by viewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
-    private val settingCupsViewModel: SettingCupsViewModel by activityViewModels()
+    private val parentViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
 
     private var intakeTypeTooltip: MulKkamTooltip? = null
@@ -94,8 +95,12 @@ class SettingCupFragment :
             }
 
             editType.observe(viewLifecycleOwner) { settingWaterCupEditType ->
-                settingWaterCupEditType?.let { showTitle(it) }
-                binding.tvDelete.visibility = if (settingWaterCupEditType == SettingWaterCupEditType.ADD) View.GONE else View.VISIBLE
+                settingWaterCupEditType?.let {
+                    showTitle(it)
+                    if (it == SettingWaterCupEditType.ADD) {
+                        binding.tvDelete.visibility = View.GONE
+                    }
+                }
             }
 
             cupNameValidity.observe(viewLifecycleOwner) { cupNameValidity ->
@@ -116,7 +121,7 @@ class SettingCupFragment :
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_save_result))
                     .show()
-                settingCupsViewModel.loadCups()
+                parentViewModel.loadCups()
                 dismiss()
             }
 
@@ -124,7 +129,7 @@ class SettingCupFragment :
                 CustomToast
                     .makeText(requireContext(), requireContext().getString(R.string.setting_cup_delete_result))
                     .show()
-                settingCupsViewModel.loadCups()
+                parentViewModel.loadCups()
                 dismiss()
             }
 
@@ -288,6 +293,7 @@ class SettingCupFragment :
                 IntakeType.COFFEE,
             ),
         )
+        intakeAdapter.selectItem(cup?.intakeType ?: IntakeType.WATER)
     }
 
     companion object {

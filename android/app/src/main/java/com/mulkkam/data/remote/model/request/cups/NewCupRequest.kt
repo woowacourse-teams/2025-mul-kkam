@@ -24,5 +24,5 @@ fun Cup.toData(): NewCupRequest =
         cupAmount = amount.value,
         cupRank = rank,
         intakeType = intakeType.name,
-        cupEmojiId = emojiId,
+        cupEmojiId = emoji.id,
     )

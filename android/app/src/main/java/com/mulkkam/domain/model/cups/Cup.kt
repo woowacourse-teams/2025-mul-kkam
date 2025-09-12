@@ -9,8 +9,7 @@ data class Cup(
     val amount: CupAmount,
     val rank: Int,
     val intakeType: IntakeType,
-    val emoji: String,
-    val emojiId: Long = 0L,
+    val emoji: CupEmoji,
 ) {
     val isRepresentative: Boolean
         get() = rank == REPRESENT_CUP_RANK
