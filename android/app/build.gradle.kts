@@ -9,6 +9,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -74,6 +75,7 @@ android {
     buildFeatures {
         viewBinding = true
         buildConfig = true
+        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21

@@ -111,3 +111,4 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kapt" }
+kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
