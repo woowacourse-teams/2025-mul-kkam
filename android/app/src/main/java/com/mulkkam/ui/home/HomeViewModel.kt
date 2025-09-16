@@ -3,6 +3,7 @@ package com.mulkkam.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.intakeRepository
@@ -38,6 +39,9 @@ class HomeViewModel : ViewModel() {
     private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> =
         MutableLiveData(MulKkamUiState.Idle)
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
+
+    private val _isGoalAchieved: MutableLiveData<Unit> = MutableLiveData()
+    val isGoalAchieved: LiveData<Unit> get() = _isGoalAchieved
 
     init {
         loadTodayProgressInfo()
@@ -123,6 +127,9 @@ class HomeViewModel : ViewModel() {
                 ),
             )
         _drinkUiState.value = MulKkamUiState.Success(intakeHistory.intakeAmount)
+        if (current.achievementRate < ACHIEVEMENT_RATE_FULL && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_FULL) {
+            _isGoalAchieved.value = Unit
+        }
     }
 
     fun addWaterIntake(
@@ -156,5 +163,9 @@ class HomeViewModel : ViewModel() {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
+    }
+
+    companion object {
+        private const val ACHIEVEMENT_RATE_FULL: Float = 100F
     }
 }

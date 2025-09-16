@@ -71,6 +71,11 @@ class HomeFragment :
             drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
                 handleDrinkResult(drinkUiState)
             }
+
+            isGoalAchieved.observe(viewLifecycleOwner) {
+                binding.lottieConfetti.setAnimation(R.raw.lottie_home_confetti)
+                binding.lottieConfetti.playAnimation()
+            }
         }
     }
 
