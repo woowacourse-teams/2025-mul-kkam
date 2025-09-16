@@ -62,6 +62,12 @@ class SettingCupViewModel : ViewModel() {
                 val isNameAvailable = _cupNameValidity.value is MulKkamUiState.Success
                 val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
                 val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
+                val isEmojiChanged =
+                    cupEmojisUiState.value
+                        ?.toSuccessDataOrNull()
+                        ?.selectedCupEmoji
+                        ?.id != originalCup.emoji.id
+                val isIntakeTypeChanged = cup.value?.intakeType != originalCup.intakeType
 
                 value =
                     when (editType.value) {
@@ -69,7 +75,7 @@ class SettingCupViewModel : ViewModel() {
                             isNameAvailable && isAmountAvailable && isEmojiSelected
                         }
                         else -> {
-                            (isNameAvailable || isAmountAvailable) && isEmojiSelected
+                            isNameAvailable || isAmountAvailable || isEmojiChanged || isIntakeTypeChanged
                         }
                     }
             }

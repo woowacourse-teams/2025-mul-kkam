@@ -1,5 +1,6 @@
 package com.mulkkam.ui.onboarding.cups.dialog
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -60,6 +61,12 @@ class CupBottomSheetViewModel : ViewModel() {
                 val isNameAvailable = _cupNameValidity.value is MulKkamUiState.Success
                 val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
                 val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
+                val isEmojiChanged =
+                    cupEmojisUiState.value
+                        ?.toSuccessDataOrNull()
+                        ?.selectedCupEmoji
+                        ?.id != originalCup.emoji.id
+                val isIntakeTypeChanged = cup.value?.intakeType != originalCup.intakeType
 
                 value =
                     when (editType.value) {
@@ -67,7 +74,7 @@ class CupBottomSheetViewModel : ViewModel() {
                             isNameAvailable && isAmountAvailable && isEmojiSelected
                         }
                         else -> {
-                            (isNameAvailable || isAmountAvailable) && isEmojiSelected
+                            isNameAvailable || isAmountAvailable || isEmojiChanged || isIntakeTypeChanged
                         }
                     }
             }
