@@ -61,7 +61,15 @@ class CupBottomSheetViewModel : ViewModel() {
                 val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
                 val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
 
-                value = isNameAvailable && isAmountAvailable && isEmojiSelected
+                value =
+                    when (editType.value) {
+                        SettingWaterCupEditType.ADD -> {
+                            isNameAvailable && isAmountAvailable && isEmojiSelected
+                        }
+                        else -> {
+                            (isNameAvailable || isAmountAvailable) && isEmojiSelected
+                        }
+                    }
             }
 
             addSource(_cup) { update() }
