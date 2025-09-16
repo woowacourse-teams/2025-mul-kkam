@@ -3,7 +3,6 @@ package com.mulkkam.ui.home
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.intakeRepository
