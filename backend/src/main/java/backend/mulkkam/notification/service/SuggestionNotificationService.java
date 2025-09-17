@@ -48,10 +48,27 @@ public class SuggestionNotificationService {
     private final MemberRepository memberRepository;
     private final FcmClient fcmClient;
 
-    @Scheduled(cron = "0 0 8 * * *")
     @Transactional
+    @Scheduled(cron = "0 0 8 * * *")
     public void notifyAdditionalWaterIntakeByWeather() {
-        notifyAdditionalIntakeByStoredWeather();
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul"); // TODO 2025. 8. 27. 20:21: import
+        LocalDateTime nowInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
+        AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
+
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            try {
+                createAndSendSuggestionNotification(
+                        toCreateSuggestionNotificationRequest(nowInSeoul, averageTemperature, member));
+            } catch (AlarmException e) {
+                log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
+                        member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934
+                        e.getErrorCode().name(),
+                        e.getErrorCode().getStatus()
+                );
+                // TODO 2025. 8. 27. 20:00: 로깅 리펙토링 필요(errorLoggedByGlobal)
+            }
+        }
     }
 
     @Transactional
@@ -90,27 +107,6 @@ public class SuggestionNotificationService {
                 new ModifyIntakeTargetAmountBySuggestionRequest(suggestionNotification.getRecommendedTargetAmount()));
 
         suggestionNotification.updateApplyTargetAmount(true);
-    }
-
-    public void notifyAdditionalIntakeByStoredWeather() {
-        ZoneId seoulZone = ZoneId.of("Asia/Seoul"); // TODO 2025. 8. 27. 20:21: import
-        LocalDateTime nowInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
-        AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
-
-        List<Member> members = memberRepository.findAll();
-        for (Member member : members) {
-            try {
-                createAndSendSuggestionNotification(
-                        toCreateSuggestionNotificationRequest(nowInSeoul, averageTemperature, member));
-            } catch (AlarmException e) {
-                log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
-                        member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934
-                        e.getErrorCode().name(),
-                        e.getErrorCode().getStatus()
-                );
-                // TODO 2025. 8. 27. 20:00: 로깅 리펙토링 필요(errorLoggedByGlobal)
-            }
-        }
     }
 
     public void delete(Long id) {
