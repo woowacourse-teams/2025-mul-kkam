@@ -12,6 +12,7 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
@@ -126,7 +127,7 @@ class HomeViewModel : ViewModel() {
                 ),
             )
         _drinkUiState.value = MulKkamUiState.Success(intakeHistory.intakeAmount)
-        if (current.achievementRate < ACHIEVEMENT_RATE_FULL && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_FULL) {
+        if (current.achievementRate < ACHIEVEMENT_RATE_MAX && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_MAX) {
             _isGoalAchieved.value = Unit
         }
     }
@@ -162,9 +163,5 @@ class HomeViewModel : ViewModel() {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
-    }
-
-    companion object {
-        private const val ACHIEVEMENT_RATE_FULL: Float = 100F
     }
 }
