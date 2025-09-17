@@ -1,9 +1,8 @@
-package backend.mulkkam.intakenotification.dto;
+package backend.mulkkam.notification.dto;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import java.time.LocalDateTime;
 
 public record CreateWeatherNotification(

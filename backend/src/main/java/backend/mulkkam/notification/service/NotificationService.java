@@ -7,6 +7,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.device.domain.Device;
@@ -31,6 +32,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +49,16 @@ public class NotificationService {
     private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
     private final ApplicationEventPublisher publisher;
+
+    @Transactional
+    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(cron = "0 0 19 * * *")
+    public void notifyRemindNotification() {
+        createAndSendTopicNotification(
+                new CreateTopicNotificationRequest("물마실 시간!", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?", "mulkkam", Action.GO_HOME,
+                        NotificationType.REMIND, LocalDateTime.now())
+        );
+    }
 
     @Transactional
     public ReadNotificationsResponse getNotificationsAfter(
@@ -80,6 +92,7 @@ public class NotificationService {
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
+
     @Transactional
     public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
         List<Member> members = memberRepository.findAll();

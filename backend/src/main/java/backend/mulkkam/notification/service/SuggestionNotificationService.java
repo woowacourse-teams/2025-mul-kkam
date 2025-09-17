@@ -3,15 +3,19 @@ package backend.mulkkam.notification.service;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
+import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
+import backend.mulkkam.notification.dto.CreateWeatherNotification;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
@@ -20,22 +24,35 @@ import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class SuggestionNotificationService {
 
     private final IntakeAmountService intakeAmountService;
+    private final WeatherService weatherService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
     private final FcmClient fcmClient;
+
+    @Scheduled(cron = "0 0 8 * * *")
+    @Transactional
+    public void notifyAdditionalWaterIntakeByWeather() {
+        notifyAdditionalIntakeByStoredWeather();
+    }
 
     @Transactional
     public void createActivityNotification(
@@ -75,6 +92,27 @@ public class SuggestionNotificationService {
         suggestionNotification.updateApplyTargetAmount(true);
     }
 
+    public void notifyAdditionalIntakeByStoredWeather() {
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul"); // TODO 2025. 8. 27. 20:21: import
+        LocalDateTime nowInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
+        AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
+
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            try {
+                createAndSendSuggestionNotification(
+                        toCreateSuggestionNotificationRequest(nowInSeoul, averageTemperature, member));
+            } catch (AlarmException e) {
+                log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
+                        member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934
+                        e.getErrorCode().name(),
+                        e.getErrorCode().getStatus()
+                );
+                // TODO 2025. 8. 27. 20:00: 로깅 리펙토링 필요(errorLoggedByGlobal)
+            }
+        }
+    }
+
     public void delete(Long id) {
         SuggestionNotification suggestionNotification = getSuggestionNotification(id);
         suggestionNotificationRepository.delete(suggestionNotification);
@@ -89,6 +127,30 @@ public class SuggestionNotificationService {
                     device.getToken());
             fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
         }
+    }
+
+    private CreateTokenSuggestionNotificationRequest toCreateSuggestionNotificationRequest(
+            LocalDateTime todayDateTimeInSeoul,
+            AverageTemperature averageTemperature,
+            Member member
+    ) {
+        ExtraIntakeAmount extraIntakeAmount = calculateExtraIntakeAmountBasedOnWeather(
+                member.getId(), averageTemperature.getTemperature());
+
+        CreateWeatherNotification createWeatherNotification = new CreateWeatherNotification(averageTemperature,
+                extraIntakeAmount, member, todayDateTimeInSeoul);
+
+        return createWeatherNotification.toCreateTokenSuggestionNotificationRequest();
+    }
+
+    private ExtraIntakeAmount calculateExtraIntakeAmountBasedOnWeather(
+            Long memberId,
+            double averageTemperatureForDate
+    ) {
+        Member member = getMember(memberId);
+        Double weight = member.getPhysicalAttributes().getWeight();
+
+        return ExtraIntakeAmount.calculateWithAverageTemperature(averageTemperatureForDate, weight);
     }
 
     private SuggestionNotification getSuggestionNotification(Long id, Long memberId) {
