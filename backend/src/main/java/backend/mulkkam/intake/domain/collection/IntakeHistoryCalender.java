@@ -10,29 +10,33 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class IntakeHistoryCalender {
 
     private final Map<LocalDate, IntakeHistory> historiesByDate;
     private final Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory;
 
-    public IntakeHistoryCalender(List<IntakeHistoryDetail> details) {
-        this.historiesByDate = new HashMap<>();
-        this.detailsByHistory = new HashMap<>();
-        init(details);
+    public IntakeHistoryCalender(List<IntakeHistory> intakeHistories, List<IntakeHistoryDetail> details) {
+        this.historiesByDate = getInitHistories(intakeHistories);
+        this.detailsByHistory = getInitDetails(details);
     }
 
-    private void init(List<IntakeHistoryDetail> details) {
+    private Map<LocalDate, IntakeHistory> getInitHistories(List<IntakeHistory> intakeHistories) {
+        return intakeHistories.stream()
+                .collect(Collectors.toMap(IntakeHistory::getHistoryDate, h -> h, (a, b) -> a));
+    }
+
+    private Map<IntakeHistory, List<IntakeHistoryDetail>> getInitDetails(List<IntakeHistoryDetail> details) {
+        Map<IntakeHistory, List<IntakeHistoryDetail>> result = new HashMap<>();
         for (IntakeHistoryDetail detail : details) {
             IntakeHistory intakeHistory = detail.getIntakeHistory();
-            LocalDate historyDate = intakeHistory.getHistoryDate();
-            historiesByDate.put(historyDate, intakeHistory);
-
-            List<IntakeHistoryDetail> saved = detailsByHistory.getOrDefault(intakeHistory, new ArrayList<>());
+            List<IntakeHistoryDetail> saved = result.getOrDefault(intakeHistory, new ArrayList<>());
             saved.add(detail);
-            detailsByHistory.put(intakeHistory, saved);
+            result.put(intakeHistory, saved);
         }
-        detailsByHistory.values().forEach(d -> d.sort(Comparator.comparing(IntakeHistoryDetail::getIntakeTime, Comparator.reverseOrder())));
+        result.values().forEach(d -> d.sort(Comparator.comparing(IntakeHistoryDetail::getIntakeTime, Comparator.reverseOrder())));
+        return Collections.unmodifiableMap(result);
     }
 
     public boolean isExistHistoryOf(LocalDate date) {

@@ -114,8 +114,9 @@ public class IntakeHistoryService {
         List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(
                 member, dateRangeRequest.from(), dateRangeRequest.to()
         );
+        List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member);
 
-        IntakeHistoryCalender intakeHistoryCalender = new IntakeHistoryCalender(details);
+        IntakeHistoryCalender intakeHistoryCalender = new IntakeHistoryCalender(histories, details);
 
         List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         return dates.stream()

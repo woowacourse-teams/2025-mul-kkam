@@ -164,6 +164,8 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryCrudService.getIntakeHistories(member))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -244,6 +246,8 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryCrudService.getIntakeHistories(member))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -297,6 +301,8 @@ class IntakeHistoryServiceUnitTest {
 
             given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
                     .willReturn(details);
+            given(intakeHistoryCrudService.getIntakeHistories(member))
+                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
