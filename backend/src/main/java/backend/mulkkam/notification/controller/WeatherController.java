@@ -1,4 +1,4 @@
-package backend.mulkkam.weather;
+package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.intakenotification.IntakeNotificationService;
 import io.swagger.v3.oas.annotations.Hidden;

@@ -1,6 +1,6 @@
 package backend.mulkkam.averageTemperature.serivce;
 
-import backend.mulkkam.intake.service.WeatherService;
+import backend.mulkkam.notification.service.WeatherService;
 import backend.mulkkam.intakenotification.IntakeNotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;

@@ -14,6 +14,8 @@ import backend.mulkkam.intake.dto.OpenWeatherResponse;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.CityInfo;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.ForecastEntry;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.ForecastEntry.TemperatureInfo;
+import backend.mulkkam.notification.service.WeatherClient;
+import backend.mulkkam.notification.service.WeatherService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;

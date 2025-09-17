@@ -5,7 +5,7 @@ import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.service.IntakeRecommendedAmountService;
-import backend.mulkkam.intake.service.WeatherService;
+import backend.mulkkam.notification.service.WeatherService;
 import backend.mulkkam.intakenotification.dto.CreateWeatherNotification;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
