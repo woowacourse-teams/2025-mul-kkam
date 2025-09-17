@@ -32,15 +32,14 @@ import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -80,7 +79,8 @@ public class IntakeHistoryService {
                 intakeDate,
                 member,
                 intakeHistory,
-                intakeHistoryDetail.getIntakeAmount().value()
+                intakeHistoryDetail.getIntakeAmount().value(),
+                cup.getIntakeType()
         );
     }
 
@@ -110,7 +110,8 @@ public class IntakeHistoryService {
                 intakeDate,
                 member,
                 intakeHistory,
-                intakeHistoryDetail.getIntakeAmount().value()
+                intakeHistoryDetail.getIntakeAmount().value(),
+                intakeType
         );
     }
 
@@ -176,7 +177,8 @@ public class IntakeHistoryService {
             LocalDate intakeDate,
             Member member,
             IntakeHistory intakeHistory,
-            int intakeAmount
+            int intakeAmount,
+            IntakeType intakeType
     ) {
         List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
 
@@ -184,7 +186,8 @@ public class IntakeHistoryService {
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
-        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount);
+        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount,
+                intakeType);
     }
 
     private IntakeHistory getIntakeHistory(
