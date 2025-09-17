@@ -15,18 +15,18 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
-import backend.mulkkam.notification.dto.CreateWeatherNotification;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.notification.domain.CityDateTime;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.dto.CreateWeatherNotification;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,15 +51,14 @@ public class SuggestionNotificationService {
     @Transactional
     @Scheduled(cron = "0 0 8 * * *")
     public void notifyAdditionalWaterIntakeByWeather() {
-        ZoneId seoulZone = ZoneId.of("Asia/Seoul"); // TODO 2025. 8. 27. 20:21: import
-        LocalDateTime nowInSeoul = ZonedDateTime.now(seoulZone).toLocalDateTime();
-        AverageTemperature averageTemperature = weatherService.getAverageTemperature(nowInSeoul.toLocalDate());
+        CityDateTime cityNow = CityDateTime.now(City.SEOUL);
+        AverageTemperature averageTemperature = weatherService.getAverageTemperature(cityNow);
 
         List<Member> members = memberRepository.findAll();
         for (Member member : members) {
             try {
                 createAndSendSuggestionNotification(
-                        toCreateSuggestionNotificationRequest(nowInSeoul, averageTemperature, member));
+                        toCreateSuggestionNotificationRequest(cityNow.localDateTime(), averageTemperature, member));
             } catch (AlarmException e) {
                 log.info("[CLIENT_ERROR] accountId = {}, code={}({})",
                         member.getId(), // 2025. 8. 27. 19:34: 필드명이 accountId 이지만, memberId로 로깅하는 이유 v.250827_1934

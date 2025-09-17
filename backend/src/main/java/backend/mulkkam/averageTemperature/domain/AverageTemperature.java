@@ -1,7 +1,7 @@
 package backend.mulkkam.averageTemperature.domain;
 
 import backend.mulkkam.notification.domain.City;
-import backend.mulkkam.notification.domain.CityDate;
+import backend.mulkkam.notification.domain.CityDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,11 +32,11 @@ public class AverageTemperature {
     private double temperature;
 
     public AverageTemperature(
-            CityDate cityDate,
+            CityDateTime cityDateTime,
             double temperature
     ) {
-        this.city = cityDate.city();
-        this.date = cityDate.localDate();
+        this.city = cityDateTime.city();
+        this.date = cityDateTime.getLocalDate();
         this.temperature = temperature;
     }
 }

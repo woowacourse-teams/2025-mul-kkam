@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.notification.domain.City;
-import backend.mulkkam.notification.domain.CityDate;
+import backend.mulkkam.notification.domain.CityDateTime;
 import backend.mulkkam.notification.service.NotificationService;
 import backend.mulkkam.notification.service.WeatherService;
 import io.swagger.v3.oas.annotations.Hidden;
@@ -22,7 +22,7 @@ public class WeatherController { // 백엔드 테스트용 controller (삭제 �
     @Hidden
     @PostMapping
     public ResponseEntity<Void> create() {
-        weatherService.notifyAdditionalIntakeByStoredWeather(CityDate.now(City.SEOUL));
+        weatherService.notifyAdditionalIntakeByStoredWeather(CityDateTime.now(City.SEOUL));
         return ResponseEntity.ok().build();
     }
 

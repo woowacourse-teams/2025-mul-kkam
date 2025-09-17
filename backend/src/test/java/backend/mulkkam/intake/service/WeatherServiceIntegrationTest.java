@@ -1,9 +1,10 @@
 package backend.mulkkam.intake.service;
 
 import backend.mulkkam.notification.domain.City;
-import backend.mulkkam.notification.domain.CityDate;
+import backend.mulkkam.notification.domain.CityDateTime;
 import backend.mulkkam.notification.service.WeatherService;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.time.LocalDateTime;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -26,10 +27,10 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExactDate() {
             // given
-            CityDate cityDate = new CityDate(City.SEOUL, LocalDate.now().plusDays(1));
+            CityDateTime cityDateTime = new CityDateTime(City.SEOUL, LocalDateTime.now().plusDays(1));
 
             // when
-            double averageTemperatureForDate = weatherService.getAverageTemperatureForCityDate(cityDate);
+            double averageTemperatureForDate = weatherService.getAverageTemperatureForCityDate(cityDateTime);
 
             // then
             System.out.println(averageTemperatureForDate);
