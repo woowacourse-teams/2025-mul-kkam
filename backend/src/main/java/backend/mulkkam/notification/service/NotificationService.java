@@ -27,7 +27,6 @@ import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,8 +53,20 @@ public class NotificationService {
     @Scheduled(cron = "0 0 14 * * *")
     @Scheduled(cron = "0 0 19 * * *")
     public void notifyRemindNotification() {
-        NotificationMessageTemplate remindNotificationMessage = getRemindNotificationMessage();
+        NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
         createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
+    }
+
+    @Transactional
+    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            Notification notification = notificationMessageTemplate.toNotification(member, now);
+            notificationRepository.save(notification);
+        }
+
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
+        publisher.publishEvent(sendMessageByFcmTopicRequest);
     }
 
     @Transactional
@@ -92,18 +103,6 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
-        List<Member> members = memberRepository.findAll();
-        for (Member member : members) {
-            Notification notification = notificationMessageTemplate.toNotification(member, now);
-            notificationRepository.save(notification);
-        }
-
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
-        publisher.publishEvent(sendMessageByFcmTopicRequest);
-    }
-
-    @Transactional
     public void createAndSendTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
         Member member = createTokenNotificationRequest.member();
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
@@ -136,12 +135,6 @@ public class NotificationService {
         }
 
         notificationRepository.delete(notification);
-    }
-
-    private NotificationMessageTemplate getRemindNotificationMessage() {
-        List<NotificationMessageTemplate> notificationMessageTemplates = NotificationMessageTemplateProvider.findByType(NotificationType.REMIND);
-        int randomIdx = RandomGenerator.getDefault().nextInt(1, notificationMessageTemplates.size());
-        return notificationMessageTemplates.get(randomIdx);
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
