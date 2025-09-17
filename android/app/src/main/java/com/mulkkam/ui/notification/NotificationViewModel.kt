@@ -8,13 +8,15 @@ import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class NotificationViewModel : ViewModel() {
-    private val _notifications: MutableLiveData<MulKkamUiState<List<Notification>>> =
-        MutableLiveData(MulKkamUiState.Idle)
-    val notifications: LiveData<MulKkamUiState<List<Notification>>> = _notifications
+    private val _notifications: MutableStateFlow<MulKkamUiState<List<Notification>>> =
+        MutableStateFlow(MulKkamUiState.Idle)
+    val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications
 
     private val _applySuggestionUiState: MutableLiveData<MulKkamUiState<Unit>> =
         MutableLiveData(
@@ -53,10 +55,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun applySuggestion(
-        id: Int,
-        onComplete: (isSuccess: Boolean) -> Unit,
-    ) {
+    fun applySuggestion(id: Int) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
@@ -65,10 +64,8 @@ class NotificationViewModel : ViewModel() {
             }.onSuccess {
                 _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
                 _isApplySuggestion.value = true
-                onComplete(true)
             }.onFailure {
                 _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
-                onComplete(false)
             }
         }
     }
