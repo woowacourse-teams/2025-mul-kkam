@@ -6,8 +6,8 @@ import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
-import backend.mulkkam.notification.service.ActivityService;
 import backend.mulkkam.notification.service.NotificationService;
+import backend.mulkkam.notification.service.SuggestionNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,8 +33,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/notifications")
 public class NotificationController {
 
-    private final ActivityService activityService;
     private final NotificationService notificationService;
+    private final SuggestionNotificationService suggestionNotificationService;
 
     @Operation(summary = "알림 목록 조회", description = "특정 시점 이후의 알림 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadNotificationsResponse.class)))
@@ -67,7 +67,7 @@ public class NotificationController {
             MemberDetails memberDetails,
             @RequestBody CreateActivityNotification createActivityNotification
     ) {
-        activityService.createActivityNotification(createActivityNotification, memberDetails);
+        suggestionNotificationService.createActivityNotification(createActivityNotification, memberDetails);
         return ResponseEntity.ok().build();
     }
 

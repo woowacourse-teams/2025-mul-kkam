@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
 import backend.mulkkam.common.dto.MemberDetails;
@@ -12,8 +13,10 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
+import backend.mulkkam.notification.dto.CreateActivityNotification;
 import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
@@ -27,11 +30,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SuggestionNotificationService {
 
-    private final FcmClient fcmClient;
     private final IntakeAmountService intakeAmountService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
+    private final MemberRepository memberRepository;
+    private final FcmClient fcmClient;
+
+    @Transactional
+    public void createActivityNotification(
+            CreateActivityNotification createActivityNotification,
+            MemberDetails memberDetails
+    ) {
+        Member member = getMember(memberDetails.id());
+        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(member);
+        createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
+    }
 
     @Transactional
     public void createAndSendSuggestionNotification(
@@ -85,5 +99,10 @@ public class SuggestionNotificationService {
     private SuggestionNotification getSuggestionNotification(Long id) {
         return suggestionNotificationRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION));
+    }
+
+    private Member getMember(Long id) {
+        return memberRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 }
