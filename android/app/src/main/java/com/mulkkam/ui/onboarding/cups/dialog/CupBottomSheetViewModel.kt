@@ -24,13 +24,16 @@ class CupBottomSheetViewModel : ViewModel() {
     private val _cup: MutableLiveData<CupUiModel> = MutableLiveData(EMPTY_CUP_UI_MODEL)
     val cup: LiveData<CupUiModel> get() = _cup
 
-    private val _editType: MutableLiveData<SettingWaterCupEditType> = MutableLiveData(SettingWaterCupEditType.ADD)
+    private val _editType: MutableLiveData<SettingWaterCupEditType> =
+        MutableLiveData(SettingWaterCupEditType.ADD)
     val editType: LiveData<SettingWaterCupEditType> get() = _editType
 
-    private val _cupNameValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    private val _cupNameValidity: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val cupNameValidity: LiveData<MulKkamUiState<Unit>> get() = _cupNameValidity
 
-    private val _amountValidity: MutableLiveData<MulKkamUiState<Unit>> = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+    private val _amountValidity: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
     val amountValidity: LiveData<MulKkamUiState<Unit>> get() = _amountValidity
 
     private val _cupEmojisUiState: MutableLiveData<MulKkamUiState<CupEmojisUiModel>> =
@@ -42,7 +45,8 @@ class CupBottomSheetViewModel : ViewModel() {
     private val hasChanges: MediatorLiveData<Boolean> =
         MediatorLiveData<Boolean>().apply {
             fun update() {
-                value = cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
+                value =
+                    cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
             }
             addSource(_cupEmojisUiState) { update() }
             addSource(_cup) { update() }
@@ -57,24 +61,22 @@ class CupBottomSheetViewModel : ViewModel() {
                     return
                 }
 
-                val isNameAvailable = _cupNameValidity.value is MulKkamUiState.Success
-                val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
-                val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
-                val isEmojiChanged =
-                    cupEmojisUiState.value
-                        ?.toSuccessDataOrNull()
-                        ?.selectedCupEmoji
-                        ?.id != originalCup.emoji.id
+                val isNameValid = _cupNameValidity.value is MulKkamUiState.Success
+                val isAmountValid = _amountValidity.value is MulKkamUiState.Success
+                val selectedEmoji = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji
+                val isEmojiSelected = selectedEmoji != null
+                val isEmojiChanged = selectedEmoji?.id != originalCup.emoji.id
                 val isIntakeTypeChanged = cup.value?.intakeType != originalCup.intakeType
 
+                val editType = editType.value ?: return
+
                 value =
-                    when (editType.value) {
-                        SettingWaterCupEditType.ADD -> {
-                            isNameAvailable && isAmountAvailable && isEmojiSelected
-                        }
-                        else -> {
-                            isNameAvailable || isAmountAvailable || isEmojiChanged || isIntakeTypeChanged
-                        }
+                    when (editType) {
+                        SettingWaterCupEditType.ADD ->
+                            isNameValid && isAmountValid && isEmojiSelected
+
+                        SettingWaterCupEditType.EDIT ->
+                            isNameValid || isAmountValid || isEmojiChanged || isIntakeTypeChanged
                     }
             }
 
@@ -99,8 +101,16 @@ class CupBottomSheetViewModel : ViewModel() {
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
                 when (editType.value) {
-                    SettingWaterCupEditType.ADD -> selectEmoji(it.firstOrNull()?.id ?: return@onSuccess)
-                    SettingWaterCupEditType.EDIT -> selectEmoji(cup.value?.emoji?.id ?: return@onSuccess)
+                    SettingWaterCupEditType.ADD ->
+                        selectEmoji(
+                            it.firstOrNull()?.id ?: return@onSuccess,
+                        )
+
+                    SettingWaterCupEditType.EDIT ->
+                        selectEmoji(
+                            cup.value?.emoji?.id ?: return@onSuccess,
+                        )
+
                     null -> return@onSuccess
                 }
             }
@@ -161,7 +171,13 @@ class CupBottomSheetViewModel : ViewModel() {
 
     fun selectEmoji(emojiId: Long) {
         val emoji = cupEmojisUiState.value?.toSuccessDataOrNull() ?: return
-        _cupEmojisUiState.value = MulKkamUiState.Success<CupEmojisUiModel>(emoji.selectCupEmoji(emojiId))
-        _cup.value = cup.value?.copy(emoji = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji ?: EMPTY_CUP_EMOJI_UI_MODEL)
+        _cupEmojisUiState.value =
+            MulKkamUiState.Success<CupEmojisUiModel>(emoji.selectCupEmoji(emojiId))
+        _cup.value =
+            cup.value?.copy(
+                emoji =
+                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji
+                        ?: EMPTY_CUP_EMOJI_UI_MODEL,
+            )
     }
 }

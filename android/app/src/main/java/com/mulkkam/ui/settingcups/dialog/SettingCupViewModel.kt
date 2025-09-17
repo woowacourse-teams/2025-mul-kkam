@@ -59,24 +59,22 @@ class SettingCupViewModel : ViewModel() {
                     return
                 }
 
-                val isNameAvailable = _cupNameValidity.value is MulKkamUiState.Success
-                val isAmountAvailable = _amountValidity.value is MulKkamUiState.Success
-                val isEmojiSelected = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
-                val isEmojiChanged =
-                    cupEmojisUiState.value
-                        ?.toSuccessDataOrNull()
-                        ?.selectedCupEmoji
-                        ?.id != originalCup.emoji.id
+                val isNameValid = _cupNameValidity.value is MulKkamUiState.Success
+                val isAmountValid = _amountValidity.value is MulKkamUiState.Success
+                val selectedEmoji = cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji
+                val isEmojiSelected = selectedEmoji != null
+                val isEmojiChanged = selectedEmoji?.id != originalCup.emoji.id
                 val isIntakeTypeChanged = cup.value?.intakeType != originalCup.intakeType
 
+                val editType = editType.value ?: return
+
                 value =
-                    when (editType.value) {
-                        SettingWaterCupEditType.ADD -> {
-                            isNameAvailable && isAmountAvailable && isEmojiSelected
-                        }
-                        else -> {
-                            isNameAvailable || isAmountAvailable || isEmojiChanged || isIntakeTypeChanged
-                        }
+                    when (editType) {
+                        SettingWaterCupEditType.ADD ->
+                            isNameValid && isAmountValid && isEmojiSelected
+
+                        SettingWaterCupEditType.EDIT ->
+                            isNameValid || isAmountValid || isEmojiChanged || isIntakeTypeChanged
                     }
             }
 
