@@ -75,13 +75,15 @@ class WeatherServiceUnitTest {
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(plusDays);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
 
+            LocalDateTime utcForecastTime = targetDateTime.toLocalDate().atStartOfDay().minusHours(9);
+
             when(weatherClient.getFourDayWeatherForecast(any(String.class)))
                     .thenReturn(new OpenWeatherResponse(
                             List.of(new ForecastEntry(
                                     new TemperatureInfo(50),
-                                    targetDateTime
+                                    utcForecastTime
                             )),
-                            new CityInfo(32000)
+                            new CityInfo(SEOUL_OFFSET_SECONDS)
                     ));
 
             // when & then
@@ -90,7 +92,7 @@ class WeatherServiceUnitTest {
         }
 
         @Test
-        @DisplayName("예보 응답의 UTC 시간이 KST 로 변환 시 targetDate 와 일치하면 평균을 계산한다")
+        @DisplayName("예보 응답의 UTC 시간이 KST 로 변환 시 targetDate 와 일치하면 평균을 계산한다") // TODO 2025. 9. 17. 21:38: KST 노
         void success_whenUtcForecastMatchesTargetDateInKST() {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(1);
