@@ -2,6 +2,7 @@ package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
@@ -35,6 +36,11 @@ public class IntakeHistoryCrudService {
     }
 
     public IntakeHistory getIntakeHistory(Member member, LocalDate intakeDate) {
+        return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
+    }
+
+    public IntakeHistory getOrCreateIntakeHistory(Member member, LocalDate intakeDate) {
         return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
                 .orElseGet(() -> getInitializedHistory(member, intakeDate));
     }

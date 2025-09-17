@@ -55,7 +55,7 @@ public class IntakeHistoryService {
         LocalDate intakeDate = createIntakeHistoryDetailByCupRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
-        IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+        IntakeHistory intakeHistory = intakeHistoryCrudService.getOrCreateIntakeHistory(member, intakeDate);
 
         Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
         if (!cup.isOwnedBy(member)) {
@@ -83,7 +83,7 @@ public class IntakeHistoryService {
         LocalDate intakeDate = request.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
-        IntakeHistory intakeHistory = getIntakeHistory(member, intakeDate);
+        IntakeHistory intakeHistory = intakeHistoryCrudService.getOrCreateIntakeHistory(member, intakeDate);
         IntakeType intakeType = request.intakeType();
 
         EmojiCode emojiCode = DefaultCup.of(intakeType)
@@ -162,13 +162,6 @@ public class IntakeHistoryService {
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
         return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount);
-    }
-
-    private IntakeHistory getIntakeHistory(
-            Member member,
-            LocalDate intakeDate
-    ) {
-        return intakeHistoryCrudService.getIntakeHistory(member, intakeDate);
     }
 
     private Member getMember(Long id) {
