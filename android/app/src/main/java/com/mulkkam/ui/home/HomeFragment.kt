@@ -297,7 +297,7 @@ class HomeFragment :
                     }.show()
                 binding.ivHomeCharacter.removeCallbacks(resetCharacterRunnable)
                 binding.ivHomeCharacter.setImageResource(R.drawable.img_home_drink_character)
-                binding.ivHomeCharacter.postDelayed(resetCharacterRunnable, 2000)
+                binding.ivHomeCharacter.postDelayed(resetCharacterRunnable, 2000L)
             }
 
             is MulKkamUiState.Idle -> Unit
