@@ -19,6 +19,7 @@ import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.collection.IntakeHistoryCalender;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
@@ -35,13 +36,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -125,60 +121,31 @@ public class IntakeHistoryService {
                 member, dateRangeRequest.from(), dateRangeRequest.to()
         );
 
-        Map<LocalDate, IntakeHistory> historiesByDate = historiesByDate(details);
-        Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory = detailsByHistory(details);
+        IntakeHistoryCalender intakeHistoryCalender = new IntakeHistoryCalender(details);
 
         List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         return dates.stream()
-                .map(date -> getIntakeHistorySummaryResponse(date, historiesByDate, detailsByHistory, member))
+                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalender, member))
                 .toList();
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
             LocalDate date,
-            Map<LocalDate, IntakeHistory> historiesByDate,
-            Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory,
+            IntakeHistoryCalender calender,
             Member member
     ) {
-        Set<LocalDate> historyDates = historiesByDate.keySet();
-        // 1. 주어진 날짜의 기록이 존재하는 경우
-        if (historyDates.contains(date)) {
-            IntakeHistory intakeHistory = historiesByDate.get(date);
-            List<IntakeHistoryDetail> details = detailsByHistory.get(intakeHistory);
+        if (calender.isExistHistoryOf(date)) {
+            IntakeHistory intakeHistory = calender.getIntakeHistory(date);
+            List<IntakeHistoryDetail> details = calender.getIntakeHistoryDetails(intakeHistory);
             return new IntakeHistorySummaryResponse(intakeHistory, details);
         }
-        // 2. 주어진 날짜의 기록이 존재하지 않는 경우
-        // - 생성되지 않은 날짜가 오늘인 경우 - target amount 를 member 의 목표 설정 값으로
         LocalDate today = LocalDate.now();
         if (date.equals(today)) {
             return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
         }
-        // - 생성되지 않은 날짜가 오늘이 아닌 경우 - 가장 최근 기록의 target amount 값을 목표 설정 값으로
         return targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(member.getId(), date)
                 .map(latestTargetAmount -> new IntakeHistorySummaryResponse(date, latestTargetAmount))
                 .orElseGet(() -> new IntakeHistorySummaryResponse(date));
-    }
-
-    private Map<LocalDate, IntakeHistory> historiesByDate(List<IntakeHistoryDetail> details) {
-        Map<LocalDate, IntakeHistory> result = new HashMap<>();
-        for (IntakeHistoryDetail detail : details) {
-            final IntakeHistory intakeHistory = detail.getIntakeHistory();
-            LocalDate historyDate = intakeHistory.getHistoryDate();
-            result.put(historyDate, intakeHistory);
-        }
-        return Collections.unmodifiableMap(result);
-    }
-
-    private Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory(List<IntakeHistoryDetail> details) {
-        Map<IntakeHistory, List<IntakeHistoryDetail>> result = new HashMap<>();
-        for (IntakeHistoryDetail detail : details) {
-            IntakeHistory intakeHistory = detail.getIntakeHistory();
-            List<IntakeHistoryDetail> saved = result.getOrDefault(intakeHistory, new ArrayList<>());
-            saved.add(detail);
-            result.put(intakeHistory, saved);
-        }
-        result.values().forEach(d -> d.sort(Comparator.comparing(IntakeHistoryDetail::getIntakeTime, Comparator.reverseOrder())));
-        return Collections.unmodifiableMap(result);
     }
 
     @Transactional
