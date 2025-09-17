@@ -13,15 +13,19 @@ import java.util.Optional;
 
 public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHistoryDetail, Long> {
 
-    @Query("SELECT d FROM IntakeHistoryDetail d " +
-            "JOIN d.intakeHistory h " +
-            "WHERE h.member = :member " +
-            "AND h.historyDate BETWEEN :dateAfter AND :dateBefore " +
-            "ORDER BY h.historyDate")
+    @Query("""
+                SELECT d
+                FROM IntakeHistoryDetail d
+                JOIN FETCH d.intakeHistory h
+                JOIN FETCH h.member
+                WHERE h.member = :member
+                    AND h.historyDate BETWEEN :from AND :to
+                ORDER BY h.historyDate
+            """)
     List<IntakeHistoryDetail> findAllByMemberAndDateRange(
             @Param("member") Member member,
-            @Param("dateAfter") LocalDate dateAfter,
-            @Param("dateBefore") LocalDate dateBefore
+            @Param("from") LocalDate from,
+            @Param("to") LocalDate to
     );
 
     @Query("""

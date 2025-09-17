@@ -168,8 +168,6 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -250,8 +248,6 @@ class IntakeHistoryServiceUnitTest {
             ));
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -305,8 +301,6 @@ class IntakeHistoryServiceUnitTest {
 
             given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
-                    .willReturn(List.of(intakeHistory));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
