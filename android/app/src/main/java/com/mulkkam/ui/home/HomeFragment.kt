@@ -37,6 +37,10 @@ class HomeFragment :
     Refreshable {
     private val viewModel: HomeViewModel by activityViewModels()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private val resetCharacterRunnable =
+        Runnable {
+            binding.ivHomeCharacter.setImageResource(R.drawable.img_home_character)
+        }
 
     override fun onViewCreated(
         view: View,
@@ -66,6 +70,11 @@ class HomeFragment :
 
             drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
                 handleDrinkResult(drinkUiState)
+            }
+
+            isGoalAchieved.observe(viewLifecycleOwner) {
+                binding.lottieConfetti.setAnimation(R.raw.lottie_home_confetti)
+                binding.lottieConfetti.playAnimation()
             }
         }
     }
@@ -286,6 +295,9 @@ class HomeFragment :
                     ).apply {
                         setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
                     }.show()
+                binding.ivHomeCharacter.removeCallbacks(resetCharacterRunnable)
+                binding.ivHomeCharacter.setImageResource(R.drawable.img_home_drink_character)
+                binding.ivHomeCharacter.postDelayed(resetCharacterRunnable, 2000L)
             }
 
             is MulKkamUiState.Idle -> Unit

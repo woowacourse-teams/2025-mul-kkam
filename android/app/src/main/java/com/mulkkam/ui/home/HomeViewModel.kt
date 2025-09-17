@@ -12,6 +12,7 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
@@ -38,6 +39,9 @@ class HomeViewModel : ViewModel() {
     private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> =
         MutableLiveData(MulKkamUiState.Idle)
     val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
+
+    private val _isGoalAchieved: MutableLiveData<Unit> = MutableLiveData()
+    val isGoalAchieved: LiveData<Unit> get() = _isGoalAchieved
 
     init {
         loadTodayProgressInfo()
@@ -123,6 +127,9 @@ class HomeViewModel : ViewModel() {
                 ),
             )
         _drinkUiState.value = MulKkamUiState.Success(intakeHistory.intakeAmount)
+        if (current.achievementRate < ACHIEVEMENT_RATE_MAX && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_MAX) {
+            _isGoalAchieved.value = Unit
+        }
     }
 
     fun addWaterIntake(
