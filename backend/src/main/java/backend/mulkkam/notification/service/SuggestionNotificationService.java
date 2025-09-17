@@ -9,7 +9,7 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
@@ -56,7 +56,7 @@ public class SuggestionNotificationService {
         SuggestionNotification suggestionNotification = getSuggestionNotification(id, memberDetails.id());
 
         intakeAmountService.modifyDailyTargetBySuggested(memberDetails,
-                new ModifyIntakeTargetAmountByRecommendRequest(suggestionNotification.getRecommendedTargetAmount()));
+                new ModifyIntakeTargetAmountBySuggestionRequest(suggestionNotification.getRecommendedTargetAmount()));
 
         suggestionNotification.updateApplyTargetAmount(true);
     }

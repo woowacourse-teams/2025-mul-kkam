@@ -9,7 +9,7 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -70,7 +70,7 @@ class SuggestionNotificationUnitServiceTest {
             // then
             verify(intakeAmountService, times(1))
                     .modifyDailyTargetBySuggested(new MemberDetails(memberId),
-                            new ModifyIntakeTargetAmountByRecommendRequest(2_000));
+                            new ModifyIntakeTargetAmountBySuggestionRequest(2_000));
             assertThat(suggestionNotification.isApplyTargetAmount()).isTrue();
         }
 

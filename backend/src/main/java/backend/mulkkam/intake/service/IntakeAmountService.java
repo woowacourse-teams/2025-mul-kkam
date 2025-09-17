@@ -8,10 +8,10 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.RecommendAmount;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
-import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.SuggestionIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
-import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
+import backend.mulkkam.intake.dto.response.IntakeSuggestionAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -52,7 +52,7 @@ public class IntakeAmountService {
     @Transactional
     public void modifyDailyTargetBySuggested(
             MemberDetails memberDetails,
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest
+            ModifyIntakeTargetAmountBySuggestionRequest modifyIntakeTargetAmountBySuggestionRequest
     ) {
         LocalDate now = LocalDate.now();
         Member member = getMember(memberDetails.id());
@@ -68,14 +68,14 @@ public class IntakeAmountService {
                     );
                     return intakeHistoryRepository.save(newIntakeHistory);
                 });
-        intakeHistory.addTargetAmount(modifyIntakeTargetAmountByRecommendRequest.amount());
+        intakeHistory.addTargetAmount(modifyIntakeTargetAmountBySuggestionRequest.amount());
     }
 
-    public IntakeRecommendedAmountResponse getRecommended(MemberDetails memberDetails) {
+    public IntakeSuggestionAmountResponse getRecommended(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         PhysicalAttributes physicalAttributes = member.getPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
-        return new IntakeRecommendedAmountResponse(recommendedTargetAmount.value());
+        return new IntakeSuggestionAmountResponse(recommendedTargetAmount.value());
     }
 
     public IntakeTargetAmountResponse getTarget(MemberDetails memberDetails) {
@@ -83,12 +83,12 @@ public class IntakeAmountService {
         return new IntakeTargetAmountResponse(member.getTargetAmount());
     }
 
-    public RecommendedIntakeAmountResponse getRecommendedTargetAmount(
+    public SuggestionIntakeAmountResponse getRecommendedTargetAmount(
             PhysicalAttributesRequest physicalAttributesRequest
     ) {
         PhysicalAttributes physicalAttributes = physicalAttributesRequest.toPhysicalAttributes();
         RecommendAmount recommendedTargetAmount = new RecommendAmount(physicalAttributes);
-        return new RecommendedIntakeAmountResponse(recommendedTargetAmount.value());
+        return new SuggestionIntakeAmountResponse(recommendedTargetAmount.value());
     }
 
     private void updateTargetAmountSnapshot(Member member) {
