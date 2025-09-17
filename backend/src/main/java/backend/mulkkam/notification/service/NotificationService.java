@@ -111,7 +111,7 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetUnreadNotificationsCountResponse getNotificationsCount(MemberDetails memberDetails) {
+    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails) {
         Long memberId = memberDetails.id();
         long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
         return new GetUnreadNotificationsCountResponse(count);

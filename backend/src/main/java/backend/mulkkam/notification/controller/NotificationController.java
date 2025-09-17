@@ -58,7 +58,7 @@ public class NotificationController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+        GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
                 memberDetails);
         return ResponseEntity.ok(getUnreadNotificationsCountResponse);
     }

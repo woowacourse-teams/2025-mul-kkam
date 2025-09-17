@@ -307,7 +307,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             // when
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
                     new MemberDetails(savedMember));
 
             // then

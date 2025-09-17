@@ -275,7 +275,7 @@ class NotificationServiceUnitTest {
             when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
 
             // when
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
                     new MemberDetails(member));
 
             // then
