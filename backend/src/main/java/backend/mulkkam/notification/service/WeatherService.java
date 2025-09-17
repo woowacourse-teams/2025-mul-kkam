@@ -8,11 +8,11 @@ import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
+import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.notification.domain.CityDate;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WeatherService {
 
-    private static final String SEOUL_ZONE_ID = "Asia/Seoul";
-    private static final String SEOUL_CITY_CODE = "1835847";
     private static final int AVAILABLE_DATE_RANGE_FOR_FORECAST = 5;
 
     private final WeatherClient weatherClient;
@@ -32,20 +30,22 @@ public class WeatherService {
     @Scheduled(cron = "0 0 19 * * *")
     @Transactional
     public void saveTomorrowAverageTemperature() {
-        ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
-        LocalDate todayDateInSeoul = ZonedDateTime.now(seoulZone).toLocalDate();
-        LocalDate tomorrowDateInSeoul = todayDateInSeoul.plusDays(1);
+        notifyAdditionalIntakeByStoredWeather(CityDate.now(City.SEOUL));
+    }
 
-        double averageTemperatureForDate = getAverageTemperatureForDate(tomorrowDateInSeoul);
-        AverageTemperature averageTemperature = new AverageTemperature(tomorrowDateInSeoul, averageTemperatureForDate);
+    public void notifyAdditionalIntakeByStoredWeather(CityDate cityDate) {
+        CityDate tomorrowCityDate = new CityDate(cityDate.city(), cityDate.localDate().plusDays(1));
+
+        double averageTemperatureForCityDate = getAverageTemperatureForCityDate(tomorrowCityDate);
+        AverageTemperature averageTemperature = new AverageTemperature(tomorrowCityDate, averageTemperatureForCityDate);
         averageTemperatureRepository.save(averageTemperature);
     }
 
-    public double getAverageTemperatureForDate(LocalDate targetDate) {
-        validateTargetDate(targetDate);
+    public double getAverageTemperatureForCityDate(CityDate cityDate) {
+        validateForecastTargetDateRange(cityDate);
 
-        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(SEOUL_CITY_CODE);
-        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, targetDate);
+        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(cityDate.getCityCode());
+        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, cityDate.localDate());
 
         return convertFromKelvinToCelsius(averageTemperatureForDate);
     }
@@ -55,8 +55,9 @@ public class WeatherService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
 
-    private void validateTargetDate(LocalDate targetDate) {
-        LocalDate now = LocalDate.now(ZoneId.of(SEOUL_ZONE_ID));
+    private void validateForecastTargetDateRange(CityDate cityDate) {
+        LocalDate targetDate = cityDate.localDate();
+        LocalDate now = CityDate.now(cityDate.city()).localDate();
 
         if (!targetDate.isAfter(now)) {
             throw new CommonException(INVALID_FORECAST_TARGET_DATE);

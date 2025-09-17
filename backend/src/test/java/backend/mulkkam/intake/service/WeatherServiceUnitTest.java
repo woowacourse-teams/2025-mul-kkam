@@ -14,6 +14,8 @@ import backend.mulkkam.intake.dto.OpenWeatherResponse;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.CityInfo;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.ForecastEntry;
 import backend.mulkkam.intake.dto.OpenWeatherResponse.ForecastEntry.TemperatureInfo;
+import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.notification.domain.CityDate;
 import backend.mulkkam.notification.service.WeatherClient;
 import backend.mulkkam.notification.service.WeatherService;
 import org.junit.jupiter.api.DisplayName;
@@ -29,7 +31,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.ZoneId;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,18 +42,17 @@ class WeatherServiceUnitTest {
     @Mock
     WeatherClient weatherClient;
 
-    @DisplayName("특정 날짜의 평균 기온을 구하는 경우")
+    @DisplayName("특정 도시의 특정 날짜의 평균 기온을 구하는 경우")
     @Nested
     class GetAverageTemperatureForDate {
 
         private final int SEOUL_OFFSET_SECONDS = 9 * 3600;
-        private final LocalDate now = LocalDate.now(ZoneId.of("Asia/Seoul"));
 
         @Test
         @DisplayName("오늘 날짜가 목표 날짜인 경우 예외를 던진다")
         void error_withTargetDateAsToday() {
-            // when &  then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForDate(now))
+            // when & then
+            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(CityDate.now(City.SEOUL)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
         }
@@ -61,10 +61,11 @@ class WeatherServiceUnitTest {
         @DisplayName("오늘 날짜보다 목표 날짜가 5일보다 뒤인 경우 예외를 던진다")
         void error_withTargetDateAsAfterThan5Days() {
             // given
-            LocalDate targetDate = now.plusDays(5).plusDays(1);
+            LocalDate targetDate = LocalDate.now().plusDays(5).plusDays(1);
+            CityDate cityDate = new CityDate(City.SEOUL, targetDate);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForDate(targetDate))
+            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDate))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
         }
@@ -74,7 +75,8 @@ class WeatherServiceUnitTest {
         @DisplayName("목표 날짜가 오늘보다 이후이고 오늘보다 5일 뒤인 경우 예외가 발생하지 않는다")
         void success_withValidTargetDate(int plusDays) {
             // given
-            LocalDate targetDate = now.plusDays(plusDays);
+            LocalDate targetDate = LocalDate.now().plusDays(plusDays);
+            CityDate cityDate = new CityDate(City.SEOUL, targetDate);
 
             when(weatherClient.getFourDayWeatherForecast(any(String.class)))
                     .thenReturn(new OpenWeatherResponse(
@@ -89,7 +91,7 @@ class WeatherServiceUnitTest {
                     ));
 
             // when & then
-            assertThatCode(() -> weatherService.getAverageTemperatureForDate(targetDate))
+            assertThatCode(() -> weatherService.getAverageTemperatureForCityDate(cityDate))
                     .doesNotThrowAnyException();
         }
 
@@ -97,7 +99,8 @@ class WeatherServiceUnitTest {
         @DisplayName("예보 응답의 UTC 시간이 KST 로 변환 시 targetDate 와 일치하면 평균을 계산한다")
         void success_whenUtcForecastMatchesTargetDateInKST() {
             // given
-            LocalDate targetDate = now.plusDays(1);
+            LocalDate targetDate = LocalDate.now().plusDays(1);
+            CityDate cityDate = new CityDate(City.SEOUL, targetDate);
 
             LocalDateTime utcForecastTime = targetDate.atStartOfDay().minusHours(9);
 
@@ -111,7 +114,7 @@ class WeatherServiceUnitTest {
             when(weatherClient.getFourDayWeatherForecast(any())).thenReturn(response);
 
             // when
-            double result = weatherService.getAverageTemperatureForDate(targetDate);
+            double result = weatherService.getAverageTemperatureForCityDate(cityDate);
 
             // then
             assertThat(result).isEqualTo(26.85, within(0.01));
@@ -121,7 +124,8 @@ class WeatherServiceUnitTest {
         @DisplayName("예보 응답의 시간이 targetDate 와 일치하지 않으면 예외가 발생한다")
         void error_whenUtcForecastDoesNotMatchTargetDateInKST() {
             // given
-            LocalDate targetDate = now.plusDays(1);
+            LocalDate targetDate = LocalDate.now().plusDays(1);
+            CityDate cityDate = new CityDate(City.SEOUL, targetDate);
 
             // KST: targetDate → 2025-08-04 → target UTC 예보는 2025-08-03T15:00
             // 예보 시간을 잘못되게 생성 (예: 하루 전 → 2025-08-03T12:00 UTC → KST: 2025-08-04 21:00 → 여전히 targetDate 이지만 시간대를 의도적으로 깨뜨려도 통과됨)
@@ -138,7 +142,7 @@ class WeatherServiceUnitTest {
             when(weatherClient.getFourDayWeatherForecast(any())).thenReturn(response);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForDate(targetDate))
+            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDate))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_FORECAST_DATE.name());
         }
@@ -147,7 +151,8 @@ class WeatherServiceUnitTest {
         @DisplayName("평균 기온이 정상적으로 계산된다")
         void success_whenTargetDateInRangeReturnsValidAverageOfTemperature() {
             // given
-            LocalDate targetDate = now.plusDays(1);
+            LocalDate targetDate = LocalDate.now().plusDays(1);
+            CityDate cityDate = new CityDate(City.SEOUL, targetDate);
 
             LocalDateTime minUtcTime = targetDate.atStartOfDay().minusHours(9);
             LocalDateTime maxUtcTime = targetDate.plusDays(1).atStartOfDay().minusSeconds(1).minusHours(9);
@@ -167,7 +172,7 @@ class WeatherServiceUnitTest {
             when(weatherClient.getFourDayWeatherForecast(any())).thenReturn(response);
 
             // when
-            double actual = weatherService.getAverageTemperatureForDate(targetDate);
+            double actual = weatherService.getAverageTemperatureForCityDate(cityDate);
 
             // then
             assertThat(actual).isCloseTo(21, within(0.1));

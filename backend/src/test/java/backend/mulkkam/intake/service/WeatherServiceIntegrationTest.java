@@ -1,5 +1,7 @@
 package backend.mulkkam.intake.service;
 
+import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.notification.domain.CityDate;
 import backend.mulkkam.notification.service.WeatherService;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.Disabled;
@@ -15,7 +17,7 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     WeatherService weatherService;
 
-    @DisplayName("특정 날짜의 평균 기온을 구하는 경우")
+    @DisplayName("특정 도시의 특정 날짜의 평균 기온을 구하는 경우")
     @Nested
     class GetAverageTemperatureForDate {
 
@@ -24,10 +26,10 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExactDate() {
             // given
-            LocalDate date = LocalDate.now().plusDays(1);
+            CityDate cityDate = new CityDate(City.SEOUL, LocalDate.now().plusDays(1));
 
             // when
-            double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(date);
+            double averageTemperatureForDate = weatherService.getAverageTemperatureForCityDate(cityDate);
 
             // then
             System.out.println(averageTemperatureForDate);
