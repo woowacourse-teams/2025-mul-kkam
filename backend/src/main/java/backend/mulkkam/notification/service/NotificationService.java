@@ -17,7 +17,7 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
@@ -70,19 +70,19 @@ public class NotificationService {
     }
 
     @Transactional
-    public ReadNotificationsResponse getNotificationsAfter(
-            GetNotificationsRequest getNotificationsRequest,
+    public ReadNotificationsResponse readNotificationsAfter(
+            ReadNotificationsRequest readNotificationsRequest,
             MemberDetails memberDetails
     ) {
-        validateSizeRange(getNotificationsRequest);
+        validateSizeRange(readNotificationsRequest);
 
-        LocalDateTime clientTime = getNotificationsRequest.clientTime();
+        LocalDateTime clientTime = readNotificationsRequest.clientTime();
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
 
-        int size = getNotificationsRequest.size();
+        int size = readNotificationsRequest.size();
         Pageable pageable = Pageable.ofSize(size + 1);
 
-        Long lastId = getNotificationsRequest.lastId();
+        Long lastId = readNotificationsRequest.lastId();
         List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
                 memberDetails,
                 lastId,
@@ -137,8 +137,8 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
-        if (getNotificationsRequest.size() < 1) {
+    private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
+        if (readNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }

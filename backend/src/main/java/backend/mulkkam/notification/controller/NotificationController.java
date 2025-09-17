@@ -2,7 +2,7 @@ package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.NotificationService;
@@ -42,10 +42,10 @@ public class NotificationController {
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "알림 조회 조건")
-            @Valid @ModelAttribute GetNotificationsRequest getNotificationsRequest
+            @Valid @ModelAttribute ReadNotificationsRequest readNotificationsRequest
     ) {
-        ReadNotificationsResponse readNotificationsResponse = notificationService.getNotificationsAfter(
-                getNotificationsRequest, memberDetails
+        ReadNotificationsResponse readNotificationsResponse = notificationService.readNotificationsAfter(
+                readNotificationsRequest, memberDetails
         );
         return ResponseEntity.ok(readNotificationsResponse);
     }

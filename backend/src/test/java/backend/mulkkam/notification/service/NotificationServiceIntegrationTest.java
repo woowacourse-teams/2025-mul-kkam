@@ -14,7 +14,7 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
@@ -128,10 +128,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
-            GetNotificationsRequest request = new GetNotificationsRequest(10L, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -164,10 +164,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -187,10 +187,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
             notificationRepository.saveAll(notifications);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, 10);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -220,10 +220,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             notificationRepository.saveAll(notifications);
             notificationRepository.save(latestNotification);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -248,10 +248,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -262,10 +262,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, new MemberDetails(savedMember)))
+            assertThatThrownBy(() -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
