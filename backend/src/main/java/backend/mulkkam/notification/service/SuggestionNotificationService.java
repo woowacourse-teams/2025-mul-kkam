@@ -92,7 +92,7 @@ public class SuggestionNotificationService {
         suggestionNotificationRepository.save(
                 createTokenSuggestionNotificationRequest.toSuggestionNotification(savedNotification));
 
-        sendNotificationByMember(createTokenSuggestionNotificationRequest, devicesByMember);
+        sendNotificationByMemberDevices(createTokenSuggestionNotificationRequest, devicesByMember);
     }
 
     @Transactional
@@ -113,7 +113,7 @@ public class SuggestionNotificationService {
         suggestionNotificationRepository.delete(suggestionNotification);
     }
 
-    private void sendNotificationByMember(
+    private void sendNotificationByMemberDevices(
             CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest,
             List<Device> devicesByMember
     ) {
@@ -125,27 +125,17 @@ public class SuggestionNotificationService {
     }
 
     private CreateTokenSuggestionNotificationRequest toCreateSuggestionNotificationRequest(
-            LocalDateTime todayDateTimeInSeoul,
+            LocalDateTime todayDateTime,
             AverageTemperature averageTemperature,
             Member member
     ) {
-        ExtraIntakeAmount extraIntakeAmount = calculateExtraIntakeAmountBasedOnWeather(
-                member.getId(), averageTemperature.getTemperature());
+        Double weight = member.getPhysicalAttributes().getWeight();
+        ExtraIntakeAmount extraIntakeAmount = ExtraIntakeAmount.calculateWithAverageTemperature(averageTemperature.getTemperature(), weight);
 
         CreateWeatherNotification createWeatherNotification = new CreateWeatherNotification(averageTemperature,
-                extraIntakeAmount, member, todayDateTimeInSeoul);
+                extraIntakeAmount, member, todayDateTime);
 
         return createWeatherNotification.toCreateTokenSuggestionNotificationRequest();
-    }
-
-    private ExtraIntakeAmount calculateExtraIntakeAmountBasedOnWeather(
-            Long memberId,
-            double averageTemperatureForDate
-    ) {
-        Member member = getMember(memberId);
-        Double weight = member.getPhysicalAttributes().getWeight();
-
-        return ExtraIntakeAmount.calculateWithAverageTemperature(averageTemperatureForDate, weight);
     }
 
     private SuggestionNotification getSuggestionNotification(Long id, Long memberId) {
