@@ -287,7 +287,9 @@ class HomeFragment :
                                     drinkUiState.data.amount,
                                 ),
                                 R.drawable.ic_terms_all_check_on,
-                            ).show()
+                            ).apply {
+                                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                            }.show()
                     }
 
                     IntakeType.COFFEE -> {
