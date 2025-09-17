@@ -46,7 +46,8 @@ class CupBottomSheetViewModel : ViewModel() {
         MediatorLiveData<Boolean>().apply {
             fun update() {
                 value =
-                    cup.value != originalCup || cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
+                    cup.value != originalCup ||
+                    cupEmojisUiState.value?.toSuccessDataOrNull()?.selectedCupEmoji != null
             }
             addSource(_cupEmojisUiState) { update() }
             addSource(_cup) { update() }
