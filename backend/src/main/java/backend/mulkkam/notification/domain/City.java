@@ -8,11 +8,11 @@ public enum City {
     SEOUL("Asia/Seoul", "1835847"),
     ;
 
-    private final String ZoneId;
+    private final String zoneId;
     private final String code;
 
     City(String zoneId, String code) {
-        ZoneId = zoneId;
+        this.zoneId = zoneId;
         this.code = code;
     }
 }
