@@ -12,12 +12,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class IntakeHistoryCalender {
+public class IntakeHistoryCalendar {
 
     private final Map<LocalDate, IntakeHistory> historiesByDate;
     private final Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory;
 
-    public IntakeHistoryCalender(List<IntakeHistory> intakeHistories, List<IntakeHistoryDetail> details) {
+    public IntakeHistoryCalendar(List<IntakeHistory> intakeHistories, List<IntakeHistoryDetail> details) {
         this.historiesByDate = getInitHistories(intakeHistories);
         this.detailsByHistory = getInitDetails(details);
     }

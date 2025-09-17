@@ -16,7 +16,7 @@ import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
-import backend.mulkkam.intake.domain.collection.IntakeHistoryCalender;
+import backend.mulkkam.intake.domain.collection.IntakeHistoryCalendar;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
@@ -116,17 +116,17 @@ public class IntakeHistoryService {
         );
         List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member);
 
-        IntakeHistoryCalender intakeHistoryCalender = new IntakeHistoryCalender(histories, details);
+        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(histories, details);
 
         List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
         return dates.stream()
-                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalender, member))
+                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
                 .toList();
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
             LocalDate date,
-            IntakeHistoryCalender calender,
+            IntakeHistoryCalendar calender,
             Member member
     ) {
         if (calender.isExistHistoryOf(date)) {
