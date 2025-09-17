@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class WeatherService {
     private final WeatherClient weatherClient;
     private final AverageTemperatureRepository averageTemperatureRepository;
 
+    @Scheduled(cron = "0 0 19 * * *")
     @Transactional
     public void saveTomorrowAverageTemperature() {
         ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
