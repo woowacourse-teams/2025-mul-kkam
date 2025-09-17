@@ -7,7 +7,6 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.device.domain.Device;
@@ -17,17 +16,18 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
 import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.random.RandomGenerator;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -54,10 +54,8 @@ public class NotificationService {
     @Scheduled(cron = "0 0 14 * * *")
     @Scheduled(cron = "0 0 19 * * *")
     public void notifyRemindNotification() {
-        createAndSendTopicNotification(
-                new CreateTopicNotificationRequest("물마실 시간!", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?", "mulkkam", Action.GO_HOME,
-                        NotificationType.REMIND, LocalDateTime.now())
-        );
+        NotificationMessageTemplate remindNotificationMessage = getRemindNotificationMessage();
+        createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
     }
 
     @Transactional
@@ -94,14 +92,14 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
+    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
         List<Member> members = memberRepository.findAll();
         for (Member member : members) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
+            Notification notification = notificationMessageTemplate.toNotification(member, now);
             notificationRepository.save(notification);
         }
 
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
         publisher.publishEvent(sendMessageByFcmTopicRequest);
     }
 
@@ -138,6 +136,12 @@ public class NotificationService {
         }
 
         notificationRepository.delete(notification);
+    }
+
+    private NotificationMessageTemplate getRemindNotificationMessage() {
+        List<NotificationMessageTemplate> notificationMessageTemplates = NotificationMessageTemplateProvider.findByType(NotificationType.REMIND);
+        int randomIdx = RandomGenerator.getDefault().nextInt(1, notificationMessageTemplates.size());
+        return notificationMessageTemplates.get(randomIdx);
     }
 
     private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {

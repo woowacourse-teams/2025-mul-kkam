@@ -7,29 +7,28 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import java.time.LocalDateTime;
 
-public record CreateTopicNotificationRequest(
+public record NotificationMessageTemplate (
         String title,
         String body,
         String topic,
         Action action,
-        NotificationType notificationType,
-        LocalDateTime createdAt
-) {
+        NotificationType type
+){
+    public Notification toNotification(Member member, LocalDateTime createdAt) {
+        return new Notification(
+                type,
+                body,
+                createdAt,
+                member
+        );
+    }
+
     public SendMessageByFcmTopicRequest toSendMessageByFcmTopicRequest() {
         return new SendMessageByFcmTopicRequest(
                 title,
                 body,
                 topic,
                 action
-        );
-    }
-
-    public Notification toNotification(Member member) {
-        return new Notification(
-                notificationType,
-                body,
-                createdAt,
-                member
         );
     }
 }
