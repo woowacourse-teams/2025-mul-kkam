@@ -4,6 +4,8 @@ import backend.mulkkam.notification.domain.City;
 import backend.mulkkam.notification.domain.CityDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,8 +24,9 @@ public class AverageTemperature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private City city; // TODO 2025. 9. 17. 15:24: 적절한 지 -> flyway 처리
+    private City city;
 
     @Column(nullable = false)
     private LocalDate date;
