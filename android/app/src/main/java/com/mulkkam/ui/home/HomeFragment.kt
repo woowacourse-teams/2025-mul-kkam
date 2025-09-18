@@ -15,6 +15,8 @@ import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentHomeBinding
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.intake.IntakeInfo
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
@@ -281,20 +283,41 @@ class HomeFragment :
         binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
     }
 
-    private fun handleDrinkResult(drinkUiState: MulKkamUiState<Int>) {
+    private fun handleDrinkResult(drinkUiState: MulKkamUiState<IntakeInfo>) {
         when (drinkUiState) {
-            is MulKkamUiState.Success<Int> -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(
-                            R.string.manual_drink_success,
-                            drinkUiState.data,
-                        ),
-                        R.drawable.ic_terms_all_check_on,
-                    ).apply {
-                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                    }.show()
+            is MulKkamUiState.Success<IntakeInfo> -> {
+                when (drinkUiState.data.intakeType) {
+                    IntakeType.WATER -> {
+                        CustomSnackBar
+                            .make(
+                                binding.root,
+                                getString(
+                                    R.string.manual_drink_success,
+                                    drinkUiState.data.amount,
+                                ),
+                                R.drawable.ic_terms_all_check_on,
+                            ).apply {
+                                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                            }.show()
+                    }
+
+                    IntakeType.COFFEE -> {
+                        CustomSnackBar
+                            .make(
+                                binding.root,
+                                getString(
+                                    R.string.manual_drink_success_coffee,
+                                    drinkUiState.data.amount,
+                                ),
+                                R.drawable.ic_terms_all_check_on,
+                            ).apply {
+                                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                            }.show()
+                    }
+
+                    IntakeType.UNKNOWN -> Unit
+                }
+
                 binding.ivHomeCharacter.removeCallbacks(resetCharacterRunnable)
                 binding.ivHomeCharacter.setImageResource(R.drawable.img_home_drink_character)
                 binding.ivHomeCharacter.postDelayed(resetCharacterRunnable, 2000L)
