@@ -28,7 +28,7 @@ public class SuggestionNotificationController {
 
     private final SuggestionNotificationService suggestionNotificationService;
 
-    @Operation(summary = "활동량 알림 생성", description = "사용자의 활동량에 따라 알림을 생성합니다.")
+    @Operation(summary = "다음 release 버전 활동량 알림 생성", description = "사용자의 활동량에 따라 알림을 생성합니다. 다음 release 시 사용 예정")
     @ApiResponse(responseCode = "200", description = "알림 생성 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "필드 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
