@@ -16,11 +16,11 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.CreateTopicNotificationRequest;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,19 +50,39 @@ public class NotificationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public ReadNotificationsResponse getNotificationsAfter(
-            GetNotificationsRequest getNotificationsRequest,
+    @Scheduled(cron = "0 0 14 * * *")
+    @Scheduled(cron = "0 0 19 * * *")
+    public void notifyRemindNotification() {
+        NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
+        createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
+    }
+
+    @Transactional
+    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
+        List<Member> members = memberRepository.findAll();
+        for (Member member : members) {
+            Notification notification = notificationMessageTemplate.toNotification(member, now);
+            notificationRepository.save(notification);
+        }
+
+        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
+        publisher.publishEvent(sendMessageByFcmTopicRequest);
+    }
+
+    @Transactional
+    public ReadNotificationsResponse readNotificationsAfter(
+            ReadNotificationsRequest readNotificationsRequest,
             MemberDetails memberDetails
     ) {
-        validateSizeRange(getNotificationsRequest);
+        validateSizeRange(readNotificationsRequest);
 
-        LocalDateTime clientTime = getNotificationsRequest.clientTime();
+        LocalDateTime clientTime = readNotificationsRequest.clientTime();
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
 
-        int size = getNotificationsRequest.size();
+        int size = readNotificationsRequest.size();
         Pageable pageable = Pageable.ofSize(size + 1);
 
-        Long lastId = getNotificationsRequest.lastId();
+        Long lastId = readNotificationsRequest.lastId();
         List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
                 memberDetails,
                 lastId,
@@ -80,17 +101,6 @@ public class NotificationService {
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
-    @Transactional
-    public void createAndSendTopicNotification(CreateTopicNotificationRequest createTopicNotificationRequest) {
-        List<Member> members = memberRepository.findAll();
-        for (Member member : members) {
-            Notification notification = createTopicNotificationRequest.toNotification(member);
-            notificationRepository.save(notification);
-        }
-
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = createTopicNotificationRequest.toSendMessageByFcmTopicRequest();
-        publisher.publishEvent(sendMessageByFcmTopicRequest);
-    }
 
     @Transactional
     public void createAndSendTokenNotification(CreateTokenNotificationRequest createTokenNotificationRequest) {
@@ -101,7 +111,7 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetUnreadNotificationsCountResponse getNotificationsCount(MemberDetails memberDetails) {
+    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails) {
         Long memberId = memberDetails.id();
         long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
         return new GetUnreadNotificationsCountResponse(count);
@@ -127,8 +137,8 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private void validateSizeRange(GetNotificationsRequest getNotificationsRequest) {
-        if (getNotificationsRequest.size() < 1) {
+    private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
+        if (readNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }

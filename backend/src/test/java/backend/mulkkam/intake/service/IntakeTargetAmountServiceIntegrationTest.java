@@ -11,10 +11,10 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
-import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.SuggestionIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
-import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
+import backend.mulkkam.intake.dto.response.IntakeSuggestionAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -137,11 +137,11 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     .date(LocalDate.now())
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest(
+            ModifyIntakeTargetAmountBySuggestionRequest modifyIntakeTargetAmountBySuggestionRequest = new ModifyIntakeTargetAmountBySuggestionRequest(
                     500);
             // when
             intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId()),
-                    modifyIntakeTargetAmountByRecommendRequest);
+                    modifyIntakeTargetAmountBySuggestionRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,
                     LocalDate.now()
@@ -203,12 +203,12 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(savedMember)
             );
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -221,12 +221,12 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(savedMember)
             );
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
         }
     }
 
@@ -263,7 +263,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(Gender.FEMALE, 60.0);
 
             // when
-            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then
@@ -277,7 +277,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(null, null);
 
             // when
-            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then
