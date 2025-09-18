@@ -68,6 +68,12 @@
             android:paddingEnd="8dp"
             android:paddingBottom="8dp">
 
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_home_drink" />
+
             <FrameLayout
                 android:id="@+id/ll_drink"
                 android:layout_width="52dp"
@@ -76,21 +82,17 @@
                 android:background="@drawable/bg_common_rectangle_10dp"
                 android:backgroundTint="@color/white"
                 android:clickable="true"
+                android:clipToOutline="true"
                 android:foreground="@drawable/bg_common_rectangle_stroke_10dp"
-                android:foregroundTint="@color/gray_300">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_home_drink" />
+                android:foregroundTint="@color/gray_300"
+                tools:targetApi="31">
 
                 <ImageView
                     android:id="@+id/iv_drink_icon"
                     android:layout_width="52dp"
                     android:layout_height="52dp"
                     android:layout_gravity="center"
-                    tools:src="@drawable/ic_home_drink" />
+                    tools:src="@color/black" />
             </FrameLayout>
 
             <TextView
