@@ -107,4 +107,4 @@ jobs:
 
       - name: Start new services
         working-directory: /home/ubuntu/mulkkam
-        run: sudo docker compose up -d backend-app
+        run: sudo docker compose up -d backend-app --pull
