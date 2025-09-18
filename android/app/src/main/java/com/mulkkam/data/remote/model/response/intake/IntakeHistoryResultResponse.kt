@@ -14,7 +14,7 @@ data class IntakeHistoryResultResponse(
     @SerialName("intakeAmount")
     val intakeAmount: Int,
     @SerialName("intakeType")
-    val intakeType: IntakeType,
+    val intakeType: String,
 )
 
 fun IntakeHistoryResultResponse.toDomain() =
@@ -22,5 +22,5 @@ fun IntakeHistoryResultResponse.toDomain() =
         achievementRate = achievementRate,
         comment = comment,
         intakeAmount = intakeAmount,
-        intakeType = intakeType,
+        intakeType = IntakeType.from(intakeType),
     )
