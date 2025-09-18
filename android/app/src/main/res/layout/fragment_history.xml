@@ -215,7 +215,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
                 android:layout_marginTop="30dp"
-                android:layout_marginBottom="36dp"
                 android:text="@string/history_intake_history_label"
                 android:textAppearance="@style/title2"
                 app:layout_constraintStart_toStartOf="parent"
@@ -237,12 +236,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="18dp"
-                android:layout_marginBottom="36dp"
                 android:text="@string/history_no_intake_histories"
                 android:textAppearance="@style/body4"
                 android:textColor="@color/black"
                 android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="@id/tv_intake_history_label"
                 app:layout_constraintTop_toBottomOf="@id/tv_intake_history_label" />
 
