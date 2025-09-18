@@ -8,7 +8,7 @@ import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
 import com.mulkkam.data.work.CalorieWorker
 import com.mulkkam.data.work.DrinkByAmountWorker
-import com.mulkkam.data.work.IntakeWidgetWorker
+import com.mulkkam.data.work.IntakeWorker
 import com.mulkkam.data.work.ProgressWorker
 import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
@@ -68,8 +68,8 @@ private class MulKkamWorkerFactory(
             ProgressWorker::class.java.name ->
                 ProgressWorker(appContext, workerParameters, membersRepository)
 
-            IntakeWidgetWorker::class.java.name ->
-                IntakeWidgetWorker(appContext, workerParameters, membersRepository, cupsRepository)
+            IntakeWorker::class.java.name ->
+                IntakeWorker(appContext, workerParameters, membersRepository, cupsRepository)
 
             DrinkByAmountWorker::class.java.name ->
                 DrinkByAmountWorker(appContext, workerParameters, intakeRepository)
