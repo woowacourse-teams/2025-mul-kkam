@@ -10,7 +10,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AverageTemperatureRepository extends JpaRepository<AverageTemperature, Long> {
 
-    Optional<AverageTemperature> findByDate(LocalDate date);
-
     Optional<AverageTemperature> findByCityAndDate(City city, LocalDate localDate);
 }
