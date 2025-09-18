@@ -68,6 +68,7 @@ public class NotificationController {
         return ResponseEntity.ok(getUnreadNotificationsCountResponse);
     }
 
+    @Deprecated
     @Operation(summary = "현재 release 버전(2.0.0) 활동량 알림 생성", description = "사용자의 활동량에 따라 알림을 생성합니다. 다음 release 시 제거 예정")
     @ApiResponse(responseCode = "200", description = "알림 생성 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
