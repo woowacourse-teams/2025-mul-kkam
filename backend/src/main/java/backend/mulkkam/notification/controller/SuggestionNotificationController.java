@@ -44,7 +44,6 @@ public class SuggestionNotificationController {
         return ResponseEntity.ok().build();
     }
 
-
     @Operation(summary = "권장 목표량 적용", description = "제안 알림(ID)을 승인하여 회원의 일일 목표 음용량을 적용합니다.")
     @ApiResponse(responseCode = "200", description = "적용 성공", content = @Content(schema = @Schema(hidden = true)))
     @ApiResponse(responseCode = "404", description = "리소스 없음",
