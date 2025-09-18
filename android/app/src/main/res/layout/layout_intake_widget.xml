@@ -90,7 +90,7 @@
                     android:layout_width="52dp"
                     android:layout_height="52dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/ic_home_drink" />
+                    tools:src="@drawable/ic_home_drink" />
             </FrameLayout>
 
             <TextView
