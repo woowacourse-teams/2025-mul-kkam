@@ -33,7 +33,6 @@ fun NotificationTopAppBar(onBackClick: () -> Unit) {
                     style = MulKkamTheme.typography.title2,
                 )
             },
-            actions = {},
             navigationIcon = {
                 IconButton(
                     onClick = onBackClick,
