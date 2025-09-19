@@ -9,12 +9,16 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
+import kotlinx.coroutines.launch
 
 class NotificationActivity : ComponentActivity() {
     private val viewModel: NotificationViewModel by viewModels()
@@ -31,27 +35,6 @@ class NotificationActivity : ComponentActivity() {
         }
         initBackPress()
         initObservers()
-    }
-
-    private fun initObservers() {
-        viewModel.applySuggestionUiState.observe(this) { applySuggestionUiState ->
-            when (applySuggestionUiState) {
-                is MulKkamUiState.Success -> {
-                    CustomToast
-                        .makeText(this, getString(R.string.notification_apply_success))
-                        .show()
-                }
-
-                is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
-                is MulKkamUiState.Failure -> {
-                    CustomToast
-                        .makeText(
-                            this,
-                            getString(R.string.notification_apply_failed),
-                        ).show()
-                }
-            }
-        }
     }
 
     private fun finishWithResult() {
@@ -73,6 +56,37 @@ class NotificationActivity : ComponentActivity() {
                 }
             },
         )
+    }
+
+    private fun initObservers() {
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.applySuggestionUiState.collect { applySuggestionUiState ->
+                    handleApplySuggestionUiState(applySuggestionUiState)
+                }
+            }
+        }
+    }
+
+    private fun handleApplySuggestionUiState(applySuggestionUiState: MulKkamUiState<Unit>) {
+        when (applySuggestionUiState) {
+            is MulKkamUiState.Success -> {
+                CustomToast
+                    .makeText(
+                        this@NotificationActivity,
+                        getString(R.string.notification_apply_success),
+                    ).show()
+            }
+
+            is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomToast
+                    .makeText(
+                        this@NotificationActivity,
+                        getString(R.string.notification_apply_failed),
+                    ).show()
+            }
+        }
     }
 
     companion object {

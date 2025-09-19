@@ -18,20 +18,20 @@ class NotificationViewModel : ViewModel() {
         MutableStateFlow(MulKkamUiState.Idle)
     val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications
 
-    private val _applySuggestionUiState: MutableLiveData<MulKkamUiState<Unit>> =
-        MutableLiveData(
+    private val _applySuggestionUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+        MutableStateFlow(
             MulKkamUiState.Idle,
         )
-    val applySuggestionUiState: LiveData<MulKkamUiState<Unit>> = _applySuggestionUiState
+    val applySuggestionUiState: StateFlow<MulKkamUiState<Unit>> = _applySuggestionUiState
 
-    private val _deleteNotificationUiState: MutableLiveData<MulKkamUiState<Unit>> =
-        MutableLiveData(
+    private val _deleteNotificationUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+        MutableStateFlow(
             MulKkamUiState.Idle,
         )
-    val deleteNotificationUiState: LiveData<MulKkamUiState<Unit>> = _deleteNotificationUiState
+    val deleteNotificationUiState: StateFlow<MulKkamUiState<Unit>> = _deleteNotificationUiState
 
-    private val _isApplySuggestion: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isApplySuggestion: LiveData<Boolean> = _isApplySuggestion
+    private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion
 
     init {
         loadNotifications()
