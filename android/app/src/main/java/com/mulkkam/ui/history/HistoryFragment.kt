@@ -366,7 +366,7 @@ class HistoryFragment :
     private fun updateCharacterImage(waterIntakeState: WaterIntakeState) {
         val characterImage =
             when (waterIntakeState) {
-                is WaterIntakeState.Past.NoRecord -> R.drawable.img_history_crying_character
+                is WaterIntakeState.Past.NoRecord -> R.drawable.img_crying_character
                 is WaterIntakeState.Past.Full -> R.drawable.img_history_character
                 is WaterIntakeState.Present.Full -> R.drawable.img_history_character
                 is WaterIntakeState.Future -> R.drawable.img_history_sleeping_character

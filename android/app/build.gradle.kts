@@ -102,6 +102,7 @@ dependencies {
     implementation(libs.androidx.ui.tooling)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     // 네트워크 통신 관련 라이브러리
     implementation(libs.okhttp)

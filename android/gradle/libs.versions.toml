@@ -1,5 +1,6 @@
 [versions]
 coreTesting = "2.2.0"
+lifecycleViewmodelCompose = "2.9.3"
 lottie = "6.6.7"
 minSdk = "28"
 shimmer = "0.5.0"
@@ -42,6 +43,7 @@ composeBom = "2025.08.01"
 # AndroidX 및 UI
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
