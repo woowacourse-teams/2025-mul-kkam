@@ -9,22 +9,23 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class NotificationViewModel : ViewModel() {
     private val _notifications: MutableStateFlow<MulKkamUiState<List<Notification>>> =
         MutableStateFlow(MulKkamUiState.Idle)
-    val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications
+    val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications.asStateFlow()
 
     private val _applySuggestionUiState: MutableStateFlow<MulKkamUiState<Unit>> =
         MutableStateFlow(
             MulKkamUiState.Idle,
         )
-    val applySuggestionUiState: StateFlow<MulKkamUiState<Unit>> = _applySuggestionUiState
+    val applySuggestionUiState: StateFlow<MulKkamUiState<Unit>> = _applySuggestionUiState.asStateFlow()
 
     private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion
+    val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion.asStateFlow()
 
     init {
         loadNotifications()
