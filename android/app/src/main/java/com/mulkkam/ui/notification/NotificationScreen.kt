@@ -31,13 +31,11 @@ import com.mulkkam.ui.notification.component.NotificationTopAppBar
 @Composable
 fun NotificationScreen(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
     viewModel: NotificationViewModel = NotificationViewModel(),
 ) {
     val notifications = viewModel.notifications.collectAsStateWithLifecycle()
 
     Scaffold(
-        modifier = modifier.background(White),
         topBar = { NotificationTopAppBar(onBackClick) },
         containerColor = White,
     ) { innerPadding ->
