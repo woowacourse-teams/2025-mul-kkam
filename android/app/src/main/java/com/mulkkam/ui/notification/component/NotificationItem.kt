@@ -53,7 +53,7 @@ private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("
 @Composable
 fun NotificationItem(
     notification: Notification,
-    onApplySuggestion: (Int) -> Unit,
+    onApplySuggestion: () -> Unit,
 ) {
     val backgroundColor = if (notification.isRead) White else Primary10
     var applied by rememberSaveable { mutableStateOf(notification.applyRecommendAmount) }
@@ -90,7 +90,7 @@ fun NotificationItem(
                 ApplyButton(
                     modifier = Modifier.align(Alignment.End),
                     onClick = {
-                        onApplySuggestion(notification.id)
+                        onApplySuggestion()
                         applied = true
                     },
                 )

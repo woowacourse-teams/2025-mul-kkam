@@ -28,7 +28,7 @@ import java.time.LocalDateTime
 @Composable
 fun NotificationItemComponent(
     notification: Notification,
-    onApplySuggestion: (Int) -> Unit,
+    onApplySuggestion: () -> Unit,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
