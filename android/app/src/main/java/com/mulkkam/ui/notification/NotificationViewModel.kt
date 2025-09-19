@@ -68,7 +68,6 @@ class NotificationViewModel : ViewModel() {
         viewModelScope.launch {
             runCatching {
                 notificationRepository.deleteNotifications(id).getOrError()
-            }.onSuccess {
                 _notifications.value =
                     MulKkamUiState.Success(
                         _notifications.value.toSuccessDataOrNull()?.filter { it.id != id }
