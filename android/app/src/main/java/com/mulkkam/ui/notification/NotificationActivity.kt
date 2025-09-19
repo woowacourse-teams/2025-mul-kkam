@@ -3,8 +3,6 @@ package com.mulkkam.ui.notification
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
@@ -13,8 +11,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.mulkkam.R
-import com.mulkkam.domain.model.notification.Notification
-import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState

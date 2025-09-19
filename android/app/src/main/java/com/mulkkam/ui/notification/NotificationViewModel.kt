@@ -1,13 +1,12 @@
 package com.mulkkam.ui.notification
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -78,6 +77,11 @@ class NotificationViewModel : ViewModel() {
                 notificationRepository.deleteNotifications(id).getOrError()
             }.onSuccess {
                 _deleteNotificationUiState.value = MulKkamUiState.Success(Unit)
+                _notifications.value =
+                    MulKkamUiState.Success(
+                        _notifications.value.toSuccessDataOrNull()?.filter { it.id != id }
+                            ?: return@launch,
+                    )
             }.onFailure {
                 _deleteNotificationUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 loadNotifications()

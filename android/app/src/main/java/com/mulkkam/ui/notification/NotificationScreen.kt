@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,7 +25,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
-import com.mulkkam.ui.notification.component.NotificationItem
+import com.mulkkam.ui.notification.component.NotificationItemComponent
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
 
 @Composable
@@ -69,14 +68,21 @@ fun NotificationScreen(
         ) {
             val notification = notifications.value.toSuccessDataOrNull() ?: return@LazyColumn
 
-            items(notification.size) { index ->
-                NotificationItem(
+            items(
+                notification.size,
+                key = { notification[it].id },
+            ) { index ->
+                NotificationItemComponent(
                     notification = notification[index],
                     onApplySuggestion = {
                         viewModel.applySuggestion(
                             notification[index].id,
                         )
                     },
+                    onRemove = {
+                        viewModel.deleteNotification(notification[index].id)
+                    },
+                    modifier = Modifier.animateItem(),
                 )
             }
         }
