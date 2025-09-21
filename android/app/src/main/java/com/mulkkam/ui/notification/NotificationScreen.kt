@@ -39,27 +39,14 @@ fun NotificationScreen(
         containerColor = White,
     ) { innerPadding ->
         if (notifications.value.toSuccessDataOrNull()?.isEmpty() == true) {
-            Column(
+            EmptyNotificationScreen(
                 modifier =
                     Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_crying_character),
-                    modifier = Modifier.size(200.dp),
-                    contentDescription = stringResource(R.string.notification_empty_description),
-                )
-                Spacer(modifier = Modifier.padding(vertical = 20.dp))
-                Text(
-                    text = stringResource(R.string.notification_empty),
-                    style = MulKkamTheme.typography.body2,
-                    color = Gray400,
-                )
-            }
+                        .fillMaxSize()
+                        .padding(innerPadding),
+            )
         }
+
         LazyColumn(
             modifier = Modifier.padding(innerPadding),
         ) {
