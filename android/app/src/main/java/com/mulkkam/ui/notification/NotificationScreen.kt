@@ -11,9 +11,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.NotificationItemComponent
+import com.mulkkam.ui.notification.component.NotificationShimmerItem
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
+import com.mulkkam.ui.util.LoadingShimmerEffect
 
 @Composable
 fun NotificationScreen(
@@ -33,6 +36,18 @@ fun NotificationScreen(
                         .fillMaxSize()
                         .padding(innerPadding),
             )
+        }
+
+        if (notifications.value == MulKkamUiState.Loading) {
+            Column(
+                modifier = Modifier.padding(innerPadding),
+            ) {
+                repeat(7) {
+                    LoadingShimmerEffect {
+                        NotificationShimmerItem(it)
+                    }
+                }
+            }
         }
 
         LazyColumn(
