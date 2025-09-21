@@ -23,11 +23,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class WeatherService {
 
     private static final int AVAILABLE_DATE_RANGE_FOR_FORECAST = 5;
+    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
 
     private final WeatherClient weatherClient;
     private final AverageTemperatureRepository averageTemperatureRepository;
 
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = DAILY_7PM_CRON)
     @Transactional
     public void saveTomorrowAverageTemperature() {
         notifyAdditionalIntakeByStoredWeather(CityDateTime.now(City.SEOUL));

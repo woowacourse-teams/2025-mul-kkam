@@ -41,6 +41,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
+    private static final String DAILY_2PM_CRON = "0 0 14 * * *";
+    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
 
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
@@ -50,8 +52,8 @@ public class NotificationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    @Scheduled(cron = "0 0 14 * * *")
-    @Scheduled(cron = "0 0 19 * * *")
+    @Scheduled(cron = DAILY_2PM_CRON)
+    @Scheduled(cron = DAILY_7PM_CRON)
     public void notifyRemindNotification() {
         NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
         createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
