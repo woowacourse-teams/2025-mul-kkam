@@ -14,6 +14,7 @@ import com.mulkkam.R
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.launch
 
 class NotificationActivity : ComponentActivity() {
@@ -55,12 +56,8 @@ class NotificationActivity : ComponentActivity() {
     }
 
     private fun initObservers() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.applySuggestionUiState.collect { applySuggestionUiState ->
-                    handleApplySuggestionUiState(applySuggestionUiState)
-                }
-            }
+        viewModel.applySuggestionUiState.collectWithLifecycle(this) { applySuggestionUiState ->
+            handleApplySuggestionUiState(applySuggestionUiState)
         }
     }
 
