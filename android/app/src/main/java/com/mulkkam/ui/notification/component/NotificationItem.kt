@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -35,20 +33,9 @@ import com.mulkkam.domain.model.notification.NotificationType.SUGGESTION
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.Gray100
-import com.mulkkam.ui.designsystem.Gray200
-import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
-import java.time.Duration
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-
-private const val ONE_MINUTE: Long = 1L
-private const val ONE_HOUR: Long = 1L
-private const val ONE_DAY: Long = 1L
-private const val TWO_DAYS: Long = 2L
-private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
 @Composable
 fun NotificationItem(
@@ -74,17 +61,7 @@ fun NotificationItem(
             modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = Alignment.Start,
         ) {
-            Text(
-                text = notification.title,
-                style = MulKkamTheme.typography.body5,
-                color = Gray400,
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = notification.createdAt.toRelativeTimeString(),
-                style = MulKkamTheme.typography.body5,
-                color = Gray200,
-            )
+            NotificationContent(notification)
 
             if (notification.type == SUGGESTION && applied == false) {
                 ApplyButton(
@@ -105,36 +82,6 @@ private fun getNotificationIcon(notificationType: NotificationType) =
         REMIND -> R.drawable.ic_notification_remind
         NOTICE -> R.drawable.ic_notification_notice
     }
-
-@Composable
-private fun LocalDateTime.toRelativeTimeString(): String {
-    val now = LocalDateTime.now()
-    val duration = Duration.between(this, now)
-
-    return when {
-        duration.toMinutes() < ONE_MINUTE ->
-            stringResource(
-                R.string.notification_just_now,
-            )
-
-        duration.toHours() < ONE_HOUR ->
-            stringResource(
-                R.string.notification_minutes_ago,
-            ).format(duration.toMinutes())
-
-        duration.toDays() < ONE_DAY ->
-            stringResource(
-                R.string.notification_hours_ago,
-            ).format(duration.toHours())
-
-        duration.toDays() < TWO_DAYS ->
-            stringResource(
-                R.string.notification_one_day_ago,
-            )
-
-        else -> this.format(dateTimeFormatter)
-    }
-}
 
 @Composable
 private fun ApplyButton(
