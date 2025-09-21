@@ -17,11 +17,11 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.NotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
@@ -60,10 +60,11 @@ public class NotificationService {
     @Transactional
     public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
         List<Member> members = memberRepository.findAll();
-        for (Member member : members) {
-            Notification notification = notificationMessageTemplate.toNotification(member, now);
-            notificationRepository.save(notification);
-        }
+
+        List<Notification> notifications = members.stream()
+                .map(member -> notificationMessageTemplate.toNotification(member, now))
+                .toList();
+        notificationRepository.saveAll(notifications);
 
         SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
         publisher.publishEvent(sendMessageByFcmTopicRequest);
