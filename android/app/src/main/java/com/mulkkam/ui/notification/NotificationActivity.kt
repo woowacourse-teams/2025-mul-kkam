@@ -7,15 +7,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import kotlinx.coroutines.launch
 
 class NotificationActivity : ComponentActivity() {
     private val viewModel: NotificationViewModel by viewModels()
