@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.dto;
 
+import backend.mulkkam.cup.domain.IntakeType;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -10,6 +11,8 @@ public record CreateIntakeHistoryDetailResponse(
         @Parameter(description = "캐릭터 상태 설명 코멘트", example = "하뭉이는 신나요")
         String comment,
         @Parameter(description = "음용량", example = "300")
-        int intakeAmount
+        int intakeAmount,
+        @Parameter(description = "음용 타입", example = "COFFEE")
+        IntakeType intakeType
 ) {
 }
