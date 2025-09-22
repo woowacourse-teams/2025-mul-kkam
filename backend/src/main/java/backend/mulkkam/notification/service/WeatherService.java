@@ -31,10 +31,10 @@ public class WeatherService {
     @Scheduled(cron = DAILY_7PM_CRON)
     @Transactional
     public void saveTomorrowAverageTemperature() {
-        notifyAdditionalIntakeByStoredWeather(CityDateTime.now(City.SEOUL));
+        saveForecastedAverageTemperature(CityDateTime.now(City.SEOUL));
     }
 
-    public void notifyAdditionalIntakeByStoredWeather(CityDateTime cityDateTime) {
+    public void saveForecastedAverageTemperature(CityDateTime cityDateTime) {
         CityDateTime tomorrowCityDateTime = new CityDateTime(cityDateTime.city(), cityDateTime.localDateTime().plusDays(1));
 
         double averageTemperatureForCityDate = getAverageTemperatureForCityDate(tomorrowCityDateTime);
