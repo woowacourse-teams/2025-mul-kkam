@@ -4,7 +4,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.workDataOf
 import com.mulkkam.data.work.DrinkByAmountWorker
-import com.mulkkam.data.work.IntakeWidgetWorker
+import com.mulkkam.data.work.IntakeWorker
 import com.mulkkam.domain.checker.IntakeChecker
 import java.util.UUID
 
@@ -21,7 +21,7 @@ class IntakeCheckerImpl(
     }
 
     override fun checkWidgetInfo(): UUID {
-        val request = OneTimeWorkRequestBuilder<IntakeWidgetWorker>().build()
+        val request = OneTimeWorkRequestBuilder<IntakeWorker>().build()
         workManager.enqueue(request)
         return request.id
     }

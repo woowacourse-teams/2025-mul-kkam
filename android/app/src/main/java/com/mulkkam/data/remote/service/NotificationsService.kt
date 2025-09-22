@@ -11,7 +11,7 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface NotificationsService {
-    @POST("/notifications/activity")
+    @POST("/suggestion-notifications/activity")
     suspend fun postActiveCaloriesBurned(
         @Body activeCaloriesBurned: ActiveCaloriesBurnedRequest,
     ): Result<Unit>

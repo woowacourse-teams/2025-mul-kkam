@@ -19,6 +19,7 @@ import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
+import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
@@ -239,7 +240,7 @@ class HistoryFragment :
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         with(chart) {
-            if (intakeHistorySummary.achievementRate == ACHIEVEMENT_RATE_FULL) {
+            if (intakeHistorySummary.achievementRate == ACHIEVEMENT_RATE_MAX) {
                 tvWaterGoalRate.visibility = View.GONE
                 ivCheck.visibility = View.VISIBLE
             } else {
@@ -449,6 +450,5 @@ class HistoryFragment :
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
 
         private const val INTAKE_AMOUNT_EMPTY: Int = 0
-        private const val ACHIEVEMENT_RATE_FULL: Float = 100f
     }
 }

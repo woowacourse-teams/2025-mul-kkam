@@ -188,6 +188,8 @@
     <string name="history_delete_failure_past">과거의 기록은 삭제할 수 없습니다</string>
 
     <string name="manual_drink_success">%,dml 섭취 완료!</string>
+    <string name="manual_drink_success_coffee">%,dml 섭취 완료! (커피는 물깜 정책상 95%% 반영돼요)</string>
+    <string name="manual_drink_coffee_why">Why? →</string>
     <string name="manual_drink_network_error">네트워크 오류로 인해 물 마시기에 실패했어요</string>
     <string name="manual_drink_label">직접 입력</string>
     <string name="manual_drink_perform">마시기</string>
@@ -217,6 +219,16 @@
     <string name="app_update_title">새 기능이 추가되었어요</string>
     <string name="app_update_title_highlighted">새 기능</string>
 
-    <string name="tooltip_title">깜빡한 물 Tip!</string>
-    <string name="tooltip_intake_type">물깜은 <b>여러분이 커피를 마시면 95%를 음용량으로 반영</b>하고 있어요.\n\nSmith et al. (2014) 연구에 따르면,\n물과 비교했을 때 중간 정도의 커피 섭취는 체수분이나 탈수 지표에 큰 차이가 없다고 해요.\n\n다만, 다른 연구(Neuhauser-Berthold et al., 1997)에서는 <b>카페인에 익숙하지 않은 사람의 경우 소변의 배설이 늘어날 수 있다</b>고 보고됐어요.</string>
+    <string name="coffee_encyclopedia_app_bar_title">커피 백과사전</string>
+    <string name="coffee_encyclopedia_title">💧 물깜 가이드: 커피와 수분 보충</string>
+    <string name="coffee_encyclopedia_subtitle1">☕ 커피도 수분일까?</string>
+    <string name="coffee_encyclopedia_content1">많은 분들이 “커피는 이뇨작용 때문에 마셔도 물 보충이 안 된다”라고 생각을 해요.\n하지만 실제 연구 결과, 커피 섭취도 물과 크게 다르지 않게 체내 수분 균형에 기여한다는 사실 알고 있었나요?</string>
+    <string name="coffee_encyclopedia_subtitle2">📊 연구에서 밝혀진 점</string>
+    <string name="coffee_encyclopedia_content2">• 초기 연구에서는 카페인에 익숙하지 않은 사람들이 단기간에 많은 양의 커피(6잔 이상)를 마실 때 소변 배출이 일시적으로 늘어났어요. \n • 그러나 정기적으로 커피나 차를 마시는 사람들에게서는 이런 효과가 줄어들어, 일상적인 섭취량에서는 이뇨 작용이 거의 없는 것으로 나타났어요. \n • 여러 임상 실험에서, 적당한 커피 섭취는 물을 마시는 것과 유사하게 체내 수분 상태를 유지한다는 결론이 확인되었답니다.</string>
+    <string name="coffee_encyclopedia_subtitle3">💡 물깜의 적용 방식</string>
+    <string name="coffee_encyclopedia_content3">이러한 근거를 바탕으로, \n • 물깜은 커피를 물의 95%로 반영해요. \n\t\t ◦ 예) 아메리카노 200ml = 물 190ml로 기록 \n즉, 커피도 수분 보충에 도움이 되지만 100% 물만큼은 아니라는 점을 반영했어요.</string>
+    <string name="coffee_encyclopedia_subtitle4">⚠️ 참고하세요</string>
+    <string name="coffee_encyclopedia_content4"><![CDATA[• 해당 연구는 Coffee & Health에서 제공한 자료이며, 이 기관은 ISIC(Institute for Scientific Information on Coffee)가 운영합니다. \n • ISIC은 네슬레, 일리, 라바짜 등 유럽 주요 커피 기업이 후원하는 산업 연합이므로, 이해 상충 가능성이 존재할 수 있습니다. \n • 따라서 물깜은 이 내용을 참고 수준으로 반영하되, 최종 판단은 항상 균형 잡힌 연구들을 바탕으로 하고 있습니다.]]></string>
+
+    <string name="health_connect_install_alert">헬스 서비스가 설치되어 있지 않아요. 신체 정보 설정에서 헬스 커넥트 설정을 완료해주세요.</string>
 </resources>

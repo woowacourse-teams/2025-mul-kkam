@@ -5,13 +5,13 @@ import androidx.health.connect.client.HealthConnectClient
 
 object HealthConnectInjection {
     private var _healthConnectClient: HealthConnectClient? = null
-    val healthConnectClient: HealthConnectClient
-        get() = _healthConnectClient ?: throw IllegalArgumentException()
+    val healthConnectClient: HealthConnectClient?
+        get() = _healthConnectClient
 
     const val PROVIDER_PACKAGE_NAME: String = "com.google.android.apps.healthdata"
 
     fun init(context: Context) {
-        if (_healthConnectClient == null) {
+        runCatching {
             _healthConnectClient = HealthConnectClient.getOrCreate(context)
         }
     }

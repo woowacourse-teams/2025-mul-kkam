@@ -17,7 +17,7 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
-import com.mulkkam.ui.custom.tooltip.MulKkamTooltip
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
@@ -40,8 +40,6 @@ class CupBottomSheetFragment :
     private val parentViewModel: CupsViewModel by activityViewModels()
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
-
-    private var intakeTypeTooltip: MulKkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -68,7 +66,10 @@ class CupBottomSheetFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { handleSaveClick() }
             tvDelete.setSingleClickListener { handleDeleteClick() }
-            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
+            ivIntakeTypeInfo.setOnClickListener {
+                val intent = CoffeeEncyclopediaActivity.newIntent(requireContext())
+                startActivity(intent)
+            }
         }
 
     private fun handleSaveClick() {
@@ -85,22 +86,6 @@ class CupBottomSheetFragment :
         val rank = viewModel.cup.value?.rank ?: return
         parentViewModel.deleteCup(rank)
         dismiss()
-    }
-
-    private fun showIntakeTypeTooltip(anchor: View) {
-        if (intakeTypeTooltip == null) {
-            intakeTypeTooltip =
-                MulKkamTooltip(
-                    anchor = anchor,
-                    title = getString(R.string.tooltip_title),
-                    message = getText(R.string.tooltip_intake_type),
-                ).also { it.show() }
-        } else {
-            intakeTypeTooltip?.let {
-                it.dismiss()
-                it.show()
-            }
-        }
     }
 
     private fun initObservers() =
