@@ -23,6 +23,7 @@ import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
 import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
@@ -312,6 +313,11 @@ class HomeFragment :
                                 R.drawable.ic_terms_all_check_on,
                             ).apply {
                                 setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                                setAction {
+                                    val intent =
+                                        CoffeeEncyclopediaActivity.newIntent(requireContext())
+                                    startActivity(intent)
+                                }
                             }.show()
                     }
 
