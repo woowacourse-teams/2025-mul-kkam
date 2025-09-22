@@ -40,7 +40,7 @@
         android:id="@+id/tv_snack_bar_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/btn_snack_bar_why"
+        android:background="@drawable/btn_snack_bar_action"
         android:paddingHorizontal="8dp"
         android:paddingVertical="6dp"
         android:text="@string/manual_drink_coffee_why"
