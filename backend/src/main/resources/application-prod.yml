@@ -1,5 +1,8 @@
 server:
   port: 80
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 spring:
   datasource:
@@ -62,6 +65,7 @@ management:
       hikaricp: true
       http.server: true
       process.cpu: true
+      tomcat: true
 
   cloudwatch:
     metrics:
