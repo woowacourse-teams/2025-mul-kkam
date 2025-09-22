@@ -6,6 +6,8 @@ import android.appwidget.AppWidgetProvider
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.view.View
 import android.widget.RemoteViews
 import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
@@ -14,6 +16,7 @@ import com.mulkkam.R
 import com.mulkkam.di.CheckerInjection.intakeChecker
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
+import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_EMOJI_BYTES
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TARGET_AMOUNT
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
@@ -52,6 +55,7 @@ class IntakeWidget : AppWidgetProvider() {
                     val target = value.outputData.getInt(KEY_INTAKE_CHECKER_TARGET_AMOUNT, 0)
                     val total = value.outputData.getInt(KEY_INTAKE_CHECKER_TOTAL_AMOUNT, 0)
                     val cupId = value.outputData.getLong(KEY_INTAKE_CHECKER_CUP_ID, 0L)
+                    val emojiBytes = value.outputData.getByteArray(KEY_INTAKE_CHECKER_EMOJI_BYTES) ?: byteArrayOf()
 
                     val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
                     showIntakeWidgetInfo(
@@ -62,6 +66,7 @@ class IntakeWidget : AppWidgetProvider() {
                         targetAmount = target,
                         totalAmount = total,
                         cupId = cupId,
+                        emojiBytes = emojiBytes,
                     )
 
                     live.removeObserver(this)
@@ -125,6 +130,7 @@ class IntakeWidget : AppWidgetProvider() {
         targetAmount: Int,
         totalAmount: Int,
         cupId: Long,
+        emojiBytes: ByteArray,
     ) {
         val views = RemoteViews(context.packageName, R.layout.layout_intake_widget)
 
@@ -162,7 +168,24 @@ class IntakeWidget : AppWidgetProvider() {
             newDrinkPendingIntent(context, appWidgetId, cupId),
         )
 
+        updateEmojiIcon(emojiBytes, views)
+
         appWidgetManager.updateAppWidget(appWidgetId, views)
+    }
+
+    private fun updateEmojiIcon(
+        emojiBytes: ByteArray,
+        views: RemoteViews,
+    ) {
+        val bitmap =
+            emojiBytes.takeIf { it.isNotEmpty() }?.let { bytes ->
+                BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+            }
+        if (bitmap != null) {
+            views.setImageViewBitmap(R.id.iv_drink_icon, bitmap)
+        } else {
+            views.setViewVisibility(R.id.iv_drink_icon, View.GONE)
+        }
     }
 
     companion object {

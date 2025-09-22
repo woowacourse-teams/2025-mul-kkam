@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
-import com.mulkkam.ui.custom.tooltip.MulKkamTooltip
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.binding.BindingBottomSheetDialogFragment
@@ -28,8 +28,6 @@ class ManualDrinkFragment :
     ) {
     private val parentViewModel: HomeViewModel by activityViewModels()
     private val viewModel: ManualDrinkViewModel by activityViewModels()
-
-    private var intakeTypeTooltip: MulKkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -56,26 +54,11 @@ class ManualDrinkFragment :
                 )
                 dismiss()
             }
-            ivIntakeTypeInfo.setOnClickListener { anchor ->
-                showIntakeTypeTooltip(anchor)
+            ivIntakeTypeInfo.setOnClickListener {
+                val intent = CoffeeEncyclopediaActivity.newIntent(requireContext())
+                startActivity(intent)
             }
         }
-
-    private fun showIntakeTypeTooltip(anchor: View) {
-        if (intakeTypeTooltip == null) {
-            intakeTypeTooltip =
-                MulKkamTooltip(
-                    anchor = anchor,
-                    title = getString(R.string.tooltip_title),
-                    message = getText(R.string.tooltip_intake_type),
-                ).also { it.show() }
-        } else {
-            intakeTypeTooltip?.let {
-                it.dismiss()
-                it.show()
-            }
-        }
-    }
 
     private fun initObservers() =
         with(viewModel) {

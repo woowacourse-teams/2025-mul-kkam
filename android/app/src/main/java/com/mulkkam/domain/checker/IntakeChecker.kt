@@ -13,5 +13,6 @@ interface IntakeChecker {
         const val KEY_INTAKE_CHECKER_TARGET_AMOUNT: String = "TARGET_AMOUNT"
         const val KEY_INTAKE_CHECKER_TOTAL_AMOUNT: String = "TOTAL_AMOUNT"
         const val KEY_INTAKE_CHECKER_CUP_ID: String = "CUP_ID"
+        const val KEY_INTAKE_CHECKER_EMOJI_BYTES = "KEY_INTAKE_CHECKER_EMOJI_BYTES"
     }
 }
