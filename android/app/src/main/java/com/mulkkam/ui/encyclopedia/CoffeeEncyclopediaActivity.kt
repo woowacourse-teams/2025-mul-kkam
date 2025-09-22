@@ -1,5 +1,7 @@
 package com.mulkkam.ui.encyclopedia
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import com.mulkkam.databinding.ActivityCoffeeEncyclopediaBinding
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -15,5 +17,9 @@ class CoffeeEncyclopediaActivity :
         binding.ivBack.setSingleClickListener {
             finish()
         }
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, CoffeeEncyclopediaActivity::class.java)
     }
 }

@@ -31,13 +31,13 @@
         android:textAppearance="@style/body2"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/tv_coffee_why"
+        app:layout_constraintEnd_toStartOf="@id/tv_snack_bar_action"
         app:layout_constraintStart_toEndOf="@id/iv_snack_bar_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="500ml 섭취 완료!" />
 
     <TextView
-        android:id="@+id/tv_coffee_why"
+        android:id="@+id/tv_snack_bar_action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/btn_snack_bar_why"
