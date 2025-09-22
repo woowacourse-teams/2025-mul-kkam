@@ -9,7 +9,6 @@ import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
@@ -30,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +46,7 @@ public class SuggestionNotificationService {
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final MemberRepository memberRepository;
-    private final FcmClient fcmClient;
+    private final ApplicationEventPublisher publisher;
 
     @Transactional
     @Scheduled(cron = "0 0 8 * * *")
@@ -120,7 +120,7 @@ public class SuggestionNotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenSuggestionNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken());
-            fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
+            publisher.publishEvent(sendMessageByFcmTokenRequest);
         }
     }
 
