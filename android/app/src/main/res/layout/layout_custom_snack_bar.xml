@@ -26,12 +26,27 @@
         android:layout_height="wrap_content"
         android:layout_marginVertical="14dp"
         android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
         android:gravity="center_vertical"
         android:textAppearance="@style/body2"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/tv_coffee_why"
         app:layout_constraintStart_toEndOf="@id/iv_snack_bar_icon"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="500ml 섭취 완료!" />
+
+    <TextView
+        android:id="@+id/tv_coffee_why"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/btn_snack_bar_why"
+        android:paddingHorizontal="8dp"
+        android:paddingVertical="6dp"
+        android:text="@string/manual_drink_coffee_why"
+        android:textColor="@color/white"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
