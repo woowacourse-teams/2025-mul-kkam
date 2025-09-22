@@ -89,6 +89,19 @@
                 app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_subtitle1" />
 
             <TextView
+                android:id="@+id/tv_coffee_encyclopedia_source"
+                style="@style/body5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:autoLink="web"
+                android:linksClickable="true"
+                android:text="@string/coffee_encyclopedia_source"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_content1" />
+
+            <TextView
                 android:id="@+id/tv_coffee_encyclopedia_subtitle2"
                 style="@style/body4"
                 android:layout_width="wrap_content"
@@ -96,7 +109,7 @@
                 android:layout_marginTop="15dp"
                 android:text="@string/coffee_encyclopedia_subtitle2"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_content1" />
+                app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_source" />
 
             <TextView
                 android:id="@+id/tv_coffee_encyclopedia_content2"
@@ -105,6 +118,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/coffee_encyclopedia_content2"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_subtitle2" />
 
             <TextView
@@ -127,27 +142,6 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_subtitle3" />
-
-            <TextView
-                android:id="@+id/tv_coffee_encyclopedia_subtitle4"
-                style="@style/body4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:text="@string/coffee_encyclopedia_subtitle4"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_content3" />
-
-            <TextView
-                android:id="@+id/tv_coffee_encyclopedia_content4"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                style="@style/body5"
-                android:text="@string/coffee_encyclopedia_content4"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/tv_coffee_encyclopedia_subtitle4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>
