@@ -18,7 +18,7 @@ import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.chip.MulKkamChipGroupAdapter
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.custom.tooltip.MulKkamTooltip
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
@@ -41,8 +41,6 @@ class SettingCupFragment :
     private val adapter: CupEmojiAdapter by lazy { CupEmojiAdapter { viewModel.selectEmoji(it) } }
     private val parentViewModel: SettingCupsViewModel by activityViewModels()
     private val cup: CupUiModel? by lazy { arguments?.getParcelableCompat(ARG_CUP) }
-
-    private var intakeTypeTooltip: MulKkamTooltip? = null
 
     override fun onViewCreated(
         view: View,
@@ -69,24 +67,11 @@ class SettingCupFragment :
             ivClose.setSingleClickListener { dismiss() }
             tvSave.setSingleClickListener { viewModel.saveCup() }
             tvDelete.setSingleClickListener { viewModel.deleteCup() }
-            ivIntakeTypeInfo.setOnClickListener { anchor -> showIntakeTypeTooltip(anchor) }
-        }
-
-    private fun showIntakeTypeTooltip(anchor: View) {
-        if (intakeTypeTooltip == null) {
-            intakeTypeTooltip =
-                MulKkamTooltip(
-                    anchor = anchor,
-                    title = getString(R.string.tooltip_title),
-                    message = getText(R.string.tooltip_intake_type),
-                ).also { it.show() }
-        } else {
-            intakeTypeTooltip?.let {
-                it.dismiss()
-                it.show()
+            ivIntakeTypeInfo.setOnClickListener {
+                val intent = CoffeeEncyclopediaActivity.newIntent(requireContext())
+                startActivity(intent)
             }
         }
-    }
 
     private fun initObservers() =
         with(viewModel) {
