@@ -42,7 +42,7 @@
                 android:backgroundTint="@color/white"
                 android:contentDescription="@string/history_week_prev"
                 android:padding="8dp"
-                android:src="@drawable/btn_history_week_prev"
+                android:src="@drawable/ic_common_prev"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 

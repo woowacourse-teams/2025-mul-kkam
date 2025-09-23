@@ -10,17 +10,21 @@
     <string name="main_health_permission_granted">헬스 커넥트 권한이 허용되었습니다</string>
     <string name="main_health_permission_denied">헬스 커넥트 권한이 거부되었습니다</string>
 
-    <string name="home_notification">알림</string>
-    <string name="home_notification_apply_target_amount">목표량 반영하기</string>
-    <string name="home_notification_apply_failed">목표량 반영에 실패했어요</string>
-    <string name="home_notification_apply_success">목표량에 반영되었어요</string>
-    <string name="home_notification_delete_success">알림이 삭제되었어요</string>
-    <string name="home_notification_delete_failed">알림 삭제에 실패했어요</string>
-    <string name="home_notification_just_now">방금 전</string>
-    <string name="home_notification_minutes_ago">%d분 전</string>
-    <string name="home_notification_hours_ago">%d시간 전</string>
-    <string name="home_notification_one_day_ago">하루 전</string>
-    <string name="home_notification_date_format">yyyy.MM.dd</string>
+    <string name="notification">알림</string>
+    <string name="notification_apply_target_amount">목표량 반영하기</string>
+    <string name="notification_apply_failed">목표량 반영에 실패했어요</string>
+    <string name="notification_apply_success">목표량에 반영되었어요</string>
+    <string name="notification_delete_success">알림이 삭제되었어요</string>
+    <string name="notification_delete_failed">알림 삭제에 실패했어요</string>
+    <string name="notification_empty">아직 받은 알림이 없어요</string>
+    <string name="notification_just_now">방금 전</string>
+    <string name="notification_minutes_ago">%d분 전</string>
+    <string name="notification_hours_ago">%d시간 전</string>
+    <string name="notification_one_day_ago">하루 전</string>
+    <string name="notification_item_icon_description">알림 아이콘</string>
+    <string name="notification_app_bar_navigation_icon_description">뒤로가기</string>
+    <string name="notification_empty_description">텅 빈 알림 화면 이미지</string>
+    <string name="notification_delete_description">알림 삭제 아이콘</string>
 
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>

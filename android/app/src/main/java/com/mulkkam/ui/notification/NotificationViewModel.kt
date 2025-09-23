@@ -1,35 +1,31 @@
 package com.mulkkam.ui.notification
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 
 class NotificationViewModel : ViewModel() {
-    private val _notifications: MutableLiveData<MulKkamUiState<List<Notification>>> =
-        MutableLiveData(MulKkamUiState.Idle)
-    val notifications: LiveData<MulKkamUiState<List<Notification>>> = _notifications
+    private val _notifications: MutableStateFlow<MulKkamUiState<List<Notification>>> =
+        MutableStateFlow(MulKkamUiState.Idle)
+    val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications.asStateFlow()
 
-    private val _applySuggestionUiState: MutableLiveData<MulKkamUiState<Unit>> =
-        MutableLiveData(
+    private val _applySuggestionUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+        MutableStateFlow(
             MulKkamUiState.Idle,
         )
-    val applySuggestionUiState: LiveData<MulKkamUiState<Unit>> = _applySuggestionUiState
+    val applySuggestionUiState: StateFlow<MulKkamUiState<Unit>> = _applySuggestionUiState.asStateFlow()
 
-    private val _deleteNotificationUiState: MutableLiveData<MulKkamUiState<Unit>> =
-        MutableLiveData(
-            MulKkamUiState.Idle,
-        )
-    val deleteNotificationUiState: LiveData<MulKkamUiState<Unit>> = _deleteNotificationUiState
-
-    private val _isApplySuggestion: MutableLiveData<Boolean> = MutableLiveData(false)
-    val isApplySuggestion: LiveData<Boolean> = _isApplySuggestion
+    private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion.asStateFlow()
 
     init {
         loadNotifications()
@@ -53,10 +49,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun applySuggestion(
-        id: Int,
-        onComplete: (isSuccess: Boolean) -> Unit,
-    ) {
+    fun applySuggestion(id: Int) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
@@ -65,24 +58,22 @@ class NotificationViewModel : ViewModel() {
             }.onSuccess {
                 _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
                 _isApplySuggestion.value = true
-                onComplete(true)
             }.onFailure {
                 _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
-                onComplete(false)
             }
         }
     }
 
     fun deleteNotification(id: Int) {
-        if (deleteNotificationUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
-                _deleteNotificationUiState.value = MulKkamUiState.Loading
                 notificationRepository.deleteNotifications(id).getOrError()
-            }.onSuccess {
-                _deleteNotificationUiState.value = MulKkamUiState.Success(Unit)
+                _notifications.value =
+                    MulKkamUiState.Success(
+                        _notifications.value.toSuccessDataOrNull()?.filter { it.id != id }
+                            ?: return@launch,
+                    )
             }.onFailure {
-                _deleteNotificationUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 loadNotifications()
             }
         }
