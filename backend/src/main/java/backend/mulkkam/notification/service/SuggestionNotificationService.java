@@ -54,7 +54,15 @@ public class SuggestionNotificationService {
     @Scheduled(cron = DAILY_8AM_CRON)
     public void notifyAdditionalWaterIntakeByWeather() {
         CityDateTime cityNow = CityDateTime.now(City.SEOUL);
+        notifyMembersByWeatherCondition(cityNow);
+    }
+
+    private void notifyMembersByWeatherCondition(CityDateTime cityNow) {
         AverageTemperature averageTemperature = weatherService.getAverageTemperature(cityNow);
+
+        if (!isHotEnough(averageTemperature)) {
+            return;
+        }
 
         List<Member> members = memberRepository.findAll();
         for (Member member : members) {
@@ -113,6 +121,11 @@ public class SuggestionNotificationService {
     public void delete(Long id) {
         SuggestionNotification suggestionNotification = getSuggestionNotification(id);
         suggestionNotificationRepository.delete(suggestionNotification);
+    }
+
+    private boolean isHotEnough(AverageTemperature averageTemperatureForCityDate) {
+        double temperature = averageTemperatureForCityDate.getTemperature();
+        return temperature > ExtraIntakeAmount.getExtraIntakeTemperatureThreshold();
     }
 
     private void sendNotificationByMemberDevices(
