@@ -20,6 +20,7 @@ import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_HEALTH_DATA_IN_BACK
 import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.util.binding.BindingDialogFragment
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class MainPermissionDialogFragment :
@@ -49,7 +50,7 @@ class MainPermissionDialogFragment :
             }
 
         CustomToast
-            .makeText(requireContext(), getString(messageResId), R.drawable.ic_info_circle)
+            .makeText(requireActivity(), getString(messageResId), R.drawable.ic_info_circle)
             .apply {
                 setGravityY(TOAST_BOTTOM_NAV_OFFSET)
             }.show()
@@ -66,7 +67,7 @@ class MainPermissionDialogFragment :
         parentViewModel.saveNotificationPermission(isCurrentlyGranted = granted)
 
         CustomToast
-            .makeText(requireContext(), getString(messageResId), R.drawable.ic_info_circle)
+            .makeText(requireActivity(), getString(messageResId), R.drawable.ic_info_circle)
             .apply {
                 setGravityY(TOAST_BOTTOM_NAV_OFFSET)
             }.show()
@@ -93,7 +94,16 @@ class MainPermissionDialogFragment :
 
     private fun initClickListeners() {
         binding.tvConfirm.setSingleClickListener {
-            requestHealthConnectLauncher.launch(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            if (requireContext().isHealthConnectAvailable()) {
+                requestHealthConnectLauncher.launch(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            } else {
+                CustomToast
+                    .makeText(requireActivity(), getString(R.string.health_connect_install_alert), R.drawable.ic_info_circle)
+                    .apply {
+                        setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+                    }.show()
+                requestNotificationPermission()
+            }
             dialog?.hide()
         }
     }
