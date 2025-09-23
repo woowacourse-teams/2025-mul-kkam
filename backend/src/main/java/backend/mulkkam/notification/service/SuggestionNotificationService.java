@@ -40,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class SuggestionNotificationService {
 
+    private static final String DAILY_8AM_CRON = "0 0 8 * * *";
+
     private final IntakeAmountService intakeAmountService;
     private final WeatherService weatherService;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
@@ -49,7 +51,7 @@ public class SuggestionNotificationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    @Scheduled(cron = "0 0 8 * * *")
+    @Scheduled(cron = DAILY_8AM_CRON)
     public void notifyAdditionalWaterIntakeByWeather() {
         CityDateTime cityNow = CityDateTime.now(City.SEOUL);
         AverageTemperature averageTemperature = weatherService.getAverageTemperature(cityNow);
