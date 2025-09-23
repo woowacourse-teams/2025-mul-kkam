@@ -1,4 +1,4 @@
-package backend.mulkkam.intake.service;
+package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_DATE;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
@@ -8,12 +8,13 @@ import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.repository.AverageTemperatureRepository;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
+import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.notification.domain.CityDateTime;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,40 +22,43 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class WeatherService {
 
-    private static final String SEOUL_ZONE_ID = "Asia/Seoul";
-    private static final String SEOUL_CITY_CODE = "1835847";
     private static final int AVAILABLE_DATE_RANGE_FOR_FORECAST = 5;
+    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
 
     private final WeatherClient weatherClient;
     private final AverageTemperatureRepository averageTemperatureRepository;
 
+    @Scheduled(cron = DAILY_7PM_CRON)
     @Transactional
     public void saveTomorrowAverageTemperature() {
-        ZoneId seoulZone = ZoneId.of(SEOUL_ZONE_ID);
-        LocalDate todayDateInSeoul = ZonedDateTime.now(seoulZone).toLocalDate();
-        LocalDate tomorrowDateInSeoul = todayDateInSeoul.plusDays(1);
+        saveForecastedAverageTemperature(CityDateTime.now(City.SEOUL));
+    }
 
-        double averageTemperatureForDate = getAverageTemperatureForDate(tomorrowDateInSeoul);
-        AverageTemperature averageTemperature = new AverageTemperature(tomorrowDateInSeoul, averageTemperatureForDate);
+    public void saveForecastedAverageTemperature(CityDateTime cityDateTime) {
+        CityDateTime tomorrowCityDateTime = new CityDateTime(cityDateTime.city(), cityDateTime.localDateTime().plusDays(1));
+
+        double averageTemperatureForCityDate = getAverageTemperatureForCityDate(tomorrowCityDateTime);
+        AverageTemperature averageTemperature = new AverageTemperature(tomorrowCityDateTime, averageTemperatureForCityDate);
         averageTemperatureRepository.save(averageTemperature);
     }
 
-    public double getAverageTemperatureForDate(LocalDate targetDate) {
-        validateTargetDate(targetDate);
+    public double getAverageTemperatureForCityDate(CityDateTime cityDateTime) {
+        validateForecastTargetDateRange(cityDateTime);
 
-        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(SEOUL_CITY_CODE);
-        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, targetDate);
+        OpenWeatherResponse weatherOfFourDays = weatherClient.getFourDayWeatherForecast(cityDateTime.getCityCode());
+        double averageTemperatureForDate = computeAverageTemperatureForDate(weatherOfFourDays, cityDateTime.getLocalDate());
 
         return convertFromKelvinToCelsius(averageTemperatureForDate);
     }
 
-    public AverageTemperature getAverageTemperature(LocalDate todayInSeoul) {
-        return averageTemperatureRepository.findByDate(todayInSeoul)
+    public AverageTemperature getAverageTemperature(CityDateTime cityDateTime) {
+        return averageTemperatureRepository.findByCityAndDate(cityDateTime.city(), cityDateTime.getLocalDate())
                 .orElseThrow(() -> new CommonException(NOT_FOUND_AVERAGE_TEMPERATURE));
     }
 
-    private void validateTargetDate(LocalDate targetDate) {
-        LocalDate now = LocalDate.now(ZoneId.of(SEOUL_ZONE_ID));
+    private void validateForecastTargetDateRange(CityDateTime cityDateTime) {
+        LocalDate targetDate = cityDateTime.getLocalDate();
+        LocalDate now = CityDateTime.now(cityDateTime.city()).getLocalDate();
 
         if (!targetDate.isAfter(now)) {
             throw new CommonException(INVALID_FORECAST_TARGET_DATE);

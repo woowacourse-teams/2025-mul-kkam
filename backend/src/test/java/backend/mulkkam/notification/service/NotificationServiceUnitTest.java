@@ -19,7 +19,7 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
@@ -83,7 +83,7 @@ class NotificationServiceUnitTest {
         void success_returnsNotificationsWithin7DaysSortedByLatest() {
             // given
             Long lastId = 10L;
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, defaultSize);
 
             when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
@@ -96,7 +96,7 @@ class NotificationServiceUnitTest {
                     ));
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -128,10 +128,10 @@ class NotificationServiceUnitTest {
                             LocalDate.of(2025, 8, 5)
                     ));
 
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -153,10 +153,10 @@ class NotificationServiceUnitTest {
             when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
                     .thenReturn(notifications);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, 10);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -184,10 +184,10 @@ class NotificationServiceUnitTest {
             when(notificationRepository.findLatest(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
                     .thenReturn(notifications);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -204,11 +204,11 @@ class NotificationServiceUnitTest {
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
             AssertionsForClassTypes.assertThatThrownBy(
-                            () -> notificationService.getNotificationsAfter(request, new MemberDetails(member)))
+                            () -> notificationService.readNotificationsAfter(request, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
@@ -275,7 +275,7 @@ class NotificationServiceUnitTest {
             when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
 
             // when
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
                     new MemberDetails(member));
 
             // then
