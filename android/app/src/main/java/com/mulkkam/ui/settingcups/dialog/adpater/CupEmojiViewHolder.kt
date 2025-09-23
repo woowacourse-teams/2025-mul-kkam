@@ -3,6 +3,7 @@ package com.mulkkam.ui.settingcups.dialog.adpater
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.mulkkam.R
 import com.mulkkam.databinding.ItemCupEmojiBinding
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.util.ImageShape
@@ -29,6 +30,7 @@ class CupEmojiViewHolder(
             ivEmoji.loadUrl(
                 url = item.cupEmojiUrl,
                 shape = ImageShape.Circle,
+                placeholderRes = R.drawable.img_cup_placeholder,
             )
         }
     }

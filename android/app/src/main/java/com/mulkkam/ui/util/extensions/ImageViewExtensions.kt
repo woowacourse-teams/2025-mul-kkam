@@ -11,13 +11,14 @@ import coil3.svg.SvgDecoder
 import coil3.transform.CircleCropTransformation
 import coil3.transform.RoundedCornersTransformation
 import coil3.transform.Transformation
+import com.mulkkam.R
 import com.mulkkam.ui.util.ImageShape
 
 private val SVG_REGEX = Regex("(?i)\\.svg(\\?.*)?$")
 
 fun ImageView.loadUrl(
     url: String,
-    placeholderRes: Int? = null,
+    placeholderRes: Int? = R.drawable.img_placeholder,
     errorRes: Int? = null,
     shape: ImageShape = ImageShape.None,
     scale: Scale = Scale.FIT,
