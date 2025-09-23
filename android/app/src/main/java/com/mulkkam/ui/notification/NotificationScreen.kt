@@ -20,13 +20,13 @@ import com.mulkkam.ui.util.LoadingShimmerEffect
 
 @Composable
 fun NotificationScreen(
-    onBackClick: () -> Unit,
+    navigateToBack: () -> Unit,
     viewModel: NotificationViewModel = NotificationViewModel(),
 ) {
     val notifications = viewModel.notifications.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { NotificationTopAppBar(onBackClick) },
+        topBar = { NotificationTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
         if (notifications.value.toSuccessDataOrNull()?.isEmpty() == true) {
@@ -82,7 +82,7 @@ private fun NotificationScreenPreview() {
     MulkkamTheme {
         Column {
             NotificationScreen(
-                onBackClick = {},
+                navigateToBack = {},
             )
         }
     }

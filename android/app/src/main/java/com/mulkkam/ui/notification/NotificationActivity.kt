@@ -21,7 +21,7 @@ class NotificationActivity : ComponentActivity() {
         setContent {
             MulkkamTheme {
                 NotificationScreen(
-                    onBackClick = { finishWithResult() },
+                    navigateToBack = { finishWithResult() },
                     viewModel = viewModel,
                 )
             }
