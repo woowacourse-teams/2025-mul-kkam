@@ -30,7 +30,7 @@ class CupEmojiViewHolder(
             ivEmoji.loadUrl(
                 url = item.cupEmojiUrl,
                 shape = ImageShape.Circle,
-                placeholderRes = R.drawable.img_cup_place_holder,
+                placeholderRes = R.drawable.img_cup_placeholder,
             )
         }
     }

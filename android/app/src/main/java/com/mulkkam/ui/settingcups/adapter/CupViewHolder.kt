@@ -39,7 +39,7 @@ class CupViewHolder(
             ivIcon.loadUrl(
                 url = item.value.emoji.cupEmojiUrl,
                 shape = ImageShape.Rounded(12),
-                placeholderRes = R.drawable.img_cup_place_holder,
+                placeholderRes = R.drawable.img_cup_placeholder,
             )
 
             val intakeTypeColor =
