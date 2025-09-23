@@ -38,7 +38,7 @@ fun NotificationTopAppBar(onBackClick: () -> Unit) {
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_setting_prev),
+                        painter = painterResource(R.drawable.ic_common_prev),
                         contentDescription = stringResource(R.string.notification_app_bar_navigation_icon_description),
                     )
                 }
