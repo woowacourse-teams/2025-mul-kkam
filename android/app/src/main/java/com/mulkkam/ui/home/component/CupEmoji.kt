@@ -1,6 +1,7 @@
 package com.mulkkam.ui.home.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -28,10 +29,12 @@ import com.mulkkam.ui.designsystem.White
 fun CupEmoji(
     emojiUrl: String,
     label: String,
+    onClick: () -> Unit,
     size: Dp = 64.dp,
 ) {
     val shape = CircleShape
     Surface(
+        onClick = onClick,
         modifier =
             Modifier
                 .size(size)
@@ -42,7 +45,7 @@ fun CupEmoji(
     ) {
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+            verticalArrangement = Arrangement.Center,
         ) {
             AsyncImage(
                 model =

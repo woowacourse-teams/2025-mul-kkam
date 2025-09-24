@@ -37,6 +37,7 @@ fun DrinkMenu(
                         CupEmoji(
                             emojiUrl = cup.emoji.cupEmojiUrl,
                             label = "${cup.amount.value}ml",
+                            onClick = { onSelectCup(cup.id) },
                         )
                     },
                     onClick = { onSelectCup(cup.id) },
@@ -49,6 +50,7 @@ fun DrinkMenu(
                     RoundIconButton(
                         iconRes = R.drawable.ic_manual_drink,
                         contentDescription = null,
+                        onClick = onManual,
                     )
                 },
                 onClick = onManual,

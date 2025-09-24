@@ -1,6 +1,7 @@
 package com.mulkkam.ui.home.component
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
@@ -24,9 +25,7 @@ fun DrinkMenuItem(
 ) {
     Row(
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement =
-            androidx.compose.foundation.layout.Arrangement
-                .spacedBy(14.dp),
+        horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
         val shape = RoundedCornerShape(8.dp)
         Surface(

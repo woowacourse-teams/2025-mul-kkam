@@ -1,7 +1,6 @@
 package com.mulkkam.ui.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
@@ -20,6 +19,7 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
 fun NotificationCounter(
@@ -31,7 +31,7 @@ fun NotificationCounter(
         modifier =
             modifier
                 .size(40.dp)
-                .clickable(onClick = onClick),
+                .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Icon(

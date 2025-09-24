@@ -21,8 +21,8 @@ fun RoundIconButton(
     iconRes: Int,
     contentDescription: String?,
     modifier: Modifier = Modifier,
+    onClick: () -> Unit,
     size: Dp = 68.dp,
-    onClick: () -> Unit = {},
 ) {
     val shape = CircleShape
     Surface(
