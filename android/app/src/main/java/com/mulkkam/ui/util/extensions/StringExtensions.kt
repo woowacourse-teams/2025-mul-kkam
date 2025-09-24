@@ -16,7 +16,7 @@ fun String.getAppearanceSpannable(
     val spannable = SpannableString(this)
 
     highlightedText.forEach { target ->
-        var startIndex = this.indexOf(target)
+        val startIndex = this.indexOf(target)
         if (startIndex != -1) {
             spannable.setSpan(
                 TextAppearanceSpan(context, typographyResId),

@@ -100,7 +100,7 @@ class HomeViewModel : ViewModel() {
     }
 
     fun addWaterIntakeByCup(cupId: Long) {
-        val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
+        val cups = cupsUiState.value.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
         addWaterIntakeByCup(cup)
     }
@@ -122,7 +122,7 @@ class HomeViewModel : ViewModel() {
     }
 
     private fun updateIntakeHistory(intakeHistory: IntakeHistoryResult) {
-        val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return
+        val current = todayProgressInfoUiState.value.toSuccessDataOrNull() ?: return
         _todayProgressInfoUiState.value =
             MulKkamUiState.Success(
                 current.updateProgressInfo(

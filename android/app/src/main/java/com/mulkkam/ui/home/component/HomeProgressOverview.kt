@@ -41,7 +41,7 @@ fun HomeProgressOverview(
             )
         }
 
-        Spacer(Modifier.height(48.dp))
+        Spacer(Modifier.height(46.dp))
 
         LinearGradientProgress(
             progress = achievementRate.coerceIn(0f, 100f),
