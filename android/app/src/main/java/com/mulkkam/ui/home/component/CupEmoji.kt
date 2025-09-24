@@ -26,7 +26,7 @@ fun CupEmoji(
     emojiUrl: String,
     label: String,
     onClick: () -> Unit,
-    size: Dp = 64.dp,
+    size: Dp = 68.dp,
 ) {
     val shape = CircleShape
     Surface(
