@@ -113,7 +113,6 @@ dependencies {
     // Kotlin 및 비동기 처리 관련 라이브러리
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
-    implementation(libs.androidx.compose.runtime)
 
     // 단위 테스트 의존성
     testImplementation(libs.kotlinx.coroutines.test)

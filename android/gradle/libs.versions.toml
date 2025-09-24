@@ -38,7 +38,6 @@ kapt = "2.2.0"
 coil = "3.3.0"
 activityCompose = "1.10.1"
 composeBom = "2025.08.01"
-runtime = "1.9.1"
 
 [libraries]
 # AndroidX 및 UI
@@ -104,7 +103,6 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 
 # 스켈레톤
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
