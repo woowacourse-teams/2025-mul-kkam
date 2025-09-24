@@ -41,7 +41,7 @@ fun DrinkMenu(
                 },
                 onClick = onManual,
             )
-            cups?.cups?.forEach { cup ->
+            cups?.cups?.reversed()?.forEach { cup ->
                 DrinkMenuItem(
                     label = cup.name.value,
                     icon = {
