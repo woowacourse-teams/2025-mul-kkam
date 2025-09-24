@@ -19,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import coil3.request.placeholder
 import coil3.request.transformations
 import coil3.transform.CircleCropTransformation
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -52,6 +54,7 @@ fun CupEmoji(
                     ImageRequest
                         .Builder(LocalContext.current)
                         .data(emojiUrl)
+                        .placeholder(R.drawable.img_cup_placeholder)
                         .crossfade(true)
                         .transformations(CircleCropTransformation())
                         .build(),
