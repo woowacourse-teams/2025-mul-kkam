@@ -30,6 +30,17 @@ fun DrinkMenu(
             horizontalAlignment = Alignment.Companion.End,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            DrinkMenuItem(
+                label = stringResource(id = R.string.home_drink_manual),
+                icon = {
+                    RoundIconButton(
+                        iconRes = R.drawable.ic_manual_drink,
+                        contentDescription = null,
+                        onClick = onManual,
+                    )
+                },
+                onClick = onManual,
+            )
             cups?.cups?.forEach { cup ->
                 DrinkMenuItem(
                     label = cup.name.value,
@@ -43,18 +54,6 @@ fun DrinkMenu(
                     onClick = { onSelectCup(cup.id) },
                 )
             }
-
-            DrinkMenuItem(
-                label = stringResource(id = R.string.home_drink_manual),
-                icon = {
-                    RoundIconButton(
-                        iconRes = R.drawable.ic_manual_drink,
-                        contentDescription = null,
-                        onClick = onManual,
-                    )
-                },
-                onClick = onManual,
-            )
         }
     }
 }
