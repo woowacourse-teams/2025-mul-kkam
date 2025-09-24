@@ -13,19 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
-import coil3.request.ImageRequest
-import coil3.request.crossfade
-import coil3.request.placeholder
-import coil3.request.transformations
-import coil3.transform.CircleCropTransformation
-import com.mulkkam.R
+import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.ImageShape
 
 @Composable
 fun CupEmoji(
@@ -49,17 +43,10 @@ fun CupEmoji(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            AsyncImage(
-                model =
-                    ImageRequest
-                        .Builder(LocalContext.current)
-                        .data(emojiUrl)
-                        .placeholder(R.drawable.img_cup_placeholder)
-                        .crossfade(true)
-                        .transformations(CircleCropTransformation())
-                        .build(),
-                contentDescription = null,
+            NetworkImage(
+                url = emojiUrl,
                 modifier = Modifier.size(size * 0.42f),
+                shape = ImageShape.Circle,
             )
             Spacer(Modifier.height(2.dp))
             Text(

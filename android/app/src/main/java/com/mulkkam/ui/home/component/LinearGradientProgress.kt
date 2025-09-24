@@ -65,14 +65,14 @@ fun LinearGradientProgress(
                     tileMode = TileMode.Clamp,
                 )
 
-            val r = minOf(cornerRadius.toPx(), size.height / 2f)
+            val cornerRadiusPx = minOf(cornerRadius.toPx(), size.height / 2f)
 
             if (filledWidth > 0f) {
                 drawRoundRect(
                     brush = brush,
                     size = Size(filledWidth, size.height),
                     cornerRadius =
-                        CornerRadius(r, r),
+                        CornerRadius(cornerRadiusPx, cornerRadiusPx),
                 )
             }
         }
