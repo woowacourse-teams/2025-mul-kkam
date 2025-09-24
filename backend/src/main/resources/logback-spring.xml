@@ -2,7 +2,6 @@
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
 
-    <!-- 파일 패턴: 컬러 없음, Asia/Seoul -->
     <property name="FILE_PATTERN"
               value="[%d{yyyy-MM-dd'T'HH:mm:ss, Asia/Seoul}] %-5level [%X{traceId}] - %msg%n"/>
 
@@ -101,9 +100,9 @@
     </springProfile>
 
     <!-- ================== -->
-    <!-- 그 외 프로파일(예: stage 등) -->
+    <!-- 그 외 프로파일-->
     <!-- ================== -->
-    <springProfile name="!dev & !prod">
+    <springProfile name="!dev &amp; !prod">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
