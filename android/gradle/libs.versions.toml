@@ -1,7 +1,7 @@
 [versions]
 coreTesting = "2.2.0"
 lifecycleViewmodelCompose = "2.9.3"
-lottie = "6.6.7"
+lottie = "6.6.9"
 minSdk = "28"
 shimmer = "0.5.0"
 targetSdk = "36"
@@ -38,6 +38,7 @@ kapt = "2.2.0"
 coil = "3.3.0"
 activityCompose = "1.10.1"
 composeBom = "2025.08.01"
+runtime = "1.9.1"
 
 [libraries]
 # AndroidX 및 UI
@@ -77,7 +78,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
@@ -101,6 +104,7 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 
 # 스켈레톤
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime", version.ref = "runtime" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

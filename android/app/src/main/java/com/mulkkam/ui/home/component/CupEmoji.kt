@@ -1,0 +1,66 @@
+package com.mulkkam.ui.home.component
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.request.transformations
+import coil3.transform.CircleCropTransformation
+import com.mulkkam.ui.designsystem.Gray200
+import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.White
+
+@Composable
+fun CupEmoji(
+    emojiUrl: String,
+    label: String,
+    size: Dp = 64.dp,
+) {
+    val shape = CircleShape
+    Surface(
+        modifier =
+            Modifier
+                .size(size)
+                .border(1.dp, Gray200, shape),
+        shape = shape,
+        color = White,
+        shadowElevation = 4.dp,
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = androidx.compose.foundation.layout.Arrangement.Center,
+        ) {
+            AsyncImage(
+                model =
+                    ImageRequest
+                        .Builder(LocalContext.current)
+                        .data(emojiUrl)
+                        .crossfade(true)
+                        .transformations(CircleCropTransformation())
+                        .build(),
+                contentDescription = null,
+                modifier = Modifier.size(size * 0.42f),
+            )
+            Spacer(Modifier.height(2.dp))
+            Text(
+                text = label,
+                style = MulKkamTheme.typography.label2,
+                color = Color(0xFF8A8A8E),
+            )
+        }
+    }
+}

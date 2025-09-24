@@ -113,6 +113,7 @@ dependencies {
     // Kotlin 및 비동기 처리 관련 라이브러리
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.androidx.compose.runtime)
 
     // 단위 테스트 의존성
     testImplementation(libs.kotlinx.coroutines.test)
@@ -124,9 +125,11 @@ dependencies {
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.coil.svg)
     implementation(libs.coil.network)
     implementation(libs.lottie)
+    implementation(libs.lottie.compose)
 
     // 로그인
     implementation(libs.kakao.v2.user)
