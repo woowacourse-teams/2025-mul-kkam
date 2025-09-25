@@ -1,7 +1,7 @@
 [versions]
 coreTesting = "2.2.0"
 lifecycleViewmodelCompose = "2.9.3"
-lottie = "6.6.7"
+lottie = "6.6.9"
 minSdk = "28"
 shimmer = "0.5.0"
 targetSdk = "36"
@@ -77,7 +77,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
