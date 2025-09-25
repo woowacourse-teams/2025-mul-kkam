@@ -1,15 +1,14 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
     <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
-    <!-- ================== -->
-    <!-- 파일: 컬러 없음, Asia/Seoul -->
+
     <property name="FILE_PATTERN"
               value="[%d{yyyy-MM-dd'T'HH:mm:ss, Asia/Seoul}] %-5level [%X{traceId}] - %msg%n"/>
 
     <!-- ================== -->
-    <!-- DEV 환경 -->
+    <!-- DEV + PROD 공통 -->
     <!-- ================== -->
-    <springProfile name="dev">
+    <springProfile name="dev | prod">
         <property name="LOG_PATH" value="/app/logs"/>
 
         <!-- INFO -->
@@ -63,7 +62,7 @@
             </filter>
         </appender>
 
-        <!-- API 성능 전용 -->
+        <!-- API 성능 전용(JSON) -->
         <appender name="API_PERF_JSON" class="ch.qos.logback.core.rolling.RollingFileAppender">
             <file>${LOG_PATH}/api-perf/api-perf.log</file>
             <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -77,17 +76,13 @@
                         <fieldName>@timestamp</fieldName>
                         <pattern>yyyy-MM-dd'T'HH:mm:ss.SSS z</pattern>
                     </timestamp>
-
                     <level/>
-
                     <mdc>
                         <includeMdcKeyName>traceId</includeMdcKeyName>
                     </mdc>
-
                     <arguments>
                         <includeNonStructuredArguments>false</includeNonStructuredArguments>
                     </arguments>
-
                 </providers>
             </encoder>
         </appender>
@@ -105,13 +100,11 @@
     </springProfile>
 
     <!-- ================== -->
-    <!-- 비-DEV 환경 -->
+    <!-- 그 외 프로파일-->
     <!-- ================== -->
-
-    <springProfile name="!dev">
+    <springProfile name="!dev &amp; !prod">
         <root level="INFO">
             <appender-ref ref="CONSOLE"/>
         </root>
     </springProfile>
-
 </configuration>
