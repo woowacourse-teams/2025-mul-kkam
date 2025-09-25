@@ -1,5 +1,6 @@
 package com.mulkkam.ui.notification
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -28,6 +29,7 @@ class NotificationActivity : ComponentActivity() {
         }
         initBackPress()
         initObservers()
+        clearNotifications()
     }
 
     private fun finishWithResult() {
@@ -76,6 +78,11 @@ class NotificationActivity : ComponentActivity() {
                     ).show()
             }
         }
+    }
+
+    private fun clearNotifications() {
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancelAll()
     }
 
     companion object {
