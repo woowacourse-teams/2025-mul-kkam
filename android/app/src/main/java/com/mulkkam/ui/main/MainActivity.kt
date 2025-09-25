@@ -20,6 +20,7 @@ import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
 import com.mulkkam.ui.main.model.MainTab
+import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
@@ -58,10 +59,13 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             val action =
                 NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
 
-            // TODO: 푸시 알림 클릭 시 처리 로직 추가
             when (action) {
                 NotificationAction.GO_HOME -> Unit
-                NotificationAction.GO_NOTIFICATION -> Unit
+                NotificationAction.GO_NOTIFICATION -> {
+                    val intent = NotificationActivity.newIntent(this)
+                    intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
+                    startActivity(intent)
+                }
                 NotificationAction.UNKNOWN -> Unit
             }
         }
