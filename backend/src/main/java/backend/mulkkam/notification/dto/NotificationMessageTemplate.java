@@ -7,13 +7,13 @@ import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import java.time.LocalDateTime;
 
-public record NotificationMessageTemplate (
+public record NotificationMessageTemplate(
         String title,
         String body,
         String topic,
         Action action,
         NotificationType type
-){
+) {
     public Notification toNotification(Member member, LocalDateTime createdAt) {
         return new Notification(
                 type,

@@ -156,7 +156,6 @@ public class MemberService {
         List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
         intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
         cupRepository.deleteByMember(member);
-
         intakeHistoryRepository.deleteByMember(member);
 
         targetAmountSnapshotRepository.deleteByMember(member);

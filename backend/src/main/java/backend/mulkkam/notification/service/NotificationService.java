@@ -8,7 +8,6 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -30,7 +29,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +52,7 @@ public class NotificationService {
     private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
     private final ApplicationEventPublisher publisher;
+    private final NotificationBatchService notificationBatchService;
 
     @Transactional
     @Scheduled(cron = DAILY_2PM_CRON)
@@ -60,16 +63,25 @@ public class NotificationService {
     }
 
     @Transactional
-    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
-        List<Member> members = memberRepository.findAll();
+    public void createAndSendTopicNotification(
+            NotificationMessageTemplate notificationMessageTemplate,
+            LocalDateTime now
+    ) {
+        int CHUNK = 1_000;
 
-        List<Notification> notifications = members.stream()
-                .map(member -> notificationMessageTemplate.toNotification(member, now))
-                .toList();
-        notificationRepository.saveAll(notifications);
+        Pageable pageable = PageRequest.of(0, CHUNK, Sort.by("id").ascending());
+        Slice<Member> slice;
 
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
-        publisher.publishEvent(sendMessageByFcmTopicRequest);
+        do {
+            slice = memberRepository.findIdsBySlice(pageable);
+            notificationBatchService.processOneChunk(
+                    notificationMessageTemplate,
+                    now,
+                    slice.getContent()
+            );
+            pageable = slice.hasNext() ? slice.nextPageable() : Pageable.unpaged();
+        } while (slice.hasNext());
+        publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest());
     }
 
     @Transactional
