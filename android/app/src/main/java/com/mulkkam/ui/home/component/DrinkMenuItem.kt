@@ -11,10 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -48,5 +50,23 @@ fun DrinkMenuItem(
             }
         }
         icon()
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DrinkMenuItemPreview() {
+    MulkkamTheme {
+        DrinkMenuItem(
+            label = "스타벅스 텀블러",
+            icon = {
+                CupEmoji(
+                    emojiUrl = "https://example.com/",
+                    label = "250 ml",
+                    onClick = {},
+                )
+            },
+            onClick = {},
+        )
     }
 }

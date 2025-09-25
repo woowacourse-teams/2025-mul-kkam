@@ -10,8 +10,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
 import com.mulkkam.ui.home.component.HomeCharacter
@@ -91,6 +94,20 @@ fun HomeScreen(
         HomeConfetti(
             playConfetti = uiStateHolder.playConfetti,
             onFinished = { uiStateHolder.onConfettiFinished() },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun HomeScreenPreview() {
+    val viewModel: HomeViewModel = viewModel()
+
+    MulkkamTheme {
+        HomeScreen(
+            viewModel = viewModel,
+            navigateToNotification = {},
+            onManualDrink = {},
         )
     }
 }

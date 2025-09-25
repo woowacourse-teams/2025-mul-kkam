@@ -10,9 +10,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
+import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.cups.CupEmoji
+import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun DrinkMenu(
@@ -55,5 +62,26 @@ fun DrinkMenu(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun DrinkMenuPreview() {
+    MulkkamTheme {
+        val cups =
+            Cups(
+                listOf(
+                    Cup(1, CupName("스타벅스 텀블러"), CupAmount(355), 1, IntakeType.WATER, CupEmoji(1L, "https://example.com/1")),
+                    Cup(2, CupName("종이컵"), CupAmount(200), 2, IntakeType.WATER, CupEmoji(2L, "https://example.com/2")),
+                    Cup(3, CupName("머그컵"), CupAmount(250), 3, IntakeType.COFFEE, CupEmoji(3L, "https://example.com/3")),
+                ),
+            )
+        DrinkMenu(
+            visible = true,
+            cups = cups,
+            onSelectCup = {},
+            onManual = {},
+        )
     }
 }

@@ -13,11 +13,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.ImageShape
 
@@ -55,5 +57,17 @@ fun CupEmoji(
                 color = Color(0xFF8A8A8E),
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun CupEmojiPreview() {
+    MulkkamTheme {
+        CupEmoji(
+            emojiUrl = "https://example.com/",
+            label = "200ml",
+            onClick = {},
+        )
     }
 }

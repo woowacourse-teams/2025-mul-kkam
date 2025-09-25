@@ -11,9 +11,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -43,5 +46,17 @@ fun RoundIconButton(
                 modifier = Modifier.size(size * 0.4f),
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun RoundIconButtonPreview() {
+    MulkkamTheme {
+        RoundIconButton(
+            iconRes = R.drawable.ic_home_drink,
+            contentDescription = null,
+            onClick = {},
+        )
     }
 }
