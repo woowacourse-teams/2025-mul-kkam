@@ -78,7 +78,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
           AND n.member.id = :memberId
           AND n.isRead = false
         """)
-    long countByIsReadFalseAndMemberId(Long memberId, LocalDateTime limitStartDateTime);
+    long countUnReadByMemberId(Long memberId, LocalDateTime limitStartDateTime);
 
     List<Notification> findAllByMember(Member member);
 

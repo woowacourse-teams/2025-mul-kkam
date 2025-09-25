@@ -274,7 +274,7 @@ class NotificationServiceUnitTest {
         @ValueSource(longs = {0L, 1L, 3L})
         void success_validMember(long count) {
             // given
-            when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class), any())).thenReturn(count);
+            when(notificationRepository.countUnReadByMemberId(any(Long.class), any())).thenReturn(count);
 
             // when
             GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(

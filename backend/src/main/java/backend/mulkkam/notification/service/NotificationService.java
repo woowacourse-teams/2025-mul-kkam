@@ -124,7 +124,7 @@ public class NotificationService {
         Long memberId = memberDetails.id();
         LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
 
-        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId, limitStartDateTime);
+        long count = notificationRepository.countUnReadByMemberId(memberId, limitStartDateTime);
         return new GetUnreadNotificationsCountResponse(count);
     }
 
