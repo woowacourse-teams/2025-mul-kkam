@@ -164,7 +164,7 @@ public class NotificationControllerTest extends ControllerTest {
         @Test
         void success_validMember() throws Exception {
             // when & then
-            String json = mockMvc.perform(get("/notifications/unread-count")
+            String json = mockMvc.perform(get("/notifications/unread-count?clientTime=2025-08-15T10:00:00")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();

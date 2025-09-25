@@ -47,7 +47,14 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
     void deleteByMember(Member member);
 
-    long countByIsReadFalseAndMemberId(Long memberId);
+    @Query("""
+        SELECT COUNT(n)
+        FROM Notification n
+        WHERE n.createdAt >= :limitStartDateTime
+          AND n.member.id = :memberId
+          AND n.isRead = false
+        """)
+    long countByIsReadFalseAndMemberId(Long memberId, LocalDateTime limitStartDateTime);
 
     List<Notification> findAllByMember(Member member);
 

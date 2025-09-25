@@ -53,9 +53,13 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private SuggestionNotificationRepository suggestionNotificationRepository;
 
-    private List<Notification> createNotifications(LocalDate... dates) {
+    private List<Notification> createUnReadNotifications(LocalDate... dates) {
         return Arrays.stream(dates)
-                .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).build())
+                .map(date -> NotificationFixtureBuilder
+                        .withMember(savedMember)
+                        .createdAt(date)
+                        .isRead(false)
+                        .build())
                 .toList();
     }
 
@@ -156,7 +160,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
-            notificationRepository.saveAll(createNotifications(
+            notificationRepository.saveAll(createUnReadNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -178,7 +182,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
             // given
-            List<Notification> notifications = createNotifications(
+            List<Notification> notifications = createUnReadNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -206,7 +210,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .createdAt(LocalDate.of(2025, 8, 10))
                     .build();
 
-            List<Notification> notifications = createNotifications(
+            List<Notification> notifications = createUnReadNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -240,7 +244,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_nextCursorIsNullWhenNoMoreData() {
             // given
-            notificationRepository.saveAll(createNotifications(
+            notificationRepository.saveAll(createUnReadNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -275,24 +279,19 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class GetNotificationsCount {
 
-        private List<Notification> createReadNotifications(LocalDate... dates) {
-            return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).isRead(true)
-                            .build())
-                    .toList();
-        }
+        private LocalDateTime clientTime;
+        @BeforeEach
+        void setUp() {
+            clientTime = LocalDateTime.of(2025, 8, 7, 0, 0, 0);
 
-        @DisplayName("안 읽은 알림의 갯수를 반환한다")
-        @Test
-        void success_validMember() {
-            // given
-            Notification notification = NotificationFixtureBuilder.withMember(savedMember)
+            // 공통 데이터 시드: 읽음 처리된 제안 알림 1건 + 8/1~8/5 읽음 + 8/6~8/7 미읽음
+            Notification suggestionRead = NotificationFixtureBuilder.withMember(savedMember)
                     .notificationType(NotificationType.SUGGESTION)
                     .createdAt(LocalDate.of(2025, 8, 1))
                     .isRead(true)
                     .build();
             suggestionNotificationRepository.save(
-                    SuggestionNotificationFixtureBuilder.withNotification(notification).build());
+                    SuggestionNotificationFixtureBuilder.withNotification(suggestionRead).build());
 
             notificationRepository.saveAll(createReadNotifications(
                     LocalDate.of(2025, 8, 1),
@@ -301,14 +300,45 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 4),
                     LocalDate.of(2025, 8, 5)
             ));
-            notificationRepository.saveAll(createNotifications(
+            notificationRepository.saveAll(createUnReadNotifications(
                     LocalDate.of(2025, 8, 6),
                     LocalDate.of(2025, 8, 7)
             ));
+        }
 
+        private List<Notification> createReadNotifications(LocalDate... dates) {
+            return Arrays.stream(dates)
+                    .map(date -> NotificationFixtureBuilder
+                            .withMember(savedMember)
+                            .createdAt(date)
+                            .isRead(true)
+                            .build())
+                    .toList();
+        }
+
+        @DisplayName("안 읽은 알림의 갯수를 반환한다")
+        @Test
+        void success_validMember() {
             // when
             GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
-                    new MemberDetails(savedMember));
+                    new MemberDetails(savedMember), clientTime);
+
+            // then
+            assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);
+        }
+
+        @DisplayName("요청 시각 기준 7일 이내의 읽지 않은 알림만 집계한다")
+        @Test
+        void success_countsUnreadOnlyWithin7Days() {
+            // given
+            notificationRepository.saveAll(createUnReadNotifications(
+                    LocalDate.of(2025, 7, 6),
+                    LocalDate.of(2025, 7, 7)
+            ));
+
+            // when 
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
+                    new MemberDetails(savedMember), clientTime);
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);

@@ -114,9 +114,11 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails) {
+    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails, LocalDateTime clientTime) {
         Long memberId = memberDetails.id();
-        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
+        LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
+
+        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId, limitStartDateTime);
         return new GetUnreadNotificationsCountResponse(count);
     }
 
