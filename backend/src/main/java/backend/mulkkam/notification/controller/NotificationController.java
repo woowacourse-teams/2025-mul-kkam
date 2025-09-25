@@ -3,8 +3,8 @@ package backend.mulkkam.notification.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.service.NotificationService;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "알림", description = "사용자 알림 관리 API")
@@ -61,10 +63,15 @@ public class NotificationController {
     @GetMapping("/unread-count")
     public ResponseEntity<GetUnreadNotificationsCountResponse> getUnreadNotificationsCount(
             @Parameter(hidden = true)
-            MemberDetails memberDetails
+            MemberDetails memberDetails,
+            @RequestParam(required = false) // TODO: 다음 릴리스에 안드에게 추가 필드로 안내
+            LocalDateTime clientTime
     ) {
+        if (clientTime == null) {
+            clientTime = LocalDateTime.now();
+        }
         GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
-                memberDetails);
+                memberDetails, clientTime);
         return ResponseEntity.ok(getUnreadNotificationsCountResponse);
     }
 
