@@ -60,7 +60,7 @@ fun DrinkMenu(
                     icon = {
                         CupEmoji(
                             emojiUrl = cup.emoji.cupEmojiUrl,
-                            label = stringResource(R.string.intake_unit_ml),
+                            label = stringResource(R.string.intake_unit_ml, cup.amount),
                             onClick = { onSelectCup(cup.id) },
                         )
                     },
