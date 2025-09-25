@@ -14,12 +14,12 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.dto.GetNotificationResponse;
 import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.NotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
@@ -98,21 +98,25 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = readNotificationsRequest.lastId();
-        List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
+        List<ReadNotificationRow> pagedNotificationResponses = getNotificationResponsesByLastIdAndMember(
                 memberDetails,
                 lastId,
                 limitStartDateTime,
                 pageable
         );
 
-        boolean hasNext = pagedNotifications.size() > size;
+        boolean hasNext = pagedNotificationResponses.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, pagedNotifications);
-        List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
-        List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
-        notifications.forEach(
-                notification -> notification.updateIsRead(true)
-        );
+        Long nextCursor = getNextCursor(hasNext, pagedNotificationResponses);
+        List<ReadNotificationRow> readNotificationRows = dropExtraNotificationResponse(hasNext,
+                pagedNotificationResponses);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotificationRows);
+
+        List<Long> ids = readNotificationRows.stream()
+                .map(ReadNotificationRow::id)
+                .toList();
+
+        notificationRepository.markReadInBulk(ids);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -126,9 +130,12 @@ public class NotificationService {
         sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails) {
+    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails,
+                                                                           LocalDateTime clientTime) {
         Long memberId = memberDetails.id();
-        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
+        LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
+
+        long count = notificationRepository.countUnReadByMemberId(memberId, limitStartDateTime);
         return new GetUnreadNotificationsCountResponse(count);
     }
 
@@ -160,17 +167,17 @@ public class NotificationService {
 
     private Long getNextCursor(
             boolean hasNext,
-            List<Notification> notifications
+            List<ReadNotificationRow> notifications
     ) {
         if (hasNext) {
-            return notifications.getLast().getId();
+            return notifications.getLast().id();
         }
         return null;
     }
 
-    private List<Notification> getNotifications(
+    private List<ReadNotificationRow> dropExtraNotificationResponse(
             boolean hasNext,
-            List<Notification> notifications
+            List<ReadNotificationRow> notifications
     ) {
         if (hasNext) {
             notifications.removeLast();
@@ -178,7 +185,7 @@ public class NotificationService {
         return notifications;
     }
 
-    private List<Notification> getNotificationsByLastIdAndMember(
+    private List<ReadNotificationRow> getNotificationResponsesByLastIdAndMember(
             MemberDetails memberDetails,
             Long lastId,
             LocalDateTime limitStartDateTime,
@@ -186,24 +193,22 @@ public class NotificationService {
     ) {
         Long memberId = memberDetails.id();
         if (lastId == null) {
-            return notificationRepository.findLatest(memberId, limitStartDateTime, pageable);
+            return notificationRepository.findLatestRows(memberId, limitStartDateTime, pageable);
         }
-        return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
+        return notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime, pageable);
     }
 
-    private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
-        return notifications.stream()
+    private List<NotificationResponse> toNotificationResponses(List<ReadNotificationRow> readNotificationRows) {
+        return readNotificationRows.stream()
                 .map(this::getNotificationResponse)
                 .collect(Collectors.toList());
     }
 
-    private NotificationResponse getNotificationResponse(Notification notification) {
-        if (notification.getNotificationType() != NotificationType.SUGGESTION) {
-            return new GetNotificationResponse(notification);
+    private NotificationResponse getNotificationResponse(ReadNotificationRow readNotificationRow) {
+        if (readNotificationRow.notificationType() != NotificationType.SUGGESTION) {
+            return new GetNotificationResponse(readNotificationRow);
         }
-        SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
-                notification);
-        return new GetSuggestionNotificationResponse(notification, suggestionNotification);
+        return new GetSuggestionNotificationResponse(readNotificationRow);
     }
 
     private void sendNotificationByMember(
