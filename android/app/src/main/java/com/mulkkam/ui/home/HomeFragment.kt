@@ -51,7 +51,7 @@ class HomeFragment :
                                 val intent = NotificationActivity.newIntent(requireContext())
                                 notificationResultLauncher.launch(intent)
                             },
-                            navigateToManualDrink = {
+                            onManualDrink = {
                                 if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return@HomeScreen
                                 ManualDrinkFragment
                                     .newInstance()

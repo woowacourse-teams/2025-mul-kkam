@@ -27,7 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 fun HomeScreen(
     viewModel: HomeViewModel,
     navigateToNotification: () -> Unit,
-    navigateToManualDrink: () -> Unit,
+    onManualDrink: () -> Unit,
 ) {
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
@@ -59,7 +59,7 @@ fun HomeScreen(
             DrinkButton(
                 cups = cupsUiState.toSuccessDataOrNull(),
                 onSelectCup = { cupId -> viewModel.addWaterIntakeByCup(cupId) },
-                onManual = navigateToManualDrink,
+                onManual = onManualDrink,
             )
         },
     ) { padding ->
