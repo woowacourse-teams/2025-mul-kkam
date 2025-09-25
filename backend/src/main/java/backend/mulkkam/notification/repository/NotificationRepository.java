@@ -54,7 +54,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
     @Query("""
             SELECT n
             FROM Notification n
-            JOIN fetch Member m
+            JOIN fetch n.member
             on n.id = :id
             """
     )
