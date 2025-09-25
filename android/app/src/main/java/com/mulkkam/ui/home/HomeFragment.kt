@@ -11,11 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.mulkkam.R
+import com.mulkkam.domain.model.intake.IntakeInfo
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
@@ -27,7 +26,7 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
-import kotlinx.coroutines.launch
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 class HomeFragment :
     Fragment(),
@@ -89,42 +88,38 @@ class HomeFragment :
     }
 
     private fun initCollectors() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                launch { collectTodayProgressFailures() }
-                launch { collectDrinkUiState() }
-            }
+        viewModel.todayProgressInfoUiState.collectWithLifecycle(this) { state ->
+            handleTodayProgressFailures(state)
+        }
+        viewModel.drinkUiState.collectWithLifecycle(this) { state ->
+            handleDrinkUiState(state)
         }
     }
 
-    private suspend fun collectTodayProgressFailures() {
-        viewModel.todayProgressInfoUiState.collect { state ->
-            if (state is MulKkamUiState.Failure) {
-                handleFailure(state.error)
-            }
+    private fun handleTodayProgressFailures(state: MulKkamUiState<TodayProgressInfo>) {
+        if (state is MulKkamUiState.Failure) {
+            handleFailure(state.error)
         }
     }
 
-    private suspend fun collectDrinkUiState() {
-        viewModel.drinkUiState.collect { state ->
-            when (state) {
-                is MulKkamUiState.Success ->
-                    showIntakeSuccessSnack(
-                        intakeType = state.data.intakeType,
-                        amount = state.data.amount,
-                    )
+    private fun handleDrinkUiState(state: MulKkamUiState<IntakeInfo>) {
+        when (state) {
+            is MulKkamUiState.Success ->
+                showIntakeSuccessSnack(
+                    intakeType = state.data.intakeType,
+                    amount = state.data.amount,
+                )
 
-                is MulKkamUiState.Failure -> {
-                    showSnackBar(
-                        message = getString(R.string.manual_drink_network_error),
-                        iconRes = R.drawable.ic_alert_circle,
-                    )
-                }
-
-                MulKkamUiState.Idle,
-                MulKkamUiState.Loading,
-                -> Unit
+            is MulKkamUiState.Failure -> {
+                showSnackBar(
+                    message = getString(R.string.manual_drink_network_error),
+                    iconRes = R.drawable.ic_alert_circle,
+                )
             }
+
+            MulKkamUiState.Idle,
+            MulKkamUiState.Loading,
+            -> Unit
         }
     }
 
