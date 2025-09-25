@@ -66,6 +66,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
                 }
+
                 NotificationAction.UNKNOWN -> Unit
             }
         }
