@@ -231,7 +231,7 @@
     <string name="coffee_encyclopedia_content2">- 물깜은 커피를 물의 95%로 반영해요.예) 아메리카노 200ml = 물 190ml로 기록\n\n즉, 커피도 수분 보충에 도움을 주지만 물만큼은 아니라는 것을 반영했어요.</string>
     <string name="coffee_encyclopedia_subtitle3">⚠️ 참고하세요</string>
     <string name="coffee_encyclopedia_content3"><![CDATA[• 해당 연구는 Coffee & Health에서 제공한 자료이며, 이 기관은 ISIC(Institute for Scientific Information on Coffee) 가 운영합니다. \n • ISIC 는 네슬레, 일리, 라바짜 등 유럽 주요 커피 기업이 후원하는 산업 연합이므로, 이해 상충 가능성이 존재할 수 있습니다.]]></string>
-    <string name="coffee_encyclopedia_source">출처 : https://www.coffeeandhealth.org/health/wellbeing/fluid-balance/coffee-caffeine-hydration-in-the-general-population?utm_source=chatgpt.com</string>
+    <string name="coffee_encyclopedia_source">출처 : https://www.coffeeandhealth.org/health/wellbeing/fluid-balance/coffee-caffeine-hydration-in-the-general-population</string>
 
     <string name="health_connect_install_alert">헬스 서비스가 설치되어 있지 않아요. 신체 정보 설정에서 헬스 커넥트 설정을 완료해주세요.</string>
 </resources>
