@@ -14,6 +14,7 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
@@ -21,9 +22,9 @@ import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -142,9 +143,9 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             List<NotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream().map(NotificationResponse::createdAt).toList();
 
-            List<Boolean> actualIsReads = notificationRepository.findByCursor(savedMember.getId(), 10L,
+            List<Boolean> actualIsReads = notificationRepository.findByCursorRows(savedMember.getId(), 10L,
                             requestTime, Pageable.ofSize(defaultSize + 1)).stream()
-                    .map(Notification::isRead)
+                    .map(ReadNotificationRow::isRead)
                             .toList();
 
             assertSoftly(softly -> {
