@@ -198,7 +198,7 @@
     <string name="manual_drink_label">직접 입력</string>
     <string name="manual_drink_perform">마시기</string>
 
-    <string name="expandable_floating_menu_intake_unit">%,dml</string>
+    <string name="intake_unit_ml">%,dml</string>
 
     <string name="network_check_error">네트워크 상태를 확인해 주세요</string>
     <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
