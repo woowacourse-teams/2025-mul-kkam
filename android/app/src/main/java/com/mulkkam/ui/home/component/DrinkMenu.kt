@@ -7,8 +7,11 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,12 +31,15 @@ fun DrinkMenu(
     onSelectCup: (Long) -> Unit,
     onManual: () -> Unit,
 ) {
+    val elevationOffset: Int = 12
     AnimatedVisibility(
         visible = visible,
+        modifier = Modifier.offset(x = (elevationOffset).dp, y = (elevationOffset).dp),
         enter = fadeIn() + expandVertically(expandFrom = Alignment.Companion.Bottom),
         exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Companion.Bottom),
     ) {
         Column(
+            modifier = Modifier.padding(elevationOffset.dp),
             horizontalAlignment = Alignment.Companion.End,
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
