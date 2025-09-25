@@ -18,7 +18,7 @@ import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
 import com.mulkkam.ui.home.component.HomeTopBar
-import com.mulkkam.ui.home.component.rememberHomeUiStateHolder
+import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import kotlinx.coroutines.flow.collectLatest
