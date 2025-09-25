@@ -124,9 +124,11 @@ dependencies {
 
     // 이미지 로딩 및 캐싱 라이브러리
     implementation(libs.coil)
+    implementation(libs.coil.compose)
     implementation(libs.coil.svg)
     implementation(libs.coil.network)
     implementation(libs.lottie)
+    implementation(libs.lottie.compose)
 
     // 로그인
     implementation(libs.kakao.v2.user)
