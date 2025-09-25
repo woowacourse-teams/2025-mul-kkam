@@ -24,7 +24,7 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.ImageShape
 
 @Composable
-fun CupEmoji(
+fun DrinkCupOption(
     emojiUrl: String,
     label: String,
     onClick: () -> Unit,
@@ -62,9 +62,9 @@ fun CupEmoji(
 
 @Preview(showBackground = true)
 @Composable
-private fun CupEmojiPreview() {
+private fun DrinkCupOptionPreview() {
     MulkkamTheme {
-        CupEmoji(
+        DrinkCupOption(
             emojiUrl = "https://example.com/",
             label = "200ml",
             onClick = {},

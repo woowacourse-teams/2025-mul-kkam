@@ -60,7 +60,7 @@ private fun DrinkMenuItemPreview() {
         DrinkMenuItem(
             label = "스타벅스 텀블러",
             icon = {
-                CupEmoji(
+                DrinkCupOption(
                     emojiUrl = "https://example.com/",
                     label = "250 ml",
                     onClick = {},
