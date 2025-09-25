@@ -96,7 +96,7 @@ public class NotificationService {
         boolean hasNext = pagedNotifications.size() > size;
 
         Long nextCursor = getNextCursor(hasNext, pagedNotifications);
-        List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
+        List<Notification> notifications = dropExtraNotification(hasNext, pagedNotifications);
         List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
         notifications.forEach(
                 notification -> notification.updateIsRead(true)
@@ -156,7 +156,7 @@ public class NotificationService {
         return null;
     }
 
-    private List<Notification> getNotifications(
+    private List<Notification> dropExtraNotification(
             boolean hasNext,
             List<Notification> notifications
     ) {
