@@ -33,7 +33,8 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             "/favicon.ico",
             "/robots.txt",
             "/swagger-ui/**",
-            "/v3/api-docs/**"
+            "/v3/api-docs/**",
+            "/actuator/health"
     );
 
 
