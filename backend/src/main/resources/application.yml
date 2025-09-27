@@ -8,6 +8,11 @@ spring:
   profiles:
     include: private
     active: local
+  jpa:
+    properties:
+      hibernate.jdbc.batch_size: 1000
+      hibernate.order_inserts: true
+      hibernate.order_updates: true
 
 management:
   metrics:
