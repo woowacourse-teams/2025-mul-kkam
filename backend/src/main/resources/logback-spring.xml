@@ -1,13 +1,15 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
-    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
     <!-- ================== -->
     <!-- 파일: 컬러 없음, Asia/Seoul -->
     <property name="FILE_PATTERN"
               value="[%d{yyyy-MM-dd'T'HH:mm:ss, Asia/Seoul}] %-5level [%X{traceId}] - %msg%n"/>
 
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
     <!-- ================== -->
-    <!-- DEV 환경 -->
+    <!-- DEV 환경            -->
     <!-- ================== -->
     <springProfile name="dev">
         <property name="LOG_PATH" value="/app/logs"/>
