@@ -42,6 +42,22 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * 들어오는 HTTP 요청을 가로채어 트레이스 아이디를 설정하고 요청/응답 내용을 선택적으로 로깅한 뒤 체인을 실행하며 응답 바디를 최종 응답으로 복사한다.
+     *
+     * 처리 흐름:
+     * - 요청을 ContentCachingRequestWrapper와 ContentCachingResponseWrapper로 래핑하여 본문을 여러 번 읽을 수 있도록 준비합니다.
+     * - MDC에 생성한 traceId를 추가합니다.
+     * - 요청 경로가 제외 패턴에 포함되면 로깅을 생략하고 필터 체인만 실행합니다(예외 발생 시 응답 정보는 기록함).
+     * - 제외되지 않는 경우 요청 URI와 헤더를 기록하고 필터 체인을 실행한 후, 에러 로깅 플래그가 설정되어 있지 않으면 응답을 기록합니다.
+     * - 최종적으로 래핑된 응답의 바디를 실제 응답으로 복사하고 MDC를 정리합니다.
+     *
+     * @param request     현재 HTTP 요청
+     * @param response    현재 HTTP 응답
+     * @param filterChain 이어서 실행할 필터 체인
+     * @throws ServletException 필터 체인 실행 중 서블릿 처리 오류가 발생한 경우 전달됩니다.
+     * @throws IOException      입력/출력 처리 중 오류가 발생한 경우 전달됩니다.
+     */
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -80,6 +96,14 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         }
     }
 
+    /**
+     * 요청 URI가 로그 제외 패턴 목록 중 하나와 일치하는지 판단한다.
+     *
+     * 주어진 요청의 경로를 EXCLUDE_PATTERNS에 있는 Ant 스타일 패턴과 비교하여 하나라도 매치되면 제외 대상으로 간주한다.
+     *
+     * @param req 검사할 HTTP 요청
+     * @return 일치하는 패턴이 하나라도 있으면 `true`, 그렇지 않으면 `false`
+     */
     private boolean isExcluded(HttpServletRequest req) {
         String path = req.getRequestURI();
         return EXCLUDE_PATTERNS.stream()
@@ -87,6 +111,13 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
                 );
     }
 
+    /**
+     * 16자 길이의 추적 식별자(traceId)를 생성합니다.
+     *
+     * UUID를 기반으로 생성된 16자리 16진수 문자열을 반환합니다.
+     *
+     * @return 16자 길이의 16진수 문자열 형식의 traceId
+     */
     private String generateTraceId() {
         return java.util.UUID.randomUUID().toString().replace("-", "").substring(0, 16);
     }
