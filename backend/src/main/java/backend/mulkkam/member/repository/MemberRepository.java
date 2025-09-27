@@ -11,9 +11,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByActiveNickname(String activeNickname);
 
     @Query("""
-                select m
+                select m.id
                 from Member m
                 order by m.id
             """)
-    Slice<Member> findIdsBySlice(Pageable pageable);
+    Slice<Long> findIdsBySlice(Pageable pageable);
 }

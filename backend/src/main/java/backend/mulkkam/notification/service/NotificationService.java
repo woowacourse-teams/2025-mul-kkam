@@ -70,7 +70,7 @@ public class NotificationService {
         int CHUNK = 1_000;
 
         Pageable pageable = PageRequest.of(0, CHUNK, Sort.by("id").ascending());
-        Slice<Member> slice;
+        Slice<Long> slice;
 
         do {
             slice = memberRepository.findIdsBySlice(pageable);

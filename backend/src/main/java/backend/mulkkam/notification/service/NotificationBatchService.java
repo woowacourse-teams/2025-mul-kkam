@@ -20,16 +20,18 @@ public class NotificationBatchService {
     private final EntityManager em;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void processOneChunk(NotificationMessageTemplate template, LocalDateTime now, List<Member> members) {
-        if (members.isEmpty()) {
+    public void processOneChunk(
+            NotificationMessageTemplate template,
+            LocalDateTime now,
+            List<Long> memberIds
+    ) {
+        if (memberIds.isEmpty()) {
             return;
         }
-
-        List<Notification> batch = members.stream()
-                .map(id -> template.toNotification(id, now))
+        List<Notification> notifications = memberIds.stream()
+                .map(id -> template.toNotification(em.getReference(Member.class, id), now))
                 .toList();
-        notificationRepository.saveAll(batch);
-
+        notificationRepository.saveAll(notifications);
         em.flush();
         em.clear();
     }
