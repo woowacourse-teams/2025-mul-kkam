@@ -1,4 +1,4 @@
-package backend.mulkkam.intake.service;
+package backend.mulkkam.notification.service;
 
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
 

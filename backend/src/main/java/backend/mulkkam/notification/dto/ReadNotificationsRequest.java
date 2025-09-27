@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Schema(description = "알림 목록 조회 요청")
-public record GetNotificationsRequest(
+public record ReadNotificationsRequest(
         @Schema(description = "마지막 조회한 알림 ID (첫 조회시 null)", example = "100")
         Long lastId,
 

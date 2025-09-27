@@ -1,8 +1,6 @@
 package backend.mulkkam.notification.dto;
 
-import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.domain.SuggestionNotification;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 
@@ -31,15 +29,15 @@ public record GetSuggestionNotificationResponse(
         boolean applyRecommendAmount
 ) implements NotificationResponse {
 
-    public GetSuggestionNotificationResponse(Notification notification, SuggestionNotification suggestionNotification) {
+    public GetSuggestionNotificationResponse(ReadNotificationRow readNotificationRow) {
         this(
-                notification.getId(),
-                notification.getContent(),
-                notification.getNotificationType().name(),
-                notification.getCreatedAt(),
-                notification.isRead(),
-                suggestionNotification.getRecommendedTargetAmount(),
-                suggestionNotification.isApplyTargetAmount()
+                readNotificationRow.id(),
+                readNotificationRow.content(),
+                readNotificationRow.notificationType().name(),
+                readNotificationRow.createdAt(),
+                readNotificationRow.isRead(),
+                readNotificationRow.recommendedTargetAmount(),
+                readNotificationRow.applyTargetAmount()
         );
     }
 }

@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
-import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -28,14 +27,13 @@ public class WebConfiguration implements WebMvcConfigurer {
     private final ApiPerformanceInterceptor apiPerformanceInterceptor;
     private final HttpLoggingFilter httpLoggingFilter;
 
-    @Override
-    public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**")
-                .allowedOrigins("https://mulkkam.stoplight.io")
-                .allowedMethods("*")
-                .allowCredentials(true);
-    }
-
+    /**
+     * 컨트롤러 핸들러 메서드의 인자 변환을 위해 커스텀 HandlerMethodArgumentResolver들을 등록한다.
+     *
+     * 등록되는 리졸버들은 OAuth 계정 해석기, 멤버 해석기, 멤버와 디바이스 UUID를 함께 해석하는 해석기 순서로 추가된다.
+     *
+     * @param resolvers 리졸버를 추가할 리스트; 메서드 실행 후 커스텀 리졸버들이 이 리스트에 추가된다.
+     */
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         resolvers.add(oauthAccountResolver);

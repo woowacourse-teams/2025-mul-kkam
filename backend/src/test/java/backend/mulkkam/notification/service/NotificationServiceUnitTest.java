@@ -19,13 +19,14 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.GetNotificationsRequest;
 import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.NotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -72,9 +73,10 @@ class NotificationServiceUnitTest {
         private final LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
         private final int defaultSize = 5;
 
-        private List<Notification> createNotifications(LocalDate... dates) {
+        private List<ReadNotificationRow> createReadNotificationRows(LocalDate... dates) {
             return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder.withMember(member).createdAt(date).build())
+                    .map(date -> new ReadNotificationRow(null, date.atStartOfDay(), "c", NotificationType.SUGGESTION,
+                            false, 1000, false))
                     .toList();
         }
 
@@ -83,11 +85,11 @@ class NotificationServiceUnitTest {
         void success_returnsNotificationsWithin7DaysSortedByLatest() {
             // given
             Long lastId = 10L;
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, defaultSize);
 
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(createNotifications(
+                    .thenReturn(createReadNotificationRows(
                             LocalDate.of(2025, 8, 9),
                             LocalDate.of(2025, 8, 8),
                             LocalDate.of(2025, 8, 7),
@@ -96,7 +98,7 @@ class NotificationServiceUnitTest {
                     ));
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -118,9 +120,9 @@ class NotificationServiceUnitTest {
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
             Long lastId = 6L;
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(createNotifications(
+                    .thenReturn(createReadNotificationRows(
                             LocalDate.of(2025, 8, 9),
                             LocalDate.of(2025, 8, 8),
                             LocalDate.of(2025, 8, 7),
@@ -128,10 +130,10 @@ class NotificationServiceUnitTest {
                             LocalDate.of(2025, 8, 5)
                     ));
 
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -143,25 +145,25 @@ class NotificationServiceUnitTest {
         void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
             // given
             Long lastId = 6L;
-            List<Notification> notifications = createNotifications(
+            List<ReadNotificationRow> readNotificationRows = createReadNotificationRows(
                     LocalDate.of(2025, 8, 9),
                     LocalDate.of(2025, 8, 8),
                     LocalDate.of(2025, 8, 7),
                     LocalDate.of(2025, 8, 6),
                     LocalDate.of(2025, 8, 5)
             );
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
-                    .thenReturn(notifications);
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
+                    .thenReturn(readNotificationRows);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(lastId, requestTime, 10);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size())
-                    .isEqualTo(notifications.size());
+                    .isEqualTo(readNotificationRows.size());
         }
 
         @DisplayName("lastId가 null이 들어오면 맨 마지막부터 불러와진다")
@@ -170,10 +172,10 @@ class NotificationServiceUnitTest {
             // given
             Notification latestNotification = NotificationFixtureBuilder
                     .withMember(member)
-                    .createdAt(LocalDate.of(2025, 8, 9))
+                    .createdAt(LocalDateTime.of(2025, 8, 9, 0, 0, 0))
                     .build();
 
-            List<Notification> notifications = createNotifications(
+            List<ReadNotificationRow> readNotificationRows = createReadNotificationRows(
                     LocalDate.of(2025, 8, 9),
                     LocalDate.of(2025, 8, 8),
                     LocalDate.of(2025, 8, 7),
@@ -181,13 +183,13 @@ class NotificationServiceUnitTest {
                     LocalDate.of(2025, 8, 5)
             );
 
-            when(notificationRepository.findLatest(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(notifications);
+            when(notificationRepository.findLatestRows(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
+                    .thenReturn(readNotificationRows);
 
-            GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
                     new MemberDetails(member));
 
             // then
@@ -204,11 +206,11 @@ class NotificationServiceUnitTest {
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
+            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
             AssertionsForClassTypes.assertThatThrownBy(
-                            () -> notificationService.getNotificationsAfter(request, new MemberDetails(member)))
+                            () -> notificationService.readNotificationsAfter(request, new MemberDetails(member)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
@@ -272,11 +274,11 @@ class NotificationServiceUnitTest {
         @ValueSource(longs = {0L, 1L, 3L})
         void success_validMember(long count) {
             // given
-            when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
+            when(notificationRepository.countUnReadByMemberId(any(Long.class), any())).thenReturn(count);
 
             // when
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
-                    new MemberDetails(member));
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
+                    new MemberDetails(member), LocalDateTime.now());
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);

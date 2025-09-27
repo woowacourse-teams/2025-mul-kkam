@@ -1,4 +1,4 @@
-package backend.mulkkam.support.fixture;
+package backend.mulkkam.support.fixture.notification;
 
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;

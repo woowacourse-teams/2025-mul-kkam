@@ -1,9 +1,7 @@
 package backend.mulkkam.notification.dto;
 
-import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.time.LocalDateTime;
 
 @Schema(description = "개별 일반 알림 응답")
@@ -25,13 +23,13 @@ public record GetNotificationResponse(
         boolean isRead
 ) implements NotificationResponse {
 
-    public GetNotificationResponse(Notification notification) {
+    public GetNotificationResponse(ReadNotificationRow readNotificationRow) {
         this(
-                notification.getId(),
-                notification.getContent(),
-                notification.getNotificationType().name(),
-                notification.getCreatedAt(),
-                notification.isRead()
+                readNotificationRow.id(),
+                readNotificationRow.content(),
+                readNotificationRow.notificationType().name(),
+                readNotificationRow.createdAt(),
+                readNotificationRow.isRead()
         );
     }
 }
