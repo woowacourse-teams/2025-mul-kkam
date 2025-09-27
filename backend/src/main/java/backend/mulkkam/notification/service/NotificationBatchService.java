@@ -19,6 +19,7 @@ public class NotificationBatchService {
     private final NotificationRepository notificationRepository;
     private final EntityManager em;
 
+    //TODO: 추후 TPS 고려 시 알림 엔티티 ID 전략 변경 고려
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void processOneChunk(
             NotificationMessageTemplate template,
