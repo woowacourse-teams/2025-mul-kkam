@@ -32,7 +32,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             "/.env",
             "/favicon.ico",
             "/robots.txt",
-            "/swagger-ui/**",
             "/v3/api-docs/**",
             "/actuator/health"
     );
