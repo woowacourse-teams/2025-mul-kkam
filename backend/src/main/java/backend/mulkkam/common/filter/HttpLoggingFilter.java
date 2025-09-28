@@ -32,7 +32,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
             "/.env",
             "/favicon.ico",
             "/robots.txt",
-            "/swagger-ui/**",
             "/v3/api-docs/**",
             "/actuator/health"
     );
@@ -62,6 +61,10 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
                 filterChain.doFilter(wrappingRequest, wrappingResponse);
             } catch (Throwable t) {
                 printResponse(request, response, wrappingResponse);
+                throw t;
+            } finally {
+                wrappingResponse.copyBodyToResponse();
+                MDC.clear();
             }
             return;
         }
