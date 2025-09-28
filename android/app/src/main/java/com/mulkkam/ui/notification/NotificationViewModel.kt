@@ -83,7 +83,28 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
+    fun loadMore() {
+        if (nextCursor == null) return
+        viewModelScope.launch {
+            runCatching {
+                notificationRepository
+                    .getNotifications(
+                        time = LocalDateTime.now(),
+                        size = NOTIFICATION_SIZE,
+                        lastId = nextCursor,
+                    ).getOrError()
+            }.onSuccess { notificationsResult ->
+                val currentList = notifications.value.toSuccessDataOrNull() ?: emptyList()
+                val updatedList = currentList + notificationsResult.notifications
+                _notifications.value = MulKkamUiState.Success(updatedList)
+                nextCursor = notificationsResult.nextCursor
+            }.onFailure {
+                _notifications.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
     companion object {
-        private const val NOTIFICATION_SIZE: Int = 100
+        private const val NOTIFICATION_SIZE: Int = 20
     }
 }
