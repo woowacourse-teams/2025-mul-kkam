@@ -50,7 +50,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun applySuggestion(id: Int) {
+    fun applySuggestion(id: Long) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
@@ -65,7 +65,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun deleteNotification(id: Int) {
+    fun deleteNotification(id: Long) {
         viewModelScope.launch {
             _notifications.value =
                 MulKkamUiState.Success(

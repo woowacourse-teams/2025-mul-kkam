@@ -8,13 +8,14 @@ interface NotificationRepository {
     suspend fun getNotifications(
         time: LocalDateTime,
         size: Int,
+        lastId: Long? = null,
     ): MulKkamResult<List<Notification>>
 
     suspend fun postActiveCaloriesBurned(kcal: Double): MulKkamResult<Unit>
 
     suspend fun getNotificationsUnreadCount(): MulKkamResult<Long>
 
-    suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit>
+    suspend fun postSuggestionNotificationsApproval(id: Long): MulKkamResult<Unit>
 
-    suspend fun deleteNotifications(id: Int): MulKkamResult<Unit>
+    suspend fun deleteNotifications(id: Long): MulKkamResult<Unit>
 }

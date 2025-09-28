@@ -16,6 +16,7 @@ class NotificationRepositoryImpl(
     override suspend fun getNotifications(
         time: LocalDateTime,
         size: Int,
+        lastId: Long?,
     ): MulKkamResult<List<Notification>> {
         val result =
             notificationService.getNotifications(
@@ -41,7 +42,7 @@ class NotificationRepositoryImpl(
         )
     }
 
-    override suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit> {
+    override suspend fun postSuggestionNotificationsApproval(id: Long): MulKkamResult<Unit> {
         val result = notificationService.postSuggestionNotificationsApproval(id)
 
         return result.fold(
@@ -59,7 +60,7 @@ class NotificationRepositoryImpl(
         )
     }
 
-    override suspend fun deleteNotifications(id: Int): MulKkamResult<Unit> {
+    override suspend fun deleteNotifications(id: Long): MulKkamResult<Unit> {
         val result = notificationService.deleteNotifications(id)
 
         return result.fold(

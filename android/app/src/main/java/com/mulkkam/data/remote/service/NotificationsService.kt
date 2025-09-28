@@ -25,7 +25,7 @@ interface NotificationsService {
 
     @POST("/suggestion-notifications/approval/{id}")
     suspend fun postSuggestionNotificationsApproval(
-        @Path("id") id: Int,
+        @Path("id") id: Long,
     ): Result<Unit>
 
     @GET("/notifications/unread-count")
@@ -33,6 +33,6 @@ interface NotificationsService {
 
     @DELETE("/notifications/{id}")
     suspend fun deleteNotifications(
-        @Path("id") id: Int,
+        @Path("id") id: Long,
     ): Result<Unit>
 }
