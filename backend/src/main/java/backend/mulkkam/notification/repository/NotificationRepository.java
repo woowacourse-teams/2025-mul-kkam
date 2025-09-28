@@ -49,7 +49,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         )
         FROM Notification n
         LEFT JOIN SuggestionNotification s ON s.id = n.id
-        WHERE n.id <= :lastId
+        WHERE n.id < :lastId
           AND n.createdAt >= :limitStartDateTime
           AND n.member.id = :memberId
         ORDER BY n.id DESC

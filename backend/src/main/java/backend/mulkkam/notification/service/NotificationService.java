@@ -96,9 +96,10 @@ public class NotificationService {
 
         boolean hasNext = pagedNotificationResponses.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, pagedNotificationResponses);
         List<ReadNotificationRow> readNotificationRows = dropExtraNotificationResponse(hasNext,
                 pagedNotificationResponses);
+
+        Long nextCursor = getNextCursor(hasNext, readNotificationRows);
         List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotificationRows);
 
         List<Long> ids = readNotificationRows.stream()
