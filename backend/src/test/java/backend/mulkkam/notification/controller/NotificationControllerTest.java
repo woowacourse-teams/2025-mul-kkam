@@ -122,10 +122,10 @@ public class NotificationControllerTest extends ControllerTest {
             ReadNotificationsResponse actual = objectMapper.readValue(json, ReadNotificationsResponse.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.nextCursor()).isEqualTo(5);
+                softly.assertThat(actual.nextCursor()).isEqualTo(6);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 4L)
+                        .allMatch(r -> r.id() >= 6L)
                         .allMatch(r -> !r.isRead());
             });
         }
