@@ -5,7 +5,7 @@ import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRequest
 import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.NotificationsService
-import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.NotificationRepository
 import java.time.LocalDateTime
@@ -17,9 +17,10 @@ class NotificationRepositoryImpl(
         time: LocalDateTime,
         size: Int,
         lastId: Long?,
-    ): MulKkamResult<List<Notification>> {
+    ): MulKkamResult<NotificationsResult> {
         val result =
             notificationService.getNotifications(
+                lastId = lastId,
                 clientTime = time.toString(),
                 size = size,
             )

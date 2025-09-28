@@ -28,6 +28,8 @@ class NotificationViewModel : ViewModel() {
     private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion.asStateFlow()
 
+    private var nextCursor: Long? = null
+
     init {
         loadNotifications()
     }
@@ -42,8 +44,9 @@ class NotificationViewModel : ViewModel() {
                         LocalDateTime.now(),
                         NOTIFICATION_SIZE,
                     ).getOrError()
-            }.onSuccess { notifications ->
-                _notifications.value = MulKkamUiState.Success<List<Notification>>(notifications)
+            }.onSuccess { notificationsResult ->
+                _notifications.value = MulKkamUiState.Success<List<Notification>>(notificationsResult.notifications)
+                nextCursor = notificationsResult.nextCursor
             }.onFailure {
                 _notifications.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

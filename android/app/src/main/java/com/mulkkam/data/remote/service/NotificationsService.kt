@@ -18,7 +18,7 @@ interface NotificationsService {
 
     @GET("/notifications")
     suspend fun getNotifications(
-        @Query("lastId") lastId: Int? = null,
+        @Query("lastId") lastId: Long? = null,
         @Query("clientTime") clientTime: String,
         @Query("size") size: Int,
     ): Result<NotificationsResponse>

@@ -1,6 +1,6 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDateTime
 
@@ -9,7 +9,7 @@ interface NotificationRepository {
         time: LocalDateTime,
         size: Int,
         lastId: Long? = null,
-    ): MulKkamResult<List<Notification>>
+    ): MulKkamResult<NotificationsResult>
 
     suspend fun postActiveCaloriesBurned(kcal: Double): MulKkamResult<Unit>
 
