@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.domain;
+package backend.mulkkam.averageTemperature.domain;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
