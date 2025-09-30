@@ -67,6 +67,11 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+    public MemberFixtureBuilder isReminderEnabled(boolean isReminderEnabled) {
+        this.isReminderEnabled = isReminderEnabled;
+        return this;
+    }
+
     public Member build() {
         return new Member(
                 this.memberNickname,
