@@ -4,5 +4,7 @@ CREATE TABLE reminder_schedule(
     schedule  TIME   NOT NULL,
 
     CONSTRAINT fk_reminder_schedule_member
-        FOREIGN KEY (member_id) REFERENCES member (id)
+        FOREIGN KEY (member_id) REFERENCES member (id),
+
+    CONSTRAINT uq_member_schedule UNIQUE (member_id, schedule)
 );
