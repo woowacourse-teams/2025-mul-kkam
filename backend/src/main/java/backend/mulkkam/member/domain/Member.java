@@ -54,7 +54,7 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String activeNickname;
 
-    private boolean isReminderEnabled;
+    private boolean isReminderEnabled = true;
 
     public Member(
             MemberNickname memberNickname,
