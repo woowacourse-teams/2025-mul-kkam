@@ -2,6 +2,7 @@ package backend.mulkkam.notification.domain;
 
 
 import backend.mulkkam.member.domain.Member;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -24,5 +25,6 @@ public class ReminderSchedule {
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
+    @Column(nullable = false)
     private LocalTime schedule;
 }
