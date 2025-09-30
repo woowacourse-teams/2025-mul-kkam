@@ -54,6 +54,8 @@ public class Member extends BaseEntity {
     @Column(unique = true)
     private String activeNickname;
 
+    private boolean isReminderEnabled;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
