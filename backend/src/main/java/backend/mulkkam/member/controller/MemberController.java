@@ -180,6 +180,8 @@ public class MemberController {
         return ResponseEntity.ok(notificationSettingsResponse);
     }
 
+    @Operation(summary = "사용자 리마인더 스케쥴링 정보 수정", description = "리마인더 스케쥴링 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "반영 성공")
     @PatchMapping("/reminder")
     public ResponseEntity<Void> modifyIsReminderEnabled(
             @Parameter(hidden = true)
