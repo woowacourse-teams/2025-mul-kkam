@@ -146,6 +146,7 @@ public class MemberService {
         );
     }
 
+    @Transactional
     public void modifyIsReminderEnabled(
             MemberDetails memberDetails,
             ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
