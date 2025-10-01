@@ -1,7 +1,10 @@
 package backend.mulkkam.notification.domain;
 
 
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_REMINDER_SCHEDULE;
+
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,4 +37,23 @@ public class ReminderSchedule extends BaseEntity {
 
     @Column(nullable = false)
     private LocalTime schedule;
+
+    public ReminderSchedule(
+            Member member,
+            LocalTime schedule
+    ) {
+        this.member = member;
+        this.schedule = schedule;
+    }
+
+    public void modifyTime(LocalTime schedule) {
+        this.schedule = schedule;
+    }
+
+    public void isOwnedBy(Member member) {
+        if (this.member.equals(member)) {
+            return;
+        }
+        throw new CommonException(NOT_PERMITTED_FOR_REMINDER_SCHEDULE);
+    }
 }

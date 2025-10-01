@@ -2,9 +2,10 @@ package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.notification.dto.request.CreateReminderScheduleRequest;
+import backend.mulkkam.notification.dto.request.ModifyReminderScheduleTimeRequest;
 import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
+import backend.mulkkam.notification.service.ReminderScheduleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,8 +13,6 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.time.LocalTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,6 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/reminder")
 public class ReminderScheduleController {
 
+    private final ReminderScheduleService reminderScheduleService;
+
     @Operation(summary = "리마인더 스케쥴링 생성", description = "리마인더 스케쥴링을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "알림 생성 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
@@ -43,6 +44,7 @@ public class ReminderScheduleController {
             MemberDetails memberDetails,
             @RequestBody CreateReminderScheduleRequest createReminderScheduleRequest
     ) {
+        reminderScheduleService.create(memberDetails, createReminderScheduleRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -57,13 +59,7 @@ public class ReminderScheduleController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        List<LocalTime> times = List.of(
-                LocalTime.of(10, 10),
-                LocalTime.of(12, 0),
-                LocalTime.of(15, 30),
-                LocalTime.of(19, 0)
-        );
-        return ResponseEntity.ok().body(new ReadReminderSchedulesResponse(true, times));
+        return ResponseEntity.ok().body(reminderScheduleService.read(memberDetails));
     }
 
     @Operation(summary = "리마인더 스케쥴링 시간 수정", description = "시간을 수정합니다.")
@@ -72,8 +68,9 @@ public class ReminderScheduleController {
     public ResponseEntity<Void> modifyTime(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @RequestBody ModifyIsReminderEnabledRequest modifyReminderScheduleTimeRequest
+            @RequestBody ModifyReminderScheduleTimeRequest modifyReminderScheduleTimeRequest
     ) {
+        reminderScheduleService.modifyTime(memberDetails, modifyReminderScheduleTimeRequest);
         return ResponseEntity.ok().build();
     }
 
@@ -87,6 +84,7 @@ public class ReminderScheduleController {
             MemberDetails memberDetails,
             @PathVariable Long id
     ) {
+        reminderScheduleService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
     }
 }

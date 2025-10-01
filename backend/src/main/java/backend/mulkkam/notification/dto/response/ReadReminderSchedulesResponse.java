@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.dto.response;
 
+import backend.mulkkam.notification.domain.ReminderSchedule;
 import io.swagger.v3.oas.annotations.media.Schema;
-import java.time.LocalTime;
 import java.util.List;
 
 @Schema(description = "사용자 리마인더 스케쥴링 응답")
@@ -10,6 +10,6 @@ public record ReadReminderSchedulesResponse(
         boolean isReminderEnabled,
 
         @Schema(description = "리마인더 스케쥴링 목록")
-        List<LocalTime> reminderSchedules
+        List<ReminderSchedule> reminderSchedules
 ) {
 }
