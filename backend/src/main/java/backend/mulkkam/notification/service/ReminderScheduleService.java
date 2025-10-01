@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.service;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_REMINDER_TIME;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMIND_SCHEDULE;
 
@@ -14,6 +15,7 @@ import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,8 +33,13 @@ public class ReminderScheduleService {
             CreateReminderScheduleRequest createReminderScheduleRequest
     ) {
         Member member = getMember(memberDetails.id());
-        ReminderSchedule reminderSchedule = new ReminderSchedule(member, createReminderScheduleRequest.schedule());
-        reminderScheduleRepository.save(reminderSchedule);
+        try {
+            ReminderSchedule reminderSchedule = new ReminderSchedule(member, createReminderScheduleRequest.schedule());
+            reminderScheduleRepository.saveAndFlush(reminderSchedule);
+        } catch (DataIntegrityViolationException e) {
+            throw new CommonException(DUPLICATE_REMINDER_TIME);
+        }
+
     }
 
     public ReadReminderSchedulesResponse read(MemberDetails memberDetails) {
@@ -51,6 +58,12 @@ public class ReminderScheduleService {
         ReminderSchedule reminderSchedule = getReminderSchedule(modifyReminderScheduleTimeRequest.id());
         reminderSchedule.isOwnedBy(member);
         reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
+        try {
+            reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
+            reminderScheduleRepository.flush();
+        } catch (DataIntegrityViolationException e) {
+            throw new CommonException(DUPLICATE_REMINDER_TIME);
+        }
     }
 
     @Transactional
