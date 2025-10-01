@@ -1,7 +1,6 @@
 package com.mulkkam.data.remote.interceptor
 
 import com.mulkkam.data.remote.model.request.auth.AuthReissueRequest
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.PreferenceInjection.devicesPreference
 import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection
@@ -29,7 +28,6 @@ object TokenRefresher {
                         runCatching {
                             ServiceInjection.authService.postAuthTokenReissue(AuthReissueRequest(refreshToken, deviceUuid))
                         }.getOrNull() ?: return@async null
-                    mulKkamLogger.debug(message = "123123: ${result.toMulKkamResult().getOrError()}")
 
                     return@async runCatching {
                         val info = result.toMulKkamResult().getOrError()
