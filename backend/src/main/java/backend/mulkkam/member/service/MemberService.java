@@ -38,6 +38,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -149,7 +150,7 @@ public class MemberService {
     @Transactional
     public void modifyIsReminderEnabled(
             MemberDetails memberDetails,
-            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+            @RequestBody ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
     ) {
         Member member = getMember(memberDetails.id());
         member.modifyIsReminderEnabled(modifyIsReminderEnabledRequest.isReminderEnabled());

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -40,7 +41,7 @@ public class ReminderScheduleController {
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            CreateReminderScheduleRequest createReminderScheduleRequest
+            @RequestBody CreateReminderScheduleRequest createReminderScheduleRequest
     ) {
         return ResponseEntity.ok().build();
     }
@@ -71,7 +72,7 @@ public class ReminderScheduleController {
     public ResponseEntity<Void> modifyTime(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            ModifyIsReminderEnabledRequest modifyReminderScheduleTimeRequest
+            @RequestBody ModifyIsReminderEnabledRequest modifyReminderScheduleTimeRequest
     ) {
         return ResponseEntity.ok().build();
     }
