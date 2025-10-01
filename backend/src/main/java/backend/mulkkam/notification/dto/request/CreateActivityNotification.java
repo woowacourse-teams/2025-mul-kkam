@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.request;
 
 import backend.mulkkam.member.domain.Member;
 import io.swagger.v3.oas.annotations.media.Schema;

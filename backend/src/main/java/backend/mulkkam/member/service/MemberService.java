@@ -21,6 +21,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
@@ -143,6 +144,14 @@ public class MemberService {
         member.modifyIsMarketingNotificationAgreed(
                 modifyIsMarketingNotificationAgreedRequest.isMarketingNotificationAgreed()
         );
+    }
+
+    public void modifyIsReminderEnabled(
+            MemberDetails memberDetails,
+            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+    ) {
+        Member member = getMember(memberDetails.id());
+        member.modifyIsReminderEnabled(modifyIsReminderEnabledRequest.isReminderEnabled());
     }
 
     @Transactional

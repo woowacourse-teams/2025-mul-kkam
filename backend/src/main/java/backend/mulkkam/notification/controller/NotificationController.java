@@ -2,10 +2,10 @@ package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.NotificationMessageTemplate.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.request.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.service.NotificationService;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
 import io.swagger.v3.oas.annotations.Operation;

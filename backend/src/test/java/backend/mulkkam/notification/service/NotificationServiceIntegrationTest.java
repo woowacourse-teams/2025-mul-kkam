@@ -14,17 +14,17 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.dto.NotificationMessageTemplate.ReadNotificationsResponse;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.NotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
 import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -146,7 +146,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             List<Boolean> actualIsReads = notificationRepository.findByCursorRows(savedMember.getId(), 10L,
                             requestTime, Pageable.ofSize(defaultSize + 1)).stream()
                     .map(ReadNotificationRow::isRead)
-                            .toList();
+                    .toList();
 
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
@@ -272,7 +272,8 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)))
+            assertThatThrownBy(
+                    () -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
@@ -283,6 +284,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     class GetNotificationsCount {
 
         private LocalDateTime clientTime;
+
         @BeforeEach
         void setUp() {
             clientTime = LocalDateTime.of(2025, 8, 7, 0, 0, 0);

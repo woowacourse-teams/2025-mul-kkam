@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.request;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;

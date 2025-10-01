@@ -4,6 +4,8 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
+import backend.mulkkam.averageTemperature.domain.City;
+import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
@@ -16,13 +18,11 @@ import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRe
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.averageTemperature.domain.City;
-import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
-import backend.mulkkam.notification.dto.CreateWeatherNotification;
+import backend.mulkkam.notification.dto.request.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.dto.request.CreateWeatherNotification;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
@@ -86,7 +86,8 @@ public class SuggestionNotificationService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(member);
+        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(
+                member);
         createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
     }
 
@@ -145,7 +146,8 @@ public class SuggestionNotificationService {
             Member member
     ) {
         Double weight = member.getPhysicalAttributes().getWeight();
-        ExtraIntakeAmount extraIntakeAmount = ExtraIntakeAmount.calculateWithAverageTemperature(averageTemperature.getTemperature(), weight);
+        ExtraIntakeAmount extraIntakeAmount = ExtraIntakeAmount.calculateWithAverageTemperature(
+                averageTemperature.getTemperature(), weight);
 
         CreateWeatherNotification createWeatherNotification = new CreateWeatherNotification(averageTemperature,
                 extraIntakeAmount, member, todayDateTime);

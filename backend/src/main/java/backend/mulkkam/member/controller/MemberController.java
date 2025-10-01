@@ -5,6 +5,7 @@ import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
@@ -177,6 +178,17 @@ public class MemberController {
         NotificationSettingsResponse notificationSettingsResponse = memberService.getNotificationSettings(
                 memberDetails);
         return ResponseEntity.ok(notificationSettingsResponse);
+    }
+
+    @PatchMapping("/reminder")
+    public ResponseEntity<Void> modifyIsReminderEnabled(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "boolean 값", required = true, example = "true")
+            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+    ) {
+        memberService.modifyIsReminderEnabled(memberDetails, modifyIsReminderEnabledRequest);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")

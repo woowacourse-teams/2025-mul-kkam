@@ -11,13 +11,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -103,6 +102,10 @@ public class Member extends BaseEntity {
 
     public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+    }
+
+    public void modifyIsReminderEnabled(boolean isReminderEnabled) {
+        this.isReminderEnabled = isReminderEnabled;
     }
 
     @Override
