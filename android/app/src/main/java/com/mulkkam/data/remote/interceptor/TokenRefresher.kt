@@ -50,7 +50,7 @@ object TokenRefresher {
                 }
             } else {
                 newJob.cancel()
-                currentJob.get()!!.await()
+                currentJob.get()?.await()
             }
         }
 }
