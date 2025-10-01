@@ -95,7 +95,7 @@ jobs:
           ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
           REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}
           PROD_FCM_BASE64_ENCODING_KEY=${{ secrets.PROD_FCM_BASE64_ENCODING_KEY }}
-          PROD_FCM_PROJECT_ID=${{ secrets.PROD_RODFCM_PROJECT_ID }}
+          PROD_FCM_PROJECT_ID=${{ secrets.PROD_FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
           SPRING_PROFILES_ACTIVE=prod
           EOF
