@@ -49,14 +49,12 @@ jobs:
         echo "key.kakao=${KEY_KAKAO}"               >> ./local.properties
 
     - name: set up google-services.json for debug
-      if: ${{ contains(matrix.build-type, 'debug') }}
       env:
         GOOGLE_SERVICES_DEBUG: ${{ secrets.GOOGLE_SERVICES_DEBUG }}
       run: |
         echo "$GOOGLE_SERVICES_DEBUG" | base64 --decode > app/src/debug/google-services.json
 
     - name: set up google-services.json for release
-      if: ${{ contains(matrix.build-type, 'release') }}
       env:
         GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
       run: |
