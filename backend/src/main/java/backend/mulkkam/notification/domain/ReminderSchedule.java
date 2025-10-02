@@ -22,7 +22,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE notification SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE reminder_schedule SET deleted_at = NOW() WHERE id = ?")
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

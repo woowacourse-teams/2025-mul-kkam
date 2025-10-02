@@ -5,13 +5,6 @@ ALTER TABLE reminder_schedule
 DROP INDEX uq_member_schedule;
 
 ALTER TABLE reminder_schedule
-    ADD UNIQUE KEY uq_member_schedule_active (
-    member_id,
-    schedule,
-    (deleted_at IS NULL)
-    );
-
-ALTER TABLE reminder_schedule
     ADD COLUMN deleted_at datetime NULL;
 
 ALTER TABLE reminder_schedule

@@ -33,6 +33,7 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.response.MemberResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -83,6 +84,7 @@ class MemberControllerTest extends ControllerTest {
             .isMarketingNotificationAgreed(true)
             .weight(null)
             .gender(null)
+            .isReminderEnabled(true)
             .build();
     private CupEmoji cupEmoji;
 
@@ -205,6 +207,27 @@ class MemberControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.weight()).isNull();
                 softly.assertThat(actual.gender()).isNull();
+            });
+        }
+
+        @DisplayName("리마인더 수신 여부 설정을 수정한다.")
+        @Test
+        void success_whenGetReminderEnabled() throws Exception {
+            //given
+            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest = new ModifyIsReminderEnabledRequest(false);
+
+            // when
+            mockMvc.perform(patch("/members/reminder")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(modifyIsReminderEnabledRequest)))
+
+                    .andExpect(status().isOk());
+            Member foundMember = memberRepository.findById(member.getId()).orElseThrow();
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(foundMember.isReminderEnabled()).isFalse();
             });
         }
     }

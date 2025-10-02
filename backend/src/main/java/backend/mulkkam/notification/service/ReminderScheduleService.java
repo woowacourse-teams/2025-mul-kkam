@@ -1,8 +1,8 @@
 package backend.mulkkam.notification.service;
 
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_REMINDER_TIME;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_REMINDER_SCHEDULE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMIND_SCHEDULE;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDR_SCHEDULE;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -35,11 +35,11 @@ public class ReminderScheduleService {
         Member member = getMember(memberDetails.id());
         try {
             ReminderSchedule reminderSchedule = new ReminderSchedule(member, createReminderScheduleRequest.schedule());
-            reminderScheduleRepository.saveAndFlush(reminderSchedule);
+            reminderScheduleRepository.save(reminderSchedule);
+            reminderScheduleRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new CommonException(DUPLICATE_REMINDER_TIME);
+            throw new CommonException(DUPLICATED_REMINDER_SCHEDULE);
         }
-
     }
 
     public ReadReminderSchedulesResponse read(MemberDetails memberDetails) {
@@ -62,7 +62,7 @@ public class ReminderScheduleService {
             reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
             reminderScheduleRepository.flush();
         } catch (DataIntegrityViolationException e) {
-            throw new CommonException(DUPLICATE_REMINDER_TIME);
+            throw new CommonException(DUPLICATED_REMINDER_SCHEDULE);
         }
     }
 
@@ -79,7 +79,7 @@ public class ReminderScheduleService {
 
     private ReminderSchedule getReminderSchedule(Long id) {
         return reminderScheduleRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_REMIND_SCHEDULE));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_REMINDR_SCHEDULE));
     }
 
     private Member getMember(Long id) {

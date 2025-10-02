@@ -187,7 +187,7 @@ public class MemberController {
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "boolean 값", required = true, example = "true")
-            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+            @RequestBody ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
     ) {
         memberService.modifyIsReminderEnabled(memberDetails, modifyIsReminderEnabledRequest);
         return ResponseEntity.ok().build();
