@@ -1,7 +1,8 @@
 -- ALLOW_DROP
 -- reason: reminder_schedule에는 soft delete 예정이므로 유니크키를 변경함. (886)
 
-DROP INDEX IF EXISTS uq_member_schedule;
+ALTER TABLE reminder_schedule
+DROP INDEX uq_member_schedule;
 
 ALTER TABLE reminder_schedule
     ADD COLUMN active_idx BOOLEAN
