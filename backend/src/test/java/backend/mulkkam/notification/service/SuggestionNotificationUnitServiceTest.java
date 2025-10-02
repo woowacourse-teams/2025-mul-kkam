@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
+import org.apache.catalina.core.ApplicationPushBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -45,6 +46,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 
@@ -59,6 +61,9 @@ class SuggestionNotificationUnitServiceTest {
 
     @Mock
     private NotificationRepository notificationRepository;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Mock
     private IntakeAmountService intakeAmountService;
@@ -211,7 +216,10 @@ class SuggestionNotificationUnitServiceTest {
             suggestionNotificationService.createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
 
             // then
+            verify(deviceRepository, never()).findAllByMember(any(Member.class));
+            verify(notificationRepository, never()).save(any(Notification.class));
             verify(suggestionNotificationRepository, never()).save(any(SuggestionNotification.class));
+            verifyNoInteractions(applicationEventPublisher);
         }
 
         @DisplayName("야간 알림을 동의한 경우 야간 알림이 전송된다")
