@@ -62,7 +62,6 @@ public class ReminderScheduleService {
         Member member = getMember(memberDetails.id());
         ReminderSchedule reminderSchedule = getReminderSchedule(modifyReminderScheduleTimeRequest.id());
         reminderSchedule.isOwnedBy(member);
-        reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
         try {
             reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
             reminderScheduleRepository.flush();
