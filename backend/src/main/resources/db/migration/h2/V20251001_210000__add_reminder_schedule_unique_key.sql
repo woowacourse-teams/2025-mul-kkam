@@ -1,12 +1,16 @@
 -- ALLOW_DROP
 -- reason: reminder_schedule에는 soft delete 예정이므로 유니크키를 변경함. (886)
 
+-- 1) 기존 유니크 인덱스 제거
 ALTER TABLE reminder_schedule
-DROP INDEX uq_member_schedule;
+DROP CONSTRAINT IF EXISTS uq_member_schedule;
 
+
+-- 2) 활성 키 컬럼 추가 (가상 생성 컬럼; STORED 키워드 없이 H2 호환)
 ALTER TABLE reminder_schedule
-    ADD COLUMN active_idx BOOLEAN
-    AS (CASE WHEN deleted_at IS NULL THEN TRUE ELSE FALSE END);
+    ADD COLUMN active_key BIGINT
+    AS (CASE WHEN deleted_at IS NULL THEN 0 ELSE id END);
 
+-- 3) 활성만 유니크 (활성=0으로 정규화)
 CREATE UNIQUE INDEX uq_member_schedule_active
-    ON reminder_schedule(member_id, schedule, active_idx);
+    ON reminder_schedule(member_id, schedule, active_key);

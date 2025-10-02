@@ -289,5 +289,41 @@ class ReminderScheduleControllerTest extends ControllerTest {
                 softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_REMINDR_SCHEDULE.name());
             });
         }
+
+        @DisplayName("생성, 삭제, 생성, 삭제 순으로 해도 올바르게 저장된다.")
+        @Test
+        void success_whenExistDuplicateDeleteRow() throws Exception {
+            //given
+            ReminderSchedule reminderSchedule = ReminderScheduleFixtureBuilder
+                    .withMember(savedMember)
+                    .schedule(LocalTime.of(19, 30))
+                    .build();
+            ReminderSchedule savedReminderSchedule = reminderScheduleRepository.save(reminderSchedule);
+
+            // when
+            mockMvc.perform(delete("/reminder/{id}", savedReminderSchedule.getId())
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isNoContent());
+            CreateReminderScheduleRequest createReminderScheduleRequest = new CreateReminderScheduleRequest(
+                    LocalTime.of(19, 30));
+
+            mockMvc.perform(post("/reminder")
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .contentType(APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(createReminderScheduleRequest)))
+                    .andExpect(status().isOk());
+
+            List<ReminderSchedule> pastReminderSchedules = reminderScheduleRepository.findAllByMember(savedMember);
+
+            mockMvc.perform(delete("/reminder/{id}", pastReminderSchedules.getFirst().getId())
+                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isNoContent());
+            List<ReminderSchedule> currentReminderSchedules = reminderScheduleRepository.findAllByMember(savedMember);
+
+            //then
+            assertSoftly(softly -> {
+                softly.assertThat(currentReminderSchedules.size()).isEqualTo(0);
+            });
+        }
     }
 }
