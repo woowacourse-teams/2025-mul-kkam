@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.controller;
 
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_REMINDER_SCHEDULE;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDR_SCHEDULE;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDER_SCHEDULE;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -308,7 +308,7 @@ class ReminderScheduleControllerTest extends ControllerTest {
 
             //then
             assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_REMINDR_SCHEDULE.name());
+                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_REMINDER_SCHEDULE.name());
             });
         }
 

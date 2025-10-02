@@ -2,7 +2,7 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_REMINDER_SCHEDULE;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDR_SCHEDULE;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDER_SCHEDULE;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -83,7 +83,7 @@ public class ReminderScheduleService {
 
     private ReminderSchedule getReminderSchedule(Long id) {
         return reminderScheduleRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_REMINDR_SCHEDULE));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_REMINDER_SCHEDULE));
     }
 
     private Member getMember(Long id) {
