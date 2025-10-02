@@ -101,6 +101,8 @@ public class SuggestionNotificationService {
         LocalTime requestTime = createTokenSuggestionNotificationRequest.createdAt().toLocalTime();
         if (!member.isNightNotificationAgreed()
                 && NightNotificationTimezone.isNightTimezoneForNotification(requestTime)) {
+            log.info("[NIGHT_NOTIFICATION_BLOCKED] memberId={}, requestTime={}",
+                    member.getId(), requestTime);
             return;
         }
 
