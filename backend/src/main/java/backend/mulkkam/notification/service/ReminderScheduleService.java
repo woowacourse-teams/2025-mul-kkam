@@ -11,6 +11,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.dto.request.CreateReminderScheduleRequest;
 import backend.mulkkam.notification.dto.request.ModifyReminderScheduleTimeRequest;
+import backend.mulkkam.notification.dto.response.ReadReminderScheduleResponse;
 import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.util.List;
@@ -45,7 +46,11 @@ public class ReminderScheduleService {
     public ReadReminderSchedulesResponse read(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         boolean isReminderEnabled = member.isReminderEnabled();
-        List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(member);
+        List<ReadReminderScheduleResponse> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                        member)
+                .stream()
+                .map(ReadReminderScheduleResponse::new)
+                .toList();
         return new ReadReminderSchedulesResponse(isReminderEnabled, reminderSchedules);
     }
 

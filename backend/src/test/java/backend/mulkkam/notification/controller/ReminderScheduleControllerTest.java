@@ -97,7 +97,7 @@ class ReminderScheduleControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.isReminderEnabled()).isTrue();
                 softly.assertThat(actual.reminderSchedules().size()).isEqualTo(2);
-                softly.assertThat(actual.reminderSchedules().getFirst().getSchedule()).isEqualTo(LocalTime.of(12, 30));
+                softly.assertThat(actual.reminderSchedules().getFirst().schedule()).isEqualTo(LocalTime.of(12, 30));
             });
         }
 
@@ -116,7 +116,7 @@ class ReminderScheduleControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.isReminderEnabled()).isTrue();
                 softly.assertThat(actual.reminderSchedules().size()).isEqualTo(2);
-                softly.assertThat(actual.reminderSchedules().getFirst().getSchedule()).isEqualTo(LocalTime.of(12, 30));
+                softly.assertThat(actual.reminderSchedules().getFirst().schedule()).isEqualTo(LocalTime.of(12, 30));
             });
         }
     }
