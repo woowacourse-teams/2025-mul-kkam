@@ -45,7 +45,7 @@ public class ReminderScheduleService {
     public ReadReminderSchedulesResponse read(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         boolean isReminderEnabled = member.isReminderEnabled();
-        List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMember(member);
+        List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(member);
         return new ReadReminderSchedulesResponse(isReminderEnabled, reminderSchedules);
     }
 

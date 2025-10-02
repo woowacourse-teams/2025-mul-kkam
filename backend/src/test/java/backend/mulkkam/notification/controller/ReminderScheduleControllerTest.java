@@ -72,17 +72,36 @@ class ReminderScheduleControllerTest extends ControllerTest {
         void setUp() {
             ReminderSchedule reminderSchedule1 = ReminderScheduleFixtureBuilder
                     .withMember(savedMember)
-                    .schedule(LocalTime.of(12, 30))
+                    .schedule(LocalTime.of(15, 30))
                     .build();
             ReminderSchedule reminderSchedule2 = ReminderScheduleFixtureBuilder
                     .withMember(savedMember)
-                    .schedule(LocalTime.of(15, 30))
+                    .schedule(LocalTime.of(12, 30))
                     .build();
 
             reminderScheduleRepository.saveAll(List.of(reminderSchedule1, reminderSchedule2));
         }
 
         @DisplayName("사용자의 모든 스케쥴링을 보여준다.")
+        @Test
+        void success_whenReadOrderByAsc() throws Exception {
+            // when
+            String json = mockMvc.perform(get("/reminder")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            ReadReminderSchedulesResponse actual = objectMapper.readValue(json, ReadReminderSchedulesResponse.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.isReminderEnabled()).isTrue();
+                softly.assertThat(actual.reminderSchedules().size()).isEqualTo(2);
+                softly.assertThat(actual.reminderSchedules().getFirst().getSchedule()).isEqualTo(LocalTime.of(12, 30));
+            });
+        }
+
+        @DisplayName("사용자의 모든 스케쥴링이 정렬되어서 반환된다.")
         @Test
         void success_whenRead() throws Exception {
             // when
@@ -134,7 +153,8 @@ class ReminderScheduleControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createReminderScheduleRequest)))
                     .andExpect(status().isOk());
             Member foundMember = memberRepository.findById(savedMember.getId()).orElseThrow();
-            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMember(foundMember);
+            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                    foundMember);
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(3);
@@ -206,7 +226,8 @@ class ReminderScheduleControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(modifyReminderScheduleTimeRequest)))
                     .andExpect(status().isOk());
             Member foundMember = memberRepository.findById(savedMember.getId()).orElseThrow();
-            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMember(foundMember);
+            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                    foundMember);
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(3);
@@ -266,7 +287,8 @@ class ReminderScheduleControllerTest extends ControllerTest {
                     .andExpect(status().isNoContent());
 
             Member foundMember = memberRepository.findById(savedMember.getId()).orElseThrow();
-            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMember(foundMember);
+            List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                    foundMember);
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(0);
@@ -313,12 +335,14 @@ class ReminderScheduleControllerTest extends ControllerTest {
                             .content(objectMapper.writeValueAsString(createReminderScheduleRequest)))
                     .andExpect(status().isOk());
 
-            List<ReminderSchedule> pastReminderSchedules = reminderScheduleRepository.findAllByMember(savedMember);
+            List<ReminderSchedule> pastReminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                    savedMember);
 
             mockMvc.perform(delete("/reminder/{id}", pastReminderSchedules.getFirst().getId())
                             .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isNoContent());
-            List<ReminderSchedule> currentReminderSchedules = reminderScheduleRepository.findAllByMember(savedMember);
+            List<ReminderSchedule> currentReminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
+                    savedMember);
 
             //then
             assertSoftly(softly -> {

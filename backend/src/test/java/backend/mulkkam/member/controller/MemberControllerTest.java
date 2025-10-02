@@ -212,7 +212,7 @@ class MemberControllerTest extends ControllerTest {
 
         @DisplayName("리마인더 수신 여부 설정을 수정한다.")
         @Test
-        void success_whenGetReminderEnabled() throws Exception {
+        void success_whenModifyReminderEnabled() throws Exception {
             //given
             ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest = new ModifyIsReminderEnabledRequest(false);
 

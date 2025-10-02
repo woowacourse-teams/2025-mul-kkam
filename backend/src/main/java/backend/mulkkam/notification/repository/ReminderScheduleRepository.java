@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedule, Long> {
 
-    List<ReminderSchedule> findAllByMember(Member member);
+    List<ReminderSchedule> findAllByMemberOrderByScheduleAsc(Member member);
 }
