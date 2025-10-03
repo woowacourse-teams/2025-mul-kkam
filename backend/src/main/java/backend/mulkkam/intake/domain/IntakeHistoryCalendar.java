@@ -1,7 +1,4 @@
-package backend.mulkkam.intake.domain.collection;
-
-import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+package backend.mulkkam.intake.domain;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
