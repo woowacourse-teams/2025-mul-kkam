@@ -52,7 +52,7 @@ public record IntakeHistorySummaryResponse(
             IntakeHistory intakeHistory,
             List<IntakeHistoryDetail> details
     ) {
-        this(intakeHistory, details, getSum(details));
+        this(intakeHistory, details, getTotalIntakeAmount(details));
     }
 
     private IntakeHistorySummaryResponse(
@@ -72,7 +72,7 @@ public record IntakeHistorySummaryResponse(
         );
     }
 
-    private static int getSum(List<IntakeHistoryDetail> details) {
+    private static int getTotalIntakeAmount(List<IntakeHistoryDetail> details) {
         return details.stream()
                 .map(IntakeHistoryDetail::getIntakeAmount)
                 .mapToInt(IntakeAmount::value)
