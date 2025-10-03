@@ -21,7 +21,11 @@ public class IntakeHistoryCalendar {
 
     private Map<LocalDate, IntakeHistory> getInitHistories(List<IntakeHistory> intakeHistories) {
         return intakeHistories.stream()
-                .collect(Collectors.toMap(IntakeHistory::getHistoryDate, h -> h, (a, b) -> a));
+                .collect(Collectors.toMap(
+                        IntakeHistory::getHistoryDate, 
+                        history -> history,
+                        (existing, duplicate) -> existing)
+                );
     }
 
     private Map<IntakeHistory, List<IntakeHistoryDetail>> getInitDetails(List<IntakeHistoryDetail> details) {
