@@ -44,11 +44,11 @@ public class IntakeHistoryCalendar {
         return historiesByDate.containsKey(date);
     }
 
-    public IntakeHistory getIntakeHistory(LocalDate date) {
+    public IntakeHistory getHistoryOf(LocalDate date) {
         return historiesByDate.get(date);
     }
 
-    public List<IntakeHistoryDetail> getIntakeHistoryDetails(IntakeHistory intakeHistory) {
+    public List<IntakeHistoryDetail> getHistoryDetails(IntakeHistory intakeHistory) {
         return Collections.unmodifiableList(detailsByHistory.getOrDefault((intakeHistory), List.of()));
     }
 }

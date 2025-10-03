@@ -130,8 +130,8 @@ public class IntakeHistoryService {
             Member member
     ) {
         if (calender.isExistHistoryOf(date)) {
-            IntakeHistory intakeHistory = calender.getIntakeHistory(date);
-            List<IntakeHistoryDetail> details = calender.getIntakeHistoryDetails(intakeHistory);
+            IntakeHistory intakeHistory = calender.getHistoryOf(date);
+            List<IntakeHistoryDetail> details = calender.getHistoryDetails(intakeHistory);
             return new IntakeHistorySummaryResponse(intakeHistory, details);
         }
         LocalDate today = LocalDate.now();
