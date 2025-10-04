@@ -31,7 +31,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -67,20 +66,24 @@ public class NotificationService {
             NotificationMessageTemplate notificationMessageTemplate,
             LocalDateTime now
     ) {
-        int CHUNK = 1_000;
+        final int CHUNK = 1000;
+        Long lastId = null;
 
-        Pageable pageable = PageRequest.of(0, CHUNK, Sort.by("id").ascending());
-        Slice<Long> slice;
-
-        do {
-            slice = memberRepository.findIdsBySlice(pageable);
-            notificationBatchService.processOneChunk(
-                    notificationMessageTemplate,
-                    now,
-                    slice.getContent()
-            );
-            pageable = slice.hasNext() ? slice.nextPageable() : Pageable.unpaged();
-        } while (slice.hasNext());
+        while (true) {
+            List<Long> memberIds = memberRepository.findIdsAfter
+                    (
+                            lastId,
+                            PageRequest.of(0, CHUNK, Sort.by("id"))
+                    );
+            if (memberIds.isEmpty()) {
+                break;
+            }
+            notificationBatchService.processOneChunk(notificationMessageTemplate, now, memberIds);
+            if (memberIds.size() < CHUNK) {
+                break;
+            }
+            lastId = memberIds.getLast();
+        }
         publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest());
     }
 
