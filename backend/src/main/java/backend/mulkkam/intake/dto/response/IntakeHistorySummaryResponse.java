@@ -4,9 +4,9 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -64,7 +64,7 @@ public record IntakeHistorySummaryResponse(
                 intakeHistory.getHistoryDate(),
                 intakeHistory.getTargetAmount().value(),
                 totalIntakeAmount,
-                getAchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount()),
+                new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount()).value(),
                 intakeHistory.getStreak(),
                 details.stream()
                         .map(IntakeHistoryDetailResponse::new)
@@ -77,10 +77,5 @@ public record IntakeHistorySummaryResponse(
                 .map(IntakeHistoryDetail::getIntakeAmount)
                 .mapToInt(IntakeAmount::value)
                 .sum();
-    }
-
-    private static double getAchievementRate(int totalIntakeAmount, TargetAmount targetAmount) {
-        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, targetAmount);
-        return achievementRate.value();
     }
 }
