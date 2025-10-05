@@ -71,5 +71,5 @@ management:
     metrics:
       export:
         enabled: true
-        step: 1m
+        step: 5m
         namespace: Mulkkam/Prod

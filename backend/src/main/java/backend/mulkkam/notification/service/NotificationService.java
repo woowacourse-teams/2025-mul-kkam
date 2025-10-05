@@ -46,7 +46,6 @@ public class NotificationService {
 
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
     private final ApplicationEventPublisher publisher;
