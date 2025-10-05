@@ -9,9 +9,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Long> {
-
-    boolean existsByMemberAndHistoryDate(Member member, LocalDate date);
-
     List<IntakeHistory> findAllByMember(Member member);
 
     List<IntakeHistory> findAllByMemberAndHistoryDateBetween(
@@ -22,5 +19,5 @@ public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Lo
 
     Optional<IntakeHistory> findByMemberAndHistoryDate(Member member, LocalDate date);
 
-    void deleteAllByMember(Member member);
+    void deleteByMember(Member member);
 }

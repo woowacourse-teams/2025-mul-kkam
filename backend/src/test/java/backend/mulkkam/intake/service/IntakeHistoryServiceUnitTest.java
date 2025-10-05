@@ -15,6 +15,8 @@ import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
@@ -22,6 +24,13 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,14 +39,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
 
@@ -45,13 +46,16 @@ class IntakeHistoryServiceUnitTest {
     private IntakeHistoryService intakeHistoryService;
 
     @Mock
-    private IntakeHistoryCrudService intakeHistoryCrudService;
-
-    @Mock
     private MemberRepository memberRepository;
 
     @Mock
     private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+
+    @Mock
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    @Mock
+    private IntakeHistoryRepository intakeHistoryRepository;
 
     @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
     @Nested
@@ -98,7 +102,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
 
             // when
@@ -162,9 +166,9 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
                     .willReturn(List.of(intakeHistory));
 
             // when
@@ -244,9 +248,9 @@ class IntakeHistoryServiceUnitTest {
                     fourthIntakeDetail,
                     fifthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
                     .willReturn(List.of(intakeHistory));
 
             // when
@@ -299,9 +303,9 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, startDate, endDate))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, startDate, endDate))
                     .willReturn(List.of(intakeHistory));
 
             // when
