@@ -29,14 +29,15 @@ import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.TimeZone;
-import org.apache.catalina.core.ApplicationPushBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -197,8 +198,9 @@ class SuggestionNotificationUnitServiceTest {
     class CreateAndSendSuggestionNotification {
 
         @DisplayName("야간 알림을 동의하지 않은 경우 야간 동안 알림이 전송되지 않는다")
-        @Test
-        void success_shouldNotSendNotificationInNightTimezone() {
+        @ParameterizedTest
+        @ValueSource(strings = {"21:00", "05:30", "00:00", "01:00"})
+        void success_shouldNotSendNotificationInNightTimezone(String rawTime) {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .isNightNotificationAgreed(false)
@@ -209,7 +211,7 @@ class SuggestionNotificationUnitServiceTest {
                     "내용",
                     member,
                     1_000,
-                    LocalDateTime.of(2025, 5, 24, 22, 0)
+                    LocalDateTime.of(LocalDate.of(2025, 5, 24), LocalTime.parse(rawTime))
             );
 
             // when
@@ -223,8 +225,9 @@ class SuggestionNotificationUnitServiceTest {
         }
 
         @DisplayName("야간 알림을 동의한 경우 야간 알림이 전송된다")
-        @Test
-        void success_sendNotificationInNightTimezoneWhenAgreedForNightNotification() {
+        @ParameterizedTest
+        @ValueSource(strings = {"21:00", "05:30", "00:00", "01:00"})
+        void success_sendNotificationInNightTimezoneWhenAgreedForNightNotification(String rawTime) {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .isNightNotificationAgreed(true)
@@ -235,7 +238,7 @@ class SuggestionNotificationUnitServiceTest {
                     "내용",
                     member,
                     1_000,
-                    LocalDateTime.of(2025, 5, 24, 22, 0)
+                    LocalDateTime.of(LocalDate.of(2025, 5, 24), LocalTime.parse(rawTime))
             );
 
             // when
