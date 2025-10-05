@@ -32,7 +32,6 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
                 JOIN FETCH h.member
                 WHERE h.member = :member
                     AND h.historyDate BETWEEN :from AND :to
-                ORDER BY h.historyDate
             """)
     List<IntakeHistoryDetail> findAllByMemberAndDateRange(
             @Param("member") Member member,
