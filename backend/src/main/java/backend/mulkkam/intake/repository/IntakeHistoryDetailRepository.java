@@ -15,7 +15,6 @@ import java.util.Optional;
 public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHistoryDetail, Long> {
 
     @Override
-    @NotNull
     @Query("""
                 SELECT d
                 FROM IntakeHistoryDetail d
