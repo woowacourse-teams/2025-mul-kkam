@@ -300,7 +300,7 @@ class ReminderScheduleControllerTest extends ControllerTest {
             });
         }
 
-        @DisplayName("생성, 삭제, 생성, 삭제 순으로 해도 올바르게 저장된다.")
+        @DisplayName("삭제 후 동일 시각 스케줄을 재생성·재삭제할 수 있다 (소프트삭제 + 복합 유니크키 정상 동작 검증)")
         @Test
         void success_whenExistDuplicateDeleteRow() throws Exception {
             //given
