@@ -1,4 +1,4 @@
-CREATE TABLE friend_edge (
+CREATE TABLE friend (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     requester_id BIGINT NOT NULL,
     addressee_id BIGINT NOT NULL,
