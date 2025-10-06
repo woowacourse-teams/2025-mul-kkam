@@ -8,7 +8,7 @@ public record ReadReminderScheduleResponse(
         @Schema(description = "삭제 및 수정을 위한 ID", example = "2")
         Long id,
 
-        @Schema(description = "사용자 시간", example = "13:30")
+        @Schema(description = "사용자가 설정한 리마인더 스케쥴 시간", example = "13:30")
         LocalTime schedule
 ) {
     public ReadReminderScheduleResponse(ReminderSchedule reminderSchedule) {

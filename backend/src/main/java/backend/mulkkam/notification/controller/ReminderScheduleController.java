@@ -32,7 +32,7 @@ public class ReminderScheduleController {
 
     private final ReminderScheduleService reminderScheduleService;
 
-    @Operation(summary = "리마인더 스케쥴링 생성", description = "리마인더 스케쥴링을 생성합니다.")
+    @Operation(summary = "사용자 리마인더 스케쥴링 생성", description = "사용자의 리마인더 스케쥴링을 생성합니다.")
     @ApiResponse(responseCode = "200", description = "알림 생성 성공")
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "필드 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
@@ -48,7 +48,7 @@ public class ReminderScheduleController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "리마인더 스케쥴링 목록 조회", description = "사용자의 리마인더 스케쥴링을 조회합니다.")
+    @Operation(summary = "사용자 리마인더 스케쥴링 목록 조회", description = "사용자의 리마인더 스케쥴링을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReminderSchedulesResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 요청", summary = "필수 파라미터 누락/형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
@@ -62,7 +62,7 @@ public class ReminderScheduleController {
         return ResponseEntity.ok().body(reminderScheduleService.read(memberDetails));
     }
 
-    @Operation(summary = "리마인더 스케쥴링 시간 수정", description = "시간을 수정합니다.")
+    @Operation(summary = "사용자 리마인더 스케쥴링 시간 수정", description = "사용자의 특정 리마인더 스케쥴의 시간을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "수정 성공")
     @PatchMapping()
     public ResponseEntity<Void> modifyTime(
@@ -74,7 +74,7 @@ public class ReminderScheduleController {
         return ResponseEntity.ok().build();
     }
 
-    @Operation(summary = "리마인더 스케쥴링 삭제", description = "사용자의 리마인더 스케쥴링을 삭제합니다.")
+    @Operation(summary = "사용자 리마인더 스케쥴링 삭제", description = "사용자의 특정 리마인더 스케쥴링을 삭제합니다.")
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 id")
     @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
