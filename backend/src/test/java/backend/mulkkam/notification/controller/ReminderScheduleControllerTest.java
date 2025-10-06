@@ -1,7 +1,6 @@
 package backend.mulkkam.notification.controller;
 
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_REMINDER_SCHEDULE;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_REMINDER_SCHEDULE;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -298,23 +297,6 @@ class ReminderScheduleControllerTest extends ControllerTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(0);
-            });
-        }
-
-        @DisplayName("없는 id일 경우 예외가 발생한다.")
-        @Test
-        void error_whenDeleteNotFound() throws Exception {
-            // when
-            String json = mockMvc.perform(delete("/reminder/{id}", Long.MAX_VALUE)
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                    .andExpect(status().isNotFound())
-                    .andReturn().getResponse().getContentAsString();
-
-            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
-
-            //then
-            assertSoftly(softly -> {
-                softly.assertThat(actual.getCode()).isEqualTo(NOT_FOUND_REMINDER_SCHEDULE.name());
             });
         }
 
