@@ -1,7 +1,5 @@
 package backend.mulkkam.averageTemperature.domain;
 
-import backend.mulkkam.notification.domain.City;
-import backend.mulkkam.notification.domain.CityDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

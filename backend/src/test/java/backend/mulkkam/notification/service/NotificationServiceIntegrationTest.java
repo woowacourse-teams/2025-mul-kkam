@@ -152,8 +152,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
                 results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
+                results.forEach(r -> softly.assertThat(r.id() < 10L).isTrue());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
                 softly.assertThat(actualIsReads).allMatch(o -> o == Boolean.TRUE);
+                softly.assertThat(response.nextCursor()).isEqualTo(5);
             });
         }
 

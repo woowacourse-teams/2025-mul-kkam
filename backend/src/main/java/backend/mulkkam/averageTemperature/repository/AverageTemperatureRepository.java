@@ -1,7 +1,7 @@
 package backend.mulkkam.averageTemperature.repository;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
-import backend.mulkkam.notification.domain.City;
+import backend.mulkkam.averageTemperature.domain.City;
 import java.time.LocalDate;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;

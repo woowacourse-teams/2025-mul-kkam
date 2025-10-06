@@ -47,7 +47,6 @@ public class NotificationService {
 
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
     private final ApplicationEventPublisher publisher;
@@ -110,9 +109,10 @@ public class NotificationService {
 
         boolean hasNext = pagedNotificationResponses.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, pagedNotificationResponses);
         List<ReadNotificationRow> readNotificationRows = dropExtraNotificationResponse(hasNext,
                 pagedNotificationResponses);
+
+        Long nextCursor = getNextCursor(hasNext, readNotificationRows);
         List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotificationRows);
 
         List<Long> ids = readNotificationRows.stream()
