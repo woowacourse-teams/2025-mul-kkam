@@ -158,6 +158,9 @@ class ReminderScheduleControllerTest extends ControllerTest {
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(3);
+                softly.assertThat(reminderSchedules)
+                        .extracting(ReminderSchedule::getSchedule)
+                        .contains(LocalTime.of(16, 0));
             });
         }
 
@@ -228,9 +231,12 @@ class ReminderScheduleControllerTest extends ControllerTest {
             Member foundMember = memberRepository.findById(savedMember.getId()).orElseThrow();
             List<ReminderSchedule> reminderSchedules = reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(
                     foundMember);
+            ReminderSchedule updated = reminderScheduleRepository.findById(savedReminderSchedule.getId()).orElseThrow();
+
             //then
             assertSoftly(softly -> {
                 softly.assertThat(reminderSchedules.size()).isEqualTo(3);
+                softly.assertThat(updated.getSchedule()).isEqualTo(LocalTime.of(16, 0));
             });
         }
 
