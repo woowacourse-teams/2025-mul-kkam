@@ -76,7 +76,9 @@ public class ReminderScheduleService {
     ) {
         if (reminderScheduleRepository.existsByIdAndMemberId(id, memberDetails.id())) {
             reminderScheduleRepository.deleteById(id);
+            return;
         }
+        throw new CommonException(NOT_FOUND_REMINDER_SCHEDULE);
     }
 
     private Member getMember(Long id) {
