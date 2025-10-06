@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.response;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -13,8 +13,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public interface NotificationResponse {
 
     Long id();
+
     String content();
+
     String type();
+
     java.time.LocalDateTime createdAt();
+
     boolean isRead();
 }

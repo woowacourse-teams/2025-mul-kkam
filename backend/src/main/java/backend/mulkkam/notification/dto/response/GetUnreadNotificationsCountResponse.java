@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.response;
 
 public record GetUnreadNotificationsCountResponse(long count) {
 }

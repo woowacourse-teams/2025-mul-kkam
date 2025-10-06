@@ -18,6 +18,7 @@ public enum NotFoundErrorCode implements ErrorCode {
     NOT_FOUND_CUP_EMOJI,
     NOT_FOUND_NOTIFICATION,
     NOT_FOUND_APP_MINIMUM_VERSION,
+    NOT_FOUND_REMINDER_SCHEDULE,
     ;
 
     private static final HttpStatus status = HttpStatus.NOT_FOUND;

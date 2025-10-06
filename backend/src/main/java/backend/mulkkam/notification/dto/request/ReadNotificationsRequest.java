@@ -1,8 +1,7 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
-
 import java.time.LocalDateTime;
 
 @Schema(description = "알림 목록 조회 요청")

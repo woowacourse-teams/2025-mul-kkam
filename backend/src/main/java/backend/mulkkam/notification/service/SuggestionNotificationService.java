@@ -4,6 +4,8 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
+import backend.mulkkam.averageTemperature.domain.City;
+import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
@@ -21,9 +23,9 @@ import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.notification.domain.NightNotificationTimezone;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
-import backend.mulkkam.notification.dto.CreateWeatherNotification;
+import backend.mulkkam.notification.dto.request.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.dto.request.CreateWeatherNotification;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;

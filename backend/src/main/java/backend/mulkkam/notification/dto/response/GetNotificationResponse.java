@@ -1,6 +1,7 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.response;
 
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 

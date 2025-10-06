@@ -1,4 +1,4 @@
-package backend.mulkkam.notification.dto;
+package backend.mulkkam.notification.dto.request;
 
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
