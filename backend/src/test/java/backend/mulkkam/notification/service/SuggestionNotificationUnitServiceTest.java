@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
@@ -21,12 +22,16 @@ import backend.mulkkam.averageTemperature.domain.City;
 import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
+import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -42,6 +47,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.support.CronTrigger;
 import org.springframework.scheduling.support.SimpleTriggerContext;
 
@@ -50,6 +56,15 @@ class SuggestionNotificationUnitServiceTest {
 
     @Mock
     private SuggestionNotificationRepository suggestionNotificationRepository;
+
+    @Mock
+    private DeviceRepository deviceRepository;
+
+    @Mock
+    private NotificationRepository notificationRepository;
+
+    @Mock
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Mock
     private IntakeAmountService intakeAmountService;
@@ -175,6 +190,62 @@ class SuggestionNotificationUnitServiceTest {
             verify(memberRepository, never()).findAll();
             verifyNoInteractions(intakeAmountService);
             verifyNoInteractions(suggestionNotificationRepository);
+        }
+    }
+
+    @DisplayName("제안 알림을 보낼 때에")
+    @Nested
+    class CreateAndSendSuggestionNotification {
+
+        @DisplayName("야간 알림을 동의하지 않은 경우 야간 동안 알림이 전송되지 않는다")
+        @ParameterizedTest
+        @ValueSource(strings = {"21:00", "05:30", "00:00", "01:00"})
+        void success_shouldNotSendNotificationInNightTimezone(String rawTime) {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .isNightNotificationAgreed(false)
+                    .buildWithId(memberId);
+
+            CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = new CreateTokenSuggestionNotificationRequest(
+                    "알림",
+                    "내용",
+                    member,
+                    1_000,
+                    LocalDateTime.of(LocalDate.of(2025, 5, 24), LocalTime.parse(rawTime))
+            );
+
+            // when
+            suggestionNotificationService.createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
+
+            // then
+            verify(deviceRepository, never()).findAllByMember(any(Member.class));
+            verify(notificationRepository, never()).save(any(Notification.class));
+            verify(suggestionNotificationRepository, never()).save(any(SuggestionNotification.class));
+            verifyNoInteractions(applicationEventPublisher);
+        }
+
+        @DisplayName("야간 알림을 동의한 경우 야간 알림이 전송된다")
+        @ParameterizedTest
+        @ValueSource(strings = {"21:00", "05:30", "00:00", "01:00"})
+        void success_sendNotificationInNightTimezoneWhenAgreedForNightNotification(String rawTime) {
+            // given
+            Member member = MemberFixtureBuilder.builder()
+                    .isNightNotificationAgreed(true)
+                    .buildWithId(memberId);
+
+            CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = new CreateTokenSuggestionNotificationRequest(
+                    "알림",
+                    "내용",
+                    member,
+                    1_000,
+                    LocalDateTime.of(LocalDate.of(2025, 5, 24), LocalTime.parse(rawTime))
+            );
+
+            // when
+            suggestionNotificationService.createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
+
+            // then
+            verify(suggestionNotificationRepository).save(any(SuggestionNotification.class));
         }
     }
 }
