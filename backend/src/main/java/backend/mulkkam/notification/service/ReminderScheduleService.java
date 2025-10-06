@@ -59,9 +59,9 @@ public class ReminderScheduleService {
             MemberDetails memberDetails,
             ModifyReminderScheduleTimeRequest modifyReminderScheduleTimeRequest
     ) {
-        Member member = getMember(memberDetails.id());
-        ReminderSchedule reminderSchedule = getReminderSchedule(modifyReminderScheduleTimeRequest.id());
-        reminderSchedule.isOwnedBy(member);
+        ReminderSchedule reminderSchedule = reminderScheduleRepository
+                .findByIdAndMemberId(modifyReminderScheduleTimeRequest.id(), memberDetails.id())
+                .orElseThrow(() -> new CommonException(NOT_FOUND_REMINDER_SCHEDULE));
         try {
             reminderSchedule.modifyTime(modifyReminderScheduleTimeRequest.schedule());
             reminderScheduleRepository.flush();
@@ -75,15 +75,9 @@ public class ReminderScheduleService {
             MemberDetails memberDetails,
             Long id
     ) {
-        Member member = getMember(memberDetails.id());
-        ReminderSchedule reminderSchedule = getReminderSchedule(id);
-        reminderSchedule.isOwnedBy(member);
-        reminderScheduleRepository.deleteById(id);
-    }
-
-    private ReminderSchedule getReminderSchedule(Long id) {
-        return reminderScheduleRepository.findById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_REMINDER_SCHEDULE));
+        if (reminderScheduleRepository.existsByIdAndMemberId(id, memberDetails.id())) {
+            reminderScheduleRepository.deleteById(id);
+        }
     }
 
     private Member getMember(Long id) {
