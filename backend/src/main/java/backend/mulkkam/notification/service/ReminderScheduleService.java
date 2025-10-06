@@ -36,8 +36,7 @@ public class ReminderScheduleService {
         Member member = getMember(memberDetails.id());
         try {
             ReminderSchedule reminderSchedule = new ReminderSchedule(member, createReminderScheduleRequest.schedule());
-            reminderScheduleRepository.save(reminderSchedule);
-            reminderScheduleRepository.flush();
+            reminderScheduleRepository.saveAndFlush(reminderSchedule);
         } catch (DataIntegrityViolationException e) {
             throw new CommonException(DUPLICATED_REMINDER_SCHEDULE);
         }
