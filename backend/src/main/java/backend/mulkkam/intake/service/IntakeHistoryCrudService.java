@@ -7,9 +7,11 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,6 +57,12 @@ public class IntakeHistoryCrudService {
             LocalDate to
     ) {
         return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, from, to);
+    }
+
+    public AchievementRate getAchievementRate(IntakeHistory intakeHistory) {
+        TargetAmount targetAmount = intakeHistory.getTargetAmount();
+        int totalIntakeAmount = getTotalIntakeAmount(intakeHistory);
+        return new AchievementRate(totalIntakeAmount, targetAmount);
     }
 
     public int getTotalIntakeAmount(IntakeHistory intakeHistory) {
