@@ -1,69 +1,79 @@
 package com.mulkkam.ui.settingreminder.component
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxValue
+import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.reminder.ReminderSchedule
-import com.mulkkam.ui.designsystem.Black
-import com.mulkkam.ui.designsystem.Gray300
-import com.mulkkam.ui.designsystem.Gray400
-import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import java.time.Duration
+import com.mulkkam.ui.designsystem.Secondary200
 import java.time.LocalTime
 
-private const val HOURS_PER_DAY = 24
-private const val NO_HOUR_DIFF = 0
-
 @Composable
-fun ReminderItem(
+fun ReminderScheduleItem(
     reminder: ReminderSchedule,
+    onRemove: () -> Unit,
     modifier: Modifier = Modifier,
     currentTime: LocalTime = LocalTime.now(),
 ) {
-    Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .padding(start = 24.dp, end = 24.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Column(
-            modifier = Modifier.padding(vertical = 12.dp),
-        ) {
-            Text(
-                text = reminder.schedule.toString(),
-                style = MulKkamTheme.typography.headline1,
-                color = Black,
-            )
-            Text(
-                text =
-                    run {
-                        var diff = Duration.between(currentTime, reminder.schedule).toHours()
-                        if (diff <= NO_HOUR_DIFF) diff += HOURS_PER_DAY
-                        stringResource(R.string.setting_reminder_hours_left, diff)
-                    },
-                style = MulKkamTheme.typography.label2,
-                color = Gray300,
-            )
+    val dismissState =
+        rememberSwipeToDismissBoxState(
+            confirmValueChange = { dismissValue ->
+                dismissValue == SwipeToDismissBoxValue.EndToStart
+            },
+            positionalThreshold = { it * 0.7f },
+        )
+    val color =
+        when (dismissState.dismissDirection) {
+            SwipeToDismissBoxValue.EndToStart -> Secondary200
+            else -> Color.Transparent
         }
-        Icon(
-            painter = painterResource(R.drawable.ic_setting_next),
-            contentDescription = null,
-            tint = Gray400,
+
+    LaunchedEffect(dismissState.currentValue) {
+        if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            onRemove()
+        }
+    }
+
+    SwipeToDismissBox(
+        modifier = modifier,
+        state = dismissState,
+        backgroundContent = {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(color)
+                        .padding(end = 18.dp),
+                contentAlignment = Alignment.CenterEnd,
+            ) {
+                Image(
+                    painter = painterResource(R.drawable.ic_common_delete),
+                    modifier = Modifier.size(24.dp),
+                    contentDescription = stringResource(R.string.setting_reminder_delete_description),
+                )
+            }
+        },
+        enableDismissFromStartToEnd = false,
+    ) {
+        ReminderScheduleItemComponent(
+            reminder = reminder,
+            currentTime = currentTime,
         )
     }
 }
@@ -72,6 +82,9 @@ fun ReminderItem(
 @Composable
 private fun RemindItemPreview() {
     MulkkamTheme {
-        ReminderItem(ReminderSchedule(1L, LocalTime.of(13, 0)))
+        ReminderScheduleItem(
+            reminder = ReminderSchedule(1L, LocalTime.of(13, 0)),
+            onRemove = {},
+        )
     }
 }
