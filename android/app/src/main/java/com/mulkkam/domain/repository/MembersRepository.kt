@@ -35,4 +35,6 @@ interface MembersRepository {
     suspend fun getIsFirstLaunch(): MulKkamResult<Boolean>
 
     suspend fun saveIsFirstLaunch(): MulKkamResult<Unit>
+
+    suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit>
 }

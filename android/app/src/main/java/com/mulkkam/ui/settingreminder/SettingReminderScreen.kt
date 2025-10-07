@@ -25,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
@@ -32,6 +33,7 @@ import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleItem
 import com.mulkkam.ui.settingreminder.component.ReminderSwitchRow
+import com.mulkkam.ui.settingreminder.component.SettingReminderComponent
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import java.time.LocalTime
 
@@ -52,54 +54,14 @@ fun SettingReminderScreen(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
-        Column(
+        SettingReminderComponent(
+            isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
+            reminders = reminders.toSuccessDataOrNull() ?: return@Scaffold,
+            updateBottomSheetMode = { bottomSheetMode = it },
+            updateReminderEnabled = { viewModel.updateReminderEnabled() },
+            removeReminder = { viewModel.removeReminder(it) },
             modifier = Modifier.padding(innerPadding),
-        ) {
-            ReminderSwitchRow(
-                checked = isReminderEnabled.toSuccessDataOrNull() ?: return@Column,
-            ) { viewModel.updateReminderEnabled() }
-
-            LazyColumn(
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                val reminder = reminders.toSuccessDataOrNull() ?: return@LazyColumn
-                items(
-                    reminder.size,
-                    key = { reminder[it].id },
-                ) { index ->
-                    ReminderScheduleItem(
-                        reminder = reminder[index],
-                        onRemove = { viewModel.removeReminder(reminder[index].id) },
-                        modifier =
-                            Modifier
-                                .clickable {
-                                    bottomSheetMode = ReminderMode.UPDATE(reminder[index])
-                                }.animateItem(),
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(18.dp))
-
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(46.dp)
-                        .padding(horizontal = 24.dp)
-                        .background(Primary100)
-                        .clickable {
-                            bottomSheetMode = ReminderMode.ADD
-                        },
-            ) {
-                Icon(
-                    painter = painterResource(com.mulkkam.R.drawable.ic_setting_add),
-                    contentDescription = "",
-                    modifier = Modifier.align(Alignment.Center),
-                    tint = White,
-                )
-            }
-        }
+        )
 
         if (showBottomSheet) {
             val currentMode = bottomSheetMode

@@ -5,6 +5,7 @@ import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
+import com.mulkkam.data.remote.model.request.members.MembersReminderRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.toDomain
@@ -125,4 +126,12 @@ class MembersRepositoryImpl(
         runCatching {
             membersPreference.saveIsFirstLaunch()
         }.toMulKkamResult()
+
+    override suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit> {
+        val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
 }

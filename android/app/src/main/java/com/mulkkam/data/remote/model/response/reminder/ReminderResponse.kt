@@ -9,11 +9,11 @@ data class ReminderResponse(
     @SerialName("isReminderEnabled")
     val isReminderEnabled: Boolean,
     @SerialName("reminderSchedules")
-    val reminderSchedules: List<ReminderScheduleResponse>?,
+    val reminderSchedules: List<ReminderScheduleResponse>,
 )
 
 fun ReminderResponse.toDomain(): ReminderConfig =
     ReminderConfig(
         isReminderEnabled = isReminderEnabled,
-        reminderSchedules = reminderSchedules?.map { it.toDomain() },
+        reminderSchedules = reminderSchedules.map { it.toDomain() },
     )

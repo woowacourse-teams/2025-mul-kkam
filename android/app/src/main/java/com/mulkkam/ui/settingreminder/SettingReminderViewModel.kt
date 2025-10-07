@@ -2,6 +2,7 @@ package com.mulkkam.ui.settingreminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.reminderRepository
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -45,9 +46,12 @@ class SettingReminderViewModel : ViewModel() {
 
     fun updateReminderEnabled() {
         viewModelScope.launch {
+            val isEnabled = isReminderEnabled.value.toSuccessDataOrNull() ?: return@launch
             runCatching {
-                val asdf = _isReminderEnabled.value.toSuccessDataOrNull() ?: return@launch
-                _isReminderEnabled.value = MulKkamUiState.Success(!asdf)
+                _isReminderEnabled.value = MulKkamUiState.Success(!isEnabled)
+                membersRepository.patchMembersReminder(!isEnabled).getOrError()
+            }.onSuccess {
+                loadReminderSchedules()
             }
         }
     }
