@@ -75,34 +75,13 @@ fun ReminderScheduleBottomSheet(
                     modifier = Modifier.clickable { onDismiss() },
                 )
             }
-            Row(
-                modifier = Modifier.padding(vertical = 18.dp, horizontal = 24.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                CustomNumberPicker(
-                    range = IntRange(0, 23),
-                    value = hour,
-                    onValueChange = { hour = it },
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(end = 8.dp),
-                )
-                Text(
-                    text = ":",
-                    color = Gray400,
-                    style = MulKkamTheme.typography.title1,
-                )
-                CustomNumberPicker(
-                    range = IntRange(0, 59),
-                    value = minute,
-                    onValueChange = { minute = it },
-                    modifier =
-                        Modifier
-                            .weight(1f)
-                            .padding(start = 8.dp),
-                )
-            }
+
+            ReminderScheduleBottomSheetTimePicker(
+                hour = hour,
+                onHourChanged = { hour = it },
+                minute = minute,
+                onMinuteChanged = { minute = it },
+            )
 
             Text(
                 text = stringResource(R.string.setting_reminder_bottom_sheet_complete),
