@@ -19,6 +19,8 @@ import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
+import backend.mulkkam.intake.dto.ReadAchieveRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchieveRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -29,6 +31,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,6 +122,19 @@ public class IntakeHistoryService {
         return dates.stream()
                 .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
                 .toList();
+    }
+
+    public ReadAchieveRateByDatesResponse readAchieveRatesByDateRange(DateRangeRequest dateRangeRequest, MemberDetails memberDetails) {
+        Member member = getMember(memberDetails.id());
+
+        List<AchievementRate> dailyAchievementRates = dateRangeRequest.getAllDatesInRange().stream()
+                .map(date -> intakeHistoryCrudService.getIntakeHistory(member, date))
+                .map(intakeHistoryCrudService::getAchievementRate).toList();
+
+        List<ReadAchieveRateByDateResponse> achievementRateResponses = dailyAchievementRates.stream()
+                .map(achievementRate -> new ReadAchieveRateByDateResponse(achievementRate.value()))
+                .collect(Collectors.toList());
+        return new ReadAchieveRateByDatesResponse(achievementRateResponses);
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(

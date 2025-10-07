@@ -3,6 +3,7 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
+import backend.mulkkam.intake.dto.ReadAchieveRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -104,6 +105,29 @@ public class IntakeHistoryController {
                 memberDetails
         );
         return ResponseEntity.ok(createIntakeHistoryResponse);
+    }
+
+    @Operation(summary = "기간별 목표 달성률 조회", description = "지정한 날짜 범위 내의 일별 목표 달성률을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryDetailResponse.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 날짜 범위", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
+    }))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping("/achieve-rates")
+    public ResponseEntity<ReadAchieveRateByDatesResponse> readAchieveRatesByDateRange(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "조회 시작 날짜 (YYYY-MM-DD)", required = true, example = "2024-01-01")
+            @RequestParam LocalDate from,
+            @Parameter(description = "조회 종료 날짜 (YYYY-MM-DD)", required = true, example = "2024-01-31")
+            @RequestParam LocalDate to
+    ) {
+        DateRangeRequest dateRangeRequest = new DateRangeRequest(from, to);
+        ReadAchieveRateByDatesResponse readAchieveRateByDatesResponse = intakeHistoryService.readAchieveRatesByDateRange(
+                dateRangeRequest,
+                memberDetails
+        );
+        return ResponseEntity.ok(readAchieveRateByDatesResponse);
     }
 
     @Operation(summary = "음용량 기록 삭제", description = "특정 음용량 기록을 삭제합니다.")
