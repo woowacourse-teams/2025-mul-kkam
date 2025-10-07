@@ -55,7 +55,7 @@ fun ReminderScheduleBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
         containerColor = White,
-        modifier = Modifier,
+        modifier = modifier,
     ) {
         Column {
             Row(

@@ -6,10 +6,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.custom.numberpicker.CustomNumberPicker
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun ReminderScheduleBottomSheetTimePicker(
@@ -44,6 +46,19 @@ fun ReminderScheduleBottomSheetTimePicker(
                 Modifier
                     .weight(1f)
                     .padding(start = 8.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ReminderScheduleBottomSheetTimePickerPreview() {
+    MulkkamTheme {
+        ReminderScheduleBottomSheetTimePicker(
+            hour = 12,
+            onHourChanged = {},
+            minute = 30,
+            onMinuteChanged = {},
         )
     }
 }
