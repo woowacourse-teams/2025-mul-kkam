@@ -79,7 +79,7 @@ private fun ReminderScheduleItemComponentPreview() {
             reminder =
                 ReminderSchedule(
                     id = 1L,
-                    schedule =  LocalTime.of(13, 45),
+                    schedule = LocalTime.of(13, 45),
                 ),
         )
     }

@@ -5,8 +5,8 @@ import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
-import com.mulkkam.data.remote.model.request.members.MembersReminderRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.MembersReminderRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.model.response.notifications.toDomain
