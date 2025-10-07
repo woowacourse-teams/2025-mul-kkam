@@ -327,7 +327,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             int targetAmountOfMember = 1_500;
             Member member = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼로리"))
-                    .targetAmount(new TargetAmount(targetAmountOfMember))
+                    .targetAmount(targetAmountOfMember)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -390,7 +390,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼로리"))
-                    .targetAmount(new TargetAmount(targetAmountOfMember))
+                    .targetAmount(targetAmountOfMember)
                     .build();
             memberRepository.save(member);
 

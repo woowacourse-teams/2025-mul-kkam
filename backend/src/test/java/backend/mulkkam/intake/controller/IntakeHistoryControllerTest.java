@@ -81,7 +81,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
     private final Member member = MemberFixtureBuilder
             .builder()
             .weight(70.0)
-            .targetAmount(new TargetAmount(1500))
+            .targetAmount(1500)
             .build();
 
     private String token;

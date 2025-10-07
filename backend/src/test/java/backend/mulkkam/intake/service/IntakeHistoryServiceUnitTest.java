@@ -17,19 +17,10 @@ import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -37,6 +28,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
 class IntakeHistoryServiceUnitTest {
@@ -194,7 +192,7 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(2_000))
+                    .targetAmount(2_000)
                     .buildWithId(memberId);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
@@ -269,7 +267,7 @@ class IntakeHistoryServiceUnitTest {
             // given
             Long memberId = 1L;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(1_000))
+                    .targetAmount(1_000)
                     .buildWithId(memberId);
 
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
