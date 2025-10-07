@@ -136,6 +136,7 @@
 
     <string name="setting_reminder_toolbar_title">리마인드 알람 설정</string>
     <string name="setting_reminder_toolbar_back_btn_description">리마인드 화면 뒤로가기 버튼</string>
+    <string name="setting_reminder_hours_left">%d시간 남음</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 

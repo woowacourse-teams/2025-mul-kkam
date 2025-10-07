@@ -25,7 +25,7 @@ import com.mulkkam.ui.designsystem.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingRemindTopAppBar(onBackClick: () -> Unit) {
+fun SettingReminderTopAppBar(onBackClick: () -> Unit) {
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -64,6 +64,6 @@ fun SettingRemindTopAppBar(onBackClick: () -> Unit) {
 @Composable
 private fun SettingRemindTopAppBarPreview() {
     MulkkamTheme {
-        SettingRemindTopAppBar(onBackClick = {})
+        SettingReminderTopAppBar(onBackClick = {})
     }
 }
