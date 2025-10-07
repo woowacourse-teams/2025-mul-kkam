@@ -15,8 +15,8 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
@@ -29,7 +29,6 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,7 +67,6 @@ public class IntakeHistoryService {
         );
         intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
         return getCreateIntakeHistoryResponse(
-                intakeDate,
                 member,
                 intakeHistory,
                 intakeHistoryDetail.getIntakeAmount().value(),
@@ -99,7 +97,6 @@ public class IntakeHistoryService {
         );
         intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
         return getCreateIntakeHistoryResponse(
-                intakeDate,
                 member,
                 intakeHistory,
                 intakeHistoryDetail.getIntakeAmount().value(),
@@ -155,13 +152,12 @@ public class IntakeHistoryService {
     }
 
     private CreateIntakeHistoryDetailResponse getCreateIntakeHistoryResponse(
-            LocalDate intakeDate,
             Member member,
             IntakeHistory intakeHistory,
             int intakeAmount,
             IntakeType intakeType
     ) {
-        int totalIntakeAmount = intakeHistoryCrudService.getTotalIntakeAmount(member, intakeDate);
+        int totalIntakeAmount = intakeHistoryCrudService.getTotalIntakeAmount(member, intakeHistory.getHistoryDate());
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
