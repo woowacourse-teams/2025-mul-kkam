@@ -11,11 +11,11 @@ import java.util.stream.Collectors;
 
 public class IntakeHistoryCalendar {
 
-    private final Map<LocalDate, IntakeHistory> historiesByDate;
+    private final Map<LocalDate, IntakeHistory> historyByDates;
     private final Map<IntakeHistory, List<IntakeHistoryDetail>> detailsByHistory;
 
     public IntakeHistoryCalendar(List<IntakeHistory> intakeHistories, List<IntakeHistoryDetail> details) {
-        this.historiesByDate = getInitHistories(intakeHistories);
+        this.historyByDates = getInitHistories(intakeHistories);
         this.detailsByHistory = getInitDetails(details);
     }
 
@@ -41,11 +41,11 @@ public class IntakeHistoryCalendar {
     }
 
     public boolean isExistHistoryOf(LocalDate date) {
-        return historiesByDate.containsKey(date);
+        return historyByDates.containsKey(date);
     }
 
     public IntakeHistory getHistoryOf(LocalDate date) {
-        return historiesByDate.get(date);
+        return historyByDates.get(date);
     }
 
     public List<IntakeHistoryDetail> getHistoryDetails(IntakeHistory intakeHistory) {
