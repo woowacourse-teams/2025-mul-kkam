@@ -25,7 +25,10 @@ public class IntakeHistoryCrudService {
     private final IntakeHistoryRepository intakeHistoryRepository;
     private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-    public boolean isExistIntakeHistory(Member member, LocalDate date) {
+    public boolean isExistIntakeHistory(
+            Member member,
+            LocalDate date
+    ) {
         return intakeHistoryRepository.existsByMemberAndHistoryDate(member, date);
     }
 
@@ -37,12 +40,18 @@ public class IntakeHistoryCrudService {
         return intakeHistoryRepository.findAllByMember(member);
     }
 
-    public IntakeHistory getIntakeHistory(Member member, LocalDate intakeDate) {
+    public IntakeHistory getIntakeHistory(
+            Member member,
+            LocalDate intakeDate
+    ) {
         return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
     }
 
-    public IntakeHistory getOrCreateIntakeHistory(Member member, LocalDate intakeDate) {
+    public IntakeHistory getOrCreateIntakeHistory(
+            Member member,
+            LocalDate intakeDate
+    ) {
         return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
                 .orElseGet(() -> getInitializedHistory(member, intakeDate));
     }
@@ -72,7 +81,10 @@ public class IntakeHistoryCrudService {
                 .sum();
     }
 
-    public int getStreak(Member member, LocalDate date) {
+    public int getStreak(
+            Member member,
+            LocalDate date
+    ) {
         return intakeHistoryRepository.findByMemberAndHistoryDate(member, date.minusDays(1))
                 .map(intakeHistory -> intakeHistory.getStreak() + 1)
                 .orElse(1);
@@ -87,7 +99,10 @@ public class IntakeHistoryCrudService {
         intakeHistoryRepository.deleteAllByMember(member);
     }
 
-    public void deleteIntakeHistoryDetail(Member member, Long id) {
+    public void deleteIntakeHistoryDetail(
+            Member member,
+            Long id
+    ) {
         intakeHistoryDetailRepository.findById(id)
                 .ifPresent((detail) -> {
                     validateAbleToDelete(member, detail);
@@ -95,7 +110,10 @@ public class IntakeHistoryCrudService {
                 });
     }
 
-    private IntakeHistory getInitializedHistory(Member member, LocalDate intakeDate) {
+    private IntakeHistory getInitializedHistory(
+            Member member,
+            LocalDate intakeDate
+    ) {
         int streak = getStreak(member, intakeDate);
         final IntakeHistory intakeHistory = new IntakeHistory(
                 member,
@@ -106,7 +124,10 @@ public class IntakeHistoryCrudService {
         return intakeHistoryRepository.save(intakeHistory);
     }
 
-    private void validateAbleToDelete(Member member, IntakeHistoryDetail detail) {
+    private void validateAbleToDelete(
+            Member member,
+            IntakeHistoryDetail detail
+    ) {
         if (!detail.isOwnedBy(member)) {
             throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
         }

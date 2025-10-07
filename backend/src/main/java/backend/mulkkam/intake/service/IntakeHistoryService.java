@@ -124,7 +124,10 @@ public class IntakeHistoryService {
                 .toList();
     }
 
-    public ReadAchieveRateByDatesResponse readAchieveRatesByDateRange(DateRangeRequest dateRangeRequest, MemberDetails memberDetails) {
+    public ReadAchieveRateByDatesResponse readAchieveRatesByDateRange(
+            DateRangeRequest dateRangeRequest,
+            MemberDetails memberDetails
+    ) {
         Member member = getMember(memberDetails.id());
 
         List<AchievementRate> dailyAchievementRates = dateRangeRequest.getAllDatesInRange().stream()
