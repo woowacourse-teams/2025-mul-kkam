@@ -39,4 +39,6 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
     );
 
     void deleteAllByIntakeHistoryIn(List<IntakeHistory> intakeHistory);
+
+    List<IntakeHistoryDetail> findByIntakeHistory(IntakeHistory intakeHistory);
 }

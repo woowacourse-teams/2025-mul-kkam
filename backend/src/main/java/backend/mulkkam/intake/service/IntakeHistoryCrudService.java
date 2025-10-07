@@ -45,19 +45,8 @@ public class IntakeHistoryCrudService {
                 .orElseGet(() -> getInitializedHistory(member, intakeDate));
     }
 
-    private IntakeHistory getInitializedHistory(Member member, LocalDate intakeDate) {
-        int streak = getStreak(member, intakeDate);
-        final IntakeHistory intakeHistory = new IntakeHistory(
-                member,
-                intakeDate,
-                member.getTargetAmount(),
-                streak
-        );
-        return intakeHistoryRepository.save(intakeHistory);
-    }
-
-    public List<IntakeHistoryDetail> getIntakeHistoryDetails(Member member, LocalDate date) {
-        return getIntakeHistoryDetails(member, date, date);
+    public List<IntakeHistoryDetail> getIntakeHistoryDetails(IntakeHistory intakeHistory) {
+        return intakeHistoryDetailRepository.findByIntakeHistory(intakeHistory);
     }
 
     public List<IntakeHistoryDetail> getIntakeHistoryDetails(
@@ -68,8 +57,8 @@ public class IntakeHistoryCrudService {
         return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, from, to);
     }
 
-    public int getTotalIntakeAmount(Member member, LocalDate date) {
-        List<IntakeHistoryDetail> details = getIntakeHistoryDetails(member, date);
+    public int getTotalIntakeAmount(IntakeHistory intakeHistory) {
+        List<IntakeHistoryDetail> details = getIntakeHistoryDetails(intakeHistory);
         return details.stream()
                 .mapToInt(detail -> detail.getIntakeAmount().value())
                 .sum();
@@ -96,6 +85,17 @@ public class IntakeHistoryCrudService {
                     validateAbleToDelete(member, detail);
                     intakeHistoryDetailRepository.delete(detail);
                 });
+    }
+
+    private IntakeHistory getInitializedHistory(Member member, LocalDate intakeDate) {
+        int streak = getStreak(member, intakeDate);
+        final IntakeHistory intakeHistory = new IntakeHistory(
+                member,
+                intakeDate,
+                member.getTargetAmount(),
+                streak
+        );
+        return intakeHistoryRepository.save(intakeHistory);
     }
 
     private void validateAbleToDelete(Member member, IntakeHistoryDetail detail) {

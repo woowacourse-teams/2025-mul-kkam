@@ -67,7 +67,6 @@ public class IntakeHistoryService {
         );
         intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
         return getCreateIntakeHistoryResponse(
-                member,
                 intakeHistory,
                 intakeHistoryDetail.getIntakeAmount().value(),
                 cup.getIntakeType()
@@ -97,7 +96,6 @@ public class IntakeHistoryService {
         );
         intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
         return getCreateIntakeHistoryResponse(
-                member,
                 intakeHistory,
                 intakeHistoryDetail.getIntakeAmount().value(),
                 intakeType
@@ -152,12 +150,11 @@ public class IntakeHistoryService {
     }
 
     private CreateIntakeHistoryDetailResponse getCreateIntakeHistoryResponse(
-            Member member,
             IntakeHistory intakeHistory,
             int intakeAmount,
             IntakeType intakeType
     ) {
-        int totalIntakeAmount = intakeHistoryCrudService.getTotalIntakeAmount(member, intakeHistory.getHistoryDate());
+        int totalIntakeAmount = intakeHistoryCrudService.getTotalIntakeAmount(intakeHistory);
         AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
         String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
