@@ -3,7 +3,7 @@ package backend.mulkkam.intake.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
-import backend.mulkkam.intake.dto.ReadAchieveRateByDatesResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -113,8 +113,8 @@ public class IntakeHistoryController {
             @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @GetMapping("/achieve-rates")
-    public ResponseEntity<ReadAchieveRateByDatesResponse> readAchieveRatesByDateRange(
+    @GetMapping("/achievement-rates")
+    public ResponseEntity<ReadAchievementRateByDatesResponse> readAchievementRatesByDateRange(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "조회 시작 날짜 (YYYY-MM-DD)", required = true, example = "2024-01-01")
@@ -123,11 +123,11 @@ public class IntakeHistoryController {
             @RequestParam LocalDate to
     ) {
         DateRangeRequest dateRangeRequest = new DateRangeRequest(from, to);
-        ReadAchieveRateByDatesResponse readAchieveRateByDatesResponse = intakeHistoryService.readAchieveRatesByDateRange(
+        ReadAchievementRateByDatesResponse readAchievementRateByDatesResponse = intakeHistoryService.readAchievementRatesByDateRange(
                 dateRangeRequest,
                 memberDetails
         );
-        return ResponseEntity.ok(readAchieveRateByDatesResponse);
+        return ResponseEntity.ok(readAchievementRateByDatesResponse);
     }
 
     @Operation(summary = "음용량 기록 삭제", description = "특정 음용량 기록을 삭제합니다.")

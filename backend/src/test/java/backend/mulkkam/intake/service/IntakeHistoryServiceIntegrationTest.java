@@ -23,8 +23,8 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.ReadAchieveRateByDateResponse;
-import backend.mulkkam.intake.dto.ReadAchieveRateByDatesResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -530,12 +530,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            ReadAchieveRateByDatesResponse readAchieveRateByDatesResponse = intakeHistoryService.readAchieveRatesByDateRange(
+            ReadAchievementRateByDatesResponse readAchievementRateByDatesResponse = intakeHistoryService.readAchievementRatesByDateRange(
                     dateRangeRequest, new MemberDetails(member));
 
             // then
-            List<Double> actualAchievementRates = readAchieveRateByDatesResponse.readAchieveRateByDateResponses().stream()
-                    .map(ReadAchieveRateByDateResponse::achievementRate)
+            List<Double> actualAchievementRates = readAchievementRateByDatesResponse.readAchievementRateByDateResponses().stream()
+                    .map(ReadAchievementRateByDateResponse::achievementRate)
                     .toList();
 
             Assertions.assertThat(actualAchievementRates)

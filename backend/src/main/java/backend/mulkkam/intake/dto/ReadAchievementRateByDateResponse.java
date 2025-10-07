@@ -1,6 +1,6 @@
 package backend.mulkkam.intake.dto;
 
-public record ReadAchieveRateByDateResponse(
+public record ReadAchievementRateByDateResponse(
         double achievementRate
 ) {
 }

@@ -19,8 +19,8 @@ import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
-import backend.mulkkam.intake.dto.ReadAchieveRateByDateResponse;
-import backend.mulkkam.intake.dto.ReadAchieveRateByDatesResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -124,7 +124,7 @@ public class IntakeHistoryService {
                 .toList();
     }
 
-    public ReadAchieveRateByDatesResponse readAchieveRatesByDateRange(
+    public ReadAchievementRateByDatesResponse readAchievementRatesByDateRange(
             DateRangeRequest dateRangeRequest,
             MemberDetails memberDetails
     ) {
@@ -134,10 +134,10 @@ public class IntakeHistoryService {
                 .map(date -> intakeHistoryCrudService.getIntakeHistory(member, date))
                 .map(intakeHistoryCrudService::getAchievementRate).toList();
 
-        List<ReadAchieveRateByDateResponse> achievementRateResponses = dailyAchievementRates.stream()
-                .map(achievementRate -> new ReadAchieveRateByDateResponse(achievementRate.value()))
+        List<ReadAchievementRateByDateResponse> achievementRateResponses = dailyAchievementRates.stream()
+                .map(achievementRate -> new ReadAchievementRateByDateResponse(achievementRate.value()))
                 .collect(Collectors.toList());
-        return new ReadAchieveRateByDatesResponse(achievementRateResponses);
+        return new ReadAchievementRateByDatesResponse(achievementRateResponses);
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
