@@ -108,7 +108,7 @@ public class IntakeHistoryController {
     }
 
     @Operation(summary = "기간별 목표 달성률 조회", description = "지정한 날짜 범위 내의 일별 목표 달성률을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = CreateIntakeHistoryDetailResponse.class)))
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadAchievementRateByDatesResponse.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 날짜 범위", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
     }))
