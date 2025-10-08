@@ -22,7 +22,7 @@ public class IntakeHistoryCalendar {
     private Map<LocalDate, IntakeHistory> getInitHistories(List<IntakeHistory> intakeHistories) {
         return intakeHistories.stream()
                 .collect(Collectors.toMap(
-                        IntakeHistory::getHistoryDate, 
+                        IntakeHistory::getHistoryDate,
                         history -> history,
                         (existing, duplicate) -> existing)
                 );
@@ -32,11 +32,17 @@ public class IntakeHistoryCalendar {
         Map<IntakeHistory, List<IntakeHistoryDetail>> result = new HashMap<>();
         for (IntakeHistoryDetail detail : details) {
             IntakeHistory intakeHistory = detail.getIntakeHistory();
-            List<IntakeHistoryDetail> saved = result.getOrDefault(intakeHistory, new ArrayList<>());
-            saved.add(detail);
-            result.put(intakeHistory, saved);
+            List<IntakeHistoryDetail> intakeHistoryDetails = result.computeIfAbsent(intakeHistory,
+                    k -> new ArrayList<>());
+            intakeHistoryDetails.add(detail);
         }
-        result.values().forEach(d -> d.sort(Comparator.comparing(IntakeHistoryDetail::getIntakeTime, Comparator.reverseOrder())));
+        result.values().forEach(
+                intakeHistoryDetails -> intakeHistoryDetails.sort(
+                        Comparator.comparing(
+                                IntakeHistoryDetail::getIntakeTime, Comparator.reverseOrder()
+                        )
+                )
+        );
         return Collections.unmodifiableMap(result);
     }
 
