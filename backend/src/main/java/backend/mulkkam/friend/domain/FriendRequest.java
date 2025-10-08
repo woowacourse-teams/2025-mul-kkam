@@ -6,7 +6,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +16,9 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE friend SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE friend_request SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class Friend extends BaseEntity {
+public class FriendRequest extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +29,4 @@ public class Friend extends BaseEntity {
 
     @Column(nullable = false)
     private Long addresseeId;
-
-    @Column
-    private LocalDateTime respondedAt;
 }
