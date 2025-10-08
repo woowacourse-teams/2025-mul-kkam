@@ -87,21 +87,21 @@ fun NotificationScreen(
     }
 }
 
-private fun LazyListState.reachedBottom(limitCount: Int): Boolean {
+private fun LazyListState.reachedBottom(preloadThreshold: Int): Boolean {
     val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
     return lastVisibleItem?.index != 0 &&
-        lastVisibleItem?.index == layoutInfo.totalItemsCount - (limitCount + 1)
+        lastVisibleItem?.index == layoutInfo.totalItemsCount - (preloadThreshold + 1)
 }
 
 @SuppressLint("ComposableNaming")
 @Composable
 private fun LazyListState.onLoadMore(
-    limitCount: Int = 6,
+    preloadThreshold: Int = 6,
     action: () -> Unit,
 ) {
     val reached by remember {
         derivedStateOf {
-            reachedBottom(limitCount = limitCount)
+            reachedBottom(preloadThreshold = preloadThreshold)
         }
     }
     LaunchedEffect(reached) {
