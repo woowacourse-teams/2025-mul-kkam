@@ -21,20 +21,19 @@ fun SettingTitleItem(item: SettingItem.TitleItem) {
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(start = 24.dp, top = 12.dp),
     ) {
         Text(
             text = item.title,
             style = typography.label1,
             color = Color.Black,
+            modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp)
         )
         HorizontalDivider(
+            color = Gray50,
+            thickness = 1.dp,
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(top = 8.dp),
-            thickness = 1.dp,
-            color = Gray50,
         )
     }
 }
