@@ -33,7 +33,7 @@ public class FriendService {
         Member member = getMember(memberDetails.id());
         FriendRequest friendRequest = getFriendRequest(friendRequestId);
 
-        if (friendRequest.validatePermission(member.getId())) {
+        if (!friendRequest.validatePermission(member.getId())) {
             throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
         }
 

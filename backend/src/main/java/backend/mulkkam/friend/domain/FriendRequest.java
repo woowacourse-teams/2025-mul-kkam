@@ -33,4 +33,9 @@ public class FriendRequest extends BaseEntity {
     public boolean validatePermission(Long addresseeId) {
         return this.addresseeId.equals(addresseeId);
     }
+
+    public FriendRequest(Long requesterId, Long addresseeId) {
+        this.requesterId = requesterId;
+        this.addresseeId = addresseeId;
+    }
 }

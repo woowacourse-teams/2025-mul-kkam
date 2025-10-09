@@ -5,10 +5,8 @@ import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +24,7 @@ public class FriendController {
     @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
     @ApiResponse(responseCode = "401", description = "수락할 권한이 없는 사용자의 요청")
     @PostMapping("/process/{requestId}/{action:accept|reject}")
-    public ResponseEntity<Void> processRequest(
+    public ResponseEntity<Void> processFriendRequest(
             @PathVariable Long requestId,
             @PathVariable String action,
             @Parameter(hidden = true) MemberDetails memberDetails
@@ -34,6 +32,6 @@ public class FriendController {
         boolean isAccept = action.equals("accept");
 
         friendService.processFriendRequest(requestId, isAccept, memberDetails);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 }

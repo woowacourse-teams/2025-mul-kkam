@@ -37,10 +37,6 @@ public class Friend extends BaseEntity {
     public Friend(FriendRequest friendRequest) {
         this.requesterId = friendRequest.getRequesterId();
         this.addresseeId = friendRequest.getAddresseeId();
-    }
-
-    public Friend(Long requesterId, Long addresseeId) {
-        this.requesterId = requesterId;
-        this.addresseeId = addresseeId;
+        this.respondedAt = LocalDateTime.now();
     }
 }
