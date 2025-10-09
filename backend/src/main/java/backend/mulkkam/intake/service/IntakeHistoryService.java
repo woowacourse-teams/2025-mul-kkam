@@ -128,14 +128,26 @@ public class IntakeHistoryService {
     ) {
         Member member = getMember(memberDetails.id());
 
-        List<AchievementRate> dailyAchievementRates = dateRangeRequest.getAllDatesInRange().stream()
-                .map(date -> intakeHistoryCrudService.getIntakeHistory(member, date))
-                .map(intakeHistoryCrudService::getAchievementRate).toList();
+        List<IntakeHistory> intakeHistories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
+        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryCrudService.getIntakeHistoryDetails(intakeHistories);
 
-        List<ReadAchievementRateByDateResponse> achievementRateResponses = dailyAchievementRates.stream()
-                .map(achievementRate -> new ReadAchievementRateByDateResponse(achievementRate.value()))
-                .collect(Collectors.toList());
+        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(intakeHistories, intakeHistoryDetails);
+        List<LocalDate> allDatesInRange = dateRangeRequest.getAllDatesInRange();
+
+        List<ReadAchievementRateByDateResponse> achievementRateResponses = allDatesInRange.stream()
+                .map(date -> toAchievementRateResponse(intakeHistoryCalendar, date))
+                .toList();
+
         return new ReadAchievementRateByDatesResponse(achievementRateResponses);
+    }
+
+    private ReadAchievementRateByDateResponse toAchievementRateResponse(IntakeHistoryCalendar intakeHistoryCalendar, LocalDate date) {
+        if (intakeHistoryCalendar.isExistHistoryOf(date)) {
+            IntakeHistory intakeHistory = intakeHistoryCalendar.getHistoryOf(date);
+            AchievementRate achievementRate = intakeHistoryCrudService.getAchievementRate(intakeHistory);
+            return ReadAchievementRateByDateResponse.of(achievementRate);
+        }
+        return ReadAchievementRateByDateResponse.empty();
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
