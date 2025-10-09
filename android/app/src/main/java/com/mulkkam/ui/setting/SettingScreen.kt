@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -64,12 +65,12 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
         modifier =
             Modifier
                 .fillMaxSize()
-                .padding(horizontal = 24.dp)
                 .padding(top = 28.dp),
     ) {
         Text(
             text = stringResource(R.string.setting_title),
             style = typography.headline1,
+            modifier = Modifier.padding(start = 24.dp)
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -77,7 +78,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
         ) {
-            items(settingItems.size) { item ->
+            items(settingItems) { item ->
                 when (item) {
                     is SettingItem.TitleItem -> SettingTitleItem(item)
                     is SettingItem.NormalItem -> SettingNormalItem(item, onSettingClick)
