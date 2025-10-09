@@ -10,6 +10,8 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
+import backend.mulkkam.intake.domain.IntakeHistoryCalenderFactory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -44,6 +46,9 @@ class IntakeHistoryServiceUnitTest {
 
     @Mock
     private IntakeHistoryCrudService intakeHistoryCrudService;
+
+    @Mock
+    private IntakeHistoryCalenderFactory intakeHistoryCalenderFactory;
 
     @Mock
     private MemberRepository memberRepository;
@@ -97,10 +102,8 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
-                    .willReturn(details);
+            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+                    .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -164,10 +167,8 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
-                    .willReturn(details);
+            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+                    .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -247,10 +248,8 @@ class IntakeHistoryServiceUnitTest {
                     fourthIntakeDetail,
                     fifthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
-                    .willReturn(details);
+            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+                    .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -303,10 +302,8 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
-                    .willReturn(List.of(intakeHistory));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
-                    .willReturn(details);
+            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+                    .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
