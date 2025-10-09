@@ -31,7 +31,6 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -111,14 +110,13 @@ public class IntakeHistoryService {
     ) {
         Member member = getMember(memberDetails.id());
 
-        List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(
-                member, dateRangeRequest
-        );
-        List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
+        List<IntakeHistory> intakeHistories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
+        List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(intakeHistories);
 
-        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(histories, details);
+        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(intakeHistories, details);
 
         List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
+
         return dates.stream()
                 .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
                 .toList();

@@ -71,6 +71,10 @@ public class IntakeHistoryCrudService {
         return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, dateRangeRequest.from(), dateRangeRequest.to());
     }
 
+    public List<IntakeHistoryDetail> getIntakeHistoryDetails(List<IntakeHistory> intakeHistories) {
+        return intakeHistoryDetailRepository.findAllByIntakeHistoryIn(intakeHistories);
+    }
+
     public AchievementRate getAchievementRate(IntakeHistory intakeHistory) {
         TargetAmount targetAmount = intakeHistory.getTargetAmount();
         int totalIntakeAmount = getTotalIntakeAmount(intakeHistory);

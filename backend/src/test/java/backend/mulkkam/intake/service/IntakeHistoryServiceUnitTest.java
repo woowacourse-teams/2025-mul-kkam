@@ -97,7 +97,9 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
+            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
+                    .willReturn(List.of(intakeHistory));
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
                     .willReturn(details);
 
             // when
@@ -162,10 +164,10 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
-                    .willReturn(details);
             given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -245,10 +247,10 @@ class IntakeHistoryServiceUnitTest {
                     fourthIntakeDetail,
                     fifthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
-                    .willReturn(details);
             given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
@@ -301,10 +303,10 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
-                    .willReturn(details);
             given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(List.of(intakeHistory)))
+                    .willReturn(details);
 
             // when
             List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
