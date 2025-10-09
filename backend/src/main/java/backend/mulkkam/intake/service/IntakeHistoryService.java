@@ -16,6 +16,7 @@ import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
+import backend.mulkkam.intake.domain.IntakeHistoryCalenderFactory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
@@ -41,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeHistoryService {
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
+    private final IntakeHistoryCalenderFactory intakeHistoryCalenderFactory;
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final CupRepository cupRepository;
@@ -109,15 +111,9 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
+        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalenderFactory.create(member, dateRangeRequest);
 
-        List<IntakeHistory> intakeHistories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
-        List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(intakeHistories);
-
-        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(intakeHistories, details);
-
-        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
-
-        return dates.stream()
+        return dateRangeRequest.getAllDatesInRange().stream()
                 .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
                 .toList();
     }
@@ -127,14 +123,9 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
+        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalenderFactory.create(member, dateRangeRequest);
 
-        List<IntakeHistory> intakeHistories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
-        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryCrudService.getIntakeHistoryDetails(intakeHistories);
-
-        IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(intakeHistories, intakeHistoryDetails);
-        List<LocalDate> allDatesInRange = dateRangeRequest.getAllDatesInRange();
-
-        List<ReadAchievementRateByDateResponse> achievementRateResponses = allDatesInRange.stream()
+        List<ReadAchievementRateByDateResponse> achievementRateResponses = dateRangeRequest.getAllDatesInRange().stream()
                 .map(date -> toAchievementRateResponse(intakeHistoryCalendar, date))
                 .toList();
 
