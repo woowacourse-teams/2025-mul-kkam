@@ -65,12 +65,6 @@ public class IntakeHistoryCrudService {
         return intakeHistoryDetailRepository.findByIntakeHistory(intakeHistory);
     }
 
-    public List<IntakeHistoryDetail> getIntakeHistoryDetails(
-            Member member, DateRangeRequest dateRangeRequest
-    ) {
-        return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, dateRangeRequest.from(), dateRangeRequest.to());
-    }
-
     public List<IntakeHistoryDetail> getIntakeHistoryDetails(List<IntakeHistory> intakeHistories) {
         return intakeHistoryDetailRepository.findAllByIntakeHistoryIn(intakeHistories);
     }
