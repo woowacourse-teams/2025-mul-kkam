@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class IntakeHistoryCalendar {
 
@@ -21,12 +20,11 @@ public class IntakeHistoryCalendar {
     }
 
     private Map<LocalDate, IntakeHistory> getInitHistories(List<IntakeHistory> intakeHistories) {
-        return intakeHistories.stream()
-                .collect(Collectors.toMap(
-                        IntakeHistory::getHistoryDate,
-                        history -> history,
-                        (existing, duplicate) -> existing)
-                );
+        Map<LocalDate, IntakeHistory> map = new HashMap<>();
+        for (IntakeHistory history : intakeHistories) {
+            map.put(history.getHistoryDate(), history);
+        }
+        return map;
     }
 
     private Map<IntakeHistory, List<IntakeHistoryDetail>> getInitDetails(List<IntakeHistoryDetail> details) {
