@@ -29,4 +29,8 @@ public class FriendRequest extends BaseEntity {
 
     @Column(nullable = false)
     private Long addresseeId;
+
+    public boolean validatePermission(Long addresseeId) {
+        return this.addresseeId.equals(addresseeId);
+    }
 }

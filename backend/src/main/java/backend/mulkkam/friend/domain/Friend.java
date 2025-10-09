@@ -33,4 +33,9 @@ public class Friend extends BaseEntity {
 
     @Column
     private LocalDateTime respondedAt;
+
+    public Friend(FriendRequest friendRequest) {
+        this.requesterId = friendRequest.getRequesterId();
+        this.addresseeId = friendRequest.getAddresseeId();
+    }
 }
