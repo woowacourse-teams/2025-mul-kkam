@@ -16,7 +16,7 @@ import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
-import backend.mulkkam.intake.domain.IntakeHistoryCalenderFactory;
+import backend.mulkkam.intake.domain.IntakeHistoryCalendarFactory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
@@ -42,7 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeHistoryService {
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
-    private final IntakeHistoryCalenderFactory intakeHistoryCalenderFactory;
+    private final IntakeHistoryCalendarFactory intakeHistoryCalendarFactory;
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final CupRepository cupRepository;
@@ -111,7 +111,7 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalenderFactory.create(member, dateRangeRequest);
+        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalendarFactory.create(member, dateRangeRequest);
 
         return dateRangeRequest.getAllDatesInRange().stream()
                 .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
@@ -123,7 +123,7 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalenderFactory.create(member, dateRangeRequest);
+        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalendarFactory.create(member, dateRangeRequest);
 
         List<ReadAchievementRateByDateResponse> achievementRateResponses = dateRangeRequest.getAllDatesInRange().stream()
                 .map(date -> toAchievementRateResponse(intakeHistoryCalendar, date))

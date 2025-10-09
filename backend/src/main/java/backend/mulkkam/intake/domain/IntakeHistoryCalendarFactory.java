@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class IntakeHistoryCalenderFactory {
+public class IntakeHistoryCalendarFactory {
 
     private final IntakeHistoryCrudService crudService;
 

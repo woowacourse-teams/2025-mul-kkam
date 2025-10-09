@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
-import backend.mulkkam.intake.domain.IntakeHistoryCalenderFactory;
+import backend.mulkkam.intake.domain.IntakeHistoryCalendarFactory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -48,7 +48,7 @@ class IntakeHistoryServiceUnitTest {
     private IntakeHistoryCrudService intakeHistoryCrudService;
 
     @Mock
-    private IntakeHistoryCalenderFactory intakeHistoryCalenderFactory;
+    private IntakeHistoryCalendarFactory intakeHistoryCalendarFactory;
 
     @Mock
     private MemberRepository memberRepository;
@@ -102,7 +102,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+            given(intakeHistoryCalendarFactory.create(member, dateRangeRequest))
                     .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
@@ -167,7 +167,7 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+            given(intakeHistoryCalendarFactory.create(member, dateRangeRequest))
                     .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
@@ -248,7 +248,7 @@ class IntakeHistoryServiceUnitTest {
                     fourthIntakeDetail,
                     fifthIntakeDetail
             ));
-            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+            given(intakeHistoryCalendarFactory.create(member, dateRangeRequest))
                     .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
@@ -302,7 +302,7 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryCalenderFactory.create(member, dateRangeRequest))
+            given(intakeHistoryCalendarFactory.create(member, dateRangeRequest))
                     .willReturn(new IntakeHistoryCalendar(List.of(intakeHistory), details));
 
             // when
