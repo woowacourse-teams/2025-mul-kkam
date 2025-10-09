@@ -71,6 +71,7 @@ class IntakeHistoryServiceUnitTest {
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 27);
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -96,7 +97,7 @@ class IntakeHistoryServiceUnitTest {
 
             Collections.shuffle(details);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
                     .willReturn(details);
 
             // when
@@ -128,6 +129,7 @@ class IntakeHistoryServiceUnitTest {
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -160,9 +162,9 @@ class IntakeHistoryServiceUnitTest {
                     thirdIntakeDetail,
                     fourthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
 
             // when
@@ -199,6 +201,7 @@ class IntakeHistoryServiceUnitTest {
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -242,9 +245,9 @@ class IntakeHistoryServiceUnitTest {
                     fourthIntakeDetail,
                     fifthIntakeDetail
             ));
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
 
             // when
@@ -274,6 +277,7 @@ class IntakeHistoryServiceUnitTest {
 
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 20);
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -297,9 +301,9 @@ class IntakeHistoryServiceUnitTest {
 
             List<IntakeHistoryDetail> details = List.of(firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail);
 
-            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, startDate, endDate))
+            given(intakeHistoryCrudService.getIntakeHistoryDetails(member, dateRangeRequest))
                     .willReturn(details);
-            given(intakeHistoryCrudService.getIntakeHistories(member))
+            given(intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest))
                     .willReturn(List.of(intakeHistory));
 
             // when

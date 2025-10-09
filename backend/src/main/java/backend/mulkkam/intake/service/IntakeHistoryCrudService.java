@@ -61,11 +61,9 @@ public class IntakeHistoryCrudService {
     }
 
     public List<IntakeHistoryDetail> getIntakeHistoryDetails(
-            Member member,
-            LocalDate from,
-            LocalDate to
+            Member member, DateRangeRequest dateRangeRequest
     ) {
-        return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, from, to);
+        return intakeHistoryDetailRepository.findAllByMemberAndDateRange(member, dateRangeRequest.from(), dateRangeRequest.to());
     }
 
     public AchievementRate getAchievementRate(IntakeHistory intakeHistory) {

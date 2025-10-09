@@ -112,7 +112,7 @@ public class IntakeHistoryService {
         Member member = getMember(memberDetails.id());
 
         List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(
-                member, dateRangeRequest.from(), dateRangeRequest.to()
+                member, dateRangeRequest
         );
         List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member);
 
