@@ -13,11 +13,11 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class IntakeHistoryCalendarFactory {
 
-    private final IntakeHistoryCrudService crudService;
+    private final IntakeHistoryCrudService intakeHistoryCrudService;
 
     public IntakeHistoryCalendar create(Member member, DateRangeRequest dateRangeRequest) {
-        List<IntakeHistory> histories = crudService.getIntakeHistories(member, dateRangeRequest);
-        List<IntakeHistoryDetail> details = crudService.getIntakeHistoryDetails(histories);
+        List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
+        List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(histories);
 
         return new IntakeHistoryCalendar(histories, details);
     }
