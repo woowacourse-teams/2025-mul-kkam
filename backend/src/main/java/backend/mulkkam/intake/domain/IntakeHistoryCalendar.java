@@ -34,7 +34,7 @@ public class IntakeHistoryCalendar {
         for (IntakeHistoryDetail detail : details) {
             IntakeHistory intakeHistory = detail.getIntakeHistory();
             List<IntakeHistoryDetail> intakeHistoryDetails = result.computeIfAbsent(intakeHistory,
-                    k -> new ArrayList<>());
+                    history -> new ArrayList<>());
             intakeHistoryDetails.add(detail);
         }
         result.values().forEach(
