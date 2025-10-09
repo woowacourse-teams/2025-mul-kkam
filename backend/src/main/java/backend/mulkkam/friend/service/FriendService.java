@@ -39,6 +39,7 @@ public class FriendService {
 
         if (isAccept) {
             Friend friend = new Friend(friendRequest);
+            friendRequestRepository.delete(friendRequest);
             friendRepository.save(friend);
             return;
         }

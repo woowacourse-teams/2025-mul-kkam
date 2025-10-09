@@ -112,8 +112,10 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             List<Friend> friends = friendRepository.findAll();
+            List<FriendRequest> friendRequests = friendRequestRepository.findAll();
             assertSoftly(softly -> {
                 softly.assertThat(friends).hasSize(1);
+                softly.assertThat(friendRequests).hasSize(0);
                 softly.assertThat(friends.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friends.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
             });

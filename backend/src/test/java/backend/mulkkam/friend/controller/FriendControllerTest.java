@@ -84,9 +84,11 @@ public class FriendControllerTest extends ControllerTest {
                     .andDo(print()).andExpect(status().isOk());
 
             // then
+            List<FriendRequest> friendRequests = friendRequestRepository.findAll();
             List<Friend> friends = friendRepository.findAll();
             assertSoftly(softly -> {
                 softly.assertThat(friends).hasSize(1);
+                softly.assertThat(friendRequests).hasSize(0);
                 softly.assertThat(friends.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friends.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
             });
@@ -106,8 +108,10 @@ public class FriendControllerTest extends ControllerTest {
 
             // then
             List<FriendRequest> friendRequests = friendRequestRepository.findAll();
+            List<Friend> friends = friendRepository.findAll();
             assertSoftly(softly -> {
                 softly.assertThat(friendRequests).hasSize(0);
+                softly.assertThat(friends).hasSize(0);
             });
         }
     }
