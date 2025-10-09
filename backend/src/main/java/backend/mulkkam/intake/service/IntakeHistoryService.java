@@ -114,7 +114,7 @@ public class IntakeHistoryService {
         List<IntakeHistoryDetail> details = intakeHistoryCrudService.getIntakeHistoryDetails(
                 member, dateRangeRequest
         );
-        List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member);
+        List<IntakeHistory> histories = intakeHistoryCrudService.getIntakeHistories(member, dateRangeRequest);
 
         IntakeHistoryCalendar intakeHistoryCalendar = new IntakeHistoryCalendar(histories, details);
 

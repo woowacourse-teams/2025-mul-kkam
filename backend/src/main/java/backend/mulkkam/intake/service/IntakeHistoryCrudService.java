@@ -8,15 +8,15 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
 
 @RequiredArgsConstructor
 @Service
@@ -38,6 +38,11 @@ public class IntakeHistoryCrudService {
 
     public List<IntakeHistory> getIntakeHistories(Member member) {
         return intakeHistoryRepository.findAllByMember(member);
+    }
+
+    public List<IntakeHistory> getIntakeHistories(Member member, DateRangeRequest dateRangeRequest) {
+        return intakeHistoryRepository.findAllByMemberAndDateRange(member, dateRangeRequest.from(),
+                dateRangeRequest.to());
     }
 
     public IntakeHistory getIntakeHistory(
