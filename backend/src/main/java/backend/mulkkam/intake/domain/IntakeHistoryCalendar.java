@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class IntakeHistoryCalendar {
@@ -56,5 +57,9 @@ public class IntakeHistoryCalendar {
 
     public List<IntakeHistoryDetail> getHistoryDetails(IntakeHistory intakeHistory) {
         return Collections.unmodifiableList(detailsByHistory.getOrDefault((intakeHistory), List.of()));
+    }
+
+    public Optional<IntakeHistory> findHistoryOf(LocalDate date) {
+        return Optional.of(historyByDates.get(date));
     }
 }
