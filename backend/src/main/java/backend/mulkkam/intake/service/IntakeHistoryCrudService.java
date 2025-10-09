@@ -41,7 +41,7 @@ public class IntakeHistoryCrudService {
     }
 
     public List<IntakeHistory> getIntakeHistories(Member member, DateRangeRequest dateRangeRequest) {
-        return intakeHistoryRepository.findAllByMemberAndDateRange(member, dateRangeRequest.from(),
+        return intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, dateRangeRequest.from(),
                 dateRangeRequest.to());
     }
 
