@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
-import backend.mulkkam.intake.domain.IntakeHistoryCalendarFactory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;

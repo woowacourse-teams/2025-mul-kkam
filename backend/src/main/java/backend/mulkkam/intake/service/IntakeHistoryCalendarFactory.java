@@ -1,7 +1,9 @@
-package backend.mulkkam.intake.domain;
+package backend.mulkkam.intake.service;
 
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.service.IntakeHistoryCrudService;
 import backend.mulkkam.member.domain.Member;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
