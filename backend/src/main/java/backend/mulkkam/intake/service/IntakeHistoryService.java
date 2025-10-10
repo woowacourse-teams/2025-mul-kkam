@@ -135,12 +135,11 @@ public class IntakeHistoryService {
             IntakeHistoryCalendar intakeHistoryCalendar,
             LocalDate date
     ) {
-        return intakeHistoryCalendar.findHistoryOf(date)
-                .map(history -> {
-                    AchievementRate rate = intakeHistoryCrudService.getAchievementRate(history);
-                    return ReadAchievementRateByDateResponse.of(rate);
-                })
-                .orElseGet(ReadAchievementRateByDateResponse::empty);
+        AchievementRate achievementRate = intakeHistoryCalendar.findHistoryOf(date)
+                .map(intakeHistoryCrudService::getAchievementRate)
+                .orElse(AchievementRate.empty());
+
+        return new ReadAchievementRateByDateResponse(achievementRate);
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
