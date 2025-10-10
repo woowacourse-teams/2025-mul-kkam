@@ -58,6 +58,7 @@ jobs:
       env:
         GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
       run: |
+        mkdir -p app/src/release
         echo "$GOOGLE_SERVICES_RELEASE" | base64 --decode > app/src/release/google-services.json
 
     - name: grant execute permission for gradlew
