@@ -1,12 +1,7 @@
 package com.mulkkam.data.remote.interceptor
 
 import com.mulkkam.data.remote.model.error.ResponseError
-import com.mulkkam.data.remote.model.request.auth.AuthReissueRequest
-import com.mulkkam.di.PreferenceInjection.devicesPreference
 import com.mulkkam.di.PreferenceInjection.tokenPreference
-import com.mulkkam.di.ServiceInjection.authService
-import com.mulkkam.domain.model.result.toMulKkamResult
-import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
 import org.json.JSONObject
@@ -35,41 +30,23 @@ class AuthorizationInterceptor : Interceptor {
             return response
         }
 
-        val refreshToken = tokenPreference.refreshToken ?: return response
-
         // 기존 response 닫기
         response.close()
 
         // 3. 토큰 재발급
-        val deviceUuid = devicesPreference.deviceUuid ?: return response
-        val refreshResponse =
-            runBlocking {
-                runCatching {
-                    authService.postAuthTokenReissue(AuthReissueRequest(refreshToken, deviceUuid))
-                }.getOrNull()
-            } ?: return response
+        val newAccessToken = TokenRefresher.refresh()
 
-        if (refreshResponse.isSuccess != true) return response
-
-        // 4. 새 토큰 저장
-        runCatching {
-            refreshResponse.toMulKkamResult().getOrError()
-        }.onSuccess { authTokenInfo ->
-            tokenPreference.saveAccessToken(authTokenInfo.accessToken)
-            tokenPreference.saveRefreshToken(authTokenInfo.refreshToken)
-        }.onFailure {
+        if (newAccessToken == null) {
             return response
         }
 
-        // 5. 새 요청 재시도
+        // 4. 새로운 토큰으로 재시도
         val newRequest =
             chain
                 .request()
                 .newBuilder()
-                .addHeader(
-                    HEADER_NAME_AUTHORIZATION,
-                    HEADER_VALUE_AUTHORIZATION.format(tokenPreference.accessToken),
-                ).build()
+                .header(HEADER_NAME_AUTHORIZATION, HEADER_VALUE_AUTHORIZATION.format(newAccessToken))
+                .build()
 
         return chain.proceed(newRequest)
     }
