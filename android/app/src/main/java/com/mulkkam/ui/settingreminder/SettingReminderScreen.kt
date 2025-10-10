@@ -50,7 +50,7 @@ fun SettingReminderScreen(
             val initialTime =
                 when (currentMode) {
                     is ReminderUpdateUiState.Update -> currentMode.reminderSchedule.schedule
-                    else -> LocalTime.now()
+                    is ReminderUpdateUiState.Add, ReminderUpdateUiState.Idle -> LocalTime.now()
                 }
 
             ReminderScheduleBottomSheet(
