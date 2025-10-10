@@ -28,7 +28,7 @@ import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 
 @Composable
-fun CustomSwitch(
+fun RoundedSwitch(
     checked: Boolean,
     onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
@@ -67,7 +67,7 @@ fun CustomSwitch(
 private fun CustomSwitchPreview() {
     var isChecked by remember { mutableStateOf(false) }
 
-    CustomSwitch(
+    RoundedSwitch(
         checked = isChecked,
         onCheckedChange = { isChecked = !isChecked },
     )
