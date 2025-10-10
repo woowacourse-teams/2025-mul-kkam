@@ -18,13 +18,13 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.settingreminder.ReminderMode
+import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 
 @Composable
 fun SettingReminderComponent(
     isReminderEnabled: Boolean,
     reminders: List<ReminderSchedule>,
-    updateBottomSheetMode: (ReminderMode) -> Unit,
+    updateBottomSheetMode: (ReminderUpdateUiState) -> Unit,
     updateReminderEnabled: () -> Unit,
     removeReminder: (Long) -> Unit,
     modifier: Modifier = Modifier,
@@ -51,7 +51,7 @@ fun SettingReminderComponent(
                         modifier =
                             Modifier
                                 .clickable {
-                                    updateBottomSheetMode(ReminderMode.Update(reminder[index]))
+                                    updateBottomSheetMode(ReminderUpdateUiState.Update(reminder[index]))
                                 }.animateItem(),
                     )
                 }
@@ -67,7 +67,7 @@ fun SettingReminderComponent(
                         .padding(horizontal = 24.dp)
                         .background(Primary100)
                         .clickable {
-                            updateBottomSheetMode(ReminderMode.Add)
+                            updateBottomSheetMode(ReminderUpdateUiState.Add)
                         },
             ) {
                 Icon(

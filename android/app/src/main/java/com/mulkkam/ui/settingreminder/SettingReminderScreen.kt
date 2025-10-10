@@ -19,6 +19,7 @@ import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderComponent
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
+import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,7 +28,7 @@ fun SettingReminderScreen(
     navigateToBack: () -> Unit,
     viewModel: SettingReminderViewModel = viewModel(),
 ) {
-    var bottomSheetMode by rememberSaveable { mutableStateOf<ReminderMode?>(null) }
+    var bottomSheetMode by rememberSaveable { mutableStateOf<ReminderUpdateUiState?>(null) }
     val modalBottomSheetState = rememberModalBottomSheetState()
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
@@ -51,7 +52,7 @@ fun SettingReminderScreen(
             val currentMode = bottomSheetMode
             val initialTime =
                 when (currentMode) {
-                    is ReminderMode.Update -> currentMode.reminderSchedule.schedule
+                    is ReminderUpdateUiState.Update -> currentMode.reminderSchedule.schedule
                     else -> LocalTime.now()
                 }
 
@@ -69,16 +70,16 @@ fun SettingReminderScreen(
 }
 
 private fun handleReminderAction(
-    mode: ReminderMode?,
+    mode: ReminderUpdateUiState?,
     selectedTime: LocalTime,
     viewModel: SettingReminderViewModel,
 ) {
     when (mode) {
-        is ReminderMode.Update -> {
+        is ReminderUpdateUiState.Update -> {
             viewModel.updateReminder(mode.reminderSchedule.copy(schedule = selectedTime))
         }
 
-        is ReminderMode.Add -> {
+        is ReminderUpdateUiState.Add -> {
             viewModel.addReminder(selectedTime)
         }
 
