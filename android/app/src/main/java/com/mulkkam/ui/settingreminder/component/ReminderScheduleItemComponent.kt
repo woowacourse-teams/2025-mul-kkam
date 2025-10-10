@@ -24,10 +24,12 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import java.time.Duration
+import java.time.LocalDateTime
 import java.time.LocalTime
 
 private const val HOURS_PER_DAY: Int = 24
-private const val NO_HOUR_DIFF: Int = 0
+private const val NO_HOUR_DIFF: Long = 0
+private const val MINUTES_PER_HOUR: Int = 60
 
 @Composable
 fun ReminderScheduleItemComponent(
@@ -53,12 +55,7 @@ fun ReminderScheduleItemComponent(
                 color = Black,
             )
             Text(
-                text =
-                    run {
-                        var diff = Duration.between(currentTime, reminder.schedule).toHours()
-                        if (diff <= NO_HOUR_DIFF) diff += HOURS_PER_DAY
-                        stringResource(R.string.setting_reminder_hours_left, diff)
-                    },
+                text = formatRemainingTime(currentTime, reminder.schedule),
                 style = MulKkamTheme.typography.label2,
                 color = Gray300,
             )
@@ -71,9 +68,32 @@ fun ReminderScheduleItemComponent(
     }
 }
 
-@Preview(showBackground = true)
 @Composable
-private fun ReminderScheduleItemComponentPreview() {
+private fun formatRemainingTime(
+    currentTime: LocalTime,
+    reminderTime: LocalTime,
+): String {
+    val diffMinutes =
+        Duration
+            .between(currentTime, reminderTime)
+            .toMinutes()
+            .let { if (it <= 0) it + HOURS_PER_DAY * MINUTES_PER_HOUR else it }
+
+    val (hours, minutes) = diffMinutes / MINUTES_PER_HOUR to diffMinutes % MINUTES_PER_HOUR
+
+    return stringResource(
+        if (hours == NO_HOUR_DIFF) {
+            R.string.setting_reminder_minutes_left
+        } else {
+            R.string.setting_reminder_hours_left
+        },
+        if (hours == NO_HOUR_DIFF) minutes else hours,
+    )
+}
+
+@Preview(showBackground = true, name = "1시간 이상 남은 경우")
+@Composable
+private fun ReminderScheduleItemComponentPreview_OverOneHour() {
     MulkkamTheme {
         ReminderScheduleItemComponent(
             reminder =
@@ -81,6 +101,22 @@ private fun ReminderScheduleItemComponentPreview() {
                     id = 1L,
                     schedule = LocalTime.of(13, 45),
                 ),
+            currentTime = LocalTime.of(10, 45),
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "1시간 미만으로 남은 경우")
+@Composable
+private fun ReminderScheduleItemComponentPreview_LessThanOneHour() {
+    MulkkamTheme {
+        ReminderScheduleItemComponent(
+            reminder =
+                ReminderSchedule(
+                    id = 1L,
+                    schedule = LocalTime.of(13, 45),
+                ),
+            currentTime = LocalTime.of(13, 40),
         )
     }
 }
