@@ -6,9 +6,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -28,12 +25,12 @@ fun SettingReminderScreen(
     navigateToBack: () -> Unit,
     viewModel: SettingReminderViewModel = viewModel(),
 ) {
-    var bottomSheetMode by rememberSaveable { mutableStateOf<ReminderUpdateUiState?>(null) }
     val modalBottomSheetState = rememberModalBottomSheetState()
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
+    val reminderUpdateUiState by viewModel.reminderUpdateUiState.collectAsStateWithLifecycle()
 
-    val showBottomSheet = bottomSheetMode != null
+    val showBottomSheet = reminderUpdateUiState !is ReminderUpdateUiState.Idle
 
     Scaffold(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
@@ -42,14 +39,14 @@ fun SettingReminderScreen(
         SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
             reminders = reminders.toSuccessDataOrNull() ?: return@Scaffold,
-            updateBottomSheetMode = { bottomSheetMode = it },
+            updateBottomSheetMode = { viewModel.updateReminderUpdateUiState(it) },
             updateReminderEnabled = { viewModel.updateReminderEnabled() },
             removeReminder = { viewModel.removeReminder(it) },
             modifier = Modifier.padding(innerPadding),
         )
 
         if (showBottomSheet) {
-            val currentMode = bottomSheetMode
+            val currentMode = reminderUpdateUiState
             val initialTime =
                 when (currentMode) {
                     is ReminderUpdateUiState.Update -> currentMode.reminderSchedule.schedule
@@ -58,32 +55,13 @@ fun SettingReminderScreen(
 
             ReminderScheduleBottomSheet(
                 sheetState = modalBottomSheetState,
-                onDismiss = { bottomSheetMode = null },
+                onDismiss = { viewModel.updateReminderUpdateUiState(ReminderUpdateUiState.Idle) },
                 onSelected = { selectedTime ->
-                    handleReminderAction(currentMode, selectedTime, viewModel)
-                    bottomSheetMode = null
+                    viewModel.handleReminderUpdateAction(selectedTime)
                 },
                 currentTime = initialTime,
             )
         }
-    }
-}
-
-private fun handleReminderAction(
-    mode: ReminderUpdateUiState?,
-    selectedTime: LocalTime,
-    viewModel: SettingReminderViewModel,
-) {
-    when (mode) {
-        is ReminderUpdateUiState.Update -> {
-            viewModel.updateReminder(mode.reminderSchedule.copy(schedule = selectedTime))
-        }
-
-        is ReminderUpdateUiState.Add -> {
-            viewModel.addReminder(selectedTime)
-        }
-
-        null -> Unit
     }
 }
 

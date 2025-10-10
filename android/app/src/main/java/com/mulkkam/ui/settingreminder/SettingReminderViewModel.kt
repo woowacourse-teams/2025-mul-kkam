@@ -8,6 +8,7 @@ import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,11 @@ class SettingReminderViewModel : ViewModel() {
         MutableStateFlow(MulKkamUiState.Idle)
     val reminderSchedules: StateFlow<MulKkamUiState<List<ReminderSchedule>>> =
         _reminderSchedules.asStateFlow()
+
+    private val _reminderUpdateUiState: MutableStateFlow<ReminderUpdateUiState> =
+        MutableStateFlow(ReminderUpdateUiState.Idle)
+    val reminderUpdateUiState: StateFlow<ReminderUpdateUiState> =
+        _reminderUpdateUiState.asStateFlow()
 
     init {
         loadReminderSchedules()
@@ -56,7 +62,27 @@ class SettingReminderViewModel : ViewModel() {
         }
     }
 
-    fun addReminder(time: LocalTime) {
+    fun updateReminderUpdateUiState(reminderUpdateUiState: ReminderUpdateUiState) {
+        _reminderUpdateUiState.value = reminderUpdateUiState
+    }
+
+    fun handleReminderUpdateAction(selectedTime: LocalTime) {
+        val currentMode = reminderUpdateUiState.value
+        when (currentMode) {
+            is ReminderUpdateUiState.Update -> {
+                updateReminder(currentMode.reminderSchedule.copy(schedule = selectedTime))
+            }
+
+            is ReminderUpdateUiState.Add -> {
+                addReminder(selectedTime)
+            }
+
+            is ReminderUpdateUiState.Idle -> Unit
+        }
+        updateReminderUpdateUiState(ReminderUpdateUiState.Idle)
+    }
+
+    private fun addReminder(time: LocalTime) {
         viewModelScope.launch {
             runCatching {
                 reminderRepository.postReminder(time).getOrError()
@@ -66,7 +92,7 @@ class SettingReminderViewModel : ViewModel() {
         }
     }
 
-    fun updateReminder(reminderSchedule: ReminderSchedule) {
+    private fun updateReminder(reminderSchedule: ReminderSchedule) {
         viewModelScope.launch {
             runCatching {
                 reminderRepository.patchReminder(reminderSchedule).getOrError()

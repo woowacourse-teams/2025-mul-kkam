@@ -8,4 +8,6 @@ sealed interface ReminderUpdateUiState {
     ) : ReminderUpdateUiState
 
     data object Add : ReminderUpdateUiState
+
+    data object Idle : ReminderUpdateUiState
 }
