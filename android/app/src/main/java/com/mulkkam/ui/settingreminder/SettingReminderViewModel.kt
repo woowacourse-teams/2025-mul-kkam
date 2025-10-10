@@ -35,10 +35,8 @@ class SettingReminderViewModel : ViewModel() {
     }
 
     private fun loadReminderSchedules() {
-        if (isReminderEnabled.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
-                _isReminderEnabled.value = MulKkamUiState.Loading
                 reminderRepository.getReminder().getOrError()
             }.onSuccess { reminderConfig ->
                 _isReminderEnabled.value = MulKkamUiState.Success(reminderConfig.isReminderEnabled)
