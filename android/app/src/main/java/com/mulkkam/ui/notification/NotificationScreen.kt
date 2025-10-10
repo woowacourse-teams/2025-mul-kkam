@@ -21,6 +21,7 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.notification.component.NotificationItemComponent
 import com.mulkkam.ui.notification.component.NotificationShimmerItem
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
@@ -32,14 +33,15 @@ fun NotificationScreen(
     state: LazyListState = rememberLazyListState(),
     viewModel: NotificationViewModel = viewModel(),
 ) {
-    val notifications = viewModel.notifications.collectAsStateWithLifecycle()
+    val notifications by viewModel.notifications.collectAsStateWithLifecycle()
+    val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.onLoadMore(action = { viewModel.loadMore() })
 
     Scaffold(
         topBar = { NotificationTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
-        if (notifications.value.toSuccessDataOrNull()?.isEmpty() == true) {
+        if (notifications.toSuccessDataOrNull()?.isEmpty() == true) {
             EmptyNotificationScreen(
                 modifier =
                     Modifier
@@ -48,7 +50,7 @@ fun NotificationScreen(
             )
         }
 
-        if (notifications.value == MulKkamUiState.Loading) {
+        if (notifications == MulKkamUiState.Loading) {
             Column(
                 modifier = Modifier.padding(innerPadding),
             ) {
@@ -60,28 +62,40 @@ fun NotificationScreen(
             }
         }
 
-        LazyColumn(
-            modifier = Modifier.padding(innerPadding),
-            state = state,
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
-            val notification = notifications.value.toSuccessDataOrNull() ?: return@LazyColumn
+            LazyColumn(
+                state = state,
+            ) {
+                val notification = notifications.toSuccessDataOrNull() ?: return@LazyColumn
 
-            items(
-                notification.size,
-                key = { notification[it].id },
-            ) { index ->
-                NotificationItemComponent(
-                    notification = notification[index],
-                    onApplySuggestion = {
-                        viewModel.applySuggestion(
-                            notification[index].id,
-                        )
-                    },
-                    onRemove = {
-                        viewModel.deleteNotification(notification[index].id)
-                    },
-                    modifier = Modifier.animateItem(),
-                )
+                items(
+                    notification.size,
+                    key = { notification[it].id },
+                ) { index ->
+                    NotificationItemComponent(
+                        notification = notification[index],
+                        onApplySuggestion = {
+                            viewModel.applySuggestion(
+                                notification[index].id,
+                            )
+                        },
+                        onRemove = {
+                            viewModel.deleteNotification(notification[index].id)
+                        },
+                        modifier = Modifier.animateItem(),
+                    )
+                }
+
+                if (loadMoreState is MulKkamUiState.Failure) {
+                    item {
+                        LoadMoreButton { viewModel.loadMore() }
+                    }
+                }
             }
         }
     }
