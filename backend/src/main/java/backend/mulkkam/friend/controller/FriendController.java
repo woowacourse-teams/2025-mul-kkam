@@ -22,7 +22,7 @@ public class FriendController {
     @Operation(summary = "친구 요청 수락 및 거절", description = "사용자에게 온 친구 요청을 수락 혹은 거절합니다.")
     @ApiResponse(responseCode = "200", description = "수락 및 거절 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
-    @ApiResponse(responseCode = "401", description = "수락할 권한이 없는 사용자의 요청")
+    @ApiResponse(responseCode = "403", description = "수락할 권한이 없는 사용자의 요청")
     @PostMapping("/process/{requestId}/{action:accept|reject}")
     public ResponseEntity<Void> processFriendRequest(
             @PathVariable Long requestId,
