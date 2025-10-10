@@ -131,7 +131,10 @@ public class IntakeHistoryService {
         return new ReadAchievementRateByDatesResponse(achievementRateResponses);
     }
 
-    private ReadAchievementRateByDateResponse toAchievementRateResponse(IntakeHistoryCalendar intakeHistoryCalendar, LocalDate date) {
+    private ReadAchievementRateByDateResponse toAchievementRateResponse(
+            IntakeHistoryCalendar intakeHistoryCalendar,
+            LocalDate date
+    ) {
         return intakeHistoryCalendar.findHistoryOf(date)
                 .map(history -> {
                     AchievementRate rate = intakeHistoryCrudService.getAchievementRate(history);
