@@ -24,7 +24,6 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import java.time.Duration
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 private const val HOURS_PER_DAY: Int = 24
