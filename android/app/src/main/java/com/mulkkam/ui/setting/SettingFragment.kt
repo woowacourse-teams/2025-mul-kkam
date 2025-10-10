@@ -20,6 +20,7 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
+import com.mulkkam.ui.settingreminder.SettingReminderActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -62,6 +63,7 @@ class SettingFragment :
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
             SettingType.TERMS -> startActivity(SettingTermsActivity.newIntent(requireContext()))
+            SettingType.REMINDER -> startActivity(SettingReminderActivity.newIntent(requireContext()))
         }
     }
 
@@ -79,6 +81,7 @@ class SettingFragment :
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_notification)),
                 SettingItem.NormalItem(getString(R.string.setting_item_push_notification), SettingType.PUSH_NOTIFICATION),
+                SettingItem.NormalItem(getString(R.string.setting_reminder_toolbar_title), SettingType.REMINDER),
                 SettingItem.DividerItem,
                 SettingItem.TitleItem(getString(R.string.setting_section_support)),
                 SettingItem.NormalItem(getString(R.string.setting_item_feedback), SettingType.FEEDBACK),
