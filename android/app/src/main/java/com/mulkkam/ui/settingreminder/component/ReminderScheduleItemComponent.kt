@@ -26,8 +26,8 @@ import com.mulkkam.ui.designsystem.White
 import java.time.Duration
 import java.time.LocalTime
 
-private const val HOURS_PER_DAY = 24
-private const val NO_HOUR_DIFF = 0
+private const val HOURS_PER_DAY: Int = 24
+private const val NO_HOUR_DIFF: Int = 0
 
 @Composable
 fun ReminderScheduleItemComponent(
