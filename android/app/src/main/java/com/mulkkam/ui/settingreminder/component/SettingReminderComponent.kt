@@ -51,7 +51,7 @@ fun SettingReminderComponent(
                         modifier =
                             Modifier
                                 .clickable {
-                                    updateBottomSheetMode(ReminderMode.UPDATE(reminder[index]))
+                                    updateBottomSheetMode(ReminderMode.Update(reminder[index]))
                                 }.animateItem(),
                     )
                 }
@@ -67,7 +67,7 @@ fun SettingReminderComponent(
                         .padding(horizontal = 24.dp)
                         .background(Primary100)
                         .clickable {
-                            updateBottomSheetMode(ReminderMode.ADD)
+                            updateBottomSheetMode(ReminderMode.Add)
                         },
             ) {
                 Icon(

@@ -51,7 +51,7 @@ fun SettingReminderScreen(
             val currentMode = bottomSheetMode
             val initialTime =
                 when (currentMode) {
-                    is ReminderMode.UPDATE -> currentMode.reminderSchedule.schedule
+                    is ReminderMode.Update -> currentMode.reminderSchedule.schedule
                     else -> LocalTime.now()
                 }
 
@@ -74,11 +74,11 @@ private fun handleReminderAction(
     viewModel: SettingReminderViewModel,
 ) {
     when (mode) {
-        is ReminderMode.UPDATE -> {
+        is ReminderMode.Update -> {
             viewModel.updateReminder(mode.reminderSchedule.copy(schedule = selectedTime))
         }
 
-        is ReminderMode.ADD -> {
+        is ReminderMode.Add -> {
             viewModel.addReminder(selectedTime)
         }
 
