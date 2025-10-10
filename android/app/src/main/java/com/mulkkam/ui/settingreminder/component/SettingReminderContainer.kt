@@ -21,7 +21,7 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 
 @Composable
-fun SettingReminderComponent(
+fun SettingReminderContainer(
     isReminderEnabled: Boolean,
     reminders: List<ReminderSchedule>,
     updateBottomSheetMode: (ReminderUpdateUiState) -> Unit,

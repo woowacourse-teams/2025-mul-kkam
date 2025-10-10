@@ -17,7 +17,7 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
-import com.mulkkam.ui.settingreminder.component.SettingReminderComponent
+import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import java.time.LocalTime
@@ -39,7 +39,7 @@ fun SettingReminderScreen(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
-        SettingReminderComponent(
+        SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
             reminders = reminders.toSuccessDataOrNull() ?: return@Scaffold,
             updateBottomSheetMode = { bottomSheetMode = it },
