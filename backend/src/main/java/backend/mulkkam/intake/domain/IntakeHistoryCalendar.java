@@ -58,6 +58,6 @@ public class IntakeHistoryCalendar {
     }
 
     public Optional<IntakeHistory> findHistoryOf(LocalDate date) {
-        return Optional.of(historyByDates.get(date));
+        return Optional.ofNullable(historyByDates.get(date));
     }
 }
