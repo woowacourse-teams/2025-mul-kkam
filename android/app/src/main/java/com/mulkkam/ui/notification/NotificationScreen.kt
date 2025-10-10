@@ -90,7 +90,7 @@ fun NotificationScreen(
 private fun LazyListState.reachedBottom(preloadThreshold: Int): Boolean {
     val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
     return lastVisibleItem?.index != 0 &&
-        lastVisibleItem?.index == layoutInfo.totalItemsCount - (preloadThreshold + 1)
+        (lastVisibleItem?.index ?: 0) >= layoutInfo.totalItemsCount - (preloadThreshold + 1)
 }
 
 @SuppressLint("ComposableNaming")
