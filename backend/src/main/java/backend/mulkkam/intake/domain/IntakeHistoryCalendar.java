@@ -21,6 +21,7 @@ public class IntakeHistoryCalendar {
 
     private Map<LocalDate, IntakeHistory> getInitHistories(List<IntakeHistory> intakeHistories) {
         Map<LocalDate, IntakeHistory> map = new HashMap<>();
+        // historyDate에 unique 제약조건이 있어 날짜별로 하나의 히스토리만 존재
         for (IntakeHistory history : intakeHistories) {
             map.put(history.getHistoryDate(), history);
         }
