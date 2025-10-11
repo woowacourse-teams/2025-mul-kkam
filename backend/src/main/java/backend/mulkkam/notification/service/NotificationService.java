@@ -23,7 +23,6 @@ import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResp
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +31,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +51,6 @@ public class NotificationService {
     private final NotificationBatchService notificationBatchService;
 
     @Transactional
-    @Scheduled(cron = DAILY_2PM_CRON)
-    @Scheduled(cron = DAILY_7PM_CRON)
     public void notifyRemindNotification() {
         NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
         createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
