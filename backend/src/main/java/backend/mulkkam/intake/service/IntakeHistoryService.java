@@ -41,7 +41,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeHistoryService {
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
-//    private final IntakeHistoryCalendarFactory intakeHistoryCalendarFactory;
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final CupRepository cupRepository;
