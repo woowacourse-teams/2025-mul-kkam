@@ -1,6 +1,7 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.friend.domain.RequestDecision;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -29,9 +30,9 @@ public class FriendController {
             @PathVariable String action,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        boolean isAccept = action.equals("accept");
+        RequestDecision requestDecision = RequestDecision.valueOf(action.toUpperCase());
 
-        friendService.processFriendRequest(requestId, isAccept, memberDetails);
+        friendService.processFriendRequest(requestId, requestDecision, memberDetails);
         return ResponseEntity.ok().build();
     }
 }

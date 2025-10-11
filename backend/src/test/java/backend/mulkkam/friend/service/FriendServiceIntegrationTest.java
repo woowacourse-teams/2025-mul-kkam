@@ -12,6 +12,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.Friend;
 import backend.mulkkam.friend.domain.FriendRequest;
+import backend.mulkkam.friend.domain.RequestDecision;
 import backend.mulkkam.friend.repository.FriendRepository;
 import backend.mulkkam.friend.repository.FriendRequestRepository;
 import backend.mulkkam.member.domain.Member;
@@ -69,7 +70,7 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.processFriendRequest(1L, true, new MemberDetails(requester.getId())))
+            assertThatThrownBy(() -> friendService.processFriendRequest(1L, RequestDecision.ACCEPT, new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -90,7 +91,7 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendService.processFriendRequest(
                     friendRequest.getId(),
-                    true,
+                    RequestDecision.ACCEPT,
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -106,7 +107,7 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             friendService.processFriendRequest(
                     friendRequest.getId(),
-                    true,
+                    RequestDecision.ACCEPT,
                     new MemberDetails(addressee.getId())
             );
 
@@ -131,7 +132,7 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             friendService.processFriendRequest(
                     friendRequest.getId(),
-                    false,
+                    RequestDecision.REJECT,
                     new MemberDetails(addressee.getId())
             );
 

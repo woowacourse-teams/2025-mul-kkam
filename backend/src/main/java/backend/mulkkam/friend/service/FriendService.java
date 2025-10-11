@@ -8,6 +8,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.Friend;
 import backend.mulkkam.friend.domain.FriendRequest;
+import backend.mulkkam.friend.domain.RequestDecision;
 import backend.mulkkam.friend.repository.FriendRepository;
 import backend.mulkkam.friend.repository.FriendRequestRepository;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -26,7 +27,7 @@ public class FriendService {
     @Transactional
     public void processFriendRequest(
             Long friendRequestId,
-            boolean isAccept,
+            RequestDecision requestDecision,
             MemberDetails memberDetails
     ) {
         Long memberId = memberDetails.id();
@@ -37,7 +38,7 @@ public class FriendService {
             throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
         }
 
-        if (isAccept) {
+        if (requestDecision.equals(RequestDecision.ACCEPT)) {
             Friend friend = new Friend(friendRequest);
             friendRepository.save(friend);
         }
