@@ -14,6 +14,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -40,6 +41,21 @@ public class IntakeHistoryCrudService {
 
     public List<IntakeHistory> getIntakeHistories(Member member) {
         return intakeHistoryRepository.findAllByMember(member);
+    }
+
+    public Map<LocalDate, IntakeHistory> getIntakeHistoryWithDetailsSortedDesc(
+            Member member,
+            DateRangeRequest dateRangeRequest
+    ) {
+        Map<LocalDate, IntakeHistory> historyMap = getIntakeHistoryByDateRanges(member, dateRangeRequest);
+
+        historyMap.values().forEach(history ->
+                history.getIntakeHistoryDetails().sort(
+                        Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed()
+                )
+        );
+
+        return historyMap;
     }
 
     public Map<LocalDate, IntakeHistory> getIntakeHistoryByDateRanges(

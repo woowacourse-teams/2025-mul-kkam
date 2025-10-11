@@ -112,7 +112,7 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest);
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest);
 
         List<ReadAchievementRateByDateResponse> achievementRateResponses = dateRangeRequest.getAllDatesInRange().stream()
                 .map(date -> toAchievementRateResponse(intakeHistoryByDates, date))
@@ -127,7 +127,7 @@ public class IntakeHistoryService {
     ) {
         validateDateRange(dateRangeRequest, MAX_DATE_RANGE_DAYS);
         Member member = getMember(memberDetails.id());
-        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member,
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member,
                 dateRangeRequest);
 
         return dateRangeRequest.getAllDatesInRange().stream()

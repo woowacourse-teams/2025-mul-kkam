@@ -101,7 +101,7 @@ class IntakeHistoryServiceUnitTest {
             when(intakeHistory.getHistoryDate()).thenReturn(startDate);
             when(intakeHistory.getTargetAmount()).thenReturn(new TargetAmount(1000));
             when(intakeHistory.getStreak()).thenReturn(5);
-            given(intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest))
+            given(intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest))
                     .willReturn(Map.of(startDate, intakeHistory));
 
             // when
@@ -168,7 +168,7 @@ class IntakeHistoryServiceUnitTest {
             when(intakeHistory.getHistoryDate()).thenReturn(startDate);
             when(intakeHistory.getTargetAmount()).thenReturn(new TargetAmount(1000));
             when(intakeHistory.getStreak()).thenReturn(5);
-            given(intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest))
+            given(intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest))
                     .willReturn(Map.of(startDate, intakeHistory));
 
             // when
@@ -250,7 +250,7 @@ class IntakeHistoryServiceUnitTest {
             when(intakeHistory.getHistoryDate()).thenReturn(startDate);
             when(intakeHistory.getTargetAmount()).thenReturn(new TargetAmount(1000));
             when(intakeHistory.getStreak()).thenReturn(5);
-            given(intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest))
+            given(intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest))
                     .willReturn(Map.of(startDate, intakeHistory));
 
             // when
@@ -305,7 +305,7 @@ class IntakeHistoryServiceUnitTest {
             when(intakeHistory.getHistoryDate()).thenReturn(startDate);
             when(intakeHistory.getTargetAmount()).thenReturn(new TargetAmount(1000));
             when(intakeHistory.getStreak()).thenReturn(5);
-            given(intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest))
+            given(intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest))
                     .willReturn(Map.of(startDate, intakeHistory));
 
             // when

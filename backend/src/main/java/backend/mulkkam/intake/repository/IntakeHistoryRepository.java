@@ -17,8 +17,7 @@ public interface IntakeHistoryRepository extends JpaRepository<IntakeHistory, Lo
     @Query("SELECT DISTINCT h FROM IntakeHistory h " +
             "LEFT JOIN FETCH h.intakeHistoryDetails d " +
             "WHERE h.member = :member " +
-            "AND h.historyDate BETWEEN :from AND :to " +
-            "ORDER BY d.intakeTime DESC")
+            "AND h.historyDate BETWEEN :from AND :to ")
     List<IntakeHistory> findAllByMemberAndDateRangeWithDetails(
             Member member,
             LocalDate from,
