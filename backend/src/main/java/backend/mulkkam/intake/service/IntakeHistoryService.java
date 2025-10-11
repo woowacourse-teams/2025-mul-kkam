@@ -135,7 +135,10 @@ public class IntakeHistoryService {
                 .toList();
     }
 
-    private void validateDateRange(DateRangeRequest dateRangeRequest, int maxDays) {
+    private void validateDateRange(
+            DateRangeRequest dateRangeRequest,
+            int maxDays
+    ) {
         LocalDate to = dateRangeRequest.to();
         LocalDate from = dateRangeRequest.from();
         if (to.isAfter(from.plusDays(maxDays))) {
