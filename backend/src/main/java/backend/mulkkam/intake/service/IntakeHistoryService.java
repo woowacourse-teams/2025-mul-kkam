@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
@@ -39,6 +40,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class IntakeHistoryService {
+
+    private static final int MAX_DATE_RANGE_DAYS = 90;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
     private final MemberRepository memberRepository;
@@ -104,19 +107,6 @@ public class IntakeHistoryService {
         );
     }
 
-    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
-            DateRangeRequest dateRangeRequest,
-            MemberDetails memberDetails
-    ) {
-        Member member = getMember(memberDetails.id());
-        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member,
-                dateRangeRequest);
-
-        return dateRangeRequest.getAllDatesInRange().stream()
-                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryByDates, member))
-                .toList();
-    }
-
     public ReadAchievementRateByDatesResponse readAchievementRatesByDateRange(
             DateRangeRequest dateRangeRequest,
             MemberDetails memberDetails
@@ -129,6 +119,28 @@ public class IntakeHistoryService {
                 .toList();
 
         return new ReadAchievementRateByDatesResponse(achievementRateResponses);
+    }
+
+    public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
+            DateRangeRequest dateRangeRequest,
+            MemberDetails memberDetails
+    ) {
+        validateDateRange(dateRangeRequest, MAX_DATE_RANGE_DAYS);
+        Member member = getMember(memberDetails.id());
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member,
+                dateRangeRequest);
+
+        return dateRangeRequest.getAllDatesInRange().stream()
+                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryByDates, member))
+                .toList();
+    }
+
+    private void validateDateRange(DateRangeRequest dateRangeRequest, int maxDays) {
+        LocalDate to = dateRangeRequest.to();
+        LocalDate from = dateRangeRequest.from();
+        if (to.isAfter(from.plusDays(maxDays))) {
+            throw new CommonException(INVALID_DATE_RANGE);
+        }
     }
 
     private ReadAchievementRateByDateResponse toAchievementRateResponse(
