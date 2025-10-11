@@ -16,6 +16,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
@@ -77,6 +78,10 @@ public class IntakeHistory extends BaseEntity {
 
     public void addTargetAmount(int targetAmount) {
         this.targetAmount = new TargetAmount(this.targetAmount.value() + targetAmount);
+    }
+
+    public List<IntakeHistoryDetail> getIntakeHistoryDetails() {
+        return Collections.unmodifiableList(intakeHistoryDetails);
     }
 
     @Override
