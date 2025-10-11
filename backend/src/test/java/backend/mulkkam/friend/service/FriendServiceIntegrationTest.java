@@ -70,7 +70,8 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.processFriendRequest(1L, RequestDecision.ACCEPT, new MemberDetails(requester.getId())))
+            assertThatThrownBy(() -> friendService.processFriendRequest(1L, RequestDecision.ACCEPT,
+                    new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -143,6 +144,42 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(friends).hasSize(0);
                 softly.assertThat(friendRequests).hasSize(0);
             });
+        }
+
+        @DisplayName("요청자가 본인의 요청을 처리하려 하면 예외를 던진다")
+        @Test
+        void error_requesterCannotProcessOwnRequest() {
+            // given
+            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
+            friendRequestRepository.save(friendRequest);
+
+            // when & then
+            assertThatThrownBy(() -> friendService.processFriendRequest(
+                    friendRequest.getId(),
+                    RequestDecision.ACCEPT,
+                    new MemberDetails(requester.getId())))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+        }
+
+        @DisplayName("이미 처리된 요청을 다시 처리하려 하면 예외를 던진다")
+        @Test
+        void error_cannotProcessAlreadyProcessedRequest() {
+            // given
+            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
+            friendRequestRepository.save(friendRequest);
+            friendService.processFriendRequest(
+                    friendRequest.getId(),
+                    RequestDecision.ACCEPT,
+                    new MemberDetails(addressee.getId()));
+
+            // when & then
+            assertThatThrownBy(() -> friendService.processFriendRequest(
+                    friendRequest.getId(),
+                    RequestDecision.ACCEPT,
+                    new MemberDetails(addressee.getId())))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
     }
 }
