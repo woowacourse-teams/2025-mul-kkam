@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.reminder.ReminderSchedule
@@ -55,27 +57,32 @@ fun SettingReminderContainer(
                                 }.animateItem(),
                     )
                 }
-            }
 
-            Spacer(modifier = Modifier.height(18.dp))
+                item {
+                    Spacer(modifier = Modifier.height(18.dp))
 
-            Box(
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .height(46.dp)
-                        .padding(horizontal = 24.dp)
-                        .background(Primary100)
-                        .clickable {
-                            updateBottomSheetMode(ReminderUpdateUiState.Add)
-                        },
-            ) {
-                Icon(
-                    painter = painterResource(com.mulkkam.R.drawable.ic_setting_add),
-                    contentDescription = "",
-                    modifier = Modifier.align(Alignment.Center),
-                    tint = White,
-                )
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .height(46.dp)
+                                .padding(horizontal = 24.dp)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Primary100)
+                                .clickable {
+                                    updateBottomSheetMode(ReminderUpdateUiState.Add)
+                                },
+                    ) {
+                        Icon(
+                            painter = painterResource(com.mulkkam.R.drawable.ic_setting_add),
+                            contentDescription = "",
+                            modifier = Modifier.align(Alignment.Center),
+                            tint = White,
+                        )
+                    }
+
+                    Spacer(modifier = Modifier.height(18.dp))
+                }
             }
         }
     }
