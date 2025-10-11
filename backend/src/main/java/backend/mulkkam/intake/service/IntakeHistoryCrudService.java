@@ -15,6 +15,8 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -40,8 +42,24 @@ public class IntakeHistoryCrudService {
         return intakeHistoryRepository.findAllByMember(member);
     }
 
-    public List<IntakeHistory> getIntakeHistories(Member member, DateRangeRequest dateRangeRequest) {
-        return intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(member, dateRangeRequest.from(),
+    public Map<LocalDate, IntakeHistory> getIntakeHistoryByDateRanges(
+            Member member,
+            DateRangeRequest dateRangeRequest
+    ) {
+        List<IntakeHistory> intakeHistories = getIntakeHistories(member, dateRangeRequest);
+
+        return intakeHistories.stream()
+                .collect(Collectors.toMap(
+                        IntakeHistory::getHistoryDate,
+                        history -> history
+                ));
+    }
+
+    public List<IntakeHistory> getIntakeHistories(
+            Member member,
+            DateRangeRequest dateRangeRequest
+    ) {
+        return intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(member, dateRangeRequest.from(),
                 dateRangeRequest.to());
     }
 

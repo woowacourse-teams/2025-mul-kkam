@@ -15,7 +15,6 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.IntakeHistoryCalendar;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
@@ -31,6 +30,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class IntakeHistoryService {
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
-    private final IntakeHistoryCalendarFactory intakeHistoryCalendarFactory;
+//    private final IntakeHistoryCalendarFactory intakeHistoryCalendarFactory;
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final CupRepository cupRepository;
@@ -110,10 +110,11 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalendarFactory.create(member, dateRangeRequest);
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member,
+                dateRangeRequest);
 
         return dateRangeRequest.getAllDatesInRange().stream()
-                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryCalendar, member))
+                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryByDates, member))
                 .toList();
     }
 
@@ -122,34 +123,33 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryCalendar intakeHistoryCalendar = intakeHistoryCalendarFactory.create(member, dateRangeRequest);
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryByDateRanges(member, dateRangeRequest);
 
         List<ReadAchievementRateByDateResponse> achievementRateResponses = dateRangeRequest.getAllDatesInRange().stream()
-                .map(date -> toAchievementRateResponse(intakeHistoryCalendar, date))
+                .map(date -> toAchievementRateResponse(intakeHistoryByDates, date))
                 .toList();
 
         return new ReadAchievementRateByDatesResponse(achievementRateResponses);
     }
 
     private ReadAchievementRateByDateResponse toAchievementRateResponse(
-            IntakeHistoryCalendar intakeHistoryCalendar,
+            Map<LocalDate, IntakeHistory> intakeHistoryByDates,
             LocalDate date
     ) {
-        AchievementRate achievementRate = intakeHistoryCalendar.findHistoryOf(date)
+        return Optional.ofNullable(intakeHistoryByDates.get(date))
                 .map(intakeHistoryCrudService::getAchievementRate)
-                .orElse(AchievementRate.empty());
-
-        return new ReadAchievementRateByDateResponse(achievementRate);
+                .map(ReadAchievementRateByDateResponse::new)
+                .orElseGet(() -> new ReadAchievementRateByDateResponse(AchievementRate.empty()));
     }
 
     private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
             LocalDate date,
-            IntakeHistoryCalendar calender,
+            Map<LocalDate, IntakeHistory> intakeHistoryByDates,
             Member member
     ) {
-        if (calender.isExistHistoryOf(date)) {
-            IntakeHistory intakeHistory = calender.getHistoryOf(date);
-            List<IntakeHistoryDetail> details = calender.getHistoryDetails(intakeHistory);
+        if (intakeHistoryByDates.containsKey(date)) {
+            IntakeHistory intakeHistory = intakeHistoryByDates.get(date);
+            List<IntakeHistoryDetail> details = intakeHistory.getIntakeHistoryDetails();
             return new IntakeHistorySummaryResponse(intakeHistory, details);
         }
         LocalDate today = LocalDate.now();
