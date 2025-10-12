@@ -9,4 +9,14 @@ public record SendMessageByFcmTokensRequest(
         List<String> tokens,
         Action action
 ) {
+
+    public SendMessageByFcmTokensRequest withTokens(List<String> tokens) {
+        return new SendMessageByFcmTokensRequest(
+                title,
+                body,
+                tokens,
+                action
+        );
+    }
+
 }
