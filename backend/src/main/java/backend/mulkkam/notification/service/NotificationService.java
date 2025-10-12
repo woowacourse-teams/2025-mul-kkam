@@ -11,9 +11,9 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
@@ -26,11 +26,10 @@ import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,45 +39,25 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
+    private static final int CHUNK = 1000;
 
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
     private final SuggestionNotificationService suggestionNotificationService;
     private final ApplicationEventPublisher publisher;
-    private final NotificationBatchService notificationBatchService;
 
     @Transactional
-    public void notifyRemindNotification() {
-        NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
-        createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
-    }
-
-    @Transactional
-    public void createAndSendTopicNotification(
-            // TODO: 배치 파이프라인 수정 할 것 (as-is: save만 배치 처리, 전체 전송, to-be: save와 푸시 알림 전송 한번에 묶기)
-            NotificationMessageTemplate notificationMessageTemplate,
+    public void processReminderNotifications(
+            List<ReminderSchedule> schedules,
             LocalDateTime now
     ) {
-        final int CHUNK = 1000;
-        Long lastId = null;
+        NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
+        List<Member> members = extractMembers(schedules);
 
-        while (true) {
-            List<Long> memberIds = memberRepository.findIdsAfter
-                    (
-                            lastId,
-                            PageRequest.of(0, CHUNK, Sort.by("id"))
-                    );
-            if (memberIds.isEmpty()) {
-                break;
-            }
-            notificationBatchService.processOneChunk(notificationMessageTemplate, now, memberIds);
-            if (memberIds.size() < CHUNK) {
-                break;
-            }
-            lastId = memberIds.getLast();
-        }
-        publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest("mulkkam"));
+        saveNotificationsInBatch(members, template, now);
+
+        List<String> allTokens = extractAllTokens(members);
+        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(allTokens));
     }
 
     @Transactional
@@ -158,6 +137,39 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
+    private List<String> extractAllTokens(List<Member> members) {
+        return members.stream()
+                .flatMap(this::getDeviceTokens)
+                .toList();
+    }
+
+    private Stream<String> getDeviceTokens(Member member) {
+        return deviceRepository.findAllByMember(member).stream()
+                .map(Device::getToken);
+    }
+
+    private List<Member> extractMembers(List<ReminderSchedule> schedules) {
+        return schedules.stream()
+                .map(ReminderSchedule::getMember)
+                .toList();
+    }
+
+    private void saveNotificationsInBatch(
+            List<Member> allMembers,
+            NotificationMessageTemplate template,
+            LocalDateTime now
+    ) {
+        for (int i = 0; i < allMembers.size(); i += CHUNK) {
+            List<Member> chunk = allMembers.subList(
+                    i,
+                    Math.min(i + CHUNK, allMembers.size())
+            );
+            notificationRepository.saveAll(
+                    template.toNotifications(chunk, now)
+            );
+        }
+    }
+
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
         if (readNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
@@ -217,15 +229,6 @@ public class NotificationService {
         List<String> tokens = devicesByMember.stream()
                 .map(Device::getToken)
                 .toList();
-        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
-                tokens);
-        publisher.publishEvent(sendMessageByFcmTokensRequest);
-    }
-
-    public void publishFcmMulticastEvent(
-            CreateTokenNotificationRequest createTokenNotificationRequest,
-            List<String> tokens
-    ) {
         SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
                 tokens);
         publisher.publishEvent(sendMessageByFcmTokensRequest);
