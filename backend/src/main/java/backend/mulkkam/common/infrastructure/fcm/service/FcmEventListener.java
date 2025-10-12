@@ -1,6 +1,7 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.event.EventListener;
@@ -8,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-public class FcmEventListener {
+public class FcmEventListener { // TODO: Async 처리
 
     private final FcmClient fcmClient;
 
@@ -20,5 +21,10 @@ public class FcmEventListener {
     @EventListener
     public void onToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest) {
         fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
+    }
+
+    @EventListener
+    public void onTokens(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
+        fcmClient.sendMulticast(sendMessageByFcmTokensRequest);
     }
 }

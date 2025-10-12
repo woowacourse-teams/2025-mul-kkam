@@ -214,11 +214,12 @@ public class NotificationService {
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
-        for (Device device : devicesByMember) {
-            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
-            publisher.publishEvent(sendMessageByFcmTokenRequest);
-        }
+        List<String> tokens = devicesByMember.stream()
+                .map(Device::getToken)
+                .toList();
+        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
+                tokens);
+        publisher.publishEvent(sendMessageByFcmTokensRequest);
     }
 
     private Notification getNotification(Long id) {
