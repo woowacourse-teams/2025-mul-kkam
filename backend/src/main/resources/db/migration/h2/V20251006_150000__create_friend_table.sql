@@ -48,5 +48,5 @@ CREATE TABLE friend (
                         CONSTRAINT fk_friend_requester FOREIGN KEY (requester_id) REFERENCES member(id),
                         CONSTRAINT fk_friend_addressee FOREIGN KEY (addressee_id) REFERENCES member(id),
 
-                        CONSTRAINT uq_friend_active UNIQUE (user_low, user_high, active_key),
+                        CONSTRAINT uq_friend_active UNIQUE (user_low, user_high, active_key)
 );
