@@ -31,7 +31,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-@Disabled
+@Disabled // TODO: 알림 처리 성능 테스트 이후 복원 필요
 @ExtendWith(MockitoExtension.class)
 class FcmClientUnitTest {
 
