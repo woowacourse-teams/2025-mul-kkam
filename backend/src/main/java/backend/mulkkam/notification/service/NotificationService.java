@@ -7,7 +7,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -40,8 +40,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
-    private static final String DAILY_2PM_CRON = "0 0 14 * * *";
-    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
 
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
@@ -58,6 +56,7 @@ public class NotificationService {
 
     @Transactional
     public void createAndSendTopicNotification(
+            // TODO: 배치 파이프라인 수정 할 것 (as-is: save만 배치 처리, 전체 전송, to-be: save와 푸시 알림 전송 한번에 묶기)
             NotificationMessageTemplate notificationMessageTemplate,
             LocalDateTime now
     ) {
@@ -126,7 +125,8 @@ public class NotificationService {
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         notificationRepository.save(createTokenNotificationRequest.toNotification());
-        sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
+
+        sendPushToMemberDevices(createTokenNotificationRequest, devicesByMember);
     }
 
     public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails,
@@ -210,13 +210,20 @@ public class NotificationService {
         return new GetSuggestionNotificationResponse(readNotificationRow);
     }
 
-    private void sendNotificationByMember(
+    private void sendPushToMemberDevices(
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
         List<String> tokens = devicesByMember.stream()
                 .map(Device::getToken)
                 .toList();
+        publishFcmMulticastEvent(createTokenNotificationRequest, tokens);
+    }
+
+    private void publishFcmMulticastEvent(
+            CreateTokenNotificationRequest createTokenNotificationRequest,
+            List<String> tokens
+    ) {
         SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
                 tokens);
         publisher.publishEvent(sendMessageByFcmTokensRequest);
