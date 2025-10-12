@@ -38,5 +38,9 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
             @Param("to") LocalDate to
     );
 
+    List<IntakeHistoryDetail> findAllByIntakeHistoryIn(List<IntakeHistory> intakeHistories);
+
     void deleteAllByIntakeHistoryIn(List<IntakeHistory> intakeHistory);
+
+    List<IntakeHistoryDetail> findByIntakeHistory(IntakeHistory intakeHistory);
 }

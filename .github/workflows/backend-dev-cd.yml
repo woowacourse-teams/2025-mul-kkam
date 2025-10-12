@@ -51,17 +51,7 @@ jobs:
     runs-on: [ self-hosted, linux, dev ]
     needs: build-and-push
     steps:
-      - name: Stop and remove existing container
-        run: |
-          if [ "$(docker ps -a -q -f name=backend-app)" ]; then
-            docker stop backend-app
-            docker rm -f backend-app
-          fi
-
-      - name: Pull latest image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:latest
-
-      - name: Create .env file
+      - name: Create/Update .env for container
         run: |
           cat <<EOF > ~/mulkkam/.env
           LOG_PATH=${{ secrets.LOG_PATH }}
@@ -77,13 +67,66 @@ jobs:
           DEV_DATASOURCE_RW_PASSWORD=${{ secrets.DEV_DATASOURCE_RW_PASSWORD }}
           DEV_DATASOURCE_MIGRATION_USERNAME=${{ secrets.DEV_DATASOURCE_MIGRATION_USERNAME }}
           DEV_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.DEV_DATASOURCE_MIGRATION_PASSWORD }}
-          
           EOF
 
-      - name: Stop existing services
-        run: sudo docker compose stop backend-app
-        working-directory: /home/ubuntu/mulkkam
+      - name: Decide colors (by health + nginx)
+        id: color
+        run: |
+          HEALTH="/actuator/health"
+          BLUE_UP=0; GREEN_UP=0
+          curl -fsS "http://127.0.0.1:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
+          curl -fsS "http://127.0.0.1:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
 
-      - name: Start new services
-        run: sudo docker compose up -d backend-app
+          CURRENT=""
+          if [ "$BLUE_UP" -eq 1 ] && [ "$GREEN_UP" -eq 0 ]; then
+            CURRENT="blue"
+          elif [ "$BLUE_UP" -eq 0 ] && [ "$GREEN_UP" -eq 1 ]; then
+            CURRENT="green"
+          else
+            # 둘 다 살아있거나 둘 다 죽었으면 nginx 스니펫으로 판단, 없으면 blue
+            if [ -f /etc/nginx/snippets/mulkkam_upstream.conf ]; then
+              grep -q '127.0.0.1:8081' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="blue" || true
+              grep -q '127.0.0.1:8082' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="green" || true
+            fi
+            [ -z "$CURRENT" ] && CURRENT="blue"
+          fi
+
+          if [ "$CURRENT" = "blue" ]; then NEXT="green"; else NEXT="blue"; fi
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Pull & start next color with new image (by SHA tag)
         working-directory: /home/ubuntu/mulkkam
+        run: |
+          export IMAGE_TAG=${{ github.sha }}
+          sudo IMAGE_TAG=${{ github.sha }} docker compose pull backend-${{ steps.color.outputs.next }}
+          sudo IMAGE_TAG=${{ github.sha }} docker compose up -d backend-${{ steps.color.outputs.next }}
+
+      - name: Wait for health on next color
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
+          echo "Waiting health on :$PORT ..."
+          for i in {1..60}; do
+            if curl -fsS "http://127.0.0.1:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
+              echo "Healthy!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Health check failed on port ${PORT}"
+          exit 1
+
+      - name: Switch Nginx upstream to next color
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
+          echo "set \$mulkkam_upstream http://127.0.0.1:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
+          sudo nginx -t
+          sudo systemctl reload nginx
+
+      - name: Stop the other color
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
+          sudo docker rm -f "$OLD" || true
+
+      - name: (Optional) Prune old dangling images
+        run: sudo docker image prune -f || true
