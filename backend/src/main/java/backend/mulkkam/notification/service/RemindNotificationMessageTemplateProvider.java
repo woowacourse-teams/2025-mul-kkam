@@ -8,14 +8,12 @@ import java.util.random.RandomGenerator;
 
 public class RemindNotificationMessageTemplateProvider {
 
-    private static final String DEFAULT_TOPIC = "mulkkam";
-
     private static final List<NotificationMessageTemplate> templates = List.of(
             remind("물 마실 시간!", "지금 이 순간 건강을 위해 물 한 잔 마셔보는 건 어떠세요?")
     );
 
     private static NotificationMessageTemplate remind(String title, String body) {
-        return new NotificationMessageTemplate(title, body, DEFAULT_TOPIC, Action.GO_HOME, NotificationType.REMIND);
+        return new NotificationMessageTemplate(title, body, Action.GO_HOME, NotificationType.REMIND);
     }
 
     public static NotificationMessageTemplate getRandomMessageTemplate() {
