@@ -13,7 +13,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -256,10 +256,10 @@ class NotificationServiceUnitTest {
             verify(deviceRepository).findAllByMember(member);
 
             verify(applicationEventPublisher).publishEvent(
-                    argThat((SendMessageByFcmTokenRequest evt) ->
+                    argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.title().equals("title")
                                     && evt.body().equals("body")
-                                    && evt.token().equals("token-1")
+                                    && evt.tokens().equals(List.of("token-1"))
                                     && evt.action() == Action.GO_HOME)
             );
         }

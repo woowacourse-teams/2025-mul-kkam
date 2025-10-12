@@ -1,8 +1,7 @@
 package backend.mulkkam.notification.controller;
 
-import backend.mulkkam.notification.service.NotificationService;
+import backend.mulkkam.notification.service.ReminderScheduleService;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
-import backend.mulkkam.notification.service.WeatherService;
 import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/weather")
 public class WeatherController { // 백엔드 테스트용 controller (삭제 예정)
 
-    private final WeatherService weatherService;
-    private final NotificationService notificationService;
     private final SuggestionNotificationService suggestionNotificationService;
+    private final ReminderScheduleService reminderScheduleService;
 
     @Hidden
     @PostMapping
@@ -29,7 +27,7 @@ public class WeatherController { // 백엔드 테스트용 controller (삭제 �
     @Hidden
     @PostMapping("/not-weather/remind")
     public ResponseEntity<Void> create2() {
-        notificationService.notifyRemindNotification();
+        reminderScheduleService.notifyReminder();
         return ResponseEntity.ok().build();
     }
 }
