@@ -78,7 +78,7 @@ public class NotificationService {
             }
             lastId = memberIds.getLast();
         }
-        publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest());
+        publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest("mulkkam"));
     }
 
     @Transactional
@@ -217,10 +217,12 @@ public class NotificationService {
         List<String> tokens = devicesByMember.stream()
                 .map(Device::getToken)
                 .toList();
-        publishFcmMulticastEvent(createTokenNotificationRequest, tokens);
+        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
+                tokens);
+        publisher.publishEvent(sendMessageByFcmTokensRequest);
     }
 
-    private void publishFcmMulticastEvent(
+    public void publishFcmMulticastEvent(
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<String> tokens
     ) {
