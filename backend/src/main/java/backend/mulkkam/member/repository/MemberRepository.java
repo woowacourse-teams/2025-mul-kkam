@@ -31,7 +31,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             Pageable pageable
     );
 
-    Slice<MemberIdNicknameProjection> findByMemberNicknameValueStartingWithOrderByMemberNicknameValueAsc(
-            String prefix, Pageable pageable
+    @Query("SELECT m.id as id, m.memberNickname.value as nickname " +
+            "FROM Member m " +
+            "WHERE m.memberNickname.value LIKE CONCAT(:prefix, '%') " +
+            "ORDER BY m.memberNickname.value")
+    Slice<MemberIdNicknameProjection> findByNicknamePrefix(
+            @Param("prefix") String prefix,
+            Pageable pageable
     );
 }

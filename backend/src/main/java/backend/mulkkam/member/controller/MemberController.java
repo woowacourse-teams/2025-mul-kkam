@@ -209,8 +209,6 @@ public class MemberController {
     @ApiResponse(responseCode = "200", description = "검색 성공")
     @GetMapping("/search")
     public ResponseEntity<MemberSearchResponse> search(
-            @Parameter(hidden = true)
-            MemberDetails memberDetails,
             @Parameter(description = "검색 할 내용", required = true, example = "돈까스먹는환")
             @RequestParam String prefix,
             @Parameter(description = "page 값", required = true, example = "4")

@@ -189,14 +189,14 @@ public class MemberService {
         if (prefix.isBlank()) {
             return new MemberSearchResponse(List.of(), false);
         }
-        Slice<MemberIdNicknameProjection> memberIdNicknames = memberRepository.findByMemberNicknameValueStartingWithOrderByMemberNicknameValueAsc
+        Slice<MemberIdNicknameProjection> memberIdNicknames = memberRepository.findByNicknamePrefix
                 (
                         prefix,
                         PageRequest.of(page, size)
                 );
         List<MemberIdNicknameResponse> memberIdNicknameResponses = memberIdNicknames.stream()
                 .map(memberIdNicknameProjection -> new MemberIdNicknameResponse(memberIdNicknameProjection.getId(),
-                        memberIdNicknameProjection.getMemberNicknameValue()))
+                        memberIdNicknameProjection.getNickname()))
                 .toList();
         return new MemberSearchResponse(memberIdNicknameResponses, memberIdNicknames.hasNext());
     }
