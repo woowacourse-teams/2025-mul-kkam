@@ -1,5 +1,10 @@
 package com.mulkkam.ui.settingreminder.component
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -38,7 +43,11 @@ fun SettingReminderContainer(
             checked = isReminderEnabled,
         ) { updateReminderEnabled() }
 
-        if (isReminderEnabled == true) {
+        AnimatedVisibility(
+            visible = isReminderEnabled,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically(),
+        ) {
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
             ) {
