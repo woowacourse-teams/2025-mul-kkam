@@ -293,9 +293,6 @@ class NotificationServiceUnitTest {
     @Nested
     class ProcessReminderNotifications {
 
-        @Mock
-        private NotificationBatchService notificationBatchService;
-
         @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
         @Test
         void success_whenValidSchedules() {

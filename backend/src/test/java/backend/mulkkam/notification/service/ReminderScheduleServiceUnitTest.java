@@ -92,7 +92,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.create(memberDetails, request))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_MEMBER);
+                    .hasMessage(NOT_FOUND_MEMBER.name());
         }
 
         @DisplayName("중복된 스케줄을 생성하면 예외가 발생한다")
@@ -101,7 +101,7 @@ class ReminderScheduleServiceUnitTest {
             // given
             LocalTime schedule = LocalTime.of(14, 30);
             CreateReminderScheduleRequest request = new CreateReminderScheduleRequest(schedule);
-            
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(reminderScheduleRepository.saveAndFlush(any(ReminderSchedule.class)))
                     .thenThrow(new DataIntegrityViolationException("duplicate"));
@@ -109,7 +109,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.create(memberDetails, request))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", DUPLICATED_REMINDER_SCHEDULE);
+                    .hasMessage(DUPLICATED_REMINDER_SCHEDULE.name());
         }
     }
 
@@ -203,7 +203,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.read(memberDetails))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_MEMBER);
+                    .hasMessage(NOT_FOUND_MEMBER.name());
         }
     }
 
@@ -251,7 +251,8 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.modifyTime(memberDetails, request))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_REMINDER_SCHEDULE);
+                    .hasMessage(NOT_FOUND_REMINDER_SCHEDULE.name());
+
         }
 
         @DisplayName("중복된 시간으로 수정하면 예외가 발생한다")
@@ -274,7 +275,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.modifyTime(memberDetails, request))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", DUPLICATED_REMINDER_SCHEDULE);
+                    .hasMessage(DUPLICATED_REMINDER_SCHEDULE.name());
         }
     }
 
@@ -310,7 +311,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.delete(memberDetails, scheduleId))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_REMINDER_SCHEDULE);
+                    .hasMessage(NOT_FOUND_REMINDER_SCHEDULE.name());
             
             verify(reminderScheduleRepository, never()).deleteById(scheduleId);
         }
@@ -325,7 +326,7 @@ class ReminderScheduleServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.delete(memberDetails, scheduleId))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_REMINDER_SCHEDULE);
+                    .hasMessage(NOT_FOUND_REMINDER_SCHEDULE.name());
         }
     }
 

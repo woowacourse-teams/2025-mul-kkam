@@ -250,7 +250,7 @@ class IntakeHistoryCrudServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryCrudService.getIntakeHistory(member, date))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_FOUND_INTAKE_HISTORY);
+                    .hasMessage(NOT_FOUND_INTAKE_HISTORY.name());
         }
     }
 
@@ -530,7 +530,7 @@ class IntakeHistoryCrudServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryCrudService.deleteIntakeHistoryDetail(member, detailId))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", NOT_PERMITTED_FOR_INTAKE_HISTORY);
+                    .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
 
             verify(intakeHistoryDetailRepository, never()).delete(any());
         }
@@ -555,7 +555,7 @@ class IntakeHistoryCrudServiceUnitTest {
             // when & then
             assertThatThrownBy(() -> intakeHistoryCrudService.deleteIntakeHistoryDetail(member, detailId))
                     .isInstanceOf(CommonException.class)
-                    .hasFieldOrPropertyWithValue("errorCode", INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
+                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
 
             verify(intakeHistoryDetailRepository, never()).delete(any());
         }
