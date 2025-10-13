@@ -12,7 +12,7 @@ data class ReadNotificationResponse(
     @SerialName("type")
     val type: String,
     @SerialName("id")
-    val id: Int,
+    val id: Long,
     @SerialName("content")
     val content: String,
     @SerialName("createdAt")
