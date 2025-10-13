@@ -37,6 +37,10 @@ public class ReminderScheduleService {
         LocalDateTime now = LocalDateTime.now();
         List<ReminderSchedule> schedules = reminderScheduleRepository.findAllActiveByHourAndMinuteWithMember(now.toLocalTime());
 
+        if (schedules.isEmpty()) {
+            return ;
+        }
+
         notificationService.processReminderNotifications(schedules, now);
     }
 
