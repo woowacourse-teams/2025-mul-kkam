@@ -3,6 +3,7 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.intake.AchievementRate
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeType
@@ -15,6 +16,11 @@ interface IntakeRepository {
         from: LocalDate,
         to: LocalDate,
     ): MulKkamResult<IntakeHistorySummaries>
+
+    suspend fun getAchievementRates(
+        from: LocalDate,
+        to: LocalDate,
+    ): MulKkamResult<List<AchievementRate>>
 
     suspend fun postIntakeHistoryInput(
         dateTime: LocalDateTime,
