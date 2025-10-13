@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -17,13 +18,17 @@
         android:alignmentMode="alignMargins"
         android:columnCount="7"
         android:rowCount="7"
-        android:useDefaultMargins="false">
+        android:useDefaultMargins="false"
+        tools:background="@color/primary_200">
 
         <ImageView
             android:id="@+id/cell_0"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -31,7 +36,10 @@
             android:id="@+id/cell_1"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -39,7 +47,10 @@
             android:id="@+id/cell_2"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -47,7 +58,10 @@
             android:id="@+id/cell_3"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -55,7 +69,10 @@
             android:id="@+id/cell_4"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -63,7 +80,10 @@
             android:id="@+id/cell_5"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -71,7 +91,10 @@
             android:id="@+id/cell_6"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -79,7 +102,10 @@
             android:id="@+id/cell_7"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -87,7 +113,10 @@
             android:id="@+id/cell_8"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -95,7 +124,10 @@
             android:id="@+id/cell_9"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -103,7 +135,10 @@
             android:id="@+id/cell_10"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -111,7 +146,10 @@
             android:id="@+id/cell_11"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -119,7 +157,10 @@
             android:id="@+id/cell_12"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -127,7 +168,10 @@
             android:id="@+id/cell_13"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -135,7 +179,10 @@
             android:id="@+id/cell_14"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -143,7 +190,10 @@
             android:id="@+id/cell_15"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -151,7 +201,10 @@
             android:id="@+id/cell_16"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -159,7 +212,10 @@
             android:id="@+id/cell_17"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -167,7 +223,10 @@
             android:id="@+id/cell_18"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -175,7 +234,10 @@
             android:id="@+id/cell_19"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -183,7 +245,10 @@
             android:id="@+id/cell_20"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -191,7 +256,10 @@
             android:id="@+id/cell_21"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -199,7 +267,10 @@
             android:id="@+id/cell_22"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -207,7 +278,10 @@
             android:id="@+id/cell_23"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -215,7 +289,10 @@
             android:id="@+id/cell_24"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -223,7 +300,10 @@
             android:id="@+id/cell_25"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -231,7 +311,10 @@
             android:id="@+id/cell_26"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -239,7 +322,10 @@
             android:id="@+id/cell_27"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -247,7 +333,10 @@
             android:id="@+id/cell_28"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -255,7 +344,10 @@
             android:id="@+id/cell_29"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -263,7 +355,10 @@
             android:id="@+id/cell_30"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -271,7 +366,10 @@
             android:id="@+id/cell_31"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -279,7 +377,10 @@
             android:id="@+id/cell_32"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -287,7 +388,10 @@
             android:id="@+id/cell_33"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -295,7 +399,10 @@
             android:id="@+id/cell_34"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -303,7 +410,10 @@
             android:id="@+id/cell_35"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -311,7 +421,10 @@
             android:id="@+id/cell_36"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -319,7 +432,10 @@
             android:id="@+id/cell_37"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -327,7 +443,10 @@
             android:id="@+id/cell_38"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -335,7 +454,10 @@
             android:id="@+id/cell_39"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -343,7 +465,10 @@
             android:id="@+id/cell_40"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -351,7 +476,10 @@
             android:id="@+id/cell_41"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -359,7 +487,10 @@
             android:id="@+id/cell_42"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -367,7 +498,10 @@
             android:id="@+id/cell_43"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -375,7 +509,10 @@
             android:id="@+id/cell_44"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -383,7 +520,10 @@
             android:id="@+id/cell_45"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -391,7 +531,10 @@
             android:id="@+id/cell_46"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -399,7 +542,10 @@
             android:id="@+id/cell_47"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
 
@@ -407,7 +553,10 @@
             android:id="@+id/cell_48"
             android:layout_width="18dp"
             android:layout_height="18dp"
-            android:layout_margin="2dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="3dp"
             android:scaleType="fitXY"
             android:src="@drawable/bg_widget_heatmap_cell" />
     </GridLayout>
