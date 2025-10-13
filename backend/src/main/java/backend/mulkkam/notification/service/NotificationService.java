@@ -139,6 +139,7 @@ public class NotificationService {
     private List<Member> extractMembers(List<ReminderSchedule> schedules) {
         return schedules.stream()
                 .map(ReminderSchedule::getMember)
+                .distinct()
                 .toList();
     }
 
