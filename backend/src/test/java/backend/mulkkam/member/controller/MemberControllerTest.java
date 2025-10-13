@@ -393,4 +393,59 @@ class MemberControllerTest extends ControllerTest {
             });
         }
     }
+
+    @DisplayName("빈 prefix로 검색 시 빈 결과를 반환한다.")
+    @Test
+    void success_whenPrefixIsBlank() throws Exception {
+        // given
+        Member member1 = MemberFixtureBuilder
+                .builder()
+                .memberNickname(new MemberNickname("테스트회원"))
+                .build();
+        memberRepository.save(member1);
+
+        // when
+        String json = mockMvc.perform(get("/members/search")
+                        .param("prefix", "")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // then
+        MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
+        assertSoftly(softly -> {
+            softly.assertThat(actual.memberIdNicknameResponses()).isEmpty();
+            softly.assertThat(actual.hasNext()).isFalse();
+        });
+    }
+
+    @DisplayName("페이지 크기보다 많은 결과가 있을 때 hasNext가 true이다.")
+    @Test
+    void success_whenHasNextPage() throws Exception {
+        // given
+        List<Member> members = List.of(
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname("테스트1")).build(),
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname("테스트2")).build(),
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname("테스트3")).build()
+        );
+        memberRepository.saveAll(members);
+
+        // when
+        String json = mockMvc.perform(get("/members/search")
+                        .param("prefix", "테스트")
+                        .param("page", "0")
+                        .param("size", "2")
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn().getResponse().getContentAsString();
+
+        // then
+        MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
+        assertSoftly(softly -> {
+            softly.assertThat(actual.memberIdNicknameResponses()).hasSize(2);
+            softly.assertThat(actual.hasNext()).isTrue();
+        });
+    }
 }
