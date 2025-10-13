@@ -20,19 +20,18 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.ReminderSchedule;
-import backend.mulkkam.notification.service.NotificationBatchService;
-import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
-import java.time.LocalTime;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
@@ -288,7 +287,6 @@ class NotificationServiceUnitTest {
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
-}
 
     @DisplayName("리마인더 알림을 처리할 때")
     @Nested
@@ -303,7 +301,7 @@ class NotificationServiceUnitTest {
             // given
             Member member1 = MemberFixtureBuilder.builder().buildWithId(1L);
             Member member2 = MemberFixtureBuilder.builder().buildWithId(2L);
-            
+
             ReminderSchedule schedule1 = ReminderScheduleFixtureBuilder
                     .withMember(member1)
                     .schedule(LocalTime.of(14, 0))
@@ -312,13 +310,13 @@ class NotificationServiceUnitTest {
                     .withMember(member2)
                     .schedule(LocalTime.of(14, 0))
                     .build();
-            
+
             List<ReminderSchedule> schedules = List.of(schedule1, schedule2);
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            Device device1 = new Device(member1, "device-1", "token-1");
-            Device device2 = new Device(member2, "device-2", "token-2");
-            
+            Device device1 = new Device("token-1", "device-1", member1);
+            Device device2 = new Device("token-2", "device-2", member2);
+
             when(deviceRepository.findAllByMember(member1)).thenReturn(List.of(device1));
             when(deviceRepository.findAllByMember(member2)).thenReturn(List.of(device2));
 
@@ -330,17 +328,17 @@ class NotificationServiceUnitTest {
                     argThat(notifications -> {
                         List<Notification> notificationList = (List<Notification>) notifications;
                         return notificationList.size() == 2 &&
-                                notificationList.stream().allMatch(n -> 
+                                notificationList.stream().allMatch(n ->
                                         n.getNotificationType() == NotificationType.REMIND &&
-                                        n.getCreatedAt().equals(now));
+                                                n.getCreatedAt().equals(now));
                     })
             );
 
             verify(applicationEventPublisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.tokens().containsAll(List.of("token-1", "token-2")) &&
-                            evt.tokens().size() == 2 &&
-                            evt.action() == Action.GO_HOME)
+                                    evt.tokens().size() == 2 &&
+                                    evt.action() == Action.GO_HOME)
             );
         }
 
@@ -355,7 +353,7 @@ class NotificationServiceUnitTest {
             notificationService.processReminderNotifications(emptySchedules, now);
 
             // then
-            verify(notificationRepository).saveAll(argThat(notifications -> 
+            verify(notificationRepository).saveAll(argThat(notifications ->
                     ((List<Notification>) notifications).isEmpty()));
             verify(applicationEventPublisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
@@ -372,7 +370,7 @@ class NotificationServiceUnitTest {
                     .withMember(member)
                     .schedule(LocalTime.of(14, 0))
                     .build();
-            
+
             List<ReminderSchedule> schedules = List.of(schedule);
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 

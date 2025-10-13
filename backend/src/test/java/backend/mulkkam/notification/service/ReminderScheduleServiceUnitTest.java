@@ -8,8 +8,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -21,7 +20,6 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.dto.request.CreateReminderScheduleRequest;
 import backend.mulkkam.notification.dto.request.ModifyReminderScheduleTimeRequest;
-import backend.mulkkam.notification.dto.response.ReadReminderScheduleResponse;
 import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
@@ -121,7 +119,7 @@ class ReminderScheduleServiceUnitTest {
 
         private final Long memberId = 1L;
         private final Member member = MemberFixtureBuilder.builder()
-                .reminderEnabled(true)
+                .isReminderEnabled(true)
                 .buildWithId(memberId);
         private final MemberDetails memberDetails = new MemberDetails(memberId);
 
@@ -164,7 +162,7 @@ class ReminderScheduleServiceUnitTest {
         void success_whenReminderDisabled() {
             // given
             Member disabledMember = MemberFixtureBuilder.builder()
-                    .reminderEnabled(false)
+                    .isReminderEnabled(false)
                     .buildWithId(memberId);
             
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(disabledMember));
@@ -269,8 +267,9 @@ class ReminderScheduleServiceUnitTest {
             
             when(reminderScheduleRepository.findByIdAndMemberId(scheduleId, memberId))
                     .thenReturn(Optional.of(schedule));
-            when(reminderScheduleRepository.flush())
-                    .thenThrow(new DataIntegrityViolationException("duplicate"));
+            doThrow(new DataIntegrityViolationException("duplicate"))
+                    .when(reminderScheduleRepository)
+                    .flush();
 
             // when & then
             assertThatThrownBy(() -> reminderScheduleService.modifyTime(memberDetails, request))
@@ -342,10 +341,10 @@ class ReminderScheduleServiceUnitTest {
             LocalTime scheduleTime = now.toLocalTime();
             
             Member member1 = MemberFixtureBuilder.builder()
-                    .reminderEnabled(true)
+                    .isReminderEnabled(true)
                     .buildWithId(1L);
             Member member2 = MemberFixtureBuilder.builder()
-                    .reminderEnabled(true)
+                    .isReminderEnabled(true)
                     .buildWithId(2L);
             
             ReminderSchedule schedule1 = ReminderScheduleFixtureBuilder

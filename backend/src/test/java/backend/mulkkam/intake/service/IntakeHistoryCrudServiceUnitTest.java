@@ -127,11 +127,11 @@ class IntakeHistoryCrudServiceUnitTest {
             // given
             IntakeHistory history1 = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(LocalDate.of(2025, 1, 15))
+                    .date(LocalDate.of(2025, 1, 15))
                     .build();
             IntakeHistory history2 = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(LocalDate.of(2025, 1, 16))
+                    .date(LocalDate.of(2025, 1, 16))
                     .build();
             List<IntakeHistory> histories = List.of(history1, history2);
 
@@ -172,11 +172,11 @@ class IntakeHistoryCrudServiceUnitTest {
 
             IntakeHistory history1 = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(LocalDate.of(2025, 1, 10))
+                    .date(LocalDate.of(2025, 1, 10))
                     .build();
             IntakeHistory history2 = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(LocalDate.of(2025, 1, 11))
+                    .date(LocalDate.of(2025, 1, 11))
                     .build();
             List<IntakeHistory> histories = List.of(history1, history2);
 
@@ -226,7 +226,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate date = LocalDate.of(2025, 1, 15);
             IntakeHistory history = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(date)
+                    .date(date)
                     .build();
 
             when(intakeHistoryRepository.findByMemberAndHistoryDate(member, date))
@@ -265,7 +265,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate date = LocalDate.of(2025, 1, 15);
             IntakeHistory existingHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(date)
+                    .date(date)
                     .build();
 
             when(intakeHistoryRepository.findByMemberAndHistoryDate(member, date))
@@ -286,7 +286,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate date = LocalDate.of(2025, 1, 15);
             IntakeHistory newHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(date)
+                    .date(date)
                     .streak(1)
                     .build();
 
@@ -315,7 +315,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate date = LocalDate.of(2025, 1, 15);
             IntakeHistory previousHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(date.minusDays(1))
+                    .date(date.minusDays(1))
                     .streak(3)
                     .build();
 
@@ -346,7 +346,7 @@ class IntakeHistoryCrudServiceUnitTest {
             // given
             IntakeHistory history = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetAmount(new TargetAmount(2000))
+                    .targetIntakeAmount(new TargetAmount(2000))
                     .build();
 
             IntakeHistoryDetail detail1 = IntakeHistoryDetailFixtureBuilder
@@ -375,7 +375,7 @@ class IntakeHistoryCrudServiceUnitTest {
             // given
             IntakeHistory history = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .targetAmount(new TargetAmount(2000))
+                    .targetIntakeAmount(new TargetAmount(2000))
                     .build();
 
             when(intakeHistoryDetailRepository.findByIntakeHistory(history))
@@ -495,7 +495,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate today = LocalDate.now();
             IntakeHistory history = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(today)
+                    .date(today)
                     .build();
             IntakeHistoryDetail detail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(history)
@@ -543,7 +543,7 @@ class IntakeHistoryCrudServiceUnitTest {
             LocalDate yesterday = LocalDate.now().minusDays(1);
             IntakeHistory history = IntakeHistoryFixtureBuilder
                     .withMember(member)
-                    .historyDate(yesterday)
+                    .date(yesterday)
                     .build();
             IntakeHistoryDetail detail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(history)
