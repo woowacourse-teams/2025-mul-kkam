@@ -136,12 +136,6 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private List<String> extractAllTokens(List<Member> members) {
-        return deviceRepository.findAllByMemberIn(members).stream()
-                .map(Device::getToken)
-                .toList();
-    }
-
     private List<Member> extractMembers(List<ReminderSchedule> schedules) {
         return schedules.stream()
                 .map(ReminderSchedule::getMember)
@@ -220,12 +214,21 @@ public class NotificationService {
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
-        List<String> tokens = devicesByMember.stream()
-                .map(Device::getToken)
-                .toList();
+        List<String> tokens = extractTokensFromDevices(devicesByMember);
         SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
                 tokens);
         publisher.publishEvent(sendMessageByFcmTokensRequest);
+    }
+
+    private List<String> extractAllTokens(List<Member> members) {
+        List<Device> allByMemberIn = deviceRepository.findAllByMemberIn(members);
+        return extractTokensFromDevices(allByMemberIn);
+    }
+
+    private List<String> extractTokensFromDevices(List<Device> devices) {
+        return devices.stream()
+                .map(Device::getToken)
+                .toList();
     }
 
     private Notification getNotification(Long id) {
