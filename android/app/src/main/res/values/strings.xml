@@ -135,6 +135,16 @@
     <string name="setting_account_info_confirm">확인</string>
     <string name="setting_account_info_cancel">취소</string>
 
+    <string name="setting_reminder_toolbar_title">리마인드 알람 설정</string>
+    <string name="setting_reminder_toolbar_back_btn_description">리마인드 화면 뒤로가기 버튼</string>
+    <string name="setting_reminder_hours_left">%d시간 남음</string>
+    <string name="setting_reminder_minutes_left">%d분 남음</string>
+    <string name="setting_reminder_switch_title">알람 ON/OFF</string>
+    <string name="setting_reminder_bottom_sheet_title">알람 설정</string>
+    <string name="setting_reminder_bottom_sheet_close_btn_description">알람 설정창 닫기 버튼</string>
+    <string name="setting_reminder_bottom_sheet_complete">완료</string>
+    <string name="setting_reminder_delete_description">알람 삭제 아이콘</string>
+
     <string name="login_kakao">카카오 계정으로 로그인</string>
 
     <string name="onboarding_next_step">다음</string>

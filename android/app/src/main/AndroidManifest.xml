@@ -133,6 +133,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.settingreminder.SettingReminderActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
