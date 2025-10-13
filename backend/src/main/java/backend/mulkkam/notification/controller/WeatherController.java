@@ -27,7 +27,7 @@ public class WeatherController { // 백엔드 테스트용 controller (삭제 �
     @Hidden
     @PostMapping("/not-weather/remind")
     public ResponseEntity<Void> create2() {
-        reminderScheduleService.notifyReminder();
+        reminderScheduleService.scheduleReminderNotification();
         return ResponseEntity.ok().build();
     }
 }

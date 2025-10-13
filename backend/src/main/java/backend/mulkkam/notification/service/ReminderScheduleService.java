@@ -33,12 +33,16 @@ public class ReminderScheduleService {
     private final NotificationService notificationService;
 
     @Scheduled(cron = MINUTELY_CRON)
-    public void notifyReminder() {
+    public void scheduleReminderNotification() {
         LocalDateTime now = LocalDateTime.now();
+        executeReminderNotification(now);
+    }
+
+    public void executeReminderNotification(LocalDateTime now) {
         List<ReminderSchedule> schedules = reminderScheduleRepository.findAllActiveByHourAndMinuteWithMember(now.toLocalTime());
 
         if (schedules.isEmpty()) {
-            return ;
+            return;
         }
 
         notificationService.processReminderNotifications(schedules, now);
