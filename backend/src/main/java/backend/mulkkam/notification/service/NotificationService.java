@@ -26,7 +26,6 @@ import backend.mulkkam.notification.repository.NotificationRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -138,14 +137,9 @@ public class NotificationService {
     }
 
     private List<String> extractAllTokens(List<Member> members) {
-        return members.stream()
-                .flatMap(this::getDeviceTokens)
+        return deviceRepository.findAllByMemberIn(members).stream()
+                .map(Device::getToken)
                 .toList();
-    }
-
-    private Stream<String> getDeviceTokens(Member member) {
-        return deviceRepository.findAllByMember(member).stream()
-                .map(Device::getToken);
     }
 
     private List<Member> extractMembers(List<ReminderSchedule> schedules) {
