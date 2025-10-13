@@ -19,6 +19,10 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.ReminderSchedule;
+import backend.mulkkam.notification.service.NotificationBatchService;
+import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
+import java.time.LocalTime;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
@@ -282,6 +286,113 @@ class NotificationServiceUnitTest {
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);
+        }
+    }
+}
+
+    @DisplayName("리마인더 알림을 처리할 때")
+    @Nested
+    class ProcessReminderNotifications {
+
+        @Mock
+        private NotificationBatchService notificationBatchService;
+
+        @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
+        @Test
+        void success_whenValidSchedules() {
+            // given
+            Member member1 = MemberFixtureBuilder.builder().buildWithId(1L);
+            Member member2 = MemberFixtureBuilder.builder().buildWithId(2L);
+            
+            ReminderSchedule schedule1 = ReminderScheduleFixtureBuilder
+                    .withMember(member1)
+                    .schedule(LocalTime.of(14, 0))
+                    .build();
+            ReminderSchedule schedule2 = ReminderScheduleFixtureBuilder
+                    .withMember(member2)
+                    .schedule(LocalTime.of(14, 0))
+                    .build();
+            
+            List<ReminderSchedule> schedules = List.of(schedule1, schedule2);
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            Device device1 = new Device(member1, "device-1", "token-1");
+            Device device2 = new Device(member2, "device-2", "token-2");
+            
+            when(deviceRepository.findAllByMember(member1)).thenReturn(List.of(device1));
+            when(deviceRepository.findAllByMember(member2)).thenReturn(List.of(device2));
+
+            // when
+            notificationService.processReminderNotifications(schedules, now);
+
+            // then
+            verify(notificationRepository).saveAll(
+                    argThat(notifications -> {
+                        List<Notification> notificationList = (List<Notification>) notifications;
+                        return notificationList.size() == 2 &&
+                                notificationList.stream().allMatch(n -> 
+                                        n.getNotificationType() == NotificationType.REMIND &&
+                                        n.getCreatedAt().equals(now));
+                    })
+            );
+
+            verify(applicationEventPublisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest evt) ->
+                            evt.tokens().containsAll(List.of("token-1", "token-2")) &&
+                            evt.tokens().size() == 2 &&
+                            evt.action() == Action.GO_HOME)
+            );
+        }
+
+        @DisplayName("스케줄이 비어있으면 알림을 저장하지 않는다")
+        @Test
+        void success_whenEmptySchedules() {
+            // given
+            List<ReminderSchedule> emptySchedules = List.of();
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            // when
+            notificationService.processReminderNotifications(emptySchedules, now);
+
+            // then
+            verify(notificationRepository).saveAll(argThat(notifications -> 
+                    ((List<Notification>) notifications).isEmpty()));
+            verify(applicationEventPublisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest evt) ->
+                            evt.tokens().isEmpty())
+            );
+        }
+
+        @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
+        @Test
+        void success_whenMemberHasNoDevices() {
+            // given
+            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
+            ReminderSchedule schedule = ReminderScheduleFixtureBuilder
+                    .withMember(member)
+                    .schedule(LocalTime.of(14, 0))
+                    .build();
+            
+            List<ReminderSchedule> schedules = List.of(schedule);
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            when(deviceRepository.findAllByMember(member)).thenReturn(List.of());
+
+            // when
+            notificationService.processReminderNotifications(schedules, now);
+
+            // then
+            verify(notificationRepository).saveAll(
+                    argThat(notifications -> {
+                        List<Notification> notificationList = (List<Notification>) notifications;
+                        return notificationList.size() == 1;
+                    })
+            );
+
+            verify(applicationEventPublisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest evt) ->
+                            evt.tokens().isEmpty())
+            );
         }
     }
 }
