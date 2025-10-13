@@ -317,8 +317,8 @@ class NotificationServiceUnitTest {
             Device device1 = new Device("token-1", "device-1", member1);
             Device device2 = new Device("token-2", "device-2", member2);
 
-            when(deviceRepository.findAllByMember(member1)).thenReturn(List.of(device1));
-            when(deviceRepository.findAllByMember(member2)).thenReturn(List.of(device2));
+            when(deviceRepository.findAllByMemberIn(List.of(member1, member2)))
+                    .thenReturn(List.of(device1, device2));
 
             // when
             notificationService.processReminderNotifications(schedules, now);
@@ -374,7 +374,7 @@ class NotificationServiceUnitTest {
             List<ReminderSchedule> schedules = List.of(schedule);
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            when(deviceRepository.findAllByMember(member)).thenReturn(List.of());
+            when(deviceRepository.findAllByMemberIn(List.of(member))).thenReturn(List.of());
 
             // when
             notificationService.processReminderNotifications(schedules, now);
