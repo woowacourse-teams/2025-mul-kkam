@@ -27,6 +27,7 @@ import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.AchievementHeatmapWidget
 import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
 
@@ -193,6 +194,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         super.onStop()
         IntakeWidget.refresh(this)
         ProgressWidget.refresh(this)
+        AchievementHeatmapWidget.refresh(this)
     }
 
     companion object {

@@ -25,6 +25,7 @@
     <string name="notification_app_bar_navigation_icon_description">뒤로가기</string>
     <string name="notification_empty_description">텅 빈 알림 화면 이미지</string>
     <string name="notification_delete_description">알림 삭제 아이콘</string>
+    <string name="notification_load_more_button">더 로드하기</string>
 
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
@@ -244,4 +245,8 @@
     <string name="coffee_encyclopedia_source">출처 : https://www.coffeeandhealth.org/health/wellbeing/fluid-balance/coffee-caffeine-hydration-in-the-general-population</string>
 
     <string name="health_connect_install_alert">헬스 서비스가 설치되어 있지 않아요. 신체 정보 설정에서 헬스 커넥트 설정을 완료해주세요.</string>
+
+    <string name="achievement_heatmap_widget_label">일일 달성도 위젯</string>
+    <string name="intake_widget_label">마시기 위젯</string>
+    <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
 </resources>

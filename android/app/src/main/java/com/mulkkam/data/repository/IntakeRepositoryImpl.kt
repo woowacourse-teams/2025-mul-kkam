@@ -10,6 +10,7 @@ import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.intake.AchievementRate
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeType
@@ -31,6 +32,17 @@ class IntakeRepositoryImpl(
             onSuccess = { intakeHistorySummary ->
                 MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
             },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun getAchievementRates(
+        from: LocalDate,
+        to: LocalDate,
+    ): MulKkamResult<List<AchievementRate>> {
+        val result = intakeService.getAchievementRates(dateToString(from), dateToString(to))
+        return result.fold(
+            onSuccess = { response -> MulKkamResult(data = response.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
