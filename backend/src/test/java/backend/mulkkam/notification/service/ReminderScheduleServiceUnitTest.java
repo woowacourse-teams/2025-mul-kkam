@@ -7,6 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -388,10 +389,7 @@ class ReminderScheduleServiceUnitTest {
             reminderScheduleService.executeReminderNotification(now);
 
             // then
-            verify(notificationService, never()).processReminderNotifications(
-                    argThat(List::isEmpty),
-                    any(LocalDateTime.class)
-            );
+            verify(notificationService, never()).processReminderNotifications(anyList(), any());
         }
     }
 }

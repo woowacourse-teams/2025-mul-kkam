@@ -351,12 +351,8 @@ class NotificationServiceUnitTest {
             notificationService.processReminderNotifications(emptySchedules, now);
 
             // then
-            verify(notificationRepository, never()).saveAll(argThat(notifications ->
-                    ((List<Notification>) notifications).isEmpty()));
-            verify(applicationEventPublisher, never()).publishEvent(
-                    argThat((SendMessageByFcmTokensRequest evt) ->
-                            evt.tokens().isEmpty())
-            );
+            verify(notificationRepository, never()).saveAll(any());
+            verify(applicationEventPublisher, never()).publishEvent(any());
         }
 
         @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
