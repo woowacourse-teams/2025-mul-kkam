@@ -331,7 +331,7 @@ class ReminderScheduleServiceUnitTest {
 
     @DisplayName("정기적으로 리마인더 알림을 전송할 때")
     @Nested
-    class NotifyReminder {
+    class ScheduleReminderNotification {
 
         @DisplayName("현재 시각에 해당하는 활성화된 스케줄의 멤버에게 알림을 전송한다")
         @Test
@@ -362,7 +362,7 @@ class ReminderScheduleServiceUnitTest {
                     .thenReturn(schedules);
 
             // when
-            reminderScheduleService.notifyReminder();
+            reminderScheduleService.executeReminderNotification(now);
 
             // then
             verify(notificationService).processReminderNotifications(
@@ -384,10 +384,10 @@ class ReminderScheduleServiceUnitTest {
                     .thenReturn(List.of());
 
             // when
-            reminderScheduleService.notifyReminder();
+            reminderScheduleService.executeReminderNotification(now);
 
             // then
-            verify(notificationService).processReminderNotifications(
+            verify(notificationService, never()).processReminderNotifications(
                     argThat(List::isEmpty),
                     any(LocalDateTime.class)
             );
