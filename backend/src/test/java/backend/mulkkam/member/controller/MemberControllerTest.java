@@ -35,6 +35,7 @@ import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedReq
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
@@ -43,6 +44,7 @@ import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.List;
 import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -344,6 +346,50 @@ class MemberControllerTest extends ControllerTest {
 
             assertSoftly(softly -> {
                 softly.assertThat(actual.getCode()).isEqualTo(DUPLICATE_MEMBER_NICKNAME.name());
+            });
+        }
+    }
+
+    @DisplayName("회원 닉네임을 검색할 때에")
+    @Nested
+    class Search {
+
+        @DisplayName("접두사에 맞는 모든 멤버를 가져온다.")
+        @Test
+        void success_whenBringAllNicknameMatchPrefix() throws Exception {
+            // given
+
+            Member member1 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("돈까스먹는환노"))
+                    .build();
+            Member member2 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("돈까스먹는공백"))
+                    .build();
+            Member member3 = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("치즈돈까스먹는체체"))
+                    .build();
+            memberRepository.saveAll(List.of(member1, member2, member3));
+
+            // when
+            String json = mockMvc.perform(get("/members/search")
+                            .param("prefix", "돈까스")
+                            .param("page", "0")
+                            .param("size", "10")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.memberIdNicknameResponses()).hasSize(2);
+                softly.assertThat(actual.memberIdNicknameResponses().getFirst().memberNickname()).isEqualTo("돈까스먹는공백");
+                softly.assertThat(actual.memberIdNicknameResponses().get(1).memberNickname()).isEqualTo("돈까스먹는환노");
+                softly.assertThat(actual.hasNext()).isFalse();
             });
         }
     }

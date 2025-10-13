@@ -16,13 +16,16 @@ import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.service.IntakeHistoryCrudService;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.MemberIdNicknameProjection;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
+import backend.mulkkam.member.dto.response.MemberIdNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -33,6 +36,8 @@ import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -174,6 +179,26 @@ public class MemberService {
     public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new NotificationSettingsResponse(member);
+    }
+
+    public MemberSearchResponse searchMember(
+            String prefix,
+            int page,
+            int size
+    ) {
+        if (prefix.isBlank()) {
+            return new MemberSearchResponse(List.of(), false);
+        }
+        Slice<MemberIdNicknameProjection> memberIdNicknames = memberRepository.findByMemberNicknameValueStartingWithOrderByMemberNicknameValueAsc
+                (
+                        prefix,
+                        PageRequest.of(page, size)
+                );
+        List<MemberIdNicknameResponse> memberIdNicknameResponses = memberIdNicknames.stream()
+                .map(memberIdNicknameProjection -> new MemberIdNicknameResponse(memberIdNicknameProjection.getId(),
+                        memberIdNicknameProjection.getMemberNicknameValue()))
+                .toList();
+        return new MemberSearchResponse(memberIdNicknameResponses, memberIdNicknames.hasNext());
     }
 
     private Member getMember(Long id) {

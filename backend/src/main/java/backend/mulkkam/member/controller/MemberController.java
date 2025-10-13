@@ -9,6 +9,7 @@ import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
@@ -196,8 +197,27 @@ public class MemberController {
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
     @ApiResponse(responseCode = "200", description = "탈퇴 성공")
     @DeleteMapping
-    public ResponseEntity<Void> delete(MemberDetails memberDetails) {
+    public ResponseEntity<Void> delete(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
         memberService.delete(memberDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 닉네임 검색", description = "사용자 닉네임을 검색합니다.")
+    @ApiResponse(responseCode = "200", description = "검색 성공")
+    @GetMapping("/search")
+    public ResponseEntity<MemberSearchResponse> search(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "검색 할 내용", required = true, example = "돈까스먹는환")
+            @RequestParam String prefix,
+            @Parameter(description = "page 값", required = true, example = "4")
+            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "size 값", required = true, example = "5")
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok().body(memberService.searchMember(prefix, page, size));
     }
 }

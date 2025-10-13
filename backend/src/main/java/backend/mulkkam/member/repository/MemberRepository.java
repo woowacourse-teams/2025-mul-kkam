@@ -1,6 +1,7 @@
 package backend.mulkkam.member.repository;
 
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.MemberIdNicknameProjection;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -28,5 +29,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<Long> findIdsAfter(
             @Param("lastId") Long lastId,
             Pageable pageable
+    );
+
+    Slice<MemberIdNicknameProjection> findByMemberNicknameValueStartingWithOrderByMemberNicknameValueAsc(
+            String prefix, Pageable pageable
     );
 }
