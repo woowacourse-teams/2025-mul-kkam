@@ -6,6 +6,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -353,9 +354,9 @@ class NotificationServiceUnitTest {
             notificationService.processReminderNotifications(emptySchedules, now);
 
             // then
-            verify(notificationRepository).saveAll(argThat(notifications ->
+            verify(notificationRepository, never()).saveAll(argThat(notifications ->
                     ((List<Notification>) notifications).isEmpty()));
-            verify(applicationEventPublisher).publishEvent(
+            verify(applicationEventPublisher, never()).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.tokens().isEmpty())
             );

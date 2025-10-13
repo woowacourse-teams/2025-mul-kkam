@@ -50,6 +50,10 @@ public class NotificationService {
             List<ReminderSchedule> schedules,
             LocalDateTime now
     ) {
+        if (schedules.isEmpty()) {
+            return ;
+        }
+
         NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
         List<Member> members = extractMembers(schedules);
 
