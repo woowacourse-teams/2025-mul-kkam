@@ -28,8 +28,8 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
                 SELECT r
                 FROM ReminderSchedule r
                 JOIN FETCH r.member
-                WHERE HOUR(r.schedule) = HOUR(:now)
-                  AND MINUTE(r.schedule) = MINUTE(:now)
+                WHERE HOUR(r.schedule) = HOUR(:schedule)
+                  AND MINUTE(r.schedule) = MINUTE(:schedule)
                   AND r.member.isReminderEnabled = true
             """)
     List<ReminderSchedule> findAllActiveByHourAndMinuteWithMember(@Param("schedule") LocalTime schedule);
