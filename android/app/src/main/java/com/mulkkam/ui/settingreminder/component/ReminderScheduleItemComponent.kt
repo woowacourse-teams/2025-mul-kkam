@@ -1,5 +1,6 @@
 package com.mulkkam.ui.settingreminder.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import java.time.Duration
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 private const val HOURS_PER_DAY: Int = 24
 private const val NO_HOUR_DIFF: Long = 0
@@ -74,9 +76,9 @@ private fun formatRemainingTime(
 ): String {
     val diffMinutes =
         Duration
-            .between(currentTime, reminderTime)
+            .between(currentTime.truncatedTo(ChronoUnit.MINUTES), reminderTime)
             .toMinutes()
-            .let { if (it <= 0) it + HOURS_PER_DAY * MINUTES_PER_HOUR else it }
+            .let { if (it < 0) it + HOURS_PER_DAY * MINUTES_PER_HOUR else it }
 
     val (hours, minutes) = diffMinutes / MINUTES_PER_HOUR to diffMinutes % MINUTES_PER_HOUR
 
