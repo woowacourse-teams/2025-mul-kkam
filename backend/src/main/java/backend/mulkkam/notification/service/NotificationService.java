@@ -25,7 +25,6 @@ import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -82,9 +81,7 @@ public class NotificationService {
             return;
         }
 
-        Lists.partition(allTokens, FCM_BATCH_SIZE).forEach(tokens -> {
-            publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
-        });
+        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(allTokens));
     }
 
     @NotNull

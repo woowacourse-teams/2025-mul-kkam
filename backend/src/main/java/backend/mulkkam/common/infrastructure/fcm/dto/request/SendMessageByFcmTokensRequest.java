@@ -6,7 +6,7 @@ import java.util.List;
 public record SendMessageByFcmTokensRequest(
         String title,
         String body,
-        List<String> tokens,
+        List<String> allTokens,
         Action action
 ) {
 

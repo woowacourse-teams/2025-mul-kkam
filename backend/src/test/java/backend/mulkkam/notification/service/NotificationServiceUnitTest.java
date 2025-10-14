@@ -273,7 +273,7 @@ class NotificationServiceUnitTest {
                     argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.title().equals("title")
                                     && evt.body().equals("body")
-                                    && evt.tokens().equals(List.of("token-1"))
+                                    && evt.allTokens().equals(List.of("token-1"))
                                     && evt.action() == Action.GO_HOME)
             );
         }
@@ -346,8 +346,8 @@ class NotificationServiceUnitTest {
             // 2. FCM 이벤트 발행 검증
             verify(applicationEventPublisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
-                            evt.tokens().containsAll(List.of("token-1", "token-2")) &&
-                                    evt.tokens().size() == 2
+                            evt.allTokens().containsAll(List.of("token-1", "token-2")) &&
+                                    evt.allTokens().size() == 2
                     )
             );
         }

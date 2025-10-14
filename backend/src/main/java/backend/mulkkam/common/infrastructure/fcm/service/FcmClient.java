@@ -78,7 +78,7 @@ public class FcmClient {
                             .setTitle(sendMessageByFcmTokensRequest.title())
                             .setBody(sendMessageByFcmTokensRequest.body())
                             .build())
-                    .addAllTokens(sendMessageByFcmTokensRequest.tokens())
+                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
                     .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
                     .build());
             log.warn("multicast batchResponse : {}", batchResponse.toString());

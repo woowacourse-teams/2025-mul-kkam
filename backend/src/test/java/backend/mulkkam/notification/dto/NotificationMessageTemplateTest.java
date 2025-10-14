@@ -181,7 +181,7 @@ class NotificationMessageTemplateTest {
             assertSoftly(softly -> {
                 softly.assertThat(request.title()).isEqualTo("물 마실 시간!");
                 softly.assertThat(request.body()).isEqualTo("지금 물 한 잔 어떠세요?");
-                softly.assertThat(request.tokens()).containsExactly("token1", "token2", "token3");
+                softly.assertThat(request.allTokens()).containsExactly("token1", "token2", "token3");
                 softly.assertThat(request.action()).isEqualTo(Action.GO_HOME);
             });
         }
@@ -202,7 +202,7 @@ class NotificationMessageTemplateTest {
             SendMessageByFcmTokensRequest request = template.toSendMessageByFcmTokensRequest(emptyTokens);
 
             // then
-            assertThat(request.tokens()).isEmpty();
+            assertThat(request.allTokens()).isEmpty();
         }
     }
 }

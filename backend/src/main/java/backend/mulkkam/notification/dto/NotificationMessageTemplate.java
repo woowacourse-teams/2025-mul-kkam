@@ -39,11 +39,11 @@ public record NotificationMessageTemplate(
         );
     }
 
-    public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(List<String> tokens) {
+    public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(List<String> allTokens) {
         return new SendMessageByFcmTokensRequest(
                 title,
                 body,
-                tokens,
+                allTokens,
                 action
         );
     }
