@@ -81,7 +81,7 @@ class FriendServiceIntegrationTest extends ServiceIntegrationTest {
             friendRepository.save(friend);
 
             // when
-            friendService.delete(addressee.getId(), new MemberDetails(requester.getId()));
+            friendService.delete(requester.getId(), new MemberDetails(addressee.getId()));
 
             // then
             assertThat(friendRepository.findAll()).isEmpty();
