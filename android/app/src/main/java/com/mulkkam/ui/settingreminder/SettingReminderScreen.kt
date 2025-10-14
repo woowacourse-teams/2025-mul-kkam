@@ -1,17 +1,27 @@
 package com.mulkkam.ui.settingreminder
 
+import android.content.Context
+import android.view.View
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.R
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
@@ -25,12 +35,20 @@ fun SettingReminderScreen(
     navigateToBack: () -> Unit,
     viewModel: SettingReminderViewModel = viewModel(),
 ) {
+    val context = LocalContext.current
+    val view = LocalView.current
     val modalBottomSheetState = rememberModalBottomSheetState()
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
     val reminderUpdateUiState by viewModel.reminderUpdateUiState.collectAsStateWithLifecycle()
 
     val showBottomSheet = reminderUpdateUiState !is ReminderUpdateUiState.Idle
+
+    LaunchedEffect(Unit) {
+        viewModel.onReminderUpdated.collect { state ->
+            handleReminderUpdateAction(state, view, context)
+        }
+    }
 
     Scaffold(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
@@ -62,6 +80,35 @@ fun SettingReminderScreen(
                 currentTime = initialTime,
             )
         }
+    }
+}
+
+private fun handleReminderUpdateAction(
+    state: MulKkamUiState<Unit>,
+    view: View,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Failure -> {
+            if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
+                CustomSnackBar
+                    .make(
+                        view,
+                        getString(context, R.string.setting_reminder_duplicated_schedule),
+                        R.drawable.ic_info_circle,
+                    ).show()
+            } else {
+                CustomSnackBar
+                    .make(
+                        view,
+                        getString(context, R.string.network_check_error),
+                        R.drawable.ic_info_circle,
+                    ).show()
+            }
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Success<Unit> -> Unit
     }
 }
 

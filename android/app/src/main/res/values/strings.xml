@@ -144,6 +144,7 @@
     <string name="setting_reminder_bottom_sheet_close_btn_description">알람 설정창 닫기 버튼</string>
     <string name="setting_reminder_bottom_sheet_complete">완료</string>
     <string name="setting_reminder_delete_description">알람 삭제 아이콘</string>
+    <string name="setting_reminder_duplicated_schedule">이미 존재하는 알람이에요</string>
 
     <string name="login_kakao">카카오 계정으로 로그인</string>
 
