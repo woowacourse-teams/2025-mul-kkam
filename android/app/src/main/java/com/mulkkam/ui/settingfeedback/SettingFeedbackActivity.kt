@@ -6,6 +6,8 @@ import android.os.Bundle
 import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingFeedbackBinding
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -29,6 +31,7 @@ class SettingFeedbackActivity : BindingActivity<ActivitySettingFeedbackBinding>(
 
     private fun initClickListeners() {
         binding.tvEmail.setSingleClickListener {
+            mulKkamLogger.info(LogEvent.USER_ACTION, "Opened feedback email link")
             val intent =
                 Intent(
                     Intent.ACTION_VIEW,

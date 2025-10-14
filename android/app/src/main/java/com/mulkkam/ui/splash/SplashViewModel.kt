@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -28,11 +30,13 @@ class SplashViewModel : ViewModel() {
                 _authUiState.value = MulKkamUiState.Loading
                 tokenRepository.getAccessToken().getOrError()
             }.onSuccess { accessToken ->
+                mulKkamLogger.info(LogEvent.SPLASH, "Access token retrieved: ${accessToken != null}")
                 when (accessToken.isNullOrBlank().not()) {
                     true -> updateAuthStateWithOnboarding()
                     false -> _authUiState.value = MulKkamUiState.Failure(MulKkamError.AccountError.InvalidToken)
                 }
             }.onFailure {
+                mulKkamLogger.error(LogEvent.SPLASH, "Failed to retrieve access token ${it.message}")
                 _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }

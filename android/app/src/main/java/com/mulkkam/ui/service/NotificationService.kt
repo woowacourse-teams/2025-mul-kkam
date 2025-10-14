@@ -18,6 +18,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
+import kotlin.jvm.java
 
 class NotificationService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
@@ -26,9 +27,11 @@ class NotificationService : FirebaseMessagingService() {
             runCatching {
                 tokenRepository.saveFcmToken(token)
                 devicesRepository.postDevice(token)
+            }.onSuccess {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "FCM Token Saved")
             }.onFailure {
                 mulKkamLogger.error(
-                    LogEvent.ERROR,
+                    LogEvent.PUSH_NOTIFICATION,
                     "FCM Token Save Failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
                 )
                 devicesPreference.saveNotificationGranted(!devicesPreference.isNotificationGranted)
@@ -60,6 +63,11 @@ class NotificationService : FirebaseMessagingService() {
     ) {
         val notificationId = UUID.randomUUID().hashCode() xor System.currentTimeMillis().hashCode()
         val pendingIntent = createPendingIntent(action, notificationId)
+
+        mulKkamLogger.info(
+            LogEvent.PUSH_NOTIFICATION,
+            "Displaying notification (id=$notificationId) with action=$action",
+        )
 
         val notification =
             NotificationCompat

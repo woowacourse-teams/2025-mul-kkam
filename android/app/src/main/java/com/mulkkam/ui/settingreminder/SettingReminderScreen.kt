@@ -41,7 +41,7 @@ fun SettingReminderScreen(
             reminders = reminders.toSuccessDataOrNull() ?: return@Scaffold,
             updateBottomSheetMode = { viewModel.updateReminderUpdateUiState(it) },
             updateReminderEnabled = { viewModel.updateReminderEnabled() },
-            removeReminder = { viewModel.removeReminder(it) },
+            removeReminder = { viewModel.deleteReminder(it) },
             modifier = Modifier.padding(innerPadding),
         )
 

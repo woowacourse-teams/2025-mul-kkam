@@ -2,10 +2,10 @@ package com.mulkkam.ui.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
-import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
@@ -13,6 +13,7 @@ import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.IntakeInfo
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -102,13 +103,14 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntakeByCup(cupId: Long) {
         val cups = cupsUiState.value.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
-        addWaterIntakeByCup(cup)
-    }
 
-    private fun addWaterIntakeByCup(cup: Cup) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(
+                    LogEvent.USER_ACTION,
+                    "Posting cup intake for cupId=${cup.id}",
+                )
                 _drinkUiState.value = MulKkamUiState.Loading
                 intakeRepository
                     .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
@@ -159,6 +161,10 @@ class HomeViewModel : ViewModel() {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(
+                    LogEvent.USER_ACTION,
+                    "Posting manual intake type=${intakeType.name}",
+                )
                 _drinkUiState.value = MulKkamUiState.Loading
                 intakeRepository
                     .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
