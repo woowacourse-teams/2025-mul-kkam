@@ -1,5 +1,6 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
 
@@ -9,7 +10,6 @@ import backend.mulkkam.friend.domain.Friend;
 import backend.mulkkam.friend.domain.FriendRequest;
 import backend.mulkkam.friend.repository.FriendRepository;
 import backend.mulkkam.friend.repository.FriendRequestRepository;
-import backend.mulkkam.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,6 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final FriendRequestRepository friendRequestRepository;
-    private final MemberRepository memberRepository;
 
     @Transactional
     public void acceptFriendRequest(
@@ -28,6 +27,13 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
+
+        if (friendRepository.existsFriendByRequesterIdAndAddresseeId(
+                friendRequest.getRequesterId(),
+                friendRequest.getAddresseeId()
+        )) {
+            throw new CommonException(DUPLICATED_FRIEND);
+        }
 
         Friend friend = new Friend(friendRequest);
         friendRepository.save(friend);
@@ -40,7 +46,6 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
-
         friendRequestRepository.delete(friendRequest);
     }
 

@@ -1,5 +1,6 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -219,7 +220,7 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
             friendRequestRepository.save(friendRequest);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendService.acceptFriendRequest(
                     friendRequest.getId(),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
@@ -237,11 +238,46 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
                     new MemberDetails(addressee.getId()));
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendService.acceptFriendRequest(
                     friendRequest.getId(),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
+        }
+
+        @DisplayName("요청자와 수락자가 동일한 친구 관계를 중복 등록하려고 하는 경우 예외가 발생한다")
+        @Test
+        void error_duplicatedRequesterAndAddressee() {
+            // given
+            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
+            friendRequestRepository.save(friendRequest);
+            Friend friend = new Friend(friendRequest);
+            friendRepository.save(friend);
+
+            // when & then
+            assertThatThrownBy(() -> friendService.acceptFriendRequest(
+                    friendRequest.getId(),
+                    new MemberDetails(addressee.getId())))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_FRIEND.name());
+        }
+
+        @DisplayName("수락자와 요청자가 반대인 친구 관계를 중복 등록하려고 하는 경우 예외가 발생한다")
+        @Test
+        void error_duplicatedFlippedRequesterAndAddressee() {
+            // given
+            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
+            friendRequestRepository.save(friendRequest);
+
+            Friend alreadySavedFriend = new Friend(addressee.getId(), requester.getId());
+            friendRepository.save(alreadySavedFriend);
+
+            // when & then
+            assertThatThrownBy(() -> friendService.acceptFriendRequest(
+                    friendRequest.getId(),
+                    new MemberDetails(addressee.getId())))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(DUPLICATED_FRIEND.name());
         }
     }
 }
