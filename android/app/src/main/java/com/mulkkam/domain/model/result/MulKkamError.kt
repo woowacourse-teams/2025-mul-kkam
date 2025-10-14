@@ -91,6 +91,12 @@ sealed class MulKkamError : Throwable() {
         }
     }
 
+    sealed class ReminderError : MulKkamError() {
+        data object DuplicatedReminderSchedule : ReminderError() {
+            private fun readResolve(): Any = DuplicatedReminderSchedule
+        }
+    }
+
     sealed class NotFoundError : MulKkamError() {
         data object Member : NotFoundError() {
             private fun readResolve(): Any = Member
