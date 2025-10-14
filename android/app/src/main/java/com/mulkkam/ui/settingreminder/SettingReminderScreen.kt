@@ -108,7 +108,7 @@ private fun handleReminderUpdateAction(
         }
 
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
-        is MulKkamUiState.Success<*> -> Unit
+        is MulKkamUiState.Success<Unit> -> Unit
     }
 }
 
