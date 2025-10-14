@@ -40,11 +40,11 @@ fun DrinkMenuItem(
                 modifier =
                     Modifier
                         .border(1.dp, Gray200, shape)
-                        .padding(horizontal = 14.dp, vertical = 10.dp),
+                        .padding(horizontal = 12.dp, vertical = 8.dp),
             ) {
                 Text(
                     text = label,
-                    style = MulKkamTheme.typography.body2,
+                    style = MulKkamTheme.typography.body3,
                     color = Black,
                 )
             }

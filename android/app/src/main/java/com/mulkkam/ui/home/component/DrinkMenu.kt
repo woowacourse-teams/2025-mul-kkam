@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.cups.Cup
@@ -23,6 +24,7 @@ import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import java.lang.System.exit
 
 @Composable
 fun DrinkMenu(
@@ -32,6 +34,8 @@ fun DrinkMenu(
     onManual: () -> Unit,
 ) {
     val elevationOffset: Int = 12
+    val itemSize: Dp = 56.dp
+
     AnimatedVisibility(
         visible = visible,
         modifier = Modifier.offset(x = (elevationOffset).dp, y = (elevationOffset).dp),
@@ -41,7 +45,7 @@ fun DrinkMenu(
         Column(
             modifier = Modifier.padding(elevationOffset.dp),
             horizontalAlignment = Alignment.Companion.End,
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             DrinkMenuItem(
                 label = stringResource(id = R.string.home_drink_manual),
@@ -50,6 +54,7 @@ fun DrinkMenu(
                         iconRes = R.drawable.ic_manual_drink,
                         contentDescription = null,
                         onClick = onManual,
+                        size = itemSize,
                     )
                 },
                 onClick = onManual,
@@ -62,6 +67,7 @@ fun DrinkMenu(
                             emojiUrl = cup.emoji.cupEmojiUrl,
                             label = stringResource(R.string.intake_unit_ml, cup.amount.value),
                             onClick = { onSelectCup(cup.id) },
+                            size = itemSize,
                         )
                     },
                     onClick = { onSelectCup(cup.id) },
