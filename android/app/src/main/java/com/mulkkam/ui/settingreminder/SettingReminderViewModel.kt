@@ -9,7 +9,9 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -29,6 +31,10 @@ class SettingReminderViewModel : ViewModel() {
         MutableStateFlow(ReminderUpdateUiState.Idle)
     val reminderUpdateUiState: StateFlow<ReminderUpdateUiState> =
         _reminderUpdateUiState.asStateFlow()
+
+    private val _onReminderUpdated: MutableSharedFlow<MulKkamUiState<Unit>> =
+        MutableSharedFlow<MulKkamUiState<Unit>>()
+    val onReminderUpdated: SharedFlow<MulKkamUiState<Unit>> = _onReminderUpdated
 
     init {
         loadReminderSchedules()
@@ -85,7 +91,10 @@ class SettingReminderViewModel : ViewModel() {
             runCatching {
                 reminderRepository.postReminder(time).getOrError()
             }.onSuccess {
+                _onReminderUpdated.emit(MulKkamUiState.Success(Unit))
                 loadReminderSchedules()
+            }.onFailure {
+                _onReminderUpdated.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
@@ -95,7 +104,10 @@ class SettingReminderViewModel : ViewModel() {
             runCatching {
                 reminderRepository.patchReminder(reminderSchedule).getOrError()
             }.onSuccess {
+                _onReminderUpdated.emit(MulKkamUiState.Success(Unit))
                 loadReminderSchedules()
+            }.onFailure {
+                _onReminderUpdated.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
