@@ -21,6 +21,11 @@ public class FriendService {
     private final FriendRepository friendRepository;
     private final FriendRequestRepository friendRequestRepository;
 
+    public void delete(Long memberId, MemberDetails memberDetails) {
+        friendRepository.findByFriendIdAndMemberId(memberId, memberDetails.id())
+                .ifPresent(friendRepository::delete);
+    }
+
     @Transactional
     public void acceptFriendRequest(
             Long friendRequestId,

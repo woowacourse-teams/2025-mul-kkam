@@ -1,8 +1,10 @@
 package backend.mulkkam.friend.service;
 
+
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -27,7 +29,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
+class FriendServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -60,6 +62,39 @@ public class FriendServiceIntegrationTest extends ServiceIntegrationTest {
 
         OauthAccount oauthAccountOfAddressee = new OauthAccount(addressee, "testIdOfAddressee", OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccountOfAddressee);
+    }
+
+    @DisplayName("친구를 삭제할 때")
+    @Nested
+    class Delete {
+
+        @DisplayName("요청자가 삭제하는 경우 정상적으로 삭제된다.")
+        @Test
+        void success_deleteByRequester() {
+            // given
+            Friend friend = new Friend(requester.getId(), addressee.getId());
+            friendRepository.save(friend);
+
+            // when
+            friendService.delete(addressee.getId(), new MemberDetails(requester.getId()));
+
+            // then
+            assertThat(friendRepository.findAll()).isEmpty();
+        }
+
+        @DisplayName("수락자가 삭제하는 경우 정상적으로 삭제된다.")
+        @Test
+        void success_deleteByAddressee() {
+            // given
+            Friend friend = new Friend(requester.getId(), addressee.getId());
+            friendRepository.save(friend);
+
+            // when
+            friendService.delete(requester.getId(), new MemberDetails(addressee.getId()));
+
+            // then
+            assertThat(friendRepository.findAll()).isEmpty();
+        }
     }
 
     @DisplayName("친구 요청을 거절할 때")
