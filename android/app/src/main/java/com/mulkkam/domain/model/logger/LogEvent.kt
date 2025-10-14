@@ -12,4 +12,5 @@ enum class LogEvent {
     PUSH_NOTIFICATION,
     ONBOARDING,
     SPLASH,
+    WIDGET,
 }
