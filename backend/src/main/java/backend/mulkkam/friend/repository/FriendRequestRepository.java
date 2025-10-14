@@ -14,12 +14,12 @@ public interface FriendRequestRepository extends JpaRepository<FriendRequest, Lo
                 SELECT new backend.mulkkam.friend.dto.response.FriendRequestResponse(fr.id, m.memberNickname.value)
                 FROM FriendRequest fr
                 JOIN Member m ON fr.requesterId = m.id
-                WHERE fr.requesterId = :receiverId
+                WHERE fr.addresseeId = :addresseeId
                   AND (:lastId IS NULL OR fr.id < :lastId)
                 ORDER BY fr.id DESC
             """)
     List<FriendRequestResponse> findReceivedFriendRequestsAfterId(
-            @Param("receiverId") Long receiverId,
+            @Param("addresseeId") Long addresseeId,
             @Param("lastId") Long lastId,
             Pageable pageable
     );
