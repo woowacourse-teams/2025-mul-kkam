@@ -20,9 +20,32 @@ android {
             .toInt()
 
     val localProperties = gradleLocalProperties(rootDir, providers)
-    val kakaoKey = localProperties.getProperty("key.kakao") ?: ""
-    val releaseBaseUrl = localProperties.getProperty("release.base.url") ?: ""
-    val debugBaseUrl = localProperties.getProperty("debug.base.url") ?: ""
+
+    val kakaoKey: String = localProperties.getProperty("key.kakao") ?: ""
+    val releaseBaseUrl: String = localProperties.getProperty("release.base.url") ?: ""
+    val debugBaseUrl: String = localProperties.getProperty("debug.base.url") ?: ""
+
+    val signingKeystorePath: String = localProperties.getProperty("signing.keystore.path") ?: ""
+    val signingKeystorePassword: String = localProperties.getProperty("signing.keystore.password") ?: ""
+    val signingKeyAlias: String = localProperties.getProperty("signing.key.alias") ?: ""
+    val signingKeyPassword: String = localProperties.getProperty("signing.key.password") ?: ""
+
+    val hasSigningCredentials: Boolean =
+        signingKeystorePath.isNotBlank() &&
+            signingKeystorePassword.isNotBlank() &&
+            signingKeyAlias.isNotBlank() &&
+            signingKeyPassword.isNotBlank()
+
+    signingConfigs {
+        if (hasSigningCredentials) {
+            create("release") {
+                storeFile = file(signingKeystorePath)
+                storePassword = signingKeystorePassword
+                keyAlias = signingKeyAlias
+                keyPassword = signingKeyPassword
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.mulkkam"
@@ -60,6 +83,10 @@ android {
             isShrinkResources = true
 
             buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
+
+            if (hasSigningCredentials) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
 
         debug {
