@@ -6,6 +6,7 @@ import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
 import backend.mulkkam.friend.repository.FriendRepository;
 import backend.mulkkam.friend.repository.FriendRequestRepository;
+import backend.mulkkam.member.repository.MemberRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,13 @@ public class FriendService {
 
     private final FriendRepository friendRepository;
     private final FriendRequestRepository friendRequestRepository;
+    private final MemberRepository memberRepository;
+
+    @Transactional
+    public void delete(Long memberId, MemberDetails memberDetails) {
+        friendRepository.findByFriendIdAndMemberId(memberId, memberDetails.id())
+                .ifPresent(friendRepository::delete);
+    }
 
     public ReadReceivedFriendRequestsResponse readReceivedFriendRequests(
             MemberDetails memberDetails,
