@@ -21,7 +21,6 @@ import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -81,9 +80,7 @@ public class OnboardingService {
     }
 
     private void createDefaultReminders(Member member) {
-        List<ReminderSchedule> reminderSchedules = Arrays.stream(DefaultRemindSchedule.values())
-                .map(defaultRemindSchedule -> defaultRemindSchedule.toReminderSchedule(member))
-                .toList();
+        List<ReminderSchedule> reminderSchedules = DefaultRemindSchedule.of(member);
         reminderScheduleRepository.saveAll(reminderSchedules);
     }
 

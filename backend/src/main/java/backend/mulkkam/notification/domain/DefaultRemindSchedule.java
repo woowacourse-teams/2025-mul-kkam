@@ -2,6 +2,8 @@ package backend.mulkkam.notification.domain;
 
 import backend.mulkkam.member.domain.Member;
 import java.time.LocalTime;
+import java.util.Arrays;
+import java.util.List;
 
 public enum DefaultRemindSchedule {
 
@@ -14,6 +16,12 @@ public enum DefaultRemindSchedule {
 
     DefaultRemindSchedule(LocalTime schedule) {
         this.schedule = schedule;
+    }
+
+    public static List<ReminderSchedule> of(Member member) {
+        return Arrays.stream(DefaultRemindSchedule.values())
+                .map(defaultRemindSchedule -> defaultRemindSchedule.toReminderSchedule(member))
+                .toList();
     }
 
     public ReminderSchedule toReminderSchedule(Member member) {
