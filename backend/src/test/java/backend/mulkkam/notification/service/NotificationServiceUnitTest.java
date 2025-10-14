@@ -364,7 +364,7 @@ class NotificationServiceUnitTest {
             notificationService.processReminderNotifications(memberIds, now);
 
             // then
-            verify(notificationRepository, never()).saveAll(any());
+            verify(notificationBatchRepository, never()).batchInsert(any());
             verify(applicationEventPublisher, never()).publishEvent(any());
         }
 
