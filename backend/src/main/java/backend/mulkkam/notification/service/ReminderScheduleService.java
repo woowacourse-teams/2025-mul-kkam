@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReminderScheduleService {
 
     private static final String MINUTELY_CRON = "0 * * * * *";
+    private static final int CHUNK_SIZE = 1000;
 
     private final NotificationBatchService notificationBatchService;
     private final ReminderScheduleRepository reminderScheduleRepository;
@@ -55,7 +56,7 @@ public class ReminderScheduleService {
         return notificationBatchService.batchRead((lastId, pageable) ->
                         reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(now.toLocalTime(), lastId, pageable),
                 id -> id,
-                1000);
+                CHUNK_SIZE);
     }
 
     @Transactional
