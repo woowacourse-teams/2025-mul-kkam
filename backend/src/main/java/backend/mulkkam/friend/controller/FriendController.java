@@ -20,13 +20,13 @@ public class FriendController {
     private final FriendService friendService;
 
     @Operation(summary = "친구 삭제", description = "로그인 멤버와 지정 멤버 사이의 친구 관계를 삭제합니다.")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{memberId}")
     public void deleteFriend(
             @Parameter(description = "삭제할 친구의 id", required = true)
-            @PathVariable Long id,
+            @PathVariable Long memberId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendService.delete(id, memberDetails);
+        friendService.delete(memberId, memberDetails);
     }
 }
