@@ -46,7 +46,9 @@ public class FriendController {
     public ResponseEntity<ReadReceivedFriendRequestsResponse> getReceivedFriendRequests(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
+            @Parameter(description = "nextId, 첫 요청시 null", required = true)
             @RequestParam(required = false) Long lastId,
+            @Parameter(description = "size", required = true)
             @RequestParam(defaultValue = "20") int size
     ) {
         ReadReceivedFriendRequestsResponse readReceivedFriendRequestsResponse = friendService.readReceivedFriendRequests(
@@ -54,6 +56,9 @@ public class FriendController {
         return ResponseEntity.ok(readReceivedFriendRequestsResponse);
     }
 
+    @Operation(summary = "받은 친구 신청 목록 갯수 조회", description = "내가 받은 친구 신청 목록의 갯수를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetReceivedFriendRequestCountResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/requests/received/count")
     public ResponseEntity<GetReceivedFriendRequestCountResponse> getReceivedFriendRequestCount(
             @Parameter(hidden = true)
