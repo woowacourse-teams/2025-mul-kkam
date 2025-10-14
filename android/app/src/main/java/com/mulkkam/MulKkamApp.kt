@@ -4,13 +4,16 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.di.HealthConnectInjection
 import com.mulkkam.di.LoggingInjection
 import com.mulkkam.di.PreferenceInjection
+import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.WorkInjection
 import com.mulkkam.ui.service.NotificationService
-import timber.log.Timber
+import kotlinx.coroutines.launch
 
 class MulKkamApp : Application() {
     override fun onCreate() {
@@ -38,10 +41,12 @@ class MulKkamApp : Application() {
     }
 
     private fun initLogger() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(LoggingInjection.debugTimberTree)
-        } else {
-            Timber.plant(LoggingInjection.releaseTimberTree)
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
+            runCatching {
+                devicesRepository.getDeviceUuid().getOrError()
+            }.onSuccess { userId ->
+                LoggingInjection.init(userId, BuildConfig.DEBUG)
+            }
         }
     }
 }

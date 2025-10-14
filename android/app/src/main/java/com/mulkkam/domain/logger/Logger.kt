@@ -39,6 +39,13 @@ import com.mulkkam.domain.model.logger.LogLevel
 
 interface Logger {
     /**
+     * 사용자 ID로 로거 초기화.
+     *
+     * @param userId 현재 사용자 ID
+     */
+    fun init(userId: String?)
+
+    /**
      * 로그를 기록하는 기본 메서드.
      *
      * @param entry 기록할 [LogEntry] 객체
