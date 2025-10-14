@@ -29,4 +29,12 @@ public class FriendRequest extends BaseEntity {
 
     @Column(nullable = false)
     private Long addresseeId;
+
+    public FriendRequest(
+            Long requesterId,
+            Long addresseeId
+    ) {
+        this.requesterId = requesterId;
+        this.addresseeId = addresseeId;
+    }
 }
