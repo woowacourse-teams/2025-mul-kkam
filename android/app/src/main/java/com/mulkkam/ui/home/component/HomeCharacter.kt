@@ -48,7 +48,7 @@ fun HomeCharacter(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .fillMaxWidth(0.76f)
+                        .fillMaxWidth(0.64f)
                         .aspectRatio(1f),
             )
 
