@@ -42,7 +42,6 @@ public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
     private static final int BATCH_READ_SIZE = 1000;
-    private static final int FCM_BATCH_SIZE = 500;
 
     private final SuggestionNotificationService suggestionNotificationService;
     private final NotificationBatchService notificationBatchService;

@@ -79,7 +79,8 @@ public class MemberFixtureBuilder {
                 this.targetAmount,
                 this.isMarketingNotificationAgreed,
                 this.isNightNotificationAgreed,
-                this.activeNickname
+                this.activeNickname,
+                this.isReminderEnabled
         );
     }
 
