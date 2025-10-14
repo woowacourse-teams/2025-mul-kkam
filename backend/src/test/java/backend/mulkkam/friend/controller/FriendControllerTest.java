@@ -66,9 +66,35 @@ public class FriendControllerTest extends ControllerTest {
         tokenOfAddressee = oauthJwtTokenHandler.createAccessToken(oauthAccountOfAddressee, "temp");
     }
 
-    @DisplayName("친구 요청을 수락 및 거절할 때")
+    @DisplayName("친구 요청을 거절할 때")
     @Nested
-    class ProcessFriendRequest {
+    class RejectFriendRequest {
+
+        @DisplayName("정상적으로 거절된다")
+        @Test
+        void success_rejected() throws Exception {
+            // given
+            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
+            friendRequestRepository.save(friendRequest);
+
+            // when
+            mockMvc.perform(post("/friends/request/" + friendRequest.getId() + "/reject")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andDo(print()).andExpect(status().isOk());
+
+            // then
+            List<FriendRequest> friendRequests = friendRequestRepository.findAll();
+            List<Friend> friends = friendRepository.findAll();
+            assertSoftly(softly -> {
+                softly.assertThat(friendRequests).hasSize(0);
+                softly.assertThat(friends).hasSize(0);
+            });
+        }
+    }
+
+    @DisplayName("친구 요청을 수락할 때")
+    @Nested
+    class AcceptFriendRequest {
 
         @DisplayName("정상적으로 수락된다")
         @Test
@@ -78,7 +104,7 @@ public class FriendControllerTest extends ControllerTest {
             friendRequestRepository.save(friendRequest);
 
             // when
-            mockMvc.perform(post("/friends/process/" + friendRequest.getId() + "/accept")
+            mockMvc.perform(post("/friends/request/" + friendRequest.getId() + "/accept")
                             .header(HttpHeaders.AUTHORIZATION,
                                     "Bearer " + tokenOfAddressee))
                     .andDo(print()).andExpect(status().isOk());
@@ -91,27 +117,6 @@ public class FriendControllerTest extends ControllerTest {
                 softly.assertThat(friendRequests).hasSize(0);
                 softly.assertThat(friends.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friends.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-            });
-        }
-
-        @DisplayName("정상적으로 거절된다")
-        @Test
-        void success_rejected() throws Exception {
-            // given
-            FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
-            friendRequestRepository.save(friendRequest);
-
-            // when
-            mockMvc.perform(post("/friends/process/" + friendRequest.getId() + "/reject")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
-                    .andDo(print()).andExpect(status().isOk());
-
-            // then
-            List<FriendRequest> friendRequests = friendRequestRepository.findAll();
-            List<Friend> friends = friendRepository.findAll();
-            assertSoftly(softly -> {
-                softly.assertThat(friendRequests).hasSize(0);
-                softly.assertThat(friends).hasSize(0);
             });
         }
     }

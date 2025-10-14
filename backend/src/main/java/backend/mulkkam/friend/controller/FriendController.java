@@ -1,7 +1,6 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.friend.domain.RequestDecision;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -20,19 +19,29 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @Operation(summary = "친구 요청 수락 및 거절", description = "사용자에게 온 친구 요청을 수락 혹은 거절합니다.")
-    @ApiResponse(responseCode = "200", description = "수락 및 거절 성공")
+    @Operation(summary = "친구 요청 거절", description = "사용자에게 온 친구 요청을 거절합니다.")
+    @ApiResponse(responseCode = "200", description = "거절 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
-    @ApiResponse(responseCode = "403", description = "수락할 권한이 없는 사용자의 요청")
-    @PostMapping("/process/{requestId}/{action:accept|reject}")
-    public ResponseEntity<Void> processFriendRequest(
+    @ApiResponse(responseCode = "403", description = "거절할 권한이 없는 사용자의 요청")
+    @PostMapping("request/{requestId}/reject")
+    public ResponseEntity<Void> rejectFriendRequest(
             @PathVariable Long requestId,
-            @PathVariable String action,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        RequestDecision requestDecision = RequestDecision.valueOf(action.toUpperCase());
+        friendService.rejectFriendRequest(requestId, memberDetails);
+        return ResponseEntity.ok().build();
+    }
 
-        friendService.processFriendRequest(requestId, requestDecision, memberDetails);
+    @Operation(summary = "친구 요청 수락", description = "사용자에게 온 친구 요청을 수락합니다.")
+    @ApiResponse(responseCode = "200", description = "수락 성공")
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
+    @ApiResponse(responseCode = "403", description = "수락할 권한이 없는 사용자의 요청")
+    @PostMapping("request/{requestId}/accept")
+    public ResponseEntity<Void> acceptFriendRequest(
+            @PathVariable Long requestId,
+            @Parameter(hidden = true) MemberDetails memberDetails
+    ) {
+        friendService.acceptFriendRequest(requestId, memberDetails);
         return ResponseEntity.ok().build();
     }
 }
