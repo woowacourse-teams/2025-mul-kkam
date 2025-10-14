@@ -1,6 +1,7 @@
 package backend.mulkkam.friend.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -143,9 +144,11 @@ class FriendControllerTest extends ControllerTest {
                     ReadReceivedFriendRequestsResponse.class);
 
             // then
-            assertThat(response.friendRequestResponses()).hasSize(2);
-            assertThat(response.hasNext()).isFalse();
-            assertThat(response.nextId()).isNotNull();
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRequestResponses()).hasSize(2);
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.nextId()).isNotNull();
+            });
         }
 
         @DisplayName("lastId를 사용한 페이지네이션이 정상적으로 동작한다.")
@@ -175,8 +178,10 @@ class FriendControllerTest extends ControllerTest {
                     firstPageContent, ReadReceivedFriendRequestsResponse.class);
 
             // then - 첫 번째 페이지 검증
-            assertThat(firstPageResponse.friendRequestResponses()).hasSize(2);
-            assertThat(firstPageResponse.hasNext()).isTrue();
+            assertSoftly(softly -> {
+                softly.assertThat(firstPageResponse.friendRequestResponses()).hasSize(2);
+                softly.assertThat(firstPageResponse.hasNext()).isTrue();
+            });
 
             // when - 두 번째 페이지 조회
             String secondPageContent = mockMvc.perform(get("/friends/requests/received")
@@ -192,8 +197,10 @@ class FriendControllerTest extends ControllerTest {
                     secondPageContent, ReadReceivedFriendRequestsResponse.class);
 
             // then - 두 번째 페이지 검증
-            assertThat(secondPageResponse.friendRequestResponses()).hasSize(1);
-            assertThat(secondPageResponse.hasNext()).isFalse();
+            assertSoftly(softly -> {
+                softly.assertThat(secondPageResponse.friendRequestResponses()).hasSize(1);
+                softly.assertThat(secondPageResponse.hasNext()).isFalse();
+            });
         }
 
         @DisplayName("받은 친구 신청이 없는 경우 빈 목록이 반환된다.")
@@ -212,9 +219,11 @@ class FriendControllerTest extends ControllerTest {
                     resultContent, ReadReceivedFriendRequestsResponse.class);
 
             // then
-            assertThat(response.friendRequestResponses()).isEmpty();
-            assertThat(response.hasNext()).isFalse();
-            assertThat(response.nextId()).isNull();
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRequestResponses()).isEmpty();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.nextId()).isNull();
+            });
         }
 
         @DisplayName("size보다 많은 데이터가 있을 때 hasNext가 true이다.")
@@ -242,9 +251,11 @@ class FriendControllerTest extends ControllerTest {
                     resultContent, ReadReceivedFriendRequestsResponse.class);
 
             // then
-            assertThat(response.friendRequestResponses()).hasSize(1);
-            assertThat(response.hasNext()).isTrue();
-            assertThat(response.nextId()).isNotNull();
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRequestResponses()).hasSize(1);
+                softly.assertThat(response.hasNext()).isTrue();
+                softly.assertThat(response.nextId()).isNotNull();
+            });
         }
     }
 
