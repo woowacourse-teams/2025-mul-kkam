@@ -23,6 +23,7 @@ public class FriendController {
     @ApiResponse(responseCode = "200", description = "거절 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
     @ApiResponse(responseCode = "403", description = "거절할 권한이 없는 사용자의 요청")
+    @ApiResponse(responseCode = "409", description = "이미 친구 관계가 존재하는 경우에 대한 요청")
     @PostMapping("request/{requestId}/reject")
     public ResponseEntity<Void> rejectFriendRequest(
             @PathVariable Long requestId,
