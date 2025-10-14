@@ -52,8 +52,8 @@ public class MemberFixtureBuilder {
         return this;
     }
 
-    public MemberFixtureBuilder targetAmount(TargetAmount targetAmount) {
-        this.targetAmount = targetAmount;
+    public MemberFixtureBuilder targetAmount(int targetAmount) {
+        this.targetAmount = new TargetAmount(targetAmount);
         return this;
     }
 

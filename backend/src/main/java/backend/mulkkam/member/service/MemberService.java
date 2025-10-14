@@ -110,7 +110,7 @@ public class MemberService {
             return new ProgressInfoResponse(member, streak);
         }
         IntakeHistory intakeHistory = intakeHistoryCrudService.getIntakeHistory(member, date);
-        int totalAmount = intakeHistoryCrudService.getTotalIntakeAmount(member, date);
+        int totalAmount = intakeHistoryCrudService.getTotalIntakeAmount(intakeHistory);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }

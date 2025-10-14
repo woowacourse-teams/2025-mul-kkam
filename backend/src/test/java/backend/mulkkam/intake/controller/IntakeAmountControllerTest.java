@@ -16,7 +16,6 @@ import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
@@ -50,7 +49,7 @@ class IntakeAmountControllerTest extends ControllerTest {
     private final Member member = MemberFixtureBuilder
             .builder()
             .weight(70.0)
-            .targetAmount(new TargetAmount(1500))
+            .targetAmount(1500)
             .build();
     ;
 
