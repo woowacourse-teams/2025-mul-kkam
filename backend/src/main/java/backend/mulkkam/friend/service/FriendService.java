@@ -15,8 +15,8 @@ public class FriendService {
     private final FriendRequestRepository friendRequestRepository;
     private final MemberRepository memberRepository;
 
-    public void delete(Long friendId, MemberDetails memberDetails) {
-        friendRepository.findByFriendIdAndMemberId(friendId, memberDetails.id())
+    public void delete(Long memberId, MemberDetails memberDetails) {
+        friendRepository.findByFriendIdAndMemberId(memberId, memberDetails.id())
                 .ifPresent(friendRepository::delete);
     }
 }
