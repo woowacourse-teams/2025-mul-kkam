@@ -2,7 +2,6 @@ package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -28,13 +27,7 @@ public class FriendService {
             Long friendRequestId,
             MemberDetails memberDetails
     ) {
-        Long memberId = memberDetails.id();
-        validateMemberExistence(memberId);
-        FriendRequest friendRequest = getFriendRequest(friendRequestId);
-
-        if (!friendRequest.validatePermission(memberId)) {
-            throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
-        }
+        FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
 
         Friend friend = new Friend(friendRequest);
         friendRepository.save(friend);
@@ -46,25 +39,21 @@ public class FriendService {
             Long friendRequestId,
             MemberDetails memberDetails
     ) {
-        Long memberId = memberDetails.id();
-        validateMemberExistence(memberId);
-        FriendRequest friendRequest = getFriendRequest(friendRequestId);
-
-        if (!friendRequest.validatePermission(memberId)) {
-            throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
-        }
+        FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
 
         friendRequestRepository.delete(friendRequest);
-    }
-
-    private void validateMemberExistence(Long memberId) {
-        if (!memberRepository.existsById(memberId)) {
-            throw new CommonException(NOT_FOUND_MEMBER);
-        }
     }
 
     private FriendRequest getFriendRequest(Long friendRequestId) {
         return friendRequestRepository.findById(friendRequestId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_REQUEST));
+    }
+
+    private FriendRequest getValidFriendRequest(Long friendRequestId, MemberDetails memberDetails) {
+        FriendRequest friendRequest = getFriendRequest(friendRequestId);
+        if (!friendRequest.validatePermission(memberDetails.id())) {
+            throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+        }
+        return friendRequest;
     }
 }
