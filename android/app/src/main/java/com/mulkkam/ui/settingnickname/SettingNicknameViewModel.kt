@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
@@ -99,10 +101,11 @@ class SettingNicknameViewModel : ViewModel() {
         if (nicknameChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.debug(LogEvent.USER_ACTION, "Saving nickname change $nickname")
                 _nicknameChangeUiState.value = MulKkamUiState.Loading
                 membersRepository.patchMembersNickname(nickname).getOrError()
             }.onSuccess {
-                _nicknameChangeUiState.value = MulKkamUiState.Success<Unit>(Unit)
+                _nicknameChangeUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
                 _nicknameChangeUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

@@ -31,7 +31,7 @@ import com.mulkkam.domain.model.logger.LogLevel
  * ## 사용 예시
  * ```kotlin
  * logger.error(LogEvent.NETWORK, "API 응답 실패: timeout")
- * logger.info(LogEvent.USER_AUTH, "로그인 성공", userId = "1234")
+ * logger.info(LogEvent.USER_AUTH, "로그인 성공" = "1234")
  * logger.debug(LogEvent.USER_ACTION, "결제 버튼 클릭")
  * ```
  *
@@ -51,8 +51,7 @@ interface Logger {
     fun error(
         event: LogEvent,
         message: String = "",
-        userId: String? = null,
-    ) = log(LogEntry(LogLevel.ERROR, event, message, userId))
+    ) = log(LogEntry(LogLevel.ERROR, event, message))
 
     /**
      * 잠재적 오류를 기록합니다.
@@ -60,8 +59,7 @@ interface Logger {
     fun warn(
         event: LogEvent,
         message: String = "",
-        userId: String? = null,
-    ) = log(LogEntry(LogLevel.WARN, event, message, userId))
+    ) = log(LogEntry(LogLevel.WARN, event, message))
 
     /**
      * 주요 사용자 이벤트를 기록합니다.
@@ -69,8 +67,7 @@ interface Logger {
     fun info(
         event: LogEvent,
         message: String = "",
-        userId: String? = null,
-    ) = log(LogEntry(LogLevel.INFO, event, message, userId))
+    ) = log(LogEntry(LogLevel.INFO, event, message))
 
     /**
      * 개발용 상세 로그를 기록합니다.
@@ -78,6 +75,5 @@ interface Logger {
     fun debug(
         event: LogEvent = LogEvent.DEBUG,
         message: String = "",
-        userId: String? = null,
-    ) = log(LogEntry(LogLevel.DEBUG, event, message, userId))
+    ) = log(LogEntry(LogLevel.DEBUG, event, message))
 }

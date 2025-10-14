@@ -5,10 +5,12 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
@@ -167,6 +169,7 @@ class SettingCupViewModel : ViewModel() {
 
     fun saveCup() {
         if (isSaveAvailable.value != true) return
+        mulKkamLogger.info(event = LogEvent.USER_ACTION, message = "Settings cup -> editType=${editType.value}, cup=${cup.value}")
         when (_editType.value) {
             SettingWaterCupEditType.ADD -> addCup()
             SettingWaterCupEditType.EDIT -> editCup()
@@ -224,6 +227,7 @@ class SettingCupViewModel : ViewModel() {
             val cupId = cup.value?.id ?: return@launch
 
             runCatching {
+                mulKkamLogger.info(LogEvent.USER_ACTION, "Deleting cup id=$cupId")
                 cupsRepository.deleteCup(cupId).getOrError()
             }.onSuccess {
                 _deleteSuccess.setValue(Unit)

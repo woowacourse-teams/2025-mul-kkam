@@ -2,8 +2,10 @@ package com.mulkkam.ui.settingreminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.reminderRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -52,6 +54,7 @@ class SettingReminderViewModel : ViewModel() {
         viewModelScope.launch {
             val isEnabled = isReminderEnabled.value.toSuccessDataOrNull() ?: return@launch
             runCatching {
+                mulKkamLogger.info(LogEvent.USER_ACTION, "Toggled reminder enabled to ${!isEnabled}")
                 _isReminderEnabled.value = MulKkamUiState.Success(!isEnabled)
                 membersRepository.patchMembersReminder(!isEnabled).getOrError()
             }.onSuccess {
@@ -66,6 +69,10 @@ class SettingReminderViewModel : ViewModel() {
 
     fun handleReminderUpdateAction(selectedTime: LocalTime) {
         val currentMode = reminderUpdateUiState.value
+        mulKkamLogger.info(
+            event = LogEvent.USER_ACTION,
+            message = "Handling reminder update action in mode $currentMode with time $selectedTime",
+        )
         when (currentMode) {
             is ReminderUpdateUiState.Update -> {
                 updateReminder(currentMode.reminderSchedule.copy(schedule = selectedTime))
@@ -100,9 +107,10 @@ class SettingReminderViewModel : ViewModel() {
         }
     }
 
-    fun removeReminder(id: Long) {
+    fun deleteReminder(id: Long) {
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.USER_ACTION, "Deleting reminder with id=$id")
                 reminderRepository.deleteReminder(id).getOrError()
             }.onSuccess {
                 loadReminderSchedules()

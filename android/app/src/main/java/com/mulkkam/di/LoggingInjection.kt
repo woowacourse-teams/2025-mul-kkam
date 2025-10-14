@@ -2,6 +2,7 @@ package com.mulkkam.di
 
 import com.mulkkam.data.logger.LoggerImpl
 import com.mulkkam.data.logger.SensitiveInfoSanitizerImpl
+import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.logger.SensitiveInfoSanitizer
 import com.mulkkam.util.logger.DebugLoggingTree
@@ -14,7 +15,7 @@ object LoggingInjection {
     }
 
     val mulKkamLogger: Logger by lazy {
-        LoggerImpl(sanitizer)
+        LoggerImpl(sanitizer, devicesRepository)
     }
 
     val releaseTimberTree: Timber.Tree by lazy {

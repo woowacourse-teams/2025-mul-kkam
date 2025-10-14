@@ -5,9 +5,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
@@ -41,9 +43,9 @@ class SettingBioInfoViewModel : ViewModel() {
 
     private fun loadMemberInfo() {
         viewModelScope.launch {
-            val result = RepositoryInjection.membersRepository.getMembers()
             runCatching {
-                val memberInfo = result.getOrError()
+                membersRepository.getMembers().getOrError()
+            }.onSuccess { memberInfo ->
                 _gender.value = memberInfo.gender
                 _weight.value = memberInfo.weight
             }.onFailure {
@@ -70,11 +72,15 @@ class SettingBioInfoViewModel : ViewModel() {
         if (bioInfoChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(
+                    LogEvent.USER_ACTION,
+                    "Submitting bio info gender: ${gender.value}, weight: ${weight.value}",
+                )
                 _bioInfoChangeUiState.value = MulKkamUiState.Loading
-                RepositoryInjection.membersRepository
+                membersRepository
                     .postMembersPhysicalAttributes(
-                        gender = _gender.value ?: return@launch,
-                        weight = _weight.value ?: return@launch,
+                        gender = gender.value ?: return@launch,
+                        weight = weight.value ?: return@launch,
                     ).getOrError()
             }.onSuccess {
                 _bioInfoChangeUiState.value = MulKkamUiState.Success(Unit)

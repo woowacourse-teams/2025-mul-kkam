@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.onboardingRepository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -56,11 +58,16 @@ class OnboardingViewModel : ViewModel() {
 
     fun completeOnboarding() {
         if (saveOnboardingUiState.value is MulKkamUiState.Loading) return
-        _saveOnboardingUiState.value = MulKkamUiState.Loading
         viewModelScope.launch {
-            val result = onboardingRepository.postOnboarding(onboardingInfo)
             runCatching {
-                result.getOrError()
+                mulKkamLogger.info(LogEvent.ONBOARDING, "Onboarding submission succeeded")
+                mulKkamLogger.info(
+                    LogEvent.ONBOARDING,
+                    "isMarketingNotificationAgreed: ${onboardingInfo.isMarketingNotificationAgreed}, isNightNotificationAgreed: ${onboardingInfo.isNightNotificationAgreed}",
+                )
+                _saveOnboardingUiState.value = MulKkamUiState.Loading
+                onboardingRepository.postOnboarding(onboardingInfo).getOrError()
+            }.onSuccess {
                 _saveOnboardingUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
                 _saveOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())

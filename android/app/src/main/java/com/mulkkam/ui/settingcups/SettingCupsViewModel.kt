@@ -4,8 +4,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.cupsRepository
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -54,6 +56,7 @@ class SettingCupsViewModel : ViewModel() {
 
         val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
         viewModelScope.launch {
+            mulKkamLogger.info(LogEvent.USER_ACTION, "Saving cup reorder from settings")
             _cupsReorderUiState.value = MulKkamUiState.Loading
             runCatching {
                 cupsRepository.putCupsRank(reorderedCups).getOrError()
@@ -71,6 +74,7 @@ class SettingCupsViewModel : ViewModel() {
 
     fun resetCups() {
         viewModelScope.launch {
+            mulKkamLogger.info(LogEvent.USER_ACTION, "Resetting cups to default")
             _cupsResetUiState.value = MulKkamUiState.Loading
             runCatching {
                 cupsRepository.resetCups().getOrError()

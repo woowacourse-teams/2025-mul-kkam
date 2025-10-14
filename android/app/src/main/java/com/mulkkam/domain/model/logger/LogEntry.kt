@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter
  * @property event 로그 이벤트 유형 ([LogEvent])
  * @property message 사람이 읽을 수 있는 설명
  * @property userId 이벤트 발생 시점의 사용자 ID (게스트일 경우 null)
- * @property timestamp 로그 생성 시각 (UTC ISO-8601 형식)
+ * @property timestamp 로그 생성 시각 (KST ISO-8601 형식)
  * ---
  */
 data class LogEntry(

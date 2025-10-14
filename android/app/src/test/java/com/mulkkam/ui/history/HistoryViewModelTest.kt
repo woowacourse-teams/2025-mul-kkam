@@ -1,6 +1,8 @@
 package com.mulkkam.ui.history
 
+import com.mulkkam.di.LoggingInjection
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.fixture.FULL_INTAKE_HISTORY
@@ -18,6 +20,7 @@ import io.mockk.mockkObject
 import io.mockk.slot
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -33,12 +36,17 @@ class HistoryViewModelTest {
     private val past: LocalDate = LocalDate.of(2024, 9, 10)
     private lateinit var fakeIntakeRepository: IntakeRepository
     private lateinit var historyViewModel: HistoryViewModel
+    private lateinit var fakeLogger: Logger
 
     @BeforeEach
     fun setup() {
         mockkObject(RepositoryInjection)
         fakeIntakeRepository = mockk(relaxed = true)
         every { RepositoryInjection.intakeRepository } returns fakeIntakeRepository
+
+        mockkObject(LoggingInjection)
+        fakeLogger = mockk(relaxed = true)
+        every { LoggingInjection.mulKkamLogger } returns fakeLogger
 
         historyViewModel = HistoryViewModel()
     }
@@ -187,5 +195,11 @@ class HistoryViewModelTest {
         // then
         assertThat(actual).isNotEqualTo(today)
         assertThat(actual.dayOfWeek).isEqualTo(DayOfWeek.MONDAY)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        mockkObject(RepositoryInjection)
+        mockkObject(LoggingInjection)
     }
 }

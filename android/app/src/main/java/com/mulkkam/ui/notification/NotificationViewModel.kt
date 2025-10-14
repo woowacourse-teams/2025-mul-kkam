@@ -2,7 +2,9 @@ package com.mulkkam.ui.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.notificationRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -61,6 +63,7 @@ class NotificationViewModel : ViewModel() {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Applying suggestion notification id=$id")
                 _applySuggestionUiState.value = MulKkamUiState.Loading
                 notificationRepository.postSuggestionNotificationsApproval(id).getOrError()
             }.onSuccess {
@@ -80,6 +83,7 @@ class NotificationViewModel : ViewModel() {
                         ?: return@launch,
                 )
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Deleting notification id=$id")
                 notificationRepository.deleteNotifications(id).getOrError()
             }.onFailure {
                 loadNotifications()
