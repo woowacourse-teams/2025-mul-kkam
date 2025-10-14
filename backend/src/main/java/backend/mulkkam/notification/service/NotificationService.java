@@ -9,11 +9,12 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.dto.DeviceTokenResponse;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.domain.ReminderSchedule;
+import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
@@ -22,11 +23,14 @@ import backend.mulkkam.notification.dto.response.GetSuggestionNotificationRespon
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import com.google.common.collect.Lists;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,29 +42,59 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
-    private static final int CHUNK = 1000;
+    private static final int BATCH_READ_SIZE = 1000;
+    private static final int FCM_BATCH_SIZE = 500;
 
+    private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationBatchService notificationBatchService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationBatchRepository notificationBatchRepository;
     private final ApplicationEventPublisher publisher;
 
     @Transactional
     public void processReminderNotifications(
-            List<ReminderSchedule> schedules,
+            List<Long> allMemberIds,
             LocalDateTime now
     ) {
-        if (schedules.isEmpty()) {
-            return ;
+        if (allMemberIds.isEmpty()) {
+            return;
         }
 
         NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
-        List<Member> members = extractMembers(schedules);
 
-        saveNotificationsInBatch(members, template, now);
+        saveNotifications(allMemberIds, template);
 
-        List<String> allTokens = extractAllTokens(members);
-        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(allTokens));
+        sendFcmNotifications(allMemberIds, template);
+    }
+
+    private void saveNotifications(List<Long> allMemberIds, NotificationMessageTemplate template) {
+        List<NotificationInsertDto> notificationInsertDtos = allMemberIds.stream()
+                .map(memberId -> new NotificationInsertDto(template, memberId))
+                .toList();
+        notificationBatchRepository.batchInsert(notificationInsertDtos);
+    }
+
+    private void sendFcmNotifications(List<Long> allMemberIds, NotificationMessageTemplate template) {
+        List<String> allTokens = readDeviceTokens(allMemberIds);
+
+        if (allTokens.isEmpty()) {
+            return;
+        }
+
+        Lists.partition(allTokens, FCM_BATCH_SIZE).forEach(tokens -> {
+            publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+        });
+    }
+
+    @NotNull
+    private List<String> readDeviceTokens(List<Long> allMemberIds) {
+        return notificationBatchService.batchRead(
+                        (lastId, pageable) ->
+                                deviceRepository.findAllTokenByMemberIdIn(allMemberIds, lastId, pageable),
+                        DeviceTokenResponse::id,
+                        BATCH_READ_SIZE).stream().
+                map(DeviceTokenResponse::token).toList();
     }
 
     @Transactional
@@ -140,29 +174,6 @@ public class NotificationService {
         notificationRepository.delete(notification);
     }
 
-    private List<Member> extractMembers(List<ReminderSchedule> schedules) {
-        return schedules.stream()
-                .map(ReminderSchedule::getMember)
-                .distinct()
-                .toList();
-    }
-
-    private void saveNotificationsInBatch(
-            List<Member> allMembers,
-            NotificationMessageTemplate template,
-            LocalDateTime now
-    ) {
-        for (int i = 0; i < allMembers.size(); i += CHUNK) {
-            List<Member> chunk = allMembers.subList(
-                    i,
-                    Math.min(i + CHUNK, allMembers.size())
-            );
-            notificationRepository.saveAll(
-                    template.toNotifications(chunk, now)
-            );
-        }
-    }
-
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
         if (readNotificationsRequest.size() < 1) {
             throw new CommonException(INVALID_PAGE_SIZE_RANGE);
@@ -223,11 +234,6 @@ public class NotificationService {
         SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
                 tokens);
         publisher.publishEvent(sendMessageByFcmTokensRequest);
-    }
-
-    private List<String> extractAllTokens(List<Member> members) {
-        List<Device> allByMemberIn = deviceRepository.findAllByMemberIn(members);
-        return extractTokensFromDevices(allByMemberIn);
     }
 
     private List<String> extractTokensFromDevices(List<Device> devices) {

@@ -9,6 +9,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -29,6 +30,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -46,6 +49,9 @@ class ReminderScheduleServiceUnitTest {
 
     @Mock
     private ReminderScheduleRepository reminderScheduleRepository;
+
+    @Mock
+    private NotificationBatchService notificationBatchService;
 
     @Mock
     private MemberRepository memberRepository;
@@ -333,14 +339,13 @@ class ReminderScheduleServiceUnitTest {
 
     @DisplayName("정기적으로 리마인더 알림을 전송할 때")
     @Nested
-    class ScheduleReminderNotification {
+    class ExecuteReminderNotification {
 
         @DisplayName("현재 시각에 해당하는 활성화된 스케줄의 멤버에게 알림을 전송한다")
         @Test
         void success_whenSchedulesExist() {
             // given
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-            LocalTime scheduleTime = now.toLocalTime();
             
             Member member1 = MemberFixtureBuilder.builder()
                     .isReminderEnabled(true)
@@ -348,20 +353,12 @@ class ReminderScheduleServiceUnitTest {
             Member member2 = MemberFixtureBuilder.builder()
                     .isReminderEnabled(true)
                     .buildWithId(2L);
-            
-            ReminderSchedule schedule1 = ReminderScheduleFixtureBuilder
-                    .withMember(member1)
-                    .schedule(scheduleTime)
-                    .build();
-            ReminderSchedule schedule2 = ReminderScheduleFixtureBuilder
-                    .withMember(member2)
-                    .schedule(scheduleTime)
-                    .build();
-            
-            List<ReminderSchedule> schedules = List.of(schedule1, schedule2);
-            
-            when(reminderScheduleRepository.findAllActiveByHourAndMinuteWithMember(scheduleTime))
-                    .thenReturn(schedules);
+
+            when(notificationBatchService.batchRead(
+                    any(BiFunction.class),
+                    any(Function.class),
+                    eq(1000)
+            )).thenReturn(List.of(member1.getId(), member2.getId()));
 
             // when
             reminderScheduleService.executeReminderNotification(now);
@@ -369,8 +366,8 @@ class ReminderScheduleServiceUnitTest {
             // then
             verify(notificationService).processReminderNotifications(
                     argThat(list -> list.size() == 2 && 
-                            list.contains(schedule1) && 
-                            list.contains(schedule2)),
+                            list.contains(member1.getId()) &&
+                            list.contains(member2.getId())),
                     any(LocalDateTime.class)
             );
         }
@@ -380,10 +377,6 @@ class ReminderScheduleServiceUnitTest {
         void success_whenNoSchedules() {
             // given
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-            LocalTime scheduleTime = now.toLocalTime();
-            
-            when(reminderScheduleRepository.findAllActiveByHourAndMinuteWithMember(scheduleTime))
-                    .thenReturn(List.of());
 
             // when
             reminderScheduleService.executeReminderNotification(now);

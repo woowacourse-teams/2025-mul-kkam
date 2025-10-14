@@ -28,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReminderScheduleService {
 
     private static final String MINUTELY_CRON = "0 * * * * *";
+
+    private final NotificationBatchService notificationBatchService;
     private final ReminderScheduleRepository reminderScheduleRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
@@ -40,13 +42,20 @@ public class ReminderScheduleService {
     }
 
     public void executeReminderNotification(LocalDateTime now) {
-        List<ReminderSchedule> schedules = reminderScheduleRepository.findAllActiveByHourAndMinuteWithMember(now.toLocalTime());
+        List<Long> memberIds = getAllActiveByHourAndMinuteWithMember(now);
 
-        if (schedules.isEmpty()) {
+        if (memberIds.isEmpty()) {
             return;
         }
 
-        notificationService.processReminderNotifications(schedules, now);
+        notificationService.processReminderNotifications(memberIds, now);
+    }
+
+    private List<Long> getAllActiveByHourAndMinuteWithMember(LocalDateTime now) {
+        return notificationBatchService.batchRead((lastId, pageable) ->
+                        reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(now.toLocalTime(), lastId, pageable),
+                id -> id,
+                1000);
     }
 
     @Transactional

@@ -5,6 +5,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -16,26 +17,29 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
+import backend.mulkkam.device.dto.DeviceTokenResponse;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.domain.ReminderSchedule;
+import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -62,6 +66,12 @@ class NotificationServiceUnitTest {
 
     @Mock
     private DeviceRepository deviceRepository;
+
+    @Mock
+    private NotificationBatchRepository notificationBatchRepository;
+
+    @Mock
+    private NotificationBatchService notificationBatchService;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
@@ -293,50 +303,52 @@ class NotificationServiceUnitTest {
     @Nested
     class ProcessReminderNotifications {
 
+        private List<Long> getMemberIds(List<ReminderSchedule> schedules) {
+            return schedules.stream()
+                    .map(ReminderSchedule::getMember)
+                    .map(Member::getId)
+                    .toList();
+        }
+
         @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
         @Test
         void success_whenValidSchedules() {
             // given
-            Member member1 = MemberFixtureBuilder.builder().buildWithId(1L);
-            Member member2 = MemberFixtureBuilder.builder().buildWithId(2L);
-
-            ReminderSchedule schedule1 = ReminderScheduleFixtureBuilder
-                    .withMember(member1)
-                    .schedule(LocalTime.of(14, 0))
-                    .build();
-            ReminderSchedule schedule2 = ReminderScheduleFixtureBuilder
-                    .withMember(member2)
-                    .schedule(LocalTime.of(14, 0))
-                    .build();
-
-            List<ReminderSchedule> schedules = List.of(schedule1, schedule2);
+            List<Long> memberIds = List.of(1L, 2L);
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            Device device1 = new Device("token-1", "device-1", member1);
-            Device device2 = new Device("token-2", "device-2", member2);
-
-            when(deviceRepository.findAllByMemberIn(List.of(member1, member2)))
-                    .thenReturn(List.of(device1, device2));
-
-            // when
-            notificationService.processReminderNotifications(schedules, now);
-
-            // then
-            verify(notificationRepository).saveAll(
-                    argThat(notifications -> {
-                        List<Notification> notificationList = (List<Notification>) notifications;
-                        return notificationList.size() == 2 &&
-                                notificationList.stream().allMatch(n ->
-                                        n.getNotificationType() == NotificationType.REMIND &&
-                                                n.getCreatedAt().equals(now));
-                    })
+            List<DeviceTokenResponse> deviceTokens = List.of(
+                    new DeviceTokenResponse(1L, "token-1"),
+                    new DeviceTokenResponse(2L, "token-2")
             );
 
+            when(notificationBatchService.batchRead(
+                    any(BiFunction.class),
+                    any(Function.class),
+                    eq(1000)
+            )).thenReturn(deviceTokens);
+
+            // when
+            notificationService.processReminderNotifications(memberIds, now);
+
+            // then
+            // 1. 배치 저장 검증
+            verify(notificationBatchRepository).batchInsert(
+                    argThat((List<NotificationInsertDto> dtos) ->
+                            dtos.size() == 2 &&
+                                    dtos.stream().allMatch(dto ->
+                                            dto.notificationType() == NotificationType.REMIND &&
+                                                    (dto.memberId() == 1L || dto.memberId() == 2L)
+                                    )
+                    )
+            );
+
+            // 2. FCM 이벤트 발행 검증
             verify(applicationEventPublisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.tokens().containsAll(List.of("token-1", "token-2")) &&
-                                    evt.tokens().size() == 2 &&
-                                    evt.action() == Action.GO_HOME)
+                                    evt.tokens().size() == 2
+                    )
             );
         }
 
@@ -348,7 +360,8 @@ class NotificationServiceUnitTest {
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
             // when
-            notificationService.processReminderNotifications(emptySchedules, now);
+            List<Long> memberIds = getMemberIds(emptySchedules);
+            notificationService.processReminderNotifications(memberIds, now);
 
             // then
             verify(notificationRepository, never()).saveAll(any());
@@ -359,32 +372,29 @@ class NotificationServiceUnitTest {
         @Test
         void success_whenMemberHasNoDevices() {
             // given
-            Member member = MemberFixtureBuilder.builder().buildWithId(1L);
-            ReminderSchedule schedule = ReminderScheduleFixtureBuilder
-                    .withMember(member)
-                    .schedule(LocalTime.of(14, 0))
-                    .build();
+            List<Long> memberIds = List.of(member.getId());
 
-            List<ReminderSchedule> schedules = List.of(schedule);
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            when(deviceRepository.findAllByMemberIn(List.of(member))).thenReturn(List.of());
+            when(notificationBatchService.batchRead(
+                    any(BiFunction.class),
+                    any(Function.class),
+                    eq(1000)
+            )).thenReturn(List.of());
 
             // when
-            notificationService.processReminderNotifications(schedules, now);
+            notificationService.processReminderNotifications(memberIds, now);
 
             // then
-            verify(notificationRepository).saveAll(
-                    argThat(notifications -> {
-                        List<Notification> notificationList = (List<Notification>) notifications;
-                        return notificationList.size() == 1;
-                    })
+            verify(notificationBatchRepository).batchInsert(
+                    argThat((List<NotificationInsertDto> dtos) ->
+                            dtos.size() == 1 && dtos.getFirst().notificationType() == NotificationType.REMIND
+                                    && dtos.getFirst().memberId() == 1L
+                    )
             );
 
-            verify(applicationEventPublisher).publishEvent(
-                    argThat((SendMessageByFcmTokensRequest evt) ->
-                            evt.tokens().isEmpty())
-            );
+            // 2. FCM 이벤트 발행 검증
+            verify(applicationEventPublisher, never()).publishEvent(any());
         }
     }
 }
