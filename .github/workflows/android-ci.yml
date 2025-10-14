@@ -52,14 +52,17 @@ jobs:
       env:
         GOOGLE_SERVICES_DEBUG: ${{ secrets.GOOGLE_SERVICES_DEBUG }}
       run: |
-        echo "$GOOGLE_SERVICES_DEBUG" | base64 --decode > app/src/debug/google-services.json
+        set -euo pipefail
+        mkdir -p app/src/debug
+        printf '%s' "$GOOGLE_SERVICES_DEBUG" > app/src/debug/google-services.json
 
     - name: set up google-services.json for release
       env:
         GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
       run: |
+        set -euo pipefail
         mkdir -p app/src/release
-        echo "$GOOGLE_SERVICES_RELEASE" | base64 --decode > app/src/release/google-services.json
+        printf '%s' "$GOOGLE_SERVICES_RELEASE" > app/src/release/google-services.json
 
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
