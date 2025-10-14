@@ -46,7 +46,7 @@ public class FriendController {
     public ResponseEntity<ReadReceivedFriendRequestsResponse> getReceivedFriendRequests(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
-            @Parameter(description = "nextId, 첫 요청시 null", required = true)
+            @Parameter(description = "lastId, 첫 요청시 null", required = false)
             @RequestParam(required = false) Long lastId,
             @Parameter(description = "size", required = true)
             @RequestParam(defaultValue = "20") int size
