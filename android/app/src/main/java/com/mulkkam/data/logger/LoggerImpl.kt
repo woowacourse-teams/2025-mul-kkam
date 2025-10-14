@@ -11,16 +11,21 @@ import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.logger.SensitiveInfoSanitizer
 import com.mulkkam.domain.model.logger.LogEntry
 import com.mulkkam.domain.model.logger.LogLevel
+import com.mulkkam.domain.repository.DevicesRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
 class LoggerImpl(
     private val sanitizer: SensitiveInfoSanitizer,
+    private val devicesRepository: DevicesRepository,
     private val analytics: FirebaseAnalytics = Firebase.analytics,
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance(),
     private val isDebug: Boolean = BuildConfig.DEBUG,
 ) : Logger {
     override fun log(entry: LogEntry) {
-        val rawMessage = formatMessage(entry)
+        val entryWithUserId = entry.copy(userId = getDeviceUuid())
+        val rawMessage = formatMessage(entryWithUserId)
         val safeMessage = sanitizer.sanitize(rawMessage)
         val safePayloadMessage = sanitizer.sanitize(entry.message)
 
@@ -35,13 +40,20 @@ class LoggerImpl(
         }
     }
 
+    private fun getDeviceUuid(): String? =
+        runCatching {
+            runBlocking(Dispatchers.IO) {
+                devicesRepository.getDeviceUuid()
+            }
+        }.getOrNull()?.data
+
     private fun formatMessage(entry: LogEntry): String =
         buildString {
             append("level=").append(entry.level)
             append(", event=").appendLine(entry.event)
             append("timestamp=").appendLine(entry.timestamp)
             append("message=").append(entry.message)
-            append(" | userId=").append(entry.userId ?: "null")
+            append(" | userId=").append(entry.userId)
         }
 
     private fun logToTimber(
