@@ -123,7 +123,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(invalidMember);
 
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -139,7 +139,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_rejected() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -160,7 +160,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_requesterCannotProcessOwnRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -213,7 +213,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(invalidMember);
 
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -229,7 +229,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_accepted() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -253,7 +253,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_requesterCannotProcessOwnRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -269,7 +269,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_cannotProcessAlreadyProcessedRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUEST);
+                    FriendStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
             friendService.rejectFriendRequest(
                     friendRelation.getId(),

@@ -26,7 +26,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpEndpoint.exact("/auth/token/reissue", HttpMethod.POST),
             HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
             HttpEndpoint.exact("/cups/default", HttpMethod.GET),
-            HttpEndpoint.exact("/members/search", HttpMethod.GET),
 
             /* swagger */
             HttpEndpoint.prefix("/swagger-ui", HttpMethod.GET),

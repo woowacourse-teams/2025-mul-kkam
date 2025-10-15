@@ -6,12 +6,13 @@ import backend.mulkkam.common.exception.CommonException;
 
 public enum FriendStatus {
 
-    REQUEST,
+    REQUESTED,
     ACCEPTED,
+    NONE,
     ;
 
     public static void validRequest(FriendStatus friendStatus) {
-        if (friendStatus == REQUEST) {
+        if (friendStatus == REQUESTED) {
             return;
         }
         throw new CommonException(INVALID_FRIEND_RELATION);

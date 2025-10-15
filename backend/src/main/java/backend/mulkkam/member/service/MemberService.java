@@ -11,12 +11,12 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.intake.service.IntakeHistoryCrudService;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.MemberIdNicknameProjection;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
@@ -54,6 +54,7 @@ public class MemberService {
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final FriendRelationRepository friendRelationRepository;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
 
@@ -182,6 +183,7 @@ public class MemberService {
     }
 
     public MemberSearchResponse searchMember(
+            MemberDetails memberDetails,
             String prefix,
             int page,
             int size
@@ -189,16 +191,10 @@ public class MemberService {
         if (prefix.isBlank()) {
             return new MemberSearchResponse(List.of(), false);
         }
-        Slice<MemberIdNicknameProjection> memberIdNicknames = memberRepository.findByNicknamePrefix
-                (
-                        prefix,
-                        PageRequest.of(page, size)
-                );
-        List<MemberIdNicknameResponse> memberIdNicknameResponses = memberIdNicknames.stream()
-                .map(memberIdNicknameProjection -> new MemberIdNicknameResponse(memberIdNicknameProjection.getId(),
-                        memberIdNicknameProjection.getNickname()))
-                .toList();
-        return new MemberSearchResponse(memberIdNicknameResponses, memberIdNicknames.hasNext());
+        Slice<MemberIdNicknameResponse> memberIdNicknames = memberRepository.findByNicknamePrefixWithStatus(
+                memberDetails.id(), prefix, PageRequest.of(page, size));
+
+        return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
     }
 
     private Member getMember(Long id) {

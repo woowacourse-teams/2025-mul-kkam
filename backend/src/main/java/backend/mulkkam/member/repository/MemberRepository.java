@@ -1,7 +1,7 @@
 package backend.mulkkam.member.repository;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.MemberIdNicknameProjection;
+import backend.mulkkam.member.dto.response.MemberIdNicknameResponse;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -31,12 +31,31 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             Pageable pageable
     );
 
-    @Query("SELECT m.id as id, m.memberNickname.value as nickname " +
-            "FROM Member m " +
-            "WHERE m.memberNickname.value LIKE CONCAT(:prefix, '%') " +
-            "ORDER BY m.memberNickname.value")
-    Slice<MemberIdNicknameProjection> findByNicknamePrefix(
+    @Query("""
+            SELECT new backend.mulkkam.member.dto.response.MemberIdNicknameResponse(
+              m.id,
+              m.memberNickname.value,
+              CASE
+                WHEN fr.id IS NULL
+                  THEN backend.mulkkam.friend.domain.FriendStatus.NONE
+                ELSE fr.friendStatus
+              END
+            )
+            FROM Member m
+            LEFT JOIN FriendRelation fr
+               ON (
+                 (fr.requesterId = :id AND fr.addresseeId = m.id) OR
+                 (fr.requesterId = m.id AND fr.addresseeId = :id)
+               )
+              AND fr.deletedAt IS NULL
+            WHERE m.memberNickname.value LIKE CONCAT(:prefix, '%')
+              AND m.id <> :id
+            ORDER BY m.memberNickname.value
+            """)
+    Slice<MemberIdNicknameResponse> findByNicknamePrefixWithStatus(
+            @Param("id") Long id,
             @Param("prefix") String prefix,
             Pageable pageable
     );
+
 }

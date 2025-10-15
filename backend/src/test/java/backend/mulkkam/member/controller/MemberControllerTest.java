@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLI
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -181,7 +182,7 @@ class MemberControllerTest extends ControllerTest {
         void success_whenModifyIsNightNotificationAgreed() throws Exception {
             // when
             String json = mockMvc.perform(get("/members/notifications/settings")
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -199,7 +200,7 @@ class MemberControllerTest extends ControllerTest {
         void success_whenWeightAndGenderCanBeNull() throws Exception {
             // when
             String json = mockMvc.perform(get("/members")
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -220,7 +221,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(patch("/members/reminder")
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .header(AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsReminderEnabledRequest)))
 
@@ -248,7 +249,7 @@ class MemberControllerTest extends ControllerTest {
             accountRefreshTokenRepository.save(accountRefreshToken);
             String deviceUuid = "deviceUuid";
 
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
+            String otherToken = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
@@ -262,7 +263,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(delete("/members")
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + otherToken))
                     .andExpect(status().isOk());
 
             // then
@@ -287,7 +288,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(delete("/members")
-                            .header(org.springframework.http.HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk());
 
             Member otherMember = MemberFixtureBuilder
@@ -313,7 +314,7 @@ class MemberControllerTest extends ControllerTest {
             // when
             String json = mockMvc.perform(get("/members/nickname/validation")
                             .param("nickname", "히로")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isBadRequest())
                     .andReturn().getResponse().getContentAsString();
 
@@ -337,7 +338,7 @@ class MemberControllerTest extends ControllerTest {
             // when
             String json = mockMvc.perform(get("/members/nickname/validation")
                             .param("nickname", "체체")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isConflict())
                     .andReturn().getResponse().getContentAsString();
 
@@ -378,7 +379,7 @@ class MemberControllerTest extends ControllerTest {
                             .param("prefix", "돈까스")
                             .param("page", "0")
                             .param("size", "10")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 

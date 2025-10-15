@@ -118,7 +118,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_rejected() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUEST);
+                        FriendStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when
@@ -143,7 +143,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_accepted() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUEST);
+                        FriendStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when

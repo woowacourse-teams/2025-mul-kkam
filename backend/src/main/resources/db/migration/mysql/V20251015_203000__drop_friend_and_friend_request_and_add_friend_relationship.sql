@@ -9,7 +9,7 @@ CREATE TABLE friend_relation (
     requester_id  BIGINT NOT NULL,
     addressee_id  BIGINT NOT NULL,
 
-    friend_status ENUM('REQUEST','ACCEPTED') NOT NULL,
+    friend_status ENUM('REQUESTED','ACCEPTED') NOT NULL,
 
     created_at    DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at    DATETIME NULL,
