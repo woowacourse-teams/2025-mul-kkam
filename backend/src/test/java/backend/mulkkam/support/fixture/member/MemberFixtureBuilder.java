@@ -16,6 +16,7 @@ public class MemberFixtureBuilder {
     private boolean isMarketingNotificationAgreed;
     private boolean isNightNotificationAgreed;
     private String activeNickname;
+    private boolean isReminderEnabled;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
@@ -26,6 +27,7 @@ public class MemberFixtureBuilder {
         this.isMarketingNotificationAgreed = false;
         this.isNightNotificationAgreed = false;
         this.activeNickname = "히로";
+        this.isReminderEnabled = true;
     }
 
     public static MemberFixtureBuilder builder() {
@@ -50,8 +52,8 @@ public class MemberFixtureBuilder {
         return this;
     }
 
-    public MemberFixtureBuilder targetAmount(TargetAmount targetAmount) {
-        this.targetAmount = targetAmount;
+    public MemberFixtureBuilder targetAmount(int targetAmount) {
+        this.targetAmount = new TargetAmount(targetAmount);
         return this;
     }
 
@@ -65,6 +67,11 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+    public MemberFixtureBuilder isReminderEnabled(boolean isReminderEnabled) {
+        this.isReminderEnabled = isReminderEnabled;
+        return this;
+    }
+
     public Member build() {
         return new Member(
                 this.memberNickname,
@@ -72,7 +79,8 @@ public class MemberFixtureBuilder {
                 this.targetAmount,
                 this.isMarketingNotificationAgreed,
                 this.isNightNotificationAgreed,
-                this.activeNickname
+                this.activeNickname,
+                this.isReminderEnabled
         );
     }
 
@@ -84,7 +92,8 @@ public class MemberFixtureBuilder {
                 this.targetAmount,
                 this.isMarketingNotificationAgreed,
                 this.isNightNotificationAgreed,
-                this.activeNickname
+                this.activeNickname,
+                this.isReminderEnabled
         );
     }
 }
