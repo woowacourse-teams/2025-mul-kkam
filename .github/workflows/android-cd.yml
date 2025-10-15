@@ -134,7 +134,7 @@ jobs:
             notes_path="$dispatch_notes_path"
           else
             commit_msg="$(git log -1 --pretty=%B)"
-            if [[ "$commit_msg" =~ (^|[[:space:]])([vV]?[0-9]+(\.[0-9]+){1,3})([[:space:]]|$) ]]; then
+            if [[ "$commit_msg" =~ (^|[[:space:]])[vV]?([0-9]+(\.[0-9]+){1,3})([[:space:]]|$) ]]; then
               release_identifier="${BASH_REMATCH[2]}"
             fi
 
