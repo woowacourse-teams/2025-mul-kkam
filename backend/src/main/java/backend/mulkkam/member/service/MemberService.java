@@ -11,6 +11,8 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.friend.repository.FriendRepository;
+import backend.mulkkam.friend.repository.FriendRequestRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -51,6 +53,8 @@ public class MemberService {
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
+    private final FriendRepository friendRepository;
+    private final FriendRequestRepository friendRequestRepository;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
 
@@ -166,6 +170,8 @@ public class MemberService {
         notificationRepository.deleteByMember(member);
 
         reminderScheduleRepository.deleteByMember(member);
+        friendRepository.deleteByMemberId(member.getId());
+        friendRequestRepository.deleteByMemberId(member.getId());
 
         memberRepository.delete(member);
     }
