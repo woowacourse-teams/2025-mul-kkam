@@ -250,4 +250,6 @@
     <string name="achievement_heatmap_widget_label">일일 달성도 위젯</string>
     <string name="intake_widget_label">마시기 위젯</string>
     <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
+
+    <string name="search_friends_top_app_bar_title">친구 찾기</string>
 </resources>
