@@ -15,17 +15,15 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class NotificationBatchRepository {
 
-    private static final int BATCH_SIZE = 1_000;
-
     private final JdbcTemplate jdbcTemplate;
 
-    public void batchInsert(List<NotificationInsertDto> notificationInsertDtos) {
+    public void batchInsert(List<NotificationInsertDto> notificationInsertDtos, int batchSize) {
         String sql = "INSERT INTO notification (notification_type, is_read, created_at, member_id, content, deleted_at) values (?, ?, ?, ?, ?, ?)";
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
 
-        for (int i = 0; i < notificationInsertDtos.size(); i += BATCH_SIZE) {
+        for (int i = 0; i < notificationInsertDtos.size(); i += batchSize) {
             List<NotificationInsertDto> batchNotificationInsertDtos = notificationInsertDtos.subList(i,
-                    Math.min(i + BATCH_SIZE, notificationInsertDtos.size()));
+                    Math.min(i + batchSize, notificationInsertDtos.size()));
 
             jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
                 @Override

@@ -28,35 +28,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReminderScheduleService {
 
     private static final String MINUTELY_CRON = "0 * * * * *";
-    private static final int CHUNK_SIZE = 1000;
 
-    private final NotificationBatchService notificationBatchService;
     private final ReminderScheduleRepository reminderScheduleRepository;
     private final MemberRepository memberRepository;
     private final NotificationService notificationService;
 
     @Transactional
     @Scheduled(cron = MINUTELY_CRON)
-    public void scheduleReminderNotification() {
+    public void scheduleReminderNotification1() {
         LocalDateTime now = LocalDateTime.now();
-        executeReminderNotification(now);
-    }
-
-    public void executeReminderNotification(LocalDateTime now) {
-        List<Long> memberIds = getAllActiveByHourAndMinuteWithMember(now);
-
-        if (memberIds.isEmpty()) {
-            return;
-        }
-
-        notificationService.processReminderNotifications(memberIds, now);
-    }
-
-    private List<Long> getAllActiveByHourAndMinuteWithMember(LocalDateTime now) {
-        return notificationBatchService.batchRead((lastId, pageable) ->
-                        reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(now.toLocalTime(), lastId, pageable),
-                id -> id,
-                CHUNK_SIZE);
+        notificationService.processReminderNotifications1(now);
     }
 
     @Transactional

@@ -329,7 +329,7 @@ class NotificationServiceUnitTest {
             )).thenReturn(deviceTokens);
 
             // when
-            notificationService.processReminderNotifications(memberIds, now);
+            notificationService.processReminderNotifications1(now);
 
             // then
             // 1. 배치 저장 검증
@@ -340,8 +340,8 @@ class NotificationServiceUnitTest {
                                             dto.notificationType() == NotificationType.REMIND &&
                                                     (dto.memberId() == 1L || dto.memberId() == 2L)
                                     )
-                    )
-            );
+                    ),
+                    1000);
 
             // 2. FCM 이벤트 발행 검증
             verify(applicationEventPublisher).publishEvent(
@@ -361,10 +361,10 @@ class NotificationServiceUnitTest {
 
             // when
             List<Long> memberIds = getMemberIds(emptySchedules);
-            notificationService.processReminderNotifications(memberIds, now);
+            notificationService.processReminderNotifications1(now);
 
             // then
-            verify(notificationBatchRepository, never()).batchInsert(any());
+            verify(notificationBatchRepository, never()).batchInsert(any(), any());
             verify(applicationEventPublisher, never()).publishEvent(any());
         }
 
@@ -383,14 +383,14 @@ class NotificationServiceUnitTest {
             )).thenReturn(List.of());
 
             // when
-            notificationService.processReminderNotifications(memberIds, now);
+            notificationService.processReminderNotifications1(now);
 
             // then
             verify(notificationBatchRepository).batchInsert(
                     argThat((List<NotificationInsertDto> dtos) ->
                             dtos.size() == 1 && dtos.getFirst().notificationType() == NotificationType.REMIND
                                     && dtos.getFirst().memberId() == 1L
-                    )
+                    ), 1000
             );
 
             // 2. FCM 이벤트 발행 검증
