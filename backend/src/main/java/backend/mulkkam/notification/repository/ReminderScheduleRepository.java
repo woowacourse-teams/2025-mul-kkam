@@ -36,5 +36,5 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
             """)
     List<Long> findAllActiveMemberIdsByHourAndMinute(@Param("schedule") LocalTime schedule, @Param("lastId") Long lastId, Pageable pageable);
 
-    void deleteByMember(Member member);
+    void deleteAllByMemberId(Long memberId);
 }

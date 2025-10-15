@@ -5,7 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -29,11 +28,10 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
     Optional<Friend> findByFriendIdAndMemberId(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
     @Modifying
-    @Transactional
     @Query("""
         DELETE
         FROM Friend f
         WHERE f.addresseeId = :memberId OR f.requesterId = :memberId
     """)
-    void deleteByMemberId(@Param("memberId") Long memberId);
+    void deleteAllByMemberId(@Param("memberId") Long memberId);
 }

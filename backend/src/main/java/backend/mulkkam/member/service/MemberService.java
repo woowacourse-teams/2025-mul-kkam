@@ -169,9 +169,9 @@ public class MemberService {
         suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
 
-        reminderScheduleRepository.deleteByMember(member);
-        friendRepository.deleteByMemberId(member.getId());
-        friendRequestRepository.deleteByMemberId(member.getId());
+        reminderScheduleRepository.deleteAllByMemberId(member.getId());
+        friendRepository.deleteAllByMemberId(member.getId());
+        friendRequestRepository.deleteAllByMemberId(member.getId());
 
         memberRepository.delete(member);
     }
