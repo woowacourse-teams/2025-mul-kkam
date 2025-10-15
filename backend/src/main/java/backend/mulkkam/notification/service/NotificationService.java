@@ -41,7 +41,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
-    private static final int BATCH_READ_SIZE = 1000;
+    private static final int BATCH_READ_SIZE = 1_000;
 
     private final SuggestionNotificationService suggestionNotificationService;
     private final NotificationBatchService notificationBatchService;
