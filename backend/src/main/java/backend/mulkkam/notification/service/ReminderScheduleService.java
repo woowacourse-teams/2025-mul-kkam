@@ -14,9 +14,11 @@ import backend.mulkkam.notification.dto.request.ModifyReminderScheduleTimeReques
 import backend.mulkkam.notification.dto.response.ReadReminderScheduleResponse;
 import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +27,23 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class ReminderScheduleService {
 
+    private static final String MINUTELY_CRON = "0 * * * * *";
+
     private final ReminderScheduleRepository reminderScheduleRepository;
     private final MemberRepository memberRepository;
+    private final NotificationService notificationService;
+
+    @Transactional
+    @Scheduled(cron = MINUTELY_CRON)
+    public void scheduleReminderNotification1() {
+        LocalDateTime now = LocalDateTime.now();
+        executeReminderNotification(now);
+    }
+
+    @Transactional
+    public void executeReminderNotification(LocalDateTime now) {
+        notificationService.processReminderNotifications1(now);
+    }
 
     @Transactional
     public void create(
@@ -85,5 +102,4 @@ public class ReminderScheduleService {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
-
 }

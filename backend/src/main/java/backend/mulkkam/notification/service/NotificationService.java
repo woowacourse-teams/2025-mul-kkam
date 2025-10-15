@@ -7,13 +7,13 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
@@ -22,17 +22,15 @@ import backend.mulkkam.notification.dto.response.GetSuggestionNotificationRespon
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,48 +40,59 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
-    private static final String DAILY_2PM_CRON = "0 0 14 * * *";
-    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
+    private static final int CHUNK_SIZE = 1_000;
 
+    private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationBatchService notificationBatchService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final MemberRepository memberRepository;
-    private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationBatchRepository notificationBatchRepository;
+    private final ReminderScheduleRepository reminderScheduleRepository;
     private final ApplicationEventPublisher publisher;
-    private final NotificationBatchService notificationBatchService;
 
     @Transactional
-    @Scheduled(cron = DAILY_2PM_CRON)
-    @Scheduled(cron = DAILY_7PM_CRON)
-    public void notifyRemindNotification() {
-        NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
-        createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
-    }
+    public void processReminderNotifications1(LocalDateTime now) {
+        NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
-    @Transactional
-    public void createAndSendTopicNotification(
-            NotificationMessageTemplate notificationMessageTemplate,
-            LocalDateTime now
-    ) {
-        final int CHUNK = 1000;
         Long lastId = null;
 
         while (true) {
-            List<Long> memberIds = memberRepository.findIdsAfter
-                    (
-                            lastId,
-                            PageRequest.of(0, CHUNK, Sort.by("id"))
-                    );
+            // - 청크 조회
+            List<Long> memberIds = notificationBatchService.readChunk(
+                    (id, pageable) -> reminderScheduleRepository
+                            .findAllActiveMemberIdsByHourAndMinute(
+                                    now.toLocalTime(),
+                                    id,
+                                    pageable
+                            ),
+                    lastId,
+                    CHUNK_SIZE
+            );
+
             if (memberIds.isEmpty()) {
                 break;
             }
-            notificationBatchService.processOneChunk(notificationMessageTemplate, now, memberIds);
-            if (memberIds.size() < CHUNK) {
+
+            // - 청크 저장
+            List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
+                    .map(memberId -> new NotificationInsertDto(template, memberId))
+                    .toList();
+            notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+
+            // - 청크 발송
+            List<String> tokens = readDeviceTokens(memberIds);
+            publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+
+            if (memberIds.size() < CHUNK_SIZE) {
                 break;
             }
+
             lastId = memberIds.getLast();
         }
-        publisher.publishEvent(notificationMessageTemplate.toSendMessageByFcmTopicRequest());
+    }
+
+    private List<String> readDeviceTokens(List<Long> memberIds) {
+        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
     }
 
     @Transactional
@@ -130,7 +139,8 @@ public class NotificationService {
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         notificationRepository.save(createTokenNotificationRequest.toNotification());
-        sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
+
+        sendPushToMemberDevices(createTokenNotificationRequest, devicesByMember);
     }
 
     public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails,
@@ -214,15 +224,20 @@ public class NotificationService {
         return new GetSuggestionNotificationResponse(readNotificationRow);
     }
 
-    private void sendNotificationByMember(
+    private void sendPushToMemberDevices(
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
-        for (Device device : devicesByMember) {
-            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
-            publisher.publishEvent(sendMessageByFcmTokenRequest);
-        }
+        List<String> tokens = extractTokensFromDevices(devicesByMember);
+        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
+                tokens);
+        publisher.publishEvent(sendMessageByFcmTokensRequest);
+    }
+
+    private List<String> extractTokensFromDevices(List<Device> devices) {
+        return devices.stream()
+                .map(Device::getToken)
+                .toList();
     }
 
     private Notification getNotification(Long id) {
