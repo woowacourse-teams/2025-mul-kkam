@@ -15,8 +15,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public class NotificationBatchRepository {
 
+    private static final int BATCH_SIZE = 1_000;
+
     private final JdbcTemplate jdbcTemplate;
-    private static final int BATCH_SIZE = 1000;
 
     public void batchInsert(List<NotificationInsertDto> notificationInsertDtos) {
         String sql = "INSERT INTO notification (notification_type, is_read, created_at, member_id, content, deleted_at) values (?, ?, ?, ?, ?, ?)";
