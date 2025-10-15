@@ -9,6 +9,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.model.MulKkamUiState
@@ -30,6 +32,8 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
             viewModel.updateOnboardingState(OnboardingStep.TERMS)
         }
 
+        mulKkamLogger.info(LogEvent.ONBOARDING, "Entered onboarding flow")
+
         initProgressBarView()
         initClickListeners()
         initObservers()
@@ -48,6 +52,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
     private fun initClickListeners() {
         binding.tvSkip.setSingleClickListener {
+            mulKkamLogger.info(LogEvent.ONBOARDING, "Onboarding skip tapped")
             viewModel.clearBioInfo()
             viewModel.moveToNextStep()
         }
@@ -73,6 +78,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     }
 
     private fun navigateToStep(step: OnboardingStep) {
+        mulKkamLogger.info(
+            LogEvent.ONBOARDING,
+            "Navigating to onboarding step ${step.name}",
+        )
         binding.viewOnboardingProgress.setProgress(step.ordinal + OFFSET_STEP_ORDINAL)
         if (supportFragmentManager.findFragmentByTag(step.name) == null) {
             supportFragmentManager.commit {

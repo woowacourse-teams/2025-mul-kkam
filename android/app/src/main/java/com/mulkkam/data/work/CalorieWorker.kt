@@ -19,6 +19,11 @@ class CalorieWorker(
     override suspend fun doWork(): Result {
         val now = Instant.now()
 
+        mulKkamLogger.info(
+            LogEvent.HEALTH_CONNECT,
+            "CalorieWorker triggered at $now",
+        )
+
         runCatching {
             healthRepository
                 .getActiveCaloriesBurned(
@@ -27,6 +32,10 @@ class CalorieWorker(
                 ).getOrError()
         }.onSuccess { exerciseCalorie ->
             if (exerciseCalorie.exercised.not()) return@onSuccess
+            mulKkamLogger.info(
+                LogEvent.HEALTH_CONNECT,
+                "Posted active calories burned notification: ${exerciseCalorie.kcal} kcal",
+            )
             notificationRepository.postActiveCaloriesBurned(exerciseCalorie.kcal)
         }.onFailure {
             mulKkamLogger.error(

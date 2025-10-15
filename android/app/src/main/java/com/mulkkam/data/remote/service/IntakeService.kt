@@ -6,6 +6,7 @@ import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
 import com.mulkkam.data.remote.model.response.intake.IntakeHistoryResultResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeHistorySummaryResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
+import com.mulkkam.data.remote.model.response.intake.ReadAchievementRatesResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -20,6 +21,12 @@ interface IntakeService {
         @Query("from") from: String,
         @Query("to") to: String,
     ): Result<List<IntakeHistorySummaryResponse>>
+
+    @GET("/intake/history/achievement-rates")
+    suspend fun getAchievementRates(
+        @Query("from") from: String,
+        @Query("to") to: String,
+    ): Result<ReadAchievementRatesResponse>
 
     @POST("/intake/history/input")
     suspend fun postIntakeHistoryInput(

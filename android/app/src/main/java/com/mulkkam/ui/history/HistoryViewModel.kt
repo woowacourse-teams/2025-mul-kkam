@@ -4,12 +4,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import com.mulkkam.domain.model.intake.WaterIntakeState
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
@@ -102,6 +104,7 @@ class HistoryViewModel : ViewModel() {
 
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.USER_ACTION, "Confirmed delete for intake history id=${history.id}")
                 _deleteUiState.value = MulKkamUiState.Loading
                 RepositoryInjection.intakeRepository.deleteIntakeHistoryDetails(history.id).getOrError()
             }.onSuccess {

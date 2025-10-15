@@ -44,7 +44,11 @@ class HistoryViewHolder(
                 )
             tvIntakeAmount.setTextColor(intakeHistory.intakeType.toColorHex().toColorInt())
 
-            ivCupIcon.loadUrl(url = intakeHistory.cupEmojiUrl, shape = ImageShape.Circle)
+            ivCupIcon.loadUrl(
+                url = intakeHistory.cupEmojiUrl,
+                shape = ImageShape.Circle,
+                placeholderRes = R.drawable.img_cup_placeholder,
+            )
         }
     }
 

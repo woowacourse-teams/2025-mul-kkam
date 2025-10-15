@@ -1,11 +1,12 @@
 [versions]
-coreTesting = "2.2.0"
-lottie = "6.6.7"
+versionCode = "6"
+versionName = "2.1.0"
 minSdk = "28"
-shimmer = "0.5.0"
 targetSdk = "36"
-versionCode = "5"
-versionName = "2.0.1"
+coreTesting = "2.2.0"
+lifecycleViewmodelCompose = "2.9.3"
+lottie = "6.6.9"
+shimmer = "0.5.0"
 agp = "8.9.3"
 kotlin = "2.2.0"
 coreKtx = "1.15.0"
@@ -42,6 +43,7 @@ composeBom = "2025.08.01"
 # AndroidX 및 UI
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "activity" }
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
@@ -75,7 +77,9 @@ mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 
 # 이미지 로딩
 lottie = { module = "com.airbnb.android:lottie", version.ref = "lottie" }
+lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "lottie" }
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
 coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 

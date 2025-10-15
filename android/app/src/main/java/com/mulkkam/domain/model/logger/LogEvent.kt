@@ -6,6 +6,11 @@ package com.mulkkam.domain.model.logger
 enum class LogEvent {
     NETWORK,
     DEBUG,
-    ERROR,
     HEALTH_CONNECT,
+    USER_ACTION,
+    USER_AUTH,
+    PUSH_NOTIFICATION,
+    ONBOARDING,
+    SPLASH,
+    WIDGET,
 }

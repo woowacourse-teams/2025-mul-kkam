@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response.notifications
 
-import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationsResult
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -12,4 +12,8 @@ data class NotificationsResponse(
     val nextCursor: Long?,
 )
 
-fun NotificationsResponse.toDomain(): List<Notification> = this.readNotificationResponses.map { it.toDomain() }
+fun NotificationsResponse.toDomain(): NotificationsResult =
+    NotificationsResult(
+        notifications = this.readNotificationResponses.map { it.toDomain() },
+        nextCursor = this.nextCursor,
+    )
