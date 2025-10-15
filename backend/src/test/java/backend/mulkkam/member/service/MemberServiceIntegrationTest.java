@@ -342,7 +342,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
-                    .targetAmount(rawTargetAmount)
+                    .targetAmount(new TargetAmount(rawTargetAmount))
                     .build();
             memberRepository.save(member);
 

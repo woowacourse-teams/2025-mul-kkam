@@ -3,7 +3,6 @@ package backend.mulkkam.intake.repository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.member.domain.Member;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,7 +13,17 @@ import java.util.Optional;
 
 public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHistoryDetail, Long> {
 
-    @Override
+    @Query("SELECT d FROM IntakeHistoryDetail d " +
+            "JOIN d.intakeHistory h " +
+            "WHERE h.member = :member " +
+            "AND h.historyDate BETWEEN :dateAfter AND :dateBefore " +
+            "ORDER BY h.historyDate")
+    List<IntakeHistoryDetail> findAllByMemberAndDateRange(
+            @Param("member") Member member,
+            @Param("dateAfter") LocalDate dateAfter,
+            @Param("dateBefore") LocalDate dateBefore
+    );
+
     @Query("""
                 SELECT d
                 FROM IntakeHistoryDetail d
@@ -22,25 +31,7 @@ public interface IntakeHistoryDetailRepository extends JpaRepository<IntakeHisto
                 JOIN FETCH h.member
                 WHERE d.id = :id
             """)
-    Optional<IntakeHistoryDetail> findById(@NotNull @Param("id") Long id);
+    Optional<IntakeHistoryDetail> findWithHistoryAndMemberById(@Param("id") Long id);
 
-    @Query("""
-                SELECT d
-                FROM IntakeHistoryDetail d
-                JOIN FETCH d.intakeHistory h
-                JOIN FETCH h.member
-                WHERE h.member = :member
-                    AND h.historyDate BETWEEN :from AND :to
-            """)
-    List<IntakeHistoryDetail> findAllByMemberAndDateRange(
-            @Param("member") Member member,
-            @Param("from") LocalDate from,
-            @Param("to") LocalDate to
-    );
-
-    List<IntakeHistoryDetail> findAllByIntakeHistoryIn(List<IntakeHistory> intakeHistories);
-
-    void deleteAllByIntakeHistoryIn(List<IntakeHistory> intakeHistory);
-
-    List<IntakeHistoryDetail> findByIntakeHistory(IntakeHistory intakeHistory);
+    void deleteByIntakeHistory(IntakeHistory intakeHistory);
 }

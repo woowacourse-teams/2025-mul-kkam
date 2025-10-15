@@ -46,8 +46,4 @@ public enum DefaultCup {
                 .filter(v -> v.intakeType == type)
                 .findFirst();
     }
-
-    public static EmojiCode getHighestPriorityEmojiCode() {
-        return EmojiCode.of(IntakeType.WATER, EmojiType.DEFAULT);
-    }
 }

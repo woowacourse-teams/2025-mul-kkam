@@ -5,9 +5,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection
+import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
+import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
+import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
+import com.mulkkam.domain.model.intake.IntakeInfo
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -30,9 +37,12 @@ class HomeViewModel : ViewModel() {
         MutableLiveData(MulKkamUiState.Idle)
     val alarmCountUiState: LiveData<MulKkamUiState<Long>> get() = _alarmCountUiState
 
-    private val _drinkUiState: MutableLiveData<MulKkamUiState<Int>> =
+    private val _drinkUiState: MutableLiveData<MulKkamUiState<IntakeInfo>> =
         MutableLiveData(MulKkamUiState.Idle)
-    val drinkUiState: LiveData<MulKkamUiState<Int>> get() = _drinkUiState
+    val drinkUiState: LiveData<MulKkamUiState<IntakeInfo>> get() = _drinkUiState
+
+    private val _isGoalAchieved: MutableLiveData<Unit> = MutableLiveData()
+    val isGoalAchieved: LiveData<Unit> get() = _isGoalAchieved
 
     init {
         loadTodayProgressInfo()
@@ -88,28 +98,69 @@ class HomeViewModel : ViewModel() {
     fun addWaterIntakeByCup(cupId: Long) {
         val cups = cupsUiState.value?.toSuccessDataOrNull() ?: return
         val cup = cups.findCupById(cupId) ?: return
-        addWaterIntake(cup.amount)
+        addWaterIntakeByCup(cup)
     }
 
-    fun addWaterIntake(amount: Int) {
+    private fun addWaterIntakeByCup(cup: Cup) {
         if (drinkUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _drinkUiState.value = MulKkamUiState.Loading
-                RepositoryInjection.intakeRepository
-                    .postIntakeHistory(LocalDateTime.now(), amount)
+                intakeRepository
+                    .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
                     .getOrError()
             }.onSuccess { intakeHistory ->
-                val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return@launch
-                _todayProgressInfoUiState.value =
-                    MulKkamUiState.Success(
-                        current.updateProgressInfo(
-                            amountDelta = amount,
-                            achievementRate = intakeHistory.achievementRate,
-                            comment = intakeHistory.comment,
-                        ),
-                    )
-                _drinkUiState.value = MulKkamUiState.Success(amount)
+                updateIntakeHistory(intakeHistory)
+            }.onFailure {
+                _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
+    private fun updateIntakeHistory(intakeHistory: IntakeHistoryResult) {
+        val current = todayProgressInfoUiState.value?.toSuccessDataOrNull() ?: return
+        _todayProgressInfoUiState.value =
+            MulKkamUiState.Success(
+                current.updateProgressInfo(
+                    amountDelta = intakeHistory.intakeAmount,
+                    achievementRate = intakeHistory.achievementRate,
+                    comment = intakeHistory.comment,
+                ),
+            )
+        _drinkUiState.value =
+            MulKkamUiState.Success(IntakeInfo(intakeHistory.intakeType, intakeHistory.intakeAmount))
+        if (current.achievementRate < ACHIEVEMENT_RATE_MAX && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_MAX) {
+            _isGoalAchieved.value = Unit
+        }
+    }
+
+    fun addWaterIntake(
+        intakeType: IntakeType,
+        amount: Int,
+    ) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
+        runCatching {
+            CupAmount(amount)
+        }.onSuccess { amount ->
+            addWaterIntake(intakeType, amount)
+        }.onFailure {
+            _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+        }
+    }
+
+    private fun addWaterIntake(
+        intakeType: IntakeType,
+        amount: CupAmount,
+    ) {
+        if (drinkUiState.value is MulKkamUiState.Loading) return
+        viewModelScope.launch {
+            runCatching {
+                _drinkUiState.value = MulKkamUiState.Loading
+                intakeRepository
+                    .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
+                    .getOrError()
+            }.onSuccess { intakeHistory ->
+                updateIntakeHistory(intakeHistory)
             }.onFailure {
                 _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

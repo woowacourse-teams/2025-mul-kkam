@@ -4,7 +4,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.notificationRepository
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -22,6 +21,12 @@ class NotificationViewModel : ViewModel() {
             MulKkamUiState.Idle,
         )
     val applySuggestionUiState: LiveData<MulKkamUiState<Unit>> = _applySuggestionUiState
+
+    private val _deleteNotificationUiState: MutableLiveData<MulKkamUiState<Unit>> =
+        MutableLiveData(
+            MulKkamUiState.Idle,
+        )
+    val deleteNotificationUiState: LiveData<MulKkamUiState<Unit>> = _deleteNotificationUiState
 
     private val _isApplySuggestion: MutableLiveData<Boolean> = MutableLiveData(false)
     val isApplySuggestion: LiveData<Boolean> = _isApplySuggestion
@@ -49,14 +54,14 @@ class NotificationViewModel : ViewModel() {
     }
 
     fun applySuggestion(
-        amount: Int,
+        id: Int,
         onComplete: (isSuccess: Boolean) -> Unit,
     ) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 _applySuggestionUiState.value = MulKkamUiState.Loading
-                intakeRepository.patchIntakeAmountTargetSuggested(amount).getOrError()
+                notificationRepository.postSuggestionNotificationsApproval(id).getOrError()
             }.onSuccess {
                 _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
                 _isApplySuggestion.value = true
@@ -64,6 +69,21 @@ class NotificationViewModel : ViewModel() {
             }.onFailure {
                 _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 onComplete(false)
+            }
+        }
+    }
+
+    fun deleteNotification(id: Int) {
+        if (deleteNotificationUiState.value == MulKkamUiState.Loading) return
+        viewModelScope.launch {
+            runCatching {
+                _deleteNotificationUiState.value = MulKkamUiState.Loading
+                notificationRepository.deleteNotifications(id).getOrError()
+            }.onSuccess {
+                _deleteNotificationUiState.value = MulKkamUiState.Success(Unit)
+            }.onFailure {
+                _deleteNotificationUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                loadNotifications()
             }
         }
     }

@@ -8,9 +8,9 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
-import backend.mulkkam.intake.dto.SuggestionIntakeAmountResponse;
+import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.response.IntakeSuggestionAmountResponse;
+import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
@@ -109,24 +109,24 @@ public class IntakeTargetAmountServiceUnitTest {
         @Test
         void success_physicalAttributes() {
             // when
-            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
+            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(member)
             );
 
             // then
-            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
         @Test
         void success_physicalAttributesIsNotExisted() {
             // when
-            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
+            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(member)
             );
 
             // then
-            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
         }
     }
 
@@ -141,7 +141,7 @@ public class IntakeTargetAmountServiceUnitTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(Gender.FEMALE, 60.0);
 
             // when
-            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then
@@ -155,7 +155,7 @@ public class IntakeTargetAmountServiceUnitTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(null, null);
 
             // when
-            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then

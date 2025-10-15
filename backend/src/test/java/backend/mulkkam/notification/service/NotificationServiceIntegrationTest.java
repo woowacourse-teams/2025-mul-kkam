@@ -14,17 +14,16 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.ReadNotificationRow;
-import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
-import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.response.NotificationResponse;
-import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.GetNotificationsRequest;
+import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationResponse;
+import backend.mulkkam.notification.dto.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
-import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.fixture.SuggestionNotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -54,13 +53,9 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private SuggestionNotificationRepository suggestionNotificationRepository;
 
-    private List<Notification> createUnReadNotifications(LocalDate... dates) {
+    private List<Notification> createNotifications(LocalDate... dates) {
         return Arrays.stream(dates)
-                .map(date -> NotificationFixtureBuilder
-                        .withMember(savedMember)
-                        .createdAt(date)
-                        .isRead(false)
-                        .build())
+                .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).build())
                 .toList();
     }
 
@@ -133,29 +128,27 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             ));
 
             LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
-            ReadNotificationsRequest request = new ReadNotificationsRequest(10L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(10L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
             List<NotificationResponse> results = response.readNotificationResponses();
             List<LocalDateTime> createdAts = results.stream().map(NotificationResponse::createdAt).toList();
 
-            List<Boolean> actualIsReads = notificationRepository.findByCursorRows(savedMember.getId(), 10L,
+            List<Boolean> actualIsReads = notificationRepository.findByCursor(savedMember.getId(), 10L,
                             requestTime, Pageable.ofSize(defaultSize + 1)).stream()
-                    .map(ReadNotificationRow::isRead)
-                    .toList();
+                    .map(Notification::isRead)
+                            .toList();
 
             assertSoftly(softly -> {
                 softly.assertThat(results).hasSize(defaultSize);
                 results.forEach(r -> softly.assertThat(r.createdAt()).isAfterOrEqualTo(limitStartDateTime));
                 results.forEach(r -> softly.assertThat(r.isRead()).isFalse());
-                results.forEach(r -> softly.assertThat(r.id() < 10L).isTrue());
                 softly.assertThat(createdAts).isSortedAccordingTo(Comparator.reverseOrder());
                 softly.assertThat(actualIsReads).allMatch(o -> o == Boolean.TRUE);
-                softly.assertThat(response.nextCursor()).isEqualTo(5);
             });
         }
 
@@ -163,7 +156,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
-            notificationRepository.saveAll(createUnReadNotifications(
+            notificationRepository.saveAll(createNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -171,10 +164,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -185,7 +178,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
             // given
-            List<Notification> notifications = createUnReadNotifications(
+            List<Notification> notifications = createNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -194,10 +187,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
             notificationRepository.saveAll(notifications);
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, 10);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, 10);
 
             // when
-            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -213,7 +206,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .createdAt(LocalDate.of(2025, 8, 10))
                     .build();
 
-            List<Notification> notifications = createUnReadNotifications(
+            List<Notification> notifications = createNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -227,10 +220,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
             notificationRepository.saveAll(notifications);
             notificationRepository.save(latestNotification);
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(null, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -247,7 +240,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_nextCursorIsNullWhenNoMoreData() {
             // given
-            notificationRepository.saveAll(createUnReadNotifications(
+            notificationRepository.saveAll(createNotifications(
                     LocalDate.of(2025, 8, 1),
                     LocalDate.of(2025, 8, 2),
                     LocalDate.of(2025, 8, 3),
@@ -255,10 +248,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 5)
             ));
 
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, defaultSize);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, defaultSize);
 
             // when
-            ReadNotificationsResponse response = notificationService.readNotificationsAfter(request,
+            ReadNotificationsResponse response = notificationService.getNotificationsAfter(request,
                     new MemberDetails(savedMember));
 
             // then
@@ -269,11 +262,10 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_throwsExceptionWhenSizeIsNegative() {
             // given
-            ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
+            GetNotificationsRequest request = new GetNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(
-                    () -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)))
+            assertThatThrownBy(() -> notificationService.getNotificationsAfter(request, new MemberDetails(savedMember)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
         }
@@ -283,20 +275,24 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class GetNotificationsCount {
 
-        private LocalDateTime clientTime;
+        private List<Notification> createReadNotifications(LocalDate... dates) {
+            return Arrays.stream(dates)
+                    .map(date -> NotificationFixtureBuilder.withMember(savedMember).createdAt(date).isRead(true)
+                            .build())
+                    .toList();
+        }
 
-        @BeforeEach
-        void setUp() {
-            clientTime = LocalDateTime.of(2025, 8, 7, 0, 0, 0);
-
-            // 공통 데이터 시드: 읽음 처리된 제안 알림 1건 + 8/1~8/5 읽음 + 8/6~8/7 미읽음
-            Notification suggestionRead = NotificationFixtureBuilder.withMember(savedMember)
+        @DisplayName("안 읽은 알림의 갯수를 반환한다")
+        @Test
+        void success_validMember() {
+            // given
+            Notification notification = NotificationFixtureBuilder.withMember(savedMember)
                     .notificationType(NotificationType.SUGGESTION)
                     .createdAt(LocalDate.of(2025, 8, 1))
                     .isRead(true)
                     .build();
             suggestionNotificationRepository.save(
-                    SuggestionNotificationFixtureBuilder.withNotification(suggestionRead).build());
+                    SuggestionNotificationFixtureBuilder.withNotification(notification).build());
 
             notificationRepository.saveAll(createReadNotifications(
                     LocalDate.of(2025, 8, 1),
@@ -305,45 +301,14 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     LocalDate.of(2025, 8, 4),
                     LocalDate.of(2025, 8, 5)
             ));
-            notificationRepository.saveAll(createUnReadNotifications(
+            notificationRepository.saveAll(createNotifications(
                     LocalDate.of(2025, 8, 6),
                     LocalDate.of(2025, 8, 7)
             ));
-        }
 
-        private List<Notification> createReadNotifications(LocalDate... dates) {
-            return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder
-                            .withMember(savedMember)
-                            .createdAt(date)
-                            .isRead(true)
-                            .build())
-                    .toList();
-        }
-
-        @DisplayName("안 읽은 알림의 갯수를 반환한다")
-        @Test
-        void success_validMember() {
             // when
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
-                    new MemberDetails(savedMember), clientTime);
-
-            // then
-            assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);
-        }
-
-        @DisplayName("요청 시각 기준 7일 이내의 읽지 않은 알림만 집계한다")
-        @Test
-        void success_countsUnreadOnlyWithin7Days() {
-            // given
-            notificationRepository.saveAll(createUnReadNotifications(
-                    LocalDate.of(2025, 7, 6),
-                    LocalDate.of(2025, 7, 7)
-            ));
-
-            // when 
-            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
-                    new MemberDetails(savedMember), clientTime);
+            GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getNotificationsCount(
+                    new MemberDetails(savedMember));
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(2);

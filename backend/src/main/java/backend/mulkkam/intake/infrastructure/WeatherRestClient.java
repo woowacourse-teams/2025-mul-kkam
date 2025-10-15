@@ -1,7 +1,7 @@
 package backend.mulkkam.intake.infrastructure;
 
 import backend.mulkkam.intake.dto.OpenWeatherResponse;
-import backend.mulkkam.notification.service.WeatherClient;
+import backend.mulkkam.intake.service.WeatherClient;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;

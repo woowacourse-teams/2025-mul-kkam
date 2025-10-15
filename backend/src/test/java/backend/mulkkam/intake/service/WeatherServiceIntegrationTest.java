@@ -1,22 +1,20 @@
 package backend.mulkkam.intake.service;
 
-import backend.mulkkam.averageTemperature.domain.City;
-import backend.mulkkam.averageTemperature.domain.CityDateTime;
-import backend.mulkkam.notification.service.WeatherService;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import java.time.LocalDateTime;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+
 class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     WeatherService weatherService;
 
-    @DisplayName("특정 도시의 특정 날짜의 평균 기온을 구하는 경우")
+    @DisplayName("특정 날짜의 평균 기온을 구하는 경우")
     @Nested
     class GetAverageTemperatureForDate {
 
@@ -25,10 +23,10 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_withExactDate() {
             // given
-            CityDateTime cityDateTime = new CityDateTime(City.SEOUL, LocalDateTime.now().plusDays(1));
+            LocalDate date = LocalDate.now().plusDays(1);
 
             // when
-            double averageTemperatureForDate = weatherService.getAverageTemperatureForCityDate(cityDateTime);
+            double averageTemperatureForDate = weatherService.getAverageTemperatureForDate(date);
 
             // then
             System.out.println(averageTemperatureForDate);

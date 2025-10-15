@@ -12,14 +12,17 @@ data class NewCupRequest(
     val cupNickname: String,
     @SerialName("intakeType")
     val intakeType: String,
-    @SerialName("emoji")
-    val emoji: String,
+    @SerialName("cupEmojiId")
+    val cupEmojiId: Long,
+    @SerialName("cupRank")
+    val cupRank: Int? = null,
 )
 
-fun Cup.toNewCupRequest(): NewCupRequest =
+fun Cup.toData(): NewCupRequest =
     NewCupRequest(
-        cupAmount = amount,
-        cupNickname = nickname,
+        cupNickname = name.value,
+        cupAmount = amount.value,
+        cupRank = rank,
         intakeType = intakeType.name,
-        emoji = emoji,
+        cupEmojiId = emoji.id,
     )

@@ -5,37 +5,24 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 import org.springframework.web.util.ContentCachingResponseWrapper;
+
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @RequiredArgsConstructor
 @Component
 public class HttpLoggingFilter extends OncePerRequestFilter {
-
-    private static final AntPathMatcher PATH_MATCHER = new AntPathMatcher();
-
-    private static final List<String> EXCLUDE_PATTERNS = List.of(
-            "/.git/**",
-            "/.env",
-            "/favicon.ico",
-            "/robots.txt",
-            "/v3/api-docs/**",
-            "/actuator/health"
-    );
-
 
     @Value("${app.logging.mask-auth:true}")
     private boolean maskAuth;
@@ -54,22 +41,8 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper wrappingRequest = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper wrappingResponse = new ContentCachingResponseWrapper(response);
 
-        boolean excluded = isExcluded(request);
-
-        if (excluded) {
-            try {
-                filterChain.doFilter(wrappingRequest, wrappingResponse);
-            } catch (Throwable t) {
-                printResponse(request, response, wrappingResponse);
-                throw t;
-            } finally {
-                wrappingResponse.copyBodyToResponse();
-                MDC.clear();
-            }
-            return;
-        }
-
         printRequestUriAndHeaders(wrappingRequest);
+
         try {
             filterChain.doFilter(wrappingRequest, wrappingResponse);
 
@@ -82,13 +55,6 @@ public class HttpLoggingFilter extends OncePerRequestFilter {
         } finally {
             MDC.clear();
         }
-    }
-
-    private boolean isExcluded(HttpServletRequest req) {
-        String path = req.getRequestURI();
-        return EXCLUDE_PATTERNS.stream()
-                .anyMatch(p -> PATH_MATCHER.match(p, path)
-                );
     }
 
     private String generateTraceId() {

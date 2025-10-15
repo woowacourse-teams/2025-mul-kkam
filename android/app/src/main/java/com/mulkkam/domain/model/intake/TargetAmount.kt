@@ -7,9 +7,12 @@ value class TargetAmount(
     val value: Int,
 ) {
     init {
-        require(value >= TARGET_AMOUNT_MIN) { throw MulKkamError.TargetAmountError.BelowMinimum }
-
-        require(value <= TARGET_AMOUNT_MAX) { throw MulKkamError.TargetAmountError.AboveMaximum }
+        require(value >= TARGET_AMOUNT_MIN) {
+            throw MulKkamError.TargetAmountError.BelowMinimum
+        }
+        require(value <= TARGET_AMOUNT_MAX) {
+            throw MulKkamError.TargetAmountError.AboveMaximum
+        }
     }
 
     companion object {

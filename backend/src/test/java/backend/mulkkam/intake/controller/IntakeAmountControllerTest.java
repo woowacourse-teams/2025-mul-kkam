@@ -11,11 +11,12 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.intake.dto.SuggestionIntakeAmountResponse;
+import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
@@ -49,7 +50,7 @@ class IntakeAmountControllerTest extends ControllerTest {
     private final Member member = MemberFixtureBuilder
             .builder()
             .weight(70.0)
-            .targetAmount(1500)
+            .targetAmount(new TargetAmount(1500))
             .build();
     ;
 
@@ -78,8 +79,8 @@ class IntakeAmountControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            SuggestionIntakeAmountResponse actual = objectMapper.readValue(json,
-                    SuggestionIntakeAmountResponse.class);
+            RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
+                    RecommendedIntakeAmountResponse.class);
 
             // then
             assertSoftly(softly -> {
@@ -109,8 +110,8 @@ class IntakeAmountControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            SuggestionIntakeAmountResponse actual = objectMapper.readValue(json,
-                    SuggestionIntakeAmountResponse.class);
+            RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
+                    RecommendedIntakeAmountResponse.class);
 
             // then
             assertSoftly(softly -> {
@@ -129,8 +130,8 @@ class IntakeAmountControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            SuggestionIntakeAmountResponse actual = objectMapper.readValue(json,
-                    SuggestionIntakeAmountResponse.class);
+            RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
+                    RecommendedIntakeAmountResponse.class);
 
             // then
             assertSoftly(softly -> {
@@ -149,8 +150,8 @@ class IntakeAmountControllerTest extends ControllerTest {
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
-            SuggestionIntakeAmountResponse actual = objectMapper.readValue(json,
-                    SuggestionIntakeAmountResponse.class);
+            RecommendedIntakeAmountResponse actual = objectMapper.readValue(json,
+                    RecommendedIntakeAmountResponse.class);
 
             // then
             assertSoftly(softly -> {
