@@ -1,28 +1,24 @@
 package com.mulkkam.ui.home
 
-import android.app.Activity.RESULT_OK
+import android.app.Activity
 import android.content.Intent
-import android.graphics.LinearGradient
-import android.graphics.Shader
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.ColorRes
-import androidx.core.graphics.toColorInt
-import androidx.core.view.isVisible
+import androidx.compose.ui.platform.ComposeView
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.R
-import com.mulkkam.databinding.FragmentHomeBinding
-import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.intake.IntakeInfo
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuIcon
-import com.mulkkam.ui.custom.floatingactionbutton.ExtendableFloatingMenuItem
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.login.LoginActivity
@@ -30,135 +26,132 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
-import com.mulkkam.ui.util.binding.BindingFragment
-import com.mulkkam.ui.util.extensions.getColoredSpannable
-import com.mulkkam.ui.util.extensions.setSingleClickListener
-import java.util.Locale
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 class HomeFragment :
-    BindingFragment<FragmentHomeBinding>(FragmentHomeBinding::inflate),
+    Fragment(),
     Refreshable {
     private val viewModel: HomeViewModel by activityViewModels()
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
-    private val resetCharacterRunnable =
-        Runnable {
-            binding.ivHomeCharacter.setImageResource(R.drawable.img_home_character)
-        }
+    private lateinit var notificationResultLauncher: ActivityResultLauncher<Intent>
+    private var snackbarAnchorView: View? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?,
+    ): View {
+        val composeView =
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MulkkamTheme {
+                        HomeScreen(
+                            viewModel = viewModel,
+                            navigateToNotification = {
+                                val intent = NotificationActivity.newIntent(requireContext())
+                                notificationResultLauncher.launch(intent)
+                            },
+                            onManualDrink = {
+                                if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return@HomeScreen
+                                ManualDrinkFragment
+                                    .newInstance()
+                                    .show(childFragmentManager, ManualDrinkFragment.TAG)
+                            },
+                        )
+                    }
+                }
+            }
+        return composeView
+    }
 
     override fun onViewCreated(
         view: View,
         savedInstanceState: Bundle?,
     ) {
         super.onViewCreated(view, savedInstanceState)
-
-        initObservers()
-        initCustomChartOptions()
-        initClickListeners()
+        snackbarAnchorView = view
         initActivityResultLauncher()
+        initCollectors()
     }
 
-    private fun initObservers() {
-        with(viewModel) {
-            todayProgressInfoUiState.observe(viewLifecycleOwner) { todayProgressInfoUiState ->
-                handleTodayProgressInfo(todayProgressInfoUiState)
+    private fun initActivityResultLauncher() {
+        notificationResultLauncher =
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+                if (it.resultCode == Activity.RESULT_OK) {
+                    val isApply =
+                        it.data?.getBooleanExtra(NotificationActivity.EXTRA_KEY_IS_APPLY, false)
+                    viewModel.loadAlarmCount()
+                    if (isApply == true) {
+                        viewModel.loadTodayProgressInfo()
+                    }
+                }
             }
+    }
 
-            cupsUiState.observe(viewLifecycleOwner) { cupsUiState ->
-                handleCupsUiState(cupsUiState)
-            }
-
-            alarmCountUiState.observe(viewLifecycleOwner) { alarmCountUiState ->
-                handleAlarmCount(alarmCountUiState)
-            }
-
-            drinkUiState.observe(viewLifecycleOwner) { drinkUiState ->
-                handleDrinkResult(drinkUiState)
-            }
-
-            isGoalAchieved.observe(viewLifecycleOwner) {
-                binding.lottieConfetti.setAnimation(R.raw.lottie_home_confetti)
-                binding.lottieConfetti.playAnimation()
-            }
+    private fun initCollectors() {
+        viewModel.todayProgressInfoUiState.collectWithLifecycle(this) { state ->
+            handleTodayProgressFailures(state)
+        }
+        viewModel.drinkUiState.collectWithLifecycle(this) { state ->
+            handleDrinkUiState(state)
         }
     }
 
-    private fun handleTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState<TodayProgressInfo>) {
-        when (todayProgressInfoMulKkamUiState) {
-            is MulKkamUiState.Success<TodayProgressInfo> ->
-                showTodayProgressInfo(
-                    todayProgressInfoMulKkamUiState,
+    private fun handleTodayProgressFailures(state: MulKkamUiState<TodayProgressInfo>) {
+        if (state is MulKkamUiState.Failure) {
+            handleFailure(state.error)
+        }
+    }
+
+    private fun handleDrinkUiState(state: MulKkamUiState<IntakeInfo>) {
+        when (state) {
+            is MulKkamUiState.Success ->
+                showIntakeSuccessSnack(
+                    intakeType = state.data.intakeType,
+                    amount = state.data.amount,
                 )
 
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                handleFailure(todayProgressInfoMulKkamUiState.error)
+                showSnackBar(
+                    message = getString(R.string.manual_drink_network_error),
+                    iconRes = R.drawable.ic_alert_circle,
+                )
             }
+
+            MulKkamUiState.Idle,
+            MulKkamUiState.Loading,
+            -> Unit
         }
     }
 
-    private fun showTodayProgressInfo(todayProgressInfoMulKkamUiState: MulKkamUiState.Success<TodayProgressInfo>) {
-        binding.pbHomeWaterProgress.setProgress(todayProgressInfoMulKkamUiState.data.achievementRate)
-        binding.tvHomeCharacterChat.text = todayProgressInfoMulKkamUiState.data.comment
-        updateDailyProgressInfo(todayProgressInfoMulKkamUiState.data)
-    }
-
-    private fun updateDailyProgressInfo(progressInfo: TodayProgressInfo) {
-        updateDailyIntakeSummary(progressInfo.targetAmount, progressInfo.totalAmount)
-        updateStreakMessage(progressInfo.nickname, progressInfo.streak)
-        updateCharacterComment(progressInfo.comment)
-    }
-
-    private fun updateDailyIntakeSummary(
-        targetAmount: Int,
-        totalAmount: Int,
+    private fun showIntakeSuccessSnack(
+        intakeType: IntakeType,
+        amount: Int,
     ) {
-        val formattedIntake = String.format(Locale.US, "%,dml", totalAmount)
-
-        @ColorRes val summaryColorResId =
-            if (targetAmount > totalAmount) {
-                R.color.gray_200
-            } else {
-                R.color.primary_200
+        when (intakeType) {
+            IntakeType.WATER -> {
+                showSnackBar(
+                    message = getString(R.string.manual_drink_success, amount),
+                    iconRes = R.drawable.ic_terms_all_check_on,
+                )
             }
 
-        binding.tvDailyIntakeSummary.text =
-            getString(
-                R.string.home_daily_intake_summary,
-                totalAmount,
-                targetAmount,
-            ).getColoredSpannable(
-                requireContext(),
-                summaryColorResId,
-                formattedIntake,
-            )
-    }
+            IntakeType.COFFEE -> {
+                showSnackBar(
+                    message = getString(R.string.manual_drink_success_coffee, amount),
+                    iconRes = R.drawable.ic_terms_all_check_on,
+                    action = {
+                        val intent = CoffeeEncyclopediaActivity.newIntent(requireContext())
+                        startActivity(intent)
+                    },
+                )
+            }
 
-    private fun updateStreakMessage(
-        nickname: String,
-        streak: Int,
-    ) {
-        binding.tvStreak.text =
-            getString(
-                R.string.home_water_streak_message,
-                nickname,
-                streak,
-            ).getColoredSpannable(
-                requireContext(),
-                R.color.primary_200,
-                nickname,
-                streak.toString(),
-            )
-    }
-
-    private fun updateCharacterComment(comment: String) {
-        binding.tvHomeCharacterChat.text = comment
+            IntakeType.UNKNOWN -> Unit
+        }
     }
 
     private fun handleFailure(error: MulKkamError) {
-        if (error is MulKkamError.AccountError ||
-            error is MulKkamError.Unknown
-        ) {
+        if (error is MulKkamError.AccountError || error is MulKkamError.Unknown) {
             CustomToast
                 .makeText(
                     requireContext(),
@@ -167,15 +160,25 @@ class HomeFragment :
                 ).show()
             navigateToLogin()
         } else {
-            CustomSnackBar
-                .make(
-                    binding.root,
-                    getString(R.string.load_info_error),
-                    R.drawable.ic_alert_circle,
-                ).apply {
-                    setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                }.show()
+            showSnackBar(
+                message = getString(R.string.load_info_error),
+                iconRes = R.drawable.ic_alert_circle,
+            )
         }
+    }
+
+    private fun showSnackBar(
+        message: String,
+        iconRes: Int,
+        action: (() -> Unit)? = null,
+    ) {
+        val anchor = snackbarAnchorView ?: requireActivity().findViewById(android.R.id.content)
+        CustomSnackBar
+            .make(anchor, message, iconRes)
+            .apply {
+                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+                if (action != null) setAction(action)
+            }.show()
     }
 
     private fun navigateToLogin() {
@@ -186,186 +189,9 @@ class HomeFragment :
         startActivity(intent)
     }
 
-    private fun handleCupsUiState(cupsUiState: MulKkamUiState<Cups>) {
-        when (cupsUiState) {
-            is MulKkamUiState.Success<Cups> -> updateDrinkOptions(cupsUiState.data)
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Failure -> Unit
-        }
-    }
-
-    private fun updateDrinkOptions(cups: Cups) {
-        binding.fabHomeDrink.setMenuItems(
-            items =
-                cups.cups.map { cup ->
-                    ExtendableFloatingMenuItem(
-                        buttonLabel = cup.name.value,
-                        icon = ExtendableFloatingMenuIcon.Url(cup.emoji.cupEmojiUrl),
-                        iconLabel =
-                            getString(
-                                R.string.expandable_floating_menu_intake_unit,
-                                cup.amount.value,
-                            ),
-                        data = cup,
-                    )
-                } +
-                    ExtendableFloatingMenuItem(
-                        buttonLabel = getString(R.string.home_drink_manual),
-                        icon = ExtendableFloatingMenuIcon.Resource(R.drawable.ic_manual_drink),
-                        data = null,
-                    ),
-            onItemClick = {
-                if (it.data == null) {
-                    showManualDrinkBottomSheetDialog()
-                } else {
-                    viewModel.addWaterIntakeByCup(it.data.id)
-                }
-            },
-        )
-    }
-
-    private fun initCustomChartOptions() {
-        with(binding.pbHomeWaterProgress) {
-            post {
-                setPaintGradient(createLinearGradient(width.toFloat()))
-            }
-            setBackgroundPaintColor(R.color.white)
-            setCornerRadius(PROGRESS_BAR_RADIUS)
-        }
-    }
-
-    private fun createLinearGradient(width: Float): LinearGradient =
-        LinearGradient(
-            0f,
-            0f,
-            width,
-            0f,
-            intArrayOf(
-                "#FFB7A5".toColorInt(),
-                "#FFEBDD".toColorInt(),
-                "#C9F0F8".toColorInt(),
-                "#C9F0F8".toColorInt(),
-            ),
-            floatArrayOf(
-                0.0f,
-                0.15f,
-                0.70f,
-                1.0f,
-            ),
-            Shader.TileMode.CLAMP,
-        )
-
-    private fun initClickListeners() {
-        binding.ivHomeNotification.setSingleClickListener {
-            val intent = NotificationActivity.newIntent(requireContext())
-            activityResultLauncher.launch(intent)
-        }
-    }
-
-    private fun showManualDrinkBottomSheetDialog() {
-        if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return
-        ManualDrinkFragment
-            .newInstance()
-            .show(childFragmentManager, ManualDrinkFragment.TAG)
-    }
-
-    private fun handleAlarmCount(alarmCountUiState: MulKkamUiState<Long>) {
-        when (alarmCountUiState) {
-            is MulKkamUiState.Success<Long> -> showAlarmCount(alarmCountUiState.data)
-            MulKkamUiState.Idle -> showAlarmCount(ALARM_COUNT_MIN)
-            MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Failure -> Unit
-        }
-    }
-
-    private fun showAlarmCount(count: Long) {
-        binding.tvAlarmCount.text = count.toString()
-        binding.tvAlarmCount.isVisible = count != ALARM_COUNT_MIN
-    }
-
-    private fun handleDrinkResult(drinkUiState: MulKkamUiState<IntakeInfo>) {
-        when (drinkUiState) {
-            is MulKkamUiState.Success<IntakeInfo> -> {
-                when (drinkUiState.data.intakeType) {
-                    IntakeType.WATER -> {
-                        CustomSnackBar
-                            .make(
-                                binding.root,
-                                getString(
-                                    R.string.manual_drink_success,
-                                    drinkUiState.data.amount,
-                                ),
-                                R.drawable.ic_terms_all_check_on,
-                            ).apply {
-                                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                            }.show()
-                    }
-
-                    IntakeType.COFFEE -> {
-                        CustomSnackBar
-                            .make(
-                                binding.root,
-                                getString(
-                                    R.string.manual_drink_success_coffee,
-                                    drinkUiState.data.amount,
-                                ),
-                                R.drawable.ic_terms_all_check_on,
-                            ).apply {
-                                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                                setAction {
-                                    val intent =
-                                        CoffeeEncyclopediaActivity.newIntent(requireContext())
-                                    startActivity(intent)
-                                }
-                            }.show()
-                    }
-
-                    IntakeType.UNKNOWN -> Unit
-                }
-
-                binding.ivHomeCharacter.removeCallbacks(resetCharacterRunnable)
-                binding.ivHomeCharacter.setImageResource(R.drawable.img_home_drink_character)
-                binding.ivHomeCharacter.postDelayed(resetCharacterRunnable, 2000L)
-            }
-
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Loading -> Unit
-
-            is MulKkamUiState.Failure -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.manual_drink_network_error),
-                        R.drawable.ic_alert_circle,
-                    ).apply {
-                        setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-                    }.show()
-            }
-        }
-    }
-
-    private fun initActivityResultLauncher() {
-        activityResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == RESULT_OK) {
-                    val isApply =
-                        it.data?.getBooleanExtra(NotificationActivity.EXTRA_KEY_IS_APPLY, false)
-                    viewModel.loadAlarmCount()
-                    if (isApply == true) viewModel.loadTodayProgressInfo()
-                }
-            }
-    }
-
     override fun onReselected() {
         viewModel.loadTodayProgressInfo()
         viewModel.loadCups()
         viewModel.loadAlarmCount()
-        binding.fabHomeDrink.closeMenu()
-    }
-
-    companion object {
-        private const val PROGRESS_BAR_RADIUS: Float = 12f
-        private const val ALARM_COUNT_MIN: Long = 0L
     }
 }

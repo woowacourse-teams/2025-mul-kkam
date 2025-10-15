@@ -4,10 +4,12 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.intakeRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.intake.TargetAmount.Companion.EMPTY_TARGET_AMOUNT
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -77,8 +79,9 @@ class SettingTargetAmountViewModel : ViewModel() {
         if (_saveTargetAmountUiState.value is MulKkamUiState.Loading) return
 
         viewModelScope.launch {
-            _saveTargetAmountUiState.value = MulKkamUiState.Loading
             runCatching {
+                mulKkamLogger.info(LogEvent.USER_ACTION, "Saving target amount: $amount")
+                _saveTargetAmountUiState.value = MulKkamUiState.Loading
                 intakeRepository.patchIntakeTarget(amount.value).getOrError()
             }.onSuccess {
                 _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)

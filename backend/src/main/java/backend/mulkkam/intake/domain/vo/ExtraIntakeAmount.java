@@ -17,4 +17,8 @@ public record ExtraIntakeAmount(
         return new ExtraIntakeAmount(
                 weight * WATER_INTAKE_COEFFICIENT_PER_DEGREE * differenceBetweenThreshold);
     }
+
+    public static int getExtraIntakeTemperatureThreshold() {
+        return EXTRA_INTAKE_TEMPERATURE_THRESHOLD;
+    }
 }

@@ -4,7 +4,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.membersRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.MutableSingleLiveData
@@ -46,6 +48,7 @@ class SettingNotificationViewModel : ViewModel() {
 
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Night notification preference updated to $agreed")
                 _settingsUiState.value = MulKkamUiState.Loading
                 membersRepository.patchMembersNotificationNight(agreed).getOrError()
             }.onSuccess {
@@ -64,6 +67,7 @@ class SettingNotificationViewModel : ViewModel() {
 
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Marketing notification preference updated to $agreed")
                 _settingsUiState.value = MulKkamUiState.Loading
                 membersRepository.patchMembersNotificationMarketing(agreed).getOrError()
             }.onSuccess {

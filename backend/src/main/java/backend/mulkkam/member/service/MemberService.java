@@ -12,15 +12,14 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
-import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
+import backend.mulkkam.intake.service.IntakeHistoryCrudService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
@@ -33,7 +32,6 @@ import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,16 +42,15 @@ import org.springframework.transaction.annotation.Transactional;
 public class MemberService {
 
     private final OauthAccountRepository oauthAccountRepository;
-    private final IntakeHistoryRepository intakeHistoryRepository;
     private final MemberRepository memberRepository;
-    private final IntakeHistoryDetailRepository intakeDetailRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
     private final CupRepository cupRepository;
     private final DeviceRepository deviceRepository;
-    private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+
+    private final IntakeHistoryCrudService intakeHistoryCrudService;
 
     public MemberResponse get(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
@@ -108,19 +105,12 @@ public class MemberService {
     ) {
         Member member = getMember(memberDetails.id());
 
-        Optional<IntakeHistory> foundIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, date);
-        if (foundIntakeHistory.isEmpty()) {
-            int streak = findStreak(member, date);
+        if (!intakeHistoryCrudService.isExistIntakeHistory(member, date)) {
+            int streak = intakeHistoryCrudService.getStreak(member, date);
             return new ProgressInfoResponse(member, streak);
         }
-
-        List<IntakeHistoryDetail> details = intakeDetailRepository.findAllByMemberAndDateRange(
-                member,
-                date,
-                date
-        );
-        IntakeHistory intakeHistory = foundIntakeHistory.get();
-        int totalAmount = calculateTotalIntakeAmount(details);
+        IntakeHistory intakeHistory = intakeHistoryCrudService.getIntakeHistory(member, date);
+        int totalAmount = intakeHistoryCrudService.getTotalIntakeAmount(intakeHistory);
         AchievementRate achievementRate = new AchievementRate(totalAmount, intakeHistory.getTargetAmount());
         return new ProgressInfoResponse(member, intakeHistory, achievementRate, totalAmount);
     }
@@ -146,6 +136,15 @@ public class MemberService {
     }
 
     @Transactional
+    public void modifyIsReminderEnabled(
+            MemberDetails memberDetails,
+            ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+    ) {
+        Member member = getMember(memberDetails.id());
+        member.modifyIsReminderEnabled(modifyIsReminderEnabledRequest.isReminderEnabled());
+    }
+
+    @Transactional
     public void delete(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
 
@@ -153,11 +152,10 @@ public class MemberService {
                 .ifPresent((this::deleteRefreshTokenAndAccount));
         deviceRepository.deleteByMember(member);
 
-        List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
-        intakeHistories.forEach(intakeHistoryDetailRepository::deleteByIntakeHistory);
+        intakeHistoryCrudService.deleteAllIntakeHistoryDetail(member);
         cupRepository.deleteByMember(member);
 
-        intakeHistoryRepository.deleteByMember(member);
+        intakeHistoryCrudService.deleteAllIntakeHistory(member);
 
         targetAmountSnapshotRepository.deleteByMember(member);
 
@@ -176,20 +174,6 @@ public class MemberService {
     public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new NotificationSettingsResponse(member);
-    }
-
-    private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
-        return intakeHistoryDetails
-                .stream()
-                .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
-                .sum();
-    }
-
-    private int findStreak(Member member, LocalDate todayDate) {
-        LocalDate yesterday = todayDate.minusDays(1);
-        return intakeHistoryRepository.findByMemberAndHistoryDate(member, yesterday)
-                .map(intakeHistory -> intakeHistory.getStreak() + 1)
-                .orElse(1);
     }
 
     private Member getMember(Long id) {

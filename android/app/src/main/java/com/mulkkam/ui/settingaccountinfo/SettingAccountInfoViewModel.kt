@@ -5,9 +5,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.R
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.authRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
@@ -29,6 +31,10 @@ class SettingAccountInfoViewModel : ViewModel() {
     fun deleteAccount() {
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.warn(
+                    LogEvent.USER_ACTION,
+                    "User initiated account deletion",
+                )
                 membersRepository.deleteMembers().getOrError()
             }.onSuccess {
                 deleteTokens()
@@ -42,6 +48,10 @@ class SettingAccountInfoViewModel : ViewModel() {
     fun logoutAccount() {
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(
+                    LogEvent.USER_ACTION,
+                    "User requested logout",
+                )
                 authRepository.postAuthLogout().getOrError()
             }.onSuccess {
                 deleteTokens()
@@ -57,8 +67,6 @@ class SettingAccountInfoViewModel : ViewModel() {
             tokenRepository.deleteAccessToken().getOrError()
             tokenRepository.deleteFcmToken().getOrError()
             tokenRepository.deleteRefreshToken().getOrError()
-        }.onFailure {
-            // TODO: 에러 처리
         }
     }
 

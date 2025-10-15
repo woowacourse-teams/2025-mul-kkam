@@ -6,6 +6,7 @@ import com.mulkkam.data.remote.model.error.ResponseError.HistoryError
 import com.mulkkam.data.remote.model.error.ResponseError.NetworkUnavailable
 import com.mulkkam.data.remote.model.error.ResponseError.NicknameError
 import com.mulkkam.data.remote.model.error.ResponseError.NotFoundError
+import com.mulkkam.data.remote.model.error.ResponseError.ReminderError
 import com.mulkkam.data.remote.model.error.ResponseError.SettingCupsError
 import com.mulkkam.data.remote.model.error.ResponseError.Unknown
 import com.mulkkam.domain.model.result.MulKkamError
@@ -90,6 +91,15 @@ sealed class ResponseError(
         }
     }
 
+    // 리마인더 관련 에러
+    sealed class ReminderError(
+        code: String,
+    ) : ResponseError(code) {
+        data object DuplicatedReminderSchedule : ReminderError("DUPLICATED_REMINDER_SCHEDULE") {
+            private fun readResolve(): Any = DuplicatedReminderSchedule
+        }
+    }
+
     sealed class NotFoundError(
         code: String,
     ) : ResponseError(code) {
@@ -143,6 +153,9 @@ sealed class ResponseError(
                 // History
                 HistoryError.InvalidDateRange.code -> HistoryError.InvalidDateRange
 
+                // Reminder
+                ReminderError.DuplicatedReminderSchedule.code -> ReminderError.DuplicatedReminderSchedule
+
                 // NotFound
                 NotFoundError.Member.code -> NotFoundError.Member
                 NotFoundError.Cup.code -> NotFoundError.Cup
@@ -180,6 +193,9 @@ fun ResponseError.toDomain(): MulKkamError =
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
         HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
+
+        // Reminder
+        ReminderError.DuplicatedReminderSchedule -> MulKkamError.ReminderError.DuplicatedReminderSchedule
 
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member
