@@ -11,6 +11,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -23,16 +24,21 @@ import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -49,6 +55,8 @@ public class MemberService {
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final ReminderScheduleRepository reminderScheduleRepository;
+    private final FriendRelationRepository friendRelationRepository;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
 
@@ -163,6 +171,9 @@ public class MemberService {
         suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
 
+        reminderScheduleRepository.deleteAllByMemberId(member.getId());
+        friendRelationRepository.deleteAllByMemberId(member.getId());
+
         memberRepository.delete(member);
     }
 
@@ -174,6 +185,20 @@ public class MemberService {
     public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new NotificationSettingsResponse(member);
+    }
+
+    public MemberSearchResponse searchMember(
+            MemberDetails memberDetails,
+            String word,
+            int page,
+            int size
+    ) {
+        if (word.isBlank()) {
+            return new MemberSearchResponse(List.of(), false);
+        }
+        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByWordWithStatusAndDirection(
+                memberDetails.id(), word, PageRequest.of(page, size));
+        return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
     }
 
     private Member getMember(Long id) {

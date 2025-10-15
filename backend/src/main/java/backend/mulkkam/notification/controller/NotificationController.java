@@ -105,12 +105,4 @@ public class NotificationController {
         notificationService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
     }
-
-    // TODO: 알림 성능 테스트 이후 삭제
-    @Operation(summary = "알림 성능 전송 테스트용", description = "사용자의 알림을 삭제합니다.")
-    @GetMapping("/test")
-    public ResponseEntity<Void> test() {
-        notificationService.notifyRemindNotification();
-        return ResponseEntity.ok().build();
-    }
 }
