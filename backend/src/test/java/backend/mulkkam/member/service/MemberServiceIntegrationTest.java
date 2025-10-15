@@ -22,6 +22,10 @@ import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.friend.domain.Friend;
+import backend.mulkkam.friend.domain.FriendRequest;
+import backend.mulkkam.friend.repository.FriendRepository;
+import backend.mulkkam.friend.repository.FriendRequestRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -39,7 +43,9 @@ import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
@@ -54,6 +60,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -91,6 +99,15 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
+    private ReminderScheduleRepository reminderScheduleRepository;
+
+    @Autowired
+    private FriendRepository friendRepository;
+
+    @Autowired
+    private FriendRequestRepository friendRequestRepository;
 
     private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
 
@@ -427,6 +444,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder()
                     .build();
             memberRepository.save(member);
+            Member friendMember = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("친구"))
+                    .build();
+            memberRepository.save(friendMember);
 
             OauthAccount oauthAccount = OauthAccountFixtureBuilder
                     .withMember(member)
@@ -458,6 +479,16 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(), member);
             notificationRepository.save(notification);
 
+            ReminderSchedule schedule1 = new ReminderSchedule(member, LocalTime.of(10, 0));
+            ReminderSchedule schedule2 = new ReminderSchedule(member, LocalTime.of(12, 0));
+            reminderScheduleRepository.saveAll(List.of(schedule1, schedule2));
+
+            Friend friend = new Friend(member.getId(), friendMember.getId());
+            friendRepository.save(friend);
+
+            FriendRequest friendRequest = new FriendRequest(member.getId(), friendMember.getId());
+            friendRequestRepository.save(friendRequest);
+
             // when
             memberService.delete(new MemberDetails(member));
 
@@ -470,6 +501,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();
                 softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
+                softly.assertThat(reminderScheduleRepository.findById(schedule1.getId())).isEmpty();
+                softly.assertThat(reminderScheduleRepository.findById(schedule2.getId())).isEmpty();
+                softly.assertThat(friendRepository.findById(friend.getId())).isEmpty();
+                softly.assertThat(friendRequestRepository.findById(friendRequest.getId())).isEmpty();
             });
         }
     }
