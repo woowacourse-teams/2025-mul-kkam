@@ -17,7 +17,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
     defer-datasource-initialization: false
 
 open-weather:

@@ -13,12 +13,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import java.time.LocalDate;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -35,7 +34,7 @@ public class TargetAmountSnapshot extends BaseEntity {
     @JoinColumn(nullable = false)
     private Member member;
 
-    @Column(name = "updated_at", nullable = false)
+    @Column(nullable = false)
     private LocalDate updatedAt;
 
     @Embedded
@@ -52,17 +51,7 @@ public class TargetAmountSnapshot extends BaseEntity {
         this.targetAmount = targetAmount;
     }
 
-    public TargetAmountSnapshot(
-            Member member,
-            TargetAmount targetAmount
-    ) {
-        this.member = member;
-        this.updatedAt = LocalDate.now();
-        this.targetAmount = targetAmount;
-    }
-
     public void updateTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
-        this.updatedAt = LocalDate.now();
     }
 }

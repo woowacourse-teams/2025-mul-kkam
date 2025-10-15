@@ -2,9 +2,9 @@ package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
 import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -23,8 +23,6 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
-import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
-import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
@@ -37,23 +35,23 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
-import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.Optional;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
 
 class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -329,7 +327,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             int targetAmountOfMember = 1_500;
             Member member = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼로리"))
-                    .targetAmount(targetAmountOfMember)
+                    .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -392,7 +390,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼로리"))
-                    .targetAmount(targetAmountOfMember)
+                    .targetAmount(new TargetAmount(targetAmountOfMember))
                     .build();
             memberRepository.save(member);
 
@@ -453,107 +451,17 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("섭취 달성률을 조회할 때")
-    @Nested
-    class ReadAchieveRatesByDateRange {
-
-        @DisplayName("날짜의 범위에 해당하는 섭취 달성률들을 조회한다")
-        @Test
-        void success_byValidDateRange() {
-            // given
-            LocalDate startDate = LocalDate.of(2025, 10, 20);
-            LocalDate endDate = LocalDate.of(2025, 10, 22);
-
-            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.of(2025, 10, 20))
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .build();
-
-            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.of(2025, 10, 21))
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .build();
-
-            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
-                    .withMember(member)
-                    .date(LocalDate.of(2025, 10, 22))
-                    .targetIntakeAmount(new TargetAmount(1000))
-                    .build();
-
-            intakeHistoryRepository.saveAll(List.of(
-                    firstHistory,
-                    secondHistory,
-                    thirdHistory
-            ));
-
-            List<IntakeHistoryDetail> intakeHistoryDetailByFirstIntakeHistory = List.of(
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(firstHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput()
-            );
-
-            List<IntakeHistoryDetail> intakeHistoryDetailBySecondIntakeHistory = List.of(
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(secondHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput(),
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(secondHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput()
-            );
-
-            List<IntakeHistoryDetail> intakeHistoryDetailByThirdIntakeHistory = List.of(
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(thirdHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput(),
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(thirdHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput(),
-                    IntakeHistoryDetailFixtureBuilder
-                            .withIntakeHistory(thirdHistory)
-                            .intakeAmount(new IntakeAmount(500))
-                            .buildWithInput()
-            );
-            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByFirstIntakeHistory);
-            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailBySecondIntakeHistory);
-            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByThirdIntakeHistory);
-
-            DateRangeRequest dateRangeRequest = new DateRangeRequest(
-                    startDate,
-                    endDate
-            );
-
-            // when
-            ReadAchievementRateByDatesResponse readAchievementRateByDatesResponse = intakeHistoryService.readAchievementRatesByDateRange(
-                    dateRangeRequest, new MemberDetails(member));
-
-            // then
-            List<Double> actualAchievementRates = readAchievementRateByDatesResponse.readAchievementRateByDateResponses().stream()
-                    .map(ReadAchievementRateByDateResponse::achievementRate)
-                    .toList();
-
-            Assertions.assertThat(actualAchievementRates)
-                    .containsExactly(50.0, 100.0, 100.0);
-        }
-
-    }
-
     @DisplayName("음용 세부 기록을 삭제할 때에")
     @Nested
     class Delete {
 
-        @DisplayName("존재하지 않는 기록에 대한 요청인 경우에도 정상적으로 처리된다.")
+        @DisplayName("존재하지 않는 기록에 대한 요청인 경우 예외가 발생한다")
         @Test
         void error_historyDetailIsNotExisted() {
             // when & then
-            assertThatCode(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(member)))
-                    .doesNotThrowAnyException();
+            assertThatThrownBy(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(member)))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_FOUND_INTAKE_HISTORY_DETAIL.name());
         }
 
         @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")

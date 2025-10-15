@@ -36,8 +36,8 @@ security:
       expire-length: ${REFRESH_TOKEN_EXPIRE}
 
 fcm:
-  base64-encoding-key: ${DEV_FCM_BASE64_ENCODING_KEY}
-  project-id: ${DEV_FCM_PROJECT_ID}
+  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
+  project-id: ${FCM_PROJECT_ID}
 
 open-weather:
   api:

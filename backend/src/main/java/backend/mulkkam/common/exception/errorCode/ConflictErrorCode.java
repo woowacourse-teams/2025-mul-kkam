@@ -8,10 +8,8 @@ public enum ConflictErrorCode implements ErrorCode {
     DUPLICATED_CUP,
     DUPLICATED_CUP_RANKS,
     REQUEST_CONFLICT,
-    DUPLICATED_REMINDER_SCHEDULE,
-    DUPLICATED_FRIEND,
     ;
-
+    
     private static final HttpStatus status = HttpStatus.CONFLICT;
 
     @Override
