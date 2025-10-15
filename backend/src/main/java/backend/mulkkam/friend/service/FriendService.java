@@ -4,17 +4,14 @@ import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.friend.dto.response.FriendRequestResponse;
-import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
-import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
-import backend.mulkkam.friend.repository.FriendRepository;
-import backend.mulkkam.friend.repository.FriendRequestRepository;
-import backend.mulkkam.member.repository.MemberRepository;
-import java.util.List;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.dto.response.FriendRequestResponse;
+import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -72,14 +69,14 @@ public class FriendService {
             int size
     ) {
         Pageable pageable = PageRequest.of(0, size + 1);
-        List<FriendRequestResponse> friendRequestResponses = friendRequestRepository
+        List<FriendRequestResponse> friendRequestResponses = friendRelationRepository
                 .findReceivedFriendRequestsAfterId(memberDetails.id(), lastId, pageable);
         return ReadReceivedFriendRequestsResponse.of(friendRequestResponses, size);
     }
 
     public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
         return new GetReceivedFriendRequestCountResponse(
-                friendRequestRepository.countFriendRequestsByAddresseeId(memberDetails.id()));
+                friendRelationRepository.countFriendRequestsByAddresseeId(memberDetails.id()));
     }
 
     private FriendRelation getFriendRelation(Long friendRelationId) {

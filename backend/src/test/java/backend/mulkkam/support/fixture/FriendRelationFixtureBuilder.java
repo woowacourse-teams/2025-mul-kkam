@@ -1,30 +1,41 @@
 package backend.mulkkam.support.fixture;
 
-import backend.mulkkam.friend.domain.FriendRequest;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.domain.FriendStatus;
 
-public class FriendRequestFixtureBuilder {
+public class FriendRelationFixtureBuilder {
 
     private Long requesterId = 1L;
     private Long addresseeId = 2L;
+    private FriendStatus friendStatus = FriendStatus.REQUESTED;
 
-    private FriendRequestFixtureBuilder(FriendRequest friendRequest) {
-
+    private FriendRelationFixtureBuilder() {
     }
 
-    public FriendRequestFixtureBuilder requesterId(Long requesterId) {
+    public static FriendRelationFixtureBuilder builder() {
+        return new FriendRelationFixtureBuilder();
+    }
+
+    public FriendRelationFixtureBuilder requesterId(Long requesterId) {
         this.requesterId = requesterId;
         return this;
     }
 
-    public FriendRequestFixtureBuilder addresseeId(Long addresseeId) {
+    public FriendRelationFixtureBuilder addresseeId(Long addresseeId) {
         this.addresseeId = addresseeId;
         return this;
     }
 
-    public FriendRequest build() {
-        return new FriendRequest(
+    public FriendRelationFixtureBuilder friendStatus(FriendStatus friendStatus) {
+        this.friendStatus = friendStatus;
+        return this;
+    }
+
+    public FriendRelation build() {
+        return new FriendRelation(
                 requesterId,
-                addresseeId
+                addresseeId,
+                friendStatus
         );
     }
 }

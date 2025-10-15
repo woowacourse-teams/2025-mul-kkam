@@ -1,10 +1,12 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
