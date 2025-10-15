@@ -364,10 +364,7 @@ class ReminderScheduleServiceUnitTest {
             reminderScheduleService.executeReminderNotification(now);
 
             // then
-            verify(notificationService).processReminderNotifications(
-                    argThat(list -> list.size() == 2 && 
-                            list.contains(member1.getId()) &&
-                            list.contains(member2.getId())),
+            verify(notificationService).processReminderNotifications1(
                     any(LocalDateTime.class)
             );
         }
@@ -382,7 +379,7 @@ class ReminderScheduleServiceUnitTest {
             reminderScheduleService.executeReminderNotification(now);
 
             // then
-            verify(notificationService, never()).processReminderNotifications(anyList(), any());
+            verify(notificationService, never()).processReminderNotifications1(any());
         }
     }
 }

@@ -43,11 +43,11 @@ public class NotificationBatchService {
         em.clear();
     }
 
-    public <T> List<T> batchRead( // TODO. 클래스 위치 점검
+    public <T> List<T> batchRead(
             BiFunction<Long, Pageable, List<T>> queryFunction,
             Function<T, Long> idExtractor,
             int chunkSize
-    ) { // TODO: 함수형 인터페이스
+    ) {
         List<T> allResults = new ArrayList<>();
         Long lastId = null;
 
@@ -70,5 +70,16 @@ public class NotificationBatchService {
         }
 
         return allResults;
+    }
+
+    public <T> List<T> readChunk(
+            BiFunction<Long, Pageable, List<T>> queryFunction,
+            Long lastId,
+            int chunkSize
+    ) {
+        return queryFunction.apply(
+                lastId,
+                PageRequest.of(0, chunkSize, Sort.by("id"))
+        );
     }
 }
