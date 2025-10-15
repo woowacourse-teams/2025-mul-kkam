@@ -5,7 +5,6 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
@@ -20,19 +19,16 @@ public class FcmEventListener {
     private final FcmClient fcmClient;
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @EventListener
     public void onTopic(SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest) {
         fcmClient.sendMessageByTopic(sendMessageByFcmTopicRequest);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @EventListener
     public void onToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest) {
         fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
     }
 
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
-    @EventListener
     public void onTokens(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
         Lists.partition(sendMessageByFcmTokensRequest.allTokens(), FCM_BATCH_SIZE)
                 .forEach(tokens -> {
