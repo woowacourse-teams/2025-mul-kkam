@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,11 @@ public class Friend extends BaseEntity {
 
     @Column(nullable = false)
     private Long addresseeId;
+
+    public Friend(FriendRequest friendRequest) {
+        this.requesterId = friendRequest.getRequesterId();
+        this.addresseeId = friendRequest.getAddresseeId();
+    }
 
     public Friend(Long requesterId, Long addresseeId) {
         this.requesterId = requesterId;
