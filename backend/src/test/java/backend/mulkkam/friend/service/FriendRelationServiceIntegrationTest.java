@@ -40,9 +40,6 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
     private FriendService friendService;
 
     @Autowired
-    private FriendRelationRepository friendRepository;
-
-    @Autowired
     private FriendRelationRepository friendRelationRepository;
 
     private Member requester;
@@ -88,13 +85,13 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendStatus.ACCEPTED);
-            friendRepository.save(friendRelation);
+            friendRelationRepository.save(friendRelation);
 
             // when
             friendService.delete(requester.getId(), new MemberDetails(addressee.getId()));
 
             // then
-            assertThat(friendRepository.findAll()).isEmpty();
+            assertThat(friendRelationRepository.findAll()).isEmpty();
         }
     }
 
