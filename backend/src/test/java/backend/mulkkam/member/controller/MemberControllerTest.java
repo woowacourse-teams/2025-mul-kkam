@@ -376,7 +376,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             String json = mockMvc.perform(get("/members/search")
-                            .param("prefix", "돈까스")
+                            .param("word", "돈까스")
                             .param("page", "0")
                             .param("size", "10")
                             .header(AUTHORIZATION, "Bearer " + token))
@@ -406,7 +406,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             String json = mockMvc.perform(get("/members/search")
-                            .param("prefix", "")
+                            .param("word", "")
                             .param("page", "0")
                             .param("size", "10")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
@@ -434,7 +434,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             String json = mockMvc.perform(get("/members/search")
-                            .param("prefix", "테스트")
+                            .param("word", "테스트")
                             .param("page", "0")
                             .param("size", "2")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))

@@ -212,12 +212,12 @@ public class MemberController {
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "검색 할 내용", required = true, example = "돈까스먹는환")
-            @RequestParam String prefix,
+            @RequestParam String word,
             @Parameter(description = "page 값", required = true, example = "4")
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "size 값", required = true, example = "5")
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(memberService.searchMember(memberDetails, prefix, page, size));
+        return ResponseEntity.ok().body(memberService.searchMember(memberDetails, word, page, size));
     }
 }

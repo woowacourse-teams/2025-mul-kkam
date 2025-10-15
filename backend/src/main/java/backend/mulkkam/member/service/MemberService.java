@@ -189,15 +189,15 @@ public class MemberService {
 
     public MemberSearchResponse searchMember(
             MemberDetails memberDetails,
-            String prefix,
+            String word,
             int page,
             int size
     ) {
-        if (prefix.isBlank()) {
+        if (word.isBlank()) {
             return new MemberSearchResponse(List.of(), false);
         }
-        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByNicknamePrefixWithStatusAndDirection(
-                memberDetails.id(), prefix, PageRequest.of(page, size));
+        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByWordWithStatusAndDirection(
+                memberDetails.id(), word, PageRequest.of(page, size));
         return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
     }
 

@@ -59,13 +59,13 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                  (fr.requesterId = m.id AND fr.addresseeId = :id)
                )
               AND fr.deletedAt IS NULL
-            WHERE (:prefix <> '' AND m.memberNickname.value LIKE CONCAT(:prefix, '%'))
+            WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
               AND m.id <> :id
             ORDER BY m.memberNickname.value
             """)
-    Slice<MemberSearchItemResponse> findByNicknamePrefixWithStatusAndDirection(
+    Slice<MemberSearchItemResponse> findByWordWithStatusAndDirection(
             @Param("id") Long id,
-            @Param("prefix") String prefix,
+            @Param("word") String word,
             Pageable pageable
     );
 
