@@ -4,12 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.activity.viewModels
 import androidx.annotation.ColorRes
 import androidx.core.widget.doAfterTextChanged
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingNicknameBinding
-import com.mulkkam.domain.model.members.Nickname
+import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
@@ -28,6 +30,9 @@ import com.mulkkam.ui.util.extensions.setSingleClickListener
 class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(ActivitySettingNicknameBinding::inflate) {
     private val viewModel: SettingNicknameViewModel by viewModels()
 
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -41,7 +46,7 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
     private fun initClickListeners() {
         with(binding) {
             btnCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameAvailability(getNickname())
+                viewModel.checkNicknameAvailability(getTrimmedNickname())
             }
 
             ivBack.setSingleClickListener {
@@ -49,12 +54,15 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
             }
 
             tvSaveNickname.setSingleClickListener {
-                viewModel.saveNickname(getNickname())
+                viewModel.saveNickname(getTrimmedNickname())
             }
         }
     }
 
-    private fun getNickname(): String = binding.etInputNickname.text.toString()
+    private fun getTrimmedNickname(): String =
+        binding.etInputNickname.text
+            .toString()
+            .trim()
 
     private fun initObservers() {
         viewModel.originalNicknameUiState.observe(this) { originalNicknameUiState ->
@@ -190,8 +198,17 @@ class SettingNicknameActivity : BindingActivity<ActivitySettingNicknameBinding>(
 
     private fun initNicknameInputWatcher() {
         binding.etInputNickname.doAfterTextChanged {
-            val nickname = binding.etInputNickname.text.toString()
-            viewModel.updateNickname(nickname)
+            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+
+            debounceRunnable =
+                Runnable {
+                    val nickname =
+                        binding.etInputNickname.text
+                            .toString()
+                            .trim()
+
+                    viewModel.updateNickname(nickname)
+                }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
 

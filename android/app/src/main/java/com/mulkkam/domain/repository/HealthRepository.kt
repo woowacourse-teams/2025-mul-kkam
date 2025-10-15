@@ -1,14 +1,13 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.model.bio.ExerciseCalorie
-import com.mulkkam.domain.model.result.MulKkamResult
+import com.mulkkam.domain.model.bio.CalorieBurn
 import java.time.Instant
 
 interface HealthRepository {
     suspend fun getActiveCaloriesBurned(
         start: Instant,
         end: Instant,
-    ): MulKkamResult<ExerciseCalorie>
+    ): CalorieBurn
 
     suspend fun hasPermissions(permissions: Set<String>): Boolean
 

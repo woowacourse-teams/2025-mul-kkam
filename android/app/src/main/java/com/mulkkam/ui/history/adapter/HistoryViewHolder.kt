@@ -2,28 +2,25 @@ package com.mulkkam.ui.history.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemIntakeHistoryBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
-import com.mulkkam.ui.util.ImageShape
-import com.mulkkam.ui.util.extensions.loadUrl
-import com.mulkkam.ui.util.extensions.setSingleClickListener
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class HistoryViewHolder(
     private val binding: ItemIntakeHistoryBinding,
-    private val onItemClickListener: Handler?,
+    private val onItemLongClickListener: Handler?,
 ) : RecyclerView.ViewHolder(binding.root) {
     private var clickedIntakeHistory: IntakeHistory? = null
 
     init {
-        binding.root.setSingleClickListener {
+        binding.root.setOnLongClickListener {
             clickedIntakeHistory?.let { history ->
-                onItemClickListener?.onItemClicked(history)
+                onItemLongClickListener?.onItemLongClick(history)
             }
+            true
         }
     }
 
@@ -42,14 +39,11 @@ class HistoryViewHolder(
                     R.string.history_intake_amount,
                     intakeHistory.intakeAmount,
                 )
-            tvIntakeAmount.setTextColor(intakeHistory.intakeType.toColorHex().toColorInt())
-
-            ivCupIcon.loadUrl(url = intakeHistory.cupEmojiUrl, shape = ImageShape.Circle)
         }
     }
 
     fun interface Handler {
-        fun onItemClicked(history: IntakeHistory)
+        fun onItemLongClick(history: IntakeHistory)
     }
 
     companion object {
@@ -58,11 +52,11 @@ class HistoryViewHolder(
 
         fun from(
             parent: ViewGroup,
-            onItemClickListener: Handler,
+            onItemLongClickListener: Handler,
         ): HistoryViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemIntakeHistoryBinding.inflate(inflater, parent, false)
-            return HistoryViewHolder(binding, onItemClickListener)
+            return HistoryViewHolder(binding, onItemLongClickListener)
         }
     }
 }

@@ -38,7 +38,8 @@ class CupsItemTouchHelperCallback(
     override fun onSwiped(
         viewHolder: RecyclerView.ViewHolder,
         direction: Int,
-    ) = Unit
+    ) {
+    }
 
     override fun clearView(
         recyclerView: RecyclerView,

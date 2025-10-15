@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.nicknameRepository
-import com.mulkkam.domain.model.members.Nickname
+import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.domain.model.result.toMulKkamError

@@ -2,15 +2,18 @@ package com.mulkkam.ui.onboarding.nickname
 
 import android.content.res.ColorStateList
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import androidx.annotation.ColorRes
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.widget.doAfterTextChanged
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import com.google.android.material.internal.ViewUtils.hideKeyboard
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentNicknameBinding
-import com.mulkkam.domain.model.members.Nickname
+import com.mulkkam.domain.model.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.MulKkamError.NicknameError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
@@ -33,6 +36,9 @@ class NicknameFragment :
     ) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: NicknameViewModel by viewModels()
+
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
 
     override fun onViewCreated(
         view: View,
@@ -60,17 +66,20 @@ class NicknameFragment :
         with(binding) {
             tvNext.setSingleClickListener {
                 binding.root.hideKeyboard()
-                parentViewModel.updateNickname(getNickname())
+                parentViewModel.updateNickname(getTrimmedNickname())
                 parentViewModel.moveToNextStep()
             }
 
             tvCheckDuplicate.setSingleClickListener {
-                viewModel.checkNicknameAvailability(getNickname())
+                viewModel.checkNicknameAvailability(getTrimmedNickname())
             }
         }
     }
 
-    private fun getNickname(): String = binding.etInputNickname.text.toString()
+    private fun getTrimmedNickname(): String =
+        binding.etInputNickname.text
+            .toString()
+            .trim()
 
     private fun initObservers() {
         with(viewModel) {
@@ -156,8 +165,17 @@ class NicknameFragment :
 
     private fun initNicknameInputWatcher() {
         binding.etInputNickname.doAfterTextChanged {
-            val nickname = binding.etInputNickname.text.toString()
-            viewModel.updateNickname(nickname)
+            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
+
+            debounceRunnable =
+                Runnable {
+                    val nickname =
+                        binding.etInputNickname.text
+                            .toString()
+                            .trim()
+
+                    viewModel.updateNickname(nickname)
+                }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
 

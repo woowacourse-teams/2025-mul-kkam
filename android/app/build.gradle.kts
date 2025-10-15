@@ -9,7 +9,6 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
     alias(libs.plugins.kotlin.kapt)
-    alias(libs.plugins.kotlin.compose)
 }
 
 android {
@@ -18,11 +17,6 @@ android {
         libs.versions.targetSdk
             .get()
             .toInt()
-
-    val localProperties = gradleLocalProperties(rootDir, providers)
-    val kakaoKey = localProperties.getProperty("key.kakao") ?: ""
-    val releaseBaseUrl = localProperties.getProperty("release.base.url") ?: ""
-    val debugBaseUrl = localProperties.getProperty("debug.base.url") ?: ""
 
     defaultConfig {
         applicationId = "com.mulkkam"
@@ -44,38 +38,41 @@ android {
         testInstrumentationRunnerArguments["runnerBuilder"] =
             "de.mannodermaus.junit5.AndroidJUnit5Builder"
 
+        buildConfigField(
+            "String",
+            "BASE_URL",
+            gradleLocalProperties(rootDir, providers).getProperty("base.url"),
+        )
+
+        val kakaoKey =
+            gradleLocalProperties(rootDir, providers).getProperty("key.kakao") ?: ""
         buildConfigField("String", "KEY_KAKAO", "\"$kakaoKey\"")
 
         manifestPlaceholders["kakaoKey"] = kakaoKey
-
-        proguardFiles(
-            getDefaultProguardFile("proguard-android-optimize.txt"),
-            "proguard-rules.pro",
-        )
     }
 
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-
-            buildConfigField("String", "BASE_URL", "\"$releaseBaseUrl\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
 
         debug {
             isMinifyEnabled = false
             isShrinkResources = false
-
-            applicationIdSuffix = ".dev"
-            versionNameSuffix = "-dev"
-
-            buildConfigField("String", "BASE_URL", "\"$debugBaseUrl\"")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro",
+            )
         }
     }
     buildFeatures {
         viewBinding = true
         buildConfig = true
-        compose = true
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
@@ -94,14 +91,6 @@ dependencies {
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.fragment.ktx)
-
-    implementation(libs.androidx.activity.compose)
-    implementation(platform(libs.androidx.compose.bom))
-    implementation(libs.androidx.ui)
-    implementation(libs.androidx.ui.graphics)
-    implementation(libs.androidx.ui.tooling)
-    implementation(libs.androidx.ui.tooling.preview)
-    implementation(libs.androidx.compose.material3)
 
     // 네트워크 통신 관련 라이브러리
     implementation(libs.okhttp)
@@ -122,10 +111,10 @@ dependencies {
     testImplementation(libs.mockk)
 
     // 이미지 로딩 및 캐싱 라이브러리
-    implementation(libs.coil)
-    implementation(libs.coil.svg)
-    implementation(libs.coil.network)
+    implementation(libs.glide)
     implementation(libs.lottie)
+    implementation(libs.androidsvg)
+    kapt(libs.glide.compiler)
 
     // 로그인
     implementation(libs.kakao.v2.user)

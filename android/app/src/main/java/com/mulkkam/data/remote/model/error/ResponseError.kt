@@ -67,14 +67,6 @@ sealed class ResponseError(
         data object Unauthorized : AccountError("Unauthorized") {
             private fun readResolve(): Any = Unauthorized
         }
-
-        data object RefreshTokenExpired : AccountError("REFRESH_TOKEN_IS_EXPIRED") {
-            private fun readResolve(): Any = RefreshTokenExpired
-        }
-
-        data object RefreshTokenAlreadyUsed : AccountError("REFRESH_TOKEN_ALREADY_USED") {
-            private fun readResolve(): Any = RefreshTokenAlreadyUsed
-        }
     }
 
     // 기록 관련 에러
@@ -136,9 +128,6 @@ sealed class ResponseError(
                 // Account
                 AccountError.NotExistUser.code -> AccountError.NotExistUser
                 AccountError.InvalidToken.code -> AccountError.InvalidToken
-                AccountError.Unauthorized.code -> AccountError.Unauthorized
-                AccountError.RefreshTokenExpired.code -> AccountError.RefreshTokenExpired
-                AccountError.RefreshTokenAlreadyUsed.code -> AccountError.RefreshTokenAlreadyUsed
 
                 // History
                 HistoryError.InvalidDateRange.code -> HistoryError.InvalidDateRange
@@ -167,15 +156,12 @@ fun ResponseError.toDomain(): MulKkamError =
         // SettingCups
         SettingCupsError.InvalidCount -> MulKkamError.SettingCupsError.InvalidCount
         SettingCupsError.InvalidAmount -> MulKkamError.SettingCupsError.InvalidAmount
-        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNicknameLength
+        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNickname
         SettingCupsError.InvalidRankValue -> MulKkamError.SettingCupsError.InvalidRankValue
 
         // Account
         AccountError.NotExistUser -> MulKkamError.AccountError.NotExistUser
         AccountError.InvalidToken -> MulKkamError.AccountError.InvalidToken
-        AccountError.Unauthorized -> MulKkamError.AccountError.Unauthorized
-        AccountError.RefreshTokenExpired -> MulKkamError.AccountError.RefreshTokenExpired
-        AccountError.RefreshTokenAlreadyUsed -> MulKkamError.AccountError.RefreshTokenAlreadyUsed
 
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange

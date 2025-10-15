@@ -5,15 +5,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.di.RepositoryInjection.onboardingRepository
+import com.mulkkam.di.RepositoryInjection
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
-import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.toDomain
 import kotlinx.coroutines.launch
 
 class OnboardingViewModel : ViewModel() {
@@ -58,7 +55,7 @@ class OnboardingViewModel : ViewModel() {
         if (saveOnboardingUiState.value is MulKkamUiState.Loading) return
         _saveOnboardingUiState.value = MulKkamUiState.Loading
         viewModelScope.launch {
-            val result = onboardingRepository.postOnboarding(onboardingInfo)
+            val result = RepositoryInjection.membersRepository.postMembers(onboardingInfo)
             runCatching {
                 result.getOrError()
                 _saveOnboardingUiState.value = MulKkamUiState.Success(Unit)
@@ -80,7 +77,7 @@ class OnboardingViewModel : ViewModel() {
     }
 
     fun updateNickname(nickname: String) {
-        onboardingInfo = onboardingInfo.copy(nickname = Nickname(nickname))
+        onboardingInfo = onboardingInfo.copy(nickname = nickname)
     }
 
     fun updateBioInfo(
@@ -96,10 +93,6 @@ class OnboardingViewModel : ViewModel() {
 
     fun updateTargetAmount(targetAmount: Int) {
         onboardingInfo = onboardingInfo.copy(targetAmount = targetAmount)
-    }
-
-    fun updateCups(cups: List<CupUiModel>) {
-        onboardingInfo = onboardingInfo.copy(cups = cups.map { it.toDomain() })
     }
 
     companion object {

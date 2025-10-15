@@ -14,12 +14,12 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_common_rectangle_12dp"
         android:backgroundTint="@color/primary_10"
-        android:src="@drawable/ic_notification_suggestion"
+        android:src="@drawable/ic_notification_sun"
         android:padding="7dp"
         app:layout_constraintStart_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:src="@drawable/ic_notification_suggestion" />
+        tools:src="@drawable/ic_notification_sun" />
 
     <View
         android:id="@+id/view_unread_alarm"

@@ -3,11 +3,13 @@ package com.mulkkam.data.remote.service
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.MembersRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
+import com.mulkkam.data.remote.model.response.members.MembersCheckOnboardingResponse
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.members.MembersResponse
-import com.mulkkam.data.remote.model.response.notifications.NotificationAgreedResponse
+import com.mulkkam.data.remote.model.response.notification.NotificationAgreedResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -16,6 +18,11 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 interface MembersService {
+    @POST("/members")
+    suspend fun postMembers(
+        @Body member: MembersRequest,
+    ): Result<Unit>
+
     @GET("/members/nickname/validation")
     suspend fun getMembersNicknameValidation(
         @Query("nickname") nickname: String,
@@ -36,6 +43,9 @@ interface MembersService {
     suspend fun postMembersPhysicalAttributes(
         @Body physicalAttributes: MembersPhysicalAtrributesRequest,
     ): Result<Unit>
+
+    @GET("/members/check/onboarding")
+    suspend fun getMembersCheckOnboarding(): Result<MembersCheckOnboardingResponse>
 
     @GET("/members/progress-info")
     suspend fun getMembersProgressInfo(

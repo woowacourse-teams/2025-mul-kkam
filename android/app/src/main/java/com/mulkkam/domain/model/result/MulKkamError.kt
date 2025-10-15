@@ -1,5 +1,7 @@
 package com.mulkkam.domain.model.result
 
+import com.mulkkam.domain.model.result.MulKkamError.NicknameError
+
 sealed class MulKkamError : Throwable() {
     // 닉네임 관련 에러
     sealed class NicknameError : MulKkamError() {
@@ -34,12 +36,8 @@ sealed class MulKkamError : Throwable() {
             private fun readResolve(): Any = InvalidAmount
         }
 
-        data object InvalidNicknameLength : SettingCupsError() {
-            private fun readResolve(): Any = InvalidNicknameLength
-        }
-
-        data object InvalidNicknameCharacters : SettingCupsError() {
-            private fun readResolve(): Any = InvalidNicknameCharacters
+        data object InvalidNickname : SettingCupsError() {
+            private fun readResolve(): Any = InvalidNickname
         }
 
         data object InvalidRankValue : SettingCupsError() {
@@ -65,18 +63,6 @@ sealed class MulKkamError : Throwable() {
 
         data object InvalidToken : AccountError() {
             private fun readResolve(): Any = InvalidToken
-        }
-
-        data object Unauthorized : AccountError() {
-            private fun readResolve(): Any = Unauthorized
-        }
-
-        data object RefreshTokenExpired : AccountError() {
-            private fun readResolve(): Any = RefreshTokenExpired
-        }
-
-        data object RefreshTokenAlreadyUsed : AccountError() {
-            private fun readResolve(): Any = RefreshTokenAlreadyUsed
         }
     }
 

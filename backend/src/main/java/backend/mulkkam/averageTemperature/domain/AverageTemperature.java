@@ -2,14 +2,15 @@ package backend.mulkkam.averageTemperature.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
@@ -21,6 +22,10 @@ public class AverageTemperature {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private City city;
+
     @Column(nullable = false)
     private LocalDate date;
 
@@ -28,10 +33,11 @@ public class AverageTemperature {
     private double temperature;
 
     public AverageTemperature(
-            LocalDate date,
+            CityDateTime cityDateTime,
             double temperature
     ) {
-        this.date = date;
+        this.city = cityDateTime.city();
+        this.date = cityDateTime.getLocalDate();
         this.temperature = temperature;
     }
 }

@@ -7,7 +7,6 @@ data class Notification(
     val title: String,
     val type: NotificationType,
     val createdAt: LocalDateTime,
-    val recommendedTargetAmount: Int?,
+    val recommendedTargetAmount: Int,
     val isRead: Boolean,
-    val applyRecommendAmount: Boolean?,
 )

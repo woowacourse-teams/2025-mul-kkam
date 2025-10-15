@@ -18,12 +18,12 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.controller.ControllerTest;
-import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -100,7 +100,7 @@ public class NotificationControllerTest extends ControllerTest {
             ReadNotificationsResponse actual = objectMapper.readValue(json, ReadNotificationsResponse.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.nextCursor()).isEqualTo(4);
+                softly.assertThat(actual.nextCursor()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
                         .allMatch(r -> r.id() >= 5L)
@@ -122,10 +122,10 @@ public class NotificationControllerTest extends ControllerTest {
             ReadNotificationsResponse actual = objectMapper.readValue(json, ReadNotificationsResponse.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.nextCursor()).isEqualTo(5);
+                softly.assertThat(actual.nextCursor()).isEqualTo(6);
                 softly.assertThat(actual.readNotificationResponses().size()).isEqualTo(5);
                 softly.assertThat(actual.readNotificationResponses())
-                        .allMatch(r -> r.id() >= 4L)
+                        .allMatch(r -> r.id() >= 6L)
                         .allMatch(r -> !r.isRead());
             });
         }
@@ -164,7 +164,7 @@ public class NotificationControllerTest extends ControllerTest {
         @Test
         void success_validMember() throws Exception {
             // when & then
-            String json = mockMvc.perform(get("/notifications/unread-count")
+            String json = mockMvc.perform(get("/notifications/unread-count?clientTime=2025-08-15T10:00:00")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();

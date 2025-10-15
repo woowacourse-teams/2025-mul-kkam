@@ -1,7 +1,6 @@
 package com.mulkkam.data.remote.model.response.intake
 
 import com.mulkkam.domain.model.intake.IntakeHistory
-import com.mulkkam.domain.model.intake.IntakeType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import java.time.LocalTime
@@ -15,10 +14,6 @@ data class IntakeHistoryResponse(
     val dateTime: String,
     @SerialName("intakeAmount")
     val intakeAmount: Int,
-    @SerialName("intakeType")
-    val intakeType: String,
-    @SerialName("cupEmojiUrl")
-    val cupEmojiUrl: String,
 )
 
 fun IntakeHistoryResponse.toDomain() =
@@ -26,6 +21,4 @@ fun IntakeHistoryResponse.toDomain() =
         id = id,
         dateTime = LocalTime.parse(this.dateTime, DateTimeFormatter.ofPattern("HH:mm:ss")),
         intakeAmount = intakeAmount,
-        intakeType = IntakeType.from(intakeType),
-        cupEmojiUrl = cupEmojiUrl,
     )

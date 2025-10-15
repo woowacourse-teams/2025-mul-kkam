@@ -2,7 +2,7 @@ package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.cups.CupsRankRequest
 import com.mulkkam.data.remote.model.request.cups.NewCupRequest
-import com.mulkkam.data.remote.model.response.cups.CupEmojisResponse
+import com.mulkkam.data.remote.model.request.cups.PatchCupRequest
 import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
 import com.mulkkam.data.remote.model.response.cups.CupsResponse
 import retrofit2.http.Body
@@ -17,9 +17,6 @@ interface CupsService {
     @GET("/cups")
     suspend fun getCups(): Result<CupsResponse>
 
-    @GET("/cups/default")
-    suspend fun getCupsDefault(): Result<CupsResponse>
-
     @POST("/cups")
     suspend fun postCup(
         @Body newCupRequest: NewCupRequest,
@@ -33,17 +30,11 @@ interface CupsService {
     @PATCH("/cups/{cupId}")
     suspend fun patchCup(
         @Path("cupId") cupId: Long,
-        @Body newCupRequest: NewCupRequest,
+        @Body patchCupRequest: PatchCupRequest,
     ): Result<Unit>
 
     @DELETE("/cups/{id}")
     suspend fun deleteCup(
         @Path("id") id: Long,
     ): Result<Unit>
-
-    @GET("/cup-emoji")
-    suspend fun getCupEmojis(): Result<CupEmojisResponse>
-
-    @PUT("/cups/reset")
-    suspend fun resetCups(): Result<Unit>
 }

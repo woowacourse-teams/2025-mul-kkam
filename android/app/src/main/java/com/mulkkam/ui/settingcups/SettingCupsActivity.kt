@@ -3,8 +3,6 @@ package com.mulkkam.ui.settingcups
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import androidx.activity.viewModels
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -17,7 +15,6 @@ import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
-import com.mulkkam.ui.settingcups.dialog.SettingCupsResetDialogFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingActivity
@@ -32,9 +29,6 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         ItemTouchHelper(CupsItemTouchHelperCallback(settingCupsAdapter))
     }
 
-    private val debounceHandler = Handler(Looper.getMainLooper())
-    private var debounceRunnable: Runnable? = null
-
     private val handler: SettingCupsAdapter.Handler = handleSettingCupClick()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +41,6 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
 
     private fun initRecyclerView() {
         binding.rvCups.adapter = settingCupsAdapter
-        binding.rvCups.itemAnimator = null
         itemTouchHelper.attachToRecyclerView(binding.rvCups)
     }
 
@@ -65,57 +58,14 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
                 showEditBottomSheetDialog(null)
             }
 
-            override fun onDropAttempt(newCupItems: List<SettingCupsItem.CupItem>) {
-                reorderCups(newCupItems)
+            override fun onCupsOrderChanged(newOrder: List<SettingCupsItem.CupItem>) {
+                viewModel.updateCupOrder(newOrder.map { cupItem -> cupItem.value })
             }
         }
 
-    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
-        if (supportFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
-        SettingCupFragment
-            .newInstance(cup)
-            .show(supportFragmentManager, SettingCupFragment.TAG)
-    }
-
-    private fun reorderCups(newCupItems: List<SettingCupsItem.CupItem>) {
-        val cups = newCupItems.map { it.value }
-        viewModel.applyOptimisticCupOrder(cups)
-
-        saveOrderResult(cups)
-        saveCupOrder(newCupItems)
-    }
-
-    private fun saveOrderResult(cups: List<CupUiModel>) {
-        val data =
-            Intent().apply {
-                putParcelableArrayListExtra(EXTRA_KEY_LATEST_CUPS_ORDER, ArrayList(cups))
-            }
-        setResult(RESULT_OK, data)
-    }
-
-    private fun saveCupOrder(newCupItems: List<SettingCupsItem.CupItem>) {
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-
-        debounceRunnable =
-            Runnable {
-                val cups = newCupItems.map { it.value }
-                viewModel.updateCupOrder(cups)
-
-                setResult(RESULT_CANCELED)
-            }.also { runnable ->
-                debounceHandler.postDelayed(runnable, REORDER_RANK_DELAY)
-            }
-    }
-
     private fun initObserver() {
-        with(viewModel) {
-            cupsUiState.observe(this@SettingCupsActivity) { cupsUiState ->
-                handleCupsUiState(cupsUiState)
-            }
-
-            cupsResetUiState.observe(this@SettingCupsActivity) { cupsResetUiState ->
-                handleCupsResetUiState(cupsResetUiState)
-            }
+        viewModel.cupsUiState.observe(this) { cupsUiState ->
+            handleCupsUiState(cupsUiState)
         }
     }
 
@@ -125,12 +75,11 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
             is MulKkamUiState.Loading -> binding.sflCups.visibility = View.VISIBLE
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.load_info_error),
-                        R.drawable.ic_alert_circle,
-                    ).show()
+                CustomSnackBar.make(
+                    binding.root,
+                    getString(R.string.load_info_error),
+                    R.drawable.ic_alert_circle,
+                )
                 binding.sflCups.visibility = View.GONE
             }
         }
@@ -146,57 +95,20 @@ class SettingCupsActivity : BindingActivity<ActivitySettingCupsBinding>(Activity
         binding.sflCups.visibility = View.GONE
     }
 
-    private fun handleCupsResetUiState(cupsResetUiState: MulKkamUiState<Unit>) {
-        when (cupsResetUiState) {
-            is MulKkamUiState.Success<Unit> -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.setting_cups_reset_success),
-                        R.drawable.ic_terms_all_check_on,
-                    ).show()
-            }
-
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Failure ->
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.network_check_error),
-                        R.drawable.ic_alert_circle,
-                    ).show()
-        }
-    }
-
     private fun initClickListener() {
-        with(binding) {
-            ivBack.setSingleClickListener {
-                finish()
-            }
-            tvReset.setSingleClickListener {
-                showResetDialog()
-            }
+        binding.ivBack.setSingleClickListener {
+            finish()
         }
     }
 
-    private fun showResetDialog() {
-        if (supportFragmentManager.findFragmentByTag(SettingCupsResetDialogFragment.TAG) != null) return
-        SettingCupsResetDialogFragment
-            .newInstance()
+    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
+        if (supportFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
+        SettingCupFragment
+            .newInstance(cup)
             .show(supportFragmentManager, SettingCupFragment.TAG)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        debounceRunnable?.let(debounceHandler::removeCallbacks)
-        debounceRunnable = null
-    }
-
     companion object {
-        const val EXTRA_KEY_LATEST_CUPS_ORDER: String = "EXTRA_KEY_LATEST_CUPS_ORDER"
-        private const val REORDER_RANK_DELAY: Long = 2000L
-
         fun newIntent(context: Context): Intent = Intent(context, SettingCupsActivity::class.java)
     }
 }
