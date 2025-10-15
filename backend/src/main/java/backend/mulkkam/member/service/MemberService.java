@@ -32,6 +32,7 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
 import java.util.List;
@@ -54,6 +55,7 @@ public class MemberService {
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
+    private final ReminderScheduleRepository reminderScheduleRepository;
     private final FriendRelationRepository friendRelationRepository;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
@@ -168,6 +170,9 @@ public class MemberService {
         List<Long> notificationIds = findSuggestionNotificationIdsByMember(member);
         suggestionNotificationRepository.deleteByIdIn(notificationIds);
         notificationRepository.deleteByMember(member);
+
+        reminderScheduleRepository.deleteAllByMemberId(member.getId());
+        friendRelationRepository.deleteAllByMemberId(member.getId());
 
         memberRepository.delete(member);
     }
