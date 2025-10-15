@@ -101,30 +101,4 @@ class MulKkamChipGroupAdapter<T>(
     }
 
     fun getSelectedItems(): List<T> = selectedItems.toList()
-
-    fun selectItem(item: T) {
-        val chip = chips[item] ?: return
-
-        if (isMultiSelect) {
-            if (chip.isSelectedChip && requireSelection && selectedItems.size == 1) {
-                return
-            }
-            chip.isSelectedChip = !chip.isSelectedChip
-            if (chip.isSelectedChip) {
-                selectedItems.add(item)
-            } else {
-                selectedItems.remove(item)
-            }
-        } else {
-            if (selectedItems.contains(item) && requireSelection) {
-                return
-            }
-            chips.forEach { (_, view) -> view.isSelectedChip = false }
-            chip.isSelectedChip = true
-            selectedItems.clear()
-            selectedItems.add(item)
-        }
-
-        onItemSelected(getSelectedItems())
-    }
 }

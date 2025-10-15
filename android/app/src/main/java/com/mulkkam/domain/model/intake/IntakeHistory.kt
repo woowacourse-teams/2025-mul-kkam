@@ -6,6 +6,4 @@ data class IntakeHistory(
     val id: Int,
     val dateTime: LocalTime,
     val intakeAmount: Int,
-    val intakeType: IntakeType,
-    val cupEmojiUrl: String,
 )

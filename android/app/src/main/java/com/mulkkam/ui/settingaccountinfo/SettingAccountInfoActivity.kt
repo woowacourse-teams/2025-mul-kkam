@@ -8,6 +8,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingAccountInfoBinding
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.login.LoginActivity
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
@@ -57,14 +58,18 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         viewModel.onDeleteAccount.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_delete_success))
-                .show()
+                .apply {
+                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
             moveToLogin()
         }
 
         viewModel.onLogout.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_logout_success))
-                .show()
+                .apply {
+                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
             moveToLogin()
         }
     }

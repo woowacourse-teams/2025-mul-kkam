@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   pull_request:
-    branches: [ "develop", "develop-an" ]
+    branches: [ "develop" ]
     paths:
       - 'android/**'
 
@@ -40,13 +40,9 @@ jobs:
     
     - name: set up local.properties
       env:
-        RELEASE_BASE_URL:  ${{ secrets.RELEASE_BASE_URL }}
-        DEBUG_BASE_URL:    ${{ secrets.DEBUG_BASE_URL }}
-        KEY_KAKAO:         ${{ secrets.KEY_KAKAO }}
-      run: |
-        echo "release.base.url=${RELEASE_BASE_URL}" >> ./local.properties
-        echo "debug.base.url=${DEBUG_BASE_URL}"     >> ./local.properties
-        echo "key.kakao=${KEY_KAKAO}"               >> ./local.properties
+        BASE_URL: ${{secrets.BASE_URL}}
+      run:
+        echo base.url=\"$_BASE_URL\" >> ./local.properties
 
     - name: set up google-services.json
       env:

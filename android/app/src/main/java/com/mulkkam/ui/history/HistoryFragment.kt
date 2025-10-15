@@ -19,7 +19,6 @@ import com.mulkkam.databinding.LayoutHistoryWaterIntakeChartBinding
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
-import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
@@ -75,16 +74,15 @@ class HistoryFragment :
 
     private fun initHistoryAdapter() {
         with(binding.rvIntakeHistory) {
-            itemAnimator = null
             adapter = historyAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        historyAdapter.onItemClickListener =
+        historyAdapter.onItemLongClickListener =
             HistoryViewHolder.Handler { history ->
                 if (viewModel.waterIntakeState.value !is WaterIntakeState.Present) {
                     CustomSnackBar
                         .make(
-                            binding.root.rootView,
+                            binding.root,
                             getString(R.string.history_delete_failure_past),
                             R.drawable.ic_alert_circle,
                         ).apply {
@@ -184,7 +182,7 @@ class HistoryFragment :
                 binding.includeHistoryShimmer.root.visibility = View.GONE
                 CustomSnackBar
                     .make(
-                        binding.root.rootView,
+                        binding.root,
                         getString(R.string.load_info_error),
                         R.drawable.ic_alert_circle,
                     ).apply {
@@ -201,7 +199,7 @@ class HistoryFragment :
         }
 
         val formatter =
-            if (weeklyIntakeHistories.isCurrentYear()) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
+            if (weeklyIntakeHistories.isCurrentYear) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
 
         binding.tvWeekRange.text =
             getString(
@@ -231,7 +229,7 @@ class HistoryFragment :
                     intakeHistorySummary.date.monthValue,
                     intakeHistorySummary.date.dayOfMonth,
                 )
-            pcWaterIntake.setProgressWithAnimation(intakeHistorySummary.achievementRate)
+            pcWaterIntake.setProgress(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -240,7 +238,7 @@ class HistoryFragment :
         intakeHistorySummary: IntakeHistorySummary,
     ) {
         with(chart) {
-            if (intakeHistorySummary.achievementRate == ACHIEVEMENT_RATE_MAX) {
+            if (intakeHistorySummary.achievementRate == ACHIEVEMENT_RATE_FULL) {
                 tvWaterGoalRate.visibility = View.GONE
                 ivCheck.visibility = View.VISIBLE
             } else {
@@ -269,7 +267,7 @@ class HistoryFragment :
 
     private fun updateDailyChartView(intakeHistorySummary: IntakeHistorySummary) {
         with(binding) {
-            viewDailyChart.setProgressWithAnimation(intakeHistorySummary.achievementRate)
+            viewDailyChart.setProgress(intakeHistorySummary.achievementRate)
         }
     }
 
@@ -369,7 +367,6 @@ class HistoryFragment :
                 is WaterIntakeState.Past.NoRecord -> R.drawable.img_history_crying_character
                 is WaterIntakeState.Past.Full -> R.drawable.img_history_character
                 is WaterIntakeState.Present.Full -> R.drawable.img_history_character
-                is WaterIntakeState.Future -> R.drawable.img_history_sleeping_character
                 else -> R.drawable.img_history_character
             }
         binding.ivHistoryCharacter.setImageDrawable(
@@ -392,7 +389,7 @@ class HistoryFragment :
         if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
             CustomSnackBar
                 .make(
-                    binding.root.rootView,
+                    binding.root,
                     getString(R.string.network_check_error),
                     R.drawable.ic_alert_circle,
                 ).apply {
@@ -401,7 +398,7 @@ class HistoryFragment :
         } else {
             CustomSnackBar
                 .make(
-                    binding.root.rootView,
+                    binding.root,
                     getString(R.string.history_delete_failure_past),
                     R.drawable.ic_alert_circle,
                 ).apply {
@@ -413,7 +410,7 @@ class HistoryFragment :
     private fun handleDeleteSuccess() {
         CustomSnackBar
             .make(
-                binding.root.rootView,
+                binding.root,
                 getString(R.string.history_delete_success),
                 R.drawable.ic_terms_all_check_on,
             ).apply {
@@ -450,5 +447,6 @@ class HistoryFragment :
         private const val DONUT_CHART_SOLID_STROKE: Float = 4f
 
         private const val INTAKE_AMOUNT_EMPTY: Int = 0
+        private const val ACHIEVEMENT_RATE_FULL: Float = 100f
     }
 }

@@ -5,7 +5,6 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.widget.LinearLayout
 import com.mulkkam.databinding.LayoutExpandableFloatingMenuBinding
-import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
 
 class ExtendableFloatingMenu
@@ -22,12 +21,7 @@ class ExtendableFloatingMenu
 
         fun setIcon(icon: ExtendableFloatingMenuIcon) {
             when (icon) {
-                is ExtendableFloatingMenuIcon.Url ->
-                    binding.ivIcon.loadUrl(
-                        url = icon.url,
-                        shape = ImageShape.Circle,
-                    )
-
+                is ExtendableFloatingMenuIcon.Url -> binding.ivIcon.loadUrl(icon.url)
                 is ExtendableFloatingMenuIcon.Resource -> binding.ivIcon.setImageResource(icon.resId)
             }
         }

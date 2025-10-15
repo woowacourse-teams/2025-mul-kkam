@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class DeviceRequest(
     @SerialName("token")
     val token: String,
+    @SerialName("deviceId")
+    val deviceId: String,
 )

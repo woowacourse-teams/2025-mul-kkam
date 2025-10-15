@@ -14,7 +14,6 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.mulkkam.R
 import com.mulkkam.databinding.LayoutExpandableFloatingActionButtonBinding
-import com.mulkkam.ui.util.extensions.dpToPx
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
 class ExtendableFloatingActionButton
@@ -83,7 +82,7 @@ class ExtendableFloatingActionButton
             binding.fabDrink.setImageDrawable(getDrawable(context, R.drawable.ic_home_close))
             binding.llMenu.childrenReversed().forEachIndexed { index, view ->
                 view.isVisible = true
-                val translation = ObjectAnimator.ofFloat(view, "translationY", 0f, -((index + 1) * 12f.dpToPx(context)))
+                val translation = ObjectAnimator.ofFloat(view, "translationY", 0f, -((index + 1) * 12f.dpToPx()))
                 val alpha = ObjectAnimator.ofFloat(view, "alpha", 0f, 1f)
                 animators.add(translation)
                 animators.add(alpha)
@@ -118,4 +117,6 @@ class ExtendableFloatingActionButton
         }
 
         private fun ViewGroup.childrenReversed(): List<View> = this.children.toList().asReversed()
+
+        private fun Float.dpToPx(): Float = this * resources.displayMetrics.density
     }

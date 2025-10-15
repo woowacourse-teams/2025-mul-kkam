@@ -1,17 +1,12 @@
 package com.mulkkam.ui.util.extensions
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
 import android.os.SystemClock
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.graphics.Insets
-import androidx.core.graphics.createBitmap
-import androidx.core.graphics.withScale
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsAnimationCompat
 import androidx.core.view.WindowInsetsCompat
@@ -97,29 +92,4 @@ fun EditText.setOnImeActionDoneListener() {
             false
         }
     }
-}
-
-fun View.snapshot(
-    scale: Float = 1f,
-    config: Bitmap.Config = Bitmap.Config.ARGB_8888,
-    clearColor: Int = Color.TRANSPARENT,
-): Bitmap {
-    require(this.width > 0 && this.height > 0) {
-        IllegalStateException()
-    }
-    val width = max(1, (this.width * scale).toInt())
-    val height = max(1, (this.height * scale).toInt())
-    val bitmap = createBitmap(width, height, config)
-    val canvas = Canvas(bitmap)
-    bitmap.eraseColor(clearColor)
-    if (scale != 1f) {
-        val scaleX = width / this.width.toFloat()
-        val scaleY = height / this.height.toFloat()
-        canvas.withScale(scaleX, scaleY) {
-            draw(canvas)
-        }
-    } else {
-        draw(canvas)
-    }
-    return bitmap
 }

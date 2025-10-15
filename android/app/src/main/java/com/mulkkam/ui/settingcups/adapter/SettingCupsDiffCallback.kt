@@ -6,7 +6,7 @@ object SettingCupsDiffCallback : DiffUtil.ItemCallback<SettingCupsItem>() {
     override fun areItemsTheSame(
         oldItem: SettingCupsItem,
         newItem: SettingCupsItem,
-    ): Boolean = oldItem.rank == newItem.rank
+    ): Boolean = oldItem.id == newItem.id
 
     override fun areContentsTheSame(
         oldItem: SettingCupsItem,

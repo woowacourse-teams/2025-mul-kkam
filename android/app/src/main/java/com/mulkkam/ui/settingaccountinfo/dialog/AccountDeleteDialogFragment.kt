@@ -2,6 +2,8 @@ package com.mulkkam.ui.settingaccountinfo.dialog
 
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.graphics.drawable.toDrawable
@@ -19,6 +21,9 @@ class AccountDeleteDialogFragment :
         FragmentAccountDeleteDialogBinding::inflate,
     ) {
     private val parentViewModel: SettingAccountInfoViewModel by activityViewModels()
+
+    private val debounceHandler = Handler(Looper.getMainLooper())
+    private var debounceRunnable: Runnable? = null
 
     override fun onViewCreated(
         view: View,
@@ -61,10 +66,18 @@ class AccountDeleteDialogFragment :
 
     private fun initDeleteAccountConfirmInputWatcher() {
         binding.etDeleteAccountConfirm.doAfterTextChanged {
-            val comment = binding.etDeleteAccountConfirm.text.toString()
+            debounceRunnable?.let { debounceHandler.removeCallbacks(it) }
 
-            binding.tvConfirm.isEnabled =
-                comment == getString(R.string.setting_account_info_delete_comment)
+            debounceRunnable =
+                Runnable {
+                    val comment =
+                        binding.etDeleteAccountConfirm.text
+                            .toString()
+                            .trim()
+
+                    binding.tvConfirm.isEnabled =
+                        comment == getString(R.string.setting_account_info_delete_comment)
+                }.apply { debounceHandler.postDelayed(this, 100L) }
         }
     }
 

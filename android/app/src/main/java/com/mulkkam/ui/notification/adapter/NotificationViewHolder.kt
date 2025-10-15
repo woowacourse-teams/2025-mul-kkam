@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemHomeNotificationBinding
 import com.mulkkam.domain.model.notification.Notification
-import com.mulkkam.domain.model.notification.NotificationType.NOTICE
-import com.mulkkam.domain.model.notification.NotificationType.REMIND
 import com.mulkkam.domain.model.notification.NotificationType.SUGGESTION
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.setSingleClickListener
@@ -19,49 +17,31 @@ import java.time.format.DateTimeFormatter
 
 class NotificationViewHolder(
     private val binding: ItemHomeNotificationBinding,
-    private val handler: NotificationApplyHandler,
+    private val handler: NotificationHandler,
 ) : RecyclerView.ViewHolder(binding.root) {
     fun bind(notification: Notification) {
-        setNotificationIcon(notification)
-        setNotificationContent(notification)
-        setReadStatus(notification)
-        setSuggestion(notification)
-    }
-
-    private fun setNotificationIcon(notification: Notification) {
-        val iconResId =
-            when (notification.type) {
-                SUGGESTION -> R.drawable.ic_notification_suggestion
-                REMIND -> R.drawable.ic_notification_remind
-                NOTICE -> R.drawable.ic_notification_notice
+        with(binding) {
+            if (notification.type == SUGGESTION) {
+                ivNotificationType.setImageResource(R.drawable.ic_notification_sun)
             }
-        binding.ivNotificationType.setImageResource(iconResId)
-    }
+            tvNotificationTitle.text = notification.title
+            tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
+            viewUnreadAlarm.isVisible = !notification.isRead
+            root.backgroundTintList =
+                if (!notification.isRead) {
+                    root.context.getColorStateList(R.color.primary_10)
+                } else {
+                    root.context.getColorStateList(R.color.white)
+                }
 
-    private fun setNotificationContent(notification: Notification) {
-        binding.tvNotificationTitle.text = notification.title
-        binding.tvNotificationDateTime.text = notification.createdAt.toRelativeTimeString()
-    }
-
-    private fun setReadStatus(notification: Notification) {
-        binding.viewUnreadAlarm.isVisible = !notification.isRead
-        binding.root.backgroundTintList =
-            binding.root.context.getColorStateList(
-                if (notification.isRead) R.color.white else R.color.primary_10,
-            )
-    }
-
-    private fun setSuggestion(notification: Notification) {
-        val isSuggestable = notification.applyRecommendAmount == false
-        binding.tvSuggestion.isVisible = isSuggestable
-        if (isSuggestable) {
-            binding.tvSuggestion.setSingleClickListener {
-                handler.onApply(notification.id, ::onCompleteApply)
+            tvSuggestion.isVisible = notification.type == SUGGESTION
+            tvSuggestion.setSingleClickListener {
+                handler.onApply(notification.recommendedTargetAmount, ::onCompleteApply)
             }
         }
     }
 
-    private fun LocalDateTime.toRelativeTimeString(): String {
+    fun LocalDateTime.toRelativeTimeString(): String {
         val now = LocalDateTime.now()
         val duration = Duration.between(this, now)
         val context = binding.root.context
@@ -107,7 +87,7 @@ class NotificationViewHolder(
         }
     }
 
-    fun interface NotificationApplyHandler {
+    fun interface NotificationHandler {
         fun onApply(
             amount: Int,
             onComplete: (isSuccess: Boolean) -> Unit,
@@ -123,7 +103,7 @@ class NotificationViewHolder(
 
         fun from(
             parent: ViewGroup,
-            handler: NotificationApplyHandler,
+            handler: NotificationHandler,
         ): NotificationViewHolder {
             val inflater = LayoutInflater.from(parent.context)
             val binding = ItemHomeNotificationBinding.inflate(inflater, parent, false)

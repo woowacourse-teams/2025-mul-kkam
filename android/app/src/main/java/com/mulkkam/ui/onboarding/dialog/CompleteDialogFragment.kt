@@ -54,11 +54,11 @@ class CompleteDialogFragment :
         binding.tvGreeting.text =
             getString(
                 R.string.onboarding_complete_greeting,
-                parentViewModel.onboardingInfo.nickname?.name,
+                parentViewModel.onboardingInfo.nickname,
             ).getColoredSpannable(
                 requireContext(),
                 R.color.primary_200,
-                parentViewModel.onboardingInfo.nickname?.name ?: "",
+                parentViewModel.onboardingInfo.nickname ?: "",
             )
     }
 

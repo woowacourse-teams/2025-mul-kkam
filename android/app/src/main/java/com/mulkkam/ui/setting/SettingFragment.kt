@@ -1,12 +1,7 @@
 package com.mulkkam.ui.setting
 
-import android.app.Activity.RESULT_OK
-import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.fragment.app.viewModels
 import com.mulkkam.R
 import com.mulkkam.databinding.FragmentSettingBinding
 import com.mulkkam.ui.main.Refreshable
@@ -16,21 +11,17 @@ import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
-import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.binding.BindingFragment
-import com.mulkkam.ui.util.extensions.getParcelableArrayListExtraCompat
 
 class SettingFragment :
     BindingFragment<FragmentSettingBinding>(FragmentSettingBinding::inflate),
     Refreshable {
     private val adapter by lazy { handleSettingClick() }
-    private val viewModel: SettingViewModel by viewModels()
-    private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onViewCreated(
         view: View,
@@ -40,7 +31,6 @@ class SettingFragment :
 
         binding.rvSettingOptions.adapter = adapter
         initSettingItems()
-        initActivityResultLauncher()
     }
 
     private fun handleSettingClick() =
@@ -57,7 +47,7 @@ class SettingFragment :
             SettingType.NICKNAME -> startActivity(SettingNicknameActivity.newIntent(requireContext()))
             SettingType.BODY_INFO -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
             SettingType.ACCOUNT_INFO -> startActivity(SettingAccountInfoActivity.newIntent(requireContext()))
-            SettingType.MY_CUP -> activityResultLauncher.launch(SettingCupsActivity.newIntent(requireContext()))
+            SettingType.MY_CUP -> startActivity(SettingCupsActivity.newIntent(requireContext()))
             SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
@@ -85,22 +75,5 @@ class SettingFragment :
                 SettingItem.NormalItem(getString(R.string.setting_item_terms), SettingType.TERMS),
             )
         adapter.submitList(settingItems)
-    }
-
-    private fun initActivityResultLauncher() {
-        activityResultLauncher =
-            registerForActivityResult(
-                ActivityResultContracts.StartActivityForResult(),
-            ) { result ->
-                if (result.resultCode == RESULT_OK) {
-                    val cups =
-                        result.data?.getParcelableArrayListExtraCompat<CupUiModel>(
-                            SettingCupsActivity.EXTRA_KEY_LATEST_CUPS_ORDER,
-                        )
-                    if (!cups.isNullOrEmpty()) {
-                        viewModel.saveCupOrder(cups)
-                    }
-                }
-            }
     }
 }

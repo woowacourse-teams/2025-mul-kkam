@@ -1,15 +1,13 @@
 package com.mulkkam.ui.settingcups.adapter
 
-import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
-import androidx.core.graphics.toColorInt
 import androidx.recyclerview.widget.RecyclerView
 import com.mulkkam.R
 import com.mulkkam.databinding.ItemSettingCupsCupBinding
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.loadUrl
 import com.mulkkam.ui.util.extensions.setSingleClickListener
 
@@ -28,33 +26,19 @@ class CupViewHolder(
 
     private fun showCupInfo(item: SettingCupsItem.CupItem) =
         with(binding) {
-            tvNickname.text = item.value.name
+            tvNickname.text = item.value.nickname
             tvIncrement.text = root.context.getString(R.string.setting_cups_increment, item.value.amount)
-            tvSettingCupRepresentative.visibility =
-                if (item.value.isRepresentative) {
-                    ViewGroup.VISIBLE
-                } else {
-                    ViewGroup.GONE
+            tvSettingWaterCupTagType.text =
+                when (item.value.intakeType) {
+                    IntakeType.WATER -> root.context.getString(R.string.setting_cups_intake_type_water)
+                    IntakeType.COFFEE -> root.context.getString(R.string.setting_cups_intake_type_coffee)
+                    IntakeType.UNKNOWN -> root.context.getString(R.string.setting_cups_intake_type_unknown)
                 }
-            ivIcon.loadUrl(
-                url = item.value.emoji.cupEmojiUrl,
-                shape = ImageShape.Rounded(12),
-            )
-
-            val intakeTypeColor =
-                ColorStateList.valueOf(
-                    item.value.intakeType
-                        .toColorHex()
-                        .toColorInt(),
-                )
-
-            tvSettingWaterCupTagType.text = item.value.intakeType.toLabel()
-            tvSettingWaterCupTagType.backgroundTintList = intakeTypeColor
-            tvIncrement.setTextColor(intakeTypeColor)
+            ivIcon.loadUrl(item.value.emoji)
         }
 
     private fun initClickListeners(item: SettingCupsItem.CupItem) =
-        binding.clEdit.setSingleClickListener {
+        binding.ivEdit.setSingleClickListener {
             handler.onEditClick(item.value)
         }
 

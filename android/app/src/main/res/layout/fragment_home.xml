@@ -90,16 +90,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.airbnb.lottie.LottieAnimationView
-        android:id="@+id/lottie_confetti"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/iv_home_character"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:lottie_applyOpacityToLayers="false"
-        app:lottie_autoPlay="false"/>
-
     <TextView
         android:id="@+id/tv_home_character_chat"
         android:layout_width="0dp"
