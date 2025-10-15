@@ -64,7 +64,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             ORDER BY m.memberNickname.value
             """)
     Slice<MemberSearchItemResponse> findByNicknamePrefixWithStatusAndDirection(
-            @Param("me") Long id,
+            @Param("id") Long id,
             @Param("prefix") String prefix,
             Pageable pageable
     );
