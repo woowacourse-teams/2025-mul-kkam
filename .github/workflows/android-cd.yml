@@ -186,7 +186,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
           packageName: com.mulkkam
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
-          track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'internal' }}
+          track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'production' }}
           status: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.status || 'completed' }}
           releaseName: ${{ steps.release-notes.outputs.release-name }}
           whatsNewDirectory: ${{ steps.release-notes.outputs.directory }}
