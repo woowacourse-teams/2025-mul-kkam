@@ -3,10 +3,11 @@ package backend.mulkkam.friend.domain;
 import backend.mulkkam.common.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,9 +18,9 @@ import org.hibernate.annotations.SQLRestriction;
 @AllArgsConstructor
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
-@SQLDelete(sql = "UPDATE friend SET deleted_at = NOW() WHERE id = ?")
+@SQLDelete(sql = "UPDATE friend_relation SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class Friend extends BaseEntity {
+public class FriendRelation extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,13 +32,28 @@ public class Friend extends BaseEntity {
     @Column(nullable = false)
     private Long addresseeId;
 
-    public Friend(FriendRequest friendRequest) {
-        this.requesterId = friendRequest.getRequesterId();
-        this.addresseeId = friendRequest.getAddresseeId();
-    }
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private FriendStatus friendStatus;
 
-    public Friend(Long requesterId, Long addresseeId) {
+    public FriendRelation(
+            Long requesterId,
+            Long addresseeId,
+            FriendStatus friendStatus
+    ) {
         this.requesterId = requesterId;
         this.addresseeId = addresseeId;
+        this.friendStatus = friendStatus;
+    }
+
+    public boolean isAddressee(Long id) {
+        if (id.equals(addresseeId)) {
+            return true;
+        }
+        return false;
+    }
+
+    public void updateAccepted() {
+        this.friendStatus = FriendStatus.ACCEPTED;
     }
 }

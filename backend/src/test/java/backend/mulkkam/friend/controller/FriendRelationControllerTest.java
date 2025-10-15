@@ -11,10 +11,9 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.friend.domain.Friend;
-import backend.mulkkam.friend.domain.FriendRequest;
-import backend.mulkkam.friend.repository.FriendRepository;
-import backend.mulkkam.friend.repository.FriendRequestRepository;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -28,7 +27,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
-class FriendControllerTest extends ControllerTest {
+class FriendRelationControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -40,10 +39,7 @@ class FriendControllerTest extends ControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private FriendRepository friendRepository;
-
-    @Autowired
-    private FriendRequestRepository friendRequestRepository;
+    private FriendRelationRepository friendRelationRepository;
 
     private Member requester;
     private Member addressee;
@@ -55,7 +51,7 @@ class FriendControllerTest extends ControllerTest {
         requester = MemberFixtureBuilder.builder().build();
         memberRepository.save(requester);
 
-        addressee = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("칼리")).build();
+        addressee = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("칼리2")).build();
         memberRepository.save(addressee);
 
         OauthAccount oauthAccountOfRequester = new OauthAccount(requester, "testIdOfRequester",
@@ -72,90 +68,97 @@ class FriendControllerTest extends ControllerTest {
 
     @DisplayName("친구 목록에서 친구를 삭제할 때")
     @Nested
-    class DeleteFriend {
+    class DeleteFriendRelation {
 
         @DisplayName("요청자가 삭제하는 경우 정상적으로 삭제된다.")
         @Test
         void success_deleteByRequester() throws Exception {
             // given
-            Friend friend = new Friend(requester.getId(), addressee.getId());
-            friendRepository.save(friend);
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
+                    FriendStatus.ACCEPTED);
+            FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            mockMvc.perform(delete("/friends/" + addressee.getId())
+            mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andExpect(status().isOk());
 
             // then
-            List<Friend> friends = friendRepository.findAll();
-
-            assertThat(friends).isEmpty();
+            List<FriendRelation> friendRelations = friendRelationRepository.findAll();
+            assertThat(friendRelations).isEmpty();
         }
 
         @DisplayName("수락자가 삭제하는 경우 정상적으로 삭제된다.")
         @Test
         void success_deleteByAddressee() throws Exception {
             // given
-            Friend friend = new Friend(requester.getId(), addressee.getId());
-            friendRepository.save(friend);
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
+                    FriendStatus.ACCEPTED);
+            friendRelationRepository.save(friendRelation);
+            FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
+            mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk());
 
             // then
-            List<Friend> friends = friendRepository.findAll();
+            List<FriendRelation> friendRelations = friendRelationRepository.findAll();
+            assertSoftly(softly -> {
+                softly.assertThat(friendRelations).hasSize(0);
+            });
         }
 
         @DisplayName("친구 요청을 거절할 때")
         @Nested
-        class RejectFriendRequest {
+        class RejectFriendRelationRequest {
 
             @DisplayName("정상적으로 거절된다")
             @Test
             void success_rejected() throws Exception {
                 // given
-                FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
-                friendRequestRepository.save(friendRequest);
+                FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
+                        FriendStatus.REQUEST);
+                friendRelationRepository.save(friendRelation);
 
                 // when
-                mockMvc.perform(post("/friends/request/" + friendRequest.getId() + "/reject")
+                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/reject")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                         .andDo(print()).andExpect(status().isOk());
 
                 // then
-                List<FriendRequest> friendRequests = friendRequestRepository.findAll();
-                List<Friend> friends = friendRepository.findAll();
+                List<FriendRelation> friendRelations = friendRelationRepository.findAll();
                 assertSoftly(softly -> {
-                    softly.assertThat(friendRequests).hasSize(0);
-                    softly.assertThat(friends).hasSize(0);
+                    softly.assertThat(friendRelations).hasSize(0);
                 });
             }
         }
 
         @DisplayName("친구 요청을 수락할 때")
         @Nested
-        class AcceptFriendRequest {
+        class AcceptFriendRelationRequest {
 
             @DisplayName("정상적으로 수락된다")
             @Test
             void success_accepted() throws Exception {
                 // given
-                FriendRequest friendRequest = new FriendRequest(requester.getId(), addressee.getId());
-                friendRequestRepository.save(friendRequest);
+                FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
+                        FriendStatus.REQUEST);
+                friendRelationRepository.save(friendRelation);
 
                 // when
-                mockMvc.perform(post("/friends/request/" + friendRequest.getId() + "/accept")
+                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/accept")
                                 .header(HttpHeaders.AUTHORIZATION,
                                         "Bearer " + tokenOfAddressee))
                         .andDo(print()).andExpect(status().isOk());
 
                 // then
-                List<FriendRequest> friendRequests = friendRequestRepository.findAll();
-                List<Friend> friends = friendRepository.findAll();
+                List<FriendRelation> friendRelations = friendRelationRepository.findAll();
                 assertSoftly(softly -> {
-                    softly.assertThat(friends).hasSize(1);
-                    softly.assertThat(friendRequests).hasSize(0);
-                    softly.assertThat(friends.getFirst().getRequesterId()).isEqualTo(requester.getId());
-                    softly.assertThat(friends.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
+                    softly.assertThat(friendRelations).hasSize(1);
+                    softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
+                    softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
+                    softly.assertThat(friendRelations.getFirst().getFriendStatus()).isEqualTo(FriendStatus.ACCEPTED);
                 });
             }
         }
