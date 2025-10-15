@@ -190,6 +190,7 @@ jobs:
           status: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.status || 'completed' }}
           releaseName: ${{ steps.release-notes.outputs.release-name }}
           whatsNewDirectory: ${{ steps.release-notes.outputs.directory }}
+          changesNotSentForReview: false
 
       - name: Upload release bundle artifact
         uses: actions/upload-artifact@v4
