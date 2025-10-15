@@ -14,14 +14,16 @@ on:
       release_notes_path:
         description: Path to the release notes file relative to the repository root
         required: false
-        default: ''
+        default: ""
       release_name:
         description: Optional explicit release name override
         required: false
-        default: ''
+        default: ""
   push:
     branches:
       - main
+    paths:
+      - "android/**"
 
 concurrency:
   group: android-cd-${{ github.ref_name }}
@@ -97,7 +99,7 @@ jobs:
           python - <<'PY'
           import os
           import pathlib
-          
+
           google_services = os.environ.get("GOOGLE_SERVICES_RELEASE", "")
           if not google_services:
             raise SystemExit("google-services.json secret is empty")
