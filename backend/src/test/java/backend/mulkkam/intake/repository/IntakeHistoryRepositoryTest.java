@@ -160,7 +160,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()
@@ -210,7 +210,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()
@@ -258,7 +258,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()
