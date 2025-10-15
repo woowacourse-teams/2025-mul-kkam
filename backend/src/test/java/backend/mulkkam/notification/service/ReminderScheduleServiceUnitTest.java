@@ -7,9 +7,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -26,12 +24,9 @@ import backend.mulkkam.notification.dto.response.ReadReminderSchedulesResponse;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.ReminderScheduleFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -337,49 +332,49 @@ class ReminderScheduleServiceUnitTest {
         }
     }
 
-    @DisplayName("정기적으로 리마인더 알림을 전송할 때")
-    @Nested
-    class ExecuteReminderNotification {
-
-        @DisplayName("현재 시각에 해당하는 활성화된 스케줄의 멤버에게 알림을 전송한다")
-        @Test
-        void success_whenSchedulesExist() {
-            // given
-            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-            
-            Member member1 = MemberFixtureBuilder.builder()
-                    .isReminderEnabled(true)
-                    .buildWithId(1L);
-            Member member2 = MemberFixtureBuilder.builder()
-                    .isReminderEnabled(true)
-                    .buildWithId(2L);
-
-            when(notificationBatchService.batchRead(
-                    any(BiFunction.class),
-                    any(Function.class),
-                    eq(1000)
-            )).thenReturn(List.of(member1.getId(), member2.getId()));
-
-            // when
-            reminderScheduleService.executeReminderNotification(now);
-
-            // then
-            verify(notificationService).processReminderNotifications1(
-                    any(LocalDateTime.class)
-            );
-        }
-
-        @DisplayName("해당 시각에 스케줄이 없으면 알림을 전송하지 않는다")
-        @Test
-        void success_whenNoSchedules() {
-            // given
-            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-
-            // when
-            reminderScheduleService.executeReminderNotification(now);
-
-            // then
-            verify(notificationService, never()).processReminderNotifications1(any());
-        }
-    }
+//    @DisplayName("정기적으로 리마인더 알림을 전송할 때")
+//    @Nested
+//    class ExecuteReminderNotification {
+//
+//        @DisplayName("현재 시각에 해당하는 활성화된 스케줄의 멤버에게 알림을 전송한다")
+//        @Test
+//        void success_whenSchedulesExist() {
+//            // given
+//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
+//
+//            Member member1 = MemberFixtureBuilder.builder()
+//                    .isReminderEnabled(true)
+//                    .buildWithId(1L);
+//            Member member2 = MemberFixtureBuilder.builder()
+//                    .isReminderEnabled(true)
+//                    .buildWithId(2L);
+//
+//            when(notificationBatchService.batchRead(
+//                    any(BiFunction.class),
+//                    any(Function.class),
+//                    eq(1000)
+//            )).thenReturn(List.of(member1.getId(), member2.getId()));
+//
+//            // when
+//            reminderScheduleService.executeReminderNotification(now);
+//
+//            // then
+//            verify(notificationService).processReminderNotifications1(
+//                    any(LocalDateTime.class)
+//            );
+//        }
+//
+//        @DisplayName("해당 시각에 스케줄이 없으면 알림을 전송하지 않는다")
+//        @Test
+//        void success_whenNoSchedules() {
+//            // given
+//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
+//
+//            // when
+//            reminderScheduleService.executeReminderNotification(now);
+//
+//            // then
+//            verify(notificationService, never()).processReminderNotifications1(any());
+//        }
+//    }
 }

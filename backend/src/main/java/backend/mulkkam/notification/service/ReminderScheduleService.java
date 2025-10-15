@@ -37,6 +37,11 @@ public class ReminderScheduleService {
     @Scheduled(cron = MINUTELY_CRON)
     public void scheduleReminderNotification1() {
         LocalDateTime now = LocalDateTime.now();
+        executeReminderNotification(now);
+    }
+
+    @Transactional
+    public void executeReminderNotification(LocalDateTime now) {
         notificationService.processReminderNotifications1(now);
     }
 
