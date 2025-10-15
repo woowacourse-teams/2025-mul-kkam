@@ -70,13 +70,13 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendStatus.ACCEPTED);
-            FriendRelation savedFriendRelation = friendRepository.save(friendRelation);
+            FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
             friendService.delete(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
 
             // then
-            assertThat(friendRepository.findAll()).isEmpty();
+            assertThat(friendRelationRepository.findAll()).isEmpty();
         }
 
         @DisplayName("수락자가 삭제하는 경우 정상적으로 삭제된다.")
@@ -236,7 +236,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // then
-            List<FriendRelation> friendRelations = friendRepository.findAll();
+            List<FriendRelation> friendRelations = friendRelationRepository.findAll();
             assertSoftly(softly -> {
                 softly.assertThat(friendRelations).hasSize(1);
                 softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());

@@ -94,7 +94,6 @@ class FriendRelationControllerTest extends ControllerTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendStatus.ACCEPTED);
-            friendRelationRepository.save(friendRelation);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
