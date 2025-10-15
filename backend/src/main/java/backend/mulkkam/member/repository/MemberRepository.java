@@ -1,7 +1,7 @@
 package backend.mulkkam.member.repository;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.response.MemberIdNicknameResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,13 +32,24 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     );
 
     @Query("""
-            SELECT new backend.mulkkam.member.dto.response.MemberIdNicknameResponse(
+            SELECT new backend.mulkkam.member.dto.response.MemberSearchItemResponse(
               m.id,
               m.memberNickname.value,
               CASE
                 WHEN fr.id IS NULL
                   THEN backend.mulkkam.friend.domain.FriendStatus.NONE
                 ELSE fr.friendStatus
+              END,
+              CASE
+                WHEN fr.id IS NULL
+                  THEN backend.mulkkam.friend.domain.RequestDirection.NONE
+                WHEN fr.friendStatus = backend.mulkkam.friend.domain.FriendStatus.REQUESTED
+                     AND fr.requesterId = :id
+                  THEN backend.mulkkam.friend.domain.RequestDirection.REQUESTED_BY_ME
+                WHEN fr.friendStatus = backend.mulkkam.friend.domain.FriendStatus.REQUESTED
+                     AND fr.addresseeId = :id
+                  THEN backend.mulkkam.friend.domain.RequestDirection.REQUESTED_TO_ME
+                ELSE backend.mulkkam.friend.domain.RequestDirection.NONE
               END
             )
             FROM Member m
@@ -48,12 +59,12 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                  (fr.requesterId = m.id AND fr.addresseeId = :id)
                )
               AND fr.deletedAt IS NULL
-            WHERE m.memberNickname.value LIKE CONCAT(:prefix, '%')
+            WHERE (:prefix <> '' AND m.memberNickname.value LIKE CONCAT(:prefix, '%'))
               AND m.id <> :id
             ORDER BY m.memberNickname.value
             """)
-    Slice<MemberIdNicknameResponse> findByNicknamePrefixWithStatus(
-            @Param("id") Long id,
+    Slice<MemberSearchItemResponse> findByNicknamePrefixWithStatusAndDirection(
+            @Param("me") Long id,
             @Param("prefix") String prefix,
             Pageable pageable
     );

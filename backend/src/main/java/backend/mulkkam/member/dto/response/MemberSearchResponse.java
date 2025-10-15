@@ -5,8 +5,8 @@ import java.util.List;
 
 public record MemberSearchResponse(
         @Schema(description = "id 및 닉네임")
-        List<MemberIdNicknameResponse> memberIdNicknameResponses,
-        
+        List<MemberSearchItemResponse> memberSearchItemResponses,
+
         @Schema(description = "다음 값이 있는 지 boolean", example = "true")
         boolean hasNext
 ) {

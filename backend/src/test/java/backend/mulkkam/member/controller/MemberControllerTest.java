@@ -387,9 +387,9 @@ class MemberControllerTest extends ControllerTest {
             MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
 
             assertSoftly(softly -> {
-                softly.assertThat(actual.memberIdNicknameResponses()).hasSize(2);
-                softly.assertThat(actual.memberIdNicknameResponses().getFirst().memberNickname()).isEqualTo("돈까스먹는공백");
-                softly.assertThat(actual.memberIdNicknameResponses().get(1).memberNickname()).isEqualTo("돈까스먹는환노");
+                softly.assertThat(actual.memberSearchItemResponses()).hasSize(2);
+                softly.assertThat(actual.memberSearchItemResponses().getFirst().memberNickname()).isEqualTo("돈까스먹는공백");
+                softly.assertThat(actual.memberSearchItemResponses().get(1).memberNickname()).isEqualTo("돈까스먹는환노");
                 softly.assertThat(actual.hasNext()).isFalse();
             });
         }
@@ -416,7 +416,7 @@ class MemberControllerTest extends ControllerTest {
             // then
             MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
             assertSoftly(softly -> {
-                softly.assertThat(actual.memberIdNicknameResponses()).isEmpty();
+                softly.assertThat(actual.memberSearchItemResponses()).isEmpty();
                 softly.assertThat(actual.hasNext()).isFalse();
             });
         }
@@ -444,7 +444,7 @@ class MemberControllerTest extends ControllerTest {
             // then
             MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
             assertSoftly(softly -> {
-                softly.assertThat(actual.memberIdNicknameResponses()).hasSize(2);
+                softly.assertThat(actual.memberSearchItemResponses()).hasSize(2);
                 softly.assertThat(actual.hasNext()).isTrue();
             });
         }

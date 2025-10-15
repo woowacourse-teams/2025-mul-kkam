@@ -22,9 +22,9 @@ import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedReq
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
-import backend.mulkkam.member.dto.response.MemberIdNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
 import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
@@ -196,9 +196,8 @@ public class MemberService {
         if (prefix.isBlank()) {
             return new MemberSearchResponse(List.of(), false);
         }
-        Slice<MemberIdNicknameResponse> memberIdNicknames = memberRepository.findByNicknamePrefixWithStatus(
+        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByNicknamePrefixWithStatusAndDirection(
                 memberDetails.id(), prefix, PageRequest.of(page, size));
-
         return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
     }
 
