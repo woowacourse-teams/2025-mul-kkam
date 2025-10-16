@@ -57,9 +57,14 @@ public class NotificationService {
         NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
         Long lastId = null;
+        int count = 0; // 2_000명씩만 보내도록 수정
 
         while (true) {
+            if (count >= 2) {
+                break;
+            }
             // - 청크 조회
+            count++;
             // TODO: 추후 바꾸기 - 모든 멤버에게 알림 보내도록 수정
             List<Long> memberIds = notificationBatchService.readChunk(
                     reminderScheduleRepository::findAllMembers,
