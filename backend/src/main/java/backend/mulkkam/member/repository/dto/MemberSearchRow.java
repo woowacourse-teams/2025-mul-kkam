@@ -6,6 +6,6 @@ public record MemberSearchRow(
         Long id,
         String nickname,
         FriendRelationStatus friendRelationStatus,
-        boolean isRequesterMe
+        boolean isRequester
 ) {
 }

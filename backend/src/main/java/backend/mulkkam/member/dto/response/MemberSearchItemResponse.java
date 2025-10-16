@@ -47,17 +47,12 @@ public record MemberSearchItemResponse(
             MemberSearchRow memberSearchRow
     ) {
         if (status == REQUESTED) {
-            if (memberSearchRow.isRequesterMe()) {
-                return Direction.REQUESTED_TO_ME;
+            if (memberSearchRow.isRequester()) {
+                return Direction.REQUESTED_BY_ME;
             }
-            return Direction.REQUESTED_BY_ME;
+            return Direction.REQUESTED_TO_ME;
         }
         return NONE;
-    }
-
-    public static MemberSearchItemResponse none(MemberSearchRow memberSearchRow) {
-        return new MemberSearchItemResponse(memberSearchRow.id(), memberSearchRow.nickname(), Status.NONE,
-                NONE);
     }
 }
 
