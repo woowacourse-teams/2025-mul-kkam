@@ -196,12 +196,10 @@ public class MemberService {
             int size
     ) {
         if (isBlank(word)) {
-            return new MemberSearchResponse(List.of(), false);
+            return MemberSearchResponse.empty();
         }
         Slice<MemberSearchRow> slice =
                 memberRepository.searchByWord(memberDetails.id(), word, PageRequest.of(page, size));
-
-        List<Long> targetIds = slice.stream().map(MemberSearchRow::id).toList();
 
         List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(slice);
 

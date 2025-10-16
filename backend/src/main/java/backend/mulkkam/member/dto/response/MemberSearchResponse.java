@@ -10,4 +10,7 @@ public record MemberSearchResponse(
         @Schema(description = "다음 값이 있는 지 boolean", example = "true")
         boolean hasNext
 ) {
+    public static MemberSearchResponse empty() {
+        return new MemberSearchResponse(List.of(), false);
+    }
 }
