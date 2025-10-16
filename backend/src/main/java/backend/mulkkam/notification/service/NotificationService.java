@@ -51,44 +51,39 @@ public class NotificationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public void processReminderNotifications1(LocalDateTime now) {
+    public void processReminderNotifications(LocalDateTime now) {
         NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
         Long lastId = null;
 
         while (true) {
-            // - 청크 조회
-            List<Long> memberIds = notificationBatchService.readChunk(
-                    (id, pageable) -> reminderScheduleRepository
-                            .findAllActiveMemberIdsByHourAndMinute(
-                                    now.toLocalTime(),
-                                    id,
-                                    pageable
-                            ),
-                    lastId,
-                    CHUNK_SIZE
-            );
+            List<Long> memberIds = readMemberIdsByTime(now, lastId);
 
             if (memberIds.isEmpty()) {
                 break;
             }
 
-            // - 청크 저장
-            List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
-                    .map(memberId -> new NotificationInsertDto(template, memberId))
-                    .toList();
-            notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+            saveAndSendNotifications(memberIds, template);
 
-            // - 청크 발송
-            List<String> tokens = readDeviceTokens(memberIds);
-            publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
-
-            if (memberIds.size() < CHUNK_SIZE) {
+            if (isLastChunk(memberIds)) {
                 break;
             }
 
             lastId = memberIds.getLast();
         }
+    }
+
+    private List<Long> readMemberIdsByTime(LocalDateTime now, Long lastId) {
+        return notificationBatchService.readChunk(
+                (id, pageable) -> reminderScheduleRepository
+                        .findAllActiveMemberIdsByHourAndMinute(
+                                now.toLocalTime(),
+                                id,
+                                pageable
+                        ),
+                lastId,
+                CHUNK_SIZE
+        );
     }
 
     private List<String> readDeviceTokens(List<Long> memberIds) {
@@ -238,6 +233,27 @@ public class NotificationService {
         return devices.stream()
                 .map(Device::getToken)
                 .toList();
+    }
+
+    private void saveAndSendNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+        savedNotifications(memberIds, template);
+        sendNotifications(memberIds, template);
+    }
+
+    private void savedNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+        List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
+                .map(memberId -> new NotificationInsertDto(template, memberId))
+                .toList();
+        notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+    }
+
+    private void sendNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+        List<String> tokens = readDeviceTokens(memberIds);
+        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+    }
+
+    private boolean isLastChunk(List<Long> memberIds) {
+        return memberIds.size() < CHUNK_SIZE;
     }
 
     private Notification getNotification(Long id) {
