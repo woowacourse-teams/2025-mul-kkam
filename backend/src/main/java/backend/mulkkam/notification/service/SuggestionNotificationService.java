@@ -18,8 +18,6 @@ import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRe
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.averageTemperature.domain.City;
-import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.notification.domain.NightNotificationTimezone;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
@@ -68,7 +66,7 @@ public class SuggestionNotificationService {
             return;
         }
 
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findAll(); // TODO: 배치 처리 및 대량 리펙터링 필요
         for (Member member : members) {
             try {
                 createAndSendSuggestionNotification(
