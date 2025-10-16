@@ -58,13 +58,9 @@ public class NotificationService {
 
         while (true) {
             // - 청크 조회
+            // TODO: 추후 바꾸기 - 모든 멤버에게 알림 보내도록 수정
             List<Long> memberIds = notificationBatchService.readChunk(
-                    (id, pageable) -> reminderScheduleRepository
-                            .findAllActiveMemberIdsByHourAndMinute(
-                                    now.toLocalTime(),
-                                    id,
-                                    pageable
-                            ),
+                    reminderScheduleRepository::findAllActiveMembers,
                     lastId,
                     CHUNK_SIZE
             );

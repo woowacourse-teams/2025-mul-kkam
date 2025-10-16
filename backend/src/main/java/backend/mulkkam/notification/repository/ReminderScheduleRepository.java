@@ -34,7 +34,18 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
                   AND r.member.isReminderEnabled = true
                   AND (:lastId IS NULL OR r.id > :lastId)
             """)
-    List<Long> findAllActiveMemberIdsByHourAndMinute(@Param("schedule") LocalTime schedule, @Param("lastId") Long lastId, Pageable pageable);
+    List<Long> findAllActiveMemberIdsByHourAndMinute(@Param("schedule") LocalTime schedule,
+                                                     @Param("lastId") Long lastId, Pageable pageable);
+
+    // TODO: 성능 검증 이후 제거
+    @Query("""
+                SELECT r.member.id
+                FROM ReminderSchedule r
+                JOIN r.member
+                WHERE r.member.isReminderEnabled = true
+                  AND (:lastId IS NULL OR r.id > :lastId)
+            """)
+    List<Long> findAllActiveMembers(@Param("lastId") Long lastId, Pageable pageable);
 
     void deleteAllByMemberId(Long memberId);
 }
