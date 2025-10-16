@@ -48,7 +48,7 @@ public class FriendRelation extends BaseEntity {
         this.friendRelationStatus = friendRelationStatus;
     }
 
-    public boolean isAddressee(Long id) {
+    public boolean isAddresseeMemberId(Long id) {
         return id.equals(addresseeId);
     }
 
