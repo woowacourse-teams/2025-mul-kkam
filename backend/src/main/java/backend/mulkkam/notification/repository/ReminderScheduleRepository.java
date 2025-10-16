@@ -39,4 +39,6 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
             @Param("lastId") Long lastId,
             Pageable pageable
     );
+
+    void deleteAllByMemberId(Long memberId);
 }
