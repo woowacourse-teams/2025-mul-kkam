@@ -14,7 +14,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -69,7 +69,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_deleteByRequester() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
@@ -84,7 +84,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_deleteByAddressee() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -120,7 +120,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(invalidMember);
 
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -136,7 +136,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_rejected() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -157,7 +157,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_requesterCannotProcessOwnRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -173,7 +173,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_cannotProcessAlreadyProcessedRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -210,7 +210,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(invalidMember);
 
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -226,7 +226,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void success_accepted() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -241,7 +241,8 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(friendRelations).hasSize(1);
                 softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                softly.assertThat(friendRelations.getFirst().getFriendStatus()).isEqualTo(FriendStatus.ACCEPTED);
+                softly.assertThat(friendRelations.getFirst().getFriendRelationStatus())
+                        .isEqualTo(FriendRelationStatus.ACCEPTED);
             });
         }
 
@@ -250,7 +251,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_requesterCannotProcessOwnRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
 
             // when & then
@@ -266,7 +267,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         void error_cannotProcessAlreadyProcessedRequest() {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
             friendService.rejectFriendRequest(
                     friendRelation.getId(),

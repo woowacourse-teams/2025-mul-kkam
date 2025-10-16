@@ -34,16 +34,16 @@ public class FriendRelation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendStatus friendStatus;
+    private FriendRelationStatus friendRelationStatus;
 
     public FriendRelation(
             Long requesterId,
             Long addresseeId,
-            FriendStatus friendStatus
+            FriendRelationStatus friendRelationStatus
     ) {
         this.requesterId = requesterId;
         this.addresseeId = addresseeId;
-        this.friendStatus = friendStatus;
+        this.friendRelationStatus = friendRelationStatus;
     }
 
     public boolean isAddressee(Long id) {
@@ -51,6 +51,6 @@ public class FriendRelation extends BaseEntity {
     }
 
     public void updateAccepted() {
-        this.friendStatus = FriendStatus.ACCEPTED;
+        this.friendRelationStatus = FriendRelationStatus.ACCEPTED;
     }
 }

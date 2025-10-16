@@ -4,7 +4,7 @@ import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Direc
 import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Status.ACCEPTED;
 import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Status.REQUESTED;
 
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.member.repository.dto.MemberSearchRow;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -33,10 +33,10 @@ public record MemberSearchItemResponse(
     }
 
     private static Status decideStatus(MemberSearchRow memberSearchRow) {
-        if (memberSearchRow.friendStatus() == FriendStatus.ACCEPTED) {
+        if (memberSearchRow.friendRelationStatus() == FriendRelationStatus.ACCEPTED) {
             return ACCEPTED;
         }
-        if (memberSearchRow.friendStatus() == FriendStatus.REQUESTED) {
+        if (memberSearchRow.friendRelationStatus() == FriendRelationStatus.REQUESTED) {
             return REQUESTED;
         }
         return Status.NONE;

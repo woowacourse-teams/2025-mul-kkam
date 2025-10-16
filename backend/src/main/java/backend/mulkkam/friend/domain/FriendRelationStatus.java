@@ -4,13 +4,13 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 
 import backend.mulkkam.common.exception.CommonException;
 
-public enum FriendStatus {
+public enum FriendRelationStatus {
 
     REQUESTED,
     ACCEPTED,
     ;
 
-    public static void validRequest(FriendStatus friendStatus) {
+    public static void validRequest(FriendRelationStatus friendStatus) {
         if (friendStatus == REQUESTED) {
             return;
         }

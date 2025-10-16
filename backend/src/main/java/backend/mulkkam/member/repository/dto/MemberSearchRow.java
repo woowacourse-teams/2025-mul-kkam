@@ -1,11 +1,11 @@
 package backend.mulkkam.member.repository.dto;
 
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 
 public record MemberSearchRow(
         Long id,
         String nickname,
-        FriendStatus friendStatus,
+        FriendRelationStatus friendRelationStatus,
         boolean isRequesterMe
 ) {
 }

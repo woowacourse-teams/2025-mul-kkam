@@ -12,7 +12,7 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -75,7 +75,7 @@ class FriendRelationControllerTest extends ControllerTest {
         void success_deleteByRequester() throws Exception {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
@@ -93,7 +93,7 @@ class FriendRelationControllerTest extends ControllerTest {
         void success_deleteByAddressee() throws Exception {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
@@ -117,7 +117,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_rejected() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUESTED);
+                        FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when
@@ -142,7 +142,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_accepted() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUESTED);
+                        FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when
@@ -157,7 +157,8 @@ class FriendRelationControllerTest extends ControllerTest {
                     softly.assertThat(friendRelations).hasSize(1);
                     softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
                     softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                    softly.assertThat(friendRelations.getFirst().getFriendStatus()).isEqualTo(FriendStatus.ACCEPTED);
+                    softly.assertThat(friendRelations.getFirst().getFriendRelationStatus())
+                            .isEqualTo(FriendRelationStatus.ACCEPTED);
                 });
             }
         }

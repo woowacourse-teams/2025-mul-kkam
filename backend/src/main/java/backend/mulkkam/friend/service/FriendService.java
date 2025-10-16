@@ -6,7 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,7 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendStatus.validRequest(friendRelation.getFriendStatus());
+        FriendRelationStatus.validRequest(friendRelation.getFriendRelationStatus());
         if (friendRelation.isAddressee(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
@@ -49,7 +49,7 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendStatus.validRequest(friendRelation.getFriendStatus());
+        FriendRelationStatus.validRequest(friendRelation.getFriendRelationStatus());
         if (friendRelation.isAddressee(memberDetails.id())) {
             friendRelationRepository.delete(friendRelation);
             return;

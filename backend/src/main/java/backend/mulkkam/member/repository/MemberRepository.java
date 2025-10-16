@@ -36,7 +36,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                 m.id,
                 m.memberNickname.value,
                 (
-                  SELECT fr.friendStatus
+                  SELECT fr.friendRelationStatus
                   FROM FriendRelation fr
                   WHERE fr.deletedAt IS NULL
                     AND (
