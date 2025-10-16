@@ -13,7 +13,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -24,6 +24,7 @@ import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
@@ -58,6 +59,12 @@ class NotificationServiceUnitTest {
 
     @Mock
     private DeviceRepository deviceRepository;
+
+    @Mock
+    private NotificationBatchRepository notificationBatchRepository;
+
+    @Mock
+    private NotificationBatchService notificationBatchService;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
@@ -256,10 +263,10 @@ class NotificationServiceUnitTest {
             verify(deviceRepository).findAllByMember(member);
 
             verify(applicationEventPublisher).publishEvent(
-                    argThat((SendMessageByFcmTokenRequest evt) ->
+                    argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.title().equals("title")
                                     && evt.body().equals("body")
-                                    && evt.token().equals("token-1")
+                                    && evt.allTokens().equals(List.of("token-1"))
                                     && evt.action() == Action.GO_HOME)
             );
         }
@@ -284,4 +291,103 @@ class NotificationServiceUnitTest {
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
+
+//    @DisplayName("리마인더 알림을 처리할 때")
+//    @Nested
+//    class ProcessReminderNotifications {
+//
+//        private List<Long> getMemberIds(List<ReminderSchedule> schedules) {
+//            return schedules.stream()
+//                    .map(ReminderSchedule::getMember)
+//                    .map(Member::getId)
+//                    .toList();
+//        }
+//
+//        @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
+//        @Test
+//        void success_whenValidSchedules() {
+//            // given
+//            List<Long> memberIds = List.of(1L, 2L);
+//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+//
+//            List<DeviceTokenResponse> deviceTokens = List.of(
+//                    new DeviceTokenResponse(1L, "token-1"),
+//                    new DeviceTokenResponse(2L, "token-2")
+//            );
+//
+//            when(notificationBatchService.readChunk(
+//                    any(),
+//                    any(),
+//                    eq(1000)
+//            )).thenReturn(any());
+//
+//            // when
+//            notificationService.processReminderNotifications1(now);
+//
+//            // then
+//            // 1. 배치 저장 검증
+//            verify(notificationBatchRepository).batchInsert(
+//                    argThat((List<NotificationInsertDto> dtos) ->
+//                            dtos.size() == 2 &&
+//                                    dtos.stream().allMatch(dto ->
+//                                            dto.notificationType() == NotificationType.REMIND &&
+//                                                    (dto.memberId() == 1L || dto.memberId() == 2L)
+//                                    )
+//                    ),
+//                    any());
+//
+//            // 2. FCM 이벤트 발행 검증
+//            verify(applicationEventPublisher).publishEvent(
+//                    argThat((SendMessageByFcmTokensRequest evt) ->
+//                            evt.allTokens().containsAll(List.of("token-1", "token-2")) &&
+//                                    evt.allTokens().size() == 2
+//                    )
+//            );
+//        }
+//
+//        @DisplayName("스케줄이 비어있으면 알림을 저장하지 않는다")
+//        @Test
+//        void success_whenEmptySchedules() {
+//            // given
+//            List<ReminderSchedule> emptySchedules = List.of();
+//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+//
+//            // when
+//            List<Long> memberIds = getMemberIds(emptySchedules);
+//            notificationService.processReminderNotifications1(now);
+//
+//            // then
+//            verify(notificationBatchRepository, never()).batchInsert(any(), any());
+//            verify(applicationEventPublisher, never()).publishEvent(any());
+//        }
+//
+//        @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
+//        @Test
+//        void success_whenMemberHasNoDevices() {
+//            // given
+//            List<Long> memberIds = List.of(member.getId());
+//
+//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+//
+//            when(notificationBatchService.batchRead(
+//                    any(BiFunction.class),
+//                    any(Function.class),
+//                    eq(1000)
+//            )).thenReturn(List.of());
+//
+//            // when
+//            notificationService.processReminderNotifications1(now);
+//
+//            // then
+//            verify(notificationBatchRepository).batchInsert(
+//                    argThat((List<NotificationInsertDto> dtos) ->
+//                            dtos.size() == 1 && dtos.getFirst().notificationType() == NotificationType.REMIND
+//                                    && dtos.getFirst().memberId() == 1L
+//                    ), 1000
+//            );
+//
+//            // 2. FCM 이벤트 발행 검증
+//            verify(applicationEventPublisher, never()).publishEvent(any());
+//        }
+//    }
 }
