@@ -32,23 +32,26 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     );
 
     @Query("""
-            SELECT new backend.mulkkam.member.repository.dto.MemberSearchRow(
-                m.id,
-                m.memberNickname.value,
-                fr.friendRelationStatus,
-                CASE WHEN fr.requesterId = :id THEN true ELSE false END
-            )
-            FROM Member m
-            LEFT JOIN FriendRelation fr ON (
-                (fr.requesterId = :id AND fr.addresseeId = m.id)
-                OR (fr.requesterId = m.id AND fr.addresseeId = :id)
-            )
-            WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
-              AND m.id <> :id
-            ORDER BY m.memberNickname.value
+                SELECT new backend.mulkkam.member.repository.dto.MemberSearchRow(
+                    m.id,
+                    m.memberNickname.value,
+                    fr.friendRelationStatus,
+                    CASE WHEN fr.requesterId = :selfId THEN true ELSE false END
+                )
+                FROM Member m
+                LEFT JOIN FriendRelation fr ON (
+                    (fr.requesterId = :selfId AND fr.addresseeId = m.id)
+                    OR (fr.requesterId = m.id AND fr.addresseeId = :selfId)
+                )
+                WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
+                  AND m.id <> :selfId
+                  AND (:lastId IS NULL OR m.id < :lastId)
+                ORDER BY m.id DESC
             """)
-    Slice<MemberSearchRow> searchByWord(
-            @Param("id") Long id,
+    List<MemberSearchRow> searchByWordAfterId(
+            @Param("selfId") Long selfId,
             @Param("word") String word,
-            Pageable pageable);
+            @Param("lastId") Long lastId,
+            Pageable pageable
+    );
 }

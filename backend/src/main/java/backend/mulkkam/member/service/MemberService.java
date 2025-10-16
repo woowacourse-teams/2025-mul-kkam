@@ -40,7 +40,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -192,18 +191,31 @@ public class MemberService {
     public MemberSearchResponse searchMember(
             MemberDetails memberDetails,
             String word,
-            int page,
+            Long lastId,
             int size
     ) {
         if (isBlank(word)) {
             return MemberSearchResponse.empty();
         }
-        Slice<MemberSearchRow> slice =
-                memberRepository.searchByWord(memberDetails.id(), word, PageRequest.of(page, size));
+        int fetchSize = Math.max(1, size) + 1;
 
-        List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(slice);
+        List<MemberSearchRow> memberSearchRows = memberRepository.searchByWordAfterId(
+                memberDetails.id(),
+                word,
+                lastId,
+                PageRequest.of(0, fetchSize)
+        );
 
-        return new MemberSearchResponse(memberSearchItemResponses, slice.hasNext());
+        boolean hasNext = memberSearchRows.size() > size;
+        if (hasNext) {
+            memberSearchRows = memberSearchRows.subList(0, size);
+        }
+
+        List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(memberSearchRows);
+
+        Long nextId = memberSearchRows.isEmpty() ? null : memberSearchRows.get(memberSearchRows.size() - 1).id();
+
+        return new MemberSearchResponse(memberSearchItemResponses, nextId, hasNext);
     }
 
     private boolean isBlank(String input) {
@@ -211,13 +223,11 @@ public class MemberService {
     }
 
     private List<MemberSearchItemResponse> toResponse(
-            Slice<MemberSearchRow> searchRows
+            List<MemberSearchRow> searchRows
     ) {
         List<MemberSearchItemResponse> memberSearchItemResponses = new ArrayList<>();
 
-        List<MemberSearchRow> memberSearchRows = searchRows.stream().toList();
-
-        for (MemberSearchRow memberSearchRow : memberSearchRows) {
+        for (MemberSearchRow memberSearchRow : searchRows) {
             memberSearchItemResponses.add(MemberSearchItemResponse.of(memberSearchRow));
         }
         return memberSearchItemResponses;
