@@ -34,9 +34,7 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        if (friendRelation.isNotRequest()) {
-            throw new CommonException(INVALID_FRIEND_RELATION);
-        }
+        validRequested(friendRelation);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
@@ -51,9 +49,7 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        if (friendRelation.isNotRequest()) {
-            throw new CommonException(INVALID_FRIEND_RELATION);
-        }
+        validRequested(friendRelation);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelationRepository.delete(friendRelation);
             return;
@@ -64,5 +60,11 @@ public class FriendService {
     private FriendRelation getFriendRelation(Long friendRelationId) {
         return friendRelationRepository.findById(friendRelationId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_RELATION));
+    }
+
+    private void validRequested(final FriendRelation friendRelation) {
+        if (friendRelation.isNotRequest()) {
+            throw new CommonException(INVALID_FRIEND_RELATION);
+        }
     }
 }
