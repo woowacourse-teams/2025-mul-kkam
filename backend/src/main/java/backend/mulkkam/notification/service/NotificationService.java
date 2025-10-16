@@ -86,10 +86,6 @@ public class NotificationService {
         );
     }
 
-    private List<String> readDeviceTokens(List<Long> memberIds) {
-        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
-    }
-
     @Transactional
     public ReadNotificationsResponse readNotificationsAfter(
             ReadNotificationsRequest readNotificationsRequest,
@@ -250,6 +246,10 @@ public class NotificationService {
     private void sendNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
         List<String> tokens = readDeviceTokens(memberIds);
         publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+    }
+
+    private List<String> readDeviceTokens(List<Long> memberIds) {
+        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
     }
 
     private boolean isLastChunk(List<Long> memberIds) {
