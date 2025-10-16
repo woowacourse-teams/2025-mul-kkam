@@ -81,7 +81,7 @@ class FriendRelationControllerTest extends ControllerTest {
             // when
             mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
 
             // then
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();
@@ -99,7 +99,7 @@ class FriendRelationControllerTest extends ControllerTest {
             // when
             mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
 
             // then
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();

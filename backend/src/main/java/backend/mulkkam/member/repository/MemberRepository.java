@@ -35,24 +35,14 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
             SELECT new backend.mulkkam.member.repository.dto.MemberSearchRow(
                 m.id,
                 m.memberNickname.value,
-                (
-                  SELECT fr.friendRelationStatus
-                  FROM FriendRelation fr
-                  WHERE fr.deletedAt IS NULL
-                    AND (
-                         (fr.requesterId = :id AND fr.addresseeId = m.id)
-                      OR (fr.requesterId = m.id AND fr.addresseeId = :id)
-                    )
-                ),
-                CASE WHEN EXISTS (
-                  SELECT 1
-                  FROM FriendRelation fr2
-                  WHERE fr2.deletedAt IS NULL
-                    AND fr2.requesterId = :id
-                    AND (fr2.addresseeId = m.id)
-                ) THEN true ELSE false END
+                fr.friendRelationStatus,
+                CASE WHEN fr.requesterId = :id THEN true ELSE false END
             )
             FROM Member m
+            LEFT JOIN FriendRelation fr ON (
+                (fr.requesterId = :id AND fr.addresseeId = m.id)
+                OR (fr.requesterId = m.id AND fr.addresseeId = :id)
+            )
             WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
               AND m.id <> :id
             ORDER BY m.memberNickname.value
