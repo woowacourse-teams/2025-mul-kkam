@@ -213,11 +213,11 @@ public class MemberController {
             MemberDetails memberDetails,
             @Parameter(description = "검색 할 내용", required = true, example = "돈까스먹는환")
             @RequestParam String word,
-            @Parameter(description = "page 값", required = true, example = "4")
-            @RequestParam(defaultValue = "0") int page,
+            @Parameter(description = "커서 lastId(최초 요청시 생략)")
+            @RequestParam(required = false) Long lastId,
             @Parameter(description = "size 값", required = true, example = "5")
             @RequestParam(defaultValue = "10") int size
     ) {
-        return ResponseEntity.ok().body(memberService.searchMember(memberDetails, word, page, size));
+        return ResponseEntity.ok().body(memberService.searchMember(memberDetails, word, lastId, size));
     }
 }
