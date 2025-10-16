@@ -13,7 +13,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.id = :id
-                AND fr.addresseeId = :memberId OR fr.requesterId = :memberId
+                AND (fr.addresseeId = :memberId OR fr.requesterId = :memberId)
             """)
     Optional<FriendRelation> findByIdAndMemberId(
             @Param("id") Long id,
