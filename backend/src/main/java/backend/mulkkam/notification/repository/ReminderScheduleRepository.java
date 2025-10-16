@@ -39,10 +39,9 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
 
     // TODO: 성능 검증 이후 제거
     @Query("""
-                SELECT r.member.id
-                FROM ReminderSchedule r
-                JOIN r.member
-                 WHERE :lastId IS NULL OR r.id > :lastId
+                SELECT m.id
+                FROM Member m
+                 WHERE :lastId IS NULL OR m.id > :lastId
             """)
     List<Long> findAllMembers(@Param("lastId") Long lastId, Pageable pageable);
 
