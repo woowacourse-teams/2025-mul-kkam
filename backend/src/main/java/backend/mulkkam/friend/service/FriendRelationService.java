@@ -74,13 +74,12 @@ public class FriendRelationService {
                 PagingUtils.createPageRequest(size)
         );
 
-        PagingResult<MemberInfo, Long> pagingResult =
-                PagingUtils.toPagingResult(
-                        memberInfoOfFriendRelations,
-                        size,
-                        MemberInfo::new,
-                        MemberInfoOfFriendRelation::friendRelationId
-                );
+        PagingResult<MemberInfo, Long> pagingResult = PagingUtils.toPagingResult(
+                memberInfoOfFriendRelations,
+                size,
+                MemberInfo::new,
+                MemberInfoOfFriendRelation::friendRelationId
+        );
 
         return new FriendRelationResponse(
                 pagingResult.content(),
