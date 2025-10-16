@@ -1,6 +1,7 @@
 package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 
@@ -68,6 +69,10 @@ public class FriendRelationService {
             int size,
             MemberDetails memberDetails
     ) {
+        if (size <= 0) {
+            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
+        }
+
         List<MemberInfoOfFriendRelation> memberInfoOfFriendRelations = friendRelationRepository.findByMemberId(
                 memberDetails.id(),
                 lastId,
