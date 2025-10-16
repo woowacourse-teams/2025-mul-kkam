@@ -43,7 +43,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
                     (fr.requesterId = :selfId AND fr.addresseeId = m.id)
                     OR (fr.requesterId = m.id AND fr.addresseeId = :selfId)
                 )
-                WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
+            WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT('%', :word, '%'))
                   AND m.id <> :selfId
                   AND (:lastId IS NULL OR m.id < :lastId)
                 ORDER BY m.id DESC

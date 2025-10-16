@@ -380,7 +380,7 @@ class MemberControllerTest extends ControllerTest {
                     .build();
             Member member3 = MemberFixtureBuilder
                     .builder()
-                    .memberNickname(new MemberNickname("치즈돈까스먹는체체"))
+                    .memberNickname(new MemberNickname("치즈동까스먹는체체"))
                     .build();
             memberRepository.saveAll(List.of(member1, member2, member3));
 
