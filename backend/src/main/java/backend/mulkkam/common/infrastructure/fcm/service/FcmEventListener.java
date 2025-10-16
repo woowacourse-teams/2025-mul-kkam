@@ -5,12 +5,11 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import com.google.common.collect.Lists;
 import lombok.RequiredArgsConstructor;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-@Async
+//@Async
 @RequiredArgsConstructor
 @Component
 public class FcmEventListener {
