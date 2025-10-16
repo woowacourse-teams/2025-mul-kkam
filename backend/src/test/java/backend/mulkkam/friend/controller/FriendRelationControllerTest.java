@@ -103,9 +103,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();
-            assertSoftly(softly -> {
-                softly.assertThat(friendRelations).hasSize(0);
-            });
+            assertThat(friendRelations).isEmpty();
         }
 
         @DisplayName("친구 요청을 거절할 때")
