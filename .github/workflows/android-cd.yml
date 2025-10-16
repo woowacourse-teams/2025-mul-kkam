@@ -168,11 +168,11 @@ jobs:
             fi
           fi
 
-          mkdir -p android/release-notes/ko-KR
-          cp "$notes_path" android/release-notes/ko-KR/default.txt
+          mkdir -p android/release-notes/whatsnew
+          cp "$notes_path" "android/release-notes/whatsnew/whatsnew-ko-KR"
 
           {
-            printf 'directory=android/release-notes\n'
+            printf 'directory=android/release-notes/whatsnew\n'
             printf 'release-name=%s\n' "$release_name"
           } >> "$GITHUB_OUTPUT"
         env:
@@ -186,10 +186,11 @@ jobs:
           serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
           packageName: com.mulkkam
           releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
-          track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'internal' }}
+          track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'production' }}
           status: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.status || 'completed' }}
           releaseName: ${{ steps.release-notes.outputs.release-name }}
           whatsNewDirectory: ${{ steps.release-notes.outputs.directory }}
+          changesNotSentForReview: false
 
       - name: Upload release bundle artifact
         uses: actions/upload-artifact@v4
