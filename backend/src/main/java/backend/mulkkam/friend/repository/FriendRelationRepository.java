@@ -33,16 +33,15 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
 
     @Query("""
                 SELECT new backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation(
-                            fr.id,
-                            m.id,
-                            m.memberNickname.value
+                    fr.id, m.id, m.memberNickname.value
                 )
-                FROM FriendRelation fr
-                JOIN Member m
-                    ON (fr.addresseeId = :memberId AND fr.requesterId = m.id)
+                FROM FriendRelation fr, Member m
+                WHERE (
+                    (fr.addresseeId = :memberId AND fr.requesterId = m.id)
                     OR (fr.requesterId = :memberId AND fr.addresseeId = m.id)
-                WHERE (:lastId IS NULL OR fr.id < :lastId)
-                            AND fr.friendRelationStatus = 'ACCEPTED'
+                )
+                AND (:lastId IS NULL OR fr.id < :lastId)
+                AND fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
                 ORDER BY fr.id DESC
             """)
     List<MemberInfoOfFriendRelation> findByMemberId(
