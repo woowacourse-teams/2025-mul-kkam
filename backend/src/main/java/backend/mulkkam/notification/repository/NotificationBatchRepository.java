@@ -7,17 +7,23 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 @RequiredArgsConstructor
 @Repository
+@Slf4j
 public class NotificationBatchRepository {
 
     private final JdbcTemplate jdbcTemplate;
 
     public void batchInsert(List<NotificationInsertDto> notificationInsertDtos, int batchSize) {
+
+        // TODO: 제거
+        log.info("Inserting {} notifications into batch", notificationInsertDtos.size());
+
         String sql = "INSERT INTO notification (notification_type, is_read, created_at, member_id, content, deleted_at) values (?, ?, ?, ?, ?, ?)";
         Timestamp currentTimestamp = Timestamp.valueOf(LocalDateTime.now());
 
