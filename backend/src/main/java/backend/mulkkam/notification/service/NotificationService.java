@@ -72,6 +72,8 @@ public class NotificationService {
                 break;
             }
 
+            log.info("member ids size {}", memberIds.size());
+
             // - 청크 저장
             List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
                     .map(memberId -> new NotificationInsertDto(template, memberId))
