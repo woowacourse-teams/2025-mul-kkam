@@ -8,6 +8,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
+import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -43,7 +44,6 @@ public class NotificationService {
     private static final int CHUNK_SIZE = 1_000;
 
     private final SuggestionNotificationService suggestionNotificationService;
-    private final NotificationBatchService notificationBatchService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationBatchRepository notificationBatchRepository;
@@ -74,7 +74,7 @@ public class NotificationService {
     }
 
     private List<Long> readMemberIdsByTime(LocalDateTime now, Long lastId) {
-        return notificationBatchService.readChunk(
+        return ChunkReader.readChunk(
                 (id, pageable) -> reminderScheduleRepository
                         .findAllActiveMemberIdsByHourAndMinute(
                                 now.toLocalTime(),

@@ -46,9 +46,6 @@ class ReminderScheduleServiceUnitTest {
     private ReminderScheduleRepository reminderScheduleRepository;
 
     @Mock
-    private NotificationBatchService notificationBatchService;
-
-    @Mock
     private MemberRepository memberRepository;
 
     @Mock

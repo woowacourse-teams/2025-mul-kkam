@@ -24,7 +24,6 @@ import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
-import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
@@ -59,12 +58,6 @@ class NotificationServiceUnitTest {
 
     @Mock
     private DeviceRepository deviceRepository;
-
-    @Mock
-    private NotificationBatchRepository notificationBatchRepository;
-
-    @Mock
-    private NotificationBatchService notificationBatchService;
 
     @Mock
     private ApplicationEventPublisher applicationEventPublisher;
