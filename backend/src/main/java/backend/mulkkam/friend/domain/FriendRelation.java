@@ -47,10 +47,7 @@ public class FriendRelation extends BaseEntity {
     }
 
     public boolean isAddressee(Long id) {
-        if (id.equals(addresseeId)) {
-            return true;
-        }
-        return false;
+        return id.equals(addresseeId);
     }
 
     public void updateAccepted() {

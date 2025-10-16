@@ -1,7 +1,7 @@
 package backend.mulkkam.member.repository;
 
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
+import backend.mulkkam.member.repository.dto.MemberSearchRow;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -32,41 +32,33 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     );
 
     @Query("""
-            SELECT new backend.mulkkam.member.dto.response.MemberSearchItemResponse(
-              m.id,
-              m.memberNickname.value,
-              CASE
-                WHEN fr.id IS NULL
-                  THEN backend.mulkkam.friend.domain.FriendStatus.NONE
-                ELSE fr.friendStatus
-              END,
-              CASE
-                WHEN fr.id IS NULL
-                  THEN backend.mulkkam.friend.domain.RequestDirection.NONE
-                WHEN fr.friendStatus = backend.mulkkam.friend.domain.FriendStatus.REQUESTED
-                     AND fr.requesterId = :id
-                  THEN backend.mulkkam.friend.domain.RequestDirection.REQUESTED_BY_ME
-                WHEN fr.friendStatus = backend.mulkkam.friend.domain.FriendStatus.REQUESTED
-                     AND fr.addresseeId = :id
-                  THEN backend.mulkkam.friend.domain.RequestDirection.REQUESTED_TO_ME
-                ELSE backend.mulkkam.friend.domain.RequestDirection.NONE
-              END
+            SELECT new backend.mulkkam.member.repository.dto.MemberSearchRow(
+                m.id,
+                m.memberNickname.value,
+                (
+                  SELECT fr.friendStatus
+                  FROM FriendRelation fr
+                  WHERE fr.deletedAt IS NULL
+                    AND (
+                         (fr.requesterId = :id AND fr.addresseeId = m.id)
+                      OR (fr.requesterId = m.id AND fr.addresseeId = :id)
+                    )
+                ),
+                CASE WHEN EXISTS (
+                  SELECT 1
+                  FROM FriendRelation fr2
+                  WHERE fr2.deletedAt IS NULL
+                    AND fr2.requesterId = :id
+                    AND (fr2.addresseeId = m.id)
+                ) THEN true ELSE false END
             )
             FROM Member m
-            LEFT JOIN FriendRelation fr
-               ON (
-                 (fr.requesterId = :id AND fr.addresseeId = m.id) OR
-                 (fr.requesterId = m.id AND fr.addresseeId = :id)
-               )
-              AND fr.deletedAt IS NULL
             WHERE (:word <> '' AND m.memberNickname.value LIKE CONCAT(:word, '%'))
               AND m.id <> :id
             ORDER BY m.memberNickname.value
             """)
-    Slice<MemberSearchItemResponse> findByWordWithStatusAndDirection(
+    Slice<MemberSearchRow> searchByWord(
             @Param("id") Long id,
             @Param("word") String word,
-            Pageable pageable
-    );
-
+            Pageable pageable);
 }

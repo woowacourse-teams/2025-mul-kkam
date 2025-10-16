@@ -8,7 +8,6 @@ public enum FriendStatus {
 
     REQUESTED,
     ACCEPTED,
-    NONE,
     ;
 
     public static void validRequest(FriendStatus friendStatus) {

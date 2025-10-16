@@ -29,12 +29,14 @@ import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.member.repository.dto.MemberSearchRow;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -193,12 +195,34 @@ public class MemberService {
             int page,
             int size
     ) {
-        if (word.isBlank()) {
+        if (isBlank(word)) {
             return new MemberSearchResponse(List.of(), false);
         }
-        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByWordWithStatusAndDirection(
-                memberDetails.id(), word, PageRequest.of(page, size));
-        return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
+        Slice<MemberSearchRow> slice =
+                memberRepository.searchByWord(memberDetails.id(), word, PageRequest.of(page, size));
+
+        List<Long> targetIds = slice.stream().map(MemberSearchRow::id).toList();
+
+        List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(slice);
+
+        return new MemberSearchResponse(memberSearchItemResponses, slice.hasNext());
+    }
+
+    private boolean isBlank(String input) {
+        return input == null || input.isBlank();
+    }
+
+    private List<MemberSearchItemResponse> toResponse(
+            Slice<MemberSearchRow> searchRows
+    ) {
+        List<MemberSearchItemResponse> memberSearchItemResponses = new ArrayList<>();
+
+        List<MemberSearchRow> memberSearchRows = searchRows.stream().toList();
+
+        for (MemberSearchRow memberSearchRow : memberSearchRows) {
+            memberSearchItemResponses.add(MemberSearchItemResponse.of(memberSearchRow));
+        }
+        return memberSearchItemResponses;
     }
 
     private Member getMember(Long id) {
