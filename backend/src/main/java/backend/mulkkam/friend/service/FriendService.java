@@ -1,12 +1,12 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,7 +34,9 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendRelationStatus.validRequest(friendRelation.getFriendRelationStatus());
+        if (friendRelation.isNotRequest()) {
+            throw new CommonException(INVALID_FRIEND_RELATION);
+        }
         if (friendRelation.isAddressee(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
@@ -49,7 +51,9 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendRelationStatus.validRequest(friendRelation.getFriendRelationStatus());
+        if (friendRelation.isNotRequest()) {
+            throw new CommonException(INVALID_FRIEND_RELATION);
+        }
         if (friendRelation.isAddressee(memberDetails.id())) {
             friendRelationRepository.delete(friendRelation);
             return;

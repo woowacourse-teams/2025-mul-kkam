@@ -1,5 +1,7 @@
 package backend.mulkkam.friend.domain;
 
+import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
+
 import backend.mulkkam.common.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,5 +54,9 @@ public class FriendRelation extends BaseEntity {
 
     public void updateAccepted() {
         this.friendRelationStatus = FriendRelationStatus.ACCEPTED;
+    }
+
+    public boolean isNotRequest() {
+        return friendRelationStatus != REQUESTED;
     }
 }
