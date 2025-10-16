@@ -29,16 +29,17 @@ import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.member.repository.dto.MemberSearchRow;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -190,15 +191,46 @@ public class MemberService {
     public MemberSearchResponse searchMember(
             MemberDetails memberDetails,
             String word,
-            int page,
+            Long lastId,
             int size
     ) {
-        if (word.isBlank()) {
-            return new MemberSearchResponse(List.of(), false);
+        if (isBlank(word)) {
+            return MemberSearchResponse.empty();
         }
-        Slice<MemberSearchItemResponse> memberIdNicknames = memberRepository.findByWordWithStatusAndDirection(
-                memberDetails.id(), word, PageRequest.of(page, size));
-        return new MemberSearchResponse(memberIdNicknames.stream().toList(), memberIdNicknames.hasNext());
+        int fetchSize = Math.max(1, size) + 1;
+
+        List<MemberSearchRow> memberSearchRows = memberRepository.searchByWordAfterId(
+                memberDetails.id(),
+                word,
+                lastId,
+                PageRequest.of(0, fetchSize)
+        );
+
+        boolean hasNext = memberSearchRows.size() > size;
+        if (hasNext) {
+            memberSearchRows = memberSearchRows.subList(0, size);
+        }
+
+        List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(memberSearchRows);
+
+        Long nextId = memberSearchRows.isEmpty() ? null : memberSearchRows.get(memberSearchRows.size() - 1).id();
+
+        return new MemberSearchResponse(memberSearchItemResponses, nextId, hasNext);
+    }
+
+    private boolean isBlank(String input) {
+        return input == null || input.isBlank();
+    }
+
+    private List<MemberSearchItemResponse> toResponse(
+            List<MemberSearchRow> searchRows
+    ) {
+        List<MemberSearchItemResponse> memberSearchItemResponses = new ArrayList<>();
+
+        for (MemberSearchRow memberSearchRow : searchRows) {
+            memberSearchItemResponses.add(MemberSearchItemResponse.of(memberSearchRow));
+        }
+        return memberSearchItemResponses;
     }
 
     private Member getMember(Long id) {

@@ -1,5 +1,7 @@
 package backend.mulkkam.friend.domain;
 
+import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
+
 import backend.mulkkam.common.domain.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -34,26 +36,27 @@ public class FriendRelation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private FriendStatus friendStatus;
+    private FriendRelationStatus friendRelationStatus;
 
     public FriendRelation(
             Long requesterId,
             Long addresseeId,
-            FriendStatus friendStatus
+            FriendRelationStatus friendRelationStatus
     ) {
         this.requesterId = requesterId;
         this.addresseeId = addresseeId;
-        this.friendStatus = friendStatus;
+        this.friendRelationStatus = friendRelationStatus;
     }
 
-    public boolean isAddressee(Long id) {
-        if (id.equals(addresseeId)) {
-            return true;
-        }
-        return false;
+    public boolean isAddresseeMemberId(Long id) {
+        return id.equals(addresseeId);
     }
 
     public void updateAccepted() {
-        this.friendStatus = FriendStatus.ACCEPTED;
+        this.friendRelationStatus = FriendRelationStatus.ACCEPTED;
+    }
+
+    public boolean isNotRequest() {
+        return friendRelationStatus != REQUESTED;
     }
 }

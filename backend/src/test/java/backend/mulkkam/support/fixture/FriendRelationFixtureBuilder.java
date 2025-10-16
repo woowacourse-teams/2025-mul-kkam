@@ -1,13 +1,13 @@
 package backend.mulkkam.support.fixture;
 
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 
 public class FriendRelationFixtureBuilder {
 
     private Long requesterId = 1L;
     private Long addresseeId = 2L;
-    private FriendStatus friendStatus = FriendStatus.REQUESTED;
+    private FriendRelationStatus friendRelationStatus = FriendRelationStatus.REQUESTED;
 
     private FriendRelationFixtureBuilder() {
     }
@@ -26,8 +26,8 @@ public class FriendRelationFixtureBuilder {
         return this;
     }
 
-    public FriendRelationFixtureBuilder friendStatus(FriendStatus friendStatus) {
-        this.friendStatus = friendStatus;
+    public FriendRelationFixtureBuilder friendStatus(FriendRelationStatus friendRelationStatus) {
+        this.friendRelationStatus = friendRelationStatus;
         return this;
     }
 
@@ -35,7 +35,7 @@ public class FriendRelationFixtureBuilder {
         return new FriendRelation(
                 requesterId,
                 addresseeId,
-                friendStatus
+                friendRelationStatus
         );
     }
 }

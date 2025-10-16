@@ -23,7 +23,7 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -479,7 +479,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             reminderScheduleRepository.saveAll(List.of(schedule1, schedule2));
 
             FriendRelation friendRelation = new FriendRelation(member.getId(), friendMember.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
 
             // when

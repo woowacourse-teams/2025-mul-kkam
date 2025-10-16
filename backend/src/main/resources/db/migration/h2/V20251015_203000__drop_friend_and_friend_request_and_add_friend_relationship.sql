@@ -9,8 +9,8 @@ CREATE TABLE friend_relation (
     requester_id  BIGINT NOT NULL,
     addressee_id  BIGINT NOT NULL,
 
-    friend_status        VARCHAR(16) NOT NULL
-    CHECK (friend_status IN ('REQUESTED','ACCEPTED')),
+    friend_relation_status        VARCHAR(16) NOT NULL
+    CHECK (friend_relation_status IN ('REQUESTED','ACCEPTED')),
 
     created_at    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at    TIMESTAMP NULL,

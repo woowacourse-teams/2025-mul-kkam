@@ -3,10 +3,11 @@ package backend.mulkkam.member.controller;
 import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
+import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Status;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -26,6 +27,9 @@ import backend.mulkkam.cup.domain.EmojiType;
 import backend.mulkkam.cup.domain.IntakeType;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
@@ -36,17 +40,19 @@ import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedReq
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse.Direction;
 import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.fixture.FriendRelationFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -80,6 +86,9 @@ class MemberControllerTest extends ControllerTest {
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
+    private FriendRelationRepository friendRelationRepository;
 
     private final Member member = MemberFixtureBuilder
             .builder()
@@ -138,7 +147,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(patch("/members/notifications/night")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .header(AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
                     .andExpect(status().isOk());
@@ -159,7 +168,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(patch("/members/notifications/marketing")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .header(AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
                     .andExpect(status().isOk())
@@ -370,14 +379,14 @@ class MemberControllerTest extends ControllerTest {
                     .build();
             Member member3 = MemberFixtureBuilder
                     .builder()
-                    .memberNickname(new MemberNickname("치즈돈까스먹는체체"))
+                    .memberNickname(new MemberNickname("치즈동까스먹는체체"))
                     .build();
             memberRepository.saveAll(List.of(member1, member2, member3));
 
             // when
             String json = mockMvc.perform(get("/members/search")
                             .param("word", "돈까스")
-                            .param("page", "0")
+                            .param("lastId", "")
                             .param("size", "10")
                             .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
@@ -407,9 +416,9 @@ class MemberControllerTest extends ControllerTest {
             // when
             String json = mockMvc.perform(get("/members/search")
                             .param("word", "")
-                            .param("page", "0")
+                            .param("lastId", "")
                             .param("size", "10")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -435,9 +444,9 @@ class MemberControllerTest extends ControllerTest {
             // when
             String json = mockMvc.perform(get("/members/search")
                             .param("word", "테스트")
-                            .param("page", "0")
+                            .param("lastId", "")
                             .param("size", "2")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -446,6 +455,160 @@ class MemberControllerTest extends ControllerTest {
             assertSoftly(softly -> {
                 softly.assertThat(actual.memberSearchItemResponses()).hasSize(2);
                 softly.assertThat(actual.hasNext()).isTrue();
+            });
+        }
+
+        @DisplayName("친구 관계 상태별로 검색 결과가 다르게 반환된다.")
+        @Test
+        void success_whenSearchWithDifferentFriendStatus() throws Exception {
+            // given
+            Member acceptedFriend = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("테스트수락친구"))
+                    .build();
+            Member requestedByMe = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("테스트요청보냄"))
+                    .build();
+            Member requestedToMe = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("테스트요청받음"))
+                    .build();
+            Member noRelation = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("테스트관계없음"))
+                    .build();
+
+            memberRepository.saveAll(List.of(acceptedFriend, requestedByMe, requestedToMe, noRelation));
+
+            FriendRelation acceptedRelation = FriendRelationFixtureBuilder
+                    .builder()
+                    .requesterId(member.getId())
+                    .addresseeId(acceptedFriend.getId())
+                    .friendStatus(FriendRelationStatus.ACCEPTED)
+                    .build();
+
+            FriendRelation sentRequest = FriendRelationFixtureBuilder
+                    .builder()
+                    .requesterId(member.getId())
+                    .addresseeId(requestedByMe.getId())
+                    .friendStatus(FriendRelationStatus.REQUESTED)
+                    .build();
+
+            FriendRelation receivedRequest = FriendRelationFixtureBuilder
+                    .builder()
+                    .requesterId(requestedToMe.getId())
+                    .addresseeId(member.getId())
+                    .friendStatus(FriendRelationStatus.REQUESTED)
+                    .build();
+
+            friendRelationRepository.saveAll(List.of(acceptedRelation, sentRequest, receivedRequest));
+
+            // when
+            String json = mockMvc.perform(get("/members/search")
+                            .param("word", "테스트")
+                            .param("lastId", "")
+                            .param("size", "10")
+                            .header(AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.memberSearchItemResponses()).hasSize(4);
+                MemberSearchItemResponse acceptedItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("테스트수락친구"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(acceptedItem.status()).isEqualTo(Status.ACCEPTED);
+                softly.assertThat(acceptedItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.NONE);
+
+                MemberSearchItemResponse sentItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("테스트요청보냄"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(sentItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(sentItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.REQUESTED_BY_ME);
+
+                MemberSearchItemResponse receivedItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("테스트요청받음"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(receivedItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(receivedItem.direction())
+                        .isEqualTo(MemberSearchItemResponse.Direction.REQUESTED_TO_ME);
+
+                MemberSearchItemResponse noRelationItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("테스트관계없음"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(noRelationItem.status()).isEqualTo(Status.NONE);
+                softly.assertThat(noRelationItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.NONE);
+            });
+        }
+
+        @DisplayName("REQUESTED 상태에서 방향이 올바르게 표시된다.")
+        @Test
+        void success_whenDirectionIsCorrectForRequestedStatus() throws Exception {
+            // given
+            Member requestSentMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("요청보낸회원"))
+                    .build();
+            Member requestReceivedMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("요청받은회원"))
+                    .build();
+
+            memberRepository.saveAll(List.of(requestSentMember, requestReceivedMember));
+
+            FriendRelation sentRelation = FriendRelationFixtureBuilder
+                    .builder()
+                    .requesterId(requestSentMember.getId())
+                    .addresseeId(member.getId())
+                    .friendStatus(FriendRelationStatus.REQUESTED)
+                    .build();
+
+            FriendRelation receivedRelation = FriendRelationFixtureBuilder
+                    .builder()
+                    .requesterId(member.getId())
+                    .addresseeId(requestReceivedMember.getId())
+                    .friendStatus(FriendRelationStatus.REQUESTED)
+                    .build();
+
+            friendRelationRepository.saveAll(List.of(sentRelation, receivedRelation));
+
+            // when
+            String json = mockMvc.perform(get("/members/search")
+                            .param("word", "요청")
+                            .param("lastId", "")
+                            .param("size", "10")
+                            .header(AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            MemberSearchResponse actual = objectMapper.readValue(json, MemberSearchResponse.class);
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual.memberSearchItemResponses()).hasSize(2);
+
+                MemberSearchItemResponse sentItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("요청보낸회원"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(sentItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(sentItem.direction()).isEqualTo(Direction.REQUESTED_TO_ME);
+
+                MemberSearchItemResponse receivedItem = actual.memberSearchItemResponses().stream()
+                        .filter(item -> item.memberNickname().equals("요청받은회원"))
+                        .findFirst()
+                        .orElseThrow();
+                softly.assertThat(receivedItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(receivedItem.direction())
+                        .isEqualTo(Direction.REQUESTED_BY_ME);
             });
         }
     }

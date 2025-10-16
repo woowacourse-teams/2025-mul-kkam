@@ -1,15 +1,15 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
-import backend.mulkkam.friend.dto.response.FriendRequestResponse;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
-import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -40,8 +40,8 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendStatus.validRequest(friendRelation.getFriendStatus());
-        if (friendRelation.isAddressee(memberDetails.id())) {
+        validRequested(friendRelation);
+        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
         }
@@ -55,24 +55,25 @@ public class FriendService {
             MemberDetails memberDetails
     ) {
         FriendRelation friendRelation = getFriendRelation(friendRelationId);
-        FriendStatus.validRequest(friendRelation.getFriendStatus());
-        if (friendRelation.isAddressee(memberDetails.id())) {
+        validRequested(friendRelation);
+        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelationRepository.delete(friendRelation);
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
     }
 
-    public ReadReceivedFriendRequestsResponse readReceivedFriendRequests(
+    public ReadReceivedFriendRelationResponse readReceivedFriendRequests(
             MemberDetails memberDetails,
             Long lastId,
             int size
     ) {
         Pageable pageable = PageRequest.of(0, size + 1);
-        List<FriendRequestResponse> friendRequestResponses = friendRelationRepository
+        List<FriendRelationResponse> friendRequestResponses = friendRelationRepository
                 .findReceivedFriendRequestsAfterId(memberDetails.id(), lastId, pageable);
-        return ReadReceivedFriendRequestsResponse.of(friendRequestResponses, size);
+        return ReadReceivedFriendRelationResponse.of(friendRequestResponses, size);
     }
+
 
     public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
         return new GetReceivedFriendRequestCountResponse(
@@ -82,5 +83,11 @@ public class FriendService {
     private FriendRelation getFriendRelation(Long friendRelationId) {
         return friendRelationRepository.findById(friendRelationId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_RELATION));
+    }
+
+    private void validRequested(final FriendRelation friendRelation) {
+        if (friendRelation.isNotRequest()) {
+            throw new CommonException(INVALID_FRIEND_RELATION);
+        }
     }
 }

@@ -3,7 +3,7 @@ package backend.mulkkam.friend.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
-import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -31,19 +31,19 @@ public class FriendController {
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @DeleteMapping("/{friendRelationId}")
-    public void deleteFriend(
+    public ResponseEntity<Void> deleteFriend(
             @Parameter(description = "삭제할 친구 관계 ID", required = true)
             @PathVariable Long friendRelationId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
         friendService.delete(friendRelationId, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "친구 요청 거절", description = "사용자에게 온 친구 요청을 거절합니다.")
     @ApiResponse(responseCode = "200", description = "거절 성공")
-    @ApiResponse(responseCode = "400", description = "올바르지 않은 친구 관계 id")
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 관계 id")
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
     @ApiResponse(responseCode = "403", description = "거절할 권한이 없는 사용자의 요청")
     @PostMapping("request/{requestId}/reject")
     public ResponseEntity<Void> rejectFriendRequest(
@@ -69,10 +69,10 @@ public class FriendController {
     }
 
     @Operation(summary = "받은 친구 신청 목록", description = "내가 받은 친구 신청 목록을 조회합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReceivedFriendRequestsResponse.class)))
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReceivedFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/requests/received")
-    public ResponseEntity<ReadReceivedFriendRequestsResponse> getReceivedFriendRequests(
+    public ResponseEntity<ReadReceivedFriendRelationResponse> getReceivedFriendRequests(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
@@ -80,7 +80,7 @@ public class FriendController {
             @Parameter(description = "size", required = true)
             @RequestParam(defaultValue = "20") int size
     ) {
-        ReadReceivedFriendRequestsResponse readReceivedFriendRequestsResponse = friendService.readReceivedFriendRequests(
+        ReadReceivedFriendRelationResponse readReceivedFriendRequestsResponse = friendService.readReceivedFriendRequests(
                 memberDetails, lastId, size);
         return ResponseEntity.ok(readReceivedFriendRequestsResponse);
     }

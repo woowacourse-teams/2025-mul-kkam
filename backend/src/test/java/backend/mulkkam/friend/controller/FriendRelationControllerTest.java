@@ -13,9 +13,9 @@ import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.domain.FriendStatus;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
-import backend.mulkkam.friend.dto.response.ReadReceivedFriendRequestsResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -78,13 +78,13 @@ class FriendRelationControllerTest extends ControllerTest {
         void success_deleteByRequester() throws Exception {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
             mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
 
             // then
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();
@@ -96,19 +96,17 @@ class FriendRelationControllerTest extends ControllerTest {
         void success_deleteByAddressee() throws Exception {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.ACCEPTED);
+                    FriendRelationStatus.ACCEPTED);
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
             mockMvc.perform(delete("/friends/" + savedFriendRelation.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
 
             // then
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();
-            assertSoftly(softly -> {
-                softly.assertThat(friendRelations).hasSize(0);
-            });
+            assertThat(friendRelations).isEmpty();
         }
 
         @DisplayName("친구 요청을 거절할 때")
@@ -120,7 +118,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_rejected() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUESTED);
+                        FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when
@@ -145,7 +143,7 @@ class FriendRelationControllerTest extends ControllerTest {
             void success_accepted() throws Exception {
                 // given
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendStatus.REQUESTED);
+                        FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
 
                 // when
@@ -160,7 +158,8 @@ class FriendRelationControllerTest extends ControllerTest {
                     softly.assertThat(friendRelations).hasSize(1);
                     softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
                     softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                    softly.assertThat(friendRelations.getFirst().getFriendStatus()).isEqualTo(FriendStatus.ACCEPTED);
+                    softly.assertThat(friendRelations.getFirst().getFriendRelationStatus())
+                            .isEqualTo(FriendRelationStatus.ACCEPTED);
                 });
             }
         }
@@ -175,7 +174,7 @@ class FriendRelationControllerTest extends ControllerTest {
         void success_firstRequest() throws Exception {
             // given
             FriendRelation friendRelation1 = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("테스터"))
@@ -183,7 +182,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             Member foundMember = memberRepository.save(member);
             FriendRelation friendRelation2 = new FriendRelation(foundMember.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
@@ -195,12 +194,12 @@ class FriendRelationControllerTest extends ControllerTest {
                     .getResponse()
                     .getContentAsString();
 
-            ReadReceivedFriendRequestsResponse response = objectMapper.readValue(resultContent,
-                    ReadReceivedFriendRequestsResponse.class);
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(resultContent,
+                    ReadReceivedFriendRelationResponse.class);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRequestResponses()).hasSize(2);
+                softly.assertThat(response.friendRelationResponses()).hasSize(2);
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -216,11 +215,11 @@ class FriendRelationControllerTest extends ControllerTest {
             memberRepository.saveAll(List.of(member1, member2, member3));
 
             FriendRelation friendRelation1 = new FriendRelation(member1.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             FriendRelation friendRelation2 = new FriendRelation(member2.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             FriendRelation friendRelation3 = new FriendRelation(member3.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2, friendRelation3));
 
             // when - 첫 번째 페이지 조회
@@ -232,12 +231,12 @@ class FriendRelationControllerTest extends ControllerTest {
                     .getResponse()
                     .getContentAsString();
 
-            ReadReceivedFriendRequestsResponse firstPageResponse = objectMapper.readValue(
-                    firstPageContent, ReadReceivedFriendRequestsResponse.class);
+            ReadReceivedFriendRelationResponse firstPageResponse = objectMapper.readValue(
+                    firstPageContent, ReadReceivedFriendRelationResponse.class);
 
             // then - 첫 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(firstPageResponse.friendRequestResponses()).hasSize(2);
+                softly.assertThat(firstPageResponse.friendRelationResponses()).hasSize(2);
                 softly.assertThat(firstPageResponse.hasNext()).isTrue();
             });
 
@@ -251,12 +250,12 @@ class FriendRelationControllerTest extends ControllerTest {
                     .getResponse()
                     .getContentAsString();
 
-            ReadReceivedFriendRequestsResponse secondPageResponse = objectMapper.readValue(
-                    secondPageContent, ReadReceivedFriendRequestsResponse.class);
+            ReadReceivedFriendRelationResponse secondPageResponse = objectMapper.readValue(
+                    secondPageContent, ReadReceivedFriendRelationResponse.class);
 
             // then - 두 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(secondPageResponse.friendRequestResponses()).hasSize(1);
+                softly.assertThat(secondPageResponse.friendRelationResponses()).hasSize(1);
                 softly.assertThat(secondPageResponse.hasNext()).isFalse();
             });
         }
@@ -273,12 +272,12 @@ class FriendRelationControllerTest extends ControllerTest {
                     .getResponse()
                     .getContentAsString();
 
-            ReadReceivedFriendRequestsResponse response = objectMapper.readValue(
-                    resultContent, ReadReceivedFriendRequestsResponse.class);
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(
+                    resultContent, ReadReceivedFriendRelationResponse.class);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRequestResponses()).isEmpty();
+                softly.assertThat(response.friendRelationResponses()).isEmpty();
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNull();
             });
@@ -293,9 +292,9 @@ class FriendRelationControllerTest extends ControllerTest {
             memberRepository.saveAll(List.of(member1, member2));
 
             FriendRelation friendRelation1 = new FriendRelation(member1.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             FriendRelation friendRelation2 = new FriendRelation(member2.getId(), addressee.getId(),
-                    FriendStatus.REQUESTED);
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
@@ -307,12 +306,12 @@ class FriendRelationControllerTest extends ControllerTest {
                     .getResponse()
                     .getContentAsString();
 
-            ReadReceivedFriendRequestsResponse response = objectMapper.readValue(
-                    resultContent, ReadReceivedFriendRequestsResponse.class);
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(
+                    resultContent, ReadReceivedFriendRelationResponse.class);
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRequestResponses()).hasSize(1);
+                softly.assertThat(response.friendRelationResponses()).hasSize(1);
                 softly.assertThat(response.hasNext()).isTrue();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -331,8 +330,10 @@ class FriendRelationControllerTest extends ControllerTest {
             Member member2 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원2")).build();
             memberRepository.saveAll(List.of(member1, member2));
 
-            FriendRelation request1 = new FriendRelation(member1.getId(), addressee.getId(), FriendStatus.REQUESTED);
-            FriendRelation request2 = new FriendRelation(member2.getId(), addressee.getId(), FriendStatus.REQUESTED);
+            FriendRelation request1 = new FriendRelation(member1.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            FriendRelation request2 = new FriendRelation(member2.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
             friendRelationRepository.saveAll(List.of(request1, request2));
 
             // when
@@ -369,3 +370,4 @@ class FriendRelationControllerTest extends ControllerTest {
         }
     }
 }
+

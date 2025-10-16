@@ -1,7 +1,7 @@
 package backend.mulkkam.friend.repository;
 
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.dto.response.FriendRequestResponse;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -16,10 +16,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.id = :id
-                AND fr.deletedAt is null
-                AND (
-                    (fr.addresseeId = :memberId OR fr.requesterId = :memberId)
-                )
+                AND (fr.addresseeId = :memberId OR fr.requesterId = :memberId)
             """)
     Optional<FriendRelation> findByIdAndMemberId(
             @Param("id") Long id,
@@ -35,15 +32,15 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     void deleteAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
-                SELECT new backend.mulkkam.friend.dto.response.FriendRequestResponse(fr.id, m.memberNickname.value)
+                SELECT new backend.mulkkam.friend.dto.response.FriendRelationResponse(fr.id, m.memberNickname.value)
                 FROM FriendRelation fr
                 JOIN Member m ON fr.requesterId = m.id
                 WHERE fr.addresseeId = :addresseeId
-                  AND (fr.friendStatus = "REQUESTED")
+                  AND (fr.friendRelationStatus = "REQUESTED")
                   AND (:lastId IS NULL OR fr.id < :lastId)
                 ORDER BY fr.id DESC
             """)
-    List<FriendRequestResponse> findReceivedFriendRequestsAfterId(
+    List<FriendRelationResponse> findReceivedFriendRequestsAfterId(
             @Param("addresseeId") Long addresseeId,
             @Param("lastId") Long lastId,
             Pageable pageable
@@ -53,7 +50,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 SELECT COUNT(fr)
                 FROM FriendRelation fr
                 WHERE fr.addresseeId = :addresseeId
-                AND (fr.friendStatus = "REQUESTED")
+                AND (fr.friendRelationStatus = "REQUESTED")
             """)
     Long countFriendRequestsByAddresseeId(@Param("addresseeId") Long addresseeId);
 }
