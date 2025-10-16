@@ -24,13 +24,14 @@ public class FriendController {
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @DeleteMapping("/{friendRelationId}")
-    public void deleteFriend(
+    public ResponseEntity<Void> deleteFriend(
             @Parameter(description = "삭제할 친구 관계 ID", required = true)
             @PathVariable Long friendRelationId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
         friendService.delete(friendRelationId, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "친구 요청 거절", description = "사용자에게 온 친구 요청을 거절합니다.")
