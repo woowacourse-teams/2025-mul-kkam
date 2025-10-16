@@ -491,15 +491,15 @@ class MemberControllerTest extends ControllerTest {
 
             FriendRelation sentRequest = FriendRelationFixtureBuilder
                     .builder()
-                    .requesterId(requestedByMe.getId())
-                    .addresseeId(member.getId())
+                    .requesterId(member.getId())
+                    .addresseeId(requestedByMe.getId())
                     .friendStatus(FriendRelationStatus.REQUESTED)
                     .build();
 
             FriendRelation receivedRequest = FriendRelationFixtureBuilder
                     .builder()
-                    .requesterId(member.getId())
-                    .addresseeId(requestedToMe.getId())
+                    .requesterId(requestedToMe.getId())
+                    .addresseeId(member.getId())
                     .friendStatus(FriendRelationStatus.REQUESTED)
                     .build();
 
@@ -601,7 +601,7 @@ class MemberControllerTest extends ControllerTest {
                         .findFirst()
                         .orElseThrow();
                 softly.assertThat(sentItem.status()).isEqualTo(Status.REQUESTED);
-                softly.assertThat(sentItem.direction()).isEqualTo(Direction.REQUESTED_BY_ME);
+                softly.assertThat(sentItem.direction()).isEqualTo(Direction.REQUESTED_TO_ME);
 
                 MemberSearchItemResponse receivedItem = actual.memberSearchItemResponses().stream()
                         .filter(item -> item.memberNickname().equals("요청받은회원"))
@@ -609,7 +609,7 @@ class MemberControllerTest extends ControllerTest {
                         .orElseThrow();
                 softly.assertThat(receivedItem.status()).isEqualTo(Status.REQUESTED);
                 softly.assertThat(receivedItem.direction())
-                        .isEqualTo(Direction.REQUESTED_TO_ME);
+                        .isEqualTo(Direction.REQUESTED_BY_ME);
             });
         }
     }

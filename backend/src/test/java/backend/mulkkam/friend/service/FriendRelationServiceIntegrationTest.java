@@ -85,10 +85,10 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.ACCEPTED);
-            friendRelationRepository.save(friendRelation);
+            FriendRelation foundFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.delete(requester.getId(), new MemberDetails(addressee.getId()));
+            friendService.delete(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
