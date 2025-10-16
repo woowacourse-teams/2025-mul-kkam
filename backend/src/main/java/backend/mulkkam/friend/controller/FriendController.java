@@ -1,7 +1,8 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.friend.service.FriendService;
+import backend.mulkkam.friend.dto.FriendRelationResponse;
+import backend.mulkkam.friend.service.FriendRelationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -9,9 +10,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "친구", description = "친구 API")
@@ -20,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/friends")
 public class FriendController {
 
-    private final FriendService friendService;
+    private final FriendRelationService friendRelationService;
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @DeleteMapping("/{friendRelationId}")
@@ -30,7 +33,7 @@ public class FriendController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendService.delete(friendRelationId, memberDetails);
+        friendRelationService.delete(friendRelationId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 
@@ -44,7 +47,7 @@ public class FriendController {
             @PathVariable Long requestId,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.rejectFriendRequest(requestId, memberDetails);
+        friendRelationService.rejectFriendRequest(requestId, memberDetails);
         return ResponseEntity.ok().build();
     }
 
@@ -58,7 +61,20 @@ public class FriendController {
             @PathVariable Long requestId,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.acceptFriend(requestId, memberDetails);
+        friendRelationService.acceptFriend(requestId, memberDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "친구 목록 조회", description = "사용자의 친구 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
+    @GetMapping
+    public ResponseEntity<FriendRelationResponse> read(
+            @Parameter(description = "커서 lastId(최초 요청시 생략)")
+            @RequestParam(required = false) Long lastId,
+            @Parameter(description = "size 값", required = true, example = "5")
+            @RequestParam(defaultValue = "10") int size,
+            @Parameter(hidden = true) MemberDetails memberDetails
+    ) {
+        return ResponseEntity.ok(friendRelationService.read(lastId, size, memberDetails));
     }
 }

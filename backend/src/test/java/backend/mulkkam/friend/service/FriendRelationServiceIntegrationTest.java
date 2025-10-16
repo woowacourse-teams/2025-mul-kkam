@@ -37,7 +37,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private FriendService friendService;
+    private FriendRelationService friendRelationService;
 
     @Autowired
     private FriendRelationRepository friendRelationRepository;
@@ -73,7 +73,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.delete(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
+            friendRelationService.delete(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -88,7 +88,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation foundFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.delete(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
+            friendRelationService.delete(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -103,7 +103,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(1L,
+            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(1L,
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -124,7 +124,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
                     friendRelation.getId(),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
@@ -140,7 +140,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.rejectFriendRequest(
+            friendRelationService.rejectFriendRequest(
                     friendRelation.getId(),
                     new MemberDetails(addressee.getId())
             );
@@ -161,7 +161,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
                     friendRelation.getId(),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
@@ -177,7 +177,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
                     savedFriendRelation.getId(),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
@@ -193,7 +193,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(1L,
+            assertThatThrownBy(() -> friendRelationService.acceptFriend(1L,
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -214,7 +214,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRelationService.acceptFriend(
                     friendRelation.getId(),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
@@ -230,7 +230,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.acceptFriend(
+            friendRelationService.acceptFriend(
                     friendRelation.getId(),
                     new MemberDetails(addressee.getId())
             );
@@ -255,7 +255,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRelationService.acceptFriend(
                     friendRelation.getId(),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
@@ -269,12 +269,12 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
-            friendService.rejectFriendRequest(
+            friendRelationService.rejectFriendRequest(
                     friendRelation.getId(),
                     new MemberDetails(addressee.getId()));
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRelationService.acceptFriend(
                     friendRelation.getId(),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
