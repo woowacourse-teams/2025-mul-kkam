@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
@@ -60,12 +62,13 @@ public class NotificationService {
             // - 청크 조회
             // TODO: 추후 바꾸기 - 모든 멤버에게 알림 보내도록 수정
             List<Long> memberIds = notificationBatchService.readChunk(
-                    reminderScheduleRepository::findAllActiveMembers,
+                    reminderScheduleRepository::findAllMembers,
                     lastId,
                     CHUNK_SIZE
             );
 
             if (memberIds.isEmpty()) {
+                log.info("member is empty");
                 break;
             }
 
