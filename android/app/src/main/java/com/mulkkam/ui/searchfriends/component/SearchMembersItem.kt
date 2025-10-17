@@ -27,7 +27,7 @@ import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 
 @Composable
-fun SearchFriendsItem(name: String) {
+fun SearchMembersItem(name: String) {
     Row(
         modifier =
             Modifier
@@ -66,8 +66,8 @@ fun SearchFriendsItem(name: String) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchFriendsItemPreview() {
+private fun SearchMembersItemPreview() {
     MulkkamTheme {
-        SearchFriendsItem(name = "돈가스먹는환노")
+        SearchMembersItem(name = "돈가스먹는환노")
     }
 }

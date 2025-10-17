@@ -33,20 +33,20 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
-import com.mulkkam.ui.searchfriends.component.SearchFriendsItem
-import com.mulkkam.ui.searchfriends.component.SearchFriendsTopAppBar
+import com.mulkkam.ui.searchfriends.component.SearchMembersItem
+import com.mulkkam.ui.searchfriends.component.SearchMembersTopAppBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFriendsScreen(
+fun SearchMembersScreen(
     navigateToBack: () -> Unit,
-    viewModel: SearchFriendsViewModel = viewModel(),
+    viewModel: SearchMembersViewModel = viewModel(),
 ) {
     var name by remember { mutableStateOf("") }
     val searchFriendsUiState by viewModel.searchFriendsUiState.collectAsStateWithLifecycle()
 
     Scaffold(
-        topBar = { SearchFriendsTopAppBar(navigateToBack) },
+        topBar = { SearchMembersTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
         Column(
@@ -94,7 +94,7 @@ fun SearchFriendsScreen(
                     count = searchFriends.size,
                     key = { index -> searchFriends[index].name },
                 ) { index ->
-                    SearchFriendsItem(
+                    SearchMembersItem(
                         name = searchFriends[index].name,
                     )
 
@@ -111,8 +111,8 @@ fun SearchFriendsScreen(
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchFriendsScreenPreview() {
+private fun SearchMembersScreenPreview() {
     MulkkamTheme {
-        SearchFriendsScreen(navigateToBack = {})
+        SearchMembersScreen(navigateToBack = {})
     }
 }

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-class SearchFriendsViewModel : ViewModel() {
+class SearchMembersViewModel : ViewModel() {
     private val _searchFriendsUiState: MutableStateFlow<MulKkamUiState<List<Friend>>> =
         MutableStateFlow(
             MulKkamUiState.Success(

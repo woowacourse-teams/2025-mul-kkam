@@ -25,7 +25,7 @@ import com.mulkkam.ui.designsystem.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SearchFriendsTopAppBar(onBackClick: () -> Unit) {
+fun SearchMembersTopAppBar(onBackClick: () -> Unit) {
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -62,8 +62,8 @@ fun SearchFriendsTopAppBar(onBackClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SearchFriendsTopAppBarPreview() {
+private fun SearchMembersTopAppBarPreview() {
     MulkkamTheme {
-        SearchFriendsTopAppBar(onBackClick = {})
+        SearchMembersTopAppBar(onBackClick = {})
     }
 }

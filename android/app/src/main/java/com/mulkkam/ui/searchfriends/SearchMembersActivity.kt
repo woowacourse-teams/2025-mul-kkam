@@ -7,17 +7,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.ui.designsystem.MulkkamTheme
 
-class SearchFriendsActivity : ComponentActivity() {
+class SearchMembersActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             MulkkamTheme {
-                SearchFriendsScreen(navigateToBack = { finish() })
+                SearchMembersScreen(navigateToBack = { finish() })
             }
         }
     }
 
     companion object {
-        fun newIntent(context: Context): Intent = Intent(context, SearchFriendsActivity::class.java)
+        fun newIntent(context: Context): Intent = Intent(context, SearchMembersActivity::class.java)
     }
 }

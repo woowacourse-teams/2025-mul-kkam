@@ -176,7 +176,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.searchfriends.SearchFriendsActivity"
+            android:name=".ui.searchfriends.SearchMembersActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
     </application>
