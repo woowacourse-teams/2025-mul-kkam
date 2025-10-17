@@ -252,6 +252,8 @@
     <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
 
     <string name="pending_friends_top_app_bar_title">신청 목록</string>
+    <string name="pending_friends_received_request">받은 신청</string>
+    <string name="pending_friends_sent_request">보낸 신청</string>
     <string name="pending_friends_hours_ago">%d시간 전</string>
     <string name="pending_friends_days_ago">%d일 전</string>
     <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>

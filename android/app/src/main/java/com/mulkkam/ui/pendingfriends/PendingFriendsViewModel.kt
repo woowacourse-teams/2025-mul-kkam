@@ -8,15 +8,25 @@ import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDateTime
 
 class PendingFriendsViewModel : ViewModel() {
-    private val _pendingFriends: MutableStateFlow<List<PendingFriend>> = MutableStateFlow(listOf())
-    val pendingFriends: StateFlow<List<PendingFriend>> = _pendingFriends.asStateFlow()
+    private val _receivedRequest: MutableStateFlow<List<PendingFriend>> = MutableStateFlow(listOf())
+    val receivedRequest: StateFlow<List<PendingFriend>> = _receivedRequest.asStateFlow()
+
+    private val _sentRequest: MutableStateFlow<List<PendingFriend>> = MutableStateFlow(listOf())
+    val sentRequest: StateFlow<List<PendingFriend>> = _sentRequest.asStateFlow()
 
     init {
         loadPendingFriends()
     }
 
     private fun loadPendingFriends() {
-        _pendingFriends.value =
+        _receivedRequest.value =
+            listOf(
+                PendingFriend("hwannow", LocalDateTime.of(2025, 10, 10, 12, 0)),
+                PendingFriend("GongBaek", LocalDateTime.of(2025, 10, 10, 13, 0)),
+                PendingFriend("Eden", LocalDateTime.of(2025, 10, 13, 15, 0)),
+            )
+
+        _sentRequest.value =
             listOf(
                 PendingFriend("hwannow", LocalDateTime.of(2025, 10, 10, 12, 0)),
                 PendingFriend("GongBaek", LocalDateTime.of(2025, 10, 10, 13, 0)),
@@ -27,4 +37,6 @@ class PendingFriendsViewModel : ViewModel() {
     fun acceptFriend() {}
 
     fun rejectFriend() {}
+
+    fun cancelRequest() {}
 }

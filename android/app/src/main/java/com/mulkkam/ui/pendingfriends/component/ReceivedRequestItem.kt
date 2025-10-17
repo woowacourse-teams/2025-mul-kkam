@@ -24,7 +24,7 @@ import java.time.LocalDateTime
 private const val HOURS_PER_DAY: Int = 24
 
 @Composable
-fun PendingFriendsItem(
+fun ReceivedRequestItem(
     pendingFriend: PendingFriend,
     onAccept: () -> Unit,
     onReject: () -> Unit,
@@ -75,9 +75,9 @@ private fun formatRemainingTime(
 
 @Preview(showBackground = true)
 @Composable
-private fun PendingFriendsItemPreview() {
+private fun ReceivedRequestItemPreview() {
     MulkkamTheme {
-        PendingFriendsItem(
+        ReceivedRequestItem(
             pendingFriend =
                 PendingFriend(
                     name = "hwannow",
