@@ -6,11 +6,16 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.utils.paging.PagingResult;
+import backend.mulkkam.common.utils.paging.PagingUtils;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
+import backend.mulkkam.friend.repository.dto.SentFriendRelationSummary;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -78,6 +83,33 @@ public class FriendService {
     public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
         return new GetReceivedFriendRequestCountResponse(
                 friendRelationRepository.countFriendRequestsByAddresseeId(memberDetails.id()));
+    }
+
+    public ReadSentFriendRelationResponse readSentFriendRelations(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PageRequest pageRequest = PagingUtils.createPageRequest(size);
+
+        List<SentFriendRelationSummary> sentFriendRelationSummaries = friendRelationRepository.findSentFriendRelationsAfterId(
+                memberDetails.id(),
+                lastId,
+                pageRequest
+        );
+
+        PagingResult<SentFriendRelationInfo, Long> pagingResult = PagingUtils.toPagingResult(
+                sentFriendRelationSummaries,
+                size,
+                SentFriendRelationInfo::new,
+                SentFriendRelationSummary::friendRequestId
+        );
+
+        return new ReadSentFriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
     }
 
     private FriendRelation getFriendRelation(Long friendRelationId) {
