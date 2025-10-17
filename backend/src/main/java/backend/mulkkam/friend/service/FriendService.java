@@ -7,6 +7,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,19 @@ public class FriendService {
     }
 
     @Transactional
+    public void modifyFriendStatus(
+            Long friendRelationId,
+            PatchFriendStatusRequest request,
+            MemberDetails memberDetails
+    ) {
+        switch (request.status()) {
+            case ACCEPT -> acceptFriend(friendRelationId, memberDetails);
+            case REJECT -> rejectFriendRequest(friendRelationId, memberDetails);
+        }
+    }
+
+    // TODO: endpoint 변경 PR 반영되면 접근 제어를 private 으로 변경하기
+    @Transactional
     public void acceptFriend(
             Long friendRelationId,
             MemberDetails memberDetails
@@ -43,6 +57,7 @@ public class FriendService {
 
     }
 
+    // TODO: endpoint 변경 PR 반영되면 접근 제어를 private 으로 변경하기
     @Transactional
     public void rejectFriendRequest(
             Long friendRelationId,
