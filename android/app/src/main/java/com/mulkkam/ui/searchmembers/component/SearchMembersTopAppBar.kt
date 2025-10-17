@@ -1,4 +1,4 @@
-package com.mulkkam.ui.searchfriends.component
+package com.mulkkam.ui.searchmembers.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth

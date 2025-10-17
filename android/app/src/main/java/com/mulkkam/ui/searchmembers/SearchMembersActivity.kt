@@ -1,4 +1,4 @@
-package com.mulkkam.ui.searchfriends
+package com.mulkkam.ui.searchmembers
 
 import android.content.Context
 import android.content.Intent

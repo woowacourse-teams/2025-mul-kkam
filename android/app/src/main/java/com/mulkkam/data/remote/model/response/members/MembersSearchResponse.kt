@@ -16,6 +16,6 @@ data class MembersSearchResponse(
 
 fun MembersSearchResponse.toDomain(): MemberSearchResult =
     MemberSearchResult(
-        memberSearchInfo = memberSearchItemResponses.map { it.toDomain() },
+        memberSearchInfos = memberSearchItemResponses.map { it.toDomain() },
         nextId = nextId,
     )
