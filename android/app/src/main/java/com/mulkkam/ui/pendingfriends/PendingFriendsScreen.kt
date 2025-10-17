@@ -27,7 +27,7 @@ fun PendingFriendsScreen(
 
     Scaffold(
         topBar = {
-            PendingFriendsTopAppBar(navigateToBack, pendingFriends.size)
+            PendingFriendsTopAppBar(navigateToBack)
         },
         containerColor = White,
     ) { innerPadding ->

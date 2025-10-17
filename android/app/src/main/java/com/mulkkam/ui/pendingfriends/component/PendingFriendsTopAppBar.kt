@@ -25,15 +25,12 @@ import com.mulkkam.ui.designsystem.White
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PendingFriendsTopAppBar(
-    onBackClick: () -> Unit,
-    count: Int,
-) {
+fun PendingFriendsTopAppBar(onBackClick: () -> Unit) {
     Column {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.pending_friends_top_app_bar_title, count),
+                    text = stringResource(R.string.pending_friends_top_app_bar_title),
                     style = MulKkamTheme.typography.title2,
                 )
             },
@@ -67,6 +64,6 @@ fun PendingFriendsTopAppBar(
 @Composable
 private fun PendingFriendsTopAppBarPreview() {
     MulkkamTheme {
-        PendingFriendsTopAppBar(onBackClick = {}, count = 3)
+        PendingFriendsTopAppBar(onBackClick = {})
     }
 }
