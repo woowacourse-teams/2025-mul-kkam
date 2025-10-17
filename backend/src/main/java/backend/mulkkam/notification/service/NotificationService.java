@@ -231,19 +231,28 @@ public class NotificationService {
                 .toList();
     }
 
-    private void saveAndSendNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+    private void saveAndSendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
         savedNotifications(memberIds, template);
         sendNotifications(memberIds, template);
     }
 
-    private void savedNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+    private void savedNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
         List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
                 .map(memberId -> new NotificationInsertDto(template, memberId))
                 .toList();
         notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
     }
 
-    private void sendNotifications(List<Long> memberIds, NotificationMessageTemplate template) {
+    private void sendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
         List<String> tokens = readDeviceTokens(memberIds);
         publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
     }

@@ -5,5 +5,8 @@ import org.springframework.data.domain.Pageable;
 
 @FunctionalInterface
 public interface ChunkQueryFunction<T> {
-    List<T> query(Long lastId, Pageable pageable);
+    List<T> query(
+            Long lastId,
+            Pageable pageable
+    );
 }
