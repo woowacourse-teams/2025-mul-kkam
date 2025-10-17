@@ -57,7 +57,7 @@ public class NotificationService {
         Long lastId = null;
 
         while (true) {
-            List<Long> memberIds = readMemberIdsByTime(now, lastId);
+            List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
 
             if (memberIds.isEmpty()) {
                 break;
@@ -73,10 +73,10 @@ public class NotificationService {
         }
     }
 
-    private List<Long> readMemberIdsByTime(LocalDateTime now, Long lastId) {
+    private List<Long> getMemberIdsForSendingNotification(LocalDateTime now, Long lastId) {
         return ChunkReader.readChunk(
                 (id, pageable) -> reminderScheduleRepository
-                        .findAllActiveMemberIdsByHourAndMinute(
+                        .findAllActiveMemberIdsBySchedule(
                                 now.toLocalTime(),
                                 id,
                                 pageable

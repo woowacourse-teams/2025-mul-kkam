@@ -315,7 +315,7 @@ class NotificationServiceUnitTest {
             String token2 = "fcm-token-2";
             List<String> tokens = List.of(token1, token2);
 
-            when(reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
                     eq(now.toLocalTime()),
                     isNull(),
                     any(Pageable.class)
@@ -351,7 +351,7 @@ class NotificationServiceUnitTest {
             // given
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            when(reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
                     eq(now.toLocalTime()),
                     isNull(),
                     any(Pageable.class)
@@ -375,7 +375,7 @@ class NotificationServiceUnitTest {
 
             LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
 
-            when(reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
                     eq(now.toLocalTime()),
                     isNull(),
                     any(Pageable.class)
