@@ -3,6 +3,7 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.MemberSearchResult
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -37,4 +38,10 @@ interface MembersRepository {
     suspend fun saveIsFirstLaunch(): MulKkamResult<Unit>
 
     suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit>
+
+    suspend fun getMembersSearch(
+        word: String,
+        lastId: Long?,
+        size: Int,
+    ): MulKkamResult<MemberSearchResult>
 }

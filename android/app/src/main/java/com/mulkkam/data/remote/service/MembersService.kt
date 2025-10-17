@@ -8,6 +8,7 @@ import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequ
 import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
 import com.mulkkam.data.remote.model.response.members.MembersResponse
+import com.mulkkam.data.remote.model.response.members.MembersSearchResponse
 import com.mulkkam.data.remote.model.response.notifications.NotificationAgreedResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -63,4 +64,11 @@ interface MembersService {
     suspend fun patchMembersReminder(
         @Body memberReminderRequest: MembersReminderRequest,
     ): Result<Unit>
+
+    @GET("/members/search")
+    suspend fun getMembersSearch(
+        @Query("word") word: String,
+        @Query("lastId") lastId: Long?,
+        @Query("size") size: Int,
+    ): Result<MembersSearchResponse>
 }
