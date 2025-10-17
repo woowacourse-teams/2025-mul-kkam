@@ -26,6 +26,7 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
+import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 class HomeFragment :
@@ -47,7 +48,7 @@ class HomeFragment :
                         HomeScreen(
                             viewModel = viewModel,
                             navigateToNotification = {
-                                val intent = NotificationActivity.newIntent(requireContext())
+                                val intent = PendingFriendsActivity.newIntent(requireContext())
                                 notificationResultLauncher.launch(intent)
                             },
                             onManualDrink = {

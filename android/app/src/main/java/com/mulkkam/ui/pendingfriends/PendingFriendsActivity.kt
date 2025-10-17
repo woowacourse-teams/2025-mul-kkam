@@ -1,5 +1,7 @@
 package com.mulkkam.ui.pendingfriends
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,5 +15,9 @@ class PendingFriendsActivity : ComponentActivity() {
                 PendingFriendsScreen(navigateToBack = { finish() })
             }
         }
+    }
+
+    companion object {
+        fun newIntent(context: Context): Intent = Intent(context, PendingFriendsActivity::class.java)
     }
 }

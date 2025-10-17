@@ -2,12 +2,14 @@ package com.mulkkam.ui.pendingfriends.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,20 +23,23 @@ import com.mulkkam.ui.designsystem.Secondary100
 import com.mulkkam.ui.designsystem.Secondary200
 
 @Composable
-fun DeclineFriendButton(onClick: () -> Unit) {
+fun RejectFriendButton(onClick: () -> Unit) {
     Box(
         modifier =
             Modifier
                 .size(48.dp)
-                .clickable { onClick }
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() },
+                    indication = null,
+                ) { onClick }
                 .padding(6.dp)
                 .clip(RoundedCornerShape(12.dp))
                 .background(Secondary100),
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_pending_friends_decline),
-            contentDescription = stringResource(R.string.pending_friends_decline_button_description),
+            painter = painterResource(R.drawable.ic_pending_friends_reject),
+            contentDescription = stringResource(R.string.pending_friends_reject_button_description),
             tint = Secondary200,
         )
     }
@@ -42,8 +47,8 @@ fun DeclineFriendButton(onClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun DeclineFriendButtonPreview() {
+private fun RejectFriendButtonPreview() {
     MulkkamTheme {
-        DeclineFriendButton(onClick = {})
+        RejectFriendButton(onClick = {})
     }
 }

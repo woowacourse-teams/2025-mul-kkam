@@ -27,7 +27,7 @@ private const val HOURS_PER_DAY: Int = 24
 fun PendingFriendsItem(
     pendingFriend: PendingFriend,
     onAccept: () -> Unit,
-    onDecline: () -> Unit,
+    onReject: () -> Unit,
     currentTime: LocalDateTime = LocalDateTime.now(),
 ) {
     Row(
@@ -52,7 +52,7 @@ fun PendingFriendsItem(
         }
         Row {
             AcceptFriendButton(onAccept)
-            DeclineFriendButton(onDecline)
+            RejectFriendButton(onReject)
         }
     }
 }
@@ -85,7 +85,7 @@ private fun PendingFriendsItemPreview() {
                 ),
             currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
             onAccept = {},
-            onDecline = {},
+            onReject = {},
         )
     }
 }

@@ -255,5 +255,5 @@
     <string name="pending_friends_hours_ago">%d시간 전</string>
     <string name="pending_friends_days_ago">%d일 전</string>
     <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>
-    <string name="pending_friends_decline_button_description">친구 신청 거절 버튼</string>
+    <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>
 </resources>

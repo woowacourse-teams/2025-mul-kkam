@@ -26,5 +26,5 @@ class PendingFriendsViewModel : ViewModel() {
 
     fun acceptFriend() {}
 
-    fun declineFriend() {}
+    fun rejectFriend() {}
 }

@@ -39,7 +39,7 @@ fun PendingFriendsScreen(
                 PendingFriendsItem(
                     pendingFriend = pendingFriends[index],
                     onAccept = { viewModel.acceptFriend() },
-                    onDecline = { viewModel.declineFriend() },
+                    onReject = { viewModel.rejectFriend() },
                 )
 
                 HorizontalDivider(
