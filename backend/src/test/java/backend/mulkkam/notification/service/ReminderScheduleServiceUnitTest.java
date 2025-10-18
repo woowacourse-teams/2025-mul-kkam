@@ -46,9 +46,6 @@ class ReminderScheduleServiceUnitTest {
     private ReminderScheduleRepository reminderScheduleRepository;
 
     @Mock
-    private NotificationBatchService notificationBatchService;
-
-    @Mock
     private MemberRepository memberRepository;
 
     @Mock
@@ -68,7 +65,7 @@ class ReminderScheduleServiceUnitTest {
             // given
             LocalTime schedule = LocalTime.of(14, 30);
             CreateReminderScheduleRequest request = new CreateReminderScheduleRequest(schedule);
-            
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
 
             // when
@@ -78,7 +75,7 @@ class ReminderScheduleServiceUnitTest {
             verify(reminderScheduleRepository).saveAndFlush(
                     argThat(reminderSchedule ->
                             reminderSchedule.getMember().equals(member) &&
-                            reminderSchedule.getSchedule().equals(schedule))
+                                    reminderSchedule.getSchedule().equals(schedule))
             );
         }
 
@@ -88,7 +85,7 @@ class ReminderScheduleServiceUnitTest {
             // given
             LocalTime schedule = LocalTime.of(14, 30);
             CreateReminderScheduleRequest request = new CreateReminderScheduleRequest(schedule);
-            
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.empty());
 
             // when & then
@@ -141,7 +138,7 @@ class ReminderScheduleServiceUnitTest {
                     .withMember(member)
                     .schedule(LocalTime.of(19, 0))
                     .build();
-            
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(member));
             when(reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(member))
                     .thenReturn(List.of(schedule1, schedule2, schedule3));
@@ -166,7 +163,7 @@ class ReminderScheduleServiceUnitTest {
             Member disabledMember = MemberFixtureBuilder.builder()
                     .isReminderEnabled(false)
                     .buildWithId(memberId);
-            
+
             when(memberRepository.findById(memberId)).thenReturn(Optional.of(disabledMember));
             when(reminderScheduleRepository.findAllByMemberOrderByScheduleAsc(disabledMember))
                     .thenReturn(List.of());
@@ -228,7 +225,7 @@ class ReminderScheduleServiceUnitTest {
                     .build();
             LocalTime newTime = LocalTime.of(16, 30);
             ModifyReminderScheduleTimeRequest request = new ModifyReminderScheduleTimeRequest(scheduleId, newTime);
-            
+
             when(reminderScheduleRepository.findByIdAndMemberId(scheduleId, memberId))
                     .thenReturn(Optional.of(schedule));
 
@@ -246,7 +243,7 @@ class ReminderScheduleServiceUnitTest {
             // given
             LocalTime newTime = LocalTime.of(16, 30);
             ModifyReminderScheduleTimeRequest request = new ModifyReminderScheduleTimeRequest(scheduleId, newTime);
-            
+
             when(reminderScheduleRepository.findByIdAndMemberId(scheduleId, memberId))
                     .thenReturn(Optional.empty());
 
@@ -267,7 +264,7 @@ class ReminderScheduleServiceUnitTest {
                     .build();
             LocalTime newTime = LocalTime.of(16, 30);
             ModifyReminderScheduleTimeRequest request = new ModifyReminderScheduleTimeRequest(scheduleId, newTime);
-            
+
             when(reminderScheduleRepository.findByIdAndMemberId(scheduleId, memberId))
                     .thenReturn(Optional.of(schedule));
             doThrow(new DataIntegrityViolationException("duplicate"))
@@ -314,7 +311,7 @@ class ReminderScheduleServiceUnitTest {
             assertThatThrownBy(() -> reminderScheduleService.delete(memberDetails, scheduleId))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_REMINDER_SCHEDULE.name());
-            
+
             verify(reminderScheduleRepository, never()).deleteById(scheduleId);
         }
 
@@ -331,50 +328,4 @@ class ReminderScheduleServiceUnitTest {
                     .hasMessage(NOT_FOUND_REMINDER_SCHEDULE.name());
         }
     }
-
-//    @DisplayName("정기적으로 리마인더 알림을 전송할 때")
-//    @Nested
-//    class ExecuteReminderNotification {
-//
-//        @DisplayName("현재 시각에 해당하는 활성화된 스케줄의 멤버에게 알림을 전송한다")
-//        @Test
-//        void success_whenSchedulesExist() {
-//            // given
-//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-//
-//            Member member1 = MemberFixtureBuilder.builder()
-//                    .isReminderEnabled(true)
-//                    .buildWithId(1L);
-//            Member member2 = MemberFixtureBuilder.builder()
-//                    .isReminderEnabled(true)
-//                    .buildWithId(2L);
-//
-//            when(notificationBatchService.batchRead(
-//                    any(BiFunction.class),
-//                    any(Function.class),
-//                    eq(1000)
-//            )).thenReturn(List.of(member1.getId(), member2.getId()));
-//
-//            // when
-//            reminderScheduleService.executeReminderNotification(now);
-//
-//            // then
-//            verify(notificationService).processReminderNotifications1(
-//                    any(LocalDateTime.class)
-//            );
-//        }
-//
-//        @DisplayName("해당 시각에 스케줄이 없으면 알림을 전송하지 않는다")
-//        @Test
-//        void success_whenNoSchedules() {
-//            // given
-//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
-//
-//            // when
-//            reminderScheduleService.executeReminderNotification(now);
-//
-//            // then
-//            verify(notificationService, never()).processReminderNotifications1(any());
-//        }
-//    }
 }

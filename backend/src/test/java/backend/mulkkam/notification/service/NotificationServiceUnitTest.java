@@ -4,8 +4,12 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -26,6 +30,7 @@ import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
@@ -61,13 +66,13 @@ class NotificationServiceUnitTest {
     private DeviceRepository deviceRepository;
 
     @Mock
+    private ApplicationEventPublisher publisher;
+
+    @Mock
     private NotificationBatchRepository notificationBatchRepository;
 
     @Mock
-    private NotificationBatchService notificationBatchService;
-
-    @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ReminderScheduleRepository reminderScheduleRepository;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -262,7 +267,7 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(applicationEventPublisher).publishEvent(
+            verify(publisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.title().equals("title")
                                     && evt.body().equals("body")
@@ -292,102 +297,108 @@ class NotificationServiceUnitTest {
         }
     }
 
-//    @DisplayName("리마인더 알림을 처리할 때")
-//    @Nested
-//    class ProcessReminderNotifications {
-//
-//        private List<Long> getMemberIds(List<ReminderSchedule> schedules) {
-//            return schedules.stream()
-//                    .map(ReminderSchedule::getMember)
-//                    .map(Member::getId)
-//                    .toList();
-//        }
-//
-//        @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
-//        @Test
-//        void success_whenValidSchedules() {
-//            // given
-//            List<Long> memberIds = List.of(1L, 2L);
-//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
-//
-//            List<DeviceTokenResponse> deviceTokens = List.of(
-//                    new DeviceTokenResponse(1L, "token-1"),
-//                    new DeviceTokenResponse(2L, "token-2")
-//            );
-//
-//            when(notificationBatchService.readChunk(
-//                    any(),
-//                    any(),
-//                    eq(1000)
-//            )).thenReturn(any());
-//
-//            // when
-//            notificationService.processReminderNotifications1(now);
-//
-//            // then
-//            // 1. 배치 저장 검증
-//            verify(notificationBatchRepository).batchInsert(
-//                    argThat((List<NotificationInsertDto> dtos) ->
-//                            dtos.size() == 2 &&
-//                                    dtos.stream().allMatch(dto ->
-//                                            dto.notificationType() == NotificationType.REMIND &&
-//                                                    (dto.memberId() == 1L || dto.memberId() == 2L)
-//                                    )
-//                    ),
-//                    any());
-//
-//            // 2. FCM 이벤트 발행 검증
-//            verify(applicationEventPublisher).publishEvent(
-//                    argThat((SendMessageByFcmTokensRequest evt) ->
-//                            evt.allTokens().containsAll(List.of("token-1", "token-2")) &&
-//                                    evt.allTokens().size() == 2
-//                    )
-//            );
-//        }
-//
-//        @DisplayName("스케줄이 비어있으면 알림을 저장하지 않는다")
-//        @Test
-//        void success_whenEmptySchedules() {
-//            // given
-//            List<ReminderSchedule> emptySchedules = List.of();
-//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
-//
-//            // when
-//            List<Long> memberIds = getMemberIds(emptySchedules);
-//            notificationService.processReminderNotifications1(now);
-//
-//            // then
-//            verify(notificationBatchRepository, never()).batchInsert(any(), any());
-//            verify(applicationEventPublisher, never()).publishEvent(any());
-//        }
-//
-//        @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
-//        @Test
-//        void success_whenMemberHasNoDevices() {
-//            // given
-//            List<Long> memberIds = List.of(member.getId());
-//
-//            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
-//
-//            when(notificationBatchService.batchRead(
-//                    any(BiFunction.class),
-//                    any(Function.class),
-//                    eq(1000)
-//            )).thenReturn(List.of());
-//
-//            // when
-//            notificationService.processReminderNotifications1(now);
-//
-//            // then
-//            verify(notificationBatchRepository).batchInsert(
-//                    argThat((List<NotificationInsertDto> dtos) ->
-//                            dtos.size() == 1 && dtos.getFirst().notificationType() == NotificationType.REMIND
-//                                    && dtos.getFirst().memberId() == 1L
-//                    ), 1000
-//            );
-//
-//            // 2. FCM 이벤트 발행 검증
-//            verify(applicationEventPublisher, never()).publishEvent(any());
-//        }
-//    }
+    @DisplayName("리마인더 알림을 처리할 때")
+    @Nested
+    class ProcessReminderNotifications {
+
+        @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
+        @Test
+        void success_whenSchedulesExist() {
+            // given
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
+
+            Long member1Id = 1L;
+            Long member2Id = 2L;
+            List<Long> memberIds = List.of(member1Id, member2Id);
+
+            String token1 = "fcm-token-1";
+            String token2 = "fcm-token-2";
+            List<String> tokens = List.of(token1, token2);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(memberIds);
+
+            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+                    .thenReturn(tokens);
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository).batchInsert(
+                    argThat(dtos -> dtos.size() == 2 &&
+                            dtos.stream()
+                                    .allMatch(dto -> dto.notificationType() == NotificationType.REMIND)
+                    ),
+                    eq(1000)
+            );
+
+            verify(deviceRepository).findAllTokenByMemberIdIn(memberIds);
+
+            verify(publisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest event) ->
+                            event.allTokens().containsAll(tokens)
+                    )
+            );
+        }
+
+        @DisplayName("스케줄이 비어있으면 알림을 저장하지 않고 FCM 이벤트도 발행하지 않는다")
+        @Test
+        void success_whenEmptySchedules() {
+            // given
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(List.of());
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository, never()).batchInsert(anyList(), eq(1000));
+            verify(publisher, never()).publishEvent(any());
+        }
+
+        @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
+        @Test
+        void success_whenMemberHasNoDevices() {
+            // given
+            Long member1Id = 1L;
+            Long member2Id = 2L;
+            List<Long> memberIds = List.of(member1Id, member2Id);
+
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(memberIds);
+
+            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+                    .thenReturn(List.of());
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository).batchInsert(
+                    argThat(dtos -> dtos.size() == 2 &&
+                            dtos.stream()
+                                    .allMatch(dto -> dto.notificationType() == NotificationType.REMIND)
+                    ),
+                    eq(1000)
+            );
+
+            // 2. FCM 이벤트 발행 검증
+            verify(publisher, never()).publishEvent(any());
+        }
+    }
 }
+

@@ -16,12 +16,15 @@ import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.FriendRelationResponse;
+import backend.mulkkam.friend.dto.FriendRelationResponse.MemberInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -29,6 +32,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.test.web.servlet.MvcResult;
 
 class FriendRelationControllerTest extends ControllerTest {
 
@@ -369,5 +373,49 @@ class FriendRelationControllerTest extends ControllerTest {
             assertThat(response.count()).isEqualTo(0L);
         }
     }
-}
 
+    @DisplayName("친구 목록을 조회할 때")
+    @Nested
+    class Read {
+
+        @DisplayName("정상적으로 조회된다")
+        @Test
+        void success() throws Exception {
+            // given
+            List<Member> addressees = new ArrayList<>();
+            for (int i = 0; i < 10; i++) {
+                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
+                memberRepository.save(member);
+                addressees.add(member);
+
+                FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
+                        FriendRelationStatus.ACCEPTED);
+                friendRelationRepository.save(friendRelation);
+            }
+
+            // when
+            MvcResult result = mockMvc.perform(get("/friends")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            String jsonResponse = result.getResponse().getContentAsString();
+
+            FriendRelationResponse parsedResponse = objectMapper.readValue(jsonResponse, FriendRelationResponse.class);
+
+            // then
+            List<Long> memberIdsInRelation = parsedResponse.informationOfMembers().stream()
+                    .map(MemberInfo::memberId)
+                    .toList();
+
+            List<Long> memberIdsOfAddressees = addressees.stream()
+                    .map(Member::getId)
+                    .toList();
+
+            assertSoftly(softly -> {
+                softly.assertThat(memberIdsInRelation).hasSize(10);
+                softly.assertThat(memberIdsInRelation).containsExactlyInAnyOrderElementsOf(memberIdsOfAddressees);
+            });
+        }
+    }
+}

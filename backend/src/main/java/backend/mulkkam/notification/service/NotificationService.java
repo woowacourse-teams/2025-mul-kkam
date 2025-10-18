@@ -8,6 +8,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
+import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
@@ -43,7 +44,6 @@ public class NotificationService {
     private static final int CHUNK_SIZE = 1_000;
 
     private final SuggestionNotificationService suggestionNotificationService;
-    private final NotificationBatchService notificationBatchService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationBatchRepository notificationBatchRepository;
@@ -51,39 +51,21 @@ public class NotificationService {
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    public void processReminderNotifications1(LocalDateTime now) {
+    public void processReminderNotifications(LocalDateTime now) {
         NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
         Long lastId = null;
 
         while (true) {
-            // - 청크 조회
-            List<Long> memberIds = notificationBatchService.readChunk(
-                    (id, pageable) -> reminderScheduleRepository
-                            .findAllActiveMemberIdsByHourAndMinute(
-                                    now.toLocalTime(),
-                                    id,
-                                    pageable
-                            ),
-                    lastId,
-                    CHUNK_SIZE
-            );
+            List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
 
             if (memberIds.isEmpty()) {
                 break;
             }
 
-            // - 청크 저장
-            List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
-                    .map(memberId -> new NotificationInsertDto(template, memberId))
-                    .toList();
-            notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+            saveAndSendNotifications(memberIds, template);
 
-            // - 청크 발송
-            List<String> tokens = readDeviceTokens(memberIds);
-            publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
-
-            if (memberIds.size() < CHUNK_SIZE) {
+            if (isLastChunk(memberIds)) {
                 break;
             }
 
@@ -91,8 +73,17 @@ public class NotificationService {
         }
     }
 
-    private List<String> readDeviceTokens(List<Long> memberIds) {
-        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
+    private List<Long> getMemberIdsForSendingNotification(LocalDateTime now, Long lastId) {
+        return ChunkReader.readChunk(
+                (id, pageable) -> reminderScheduleRepository
+                        .findAllActiveMemberIdsBySchedule(
+                                now.toLocalTime(),
+                                id,
+                                pageable
+                        ),
+                lastId,
+                CHUNK_SIZE
+        );
     }
 
     @Transactional
@@ -238,6 +229,40 @@ public class NotificationService {
         return devices.stream()
                 .map(Device::getToken)
                 .toList();
+    }
+
+    private void saveAndSendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        savedNotifications(memberIds, template);
+        sendNotifications(memberIds, template);
+    }
+
+    private void savedNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
+                .map(memberId -> new NotificationInsertDto(template, memberId))
+                .toList();
+        notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+    }
+
+    private void sendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        List<String> tokens = readDeviceTokens(memberIds);
+        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+    }
+
+    private List<String> readDeviceTokens(List<Long> memberIds) {
+        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
+    }
+
+    private boolean isLastChunk(List<Long> memberIds) {
+        return memberIds.size() < CHUNK_SIZE;
     }
 
     private Notification getNotification(Long id) {
