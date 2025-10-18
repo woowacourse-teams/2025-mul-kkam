@@ -79,7 +79,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     @Query("""
                 SELECT new backend.mulkkam.friend.repository.dto.SentFriendRelationSummary(fr.id, m.memberNickname.value)
                 FROM FriendRelation fr
-                JOIN Member m ON fr.requesterId = m.id
+                JOIN Member m ON fr.addresseeId = m.id
                 WHERE fr.requesterId = :memberId
                   AND (fr.friendRelationStatus = "REQUESTED")
                   AND (:lastId IS NULL OR fr.id < :lastId)
