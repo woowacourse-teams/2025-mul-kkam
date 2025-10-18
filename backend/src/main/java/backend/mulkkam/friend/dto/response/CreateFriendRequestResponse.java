@@ -1,4 +1,4 @@
-package backend.mulkkam.friend.dto;
+package backend.mulkkam.friend.dto.response;
 
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;

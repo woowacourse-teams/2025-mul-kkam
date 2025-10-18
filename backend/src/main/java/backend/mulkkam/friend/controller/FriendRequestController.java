@@ -1,22 +1,30 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.friend.dto.CreateFriendRequestRequest;
-import backend.mulkkam.friend.dto.CreateFriendRequestResponse;
-import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
+import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.friend.dto.request.CreateFriendRequestRequest;
+import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
+import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
+import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.service.FriendRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "친구 요청", description = "친구 요청 API")
@@ -59,5 +67,31 @@ public class FriendRequestController {
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         friendRequestService.modifyFriendStatus(requestId, request, memberDetails);
+    }
+
+    @Operation(summary = "받은 친구 신청 목록", description = "내가 받은 친구 신청 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReceivedFriendRelationResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping("/received")
+    public ReadReceivedFriendRelationResponse getReceivedFriendRequests(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "lastId, 첫 요청시 null", required = false)
+            @RequestParam(required = false) Long lastId,
+            @Parameter(description = "size", required = true)
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return friendRequestService.readReceivedFriendRequests(memberDetails, lastId, size);
+    }
+
+    @Operation(summary = "받은 친구 신청 목록 갯수 조회", description = "내가 받은 친구 신청 목록의 갯수를 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetReceivedFriendRequestCountResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping("/received-count")
+    public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
+        return friendRequestService.getReceivedFriendRequestCount(memberDetails);
     }
 }

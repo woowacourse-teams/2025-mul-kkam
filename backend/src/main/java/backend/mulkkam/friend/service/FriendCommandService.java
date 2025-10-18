@@ -7,7 +7,7 @@ import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.dto.CreateFriendRequestResponse;
+import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

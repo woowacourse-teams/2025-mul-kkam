@@ -1,4 +1,4 @@
-package backend.mulkkam.friend.dto;
+package backend.mulkkam.friend.dto.request;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

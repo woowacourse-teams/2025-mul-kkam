@@ -4,10 +4,10 @@ import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Status;
+import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -53,7 +53,6 @@ import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import java.util.List;
-import org.apache.http.HttpHeaders;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -148,7 +147,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(patch("/members/notifications/night")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .header(AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsNightNotificationAgreedRequest)))
                     .andExpect(status().isOk());
@@ -169,7 +168,7 @@ class MemberControllerTest extends ControllerTest {
 
             // when
             mockMvc.perform(patch("/members/notifications/marketing")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                            .header(AUTHORIZATION, "Bearer " + token)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(modifyIsMarketingNotificationAgreedRequest)))
                     .andExpect(status().isOk())
@@ -419,7 +418,7 @@ class MemberControllerTest extends ControllerTest {
                             .param("word", "")
                             .param("lastId", "")
                             .param("size", "10")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -447,7 +446,7 @@ class MemberControllerTest extends ControllerTest {
                             .param("word", "테스트")
                             .param("lastId", "")
                             .param("size", "2")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                            .header(AUTHORIZATION, "Bearer " + token))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
