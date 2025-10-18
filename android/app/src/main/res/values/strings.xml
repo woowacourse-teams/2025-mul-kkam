@@ -253,4 +253,6 @@
 
     <string name="search_friends_top_app_bar_title">친구 찾기</string>
     <string name="search_friends_empty">닉네임을 찾을 수 없어요</string>
+    <string name="search_friends_request_success">친구 신청을 완료했어요!</string>
+    <string name="search_friends_request_failed">친구 신청에 실패했어요</string>
 </resources>

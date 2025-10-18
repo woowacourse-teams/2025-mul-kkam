@@ -1,7 +1,6 @@
 package com.mulkkam.ui.searchmembers.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +27,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
 fun SearchMembersItem(
@@ -59,7 +59,7 @@ fun SearchMembersItem(
                 modifier =
                     Modifier
                         .size(48.dp)
-                        .clickable { onRequest }
+                        .noRippleClickable(onClick = onRequest)
                         .padding(6.dp)
                         .clip(RoundedCornerShape(12.dp))
                         .background(Primary100),

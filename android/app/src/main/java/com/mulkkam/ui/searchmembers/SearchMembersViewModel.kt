@@ -2,14 +2,18 @@ package com.mulkkam.ui.searchmembers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.RepositoryInjection.friendsRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
@@ -30,8 +34,11 @@ class SearchMembersViewModel : ViewModel() {
         MutableStateFlow(MulKkamUiState.Idle)
     val loadUiState: StateFlow<MulKkamUiState<Unit>> = _loadUiState.asStateFlow()
 
-    private val _isTyping = MutableStateFlow(false)
-    val isTyping = _isTyping.asStateFlow()
+    private val _isTyping: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isTyping: StateFlow<Boolean> = _isTyping.asStateFlow()
+
+    private val _onRequestFriends: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow<MulKkamUiState<Unit>>()
+    val onRequestFriends: SharedFlow<MulKkamUiState<Unit>> = _onRequestFriends.asSharedFlow()
 
     init {
         viewModelScope.launch {
@@ -79,7 +86,15 @@ class SearchMembersViewModel : ViewModel() {
     }
 
     fun requestFriends(id: Long) {
-        // TODO: 서버 연결 필요
+        viewModelScope.launch {
+            runCatching {
+                friendsRepository.postFriendRequest(id).getOrError()
+            }.onSuccess {
+                _onRequestFriends.emit(MulKkamUiState.Success(Unit))
+            }.onFailure {
+                _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+            }
+        }
     }
 
     companion object {

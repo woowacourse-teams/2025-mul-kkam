@@ -1,6 +1,8 @@
 package com.mulkkam.ui.searchmembers
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.view.View
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,10 +19,16 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.R
+import com.mulkkam.domain.model.result.MulKkamError
+import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -39,12 +47,21 @@ fun SearchMembersScreen(
     state: LazyListState = rememberLazyListState(),
     viewModel: SearchMembersViewModel = viewModel(),
 ) {
+    val context = LocalContext.current
+    val view = LocalView.current
+
     val searchMembersUiState by viewModel.searchMembersUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
 
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.onLoadMore(action = { viewModel.loadMoreMembers() })
+
+    LaunchedEffect(Unit) {
+        viewModel.onRequestFriends.collect { state ->
+            handleRequestFriendsAction(state, view, context)
+        }
+    }
 
     Scaffold(
         topBar = { SearchMembersTopAppBar(navigateToBack) },
@@ -114,6 +131,34 @@ private fun LazyListState.onLoadMore(
     }
     LaunchedEffect(reached) {
         if (reached) action()
+    }
+}
+
+private fun handleRequestFriendsAction(
+    state: MulKkamUiState<Unit>,
+    view: View,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            CustomSnackBar
+                .make(
+                    view,
+                    getString(context, R.string.search_friends_request_success),
+                    R.drawable.ic_terms_all_check_on,
+                ).show()
+        }
+
+        is MulKkamUiState.Failure -> {
+            CustomSnackBar
+                .make(
+                    view,
+                    getString(context, R.string.search_friends_request_failed),
+                    R.drawable.ic_alert_circle,
+                ).show()
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
     }
 }
 
