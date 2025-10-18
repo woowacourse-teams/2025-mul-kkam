@@ -12,6 +12,7 @@ import backend.mulkkam.common.utils.paging.PagingUtils;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.FriendRelationResponse;
 import backend.mulkkam.friend.dto.FriendRelationResponse.MemberInfo;
+import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
 import java.util.List;
@@ -35,6 +36,19 @@ public class FriendRelationService {
                 .ifPresent(friendRelationRepository::delete);
     }
 
+    @Transactional
+    public void modifyFriendStatus(
+            Long friendRelationId,
+            PatchFriendStatusRequest request,
+            MemberDetails memberDetails
+    ) {
+        switch (request.status()) {
+            case ACCEPT -> acceptFriend(friendRelationId, memberDetails);
+            case REJECT -> rejectFriendRequest(friendRelationId, memberDetails);
+        }
+    }
+
+    // TODO: endpoint 변경 PR 반영되면 접근 제어를 private 으로 변경하기
     @Transactional
     public void acceptFriend(
             Long friendRelationId,
