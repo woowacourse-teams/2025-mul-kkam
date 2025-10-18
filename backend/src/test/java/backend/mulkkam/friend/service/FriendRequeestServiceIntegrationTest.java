@@ -304,7 +304,7 @@ class FriendRequeestServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // then
-            List<Long> actual = result.sentFriendRelationInfos().stream()
+            List<Long> actual = result.results().stream()
                     .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 
@@ -344,7 +344,7 @@ class FriendRequeestServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // then
-            List<Long> actual = result.sentFriendRelationInfos().stream()
+            List<Long> actual = result.results().stream()
                     .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 

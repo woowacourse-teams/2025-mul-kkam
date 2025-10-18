@@ -148,7 +148,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).hasSize(2);
+                softly.assertThat(response.results()).hasSize(2);
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -185,7 +185,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then - 첫 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(firstPageResponse.friendRelationResponses()).hasSize(2);
+                softly.assertThat(firstPageResponse.results()).hasSize(2);
                 softly.assertThat(firstPageResponse.hasNext()).isTrue();
             });
 
@@ -204,7 +204,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then - 두 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(secondPageResponse.friendRelationResponses()).hasSize(1);
+                softly.assertThat(secondPageResponse.results()).hasSize(1);
                 softly.assertThat(secondPageResponse.hasNext()).isFalse();
             });
         }
@@ -226,7 +226,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).isEmpty();
+                softly.assertThat(response.results()).isEmpty();
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNull();
             });
@@ -260,7 +260,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).hasSize(1);
+                softly.assertThat(response.results()).hasSize(1);
                 softly.assertThat(response.hasNext()).isTrue();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -407,7 +407,7 @@ class FriendControllerTest extends ControllerTest {
                     resultContent, ReadSentFriendRelationResponse.class);
 
             // then
-            List<Long> actual = response.sentFriendRelationInfos().stream()
+            List<Long> actual = response.results().stream()
                     .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 
@@ -446,7 +446,7 @@ class FriendControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.sentFriendRelationInfos()).hasSize(2);
+                softly.assertThat(response.results()).hasSize(2);
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -484,7 +484,7 @@ class FriendControllerTest extends ControllerTest {
 
         // then - 첫 번째 페이지 검증
         assertSoftly(softly -> {
-            softly.assertThat(firstPageResponse.sentFriendRelationInfos()).hasSize(2);
+            softly.assertThat(firstPageResponse.results()).hasSize(2);
             softly.assertThat(firstPageResponse.hasNext()).isTrue();
         });
 
@@ -503,7 +503,7 @@ class FriendControllerTest extends ControllerTest {
 
         // then - 두 번째 페이지 검증
         assertSoftly(softly -> {
-            softly.assertThat(secondPageResponse.sentFriendRelationInfos()).hasSize(1);
+            softly.assertThat(secondPageResponse.results()).hasSize(1);
             softly.assertThat(secondPageResponse.hasNext()).isFalse();
         });
     }
@@ -536,7 +536,7 @@ class FriendControllerTest extends ControllerTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(response.sentFriendRelationInfos()).hasSize(1);
+            softly.assertThat(response.results()).hasSize(1);
             softly.assertThat(response.hasNext()).isTrue();
             softly.assertThat(response.nextId()).isNotNull();
         });
