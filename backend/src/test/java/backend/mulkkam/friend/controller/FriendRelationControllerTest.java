@@ -1,9 +1,12 @@
 package backend.mulkkam.friend.controller;
 
+import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
+import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -13,19 +16,21 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+
+import java.util.List;
 
 class FriendRelationControllerTest extends ControllerTest {
 
@@ -117,11 +122,15 @@ class FriendRelationControllerTest extends ControllerTest {
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                         FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
+                PatchFriendStatusRequest request = new PatchFriendStatusRequest(REJECT);
 
                 // when
-                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/reject")
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
-                        .andDo(print()).andExpect(status().isOk());
+                mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
+                                .contentType(APPLICATION_JSON)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andDo(print())
+                        .andExpect(status().isOk());
 
                 // then
                 List<FriendRelation> friendRelations = friendRelationRepository.findAll();
@@ -142,12 +151,16 @@ class FriendRelationControllerTest extends ControllerTest {
                 FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                         FriendRelationStatus.REQUESTED);
                 friendRelationRepository.save(friendRelation);
+                PatchFriendStatusRequest request = new PatchFriendStatusRequest(ACCEPT);
 
                 // when
-                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/accept")
+                mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
+                                .contentType(APPLICATION_JSON)
                                 .header(HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + tokenOfAddressee))
-                        .andDo(print()).andExpect(status().isOk());
+                                        "Bearer " + tokenOfAddressee)
+                                .content(objectMapper.writeValueAsString(request)))
+                        .andDo(print())
+                        .andExpect(status().isOk());
 
                 // then
                 List<FriendRelation> friendRelations = friendRelationRepository.findAll();

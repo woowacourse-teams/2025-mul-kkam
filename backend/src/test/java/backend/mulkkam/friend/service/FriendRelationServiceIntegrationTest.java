@@ -4,6 +4,8 @@ package backend.mulkkam.friend.service;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
+import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
+import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
@@ -15,6 +17,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
@@ -38,6 +41,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private FriendService friendService;
+
+    @Autowired
+    private FriendRequestService friendRequestService;
 
     @Autowired
     private FriendRelationRepository friendRelationRepository;
@@ -103,7 +109,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(1L,
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
+                    1L,
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -124,8 +132,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -140,8 +149,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.rejectFriendRequest(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId())
             );
 
@@ -161,8 +171,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -177,8 +188,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     savedFriendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(INVALID_FRIEND_RELATION.name());
@@ -193,7 +205,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(1L,
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
+                    1L,
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -214,8 +228,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -230,8 +245,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.acceptFriend(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(addressee.getId())
             );
 
@@ -255,8 +271,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -269,13 +286,15 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
-            friendService.rejectFriendRequest(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId()));
 
             // when & then
-            assertThatThrownBy(() -> friendService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
