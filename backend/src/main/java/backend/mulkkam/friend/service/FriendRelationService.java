@@ -64,7 +64,7 @@ public class FriendRelationService {
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
     }
 
-    public FriendRelationResponse read(
+    public FriendRelationResponse readFriendRelationsInStatusAccepted(
             Long lastId,
             int size,
             MemberDetails memberDetails

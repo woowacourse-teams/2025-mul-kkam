@@ -68,13 +68,14 @@ public class FriendController {
     @Operation(summary = "친구 목록 조회", description = "사용자의 친구 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @GetMapping
-    public ResponseEntity<FriendRelationResponse> read(
+    public ResponseEntity<FriendRelationResponse> readFriendRelationsInStatusAccepted(
             @Parameter(description = "커서 lastId(최초 요청시 생략)")
             @RequestParam(required = false) Long lastId,
             @Parameter(description = "size 값", required = true, example = "5")
             @RequestParam(defaultValue = "10") int size,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        return ResponseEntity.ok(friendRelationService.read(lastId, size, memberDetails));
+        return ResponseEntity.ok(
+                friendRelationService.readFriendRelationsInStatusAccepted(lastId, size, memberDetails));
     }
 }
