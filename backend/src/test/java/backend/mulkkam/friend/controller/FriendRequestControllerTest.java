@@ -1,15 +1,18 @@
 package backend.mulkkam.friend.controller;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED;
 import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
 import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
 import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -175,7 +178,7 @@ class FriendRequestControllerTest extends ControllerTest {
         @Test
         void error_alreadyFriend() throws Exception {
             // given
-            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), FriendRelationStatus.ACCEPTED);
+            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), ACCEPTED);
             friendRelationRepository.save(friendRelation);
             CreateFriendRequestRequest request = new CreateFriendRequestRequest(addressee.getId());
 
@@ -194,6 +197,66 @@ class FriendRequestControllerTest extends ControllerTest {
         }
     }
 
+    @DisplayName("친구 요청을 취소할 때")
+    @Nested
+    class CancelFriendRequest {
+
+        @DisplayName("친구 신청자가 요청을 취소할 수 있다.")
+        @Test
+        void success_requestByRequester() throws Exception {
+            // given
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
+            friendRelationRepository.save(friendRelation);
+
+            // when
+            mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
+                    .andDo(print())
+                    .andExpect(status().isNoContent());
+
+            // then
+            assertThat(friendRelationRepository.findAll()).isEmpty();
+        }
+
+        @DisplayName("이미 수락된 요청인 경우 예외가 발생한다.")
+        @Test
+        void error_alreadyAccepted() throws Exception {
+            // given
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), ACCEPTED);
+            friendRelationRepository.save(friendRelation);
+
+            // when
+            String json = mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(ALREADY_ACCEPTED.name());
+        }
+
+        @DisplayName("요청자가 아닌 유저는 친구 신청을 취소할 수 없다.")
+        @Test
+        void error_requestByOther() throws Exception {
+            // given
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
+            friendRelationRepository.save(friendRelation);
+
+            // when
+            String json = mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+        }
+    }
+
     @DisplayName("친구 요청 상태를 수정할 때")
     @Nested
     class UpdateFriendRequest {
@@ -202,8 +265,7 @@ class FriendRequestControllerTest extends ControllerTest {
         @Test
         void success_rejected() throws Exception {
             // given
-            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendRelationStatus.REQUESTED);
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
             PatchFriendStatusRequest request = new PatchFriendStatusRequest(REJECT);
 
@@ -226,8 +288,7 @@ class FriendRequestControllerTest extends ControllerTest {
         @Test
         void success_accepted() throws Exception {
             // given
-            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendRelationStatus.REQUESTED);
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
             PatchFriendStatusRequest request = new PatchFriendStatusRequest(ACCEPT);
 
@@ -246,8 +307,7 @@ class FriendRequestControllerTest extends ControllerTest {
                 softly.assertThat(friendRelations).hasSize(1);
                 softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                softly.assertThat(friendRelations.getFirst().getFriendRelationStatus())
-                        .isEqualTo(FriendRelationStatus.ACCEPTED);
+                softly.assertThat(friendRelations.getFirst().getFriendRelationStatus()).isEqualTo(ACCEPTED);
             });
         }
 
@@ -272,7 +332,7 @@ class FriendRequestControllerTest extends ControllerTest {
             FriendRelation friendRelation = new FriendRelation(
                     requester.getId(),
                     addressee.getId(),
-                    FriendRelationStatus.REQUESTED
+                    REQUESTED
             );
             friendRelationRepository.save(friendRelation);
             PatchFriendStatusRequest request = new PatchFriendStatusRequest(
