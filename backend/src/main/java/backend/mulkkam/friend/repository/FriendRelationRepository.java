@@ -10,6 +10,15 @@ import org.springframework.data.repository.query.Param;
 public interface FriendRelationRepository extends JpaRepository<FriendRelation, Long> {
 
     @Query("""
+        SELECT (EXISTS(
+                SELECT fr
+                FROM FriendRelation fr
+                WHERE (fr.addresseeId = :addresseeId AND fr.requesterId = :requesterId)
+                    OR (fr.addresseeId = :requesterId AND fr.requesterId = :addresseeId)))
+    """)
+    boolean existsByMemberIds(@Param("addresseeId") Long addresseeId, @Param("requesterId") Long requesterId);
+
+    @Query("""
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.id = :id

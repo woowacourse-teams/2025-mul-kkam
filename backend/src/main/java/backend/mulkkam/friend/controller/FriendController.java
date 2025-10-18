@@ -1,7 +1,7 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.friend.service.FriendService;
+import backend.mulkkam.friend.service.FriendCommandService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/friends")
 public class FriendController {
 
-    private final FriendService friendService;
+    private final FriendCommandService friendCommandService;
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @DeleteMapping("/{friendRelationId}")
@@ -28,7 +28,7 @@ public class FriendController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendService.delete(friendRelationId, memberDetails);
+        friendCommandService.delete(friendRelationId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 }

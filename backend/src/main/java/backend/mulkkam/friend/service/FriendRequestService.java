@@ -14,7 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class FriendRequestService {
 
-    private final FriendService friendService;
+    private final FriendQueryService friendQueryService;
+    private final FriendCommandService friendCommandService;
 
     @Transactional
     public void modifyFriendStatus(
@@ -32,7 +33,7 @@ public class FriendRequestService {
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = friendService.getFriendRelation(friendRelationId);
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
@@ -45,9 +46,9 @@ public class FriendRequestService {
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = friendService.getFriendRelation(friendRelationId);
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
-            friendService.delete(friendRelationId, memberDetails);
+            friendCommandService.delete(friendRelationId, memberDetails);
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
