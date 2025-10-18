@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,7 +33,7 @@ public class FriendRequestController {
     @PostMapping
     public ResponseEntity<Void> createFriendRequest(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
-            @RequestBody CreateFriendRequestRequest request,
+            @RequestBody @Valid CreateFriendRequestRequest request,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
@@ -55,7 +56,7 @@ public class FriendRequestController {
     public void updateFriendRequest(
             @Parameter(description = "취소하려는 요청의 id", required = true)
             @PathVariable Long requestId,
-            @RequestBody PatchFriendStatusRequest request,
+            @RequestBody @Valid PatchFriendStatusRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         friendService.modifyFriendStatus(requestId, request, memberDetails);
