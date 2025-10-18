@@ -424,7 +424,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("상태가 REQUEST 인 경우만 반환한다")
+        @DisplayName("상태가 REQUESTED 인 경우만 반환한다")
         @Test
         void success_onlyStatusIsRequested() {
             // given
