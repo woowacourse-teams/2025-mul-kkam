@@ -14,6 +14,7 @@ import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +44,22 @@ public class FriendRequestService {
     public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
         Long count = friendQueryService.getReceivedFriendRequestCount(memberDetails);
         return new GetReceivedFriendRequestCountResponse(count);
+    }
+
+    @Transactional(readOnly = true)
+    public ReadSentFriendRelationResponse readSentFriendRelations(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PagingResult<ReadSentFriendRelationResponse.SentFriendRelationInfo, Long> pagingResult
+                = friendQueryService.getSentFriendRelationInfosByPaging(memberDetails, lastId, size);
+
+        return new ReadSentFriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
     }
 
     @Transactional

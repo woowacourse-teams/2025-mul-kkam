@@ -396,7 +396,7 @@ class FriendControllerTest extends ControllerTest {
             }
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/sent")
+            String resultContent = mockMvc.perform(get("/friend-requests/sent")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andExpect(status().isOk())
                     .andReturn()
@@ -433,7 +433,7 @@ class FriendControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/sent")
+            String resultContent = mockMvc.perform(get("/friend-requests/sent")
                             .param("size", "10")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andExpect(status().isOk())
@@ -471,7 +471,7 @@ class FriendControllerTest extends ControllerTest {
         friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2, friendRelation3));
 
         // when - 첫 번째 페이지 조회
-        String firstPageContent = mockMvc.perform(get("/friends/requests/sent")
+        String firstPageContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("size", "2")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                 .andExpect(status().isOk())
@@ -489,7 +489,7 @@ class FriendControllerTest extends ControllerTest {
         });
 
         // when - 두 번째 페이지 조회
-        String secondPageContent = mockMvc.perform(get("/friends/requests/sent")
+        String secondPageContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("lastId", firstPageResponse.nextId().toString())
                         .param("size", "2")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
@@ -523,7 +523,7 @@ class FriendControllerTest extends ControllerTest {
         friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
         // when
-        String resultContent = mockMvc.perform(get("/friends/requests/sent")
+        String resultContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("size", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                 .andExpect(status().isOk())
