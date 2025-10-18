@@ -4,7 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.RepositoryInjection.friendsRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
+import com.mulkkam.domain.model.members.Direction
 import com.mulkkam.domain.model.members.MemberSearchInfo
+import com.mulkkam.domain.model.members.Status
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -25,10 +27,10 @@ class SearchMembersViewModel : ViewModel() {
     private val _name: MutableStateFlow<String> = MutableStateFlow("")
     val name: StateFlow<String> = _name.asStateFlow()
 
-    private val _searchMembersUiState: MutableStateFlow<MulKkamUiState<List<MemberSearchInfo>>> =
+    private val _memberSearchUiState: MutableStateFlow<MulKkamUiState<List<MemberSearchInfo>>> =
         MutableStateFlow(MulKkamUiState.Idle)
-    val searchMembersUiState: StateFlow<MulKkamUiState<List<MemberSearchInfo>>> =
-        _searchMembersUiState.asStateFlow()
+    val memberSearchUiState: StateFlow<MulKkamUiState<List<MemberSearchInfo>>> =
+        _memberSearchUiState.asStateFlow()
 
     private val _loadUiState: MutableStateFlow<MulKkamUiState<Unit>> =
         MutableStateFlow(MulKkamUiState.Idle)
@@ -60,7 +62,7 @@ class SearchMembersViewModel : ViewModel() {
             runCatching {
                 membersRepository.getMembersSearch(name.value, lastId, SEARCH_SIZE).getOrError()
             }.onSuccess { memberSearchResult ->
-                _searchMembersUiState.value =
+                _memberSearchUiState.value =
                     MulKkamUiState.Success(memberSearchResult.memberSearchInfos)
                 lastId = memberSearchResult.nextId
                 _isTyping.value = false
@@ -76,9 +78,9 @@ class SearchMembersViewModel : ViewModel() {
                 membersRepository.getMembersSearch(name.value, lastId, SEARCH_SIZE).getOrError()
             }.onSuccess { memberSearchResult ->
                 _loadUiState.value = MulKkamUiState.Success(Unit)
-                val currentList = searchMembersUiState.value.toSuccessDataOrNull() ?: emptyList()
+                val currentList = memberSearchUiState.value.toSuccessDataOrNull() ?: emptyList()
                 val updatedList = currentList + memberSearchResult.memberSearchInfos
-                _searchMembersUiState.value = MulKkamUiState.Success(updatedList)
+                _memberSearchUiState.value = MulKkamUiState.Success(updatedList)
                 lastId = memberSearchResult.nextId
             }.onFailure {
                 _loadUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
@@ -92,18 +94,36 @@ class SearchMembersViewModel : ViewModel() {
                 // TODO: 친구 요청 수락 로직 구현
                 return@launch
             }
-            requestFriends(memberSearchInfo.id)
+            sendFriendRequest(memberSearchInfo.id)
         }
     }
 
-    private suspend fun requestFriends(id: Long) {
+    private suspend fun sendFriendRequest(id: Long) {
         runCatching {
             friendsRepository.postFriendRequest(id).getOrError()
         }.onSuccess {
             _onRequestFriends.emit(MulKkamUiState.Success(Unit))
+            updateSearchMembersUiState(id)
         }.onFailure {
             _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
         }
+    }
+
+    private fun updateSearchMembersUiState(id: Long) {
+        val currentList = _memberSearchUiState.value.toSuccessDataOrNull() ?: return
+        val updatedList =
+            currentList.map { member ->
+                if (member.id == id) {
+                    member.copy(
+                        status = Status.REQUESTED,
+                        direction = Direction.REQUESTED_BY_ME,
+                    )
+                } else {
+                    member
+                }
+            }
+
+        _memberSearchUiState.value = MulKkamUiState.Success(updatedList)
     }
 
     companion object {

@@ -49,7 +49,7 @@ fun SearchMembersScreen(
     val context = LocalContext.current
     val view = LocalView.current
 
-    val searchMembersUiState by viewModel.searchMembersUiState.collectAsStateWithLifecycle()
+    val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
 
@@ -71,7 +71,7 @@ fun SearchMembersScreen(
         ) {
             SearchMembersTextField(name) { viewModel.updateName(it) }
 
-            if (!isTyping && name.isNotEmpty() && searchMembersUiState.toSuccessDataOrNull()?.size == 0) {
+            if (!isTyping && name.isNotEmpty() && memberSearchUiState.toSuccessDataOrNull()?.size == 0) {
                 EmptySearchMembersScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -80,7 +80,7 @@ fun SearchMembersScreen(
             LazyColumn(
                 state = state,
             ) {
-                val searchMembers = searchMembersUiState.toSuccessDataOrNull() ?: return@LazyColumn
+                val searchMembers = memberSearchUiState.toSuccessDataOrNull() ?: return@LazyColumn
 
                 items(
                     count = searchMembers.size,
