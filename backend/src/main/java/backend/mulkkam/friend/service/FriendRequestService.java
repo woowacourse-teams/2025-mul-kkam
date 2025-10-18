@@ -39,11 +39,8 @@ public class FriendRequestService {
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
-        if (!friendRelation.isPending()) {
-            throw new CommonException(ALREADY_ACCEPTED);
-        }
-        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
+        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
+        if (friendRelation.isRequesterMemberId(memberDetails.id())) {
             friendCommandService.deleteFriendRequest(friendRelationId);
             return;
         }
@@ -66,7 +63,7 @@ public class FriendRequestService {
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
+        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendRelation.updateAccepted();
             return;
@@ -78,11 +75,19 @@ public class FriendRequestService {
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
+        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
             friendCommandService.deleteFriend(friendRelationId, memberDetails);
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+    }
+
+    private FriendRelation getModifiableRelation(Long friendRelationId) {
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
+        if (!friendRelation.isPending()) {
+            throw new CommonException(ALREADY_ACCEPTED);
+        }
+        return friendRelation;
     }
 }

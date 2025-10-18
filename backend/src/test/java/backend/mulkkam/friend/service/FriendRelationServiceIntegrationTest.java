@@ -1,7 +1,7 @@
 package backend.mulkkam.friend.service;
 
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
@@ -24,12 +24,13 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -193,7 +194,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                     new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FRIEND_RELATION.name());
+                    .hasMessage(ALREADY_ACCEPTED.name());
         }
     }
 
