@@ -398,7 +398,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                     continue;
                 }
 
-                // 3의 배수인 경우에는 내가 신청을 한 관계로 저장
+                // 짝수인 경우에는 내가 신청을 한 관계로 저장
                 if (i % 2 == 0) {
                     FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
                             FriendRelationStatus.REQUESTED);
