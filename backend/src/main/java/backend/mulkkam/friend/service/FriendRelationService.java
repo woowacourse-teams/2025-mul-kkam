@@ -1,7 +1,6 @@
 package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
 
@@ -88,7 +87,6 @@ public class FriendRelationService {
             Long lastId,
             int size
     ) {
-        validatePageSize(size);
         Pageable pageable = PagingUtils.createPageRequest(size);
         List<FriendRelationRequestResponse> friendRelationRequestResponses = friendRelationRepository
                 .findReceivedFriendRequestsAfterId(memberDetails.id(), lastId, pageable);
@@ -116,8 +114,6 @@ public class FriendRelationService {
             int size,
             MemberDetails memberDetails
     ) {
-        validatePageSize(size);
-
         List<MemberInfoOfFriendRelation> memberInfoOfFriendRelations = friendRelationRepository.findByMemberId(
                 memberDetails.id(),
                 lastId,
@@ -146,12 +142,6 @@ public class FriendRelationService {
     private void validRequested(final FriendRelation friendRelation) {
         if (friendRelation.isNotRequest()) {
             throw new CommonException(INVALID_FRIEND_RELATION);
-        }
-    }
-
-    private void validatePageSize(int size) {
-        if (size <= 0) {
-            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }
 }
