@@ -63,7 +63,7 @@ public class FriendRequestController {
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")
     @PatchMapping("/{requestId}")
     public void updateFriendRequest(
-            @Parameter(description = "취소하려는 요청의 id", required = true)
+            @Parameter(description = "수정하려는 친구 요청의 id", required = true)
             @PathVariable Long requestId,
             @RequestBody @Valid
             PatchFriendStatusRequest request,
