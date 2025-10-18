@@ -3,6 +3,7 @@ package backend.mulkkam.friend.repository;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
+import backend.mulkkam.friend.repository.dto.SentFriendRelationSummary;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -69,6 +70,21 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 ORDER BY fr.id DESC
             """)
     List<MemberInfoOfFriendRelation> findByMemberId(
+            @Param("memberId") Long memberId,
+            @Param("lastId") Long lastId,
+            Pageable pageable
+    );
+
+    @Query("""
+                SELECT new backend.mulkkam.friend.repository.dto.SentFriendRelationSummary(fr.id, m.memberNickname.value)
+                FROM FriendRelation fr
+                JOIN Member m ON fr.addresseeId = m.id
+                WHERE fr.requesterId = :memberId
+                  AND (fr.friendRelationStatus = "REQUESTED")
+                  AND (:lastId IS NULL OR fr.id < :lastId)
+                ORDER BY fr.id DESC
+            """)
+    List<SentFriendRelationSummary> findSentFriendRelationsAfterId(
             @Param("memberId") Long memberId,
             @Param("lastId") Long lastId,
             Pageable pageable

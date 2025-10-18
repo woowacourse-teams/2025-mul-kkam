@@ -15,11 +15,15 @@ import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
+import backend.mulkkam.friend.repository.dto.SentFriendRelationSummary;
 import java.util.List;
 import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -128,6 +132,33 @@ public class FriendRelationService {
         );
 
         return new FriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
+    }
+
+    public ReadSentFriendRelationResponse readSentFriendRelations(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PageRequest pageRequest = PagingUtils.createPageRequest(size);
+
+        List<SentFriendRelationSummary> sentFriendRelationSummaries = friendRelationRepository.findSentFriendRelationsAfterId(
+                memberDetails.id(),
+                lastId,
+                pageRequest
+        );
+
+        PagingResult<SentFriendRelationInfo, Long> pagingResult = PagingUtils.toPagingResult(
+                sentFriendRelationSummaries,
+                size,
+                SentFriendRelationInfo::new,
+                SentFriendRelationSummary::friendRequestId
+        );
+
+        return new ReadSentFriendRelationResponse(
                 pagingResult.content(),
                 pagingResult.nextCursor(),
                 pagingResult.hasNext()
