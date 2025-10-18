@@ -9,9 +9,12 @@ import backend.mulkkam.common.utils.paging.PagingUtils;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
+import backend.mulkkam.friend.repository.dto.SentFriendRelationSummary;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,9 +56,9 @@ public class FriendQueryService {
     }
 
     public PagingResult<FriendRelationResponse.MemberInfo, Long> getMemberInfosByPaging(
+            MemberDetails memberDetails,
             Long lastId,
-            int size,
-            MemberDetails memberDetails
+            int size
     ) {
         List<MemberInfoOfFriendRelation> memberInfoOfFriendRelations = friendRelationRepository.findByMemberId(
                 memberDetails.id(),
@@ -68,6 +71,26 @@ public class FriendQueryService {
                 size,
                 FriendRelationResponse.MemberInfo::new,
                 MemberInfoOfFriendRelation::friendRelationId
+        );
+    }
+
+    public PagingResult<ReadSentFriendRelationResponse.SentFriendRelationInfo, Long> getSentFriendRelationInfosByPaging(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PageRequest pageRequest = PagingUtils.createPageRequest(size);
+        List<SentFriendRelationSummary> sentFriendRelationSummaries = friendRelationRepository.findSentFriendRelationsAfterId(
+                memberDetails.id(),
+                lastId,
+                pageRequest
+        );
+
+        return PagingUtils.toPagingResult(
+                sentFriendRelationSummaries,
+                size,
+                ReadSentFriendRelationResponse.SentFriendRelationInfo::new,
+                SentFriendRelationSummary::friendRequestId
         );
     }
 }
