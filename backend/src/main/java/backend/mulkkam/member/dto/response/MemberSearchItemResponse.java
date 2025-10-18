@@ -55,5 +55,3 @@ public record MemberSearchItemResponse(
         return NONE;
     }
 }
-
-

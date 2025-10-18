@@ -14,6 +14,8 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.dto.FriendRelationResponse;
 import backend.mulkkam.friend.dto.FriendRelationResponse.MemberInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
@@ -164,6 +166,211 @@ class FriendRelationControllerTest extends ControllerTest {
                             .isEqualTo(FriendRelationStatus.ACCEPTED);
                 });
             }
+        }
+    }
+
+    @DisplayName("받은 친구 신청 목록 조회 시")
+    @Nested
+    class GetReceivedFriendRequests {
+
+        @DisplayName("첫 요청 시 (lastId가 null) 정상적으로 조회된다.")
+        @Test
+        void success_firstRequest() throws Exception {
+            // given
+            FriendRelation friendRelation1 = new FriendRelation(requester.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            Member member = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("테스터"))
+                    .build();
+
+            Member foundMember = memberRepository.save(member);
+            FriendRelation friendRelation2 = new FriendRelation(foundMember.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
+
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/received")
+                            .param("size", "10")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(resultContent,
+                    ReadReceivedFriendRelationResponse.class);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRelationResponses()).hasSize(2);
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.nextId()).isNotNull();
+            });
+        }
+
+        @DisplayName("lastId를 사용한 페이지네이션이 정상적으로 동작한다.")
+        @Test
+        void success_withPagination() throws Exception {
+            // given
+            Member member1 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원1")).build();
+            Member member2 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원2")).build();
+            Member member3 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원3")).build();
+            memberRepository.saveAll(List.of(member1, member2, member3));
+
+            FriendRelation friendRelation1 = new FriendRelation(member1.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            FriendRelation friendRelation2 = new FriendRelation(member2.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            FriendRelation friendRelation3 = new FriendRelation(member3.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2, friendRelation3));
+
+            // when - 첫 번째 페이지 조회
+            String firstPageContent = mockMvc.perform(get("/friends/requests/received")
+                            .param("size", "2")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadReceivedFriendRelationResponse firstPageResponse = objectMapper.readValue(
+                    firstPageContent, ReadReceivedFriendRelationResponse.class);
+
+            // then - 첫 번째 페이지 검증
+            assertSoftly(softly -> {
+                softly.assertThat(firstPageResponse.friendRelationResponses()).hasSize(2);
+                softly.assertThat(firstPageResponse.hasNext()).isTrue();
+            });
+
+            // when - 두 번째 페이지 조회
+            String secondPageContent = mockMvc.perform(get("/friends/requests/received")
+                            .param("lastId", firstPageResponse.nextId().toString())
+                            .param("size", "2")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadReceivedFriendRelationResponse secondPageResponse = objectMapper.readValue(
+                    secondPageContent, ReadReceivedFriendRelationResponse.class);
+
+            // then - 두 번째 페이지 검증
+            assertSoftly(softly -> {
+                softly.assertThat(secondPageResponse.friendRelationResponses()).hasSize(1);
+                softly.assertThat(secondPageResponse.hasNext()).isFalse();
+            });
+        }
+
+        @DisplayName("받은 친구 신청이 없는 경우 빈 목록이 반환된다.")
+        @Test
+        void success_emptyList() throws Exception {
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/received")
+                            .param("size", "10")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(
+                    resultContent, ReadReceivedFriendRelationResponse.class);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRelationResponses()).isEmpty();
+                softly.assertThat(response.hasNext()).isFalse();
+                softly.assertThat(response.nextId()).isNull();
+            });
+        }
+
+        @DisplayName("size보다 많은 데이터가 있을 때 hasNext가 true이다.")
+        @Test
+        void success_hasNextTrue() throws Exception {
+            // given
+            Member member1 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원1")).build();
+            Member member2 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원2")).build();
+            memberRepository.saveAll(List.of(member1, member2));
+
+            FriendRelation friendRelation1 = new FriendRelation(member1.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            FriendRelation friendRelation2 = new FriendRelation(member2.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
+
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/received")
+                            .param("size", "1")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadReceivedFriendRelationResponse response = objectMapper.readValue(
+                    resultContent, ReadReceivedFriendRelationResponse.class);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(response.friendRelationResponses()).hasSize(1);
+                softly.assertThat(response.hasNext()).isTrue();
+                softly.assertThat(response.nextId()).isNotNull();
+            });
+        }
+    }
+
+    @DisplayName("받은 친구 신청 개수 조회 시")
+    @Nested
+    class GetReceivedFriendRequestCount {
+
+        @DisplayName("정상적으로 개수를 조회한다.")
+        @Test
+        void success_getCount() throws Exception {
+            // given
+            Member member1 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원1")).build();
+            Member member2 = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("회원2")).build();
+            memberRepository.saveAll(List.of(member1, member2));
+
+            FriendRelation request1 = new FriendRelation(member1.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            FriendRelation request2 = new FriendRelation(member2.getId(), addressee.getId(),
+                    FriendRelationStatus.REQUESTED);
+            friendRelationRepository.saveAll(List.of(request1, request2));
+
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/received/count")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            GetReceivedFriendRequestCountResponse response = objectMapper.readValue(
+                    resultContent, GetReceivedFriendRequestCountResponse.class);
+
+            // then
+            assertThat(response.count()).isEqualTo(2L);
+        }
+
+        @DisplayName("받은 친구 신청이 없는 경우 0을 반환한다.")
+        @Test
+        void success_zeroCount() throws Exception {
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/received/count")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            GetReceivedFriendRequestCountResponse response = objectMapper.readValue(
+                    resultContent, GetReceivedFriendRequestCountResponse.class);
+
+            // then
+            assertThat(response.count()).isEqualTo(0L);
         }
     }
 
