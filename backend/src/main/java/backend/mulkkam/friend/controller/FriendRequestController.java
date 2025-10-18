@@ -12,6 +12,7 @@ import backend.mulkkam.friend.service.FriendRequestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,6 +38,17 @@ public class FriendRequestController {
     private final FriendRequestService friendRequestService;
 
     @Operation(summary = "친구 신청 생성", description = "다른 유저에게 친구를 신청합니다.")
+    @ApiResponse(responseCode = "200", description = "친구 신청 성공", content = @Content(schema = @Schema(implementation = CreateFriendRequestResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 신청자와 수신자 동일", value = "{\"code\":\"INVALID_FRIEND_REQUEST\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 수신자 id", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 친구 신청 수신자", value = "{\"code\":\"NOT_FOUND_MEMBER\"}")
+    }))
+    @ApiResponse(responseCode = "409", description = "요청 내역이 이미 존재", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "서로 친구 신청을 보낸 이력 존재", value = "{\"code\":\"DUPLICATED_FRIEND_REQUEST\"}")
+    }))
     @PostMapping
     public CreateFriendRequestResponse createFriendRequest(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
@@ -49,6 +61,17 @@ public class FriendRequestController {
     }
 
     @Operation(summary = "친구 신청 취소", description = "다른 유저에게 보낸 친구 신청을 취소합니다.")
+    @ApiResponse(responseCode = "204", description = "친구 신청 취소 성공", content = @Content(schema = @Schema(implementation = CreateFriendRequestResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
+    }))
+    @ApiResponse(responseCode = "403", description = "친구 신청자가 보낸 요청이 아닌 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 신청자가 보낸 요청이 아님", value = "{\"code\":\"NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 신청 id", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
+    }))
     @DeleteMapping("/{requestId}")
     public ResponseEntity<Void> cancelFriendRequest(
             @Parameter(description = "취소하려는 요청의 id", required = true)
@@ -61,6 +84,17 @@ public class FriendRequestController {
     }
 
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")
+    @ApiResponse(responseCode = "200", description = "친구 요청 상태 변경 성공", content = @Content(schema = @Schema(implementation = CreateFriendRequestResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
+    }))
+    @ApiResponse(responseCode = "403", description = "친구 신청 수신자가 보낸 요청이 아닌 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 신청 id", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
+    }))
     @PatchMapping("/{requestId}")
     public void updateFriendRequest(
             @Parameter(description = "수정하려는 친구 요청의 id", required = true)
