@@ -10,6 +10,7 @@ public enum ConflictErrorCode implements ErrorCode {
     REQUEST_CONFLICT,
     DUPLICATED_REMINDER_SCHEDULE,
     DUPLICATED_FRIEND,
+    DUPLICATED_FRIEND_REQUEST,
     ;
 
     private static final HttpStatus status = HttpStatus.CONFLICT;

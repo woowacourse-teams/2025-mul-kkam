@@ -5,7 +5,7 @@ import java.util.List;
 
 public record ReadReceivedFriendRelationResponse(
         @Schema(description = "친구 신청 엔티티 id 및 닉네임")
-        List<FriendRelationRequestResponse> friendRelationResponses,
+        List<FriendRelationRequestResponse> results,
 
         @Schema(description = "다음 요청 시 보내야할 id", example = "25")
         Long nextId,

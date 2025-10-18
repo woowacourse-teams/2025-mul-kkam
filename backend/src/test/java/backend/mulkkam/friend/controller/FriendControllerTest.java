@@ -4,8 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.OauthAccount;
@@ -14,20 +12,17 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse.MemberInfo;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
-import backend.mulkkam.friend.dto.FriendRelationResponse;
-import backend.mulkkam.friend.dto.FriendRelationResponse.MemberInfo;
 import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
-import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -36,7 +31,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MvcResult;
 
-class FriendRelationControllerTest extends ControllerTest {
+import java.util.ArrayList;
+import java.util.List;
+
+class FriendControllerTest extends ControllerTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;
@@ -114,61 +112,6 @@ class FriendRelationControllerTest extends ControllerTest {
             List<FriendRelation> friendRelations = friendRelationRepository.findAll();
             assertThat(friendRelations).isEmpty();
         }
-
-        @DisplayName("친구 요청을 거절할 때")
-        @Nested
-        class RejectFriendRelationRequest {
-
-            @DisplayName("정상적으로 거절된다")
-            @Test
-            void success_rejected() throws Exception {
-                // given
-                FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendRelationStatus.REQUESTED);
-                friendRelationRepository.save(friendRelation);
-
-                // when
-                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/reject")
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
-                        .andDo(print()).andExpect(status().isOk());
-
-                // then
-                List<FriendRelation> friendRelations = friendRelationRepository.findAll();
-                assertSoftly(softly -> {
-                    softly.assertThat(friendRelations).hasSize(0);
-                });
-            }
-        }
-
-        @DisplayName("친구 요청을 수락할 때")
-        @Nested
-        class AcceptFriendRelationRequest {
-
-            @DisplayName("정상적으로 수락된다")
-            @Test
-            void success_accepted() throws Exception {
-                // given
-                FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                        FriendRelationStatus.REQUESTED);
-                friendRelationRepository.save(friendRelation);
-
-                // when
-                mockMvc.perform(post("/friends/request/" + friendRelation.getId() + "/accept")
-                                .header(HttpHeaders.AUTHORIZATION,
-                                        "Bearer " + tokenOfAddressee))
-                        .andDo(print()).andExpect(status().isOk());
-
-                // then
-                List<FriendRelation> friendRelations = friendRelationRepository.findAll();
-                assertSoftly(softly -> {
-                    softly.assertThat(friendRelations).hasSize(1);
-                    softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
-                    softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                    softly.assertThat(friendRelations.getFirst().getFriendRelationStatus())
-                            .isEqualTo(FriendRelationStatus.ACCEPTED);
-                });
-            }
-        }
     }
 
     @DisplayName("받은 친구 신청 목록 조회 시")
@@ -192,7 +135,7 @@ class FriendRelationControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/received")
+            String resultContent = mockMvc.perform(get("/friend-requests/received")
                             .param("size", "10")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
@@ -205,7 +148,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).hasSize(2);
+                softly.assertThat(response.results()).hasSize(2);
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -229,7 +172,7 @@ class FriendRelationControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2, friendRelation3));
 
             // when - 첫 번째 페이지 조회
-            String firstPageContent = mockMvc.perform(get("/friends/requests/received")
+            String firstPageContent = mockMvc.perform(get("/friend-requests/received")
                             .param("size", "2")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
@@ -242,12 +185,12 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then - 첫 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(firstPageResponse.friendRelationResponses()).hasSize(2);
+                softly.assertThat(firstPageResponse.results()).hasSize(2);
                 softly.assertThat(firstPageResponse.hasNext()).isTrue();
             });
 
             // when - 두 번째 페이지 조회
-            String secondPageContent = mockMvc.perform(get("/friends/requests/received")
+            String secondPageContent = mockMvc.perform(get("/friend-requests/received")
                             .param("lastId", firstPageResponse.nextId().toString())
                             .param("size", "2")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
@@ -261,7 +204,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then - 두 번째 페이지 검증
             assertSoftly(softly -> {
-                softly.assertThat(secondPageResponse.friendRelationResponses()).hasSize(1);
+                softly.assertThat(secondPageResponse.results()).hasSize(1);
                 softly.assertThat(secondPageResponse.hasNext()).isFalse();
             });
         }
@@ -270,7 +213,7 @@ class FriendRelationControllerTest extends ControllerTest {
         @Test
         void success_emptyList() throws Exception {
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/received")
+            String resultContent = mockMvc.perform(get("/friend-requests/received")
                             .param("size", "10")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
@@ -283,7 +226,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).isEmpty();
+                softly.assertThat(response.results()).isEmpty();
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNull();
             });
@@ -304,7 +247,7 @@ class FriendRelationControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/received")
+            String resultContent = mockMvc.perform(get("/friend-requests/received")
                             .param("size", "1")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
@@ -317,7 +260,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.friendRelationResponses()).hasSize(1);
+                softly.assertThat(response.results()).hasSize(1);
                 softly.assertThat(response.hasNext()).isTrue();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -343,7 +286,7 @@ class FriendRelationControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(request1, request2));
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/received/count")
+            String resultContent = mockMvc.perform(get("/friend-requests/received-count")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
                     .andReturn()
@@ -361,7 +304,7 @@ class FriendRelationControllerTest extends ControllerTest {
         @Test
         void success_zeroCount() throws Exception {
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/received/count")
+            String resultContent = mockMvc.perform(get("/friend-requests/received-count")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andExpect(status().isOk())
                     .andReturn()
@@ -453,7 +396,7 @@ class FriendRelationControllerTest extends ControllerTest {
             }
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/sent")
+            String resultContent = mockMvc.perform(get("/friend-requests/sent")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andExpect(status().isOk())
                     .andReturn()
@@ -464,8 +407,8 @@ class FriendRelationControllerTest extends ControllerTest {
                     resultContent, ReadSentFriendRelationResponse.class);
 
             // then
-            List<Long> actual = response.sentFriendRelationInfos().stream()
-                    .map(SentFriendRelationInfo::friendRequestId)
+            List<Long> actual = response.results().stream()
+                    .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 
             assertSoftly(softly -> {
@@ -490,7 +433,7 @@ class FriendRelationControllerTest extends ControllerTest {
             friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
             // when
-            String resultContent = mockMvc.perform(get("/friends/requests/sent")
+            String resultContent = mockMvc.perform(get("/friend-requests/sent")
                             .param("size", "10")
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andExpect(status().isOk())
@@ -503,7 +446,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(response.sentFriendRelationInfos()).hasSize(2);
+                softly.assertThat(response.results()).hasSize(2);
                 softly.assertThat(response.hasNext()).isFalse();
                 softly.assertThat(response.nextId()).isNotNull();
             });
@@ -528,7 +471,7 @@ class FriendRelationControllerTest extends ControllerTest {
         friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2, friendRelation3));
 
         // when - 첫 번째 페이지 조회
-        String firstPageContent = mockMvc.perform(get("/friends/requests/sent")
+        String firstPageContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("size", "2")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                 .andExpect(status().isOk())
@@ -541,12 +484,12 @@ class FriendRelationControllerTest extends ControllerTest {
 
         // then - 첫 번째 페이지 검증
         assertSoftly(softly -> {
-            softly.assertThat(firstPageResponse.sentFriendRelationInfos()).hasSize(2);
+            softly.assertThat(firstPageResponse.results()).hasSize(2);
             softly.assertThat(firstPageResponse.hasNext()).isTrue();
         });
 
         // when - 두 번째 페이지 조회
-        String secondPageContent = mockMvc.perform(get("/friends/requests/sent")
+        String secondPageContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("lastId", firstPageResponse.nextId().toString())
                         .param("size", "2")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
@@ -560,7 +503,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
         // then - 두 번째 페이지 검증
         assertSoftly(softly -> {
-            softly.assertThat(secondPageResponse.sentFriendRelationInfos()).hasSize(1);
+            softly.assertThat(secondPageResponse.results()).hasSize(1);
             softly.assertThat(secondPageResponse.hasNext()).isFalse();
         });
     }
@@ -580,7 +523,7 @@ class FriendRelationControllerTest extends ControllerTest {
         friendRelationRepository.saveAll(List.of(friendRelation1, friendRelation2));
 
         // when
-        String resultContent = mockMvc.perform(get("/friends/requests/sent")
+        String resultContent = mockMvc.perform(get("/friend-requests/sent")
                         .param("size", "1")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                 .andExpect(status().isOk())
@@ -593,7 +536,7 @@ class FriendRelationControllerTest extends ControllerTest {
 
         // then
         assertSoftly(softly -> {
-            softly.assertThat(response.sentFriendRelationInfos()).hasSize(1);
+            softly.assertThat(response.results()).hasSize(1);
             softly.assertThat(response.hasNext()).isTrue();
             softly.assertThat(response.nextId()).isNotNull();
         });
