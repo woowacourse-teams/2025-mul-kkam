@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "친구 요청", description = "친구 요청 API")
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/friend-requests")
+@RestController
 public class FriendRequestController {
 
     private final FriendRequestService friendRequestService;
@@ -39,7 +39,8 @@ public class FriendRequestController {
     @PostMapping
     public CreateFriendRequestResponse createFriendRequest(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
-            @RequestBody @Valid CreateFriendRequestRequest request,
+            @RequestBody @Valid
+            CreateFriendRequestRequest request,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
@@ -63,7 +64,8 @@ public class FriendRequestController {
     public void updateFriendRequest(
             @Parameter(description = "취소하려는 요청의 id", required = true)
             @PathVariable Long requestId,
-            @RequestBody @Valid PatchFriendStatusRequest request,
+            @RequestBody @Valid
+            PatchFriendStatusRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         friendRequestService.modifyFriendStatus(requestId, request, memberDetails);
