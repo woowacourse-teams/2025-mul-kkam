@@ -360,7 +360,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                 }
             }
 
-            // wheㄱn
+            // when
             FriendRelationResponse friendRelationResponse = friendRelationService.readFriendRelationsInStatusAccepted(
                     null, 10,
                     new MemberDetails(requester.getId()));
