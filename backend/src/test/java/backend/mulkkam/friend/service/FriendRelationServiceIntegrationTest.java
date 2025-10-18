@@ -79,7 +79,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendCommandService.delete(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
+            friendCommandService.deleteFriend(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -94,7 +94,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation foundFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendCommandService.delete(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
+            friendCommandService.deleteFriend(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();

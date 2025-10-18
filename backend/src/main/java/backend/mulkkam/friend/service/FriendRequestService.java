@@ -1,5 +1,6 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 
@@ -34,6 +35,22 @@ public class FriendRequestService {
     }
 
     @Transactional
+    public void cancel(
+            Long friendRelationId,
+            MemberDetails memberDetails
+    ) {
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
+        if (!friendRelation.isPending()) {
+            throw new CommonException(ALREADY_ACCEPTED);
+        }
+        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
+            friendCommandService.deleteFriendRequest(friendRelationId);
+            return;
+        }
+        throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+    }
+
+    @Transactional
     public void modifyFriendStatus(
             Long friendRelationId,
             PatchFriendStatusRequest request,
@@ -55,7 +72,6 @@ public class FriendRequestService {
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
-
     }
 
     private void rejectFriendRequest(
@@ -64,7 +80,7 @@ public class FriendRequestService {
     ) {
         FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
-            friendCommandService.delete(friendRelationId, memberDetails);
+            friendCommandService.deleteFriend(friendRelationId, memberDetails);
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);

@@ -56,7 +56,7 @@ public class FriendRelation extends BaseEntity {
         this.friendRelationStatus = FriendRelationStatus.ACCEPTED;
     }
 
-    public boolean isNotRequest() {
-        return friendRelationStatus != REQUESTED;
+    public boolean isPending() {
+        return friendRelationStatus == REQUESTED;
     }
 }

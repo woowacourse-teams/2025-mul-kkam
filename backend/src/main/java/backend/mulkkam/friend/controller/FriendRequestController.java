@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,13 +40,14 @@ public class FriendRequestController {
 
     @Operation(summary = "친구 신청 취소", description = "다른 유저에게 보낸 친구 신청을 취소합니다.")
     @DeleteMapping("/{requestId}")
-    public void deleteFriendRequest(
+    public ResponseEntity<Void> cancelFriendRequest(
             @Parameter(description = "취소하려는 요청의 id", required = true)
             @PathVariable Long requestId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-
+        friendRequestService.cancel(requestId, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")

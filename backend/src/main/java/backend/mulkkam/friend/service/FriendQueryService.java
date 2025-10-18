@@ -25,7 +25,7 @@ public class FriendQueryService {
     }
 
     private void validateRequested(final FriendRelation friendRelation) {
-        if (friendRelation.isNotRequest()) {
+        if (!friendRelation.isPending()) {
             throw new CommonException(INVALID_FRIEND_RELATION);
         }
     }

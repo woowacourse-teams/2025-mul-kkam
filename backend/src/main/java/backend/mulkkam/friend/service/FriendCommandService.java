@@ -22,16 +22,16 @@ public class FriendCommandService {
     private final FriendRelationRepository friendRelationRepository;
     private final MemberRepository memberRepository;
 
-    public void delete(
+    public void deleteFriendRequest(Long friendRelationId) {
+        friendRelationRepository.deleteById(friendRelationId);
+    }
+
+    public void deleteFriend(
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
         friendRelationRepository.findByIdAndMemberId(friendRelationId, memberDetails.id())
                 .ifPresent(friendRelationRepository::delete);
-    }
-
-    public FriendRelation create(FriendRelation friendRelation) {
-        return friendRelationRepository.save(friendRelation);
     }
 
     public CreateFriendRequestResponse create(

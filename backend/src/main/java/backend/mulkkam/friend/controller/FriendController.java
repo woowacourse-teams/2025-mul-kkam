@@ -28,7 +28,7 @@ public class FriendController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendCommandService.delete(friendRelationId, memberDetails);
+        friendCommandService.deleteFriend(friendRelationId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 }
