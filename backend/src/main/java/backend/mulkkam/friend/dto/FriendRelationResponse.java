@@ -6,7 +6,7 @@ import java.util.List;
 
 public record FriendRelationResponse(
         @Schema(description = "친구인 멤버의 정보")
-        List<MemberInfo> memberInfo,
+        List<MemberInfo> informationOfMembers,
 
         @Schema(description = "다음 요청의 id")
         Long nextId,

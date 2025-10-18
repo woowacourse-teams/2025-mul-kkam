@@ -197,7 +197,7 @@ class FriendRelationControllerTest extends ControllerTest {
             FriendRelationResponse parsedResponse = objectMapper.readValue(jsonResponse, FriendRelationResponse.class);
 
             // then
-            List<Long> memberIdsInRelation = parsedResponse.memberInfo().stream()
+            List<Long> memberIdsInRelation = parsedResponse.informationOfMembers().stream()
                     .map(MemberInfo::memberId)
                     .toList();
 

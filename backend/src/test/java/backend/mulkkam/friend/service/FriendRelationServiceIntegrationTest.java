@@ -317,11 +317,11 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             }
 
             // when
-            FriendRelationResponse friendRelationResponse = friendRelationService.read(null, 10,
+            FriendRelationResponse friendRelationResponse = friendRelationService.readFriendRelationsInStatusAccepted(null, 10,
                     new MemberDetails(requester.getId()));
 
             // then
-            List<Long> memberIdsOfResult = friendRelationResponse.memberInfo().stream()
+            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
                     .map(MemberInfo::memberId)
                     .toList();
 
@@ -357,12 +357,12 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                 }
             }
 
-            // when
-            FriendRelationResponse friendRelationResponse = friendRelationService.read(null, 10,
+            // wheㄱn
+            FriendRelationResponse friendRelationResponse = friendRelationService.readFriendRelationsInStatusAccepted(null, 10,
                     new MemberDetails(requester.getId()));
 
             // then
-            List<Long> memberIdsOfResult = friendRelationResponse.memberInfo().stream()
+            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
                     .map(MemberInfo::memberId)
                     .toList();
 
