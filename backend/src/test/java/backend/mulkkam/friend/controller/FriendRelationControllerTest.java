@@ -5,6 +5,7 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -16,12 +17,15 @@ import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -367,6 +371,59 @@ class FriendRelationControllerTest extends ControllerTest {
 
             // then
             assertThat(response.count()).isEqualTo(0L);
+        }
+    }
+
+    @DisplayName("보낸 친구 신청 목록 조회 시 ")
+    @Nested
+    class GetSentFriendRequest {
+
+        @DisplayName("정상적으로 조회한다.")
+        @Test
+        void success_getCount() throws Exception {
+            // given
+            List<Long> idsOfFriendRelation = new ArrayList<>();
+
+            for (int i = 0; i < 10; i++) {
+                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
+                memberRepository.save(member);
+
+                // 3의 배수인 경우에는 내가 신청을 받은 관계로 저장
+                if (i % 3 == 0) {
+                    FriendRelation friendRelation = new FriendRelation(member.getId(), requester.getId(),
+                            FriendRelationStatus.REQUESTED);
+                    friendRelationRepository.save(friendRelation);
+                    continue;
+                }
+
+                // 3의 배수인 경우에는 내가 신청을 한 관계로 저장
+                if (i % 2 == 0) {
+                    FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
+                            FriendRelationStatus.REQUESTED);
+                    friendRelationRepository.save(friendRelation);
+                    idsOfFriendRelation.add(friendRelation.getId());
+                }
+            }
+
+            // when
+            String resultContent = mockMvc.perform(get("/friends/requests/sent")
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
+                    .andExpect(status().isOk())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString();
+
+            ReadSentFriendRelationResponse response = objectMapper.readValue(
+                    resultContent, ReadSentFriendRelationResponse.class);
+
+            // then
+            List<Long> actual = response.friendRequestResponses().stream()
+                    .map(SentFriendRelationInfo::friendRequestId)
+                    .toList();
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual).containsExactlyInAnyOrderElementsOf(idsOfFriendRelation);
+            });
         }
     }
 }

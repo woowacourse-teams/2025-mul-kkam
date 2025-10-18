@@ -7,6 +7,8 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
@@ -15,18 +17,22 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 
 class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -279,6 +285,95 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
+        }
+    }
+
+    @DisplayName("내가 보낸 친구 신청 목록을 조회할 때")
+    @Nested
+    class GetSentFriendRequest {
+
+        @DisplayName("내가 요청자인 경우만 반환한다.")
+        @Test
+        void success_onlyInRequester() {
+            // given
+            List<Long> idsOfFriendRelation = new ArrayList<>();
+
+            for (int i = 0; i < 10; i++) {
+                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
+                memberRepository.save(member);
+
+                // 3의 배수인 경우에는 내가 신청을 받은 관계로 저장
+                if (i % 3 == 0) {
+                    FriendRelation friendRelation = new FriendRelation(member.getId(), requester.getId(),
+                            FriendRelationStatus.REQUESTED);
+                    friendRelationRepository.save(friendRelation);
+                    continue;
+                }
+
+                // 3의 배수인 경우에는 내가 신청을 한 관계로 저장
+                if (i % 2 == 0) {
+                    FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
+                            FriendRelationStatus.REQUESTED);
+                    friendRelationRepository.save(friendRelation);
+                    idsOfFriendRelation.add(friendRelation.getId());
+                }
+            }
+
+            // when
+            ReadSentFriendRelationResponse result = friendService.readSentFriendRelations(
+                    new MemberDetails(requester.getId()),
+                    null,
+                    10
+            );
+
+            // then
+            List<Long> actual = result.friendRequestResponses().stream()
+                    .map(SentFriendRelationInfo::friendRequestId)
+                    .toList();
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual).containsExactlyInAnyOrderElementsOf(idsOfFriendRelation);
+            });
+        }
+
+        @DisplayName("상태가 REQUEST 인 경우만 반환한다")
+        @Test
+        void success_onlyStatusIsRequested() {
+            // given
+            List<Long> expected = new ArrayList<>();
+
+            for (int i = 0; i < 10; i++) {
+                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
+                memberRepository.save(member);
+
+                if (i % 3 == 0) {
+                    FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
+                            FriendRelationStatus.ACCEPTED);
+                    friendRelationRepository.save(friendRelation);
+                    continue;
+                }
+
+                FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
+                        FriendRelationStatus.REQUESTED);
+                friendRelationRepository.save(friendRelation);
+                expected.add(friendRelation.getId());
+            }
+
+            // when
+            ReadSentFriendRelationResponse result = friendService.readSentFriendRelations(
+                    new MemberDetails(requester.getId()),
+                    null,
+                    10
+            );
+
+            // then
+            List<Long> actual = result.friendRequestResponses().stream()
+                    .map(SentFriendRelationInfo::friendRequestId)
+                    .toList();
+
+            assertSoftly(softly -> {
+                softly.assertThat(actual).containsExactlyInAnyOrderElementsOf(expected);
+            });
         }
     }
 }
