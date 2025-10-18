@@ -3,7 +3,7 @@ package backend.mulkkam.friend.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.friend.dto.CreateFriendRequestRequest;
 import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
-import backend.mulkkam.friend.service.FriendService;
+import backend.mulkkam.friend.service.FriendRelationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -26,7 +26,7 @@ import java.net.URI;
 @RequestMapping("/friend-requests")
 public class FriendRequestController {
 
-    private final FriendService friendService;
+    private final FriendRelationService friendRelationService;
 
     @Operation(summary = "친구 신청 생성", description = "다른 유저에게 친구를 신청합니다.")
     @PostMapping
@@ -58,7 +58,7 @@ public class FriendRequestController {
             @RequestBody PatchFriendStatusRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.modifyFriendStatus(requestId, request, memberDetails);
+        friendRelationService.modifyFriendStatus(requestId, request, memberDetails);
     }
 
     @Deprecated
@@ -72,7 +72,7 @@ public class FriendRequestController {
             @PathVariable Long requestId,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.rejectFriendRequest(requestId, memberDetails);
+        friendRelationService.rejectFriendRequest(requestId, memberDetails);
         return ResponseEntity.ok().build();
     }
 
@@ -87,7 +87,7 @@ public class FriendRequestController {
             @PathVariable Long requestId,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.acceptFriend(requestId, memberDetails);
+        friendRelationService.acceptFriend(requestId, memberDetails);
         return ResponseEntity.ok().build();
     }
 }

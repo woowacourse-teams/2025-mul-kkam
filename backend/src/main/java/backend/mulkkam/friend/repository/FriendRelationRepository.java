@@ -1,7 +1,10 @@
 package backend.mulkkam.friend.repository;
 
 import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
+import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,4 +30,23 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 WHERE fr.addresseeId = :memberId OR fr.requesterId = :memberId
             """)
     void deleteAllByMemberId(@Param("memberId") Long memberId);
+
+    @Query("""
+                SELECT new backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation(
+                    fr.id, m.id, m.memberNickname.value
+                )
+                FROM FriendRelation fr, Member m
+                WHERE (
+                    (fr.addresseeId = :memberId AND fr.requesterId = m.id)
+                    OR (fr.requesterId = :memberId AND fr.addresseeId = m.id)
+                )
+                AND (:lastId IS NULL OR fr.id < :lastId)
+                AND fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
+                ORDER BY fr.id DESC
+            """)
+    List<MemberInfoOfFriendRelation> findByMemberId(
+            @Param("memberId") Long memberId,
+            @Param("lastId") Long lastId,
+            Pageable pageable
+    );
 }
