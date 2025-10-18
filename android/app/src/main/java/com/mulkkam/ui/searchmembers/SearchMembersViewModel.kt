@@ -37,7 +37,8 @@ class SearchMembersViewModel : ViewModel() {
     private val _isTyping: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isTyping: StateFlow<Boolean> = _isTyping.asStateFlow()
 
-    private val _onRequestFriends: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow<MulKkamUiState<Unit>>()
+    private val _onRequestFriends: MutableSharedFlow<MulKkamUiState<Unit>> =
+        MutableSharedFlow<MulKkamUiState<Unit>>()
     val onRequestFriends: SharedFlow<MulKkamUiState<Unit>> = _onRequestFriends.asSharedFlow()
 
     init {
@@ -85,15 +86,23 @@ class SearchMembersViewModel : ViewModel() {
         }
     }
 
-    fun requestFriends(id: Long) {
+    fun requestFriends(memberSearchInfo: MemberSearchInfo) {
         viewModelScope.launch {
-            runCatching {
-                friendsRepository.postFriendRequest(id).getOrError()
-            }.onSuccess {
-                _onRequestFriends.emit(MulKkamUiState.Success(Unit))
-            }.onFailure {
-                _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+            if (memberSearchInfo.isRequestedToMe()) {
+                // TODO: 친구 요청 수락 로직 구현
+                return@launch
             }
+            requestFriends(memberSearchInfo.id)
+        }
+    }
+
+    private suspend fun requestFriends(id: Long) {
+        runCatching {
+            friendsRepository.postFriendRequest(id).getOrError()
+        }.onSuccess {
+            _onRequestFriends.emit(MulKkamUiState.Success(Unit))
+        }.onFailure {
+            _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
         }
     }
 

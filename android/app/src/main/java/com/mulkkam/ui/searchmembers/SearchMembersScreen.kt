@@ -27,7 +27,6 @@ import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
-import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -89,8 +88,8 @@ fun SearchMembersScreen(
                 ) { index ->
 
                     SearchMembersItem(
-                        name = searchMembers[index].nickname.name,
-                        onRequest = { viewModel.requestFriends(searchMembers[index].id) },
+                        memberSearchInfo = searchMembers[index],
+                        onClick = { viewModel.requestFriends(searchMembers[index]) },
                     )
 
                     if (index == searchMembers.lastIndex) {
