@@ -1,7 +1,6 @@
 package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 
 import backend.mulkkam.common.dto.MemberDetails;
@@ -9,8 +8,8 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.utils.paging.PagingResult;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.request.CreateFriendRequestRequest;
-import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
+import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
@@ -69,9 +68,6 @@ public class FriendRequestService {
     ) {
         Long requesterId = memberDetails.id();
         Long addresseeId = request.memberId();
-        if (addresseeId.equals(requesterId)) {
-            throw new CommonException(INVALID_FRIEND_REQUEST);
-        }
         return friendCommandService.create(addresseeId, requesterId);
     }
 
