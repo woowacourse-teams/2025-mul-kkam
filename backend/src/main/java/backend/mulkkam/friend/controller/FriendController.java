@@ -1,14 +1,10 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
-import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -47,7 +43,7 @@ public class FriendController {
             @Parameter(description = "커서 lastId(최초 요청시 생략)")
             @RequestParam(required = false) Long lastId,
             @Parameter(description = "size 값", required = true, example = "5")
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "10", required = false) int size,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         return friendService.readFriendRelationsInStatusAccepted(lastId, size, memberDetails);
