@@ -49,8 +49,8 @@ public class FriendController {
     public FriendRelationResponse readFriendRelationsInStatusAccepted(
             @Parameter(description = "커서 lastId(최초 요청시 생략)")
             @RequestParam(required = false) Long lastId,
-            @Parameter(description = "size 값", required = true, example = "5")
-            @RequestParam(defaultValue = "10", required = false) int size,
+            @Parameter(description = "size 값", required = true, example = "10")
+            @RequestParam int size,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         return friendService.readFriendRelationsInStatusAccepted(lastId, size, memberDetails);
