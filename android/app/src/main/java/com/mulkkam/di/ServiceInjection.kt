@@ -4,6 +4,7 @@ import com.mulkkam.data.local.service.HealthService
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.DevicesService
+import com.mulkkam.data.remote.service.FriendsService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
@@ -57,5 +58,9 @@ object ServiceInjection {
 
     val reminderService: ReminderService by lazy {
         retrofit.create(ReminderService::class.java)
+    }
+
+    val friendsService: FriendsService by lazy {
+        retrofit.create(FriendsService::class.java)
     }
 }
