@@ -44,9 +44,6 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private FriendCommandService friendCommandService;
-
-    @Autowired
     private FriendRequestService friendRequestService;
 
     @Autowired
@@ -86,7 +83,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendCommandService.deleteFriend(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
+            friendService.deleteFriend(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -101,7 +98,7 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation foundFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when
-            friendCommandService.deleteFriend(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
+            friendService.deleteFriend(foundFriendRelation.getId(), new MemberDetails(addressee.getId()));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
