@@ -115,8 +115,8 @@ public class FriendRequestController {
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
             @RequestParam(required = false) Long lastId,
-            @Parameter(description = "size", required = true, example = "20")
-            @RequestParam int size
+            @Parameter(description = "size, 미지정시 20", example = "20")
+            @RequestParam(defaultValue = "20") int size
     ) {
         return friendRequestService.readReceivedFriendRequests(memberDetails, lastId, size);
     }
@@ -141,8 +141,8 @@ public class FriendRequestController {
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
             @RequestParam(required = false) Long lastId,
-            @Parameter(description = "size", required = true, example = "20")
-            @RequestParam int size
+            @Parameter(description = "size, 미지정시 20", example = "20")
+            @RequestParam(defaultValue = "20") int size
     ) {
         ReadSentFriendRelationResponse readSentFriendRelationResponse = friendRequestService.readSentFriendRelations(
                 memberDetails, lastId, size);
