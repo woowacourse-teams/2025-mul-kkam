@@ -464,7 +464,7 @@ class FriendRelationControllerTest extends ControllerTest {
                     resultContent, ReadSentFriendRelationResponse.class);
 
             // then
-            List<Long> actual = response.friendRequestResponses().stream()
+            List<Long> actual = response.sentFriendRelationInfos().stream()
                     .map(SentFriendRelationInfo::friendRequestId)
                     .toList();
 
