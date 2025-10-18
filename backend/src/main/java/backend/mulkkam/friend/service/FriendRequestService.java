@@ -1,10 +1,13 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.dto.CreateFriendRequestRequest;
+import backend.mulkkam.friend.dto.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +19,19 @@ public class FriendRequestService {
 
     private final FriendQueryService friendQueryService;
     private final FriendCommandService friendCommandService;
+
+    @Transactional
+    public CreateFriendRequestResponse create(
+            CreateFriendRequestRequest request,
+            MemberDetails memberDetails
+    ) {
+        Long requesterId = memberDetails.id();
+        Long addresseeId = request.memberId();
+        if (addresseeId.equals(requesterId)) {
+            throw new CommonException(INVALID_FRIEND_REQUEST);
+        }
+        return friendCommandService.create(addresseeId, requesterId);
+    }
 
     @Transactional
     public void modifyFriendStatus(

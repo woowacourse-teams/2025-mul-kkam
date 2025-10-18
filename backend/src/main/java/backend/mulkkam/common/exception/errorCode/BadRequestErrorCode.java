@@ -28,6 +28,8 @@ public enum BadRequestErrorCode implements ErrorCode {
     INVALID_INTAKE_AMOUNT,
     NOT_ALL_MEMBER_CUPS_INCLUDED,
     INVALID_FRIEND_RELATION,
+
+    INVALID_FRIEND_REQUEST,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;

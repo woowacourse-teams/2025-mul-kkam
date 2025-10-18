@@ -2,6 +2,7 @@ package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.friend.dto.CreateFriendRequestRequest;
+import backend.mulkkam.friend.dto.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.service.FriendRequestService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,7 +10,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.net.URI;
 
 @Tag(name = "친구 요청", description = "친구 요청 API")
 @RequiredArgsConstructor
@@ -30,13 +28,13 @@ public class FriendRequestController {
 
     @Operation(summary = "친구 신청 생성", description = "다른 유저에게 친구를 신청합니다.")
     @PostMapping
-    public ResponseEntity<Void> createFriendRequest(
+    public CreateFriendRequestResponse createFriendRequest(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
             @RequestBody @Valid CreateFriendRequestRequest request,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        return ResponseEntity.created(URI.create("resource uri")).build();
+        return friendRequestService.create(request, memberDetails);
     }
 
     @Operation(summary = "친구 신청 취소", description = "다른 유저에게 보낸 친구 신청을 취소합니다.")
