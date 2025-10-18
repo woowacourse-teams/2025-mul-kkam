@@ -19,8 +19,8 @@ import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
 import java.util.List;
+import java.util.function.Function;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -88,12 +88,23 @@ public class FriendRelationService {
             Long lastId,
             int size
     ) {
-        Pageable pageable = PageRequest.of(0, size + 1);
-        List<FriendRelationRequestResponse> friendRequestResponses = friendRelationRepository
+        validatePageSize(size);
+        Pageable pageable = PagingUtils.createPageRequest(size);
+        List<FriendRelationRequestResponse> friendRelationRequestResponses = friendRelationRepository
                 .findReceivedFriendRequestsAfterId(memberDetails.id(), lastId, pageable);
-        return ReadReceivedFriendRelationResponse.of(friendRequestResponses, size);
-    }
 
+        PagingResult<FriendRelationRequestResponse, Long> pagingResult = PagingUtils.toPagingResult(
+                friendRelationRequestResponses,
+                size,
+                Function.identity(),
+                FriendRelationRequestResponse::friendRequestId
+        );
+        return new ReadReceivedFriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
+    }
 
     public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
         return new GetReceivedFriendRequestCountResponse(
@@ -105,9 +116,7 @@ public class FriendRelationService {
             int size,
             MemberDetails memberDetails
     ) {
-        if (size <= 0) {
-            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
-        }
+        validatePageSize(size);
 
         List<MemberInfoOfFriendRelation> memberInfoOfFriendRelations = friendRelationRepository.findByMemberId(
                 memberDetails.id(),
@@ -137,6 +146,12 @@ public class FriendRelationService {
     private void validRequested(final FriendRelation friendRelation) {
         if (friendRelation.isNotRequest()) {
             throw new CommonException(INVALID_FRIEND_RELATION);
+        }
+    }
+
+    private void validatePageSize(int size) {
+        if (size <= 0) {
+            throw new CommonException(INVALID_PAGE_SIZE_RANGE);
         }
     }
 }
