@@ -7,11 +7,14 @@ import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
+@OptIn(FlowPreview::class)
 class SearchMembersViewModel : ViewModel() {
     private var lastId: Long? = null
 
@@ -27,12 +30,24 @@ class SearchMembersViewModel : ViewModel() {
         MutableStateFlow(MulKkamUiState.Idle)
     val loadUiState: StateFlow<MulKkamUiState<Unit>> = _loadUiState.asStateFlow()
 
-    fun updateName(word: String) {
-        _name.value = word
+    private val _isTyping = MutableStateFlow(false)
+    val isTyping = _isTyping.asStateFlow()
+
+    init {
+        viewModelScope.launch {
+            _name.debounce(300L).collect { query ->
+                searchMembers()
+            }
+        }
+    }
+
+    fun updateName(newName: String) {
+        _isTyping.value = true
+        _name.value = newName
         lastId = null
     }
 
-    fun searchMembers() {
+    private fun searchMembers() {
         viewModelScope.launch {
             runCatching {
                 membersRepository.getMembersSearch(name.value, lastId, SEARCH_SIZE).getOrError()
@@ -40,6 +55,7 @@ class SearchMembersViewModel : ViewModel() {
                 _searchMembersUiState.value =
                     MulKkamUiState.Success(memberSearchResult.memberSearchInfos)
                 lastId = memberSearchResult.nextId
+                _isTyping.value = false
             }
         }
     }
@@ -62,7 +78,9 @@ class SearchMembersViewModel : ViewModel() {
         }
     }
 
-    fun requestFriends(id: Long) {}
+    fun requestFriends(id: Long) {
+        // TODO: 서버 연결 필요
+    }
 
     companion object {
         private const val SEARCH_SIZE: Int = 20

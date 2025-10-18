@@ -252,4 +252,5 @@
     <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
 
     <string name="search_friends_top_app_bar_title">친구 찾기</string>
+    <string name="search_friends_empty">닉네임을 찾을 수 없어요</string>
 </resources>
