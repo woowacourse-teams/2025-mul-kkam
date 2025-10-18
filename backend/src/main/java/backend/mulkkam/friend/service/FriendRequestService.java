@@ -101,7 +101,7 @@ public class FriendRequestService {
     ) {
         FriendRelation friendRelation = getModifiableRelation(friendRelationId);
         if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
-            friendCommandService.deleteFriend(friendRelationId, memberDetails);
+            friendCommandService.deleteFriendRequest(friendRelationId);
             return;
         }
         throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
