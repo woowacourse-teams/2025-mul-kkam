@@ -11,8 +11,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    boolean existsByIdIn(List<Long> ids);
-
     boolean existsByActiveNickname(String activeNickname);
 
     @Query("""

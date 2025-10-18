@@ -40,7 +40,7 @@ public class FriendCommandService {
             Long addresseeId,
             Long requesterId
     ) {
-        if (!memberRepository.existsByIdIn(List.of(addresseeId, requesterId))) {
+        if (!memberRepository.existsById(addresseeId)) {
             throw new CommonException(NOT_FOUND_MEMBER);
         }
 
