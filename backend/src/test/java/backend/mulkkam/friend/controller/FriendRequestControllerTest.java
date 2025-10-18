@@ -1,12 +1,17 @@
 package backend.mulkkam.friend.controller;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
+import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
+import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
 import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
 import static backend.mulkkam.friend.dto.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -17,6 +22,7 @@ import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.CreateFriendRequestRequest;
 import backend.mulkkam.friend.dto.PatchFriendStatusRequest;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
@@ -51,6 +57,7 @@ class FriendRequestControllerTest extends ControllerTest {
 
     private Member requester;
     private Member addressee;
+    private String tokenOfRequester;
     private String tokenOfAddressee;
 
     @BeforeEach
@@ -69,7 +76,122 @@ class FriendRequestControllerTest extends ControllerTest {
                 OauthProvider.KAKAO);
         oauthAccountRepository.save(oauthAccountOfAddressee);
 
-        tokenOfAddressee = oauthJwtTokenHandler.createAccessToken(oauthAccountOfAddressee, "temp");
+        tokenOfRequester = oauthJwtTokenHandler.createAccessToken(oauthAccountOfRequester, "requester");
+        tokenOfAddressee = oauthJwtTokenHandler.createAccessToken(oauthAccountOfAddressee, "addressee");
+    }
+
+    @DisplayName("친구 요청을 보낼 때")
+    @Nested
+    class createFriendRequest {
+
+        @DisplayName("올바른 요청이 들어온 경우, '요청' 상태의 엔티티가 성공적으로 생성된다.")
+        @Test
+        void success() throws Exception {
+            // given
+            CreateFriendRequestRequest request = new CreateFriendRequestRequest(addressee.getId());
+
+            // when
+            mockMvc.perform(post("/friend-requests")
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            List<FriendRelation> relations = friendRelationRepository.findAll();
+            assertSoftly(softly -> {
+                softly.assertThat(relations).hasSize(1);
+                softly.assertThat(relations.getFirst().getRequesterId()).isEqualTo(requester.getId());
+                softly.assertThat(relations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
+                softly.assertThat(relations.getFirst().getFriendRelationStatus()).isSameAs(REQUESTED);
+            });
+        }
+
+        @DisplayName("요청자와 수신자가 동일한 경우 예외가 발생한다.")
+        @Test
+        void error_sameIds() throws Exception {
+            // given
+            CreateFriendRequestRequest request = new CreateFriendRequestRequest(requester.getId());
+
+            // when
+            String json = mockMvc.perform(post("/friend-requests")
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(INVALID_FRIEND_REQUEST.name());
+        }
+
+        @DisplayName("친구 신청 대상자가 존재하지 않은 경우 예외가 발생한다.")
+        @Test
+        void error_notFoundAddressee() throws Exception {
+            // given
+            CreateFriendRequestRequest request = new CreateFriendRequestRequest(999L);
+
+            // when
+            String json = mockMvc.perform(post("/friend-requests")
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(NOT_FOUND_MEMBER.name());
+        }
+
+        @DisplayName("요청자 - 수신자 사이에 친구 신청이 이미 존재하는 경우 예외가 발생한다.")
+        @Test
+        void error_alreadyExistsFriendRequest() throws Exception {
+            // given
+            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), FriendRelationStatus.REQUESTED);
+            friendRelationRepository.save(friendRelation);
+            CreateFriendRequestRequest request = new CreateFriendRequestRequest(addressee.getId());
+
+            // when
+            String json = mockMvc.perform(post("/friend-requests")
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(DUPLICATED_FRIEND_REQUEST.name());
+        }
+
+        @DisplayName("요청자 - 수신자가 이미 친구 관계인 경우 예외가 발생한다.")
+        @Test
+        void error_alreadyFriend() throws Exception {
+            // given
+            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), FriendRelationStatus.ACCEPTED);
+            friendRelationRepository.save(friendRelation);
+            CreateFriendRequestRequest request = new CreateFriendRequestRequest(addressee.getId());
+
+            // when
+            String json = mockMvc.perform(post("/friend-requests")
+                            .contentType(APPLICATION_JSON)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
+                            .content(objectMapper.writeValueAsString(request)))
+                    .andDo(print())
+                    .andExpect(status().is4xxClientError())
+                    .andReturn().getResponse().getContentAsString();
+            FailureBody actual = objectMapper.readValue(json, FailureBody.class);
+
+            // then
+            assertThat(actual.getCode()).isEqualTo(DUPLICATED_FRIEND_REQUEST.name());
+        }
     }
 
     @DisplayName("친구 요청 상태를 수정할 때")
