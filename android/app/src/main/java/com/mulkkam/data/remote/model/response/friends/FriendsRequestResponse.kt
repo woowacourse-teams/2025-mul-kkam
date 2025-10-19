@@ -9,7 +9,7 @@ data class FriendsRequestResponse(
     @SerialName("results")
     val results: List<FriendRequestInfoResponse>,
     @SerialName("nextId")
-    val nextId: Long,
+    val nextId: Long?,
     @SerialName("hasNext")
     val hasNext: Boolean,
 )
