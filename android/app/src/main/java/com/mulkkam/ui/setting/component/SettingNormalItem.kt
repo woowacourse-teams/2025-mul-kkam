@@ -16,7 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulKkamTheme.typography
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
@@ -36,7 +36,7 @@ fun SettingNormalItem(
     ) {
         Text(
             text = item.label,
-            style = typography.body2,
+            style = MulKkamTheme.typography.body2,
             color = Color.Black,
             modifier = Modifier.padding(start = 24.dp, top = 14.dp, bottom = 14.dp),
         )

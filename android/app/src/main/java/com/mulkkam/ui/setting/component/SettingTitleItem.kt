@@ -11,7 +11,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray50
-import com.mulkkam.ui.designsystem.MulKkamTheme.typography
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.adapter.SettingItem
 
@@ -24,7 +24,7 @@ fun SettingTitleItem(item: SettingItem.TitleItem) {
     ) {
         Text(
             text = item.title,
-            style = typography.label1,
+            style = MulKkamTheme.typography.label1,
             color = Color.Black,
             modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp),
         )
