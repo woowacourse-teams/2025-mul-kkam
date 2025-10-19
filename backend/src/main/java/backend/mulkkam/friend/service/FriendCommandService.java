@@ -31,7 +31,7 @@ public class FriendCommandService {
             Long friendId,
             MemberDetails memberDetails
     ) {
-        friendRelationRepository.findByMemberIds(friendId, memberDetails.id())
+        friendRelationRepository.findFriendByMemberIds(friendId, memberDetails.id())
                 .ifPresent(friendRelationRepository::delete);
     }
 
