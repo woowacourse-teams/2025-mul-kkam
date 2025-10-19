@@ -4,6 +4,7 @@ import com.mulkkam.data.local.service.HealthService
 import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.data.remote.service.DevicesService
+import com.mulkkam.data.remote.service.FriendsService
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.data.remote.service.NicknameService
@@ -13,6 +14,7 @@ import com.mulkkam.data.remote.service.ReminderService
 import com.mulkkam.data.remote.service.VersionsService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
+import retrofit2.create
 
 object ServiceInjection {
     val intakeService: IntakeService by lazy {
@@ -57,5 +59,9 @@ object ServiceInjection {
 
     val reminderService: ReminderService by lazy {
         retrofit.create(ReminderService::class.java)
+    }
+
+    val friendsService: FriendsService by lazy {
+        retrofit.create(FriendsService::class.java)
     }
 }
