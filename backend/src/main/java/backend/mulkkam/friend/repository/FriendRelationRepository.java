@@ -15,6 +15,15 @@ import org.springframework.data.repository.query.Param;
 public interface FriendRelationRepository extends JpaRepository<FriendRelation, Long> {
 
     @Query("""
+        SELECT (EXISTS(
+                SELECT fr
+                FROM FriendRelation fr
+                WHERE (fr.addresseeId = :addresseeId AND fr.requesterId = :requesterId)
+                    OR (fr.addresseeId = :requesterId AND fr.requesterId = :addresseeId)))
+    """)
+    boolean existsByMemberIds(@Param("addresseeId") Long addresseeId, @Param("requesterId") Long requesterId);
+
+    @Query("""
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.id = :id
@@ -34,7 +43,11 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     void deleteAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
-                SELECT new backend.mulkkam.friend.dto.response.FriendRelationRequestResponse(fr.id, m.memberNickname.value)
+                SELECT new backend.mulkkam.friend.dto.response.FriendRelationRequestResponse(
+                    fr.id,
+                    m.memberNickname.value,
+                    fr.createdAt
+                )
                 FROM FriendRelation fr
                 JOIN Member m ON fr.requesterId = m.id
                 WHERE fr.addresseeId = :addresseeId
