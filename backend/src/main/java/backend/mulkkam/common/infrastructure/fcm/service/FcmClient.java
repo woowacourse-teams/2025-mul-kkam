@@ -72,17 +72,24 @@ public class FcmClient {
 
     public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
         try {
-            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle(sendMessageByFcmTokensRequest.title())
-                            .setBody(sendMessageByFcmTokensRequest.body())
-                            .build())
-                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
-                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
-                    .build());
-            log.warn("multicast batchResponse : {}", batchResponse.toString());
-        } catch (FirebaseMessagingException e) {
-            throw new AlarmException(e);
+            log.info("[MOCK FCM] title={}, body={}",
+                    sendMessageByFcmTokensRequest.title(), sendMessageByFcmTokensRequest.body());
+            Thread.sleep(350);
+        } catch (InterruptedException e) {
+            log.warn("[MOCK FCM] sleep interrupted");
         }
+//        try {
+//            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
+//                    .setNotification(Notification.builder()
+//                            .setTitle(sendMessageByFcmTokensRequest.title())
+//                            .setBody(sendMessageByFcmTokensRequest.body())
+//                            .build())
+//                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
+//                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
+//                    .build());
+//            log.warn("multicast batchResponse : {}", batchResponse.toString());
+//        } catch (FirebaseMessagingException e) {
+//            throw new AlarmException(e);
+//        }
     }
 }
