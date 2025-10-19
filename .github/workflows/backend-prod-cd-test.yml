@@ -7,7 +7,9 @@ name: backend-prod-cd-test
 
 on:
   pull_request:
-    branches: ["develop-be" ]
+    types: ["opened", "reopened"]
+    branches: ["develop-be"]
+
 
 
 jobs:
