@@ -52,7 +52,7 @@ fun ReceivedRequestItem(
                     style = MulKkamTheme.typography.title1,
                 )
                 Text(
-                    text = formatRemainingTime(currentTime, LocalDateTime.now()),
+                    text = formatRemainingTime(currentTime, pendingFriend.createdAt ?: return),
                     color = Gray300,
                     style = MulKkamTheme.typography.label2,
                 )
@@ -95,6 +95,7 @@ private fun ReceivedRequestItemPreview() {
                 FriendsRequestInfo(
                     requestId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
+                    createdAt = LocalDateTime.of(2025, 10, 13, 14, 0)
                 ),
             currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
             onAccept = {},

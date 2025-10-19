@@ -1,8 +1,7 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.friends.PatchFriendsRequest
-import com.mulkkam.data.remote.model.response.friends.FriendsRequestReceivedResponse
-import com.mulkkam.data.remote.model.response.friends.FriendsRequestSentResponse
+import com.mulkkam.data.remote.model.response.friends.FriendsRequestResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
@@ -14,17 +13,17 @@ interface FriendsService {
     @GET("/friends")
     suspend fun getFriends(): Result<Unit>
 
-    @GET("/friends/requests/sent")
+    @GET("/friend-requests/sent")
     suspend fun getFriendsRequestsSent(
         @Query("lastId") lastId: Long?,
         @Query("size") size: Int,
-    ): Result<FriendsRequestSentResponse>
+    ): Result<FriendsRequestResponse>
 
-    @GET("/friends/requests/received")
+    @GET("/friend-requests/received")
     suspend fun getFriendsRequestsReceived(
         @Query("lastId") lastId: Long?,
         @Query("size") size: Int,
-    ): Result<FriendsRequestReceivedResponse>
+    ): Result<FriendsRequestResponse>
 
     @PATCH("/friend-requests/{requestId}")
     suspend fun patchFriendsRequests(
