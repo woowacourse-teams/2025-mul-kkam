@@ -75,14 +75,13 @@ jobs:
       - name: Prepare bundle (appspec + scripts + env/image.env with IMAGE_TAG)
         shell: bash
         run: |
-          mkdir -p codedeploy/scripts codedeploy/env
-          # appspec.yml는 리포의 codedeploy/appspec.yml에서 가져온다고 가정
-          cp codedeploy/appspec.yml codedeploy/appspec.yml
-          cp scripts/pull.sh codedeploy/scripts/pull.sh
-          cp scripts/start.sh codedeploy/scripts/start.sh
-          cp scripts/validate.sh codedeploy/scripts/validate.sh
-          echo "IMAGE_TAG=${IMAGE_TAG}" > codedeploy/env/image.env
-          (cd codedeploy && zip -rq ../bundle.zip .)
+          mkdir -p bundle/scripts bundle/env
+          cp codedeploy/appspec.yml bundle/appspec.yml
+          cp scripts/pull.sh bundle/scripts/pull.sh
+          cp scripts/start.sh bundle/scripts/start.sh
+          cp scripts/validate.sh bundle/scripts/validate.sh
+          echo "IMAGE_TAG=${IMAGE_TAG}" > bundle/env/image.env
+          (cd bundle && zip -rq ../bundle.zip .)
 
       # OIDC로 AWS AssumeRole (※ 이 ARN을 GitHub Secrets에 저장해 둬: AWS_OIDC_ROLE_ARN)
       - uses: aws-actions/configure-aws-credentials@v4
