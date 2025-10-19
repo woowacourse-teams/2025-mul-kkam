@@ -1,0 +1,102 @@
+name: backend-prod-cd-test
+
+#on:
+#  pull_request:
+#    types: [closed]
+#    branches: [main]
+
+on:
+  pull_request:
+    branches: ["develop-be" ]
+
+
+jobs:
+  build-and-push:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Derive version from PR title (expects like "feat .... (v1.2.3)")
+        id: ver
+        shell: bash
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          if [[ "$PR_TITLE" =~ (v[0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            echo "version=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+            echo "Resolved VERSION=${BASH_REMATCH[1]}"
+          else
+            echo "PR title must contain version like v1.2.3"; exit 1
+          fi
+
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '21' }
+
+      - name: Build (skip tests if needed)
+        run: ./gradlew -p backend clean build -x test
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build & Push image (multi-arch)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            mulkkam/mulkkam-prod-test:${{ steps.ver.outputs.version }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-24.04
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
+      AWS_REGION: ap-northeast-2
+      S3_BUCKET: techcourse-project-2025-artifacts
+      S3_KEY: mulkkam/bundle-${{ needs.build-and-push.outputs.version }}.zip
+      APP_NAME: mulkkam-prod
+      GROUP_NAME: CodeDeploy-group-mulkkam-prod
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Prepare bundle (appspec + scripts + env/image.env with IMAGE_TAG)
+        shell: bash
+        run: |
+          mkdir -p codedeploy/scripts codedeploy/env
+          # appspec.yml는 리포의 codedeploy/appspec.yml에서 가져온다고 가정
+          cp codedeploy/appspec.yml codedeploy/appspec.yml
+          cp scripts/pull.sh codedeploy/scripts/pull.sh
+          cp scripts/start.sh codedeploy/scripts/start.sh
+          cp scripts/validate.sh codedeploy/scripts/validate.sh
+          echo "IMAGE_TAG=${IMAGE_TAG}" > codedeploy/env/image.env
+          (cd codedeploy && zip -rq ../bundle.zip .)
+
+      # OIDC로 AWS AssumeRole (※ 이 ARN을 GitHub Secrets에 저장해 둬: AWS_OIDC_ROLE_ARN)
+      - uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ env.AWS_REGION }}
+          role-to-assume: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+          role-session-name: gha-cd
+
+      - name: Upload bundle to S3
+        run: aws s3 cp bundle.zip "s3://${S3_BUCKET}/${S3_KEY}"
+
+      - name: Trigger CodeDeploy
+        run: |
+          aws deploy create-deployment \
+            --application-name "${APP_NAME}" \
+            --deployment-group-name "${GROUP_NAME}" \
+            --deployment-config-name CodeDeployDefault.AllAtOnce \
+            --s3-location bucket=${S3_BUCKET},key=${S3_KEY},bundleType=zip \
+            --file-exists-behavior OVERWRITE \
+            --description "Deploy ${IMAGE_TAG}"
