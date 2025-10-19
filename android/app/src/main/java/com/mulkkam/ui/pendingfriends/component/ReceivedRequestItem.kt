@@ -28,7 +28,7 @@ private const val HOURS_PER_DAY: Int = 24
 
 @Composable
 fun ReceivedRequestItem(
-    pendingFriend: FriendsRequestInfo,
+    receivedRequest: FriendsRequestInfo,
     onAccept: () -> Unit,
     onReject: () -> Unit,
     modifier: Modifier = Modifier,
@@ -47,12 +47,12 @@ fun ReceivedRequestItem(
         ) {
             Column {
                 Text(
-                    text = pendingFriend.nickname.name,
+                    text = receivedRequest.nickname.name,
                     color = Black,
                     style = MulKkamTheme.typography.title1,
                 )
                 Text(
-                    text = formatRemainingTime(currentTime, pendingFriend.createdAt ?: return),
+                    text = formatRemainingTime(currentTime, receivedRequest.createdAt ?: return),
                     color = Gray300,
                     style = MulKkamTheme.typography.label2,
                 )
@@ -91,11 +91,11 @@ private fun formatRemainingTime(
 private fun ReceivedRequestItemPreview() {
     MulkkamTheme {
         ReceivedRequestItem(
-            pendingFriend =
+            receivedRequest =
                 FriendsRequestInfo(
                     requestId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    createdAt = LocalDateTime.of(2025, 10, 13, 14, 0)
+                    createdAt = LocalDateTime.of(2025, 10, 13, 14, 0),
                 ),
             currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
             onAccept = {},

@@ -11,7 +11,7 @@ import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
 fun ReceivedTab(
-    pendingFriends: List<FriendsRequestInfo>,
+    receivedRequests: List<FriendsRequestInfo>,
     onAccept: (FriendsRequestInfo) -> Unit,
     onReject: (FriendsRequestInfo) -> Unit,
     onLoadMore: () -> Unit,
@@ -22,12 +22,12 @@ fun ReceivedTab(
 
     LazyColumn(modifier = modifier.fillMaxHeight(), state = state) {
         items(
-            pendingFriends.size,
-            key = { pendingFriends[it].requestId },
+            receivedRequests.size,
+            key = { receivedRequests[it].requestId },
         ) { index ->
-            val friendsRequestInfo = pendingFriends[index]
+            val friendsRequestInfo = receivedRequests[index]
             ReceivedRequestItem(
-                pendingFriend = pendingFriends[index],
+                receivedRequest = receivedRequests[index],
                 onAccept = { onAccept(friendsRequestInfo) },
                 onReject = { onReject(friendsRequestInfo) },
                 modifier = Modifier.animateItem(),

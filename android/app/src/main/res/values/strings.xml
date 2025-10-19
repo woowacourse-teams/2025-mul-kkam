@@ -260,8 +260,10 @@
     <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>
     <string name="pending_friends_accept_success">%s 님과 친구가 되었습니다</string>
     <string name="pending_friends_accept_failed">친구 승인에 실패했습니다</string>
+    <string name="pending_friends_reject_success">친구 신청을 거절했습니다</string>
     <string name="pending_friends_cancel_request_confirmed">%s\n친구 신청을 취소하시겠습니까?</string>
     <string name="pending_friends_cancel_request_warning">취소된 신청을 복구되지 않습니다</string>
     <string name="pending_friends_cancel_request_confirm">확인</string>
     <string name="pending_friends_cancel_request_cancel">취소</string>
+    <string name="pending_friends_cancel_success">친구 신청을 취소했습니다</string>
 </resources>

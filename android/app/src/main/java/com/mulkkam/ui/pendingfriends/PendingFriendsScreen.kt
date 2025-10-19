@@ -56,15 +56,26 @@ fun PendingFriendsScreen(
     val pagerState = rememberPagerState(pageCount = { tabTitles.size })
     val coroutineScope = rememberCoroutineScope()
 
-    val receivedRequests by viewModel.receivedRequest.collectAsStateWithLifecycle()
-    val sentRequests by viewModel.sentRequest.collectAsStateWithLifecycle()
+    val receivedRequests by viewModel.receivedRequests.collectAsStateWithLifecycle()
+    val sentRequests by viewModel.sentRequests.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.onAcceptRequest.collect { state ->
-            handleAcceptRequestAction(state, view, context)
+        launch {
+            viewModel.onAcceptRequest.collect { state ->
+                handleAcceptRequestAction(state, view, context)
+            }
         }
 
-        viewModel.onRejectRequest.collect {
+        launch {
+            viewModel.onRejectRequest.collect { state ->
+                handleRejectRequestAction(state, view, context)
+            }
+        }
+
+        launch {
+            viewModel.onCancelRequest.collect { state ->
+                handleCancelRequestAction(state, view, context)
+            }
         }
     }
 
@@ -114,7 +125,9 @@ fun PendingFriendsScreen(
                 when (page) {
                     0 ->
                         ReceivedTab(
-                            pendingFriends = receivedRequests.toSuccessDataOrNull() ?: emptyList(),
+                            receivedRequests =
+                                receivedRequests.toSuccessDataOrNull()
+                                    ?: emptyList(),
                             onAccept = { viewModel.acceptFriend(it) },
                             onReject = { viewModel.rejectFriend(it) },
                             onLoadMore = { viewModel.loadMoreReceivedFriendsRequest() },
@@ -157,6 +170,46 @@ private fun handleAcceptRequestAction(
                 ).show()
         }
 
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+    }
+}
+
+private fun handleRejectRequestAction(
+    state: MulKkamUiState<Unit>,
+    view: View,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            CustomSnackBar
+                .make(
+                    view,
+                    context.getString(R.string.pending_friends_reject_success),
+                    R.drawable.ic_terms_all_check_on,
+                ).show()
+        }
+
+        is MulKkamUiState.Failure -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+    }
+}
+
+private fun handleCancelRequestAction(
+    state: MulKkamUiState<Unit>,
+    view: View,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            CustomSnackBar
+                .make(
+                    view,
+                    context.getString(R.string.pending_friends_cancel_success),
+                    R.drawable.ic_terms_all_check_on,
+                ).show()
+        }
+
+        is MulKkamUiState.Failure -> Unit
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
     }
 }

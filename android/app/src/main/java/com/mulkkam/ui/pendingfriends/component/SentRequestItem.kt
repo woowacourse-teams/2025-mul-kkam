@@ -17,10 +17,11 @@ import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun SentRequestItem(
-    pendingFriend: FriendsRequestInfo,
+    sentRequest: FriendsRequestInfo,
     onCancel: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -37,7 +38,7 @@ fun SentRequestItem(
         ) {
             Column {
                 Text(
-                    text = pendingFriend.nickname.name,
+                    text = sentRequest.nickname.name,
                     color = Black,
                     style = MulKkamTheme.typography.title1,
                 )
@@ -58,11 +59,13 @@ fun SentRequestItem(
 @Preview(showBackground = true)
 @Composable
 private fun SentRequestItemPreview() {
-    SentRequestItem(
-        FriendsRequestInfo(
-            requestId = 1L,
-            nickname = Nickname("돈가스먹는환노"),
-        ),
-        onCancel = {},
-    )
+    MulkkamTheme {
+        SentRequestItem(
+            FriendsRequestInfo(
+                requestId = 1L,
+                nickname = Nickname("돈가스먹는환노"),
+            ),
+            onCancel = {},
+        )
+    }
 }

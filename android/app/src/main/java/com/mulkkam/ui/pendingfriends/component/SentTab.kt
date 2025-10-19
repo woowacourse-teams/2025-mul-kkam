@@ -5,8 +5,15 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
+import com.mulkkam.domain.model.members.Nickname
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
@@ -18,6 +25,8 @@ fun SentTab(
     state: LazyListState = rememberLazyListState(),
 ) {
     state.onLoadMore(action = onLoadMore)
+    var showDialog by remember { mutableStateOf(false) }
+    var requestToCancel: FriendsRequestInfo? by remember { mutableStateOf(null) }
 
     LazyColumn(modifier = modifier.fillMaxHeight(), state = state) {
         items(
@@ -27,9 +36,49 @@ fun SentTab(
             val friendsRequest = sentRequests[index]
             SentRequestItem(
                 modifier = Modifier.animateItem(),
-                pendingFriend = friendsRequest,
-                onCancel = { onCancel(friendsRequest) },
+                sentRequest = friendsRequest,
+                onCancel = {
+                    requestToCancel = friendsRequest
+                    showDialog = true
+                },
             )
         }
+    }
+
+    if (showDialog) {
+        CancelFriendsRequestDialog(
+            friendsRequest = requestToCancel ?: return,
+            onConfirm = {
+                onCancel(requestToCancel ?: return@CancelFriendsRequestDialog)
+                showDialog = false
+            },
+            onDismiss = { showDialog = false },
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SentTabPreview() {
+    MulkkamTheme {
+        SentTab(
+            sentRequests =
+                listOf(
+                    FriendsRequestInfo(
+                        requestId = 1L,
+                        nickname = Nickname("돈가스먹는환노"),
+                    ),
+                    FriendsRequestInfo(
+                        requestId = 2L,
+                        nickname = Nickname("돈가스먹는공백"),
+                    ),
+                    FriendsRequestInfo(
+                        requestId = 3L,
+                        nickname = Nickname("돈가스안먹는이든"),
+                    ),
+                ),
+            onCancel = {},
+            onLoadMore = {},
+        )
     }
 }

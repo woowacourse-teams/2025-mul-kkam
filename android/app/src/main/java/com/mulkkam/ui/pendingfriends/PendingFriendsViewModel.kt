@@ -17,15 +17,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PendingFriendsViewModel : ViewModel() {
-    private val _receivedRequest: MutableStateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
+    private val _receivedRequests: MutableStateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
         MutableStateFlow(MulKkamUiState.Idle)
-    val receivedRequest: StateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
-        _receivedRequest.asStateFlow()
+    val receivedRequests: StateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
+        _receivedRequests.asStateFlow()
 
-    private val _sentRequest: MutableStateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
+    private val _sentRequests: MutableStateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
         MutableStateFlow(MulKkamUiState.Idle)
-    val sentRequest: StateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
-        _sentRequest.asStateFlow()
+    val sentRequests: StateFlow<MulKkamUiState<List<FriendsRequestInfo>>> =
+        _sentRequests.asStateFlow()
 
     private val _onAcceptRequest: MutableSharedFlow<MulKkamUiState<String>> =
         MutableSharedFlow()
@@ -52,11 +52,11 @@ class PendingFriendsViewModel : ViewModel() {
             runCatching {
                 friendsRepository.getFriendsRequestReceived(size = REQUEST_SIZE).getOrError()
             }.onSuccess { friendsRequestResult ->
-                _receivedRequest.value =
+                _receivedRequests.value =
                     MulKkamUiState.Success(friendsRequestResult.friendsRequestInfos)
                 receivedLastId = friendsRequestResult.nextId
             }.onFailure {
-                _receivedRequest.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _receivedRequests.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -66,11 +66,11 @@ class PendingFriendsViewModel : ViewModel() {
             runCatching {
                 friendsRepository.getFriendsRequestSent(size = REQUEST_SIZE).getOrError()
             }.onSuccess { friendsRequestResult ->
-                _sentRequest.value =
+                _sentRequests.value =
                     MulKkamUiState.Success(friendsRequestResult.friendsRequestInfos)
                 sentLastId = friendsRequestResult.nextId
             }.onFailure {
-                _sentRequest.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _sentRequests.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
@@ -85,8 +85,8 @@ class PendingFriendsViewModel : ViewModel() {
                     ).getOrError()
             }.onSuccess {
                 _onAcceptRequest.emit(MulKkamUiState.Success(friendsRequest.nickname.name))
-                val currentList = receivedRequest.value.toSuccessDataOrNull() ?: return@launch
-                _receivedRequest.value =
+                val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
+                _receivedRequests.value =
                     MulKkamUiState.Success(currentList.filter { it != friendsRequest })
             }.onFailure {
                 _onAcceptRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
@@ -104,8 +104,8 @@ class PendingFriendsViewModel : ViewModel() {
                     ).getOrError()
             }.onSuccess {
                 _onRejectRequest.emit(MulKkamUiState.Success(Unit))
-                val currentList = receivedRequest.value.toSuccessDataOrNull() ?: return@launch
-                _receivedRequest.value =
+                val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
+                _receivedRequests.value =
                     MulKkamUiState.Success(currentList.filter { it != friendsRequest })
             }.onFailure {
                 _onRejectRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
@@ -119,8 +119,8 @@ class PendingFriendsViewModel : ViewModel() {
                 friendsRepository.deleteFriendsRequest(friendsRequest.requestId).getOrError()
             }.onSuccess {
                 _onCancelRequest.emit(MulKkamUiState.Success(Unit))
-                val currentList = sentRequest.value.toSuccessDataOrNull() ?: return@launch
-                _sentRequest.value =
+                val currentList = sentRequests.value.toSuccessDataOrNull() ?: return@launch
+                _sentRequests.value =
                     MulKkamUiState.Success(currentList.filter { it != friendsRequest })
             }.onFailure {
                 _onCancelRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
@@ -138,8 +138,8 @@ class PendingFriendsViewModel : ViewModel() {
                         size = REQUEST_SIZE,
                     ).getOrError()
             }.onSuccess {
-                val currentList = receivedRequest.value.toSuccessDataOrNull() ?: return@launch
-                _receivedRequest.value =
+                val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
+                _receivedRequests.value =
                     MulKkamUiState.Success(currentList + it.friendsRequestInfos)
                 receivedLastId = it.nextId
             }
@@ -156,8 +156,8 @@ class PendingFriendsViewModel : ViewModel() {
                         size = REQUEST_SIZE,
                     ).getOrError()
             }.onSuccess {
-                val currentList = sentRequest.value.toSuccessDataOrNull() ?: return@launch
-                _sentRequest.value =
+                val currentList = sentRequests.value.toSuccessDataOrNull() ?: return@launch
+                _sentRequests.value =
                     MulKkamUiState.Success(currentList + it.friendsRequestInfos)
                 sentLastId = it.nextId
             }
