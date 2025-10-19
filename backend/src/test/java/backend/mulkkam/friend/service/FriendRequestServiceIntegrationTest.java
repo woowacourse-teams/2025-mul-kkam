@@ -1,10 +1,10 @@
 package backend.mulkkam.friend.service;
 
-
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_RELATION;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
-import static org.assertj.core.api.Assertions.assertThat;
+import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
+import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -15,25 +15,24 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
-import backend.mulkkam.friend.dto.FriendRelationResponse;
-import backend.mulkkam.friend.dto.FriendRelationResponse.MemberInfo;
+import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
 import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
-import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse.SentFriendRelationInfo;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
+import java.util.ArrayList;
+import java.util.List;
+
+class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -42,10 +41,10 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private FriendRelationService friendRelationService;
+    private FriendRelationRepository friendRelationRepository;
 
     @Autowired
-    private FriendRelationRepository friendRelationRepository;
+    private FriendRequestService friendRequestService;
 
     private Member requester;
     private Member addressee;
@@ -65,41 +64,6 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         oauthAccountRepository.save(oauthAccountOfAddressee);
     }
 
-    @DisplayName("친구를 삭제할 때")
-    @Nested
-    class Delete {
-
-        @DisplayName("요청자가 삭제하는 경우 정상적으로 삭제된다.")
-        @Test
-        void success_deleteByRequester() {
-            // given
-            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendRelationStatus.ACCEPTED);
-            FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
-
-            // when
-            friendRelationService.delete(savedFriendRelation.getId(), new MemberDetails(requester.getId()));
-
-            // then
-            assertThat(friendRelationRepository.findAll()).isEmpty();
-        }
-
-        @DisplayName("수락자가 삭제하는 경우 정상적으로 삭제된다.")
-        @Test
-        void success_deleteByAddressee() {
-            // given
-            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
-                    FriendRelationStatus.ACCEPTED);
-            FriendRelation foundFriendRelation = friendRelationRepository.save(friendRelation);
-
-            // when
-            friendRelationService.delete(requester.getId(), new MemberDetails(foundFriendRelation.getId()));
-
-            // then
-            assertThat(friendRelationRepository.findAll()).isEmpty();
-        }
-    }
-
     @DisplayName("친구 요청을 거절할 때")
     @Nested
     class RejectFriendRelationRequest {
@@ -108,7 +72,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(1L,
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
+                    1L,
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -129,8 +95,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -145,8 +112,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendRelationService.rejectFriendRequest(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId())
             );
 
@@ -166,8 +134,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -182,11 +151,12 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.rejectFriendRequest(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     savedFriendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FRIEND_RELATION.name());
+                    .hasMessage(ALREADY_ACCEPTED.name());
         }
     }
 
@@ -198,7 +168,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void error_byNonExistingFriendRequest() {
             // when & then
-            assertThatThrownBy(() -> friendRelationService.acceptFriend(1L,
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
+                    1L,
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
@@ -219,8 +191,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -235,8 +208,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendRelationService.acceptFriend(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(addressee.getId())
             );
 
@@ -260,8 +234,9 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
@@ -274,105 +249,18 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
-            friendRelationService.rejectFriendRequest(
+            friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(REJECT),
                     new MemberDetails(addressee.getId()));
 
             // when & then
-            assertThatThrownBy(() -> friendRelationService.acceptFriend(
+            assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     friendRelation.getId(),
+                    new PatchFriendStatusRequest(ACCEPT),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
-        }
-    }
-
-    @DisplayName("친구 목록을 조회할 때")
-    @Nested
-    class Read {
-
-        @DisplayName("친구 관계의 수락자나 요청자가 조회 시도자인 경우만 반환한다")
-        @Test
-        void success_onlyRequesterOrAddressee() {
-            // given
-            List<Long> idOfMemberInRelation = new ArrayList<>();
-            for (int i = 0; i < 10; i++) {
-                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
-                memberRepository.save(member);
-
-                // 3의 배수인 경우에는 member 를 요청자로 저장
-                if (i % 3 == 0) {
-                    FriendRelation friendRelation = new FriendRelation(member.getId(), requester.getId(),
-                            FriendRelationStatus.ACCEPTED);
-                    friendRelationRepository.save(friendRelation);
-                    idOfMemberInRelation.add(member.getId());
-                    continue;
-                }
-
-                // 짝수인 경우에는 member 를 수락자로 저장
-                if (i % 2 == 0) {
-                    FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
-                            FriendRelationStatus.ACCEPTED);
-                    friendRelationRepository.save(friendRelation);
-                    idOfMemberInRelation.add(member.getId());
-                }
-            }
-
-            // when
-            FriendRelationResponse friendRelationResponse = friendRelationService.readFriendRelationsInStatusAccepted(
-                    null, 10,
-                    new MemberDetails(requester.getId()));
-
-            // then
-            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
-                    .map(MemberInfo::memberId)
-                    .toList();
-
-            assertSoftly(softly -> {
-                softly.assertThat(memberIdsOfResult).containsExactlyInAnyOrderElementsOf(idOfMemberInRelation);
-            });
-        }
-
-        @DisplayName("상태가 ACCEPTED 인 경우에만 반환한다")
-        @Test
-        void success_onlyStatusISAccepted() {
-            // given
-            List<Long> memberIdsOfAcceptedRelations = new ArrayList<>();
-
-            for (int i = 0; i < 10; i++) {
-                Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
-                memberRepository.save(member);
-
-                // 3의 배수인 경우에는 신청된 관계로 저장
-                if (i % 3 == 0) {
-                    FriendRelation friendRelation = new FriendRelation(member.getId(), requester.getId(),
-                            FriendRelationStatus.REQUESTED);
-                    friendRelationRepository.save(friendRelation);
-                    continue;
-                }
-
-                // 2의 배수인 경우에는 수락된 관계로 저장
-                if (i % 2 == 0) {
-                    FriendRelation friendRelation = new FriendRelation(requester.getId(), member.getId(),
-                            FriendRelationStatus.ACCEPTED);
-                    friendRelationRepository.save(friendRelation);
-                    memberIdsOfAcceptedRelations.add(member.getId());
-                }
-            }
-
-            // when
-            FriendRelationResponse friendRelationResponse = friendRelationService.readFriendRelationsInStatusAccepted(
-                    null, 10,
-                    new MemberDetails(requester.getId()));
-
-            // then
-            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
-                    .map(MemberInfo::memberId)
-                    .toList();
-
-            assertSoftly(softly -> {
-                softly.assertThat(memberIdsOfResult).containsExactlyInAnyOrderElementsOf(memberIdsOfAcceptedRelations);
-            });
         }
     }
 
@@ -408,15 +296,15 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             }
 
             // when
-            ReadSentFriendRelationResponse result = friendRelationService.readSentFriendRelations(
+            ReadSentFriendRelationResponse result = friendRequestService.readSent(
                     new MemberDetails(requester.getId()),
                     null,
                     10
             );
 
             // then
-            List<Long> actual = result.sentFriendRelationInfos().stream()
-                    .map(SentFriendRelationInfo::friendRequestId)
+            List<Long> actual = result.results().stream()
+                    .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 
             assertSoftly(softly -> {
@@ -448,15 +336,15 @@ class FriendRelationServiceIntegrationTest extends ServiceIntegrationTest {
             }
 
             // when
-            ReadSentFriendRelationResponse result = friendRelationService.readSentFriendRelations(
+            ReadSentFriendRelationResponse result = friendRequestService.readSent(
                     new MemberDetails(requester.getId()),
                     null,
                     10
             );
 
             // then
-            List<Long> actual = result.sentFriendRelationInfos().stream()
-                    .map(SentFriendRelationInfo::friendRequestId)
+            List<Long> actual = result.results().stream()
+                    .map(ReadSentFriendRelationResponse.SentFriendRelationInfo::friendRequestId)
                     .toList();
 
             assertSoftly(softly -> {

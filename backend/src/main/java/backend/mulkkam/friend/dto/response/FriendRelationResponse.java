@@ -1,4 +1,4 @@
-package backend.mulkkam.friend.dto;
+package backend.mulkkam.friend.dto.response;
 
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
 import io.swagger.v3.oas.annotations.media.Schema;

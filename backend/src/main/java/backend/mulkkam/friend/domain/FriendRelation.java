@@ -52,11 +52,15 @@ public class FriendRelation extends BaseEntity {
         return id.equals(addresseeId);
     }
 
+    public boolean isRequesterMemberId(Long id) {
+        return id.equals(requesterId);
+    }
+
     public void updateAccepted() {
         this.friendRelationStatus = FriendRelationStatus.ACCEPTED;
     }
 
-    public boolean isNotRequest() {
-        return friendRelationStatus != REQUESTED;
+    public boolean isPending() {
+        return friendRelationStatus == REQUESTED;
     }
 }
