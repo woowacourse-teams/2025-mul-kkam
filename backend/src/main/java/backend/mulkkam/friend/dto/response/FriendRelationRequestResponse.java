@@ -8,6 +8,9 @@ public record FriendRelationRequestResponse(
         @Schema(description = "친구 신청 엔티티 id", example = "1")
         Long friendRequestId,
 
+        @Schema(description = "친구의 멤버 id", example = "1")
+        Long memberId,
+
         @Schema(description = "회원 닉네임", example = "밍곰")
         String memberNickname,
 

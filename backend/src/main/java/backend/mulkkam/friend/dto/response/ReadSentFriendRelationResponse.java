@@ -19,12 +19,16 @@ public record ReadSentFriendRelationResponse(
             @Schema(description = "친구 관계 id", example = "1")
             Long friendRequestId,
 
+            @Schema(description = "친구의 멤버 id", example = "1")
+            Long memberId,
+
             @Schema(description = "회원 닉네임", example = "밍곰")
             String memberNickname
     ) {
         public SentFriendRelationInfo(SentFriendRelationSummary sentFriendRelationSummary) {
             this(
                     sentFriendRelationSummary.friendRequestId(),
+                    sentFriendRelationSummary.memberId(),
                     sentFriendRelationSummary.memberNickname()
             );
         }

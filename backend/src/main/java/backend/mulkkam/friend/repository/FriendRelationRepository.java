@@ -28,8 +28,8 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
-                AND (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
-                OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)
+                AND ((fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                        OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId))
     """)
     Optional<FriendRelation> findFriendByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
@@ -46,6 +46,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     @Query("""
                 SELECT new backend.mulkkam.friend.dto.response.FriendRelationRequestResponse(
                     fr.id,
+                    m.id,
                     m.memberNickname.value,
                     fr.createdAt
                 )
@@ -90,7 +91,9 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     );
 
     @Query("""
-                SELECT new backend.mulkkam.friend.repository.dto.SentFriendRelationSummary(fr.id, m.memberNickname.value)
+                SELECT new backend.mulkkam.friend.repository.dto.SentFriendRelationSummary(
+                    fr.id, m.id, m.memberNickname.value
+                )
                 FROM FriendRelation fr
                 JOIN Member m ON fr.addresseeId = m.id
                 WHERE fr.requesterId = :memberId
