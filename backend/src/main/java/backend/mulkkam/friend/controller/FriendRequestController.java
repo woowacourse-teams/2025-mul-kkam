@@ -50,7 +50,7 @@ public class FriendRequestController {
             @ExampleObject(name = "서로 친구 신청을 보낸 이력 존재", value = "{\"code\":\"DUPLICATED_FRIEND_REQUEST\"}")
     }))
     @PostMapping
-    public CreateFriendRequestResponse createFriendRequest(
+    public CreateFriendRequestResponse create(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
             @RequestBody @Valid
             CreateFriendRequestRequest request,
@@ -73,7 +73,7 @@ public class FriendRequestController {
             @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
     }))
     @DeleteMapping("/{requestId}")
-    public ResponseEntity<Void> cancelFriendRequest(
+    public ResponseEntity<Void> cancel(
             @Parameter(description = "취소하려는 요청의 id", required = true)
             @PathVariable Long requestId,
             @Parameter(hidden = true)
@@ -96,7 +96,7 @@ public class FriendRequestController {
             @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
     }))
     @PatchMapping("/{requestId}")
-    public void updateFriendRequest(
+    public void update(
             @Parameter(description = "수정하려는 친구 요청의 id", required = true)
             @PathVariable Long requestId,
             @RequestBody @Valid
@@ -110,7 +110,7 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReceivedFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/received")
-    public ReadReceivedFriendRelationResponse getReceivedFriendRequests(
+    public ReadReceivedFriendRelationResponse getReceived(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
@@ -125,7 +125,7 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetReceivedFriendRequestCountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/received-count")
-    public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(
+    public GetReceivedFriendRequestCountResponse getReceivedCount(
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
@@ -136,7 +136,7 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadSentFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/sent")
-    public ResponseEntity<ReadSentFriendRelationResponse> getSentFriendRequests(
+    public ResponseEntity<ReadSentFriendRelationResponse> getSent(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
