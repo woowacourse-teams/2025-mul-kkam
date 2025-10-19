@@ -78,21 +78,4 @@ public class RabbitMQConfig {
         t.setMessageConverter(converter);
         return t;
     }
-
-    @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory(
-            ConnectionFactory cf,
-            Jackson2JsonMessageConverter converter,
-            @Qualifier("fcmExecutor") Executor executor
-    ) {
-        SimpleRabbitListenerContainerFactory f = new SimpleRabbitListenerContainerFactory();
-        f.setConnectionFactory(cf);
-        f.setMessageConverter(converter);
-        f.setConcurrentConsumers(2);
-        f.setMaxConcurrentConsumers(8);
-        f.setPrefetchCount(100);
-        f.setTaskExecutor(executor);
-        f.setDefaultRequeueRejected(false);
-        return f;
-    }
 }
