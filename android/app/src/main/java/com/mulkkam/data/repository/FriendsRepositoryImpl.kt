@@ -29,10 +29,10 @@ class FriendsRepositoryImpl(
     }
 
     override suspend fun patchFriendRequest(
-        requestId: Long,
+        memberId: Long,
         status: Status,
     ): MulKkamResult<Unit> {
-        val result = friendsService.patchFriendRequests(requestId, PatchFriendRequest(status.name))
+        val result = friendsService.patchFriendRequests(PatchFriendRequest(memberId, status.name))
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },

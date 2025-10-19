@@ -43,6 +43,10 @@ class SearchMembersViewModel : ViewModel() {
         MutableSharedFlow<MulKkamUiState<Unit>>()
     val onRequestFriends: SharedFlow<MulKkamUiState<Unit>> = _onRequestFriends.asSharedFlow()
 
+    private val _onAcceptFriends: MutableSharedFlow<MulKkamUiState<String>> =
+        MutableSharedFlow<MulKkamUiState<String>>()
+    val onAcceptFriends: SharedFlow<MulKkamUiState<String>> = _onAcceptFriends.asSharedFlow()
+
     init {
         viewModelScope.launch {
             _name.debounce(300L).collect { query ->
@@ -91,10 +95,21 @@ class SearchMembersViewModel : ViewModel() {
     fun requestFriends(memberSearchInfo: MemberSearchInfo) {
         viewModelScope.launch {
             if (memberSearchInfo.isRequestedToMe()) {
-                // TODO: 친구 요청 수락 로직 구현
+                acceptFriendRequest(memberSearchInfo)
                 return@launch
             }
             sendFriendRequest(memberSearchInfo.id)
+        }
+    }
+
+    private suspend fun acceptFriendRequest(memberSearchInfo: MemberSearchInfo) {
+        runCatching {
+            friendsRepository.patchFriendRequest(memberSearchInfo.id, Status.ACCEPTED).getOrError()
+        }.onSuccess {
+            _onAcceptFriends.emit(MulKkamUiState.Success(memberSearchInfo.nickname.name))
+            updateSearchMembersUiState(memberSearchInfo.id, Status.ACCEPTED, Direction.REQUESTED_TO_ME)
+        }.onFailure {
+            _onAcceptFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
         }
     }
 
@@ -103,20 +118,24 @@ class SearchMembersViewModel : ViewModel() {
             friendsRepository.postFriendRequest(id).getOrError()
         }.onSuccess {
             _onRequestFriends.emit(MulKkamUiState.Success(Unit))
-            updateSearchMembersUiState(id)
+            updateSearchMembersUiState(id, Status.REQUESTED, Direction.REQUESTED_BY_ME)
         }.onFailure {
             _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
         }
     }
 
-    private fun updateSearchMembersUiState(id: Long) {
+    private fun updateSearchMembersUiState(
+        id: Long,
+        status: Status,
+        direction: Direction,
+    ) {
         val currentList = _memberSearchUiState.value.toSuccessDataOrNull() ?: return
         val updatedList =
             currentList.map { member ->
                 if (member.id == id) {
                     member.copy(
-                        status = Status.REQUESTED,
-                        direction = Direction.REQUESTED_BY_ME,
+                        status = status,
+                        direction = direction,
                     )
                 } else {
                     member

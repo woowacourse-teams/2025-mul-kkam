@@ -38,6 +38,7 @@ import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
@@ -57,8 +58,16 @@ fun SearchMembersScreen(
     state.onLoadMore(action = { viewModel.loadMoreMembers() })
 
     LaunchedEffect(Unit) {
-        viewModel.onRequestFriends.collect { state ->
-            handleRequestFriendsAction(state, view, context)
+        launch {
+            viewModel.onRequestFriends.collect { state ->
+                handleRequestFriendsAction(state, view, context)
+            }
+        }
+
+        launch {
+            viewModel.onAcceptFriends.collect { state ->
+                handleAcceptFriendsAction(state, view, context)
+            }
         }
     }
 
@@ -157,6 +166,26 @@ private fun handleRequestFriendsAction(
                 ).show()
         }
 
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+    }
+}
+
+private fun handleAcceptFriendsAction(
+    state: MulKkamUiState<String>,
+    view: View,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Success<String> -> {
+            CustomSnackBar
+                .make(
+                    view,
+                    context.getString(R.string.search_friends_accept_success, state.toSuccessDataOrNull()),
+                    R.drawable.ic_terms_all_check_on,
+                ).show()
+        }
+
+        is MulKkamUiState.Failure -> Unit
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
     }
 }
