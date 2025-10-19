@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.setting.adapter.SettingItem
+import com.mulkkam.ui.setting.SettingItem
 
 @Composable
 fun SettingTitleItem(item: SettingItem.TitleItem) {
