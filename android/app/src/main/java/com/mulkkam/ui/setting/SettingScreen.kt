@@ -55,6 +55,10 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
                 stringResource(R.string.setting_item_push_notification),
                 SettingType.PUSH_NOTIFICATION,
             ),
+            SettingItem.NormalItem(
+                stringResource(R.string.setting_reminder_toolbar_title),
+                SettingType.ACCOUNT_INFO,
+            ),
             SettingItem.DividerItem,
             SettingItem.TitleItem(stringResource(R.string.setting_section_support)),
             SettingItem.NormalItem(
