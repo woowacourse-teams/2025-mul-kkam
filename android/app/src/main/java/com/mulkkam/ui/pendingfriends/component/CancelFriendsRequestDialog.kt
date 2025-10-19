@@ -68,7 +68,7 @@ fun CancelFriendsRequestDialog(
                     painter = painterResource(R.drawable.ic_alert_circle),
                     contentDescription = null,
                     tint = Secondary200,
-                    modifier = Modifier.size(48.dp)
+                    modifier = Modifier.size(48.dp),
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(

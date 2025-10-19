@@ -62,7 +62,7 @@ private fun SentRequestItemPreview() {
     MulkkamTheme {
         SentRequestItem(
             FriendsRequestInfo(
-                requestId = 1L,
+                memberId = 1L,
                 nickname = Nickname("돈가스먹는환노"),
             ),
             onCancel = {},

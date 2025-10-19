@@ -26,8 +26,6 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
-import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
-import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 class HomeFragment :

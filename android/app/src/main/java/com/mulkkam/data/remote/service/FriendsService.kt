@@ -6,7 +6,6 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
-import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface FriendsService {
@@ -25,14 +24,13 @@ interface FriendsService {
         @Query("size") size: Int,
     ): Result<FriendsRequestResponse>
 
-    @PATCH("/friend-requests/{requestId}")
+    @PATCH("/friend-requests")
     suspend fun patchFriendsRequests(
-        @Path("requestId") requestId: Long,
         @Body patchFriendsRequest: PatchFriendsRequest,
     ): Result<Unit>
 
-    @DELETE("/friend-requests/{requestId}")
+    @DELETE("/friend-requests")
     suspend fun deleteFriendsRequest(
-        @Path("requestId") requestId: Long,
+        @Query("memberId") memberId: Long,
     ): Result<Unit>
 }

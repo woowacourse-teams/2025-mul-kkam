@@ -93,7 +93,7 @@ private fun ReceivedRequestItemPreview() {
         ReceivedRequestItem(
             receivedRequest =
                 FriendsRequestInfo(
-                    requestId = 1L,
+                    memberId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
                     createdAt = LocalDateTime.of(2025, 10, 13, 14, 0),
                 ),

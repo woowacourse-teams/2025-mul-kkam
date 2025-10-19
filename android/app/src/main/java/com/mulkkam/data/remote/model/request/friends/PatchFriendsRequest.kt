@@ -5,6 +5,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class PatchFriendsRequest(
+    @SerialName("memberId")
+    val memberId: Long,
     @SerialName("status")
     val status: String,
 )

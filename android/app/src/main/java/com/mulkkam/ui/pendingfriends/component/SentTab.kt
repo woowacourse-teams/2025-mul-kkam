@@ -31,7 +31,7 @@ fun SentTab(
     LazyColumn(modifier = modifier.fillMaxHeight(), state = state) {
         items(
             sentRequests.size,
-            key = { sentRequests[it].requestId },
+            key = { sentRequests[it].memberId },
         ) { index ->
             val friendsRequest = sentRequests[index]
             SentRequestItem(
@@ -65,15 +65,15 @@ private fun SentTabPreview() {
             sentRequests =
                 listOf(
                     FriendsRequestInfo(
-                        requestId = 1L,
+                        memberId = 1L,
                         nickname = Nickname("돈가스먹는환노"),
                     ),
                     FriendsRequestInfo(
-                        requestId = 2L,
+                        memberId = 2L,
                         nickname = Nickname("돈가스먹는공백"),
                     ),
                     FriendsRequestInfo(
-                        requestId = 3L,
+                        memberId = 3L,
                         nickname = Nickname("돈가스안먹는이든"),
                     ),
                 ),

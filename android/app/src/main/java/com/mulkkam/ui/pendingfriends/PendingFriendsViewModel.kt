@@ -80,8 +80,8 @@ class PendingFriendsViewModel : ViewModel() {
             runCatching {
                 friendsRepository
                     .patchFriendsRequest(
-                        friendsRequest.requestId,
-                        FriendsStatus.ACCEPT,
+                        friendsRequest.memberId,
+                        FriendsStatus.ACCEPTED,
                     ).getOrError()
             }.onSuccess {
                 _onAcceptRequest.emit(MulKkamUiState.Success(friendsRequest.nickname.name))
@@ -99,8 +99,8 @@ class PendingFriendsViewModel : ViewModel() {
             runCatching {
                 friendsRepository
                     .patchFriendsRequest(
-                        friendsRequest.requestId,
-                        FriendsStatus.REJECT,
+                        friendsRequest.memberId,
+                        FriendsStatus.REJECTED,
                     ).getOrError()
             }.onSuccess {
                 _onRejectRequest.emit(MulKkamUiState.Success(Unit))
@@ -116,7 +116,7 @@ class PendingFriendsViewModel : ViewModel() {
     fun cancelRequest(friendsRequest: FriendsRequestInfo) {
         viewModelScope.launch {
             runCatching {
-                friendsRepository.deleteFriendsRequest(friendsRequest.requestId).getOrError()
+                friendsRepository.deleteFriendsRequest(friendsRequest.memberId).getOrError()
             }.onSuccess {
                 _onCancelRequest.emit(MulKkamUiState.Success(Unit))
                 val currentList = sentRequests.value.toSuccessDataOrNull() ?: return@launch

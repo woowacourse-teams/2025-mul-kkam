@@ -23,7 +23,7 @@ fun ReceivedTab(
     LazyColumn(modifier = modifier.fillMaxHeight(), state = state) {
         items(
             receivedRequests.size,
-            key = { receivedRequests[it].requestId },
+            key = { receivedRequests[it].memberId },
         ) { index ->
             val friendsRequestInfo = receivedRequests[index]
             ReceivedRequestItem(

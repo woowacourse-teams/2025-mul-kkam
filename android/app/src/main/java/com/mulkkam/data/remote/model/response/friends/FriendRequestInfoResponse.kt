@@ -18,7 +18,7 @@ data class FriendRequestInfoResponse(
 
 fun FriendRequestInfoResponse.toDomain(): FriendsRequestInfo =
     FriendsRequestInfo(
-        requestId = friendRequestId.toLong(),
+        memberId = friendRequestId.toLong(),
         nickname = Nickname(memberNickname),
         createdAt = createdAt?.let { LocalDateTime.parse(it) },
     )
