@@ -17,6 +17,9 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulKkamTheme.typography
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.adapter.SettingItem
+import com.mulkkam.ui.setting.component.SettingDividerItem
+import com.mulkkam.ui.setting.component.SettingNormalItem
+import com.mulkkam.ui.setting.component.SettingTitleItem
 import com.mulkkam.ui.setting.model.SettingType
 
 @Composable
@@ -70,7 +73,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
         Text(
             text = stringResource(R.string.setting_title),
             style = typography.headline1,
-            modifier = Modifier.padding(start = 24.dp)
+            modifier = Modifier.padding(start = 24.dp),
         )
 
         Spacer(modifier = Modifier.height(20.dp))

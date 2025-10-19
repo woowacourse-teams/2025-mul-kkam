@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting
+package com.mulkkam.ui.setting.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,20 +20,20 @@ fun SettingTitleItem(item: SettingItem.TitleItem) {
     Column(
         modifier =
             Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
     ) {
         Text(
             text = item.title,
             style = typography.label1,
             color = Color.Black,
-            modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp)
+            modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp),
         )
         HorizontalDivider(
             color = Gray50,
             thickness = 1.dp,
             modifier =
                 Modifier
-                    .fillMaxWidth()
+                    .fillMaxWidth(),
         )
     }
 }

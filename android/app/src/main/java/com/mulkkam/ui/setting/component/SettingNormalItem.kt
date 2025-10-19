@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting
+package com.mulkkam.ui.setting.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
