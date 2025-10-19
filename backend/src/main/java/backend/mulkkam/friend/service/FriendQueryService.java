@@ -1,14 +1,11 @@
 package backend.mulkkam.friend.service;
 
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
-
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.utils.paging.PagingResult;
 import backend.mulkkam.common.utils.paging.PagingUtils;
 import backend.mulkkam.friend.domain.FriendRelation;
-import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
@@ -20,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Function;
 
 @RequiredArgsConstructor
@@ -29,9 +27,8 @@ public class FriendQueryService {
 
     private final FriendRelationRepository friendRelationRepository;
 
-    public FriendRelation getFriendRelation(Long friendRelationId) {
-        return friendRelationRepository.findById(friendRelationId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_RELATION));
+    public Optional<FriendRelation> getFriendRelation(Long requesterId, Long addresseeId) {
+        return friendRelationRepository.findByRequesterIdAndAddresseeId(requesterId, addresseeId);
     }
 
     public Long getReceivedFriendRequestCount(MemberDetails memberDetails) {

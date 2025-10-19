@@ -3,11 +3,11 @@ package backend.mulkkam.friend.controller;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND_REQUEST;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
-import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.Status.REJECTED;
 import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.Status.ACCEPTED;
+import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.Status.REJECTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -215,7 +215,7 @@ class FriendRequestControllerTest extends ControllerTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+            mockMvc.perform(delete("/friend-requests?memberId=" + addressee.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andDo(print())
                     .andExpect(status().isNoContent());
@@ -232,7 +232,7 @@ class FriendRequestControllerTest extends ControllerTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            String json = mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+            String json = mockMvc.perform(delete("/friend-requests?memberId=" + addressee.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
@@ -251,7 +251,7 @@ class FriendRequestControllerTest extends ControllerTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            String json = mockMvc.perform(delete("/friend-requests/" + friendRelation.getId())
+            String json = mockMvc.perform(delete("/friend-requests?memberId=" + addressee.getId())
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
@@ -259,7 +259,7 @@ class FriendRequestControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             // then
-            assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+            assertThat(actual.getCode()).isEqualTo(NOT_FOUND_FRIEND_REQUEST.name());
         }
     }
 
@@ -273,10 +273,10 @@ class FriendRequestControllerTest extends ControllerTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
-            PatchFriendStatusRequest request = new PatchFriendStatusRequest(REJECTED);
+            PatchFriendStatusRequest request = new PatchFriendStatusRequest(requester.getId(), REJECTED);
 
             // when
-            mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
+            mockMvc.perform(patch("/friend-requests")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfAddressee)
                             .content(objectMapper.writeValueAsString(request)))
@@ -296,10 +296,10 @@ class FriendRequestControllerTest extends ControllerTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
-            PatchFriendStatusRequest request = new PatchFriendStatusRequest(ACCEPTED);
+            PatchFriendStatusRequest request = new PatchFriendStatusRequest(requester.getId(), ACCEPTED);
 
             // when
-            mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
+            mockMvc.perform(patch("/friend-requests")
                             .contentType(APPLICATION_JSON)
                             .header(HttpHeaders.AUTHORIZATION,
                                     "Bearer " + tokenOfAddressee)
@@ -342,14 +342,14 @@ class FriendRequestControllerTest extends ControllerTest {
             );
             friendRelationRepository.save(friendRelation);
             PatchFriendStatusRequest request = new PatchFriendStatusRequest(
+                    requester.getId(),
                     PatchFriendStatusRequest.Status.valueOf(status)
             );
 
             // when
-            String json = mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
+            String json = mockMvc.perform(patch("/friend-requests")
                             .contentType(APPLICATION_JSON)
-                            .header(HttpHeaders.AUTHORIZATION,
-                                    "Bearer " + tokenOfOther)
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfOther)
                             .content(objectMapper.writeValueAsString(request)))
                     .andDo(print())
                     .andExpect(status().is4xxClientError())
@@ -357,7 +357,7 @@ class FriendRequestControllerTest extends ControllerTest {
             FailureBody actual = objectMapper.readValue(json, FailureBody.class);
 
             // then
-            assertThat(actual.getCode()).isEqualTo(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+            assertThat(actual.getCode()).isEqualTo(NOT_FOUND_FRIEND_REQUEST.name());
         }
     }
 

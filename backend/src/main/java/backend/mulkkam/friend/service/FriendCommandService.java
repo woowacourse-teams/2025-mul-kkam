@@ -28,10 +28,10 @@ public class FriendCommandService {
     }
 
     public void deleteFriend(
-            Long friendRelationId,
+            Long friendId,
             MemberDetails memberDetails
     ) {
-        friendRelationRepository.findByIdAndMemberId(friendRelationId, memberDetails.id())
+        friendRelationRepository.findByMemberIds(friendId, memberDetails.id())
                 .ifPresent(friendRelationRepository::delete);
     }
 

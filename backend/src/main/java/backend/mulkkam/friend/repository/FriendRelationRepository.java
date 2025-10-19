@@ -18,21 +18,20 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
         SELECT (EXISTS(
                 SELECT fr
                 FROM FriendRelation fr
-                WHERE (fr.addresseeId = :addresseeId AND fr.requesterId = :requesterId)
-                    OR (fr.addresseeId = :requesterId AND fr.requesterId = :addresseeId)))
+                WHERE (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                    OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)))
     """)
-    boolean existsByMemberIds(@Param("addresseeId") Long addresseeId, @Param("requesterId") Long requesterId);
+    boolean existsByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
     @Query("""
             SELECT fr
             FROM FriendRelation fr
-            WHERE fr.id = :id
-                AND (fr.addresseeId = :memberId OR fr.requesterId = :memberId)
-            """)
-    Optional<FriendRelation> findByIdAndMemberId(
-            @Param("id") Long id,
-            @Param("memberId") Long memberId
-    );
+            WHERE (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)
+    """)
+    Optional<FriendRelation> findByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
+
+    Optional<FriendRelation> findByRequesterIdAndAddresseeId(Long requesterId, Long addresseeId);
 
     @Modifying
     @Query("""
