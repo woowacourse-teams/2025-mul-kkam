@@ -23,7 +23,7 @@ import com.mulkkam.ui.setting.component.SettingTitleItem
 import com.mulkkam.ui.setting.model.SettingType
 
 @Composable
-fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
+fun SettingScreen(navigateToSettingType: (SettingType) -> Unit) {
     val settingItems =
         listOf(
             SettingItem.TitleItem(stringResource(R.string.setting_section_account)),
@@ -88,7 +88,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
             items(settingItems) { item ->
                 when (item) {
                     is SettingItem.TitleItem -> SettingTitleItem(item)
-                    is SettingItem.NormalItem -> SettingNormalItem(item, onSettingClick)
+                    is SettingItem.NormalItem -> SettingNormalItem(item, navigateToSettingType)
                     is SettingItem.DividerItem -> SettingDividerItem()
                 }
             }
@@ -101,7 +101,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
 fun PreviewSettingScreen() {
     MulkkamTheme {
         SettingScreen(
-            onSettingClick = {},
+            navigateToSettingType = {},
         )
     }
 }

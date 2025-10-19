@@ -43,7 +43,7 @@ class SettingFragment :
             composeView.setContent {
                 MulkkamTheme {
                     SettingScreen(
-                        onSettingClick = { type -> handleSettingClick(type) },
+                        navigateToSettingType = { type -> handleSettingClick(type) },
                     )
                 }
             }
