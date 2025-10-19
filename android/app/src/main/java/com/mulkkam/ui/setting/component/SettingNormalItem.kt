@@ -47,8 +47,7 @@ fun SettingNormalItem(
             modifier =
                 Modifier
                     .size(40.dp)
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically),
+                    .padding(8.dp),
         )
     }
 }
