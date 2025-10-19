@@ -118,7 +118,7 @@ public class FriendRequestController {
             @Parameter(description = "size, 미지정시 20", example = "20")
             @RequestParam(defaultValue = "20") int size
     ) {
-        return friendRequestService.readReceivedFriendRequests(memberDetails, lastId, size);
+        return friendRequestService.readReceived(memberDetails, lastId, size);
     }
 
     @Operation(summary = "받은 친구 신청 목록 갯수 조회", description = "내가 받은 친구 신청 목록의 갯수를 조회합니다.")
@@ -129,7 +129,7 @@ public class FriendRequestController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        return friendRequestService.getReceivedFriendRequestCount(memberDetails);
+        return friendRequestService.getReceivedCount(memberDetails);
     }
 
     @Operation(summary = "보낸 친구 신청 목록", description = "내가 보낸 친구 신청 목록을 조회합니다.")
@@ -144,7 +144,7 @@ public class FriendRequestController {
             @Parameter(description = "size, 미지정시 20", example = "20")
             @RequestParam(defaultValue = "20") int size
     ) {
-        ReadSentFriendRelationResponse readSentFriendRelationResponse = friendRequestService.readSentFriendRelations(
+        ReadSentFriendRelationResponse readSentFriendRelationResponse = friendRequestService.readSent(
                 memberDetails, lastId, size);
         return ResponseEntity.ok(readSentFriendRelationResponse);
     }

@@ -26,7 +26,7 @@ public class FriendRequestService {
     private final FriendCommandService friendCommandService;
 
     @Transactional(readOnly = true)
-    public ReadReceivedFriendRelationResponse readReceivedFriendRequests(
+    public ReadReceivedFriendRelationResponse readReceived(
             MemberDetails memberDetails,
             Long lastId,
             int size
@@ -40,13 +40,13 @@ public class FriendRequestService {
     }
 
     @Transactional(readOnly = true)
-    public GetReceivedFriendRequestCountResponse getReceivedFriendRequestCount(MemberDetails memberDetails) {
+    public GetReceivedFriendRequestCountResponse getReceivedCount(MemberDetails memberDetails) {
         Long count = friendQueryService.getReceivedFriendRequestCount(memberDetails);
         return new GetReceivedFriendRequestCountResponse(count);
     }
 
     @Transactional(readOnly = true)
-    public ReadSentFriendRelationResponse readSentFriendRelations(
+    public ReadSentFriendRelationResponse readSent(
             MemberDetails memberDetails,
             Long lastId,
             int size

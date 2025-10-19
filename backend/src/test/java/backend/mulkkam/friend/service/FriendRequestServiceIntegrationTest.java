@@ -296,7 +296,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             }
 
             // when
-            ReadSentFriendRelationResponse result = friendRequestService.readSentFriendRelations(
+            ReadSentFriendRelationResponse result = friendRequestService.readSent(
                     new MemberDetails(requester.getId()),
                     null,
                     10
@@ -336,7 +336,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             }
 
             // when
-            ReadSentFriendRelationResponse result = friendRequestService.readSentFriendRelations(
+            ReadSentFriendRelationResponse result = friendRequestService.readSent(
                     new MemberDetails(requester.getId()),
                     null,
                     10
