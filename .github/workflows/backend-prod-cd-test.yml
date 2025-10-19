@@ -6,7 +6,9 @@ on:
     paths:
       - "backend/**"
 
-
+permissions:
+  id-token: write
+  contents: read
 
 jobs:
   build-and-push:
