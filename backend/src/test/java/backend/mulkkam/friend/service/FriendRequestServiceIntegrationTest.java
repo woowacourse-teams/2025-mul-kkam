@@ -1,10 +1,7 @@
 package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_RELATION;
-import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
-import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
@@ -73,11 +70,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
         void error_byNonExistingFriendRequest() {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    1L,
-                    new PatchFriendStatusRequest(REJECT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("요청을 받은 사용자가 아닌 경우 예외를 던진다")
@@ -96,11 +92,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(REJECT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("정상적으로 거절된다")
@@ -113,8 +108,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(REJECT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
                     new MemberDetails(addressee.getId())
             );
 
@@ -135,11 +129,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(REJECT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("이미 처리된 요청을 다시 처리하려 하면 예외를 던진다")
@@ -148,13 +141,12 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.ACCEPTED);
-            FriendRelation savedFriendRelation = friendRelationRepository.save(friendRelation);
+            friendRelationRepository.save(friendRelation);
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    savedFriendRelation.getId(),
-                    new PatchFriendStatusRequest(REJECT),
-                    new MemberDetails(addressee.getId())))
+                        new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
+                        new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(ALREADY_ACCEPTED.name());
         }
@@ -169,11 +161,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
         void error_byNonExistingFriendRequest() {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    1L,
-                    new PatchFriendStatusRequest(ACCEPT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
                     new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("요청을 받은 사용자가 아닌 경우 예외를 던진다")
@@ -192,11 +183,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(ACCEPT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
                     new MemberDetails(invalidMember.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("정상적으로 수락된다")
@@ -209,8 +199,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(ACCEPT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
                     new MemberDetails(addressee.getId())
             );
 
@@ -235,11 +224,10 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(ACCEPT),
-                    new MemberDetails(requester.getId())))
+                        new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
+                        new MemberDetails(requester.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
 
         @DisplayName("이미 처리된 요청을 다시 처리하려 하면 예외를 던진다")
@@ -250,17 +238,15 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
                     FriendRelationStatus.REQUESTED);
             friendRelationRepository.save(friendRelation);
             friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(REJECT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
                     new MemberDetails(addressee.getId()));
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                    friendRelation.getId(),
-                    new PatchFriendStatusRequest(ACCEPT),
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
                     new MemberDetails(addressee.getId())))
                     .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_FRIEND_RELATION.name());
+                    .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
     }
 

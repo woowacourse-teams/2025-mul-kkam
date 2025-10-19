@@ -4,13 +4,14 @@ import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
 import backend.mulkkam.friend.repository.dto.MemberInfoOfFriendRelation;
 import backend.mulkkam.friend.repository.dto.SentFriendRelationSummary;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
+import java.util.Optional;
 
 public interface FriendRelationRepository extends JpaRepository<FriendRelation, Long> {
 
@@ -18,21 +19,21 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
         SELECT (EXISTS(
                 SELECT fr
                 FROM FriendRelation fr
-                WHERE (fr.addresseeId = :addresseeId AND fr.requesterId = :requesterId)
-                    OR (fr.addresseeId = :requesterId AND fr.requesterId = :addresseeId)))
+                WHERE (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                    OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)))
     """)
-    boolean existsByMemberIds(@Param("addresseeId") Long addresseeId, @Param("requesterId") Long requesterId);
+    boolean existsByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
     @Query("""
             SELECT fr
             FROM FriendRelation fr
-            WHERE fr.id = :id
-                AND (fr.addresseeId = :memberId OR fr.requesterId = :memberId)
-            """)
-    Optional<FriendRelation> findByIdAndMemberId(
-            @Param("id") Long id,
-            @Param("memberId") Long memberId
-    );
+            WHERE fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
+                AND (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)
+    """)
+    Optional<FriendRelation> findFriendByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
+
+    Optional<FriendRelation> findByRequesterIdAndAddresseeId(Long requesterId, Long addresseeId);
 
     @Modifying
     @Query("""
@@ -51,7 +52,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 FROM FriendRelation fr
                 JOIN Member m ON fr.requesterId = m.id
                 WHERE fr.addresseeId = :addresseeId
-                  AND (fr.friendRelationStatus = "REQUESTED")
+                  AND (fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED)
                   AND (:lastId IS NULL OR fr.id < :lastId)
                 ORDER BY fr.id DESC
             """)
@@ -65,7 +66,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 SELECT COUNT(fr)
                 FROM FriendRelation fr
                 WHERE fr.addresseeId = :addresseeId
-                AND (fr.friendRelationStatus = "REQUESTED")
+                AND (fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED)
             """)
     Long countFriendRequestsByAddresseeId(@Param("addresseeId") Long addresseeId);
 
@@ -93,7 +94,7 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
                 FROM FriendRelation fr
                 JOIN Member m ON fr.addresseeId = m.id
                 WHERE fr.requesterId = :memberId
-                  AND (fr.friendRelationStatus = "REQUESTED")
+                  AND (fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED)
                   AND (:lastId IS NULL OR fr.id < :lastId)
                 ORDER BY fr.id DESC
             """)

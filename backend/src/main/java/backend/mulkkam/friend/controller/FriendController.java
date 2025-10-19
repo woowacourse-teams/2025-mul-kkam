@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,14 +29,14 @@ public class FriendController {
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @ApiResponse(responseCode = "204", description = "친구 삭제 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @DeleteMapping("/{friendRelationId}")
+    @DeleteMapping
     public ResponseEntity<Void> deleteFriend(
-            @Parameter(description = "삭제할 친구 관계 ID", required = true)
-            @PathVariable Long friendRelationId,
+            @Parameter(description = "삭제할 친구의 멤버 ID", required = true)
+            @RequestParam Long memberId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendService.delete(friendRelationId, memberDetails);
+        friendService.delete(memberId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 

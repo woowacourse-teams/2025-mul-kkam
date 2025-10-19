@@ -1,7 +1,7 @@
 package backend.mulkkam.friend.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -73,55 +73,43 @@ public class FriendRequestService {
 
     @Transactional
     public void cancel(
-            Long friendRelationId,
+            Long addresseeId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
-        if (friendRelation.isRequesterMemberId(memberDetails.id())) {
-            friendCommandService.deleteFriendRequest(friendRelationId);
-            return;
-        }
-        throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+        FriendRelation friendRelation = getModifiableRequest(memberDetails.id(), addresseeId);
+        friendCommandService.deleteFriendRequest(friendRelation.getId());
     }
 
     @Transactional
     public void modifyFriendStatus(
-            Long friendRelationId,
             PatchFriendStatusRequest request,
             MemberDetails memberDetails
     ) {
         switch (request.status()) {
-            case ACCEPT -> acceptFriend(friendRelationId, memberDetails);
-            case REJECT -> rejectFriendRequest(friendRelationId, memberDetails);
+            case ACCEPTED -> acceptFriend(request.memberId(), memberDetails);
+            case REJECTED -> rejectFriendRequest(request.memberId(), memberDetails);
         }
     }
 
     private void acceptFriend(
-            Long friendRelationId,
+            Long requesterId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
-        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
-            friendRelation.updateAccepted();
-            return;
-        }
-        throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+        FriendRelation friendRelation = getModifiableRequest(requesterId, memberDetails.id());
+        friendRelation.updateAccepted();
     }
 
     private void rejectFriendRequest(
-            Long friendRelationId,
+            Long requesterId,
             MemberDetails memberDetails
     ) {
-        FriendRelation friendRelation = getModifiableRelation(friendRelationId);
-        if (friendRelation.isAddresseeMemberId(memberDetails.id())) {
-            friendCommandService.deleteFriendRequest(friendRelationId);
-            return;
-        }
-        throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
+        FriendRelation friendRelation = getModifiableRequest(requesterId, memberDetails.id());
+        friendCommandService.deleteFriendRequest(friendRelation.getId());
     }
 
-    private FriendRelation getModifiableRelation(Long friendRelationId) {
-        FriendRelation friendRelation = friendQueryService.getFriendRelation(friendRelationId);
+    private FriendRelation getModifiableRequest(Long requesterId, Long addresseeId) {
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(requesterId, addresseeId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_REQUEST));
         if (!friendRelation.isPending()) {
             throw new CommonException(ALREADY_ACCEPTED);
         }

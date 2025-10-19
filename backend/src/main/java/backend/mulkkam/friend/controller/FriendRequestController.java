@@ -22,7 +22,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,44 +65,38 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
     }))
-    @ApiResponse(responseCode = "403", description = "친구 신청자가 보낸 요청이 아닌 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "친구 신청자가 보낸 요청이 아님", value = "{\"code\":\"NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST\"}")
+    @ApiResponse(responseCode = "404", description = "두 멤버 사이에 친구 신청이 존재하지 않는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}"),
+            @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}")
     }))
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 신청 id", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
-    }))
-    @DeleteMapping("/{requestId}")
+    @DeleteMapping
     public ResponseEntity<Void> cancel(
-            @Parameter(description = "취소하려는 요청의 id", required = true)
-            @PathVariable Long requestId,
+            @Parameter(description = "취소하려는 요청 수신자의 멤버 id", required = true)
+            @RequestParam("memberId") Long addresseeId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendRequestService.cancel(requestId, memberDetails);
+        friendRequestService.cancel(addresseeId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "친구 요청 상태 변경 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+    @ApiResponse(responseCode = "400", description = "변경이 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
     }))
-    @ApiResponse(responseCode = "403", description = "친구 신청 수신자가 보낸 요청이 아닌 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST\"}")
+    @ApiResponse(responseCode = "404", description = "두 멤버 사이에 친구 신청이 존재하지 않는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}"),
+            @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}")
     }))
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 신청 id", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_RELATION\"}")
-    }))
-    @PatchMapping("/{requestId}")
+    @PatchMapping
     public void update(
-            @Parameter(description = "수정하려는 친구 요청의 id", required = true)
-            @PathVariable Long requestId,
             @RequestBody @Valid
             PatchFriendStatusRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendRequestService.modifyFriendStatus(requestId, request, memberDetails);
+        friendRequestService.modifyFriendStatus(request, memberDetails);
     }
 
     @Operation(summary = "받은 친구 신청 목록", description = "내가 받은 친구 신청 목록을 조회합니다.")

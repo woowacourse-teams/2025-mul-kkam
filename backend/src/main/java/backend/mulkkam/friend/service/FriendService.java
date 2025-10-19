@@ -16,10 +16,10 @@ public class FriendService {
 
     @Transactional
     public void delete(
-            Long friendRelationId,
+            Long friendId,
             MemberDetails memberDetails
     ) {
-        friendCommandService.deleteFriend(friendRelationId, memberDetails);
+        friendCommandService.deleteFriend(friendId, memberDetails);
     }
 
     @Transactional(readOnly = true)
