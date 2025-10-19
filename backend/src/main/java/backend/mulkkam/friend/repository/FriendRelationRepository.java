@@ -43,7 +43,11 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     void deleteAllByMemberId(@Param("memberId") Long memberId);
 
     @Query("""
-                SELECT new backend.mulkkam.friend.dto.response.FriendRelationRequestResponse(fr.id, m.memberNickname.value)
+                SELECT new backend.mulkkam.friend.dto.response.FriendRelationRequestResponse(
+                    fr.id,
+                    m.memberNickname.value,
+                    fr.createdAt
+                )
                 FROM FriendRelation fr
                 JOIN Member m ON fr.requesterId = m.id
                 WHERE fr.addresseeId = :addresseeId
