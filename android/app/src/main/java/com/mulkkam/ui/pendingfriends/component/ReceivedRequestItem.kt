@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
+import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -29,32 +31,42 @@ fun ReceivedRequestItem(
     pendingFriend: FriendsRequestInfo,
     onAccept: () -> Unit,
     onReject: () -> Unit,
+    modifier: Modifier = Modifier,
     currentTime: LocalDateTime = LocalDateTime.now(),
 ) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 24.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+    Column(
+        modifier = modifier,
     ) {
-        Column {
-            Text(
-                text = pendingFriend.nickname.name,
-                color = Black,
-                style = MulKkamTheme.typography.title1,
-            )
-            Text(
-                text = formatRemainingTime(currentTime, LocalDateTime.now()),
-                color = Gray300,
-                style = MulKkamTheme.typography.label2,
-            )
+        Row(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 24.dp, end = 16.dp, top = 12.dp, bottom = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+        ) {
+            Column {
+                Text(
+                    text = pendingFriend.nickname.name,
+                    color = Black,
+                    style = MulKkamTheme.typography.title1,
+                )
+                Text(
+                    text = formatRemainingTime(currentTime, LocalDateTime.now()),
+                    color = Gray300,
+                    style = MulKkamTheme.typography.label2,
+                )
+            }
+            Row {
+                AcceptFriendButton(onAccept)
+                RejectFriendButton(onReject)
+            }
         }
-        Row {
-            AcceptFriendButton(onAccept)
-            RejectFriendButton(onReject)
-        }
+        HorizontalDivider(
+            modifier = Modifier.fillMaxWidth(),
+            thickness = 1.dp,
+            color = Gray100,
+        )
     }
 }
 
