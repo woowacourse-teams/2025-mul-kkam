@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+// TODO: 구현 모두 끝내면 @Profile("worker") 추가하기
 public class FcmClient {
 
     private static final String ACTION = "action";
