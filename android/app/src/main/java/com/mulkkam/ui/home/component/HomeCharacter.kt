@@ -3,10 +3,8 @@ package com.mulkkam.ui.home.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +27,7 @@ fun HomeCharacter(
 ) {
     Box(
         modifier =
-            modifier
-                .fillMaxWidth(),
+            modifier.fillMaxWidth(),
         contentAlignment = Alignment.Center,
     ) {
         Column(
@@ -48,12 +45,11 @@ fun HomeCharacter(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .fillMaxWidth(0.76f)
+                        .fillMaxWidth(0.64f)
                         .aspectRatio(1f),
             )
 
             if (comment != null) {
-                Spacer(Modifier.height(16.dp))
                 Text(
                     text = comment,
                     style = MulKkamTheme.typography.title2,
@@ -62,7 +58,8 @@ fun HomeCharacter(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 16.dp, bottom = 24.dp),
                 )
             }
         }

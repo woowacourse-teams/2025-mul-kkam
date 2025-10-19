@@ -6,6 +6,7 @@ import androidx.work.ListenableWorker
 import androidx.work.WorkManager
 import androidx.work.WorkerFactory
 import androidx.work.WorkerParameters
+import com.mulkkam.data.work.AchievementHeatmapWorker
 import com.mulkkam.data.work.CalorieWorker
 import com.mulkkam.data.work.DrinkByAmountWorker
 import com.mulkkam.data.work.IntakeWorker
@@ -64,6 +65,9 @@ private class MulKkamWorkerFactory(
         when (workerClassName) {
             CalorieWorker::class.java.name ->
                 CalorieWorker(appContext, workerParameters, healthRepository, notificationRepository)
+
+            AchievementHeatmapWorker::class.java.name ->
+                AchievementHeatmapWorker(appContext, workerParameters, intakeRepository)
 
             ProgressWorker::class.java.name ->
                 ProgressWorker(appContext, workerParameters, membersRepository)

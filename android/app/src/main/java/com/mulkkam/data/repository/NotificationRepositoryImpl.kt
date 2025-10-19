@@ -5,7 +5,7 @@ import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRequest
 import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.NotificationsService
-import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.NotificationRepository
 import java.time.LocalDateTime
@@ -16,9 +16,11 @@ class NotificationRepositoryImpl(
     override suspend fun getNotifications(
         time: LocalDateTime,
         size: Int,
-    ): MulKkamResult<List<Notification>> {
+        lastId: Long?,
+    ): MulKkamResult<NotificationsResult> {
         val result =
             notificationService.getNotifications(
+                lastId = lastId,
                 clientTime = time.toString(),
                 size = size,
             )
@@ -41,7 +43,7 @@ class NotificationRepositoryImpl(
         )
     }
 
-    override suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit> {
+    override suspend fun postSuggestionNotificationsApproval(id: Long): MulKkamResult<Unit> {
         val result = notificationService.postSuggestionNotificationsApproval(id)
 
         return result.fold(
@@ -59,7 +61,7 @@ class NotificationRepositoryImpl(
         )
     }
 
-    override suspend fun deleteNotifications(id: Int): MulKkamResult<Unit> {
+    override suspend fun deleteNotifications(id: Long): MulKkamResult<Unit> {
         val result = notificationService.deleteNotifications(id)
 
         return result.fold(

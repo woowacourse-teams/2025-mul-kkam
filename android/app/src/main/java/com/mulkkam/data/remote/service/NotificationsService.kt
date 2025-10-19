@@ -18,14 +18,14 @@ interface NotificationsService {
 
     @GET("/notifications")
     suspend fun getNotifications(
-        @Query("lastId") lastId: Int? = null,
+        @Query("lastId") lastId: Long? = null,
         @Query("clientTime") clientTime: String,
         @Query("size") size: Int,
     ): Result<NotificationsResponse>
 
     @POST("/suggestion-notifications/approval/{id}")
     suspend fun postSuggestionNotificationsApproval(
-        @Path("id") id: Int,
+        @Path("id") id: Long,
     ): Result<Unit>
 
     @GET("/notifications/unread-count")
@@ -33,6 +33,6 @@ interface NotificationsService {
 
     @DELETE("/notifications/{id}")
     suspend fun deleteNotifications(
-        @Path("id") id: Int,
+        @Path("id") id: Long,
     ): Result<Unit>
 }

@@ -2,7 +2,9 @@ package com.mulkkam.ui.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.notificationRepository
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.ui.model.MulKkamUiState
@@ -28,6 +30,12 @@ class NotificationViewModel : ViewModel() {
     private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion.asStateFlow()
 
+    private val _loadUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+        MutableStateFlow(MulKkamUiState.Idle)
+    val loadUiState: StateFlow<MulKkamUiState<Unit>> = _loadUiState.asStateFlow()
+
+    private var nextCursor: Long? = null
+
     init {
         loadNotifications()
     }
@@ -42,18 +50,20 @@ class NotificationViewModel : ViewModel() {
                         LocalDateTime.now(),
                         NOTIFICATION_SIZE,
                     ).getOrError()
-            }.onSuccess { notifications ->
-                _notifications.value = MulKkamUiState.Success<List<Notification>>(notifications)
+            }.onSuccess { notificationsResult ->
+                _notifications.value = MulKkamUiState.Success<List<Notification>>(notificationsResult.notifications)
+                nextCursor = notificationsResult.nextCursor
             }.onFailure {
                 _notifications.value = MulKkamUiState.Failure(it.toMulKkamError())
             }
         }
     }
 
-    fun applySuggestion(id: Int) {
+    fun applySuggestion(id: Long) {
         if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Applying suggestion notification id=$id")
                 _applySuggestionUiState.value = MulKkamUiState.Loading
                 notificationRepository.postSuggestionNotificationsApproval(id).getOrError()
             }.onSuccess {
@@ -65,7 +75,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun deleteNotification(id: Int) {
+    fun deleteNotification(id: Long) {
         viewModelScope.launch {
             _notifications.value =
                 MulKkamUiState.Success(
@@ -73,6 +83,7 @@ class NotificationViewModel : ViewModel() {
                         ?: return@launch,
                 )
             runCatching {
+                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Deleting notification id=$id")
                 notificationRepository.deleteNotifications(id).getOrError()
             }.onFailure {
                 loadNotifications()
@@ -80,7 +91,30 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
+    fun loadMore() {
+        if (nextCursor == null) return
+        viewModelScope.launch {
+            runCatching {
+                _loadUiState.value = MulKkamUiState.Loading
+                notificationRepository
+                    .getNotifications(
+                        time = LocalDateTime.now(),
+                        size = NOTIFICATION_SIZE,
+                        lastId = nextCursor,
+                    ).getOrError()
+            }.onSuccess { notificationsResult ->
+                _loadUiState.value = MulKkamUiState.Success(Unit)
+                val currentList = notifications.value.toSuccessDataOrNull() ?: emptyList()
+                val updatedList = currentList + notificationsResult.notifications
+                _notifications.value = MulKkamUiState.Success(updatedList)
+                nextCursor = notificationsResult.nextCursor
+            }.onFailure {
+                _loadUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
     companion object {
-        private const val NOTIFICATION_SIZE: Int = 100
+        private const val NOTIFICATION_SIZE: Int = 20
     }
 }

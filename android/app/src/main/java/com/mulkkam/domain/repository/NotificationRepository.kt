@@ -1,6 +1,6 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.model.notification.Notification
+import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDateTime
 
@@ -8,13 +8,14 @@ interface NotificationRepository {
     suspend fun getNotifications(
         time: LocalDateTime,
         size: Int,
-    ): MulKkamResult<List<Notification>>
+        lastId: Long? = null,
+    ): MulKkamResult<NotificationsResult>
 
     suspend fun postActiveCaloriesBurned(kcal: Double): MulKkamResult<Unit>
 
     suspend fun getNotificationsUnreadCount(): MulKkamResult<Long>
 
-    suspend fun postSuggestionNotificationsApproval(id: Int): MulKkamResult<Unit>
+    suspend fun postSuggestionNotificationsApproval(id: Long): MulKkamResult<Unit>
 
-    suspend fun deleteNotifications(id: Int): MulKkamResult<Unit>
+    suspend fun deleteNotifications(id: Long): MulKkamResult<Unit>
 }

@@ -9,19 +9,29 @@ import com.mulkkam.util.logger.ReleaseLoggingTree
 import timber.log.Timber
 
 object LoggingInjection {
-    private val sanitizer: SensitiveInfoSanitizer by lazy {
-        SensitiveInfoSanitizerImpl()
-    }
-
     val mulKkamLogger: Logger by lazy {
         LoggerImpl(sanitizer)
     }
 
-    val releaseTimberTree: Timber.Tree by lazy {
+    private val sanitizer: SensitiveInfoSanitizer by lazy {
+        SensitiveInfoSanitizerImpl()
+    }
+
+    private val releaseTimberTree: Timber.Tree by lazy {
         ReleaseLoggingTree(sanitizer)
     }
 
-    val debugTimberTree: Timber.Tree by lazy {
+    private val debugTimberTree: Timber.Tree by lazy {
         DebugLoggingTree(sanitizer)
+    }
+
+    fun init(
+        userId: String?,
+        isDebug: Boolean,
+    ) {
+        mulKkamLogger.init(userId)
+
+        val timberTree = if (isDebug) debugTimberTree else releaseTimberTree
+        Timber.plant(timberTree)
     }
 }

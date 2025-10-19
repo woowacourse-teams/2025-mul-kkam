@@ -64,7 +64,7 @@ fun NotificationItemComponent(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_notification_delete),
+                    painter = painterResource(R.drawable.ic_common_delete),
                     modifier = Modifier.size(24.dp),
                     contentDescription = stringResource(R.string.notification_delete_description),
                 )

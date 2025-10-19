@@ -3,12 +3,14 @@ package com.mulkkam.di
 import com.mulkkam.data.repository.AuthRepositoryImpl
 import com.mulkkam.data.repository.CupsRepositoryImpl
 import com.mulkkam.data.repository.DevicesRepositoryImpl
+import com.mulkkam.data.repository.FriendsRepositoryImpl
 import com.mulkkam.data.repository.HealthRepositoryImpl
 import com.mulkkam.data.repository.IntakeRepositoryImpl
 import com.mulkkam.data.repository.MembersRepositoryImpl
 import com.mulkkam.data.repository.NicknameRepositoryImpl
 import com.mulkkam.data.repository.NotificationRepositoryImpl
 import com.mulkkam.data.repository.OnboardingRepositoryImpl
+import com.mulkkam.data.repository.ReminderRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
 import com.mulkkam.data.repository.VersionsRepositoryImpl
 import com.mulkkam.di.PreferenceInjection.devicesPreference
@@ -17,22 +19,26 @@ import com.mulkkam.di.PreferenceInjection.tokenPreference
 import com.mulkkam.di.ServiceInjection.authService
 import com.mulkkam.di.ServiceInjection.cupsService
 import com.mulkkam.di.ServiceInjection.devicesService
+import com.mulkkam.di.ServiceInjection.friendsService
 import com.mulkkam.di.ServiceInjection.healthService
 import com.mulkkam.di.ServiceInjection.intakeService
 import com.mulkkam.di.ServiceInjection.membersService
 import com.mulkkam.di.ServiceInjection.nicknameService
 import com.mulkkam.di.ServiceInjection.notificationService
 import com.mulkkam.di.ServiceInjection.onboardingService
+import com.mulkkam.di.ServiceInjection.reminderService
 import com.mulkkam.di.ServiceInjection.versionsService
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.DevicesRepository
+import com.mulkkam.domain.repository.FriendsRepository
 import com.mulkkam.domain.repository.HealthRepository
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.domain.repository.NotificationRepository
 import com.mulkkam.domain.repository.OnboardingRepository
+import com.mulkkam.domain.repository.ReminderRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.domain.repository.VersionsRepository
 
@@ -79,5 +85,13 @@ object RepositoryInjection {
 
     val onboardingRepository: OnboardingRepository by lazy {
         OnboardingRepositoryImpl(onboardingService)
+    }
+
+    val reminderRepository: ReminderRepository by lazy {
+        ReminderRepositoryImpl(reminderService)
+    }
+
+    val friendsRepository: FriendsRepository by lazy {
+        FriendsRepositoryImpl(friendsService)
     }
 }

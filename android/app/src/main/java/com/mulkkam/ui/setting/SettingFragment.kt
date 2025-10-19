@@ -21,6 +21,7 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
+import com.mulkkam.ui.settingreminder.SettingReminderActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.extensions.getParcelableArrayListExtraCompat
@@ -59,6 +60,7 @@ class SettingFragment :
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
             SettingType.TERMS -> startActivity(SettingTermsActivity.newIntent(requireContext()))
+            SettingType.REMINDER -> startActivity(SettingReminderActivity.newIntent(requireContext()))
         }
     }
 

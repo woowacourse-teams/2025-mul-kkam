@@ -19,8 +19,14 @@ class LoggerImpl(
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance(),
     private val isDebug: Boolean = BuildConfig.DEBUG,
 ) : Logger {
+    private var userId: String? = null
+
+    override fun init(userId: String?) {
+        this.userId = userId
+    }
+
     override fun log(entry: LogEntry) {
-        val rawMessage = formatMessage(entry)
+        val rawMessage = formatMessage(entry.copy(userId = userId))
         val safeMessage = sanitizer.sanitize(rawMessage)
         val safePayloadMessage = sanitizer.sanitize(entry.message)
 
@@ -41,7 +47,7 @@ class LoggerImpl(
             append(", event=").appendLine(entry.event)
             append("timestamp=").appendLine(entry.timestamp)
             append("message=").append(entry.message)
-            append(" | userId=").append(entry.userId ?: "null")
+            append(" | userId=").append(entry.userId)
         }
 
     private fun logToTimber(

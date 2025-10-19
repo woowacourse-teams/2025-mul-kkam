@@ -3,6 +3,7 @@ package com.mulkkam.data.remote.service
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
+import com.mulkkam.data.remote.model.request.members.MembersReminderRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.MemberNicknameResponse
 import com.mulkkam.data.remote.model.response.members.MembersProgressInfoResponse
@@ -57,4 +58,9 @@ interface MembersService {
 
     @DELETE("/members")
     suspend fun deleteMembers(): Result<Unit>
+
+    @PATCH("/members/reminder")
+    suspend fun patchMembersReminder(
+        @Body memberReminderRequest: MembersReminderRequest,
+    ): Result<Unit>
 }

@@ -1,0 +1,199 @@
+name: Android CD
+
+on:
+  workflow_dispatch:
+    inputs:
+      track:
+        description: Play Store track to deploy to (internal, alpha, beta, production)
+        required: true
+        default: internal
+      status:
+        description: Release status for the uploaded artifact (draft, inProgress, completed, halted)
+        required: true
+        default: completed
+      release_notes_path:
+        description: Path to the release notes file relative to the repository root
+        required: false
+        default: ''
+      release_name:
+        description: Optional explicit release name override
+        required: false
+        default: ''
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: android-cd-${{ github.ref_name }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: Build and publish bundle
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON }}
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
+      DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
+      KAKAO_NATIVE_APP_KEY: ${{ secrets.KEY_KAKAO }}
+      GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
+      ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/android/app/upload-keystore.jks
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate deployment secrets
+        run: |
+          set -euo pipefail
+          missing=()
+          for variable_name in SERVICE_ACCOUNT_JSON ANDROID_KEYSTORE_BASE64 ANDROID_KEYSTORE_PASSWORD ANDROID_KEY_PASSWORD ANDROID_KEY_ALIAS RELEASE_BASE_URL KAKAO_NATIVE_APP_KEY GOOGLE_SERVICES_RELEASE; do
+            if [ -z "${!variable_name:-}" ]; then
+              missing+=("$variable_name")
+            fi
+          done
+          if [ "${#missing[@]}" -gt 0 ]; then
+            printf '::error::Missing required secrets: %s\n' "${missing[*]}"
+            exit 1
+          fi
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Prepare Android keystore
+        run: |
+          set -euo pipefail
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$ANDROID_KEYSTORE_PATH"
+
+      - name: Configure local.properties
+        run: |
+          set -euo pipefail
+          cat <<LOCAL_PROPERTIES > android/local.properties
+          key.kakao=${KAKAO_NATIVE_APP_KEY}
+          release.base.url=${RELEASE_BASE_URL}
+          debug.base.url=${DEBUG_BASE_URL:-$RELEASE_BASE_URL}
+          signing.keystore.path=${ANDROID_KEYSTORE_PATH}
+          signing.keystore.password=${ANDROID_KEYSTORE_PASSWORD}
+          signing.key.alias=${ANDROID_KEY_ALIAS}
+          signing.key.password=${ANDROID_KEY_PASSWORD}
+          LOCAL_PROPERTIES
+
+      - name: Set up google-services.json for release
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import os
+          import pathlib
+          
+          google_services = os.environ.get("GOOGLE_SERVICES_RELEASE", "")
+          if not google_services:
+            raise SystemExit("google-services.json secret is empty")
+
+          output_path = pathlib.Path("android/app/src/release/google-services.json")
+          output_path.parent.mkdir(parents=True, exist_ok=True)
+          output_path.write_text(google_services, encoding="utf-8")
+          PY
+
+      - name: Build release bundle
+        run: ./gradlew :app:bundleRelease
+        working-directory: android
+        env:
+          CI: true
+
+      - name: Prepare release notes
+        id: release-notes
+        run: |
+          set -euo pipefail
+
+          strip_version_prefix() {
+            if [[ "$1" =~ ^[vV]([0-9].*)$ ]]; then
+              printf '%s' "${BASH_REMATCH[1]}"
+            else
+              printf '%s' "$1"
+            fi
+          }
+
+          dispatch_notes_path="${DISPATCH_NOTES_PATH:-}"
+          dispatch_release_name="${DISPATCH_RELEASE_NAME:-}"
+          release_identifier=""
+
+          if [ -n "$dispatch_notes_path" ]; then
+            notes_path="$dispatch_notes_path"
+          else
+            commit_msg="$(git log -1 --pretty=%B)"
+            if [[ "$commit_msg" =~ (^|[[:space:]])[vV]?([0-9]+(\.[0-9]+){1,3})([[:space:]]|$) ]]; then
+              release_identifier="${BASH_REMATCH[2]}"
+            fi
+
+            if [ -z "$release_identifier" ]; then
+              printf '::error::Unable to infer version from commit message. Provide inputs.release_notes_path or ensure PR title contains a version like v2.0.1.\n'
+              exit 1
+            fi
+
+            notes_path="android/release-notes/ko-KR/${release_identifier}.txt"
+            if [ ! -f "$notes_path" ]; then
+              stripped_identifier="$(strip_version_prefix "$release_identifier")"
+              alternative_notes_path="android/release-notes/ko-KR/${stripped_identifier}.txt"
+              if [ -f "$alternative_notes_path" ]; then
+                notes_path="$alternative_notes_path"
+              fi
+            fi
+          fi
+
+          if [ ! -f "$notes_path" ]; then
+            printf '::error::Release notes file not found: %s\n' "$notes_path"
+            exit 1
+          fi
+
+          release_name="$dispatch_release_name"
+          if [ -z "$release_name" ]; then
+            if [ -n "${release_identifier:-}" ]; then
+              release_name="$(strip_version_prefix "$release_identifier")"
+            else
+              filename="$(basename "$notes_path")"
+              release_name="$(strip_version_prefix "${filename%.*}")"
+            fi
+          fi
+
+          mkdir -p android/release-notes/ko-KR
+          cp "$notes_path" android/release-notes/ko-KR/default.txt
+
+          {
+            printf 'directory=android/release-notes\n'
+            printf 'release-name=%s\n' "$release_name"
+          } >> "$GITHUB_OUTPUT"
+        env:
+          DISPATCH_NOTES_PATH: ${{ github.event.inputs.release_notes_path }}
+          DISPATCH_RELEASE_NAME: ${{ github.event.inputs.release_name }}
+
+      - name: Upload bundle to Play Store
+        id: play-upload
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
+          packageName: com.mulkkam
+          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'internal' }}
+          status: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.status || 'completed' }}
+          releaseName: ${{ steps.release-notes.outputs.release-name }}
+          whatsNewDirectory: ${{ steps.release-notes.outputs.directory }}
+
+      - name: Upload release bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release-bundle
+          path: android/app/build/outputs/bundle/release/app-release.aab
+          if-no-files-found: error

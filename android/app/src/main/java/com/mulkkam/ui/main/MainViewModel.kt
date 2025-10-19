@@ -4,12 +4,14 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.di.CheckerInjection.calorieChecker
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.di.RepositoryInjection.devicesRepository
 import com.mulkkam.di.RepositoryInjection.healthRepository
 import com.mulkkam.di.RepositoryInjection.membersRepository
 import com.mulkkam.di.RepositoryInjection.tokenRepository
 import com.mulkkam.di.RepositoryInjection.versionsRepository
 import com.mulkkam.domain.checker.CalorieChecker.Companion.DEFAULT_CHECK_CALORIE_INTERVAL_HOURS
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import kotlinx.coroutines.launch
@@ -62,7 +64,12 @@ class MainViewModel : ViewModel() {
 
     fun checkHealthPermissions(permissions: Set<String>) {
         viewModelScope.launch {
-            _isHealthPermissionGranted.value = healthRepository.hasPermissions(permissions)
+            val granted = healthRepository.hasPermissions(permissions)
+            mulKkamLogger.info(
+                LogEvent.HEALTH_CONNECT,
+                "Health Connect permissions check completed: granted=$granted",
+            )
+            _isHealthPermissionGranted.value = granted
         }
     }
 
@@ -82,6 +89,8 @@ class MainViewModel : ViewModel() {
                 }.getOrNull() ?: return@launch
 
             if (previouslyGranted == isCurrentlyGranted) return@launch
+
+            mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "Notification permission changed: isGranted=$isCurrentlyGranted")
 
             if (isCurrentlyGranted) {
                 handlePermissionGranted(isCurrentlyGranted)

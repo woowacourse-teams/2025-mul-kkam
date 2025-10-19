@@ -14,12 +14,14 @@ import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.di.CheckerInjection.intakeChecker
+import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_EMOJI_BYTES
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TARGET_AMOUNT
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
@@ -92,6 +94,7 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
     ) {
         val cupId = intent.getLongExtra(KEY_EXTRA_CUP_ID, 0L)
+        mulKkamLogger.info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
         val requestId = intakeChecker.drink(cupId)
         observeDrinkWorker(context, requestId)
     }

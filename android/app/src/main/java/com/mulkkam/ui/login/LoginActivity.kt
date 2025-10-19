@@ -45,6 +45,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun loginWithKakao() {
+        mulKkamLogger.info(LogEvent.USER_AUTH, "Kakao Login Attempted")
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
             loginWithKakaoTalk()
         } else {
@@ -58,7 +59,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                 error is ClientError && error.reason == ClientErrorCause.Cancelled -> Unit
 
                 error != null -> {
-                    mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
+                    mulKkamLogger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
                     loginWithKakaoAccount()
                 }
 
@@ -70,7 +71,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     private fun loginWithKakaoAccount() {
         UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
             if (error != null) {
-                mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
+                mulKkamLogger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
             } else {
                 handleKakaoLoginResult(token)
             }
