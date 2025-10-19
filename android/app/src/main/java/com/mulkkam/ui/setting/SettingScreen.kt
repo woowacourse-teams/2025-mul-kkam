@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulKkamTheme.typography
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.adapter.SettingItem
 import com.mulkkam.ui.setting.component.SettingDividerItem
@@ -72,7 +72,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
     ) {
         Text(
             text = stringResource(R.string.setting_title),
-            style = typography.headline1,
+            style = MulKkamTheme.typography.headline1,
             modifier = Modifier.padding(start = 24.dp),
         )
 
