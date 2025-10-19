@@ -57,7 +57,7 @@ fun SettingScreen(onSettingClick: (SettingType) -> Unit) {
             ),
             SettingItem.NormalItem(
                 stringResource(R.string.setting_reminder_toolbar_title),
-                SettingType.ACCOUNT_INFO,
+                SettingType.REMINDER,
             ),
             SettingItem.DividerItem,
             SettingItem.TitleItem(stringResource(R.string.setting_section_support)),
