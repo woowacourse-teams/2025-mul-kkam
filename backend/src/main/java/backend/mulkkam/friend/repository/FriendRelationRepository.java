@@ -28,8 +28,8 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
-                AND (fr.requesterId = :friendId AND fr.addresseeId = :memberId)
-                OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId)
+                AND ((fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                        OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId))
     """)
     Optional<FriendRelation> findFriendByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
