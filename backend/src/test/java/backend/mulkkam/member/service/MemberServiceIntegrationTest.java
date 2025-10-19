@@ -22,10 +22,9 @@ import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
-import backend.mulkkam.friend.domain.Friend;
-import backend.mulkkam.friend.domain.FriendRequest;
-import backend.mulkkam.friend.repository.FriendRepository;
-import backend.mulkkam.friend.repository.FriendRequestRepository;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -53,15 +52,14 @@ import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -104,10 +102,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
     private ReminderScheduleRepository reminderScheduleRepository;
 
     @Autowired
-    private FriendRepository friendRepository;
-
-    @Autowired
-    private FriendRequestRepository friendRequestRepository;
+    private FriendRelationRepository friendRelationRepository;
 
     private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
 
@@ -483,11 +478,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             ReminderSchedule schedule2 = new ReminderSchedule(member, LocalTime.of(12, 0));
             reminderScheduleRepository.saveAll(List.of(schedule1, schedule2));
 
-            Friend friend = new Friend(member.getId(), friendMember.getId());
-            friendRepository.save(friend);
-
-            FriendRequest friendRequest = new FriendRequest(member.getId(), friendMember.getId());
-            friendRequestRepository.save(friendRequest);
+            FriendRelation friendRelation = new FriendRelation(member.getId(), friendMember.getId(),
+                    FriendRelationStatus.ACCEPTED);
+            friendRelationRepository.save(friendRelation);
 
             // when
             memberService.delete(new MemberDetails(member));
@@ -503,8 +496,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
                 softly.assertThat(reminderScheduleRepository.findById(schedule1.getId())).isEmpty();
                 softly.assertThat(reminderScheduleRepository.findById(schedule2.getId())).isEmpty();
-                softly.assertThat(friendRepository.findById(friend.getId())).isEmpty();
-                softly.assertThat(friendRequestRepository.findById(friendRequest.getId())).isEmpty();
+                softly.assertThat(friendRelationRepository.findById(friendRelation.getId())).isEmpty();
             });
         }
     }

@@ -11,8 +11,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.repository.DeviceRepository;
-import backend.mulkkam.friend.repository.FriendRepository;
-import backend.mulkkam.friend.repository.FriendRequestRepository;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -25,17 +24,22 @@ import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchItemResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.member.repository.dto.MemberSearchRow;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,8 +57,7 @@ public class MemberService {
     private final NotificationRepository notificationRepository;
     private final SuggestionNotificationRepository suggestionNotificationRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
-    private final FriendRepository friendRepository;
-    private final FriendRequestRepository friendRequestRepository;
+    private final FriendRelationRepository friendRelationRepository;
 
     private final IntakeHistoryCrudService intakeHistoryCrudService;
 
@@ -170,8 +173,7 @@ public class MemberService {
         notificationRepository.deleteByMember(member);
 
         reminderScheduleRepository.deleteAllByMemberId(member.getId());
-        friendRepository.deleteAllByMemberId(member.getId());
-        friendRequestRepository.deleteAllByMemberId(member.getId());
+        friendRelationRepository.deleteAllByMemberId(member.getId());
 
         memberRepository.delete(member);
     }
@@ -184,6 +186,51 @@ public class MemberService {
     public NotificationSettingsResponse getNotificationSettings(MemberDetails memberDetails) {
         Member member = getMember(memberDetails.id());
         return new NotificationSettingsResponse(member);
+    }
+
+    public MemberSearchResponse searchMember(
+            MemberDetails memberDetails,
+            String word,
+            Long lastId,
+            int size
+    ) {
+        if (isBlank(word)) {
+            return MemberSearchResponse.empty();
+        }
+        int fetchSize = Math.max(1, size) + 1;
+
+        List<MemberSearchRow> memberSearchRows = memberRepository.searchByWordAfterId(
+                memberDetails.id(),
+                word,
+                lastId,
+                PageRequest.of(0, fetchSize)
+        );
+
+        boolean hasNext = memberSearchRows.size() > size;
+        if (hasNext) {
+            memberSearchRows = memberSearchRows.subList(0, size);
+        }
+
+        List<MemberSearchItemResponse> memberSearchItemResponses = toResponse(memberSearchRows);
+
+        Long nextId = memberSearchRows.isEmpty() ? null : memberSearchRows.get(memberSearchRows.size() - 1).id();
+
+        return new MemberSearchResponse(memberSearchItemResponses, nextId, hasNext);
+    }
+
+    private boolean isBlank(String input) {
+        return input == null || input.isBlank();
+    }
+
+    private List<MemberSearchItemResponse> toResponse(
+            List<MemberSearchRow> searchRows
+    ) {
+        List<MemberSearchItemResponse> memberSearchItemResponses = new ArrayList<>();
+
+        for (MemberSearchRow memberSearchRow : searchRows) {
+            memberSearchItemResponses.add(MemberSearchItemResponse.of(memberSearchRow));
+        }
+        return memberSearchItemResponses;
     }
 
     private Member getMember(Long id) {
