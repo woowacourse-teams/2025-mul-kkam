@@ -12,6 +12,14 @@ import com.mulkkam.domain.repository.FriendsRepository
 class FriendsRepositoryImpl(
     private val friendsService: FriendsService,
 ) : FriendsRepository {
+    override suspend fun getFriends(): MulKkamResult<Unit> {
+        val result = friendsService.getFriends()
+        return result.fold(
+            onSuccess = { MulKkamResult() },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
     override suspend fun postFriendRequest(id: Long): MulKkamResult<Unit> {
         val result = friendsService.postFriendRequest(FriendRequest(id))
         return result.fold(

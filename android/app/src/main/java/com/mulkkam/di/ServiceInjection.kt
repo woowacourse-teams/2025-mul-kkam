@@ -14,6 +14,7 @@ import com.mulkkam.data.remote.service.ReminderService
 import com.mulkkam.data.remote.service.VersionsService
 import com.mulkkam.di.HealthConnectInjection.healthConnectClient
 import com.mulkkam.di.NetworkInjection.retrofit
+import retrofit2.create
 
 object ServiceInjection {
     val intakeService: IntakeService by lazy {
