@@ -52,7 +52,7 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            mulkkam/mulkkam-prod-test:${{ steps.ver.outputs.version }}
+            mulkkam/mulkkam-prod:${{ steps.ver.outputs.version }}
 
   deploy:
     needs: build-and-push
@@ -60,7 +60,7 @@ jobs:
     env:
       IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
       AWS_REGION: ap-northeast-2
-      S3_BUCKET: techcourse-project-2025-artifacts
+      S3_BUCKET: ${{ secrets.S3_BUCKET }}
       S3_KEY: mulkkam/bundle-${{ needs.build-and-push.outputs.version }}.zip
       APP_NAME: mulkkam-prod
       GROUP_NAME: CodeDeploy-group-mulkkam-prod
