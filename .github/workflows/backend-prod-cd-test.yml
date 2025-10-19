@@ -1,14 +1,10 @@
 name: backend-prod-cd-test
 
-#on:
-#  pull_request:
-#    types: [closed]
-#    branches: [main]
-
 on:
   pull_request:
-    types: ["opened", "reopened"]
-    branches: ["develop-be"]
+    branches: [ "develop", "develop-be" ]
+    paths:
+      - "backend/**"
 
 
 
