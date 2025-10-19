@@ -9,7 +9,9 @@ import java.time.LocalDateTime
 @Serializable
 data class FriendRequestInfoResponse(
     @SerialName("friendRequestId")
-    val friendRequestId: Int,
+    val friendRequestId: Long,
+    @SerialName("memberId")
+    val memberId: Long,
     @SerialName("memberNickname")
     val memberNickname: String,
     @SerialName("createdAt")
@@ -18,7 +20,7 @@ data class FriendRequestInfoResponse(
 
 fun FriendRequestInfoResponse.toDomain(): FriendsRequestInfo =
     FriendsRequestInfo(
-        memberId = friendRequestId.toLong(),
+        memberId = memberId,
         nickname = Nickname(memberNickname),
         createdAt = createdAt?.let { LocalDateTime.parse(it) },
     )
