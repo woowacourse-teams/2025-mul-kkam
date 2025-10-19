@@ -34,7 +34,7 @@ jobs:
         with: { distribution: temurin, java-version: '21' }
 
       - name: Build (skip tests if needed)
-        run: ./gradlew -p backend clean build -x test
+        run: ./gradlew clean build -x test
 
       - uses: docker/setup-buildx-action@v3
 
