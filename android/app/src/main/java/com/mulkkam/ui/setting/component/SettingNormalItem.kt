@@ -2,6 +2,7 @@ package com.mulkkam.ui.setting.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,15 +30,15 @@ fun SettingNormalItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable { onSettingClick(item.type) }
-                .padding(vertical = 14.dp, horizontal = 24.dp),
+                .clickable { onSettingClick(item.type) },
         verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Text(
             text = item.label,
             style = typography.body2,
             color = Color.Black,
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.padding(start = 24.dp, top = 14.dp, bottom = 14.dp),
         )
 
         Image(
