@@ -30,6 +30,12 @@ spring:
     user: ${PROD_DATASOURCE_MIGRATION_USERNAME}
     password: ${PROD_DATASOURCE_MIGRATION_PASSWORD}
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
 security:
   jwt:
     secret-key: ${JWT_SECRET}

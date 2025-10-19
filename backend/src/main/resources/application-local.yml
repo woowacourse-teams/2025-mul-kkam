@@ -26,6 +26,12 @@ spring:
       enabled: true
       path: /h2-console
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
 app:
   logging:
     mask-auth: false

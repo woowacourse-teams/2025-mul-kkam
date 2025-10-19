@@ -8,6 +8,12 @@ spring:
     password: ${DEV_DATASOURCE_RW_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -25,7 +31,6 @@ spring:
     url: ${DEV_DATASOURCE_URL}
     user: ${DEV_DATASOURCE_MIGRATION_USERNAME}
     password: ${DEV_DATASOURCE_MIGRATION_PASSWORD}
-
 
 security:
   jwt:
