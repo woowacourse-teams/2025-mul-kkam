@@ -5,10 +5,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
-import static backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED;
 import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
-import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.ACCEPT;
-import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.FriendRequestStatus.REJECT;
+import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.Status.REJECTED;
+import static backend.mulkkam.friend.dto.request.PatchFriendStatusRequest.Status.ACCEPTED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -185,7 +184,7 @@ class FriendRequestControllerTest extends ControllerTest {
         @Test
         void error_alreadyFriend() throws Exception {
             // given
-            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), ACCEPTED);
+            FriendRelation friendRelation = new FriendRelation(addressee.getId(), requester.getId(), FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
             CreateFriendRequestRequest request = new CreateFriendRequestRequest(addressee.getId());
 
@@ -229,7 +228,7 @@ class FriendRequestControllerTest extends ControllerTest {
         @Test
         void error_alreadyAccepted() throws Exception {
             // given
-            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), ACCEPTED);
+            FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
 
             // when
@@ -274,7 +273,7 @@ class FriendRequestControllerTest extends ControllerTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
-            PatchFriendStatusRequest request = new PatchFriendStatusRequest(REJECT);
+            PatchFriendStatusRequest request = new PatchFriendStatusRequest(REJECTED);
 
             // when
             mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
@@ -297,7 +296,7 @@ class FriendRequestControllerTest extends ControllerTest {
             // given
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
             friendRelationRepository.save(friendRelation);
-            PatchFriendStatusRequest request = new PatchFriendStatusRequest(ACCEPT);
+            PatchFriendStatusRequest request = new PatchFriendStatusRequest(ACCEPTED);
 
             // when
             mockMvc.perform(patch("/friend-requests/" + friendRelation.getId())
@@ -314,13 +313,13 @@ class FriendRequestControllerTest extends ControllerTest {
                 softly.assertThat(friendRelations).hasSize(1);
                 softly.assertThat(friendRelations.getFirst().getRequesterId()).isEqualTo(requester.getId());
                 softly.assertThat(friendRelations.getFirst().getAddresseeId()).isEqualTo(addressee.getId());
-                softly.assertThat(friendRelations.getFirst().getFriendRelationStatus()).isEqualTo(ACCEPTED);
+                softly.assertThat(friendRelations.getFirst().getFriendRelationStatus()).isEqualTo(FriendRelationStatus.ACCEPTED);
             });
         }
 
         @DisplayName("친구 신청 수신자가 아닌 멤버가 요청한 경우 예외가 발생한다.")
         @ParameterizedTest
-        @ValueSource(strings = {"REJECT", "ACCEPT"})
+        @ValueSource(strings = {"REJECTED", "ACCEPTED"})
         void error_acceptByOtherMember(String status) throws Exception {
             // given
             Member other = MemberFixtureBuilder.builder()
@@ -343,7 +342,7 @@ class FriendRequestControllerTest extends ControllerTest {
             );
             friendRelationRepository.save(friendRelation);
             PatchFriendStatusRequest request = new PatchFriendStatusRequest(
-                    PatchFriendStatusRequest.FriendRequestStatus.valueOf(status)
+                    PatchFriendStatusRequest.Status.valueOf(status)
             );
 
             // when
@@ -780,7 +779,7 @@ class FriendRequestControllerTest extends ControllerTest {
             memberRepository.save(addressee2);
 
             FriendRelation requestedRelation = new FriendRelation(requester.getId(), addressee.getId(), REQUESTED);
-            FriendRelation acceptedRelation = new FriendRelation(requester.getId(), addressee2.getId(), ACCEPTED);
+            FriendRelation acceptedRelation = new FriendRelation(requester.getId(), addressee2.getId(), FriendRelationStatus.ACCEPTED);
             friendRelationRepository.saveAll(List.of(requestedRelation, acceptedRelation));
 
             // when

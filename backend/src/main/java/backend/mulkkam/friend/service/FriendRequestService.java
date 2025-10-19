@@ -91,8 +91,8 @@ public class FriendRequestService {
             MemberDetails memberDetails
     ) {
         switch (request.status()) {
-            case ACCEPT -> acceptFriend(friendRelationId, memberDetails);
-            case REJECT -> rejectFriendRequest(friendRelationId, memberDetails);
+            case ACCEPTED -> acceptFriend(friendRelationId, memberDetails);
+            case REJECTED -> rejectFriendRequest(friendRelationId, memberDetails);
         }
     }
 

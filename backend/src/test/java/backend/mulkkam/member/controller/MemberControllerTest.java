@@ -3,7 +3,6 @@ package backend.mulkkam.member.controller;
 import static backend.mulkkam.auth.domain.OauthProvider.KAKAO;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
-import static backend.mulkkam.member.dto.response.MemberSearchItemResponse.Status;
 import static org.apache.http.HttpHeaders.AUTHORIZATION;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -29,6 +28,7 @@ import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.dto.FriendRequestStatus;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
@@ -52,12 +52,13 @@ import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.List;
 
 class MemberControllerTest extends ControllerTest {
 
@@ -522,21 +523,21 @@ class MemberControllerTest extends ControllerTest {
                         .filter(item -> item.memberNickname().equals("테스트수락친구"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(acceptedItem.status()).isEqualTo(Status.ACCEPTED);
+                softly.assertThat(acceptedItem.status()).isEqualTo(FriendRequestStatus.ACCEPTED);
                 softly.assertThat(acceptedItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.NONE);
 
                 MemberSearchItemResponse sentItem = actual.memberSearchItemResponses().stream()
                         .filter(item -> item.memberNickname().equals("테스트요청보냄"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(sentItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(sentItem.status()).isEqualTo(FriendRequestStatus.REQUESTED);
                 softly.assertThat(sentItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.REQUESTED_BY_ME);
 
                 MemberSearchItemResponse receivedItem = actual.memberSearchItemResponses().stream()
                         .filter(item -> item.memberNickname().equals("테스트요청받음"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(receivedItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(receivedItem.status()).isEqualTo(FriendRequestStatus.REQUESTED);
                 softly.assertThat(receivedItem.direction())
                         .isEqualTo(MemberSearchItemResponse.Direction.REQUESTED_TO_ME);
 
@@ -544,7 +545,7 @@ class MemberControllerTest extends ControllerTest {
                         .filter(item -> item.memberNickname().equals("테스트관계없음"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(noRelationItem.status()).isEqualTo(Status.NONE);
+                softly.assertThat(noRelationItem.status()).isEqualTo(FriendRequestStatus.NONE);
                 softly.assertThat(noRelationItem.direction()).isEqualTo(MemberSearchItemResponse.Direction.NONE);
             });
         }
@@ -599,14 +600,14 @@ class MemberControllerTest extends ControllerTest {
                         .filter(item -> item.memberNickname().equals("요청보낸회원"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(sentItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(sentItem.status()).isEqualTo(FriendRequestStatus.REQUESTED);
                 softly.assertThat(sentItem.direction()).isEqualTo(Direction.REQUESTED_TO_ME);
 
                 MemberSearchItemResponse receivedItem = actual.memberSearchItemResponses().stream()
                         .filter(item -> item.memberNickname().equals("요청받은회원"))
                         .findFirst()
                         .orElseThrow();
-                softly.assertThat(receivedItem.status()).isEqualTo(Status.REQUESTED);
+                softly.assertThat(receivedItem.status()).isEqualTo(FriendRequestStatus.REQUESTED);
                 softly.assertThat(receivedItem.direction())
                         .isEqualTo(Direction.REQUESTED_BY_ME);
             });
