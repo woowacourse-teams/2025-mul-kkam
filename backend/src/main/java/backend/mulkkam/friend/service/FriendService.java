@@ -15,7 +15,7 @@ public class FriendService {
     private final FriendQueryService friendQueryService;
 
     @Transactional
-    public void deleteFriend(
+    public void delete(
             Long friendRelationId,
             MemberDetails memberDetails
     ) {
@@ -23,7 +23,7 @@ public class FriendService {
     }
 
     @Transactional(readOnly = true)
-    public FriendRelationResponse readFriendRelationsInStatusAccepted(
+    public FriendRelationResponse read(
             Long lastId,
             int size,
             MemberDetails memberDetails

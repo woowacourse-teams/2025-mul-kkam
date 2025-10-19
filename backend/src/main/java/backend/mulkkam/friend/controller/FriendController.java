@@ -38,7 +38,7 @@ public class FriendController {
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
-        friendService.deleteFriend(friendRelationId, memberDetails);
+        friendService.delete(friendRelationId, memberDetails);
         return ResponseEntity.noContent().build();
     }
 
@@ -53,6 +53,6 @@ public class FriendController {
             @RequestParam(defaultValue = "10") int size,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        return friendService.readFriendRelationsInStatusAccepted(lastId, size, memberDetails);
+        return friendService.read(lastId, size, memberDetails);
     }
 }
