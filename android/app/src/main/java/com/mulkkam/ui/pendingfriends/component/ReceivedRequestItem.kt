@@ -13,7 +13,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.domain.model.friends.PendingFriend
+import com.mulkkam.domain.model.friends.FriendsRequestInfo
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -25,7 +26,7 @@ private const val HOURS_PER_DAY: Int = 24
 
 @Composable
 fun ReceivedRequestItem(
-    pendingFriend: PendingFriend,
+    pendingFriend: FriendsRequestInfo,
     onAccept: () -> Unit,
     onReject: () -> Unit,
     currentTime: LocalDateTime = LocalDateTime.now(),
@@ -40,12 +41,12 @@ fun ReceivedRequestItem(
     ) {
         Column {
             Text(
-                text = pendingFriend.name,
+                text = pendingFriend.nickname.name,
                 color = Black,
                 style = MulKkamTheme.typography.title1,
             )
             Text(
-                text = formatRemainingTime(currentTime, pendingFriend.time),
+                text = formatRemainingTime(currentTime, LocalDateTime.now()),
                 color = Gray300,
                 style = MulKkamTheme.typography.label2,
             )
@@ -79,9 +80,9 @@ private fun ReceivedRequestItemPreview() {
     MulkkamTheme {
         ReceivedRequestItem(
             pendingFriend =
-                PendingFriend(
-                    name = "hwannow",
-                    time = LocalDateTime.of(2025, 10, 13, 15, 0),
+                FriendsRequestInfo(
+                    requestId = 1L,
+                    nickname = Nickname("돈가스먹는환노"),
                 ),
             currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
             onAccept = {},

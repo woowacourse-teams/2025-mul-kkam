@@ -11,14 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.domain.model.friends.PendingFriend
+import com.mulkkam.domain.model.friends.FriendsRequestInfo
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import java.time.LocalDateTime
 
 @Composable
 fun SentRequestItem(
-    pendingFriend: PendingFriend,
+    pendingFriend: FriendsRequestInfo,
     onCancel: () -> Unit,
 ) {
     Row(
@@ -31,7 +31,7 @@ fun SentRequestItem(
     ) {
         Column {
             Text(
-                text = pendingFriend.name,
+                text = pendingFriend.nickname.name,
                 color = Black,
                 style = MulKkamTheme.typography.title1,
             )
@@ -46,7 +46,10 @@ fun SentRequestItem(
 @Composable
 private fun SentRequestItemPreview() {
     SentRequestItem(
-        PendingFriend(name = "hwannow", time = LocalDateTime.of(2025, 10, 14, 10, 0)),
+        FriendsRequestInfo(
+            requestId = 1L,
+            nickname = Nickname("돈가스먹는환노"),
+        ),
         onCancel = {},
     )
 }

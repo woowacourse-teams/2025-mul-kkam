@@ -1,6 +1,5 @@
 package com.mulkkam.ui.notification
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -9,10 +8,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +22,7 @@ import com.mulkkam.ui.notification.component.NotificationItemComponent
 import com.mulkkam.ui.notification.component.NotificationShimmerItem
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
 import com.mulkkam.ui.util.LoadingShimmerEffect
+import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
 fun NotificationScreen(
@@ -98,28 +95,6 @@ fun NotificationScreen(
                 }
             }
         }
-    }
-}
-
-private fun LazyListState.reachedBottom(preloadThreshold: Int): Boolean {
-    val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-    return lastVisibleItem?.index != 0 &&
-        (lastVisibleItem?.index ?: 0) >= layoutInfo.totalItemsCount - (preloadThreshold + 1)
-}
-
-@SuppressLint("ComposableNaming")
-@Composable
-private fun LazyListState.onLoadMore(
-    preloadThreshold: Int = 6,
-    action: () -> Unit,
-) {
-    val reached by remember {
-        derivedStateOf {
-            reachedBottom(preloadThreshold = preloadThreshold)
-        }
-    }
-    LaunchedEffect(reached) {
-        if (reached) action()
     }
 }
 
