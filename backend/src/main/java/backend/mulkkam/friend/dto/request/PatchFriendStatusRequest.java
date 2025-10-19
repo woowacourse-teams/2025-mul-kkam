@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 public record PatchFriendStatusRequest(
 
     @Schema(description = "요청자의 멤버 id", example = "1")
-    Long memberId,
+    @NotNull Long memberId,
 
     @Schema(description = "변경하려는 상태", implementation = Status.class)
     @NotNull Status status

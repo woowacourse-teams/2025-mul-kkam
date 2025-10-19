@@ -83,7 +83,7 @@ public class FriendRequestController {
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")
     @ApiResponse(responseCode = "200", description = "친구 요청 상태 변경 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
-    @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+    @ApiResponse(responseCode = "400", description = "변경이 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
     }))
     @ApiResponse(responseCode = "404", description = "두 멤버 사이에 친구 신청이 존재하지 않는 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
