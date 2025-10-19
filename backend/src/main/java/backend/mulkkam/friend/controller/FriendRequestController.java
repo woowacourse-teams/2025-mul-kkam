@@ -3,8 +3,8 @@ package backend.mulkkam.friend.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.request.CreateFriendRequestRequest;
-import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
+import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
 import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
 import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
 import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
@@ -61,7 +61,7 @@ public class FriendRequestController {
     }
 
     @Operation(summary = "친구 신청 취소", description = "다른 유저에게 보낸 친구 신청을 취소합니다.")
-    @ApiResponse(responseCode = "204", description = "친구 신청 취소 성공", content = @Content(schema = @Schema(implementation = CreateFriendRequestResponse.class)))
+    @ApiResponse(responseCode = "204", description = "친구 신청 취소 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
@@ -84,7 +84,7 @@ public class FriendRequestController {
     }
 
     @Operation(summary = "친구 요청 상태 변경 - 수락 / 거절", description = "사용자에게 온 친구 요청의 상태를 변경합니다.")
-    @ApiResponse(responseCode = "200", description = "친구 요청 상태 변경 성공", content = @Content(schema = @Schema(implementation = CreateFriendRequestResponse.class)))
+    @ApiResponse(responseCode = "200", description = "친구 요청 상태 변경 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "400", description = "취소가 불가능한 경우", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "이미 수락된 요청", value = "{\"code\":\"ALREADY_ACCEPTED\"}")
@@ -136,7 +136,7 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadSentFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @GetMapping("/sent")
-    public ResponseEntity<ReadSentFriendRelationResponse> getSent(
+    public ReadSentFriendRelationResponse getSent(
             @Parameter(hidden = true)
             MemberDetails memberDetails,
             @Parameter(description = "lastId, 첫 요청시 null", required = false)
@@ -144,8 +144,6 @@ public class FriendRequestController {
             @Parameter(description = "size, 미지정시 20", example = "20")
             @RequestParam(defaultValue = "20") int size
     ) {
-        ReadSentFriendRelationResponse readSentFriendRelationResponse = friendRequestService.readSent(
-                memberDetails, lastId, size);
-        return ResponseEntity.ok(readSentFriendRelationResponse);
+        return friendRequestService.readSent(memberDetails, lastId, size);
     }
 }
