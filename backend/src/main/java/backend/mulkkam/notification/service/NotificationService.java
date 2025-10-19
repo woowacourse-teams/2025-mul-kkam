@@ -56,8 +56,15 @@ public class NotificationService {
 
         Long lastId = null;
 
+        int count = 0; // 임시로 1분당 2_000명까지만 보내도록 수정
+
         while (true) {
             List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
+            count++;
+
+            if (count >= 2) {
+                break;
+            }
 
             if (memberIds.isEmpty()) {
                 break;

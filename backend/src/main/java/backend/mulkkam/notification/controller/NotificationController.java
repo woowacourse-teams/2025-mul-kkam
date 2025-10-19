@@ -105,10 +105,4 @@ public class NotificationController {
         notificationService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<Void> test() {
-        notificationService.processReminderNotifications1(LocalDateTime.now());
-        return ResponseEntity.ok().build();
-    }
 }
