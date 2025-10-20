@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting.adapter
+package com.mulkkam.ui.setting
 
 enum class SettingViewType {
     TITLE,

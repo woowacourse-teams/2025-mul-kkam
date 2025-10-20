@@ -3,7 +3,7 @@ package com.mulkkam.domain.model.members
 enum class Status {
     ACCEPTED,
     REQUESTED,
-    REJECT,
+    REJECTED,
     NONE,
     ;
 
@@ -12,7 +12,7 @@ enum class Status {
             when (status) {
                 ACCEPTED.name -> ACCEPTED
                 REQUESTED.name -> REQUESTED
-                REJECT.name -> REJECT
+                REJECTED.name -> REJECTED
                 else -> NONE
             }
     }

@@ -1,5 +1,6 @@
-package com.mulkkam.ui.setting.adapter
+package com.mulkkam.ui.setting
 
+import com.mulkkam.ui.setting.SettingViewType
 import com.mulkkam.ui.setting.model.SettingType
 
 sealed class SettingItem(
