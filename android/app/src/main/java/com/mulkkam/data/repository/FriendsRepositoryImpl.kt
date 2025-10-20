@@ -2,17 +2,38 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
+import com.mulkkam.data.remote.model.response.friends.toDomain
 import com.mulkkam.data.remote.service.FriendsService
+import com.mulkkam.domain.model.friend.FriendsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.FriendsRepository
 
 class FriendsRepositoryImpl(
     private val friendsService: FriendsService,
 ) : FriendsRepository {
-    override suspend fun getFriends(): MulKkamResult<Unit> {
-        val result = friendsService.getFriends()
+    override suspend fun getFriends(
+        lastId: Long?,
+        size: Int,
+    ): MulKkamResult<FriendsResult> {
+        val result = friendsService.getFriends(lastId = lastId, size = size)
         return result.fold(
-            onSuccess = { MulKkamResult() },
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun getFriendRequestReceivedCount(): MulKkamResult<Int> {
+        val result = friendsService.getFriendRequestReceivedCount()
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.count) },
+            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+        )
+    }
+
+    override suspend fun deleteFriend(memberId: Long): MulKkamResult<Unit> {
+        val result = friendsService.deleteFriend(memberId)
+        return result.fold(
+            onSuccess = { MulKkamResult(data = Unit) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
