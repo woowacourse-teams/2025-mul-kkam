@@ -17,7 +17,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Table(uniqueConstraints = @UniqueConstraint(
         name = "uk_sender_recipient_date",
-        columnNames = {"sender_id", "recipient_id", "date"}))
+        columnNames = {"sender_id", "recipient_id", "quota_date"}))
 @Entity
 public class FriendReminderHistory extends BaseEntity {
 
@@ -33,21 +33,21 @@ public class FriendReminderHistory extends BaseEntity {
     @Column(name="recipient_id", nullable=false)
     private Long recipientId;
 
-    @Column(name="date", nullable=false)
-    private LocalDate date;
+    @Column(name="quota_date", nullable=false)
+    private LocalDate quotaDate;
 
     @Column(name="remaining", nullable=false)
     private short remaining;
 
-    public FriendReminderHistory(Long id, Long senderId, Long recipientId, LocalDate date) {
+    public FriendReminderHistory(Long id, Long senderId, Long recipientId, LocalDate quotaDate) {
         this.id = id;
         this.senderId = senderId;
         this.recipientId = recipientId;
-        this.date = date;
+        this.quotaDate = quotaDate;
         this.remaining = MAX_TRY_COUNT;
     }
 
-    public FriendReminderHistory(Long senderId, Long recipientId, LocalDate date) {
-        this(null, senderId, recipientId, date);
+    public FriendReminderHistory(Long senderId, Long recipientId, LocalDate quotaDate) {
+        this(null, senderId, recipientId, quotaDate);
     }
 }
