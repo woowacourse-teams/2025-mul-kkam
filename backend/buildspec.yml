@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Docker Hub...
+      - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+  build:
+    commands:
+      - echo "Building Spring Boot app..."
+      - cd backend
+      - chmod +x gradlew
+      - ./gradlew clean build -x test
+      - echo "Building Docker image..."
+      - docker build -t mulkkam/mulkkam-prod:$CODEBUILD_RESOLVED_SOURCE_VERSION .
+      - docker push mulkkam/mulkkam-prod:$CODEBUILD_RESOLVED_SOURCE_VERSION
+  post_build:
+    commands:
+      - echo "Preparing deployment bundle..."
+      - cd ..
+      - mkdir -p bundle/scripts bundle/env
+      - cp codedeploy/appspec.yml bundle/appspec.yml
+      - cp scripts/*.sh bundle/scripts/
+      - echo "IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION" > bundle/env/image.env
+      - cd bundle && zip -rq ../bundle.zip .
+      - aws s3 cp ../bundle.zip s3://techcourse-project-2025-artifacts/mulkkam/prod/
+artifacts:
+  files:
+    - bundle.zip
