@@ -66,7 +66,7 @@ fun FriendDeleteConfirmationDialog(
 
             Text(
                 text = stringResource(R.string.friends_delete_dialog_title, friend.nickname),
-                style = MulKkamTheme.typography.title3,
+                style = MulKkamTheme.typography.title1,
                 color = Gray400,
                 textAlign = TextAlign.Center,
             )
@@ -75,7 +75,7 @@ fun FriendDeleteConfirmationDialog(
 
             Text(
                 text = stringResource(R.string.friends_delete_dialog_description),
-                style = MulKkamTheme.typography.body3,
+                style = MulKkamTheme.typography.body2,
                 color = Secondary200,
                 textAlign = TextAlign.Center,
             )
@@ -101,7 +101,7 @@ fun FriendDeleteConfirmationDialog(
                 ) {
                     Text(
                         text = stringResource(R.string.friends_delete_dialog_confirm),
-                        style = MulKkamTheme.typography.body3,
+                        style = MulKkamTheme.typography.body4,
                     )
                 }
 
@@ -120,7 +120,7 @@ fun FriendDeleteConfirmationDialog(
                 ) {
                     Text(
                         text = stringResource(R.string.friends_delete_dialog_cancel),
-                        style = MulKkamTheme.typography.body3,
+                        style = MulKkamTheme.typography.body4,
                     )
                 }
             }
