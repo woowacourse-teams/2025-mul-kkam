@@ -71,7 +71,7 @@ fun FriendItem(
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_friendds_delete),
+                        painter = painterResource(R.drawable.ic_friends_delete),
                         contentDescription =
                             stringResource(
                                 R.string.friends_delete_friend_content_description,
