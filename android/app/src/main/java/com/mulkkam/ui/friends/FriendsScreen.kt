@@ -1,6 +1,5 @@
 package com.mulkkam.ui.friends
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -12,11 +11,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,6 +35,7 @@ import com.mulkkam.ui.friends.component.FriendsTopAppBar
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
 fun FriendsScreen(
@@ -163,26 +160,6 @@ private fun FriendItems(
             HorizontalDivider(color = Gray100, thickness = 1.dp)
         }
     }
-}
-
-@SuppressLint("ComposableNaming")
-@Composable
-private fun LazyListState.onLoadMore(
-    isLoadMoreEnabled: Boolean,
-    preloadThreshold: Int = 4,
-    action: () -> Unit,
-) {
-    val shouldLoadMore by remember { derivedStateOf { reachedBottom(preloadThreshold) } }
-    LaunchedEffect(shouldLoadMore, isLoadMoreEnabled) {
-        if (shouldLoadMore && isLoadMoreEnabled) {
-            action()
-        }
-    }
-}
-
-private fun LazyListState.reachedBottom(preloadThreshold: Int): Boolean {
-    val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: return false
-    return lastVisibleItemIndex >= layoutInfo.totalItemsCount - (preloadThreshold + 1)
 }
 
 @Preview(showBackground = true)
