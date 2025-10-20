@@ -1,6 +1,5 @@
 package com.mulkkam.ui.searchmembers
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.view.View
 import androidx.compose.foundation.layout.Column
@@ -15,9 +14,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -37,6 +34,7 @@ import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
+import com.mulkkam.ui.util.extensions.onLoadMore
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
 
@@ -117,28 +115,6 @@ fun SearchMembersScreen(
                 }
             }
         }
-    }
-}
-
-private fun LazyListState.reachedBottom(preloadThreshold: Int): Boolean {
-    val lastVisibleItem = layoutInfo.visibleItemsInfo.lastOrNull()
-    return lastVisibleItem?.index != 0 &&
-        (lastVisibleItem?.index ?: 0) >= layoutInfo.totalItemsCount - (preloadThreshold + 1)
-}
-
-@SuppressLint("ComposableNaming")
-@Composable
-private fun LazyListState.onLoadMore(
-    preloadThreshold: Int = 6,
-    action: () -> Unit,
-) {
-    val reached by remember {
-        derivedStateOf {
-            reachedBottom(preloadThreshold = preloadThreshold)
-        }
-    }
-    LaunchedEffect(reached) {
-        if (reached) action()
     }
 }
 
