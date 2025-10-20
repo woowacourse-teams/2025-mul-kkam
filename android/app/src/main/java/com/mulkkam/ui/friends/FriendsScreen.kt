@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,7 +41,6 @@ fun FriendsScreen(
     navigateToSearch: () -> Unit,
     navigateToFriendRequests: () -> Unit,
     modifier: Modifier = Modifier,
-    listState: LazyListState = rememberLazyListState(),
     viewModel: FriendsViewModel = viewModel(),
 ) {
     val friendsUiState by viewModel.friendsUiState.collectAsStateWithLifecycle()
@@ -52,11 +50,6 @@ fun FriendsScreen(
     val loadMoreUiState by viewModel.loadMoreUiState.collectAsStateWithLifecycle()
 
     val friendRequestCount: Long = friendRequestCountUiState.toSuccessDataOrNull() ?: 0L
-
-    listState.onLoadMore(
-        isLoadMoreEnabled = hasMoreFriends,
-        action = { viewModel.loadMore() },
-    )
 
     var friendToDelete: Friend? by rememberSaveable { mutableStateOf(null) }
 
@@ -105,13 +98,12 @@ fun FriendsScreen(
                         FriendItems(
                             friends = friendsResult.friends,
                             displayMode = displayMode,
-                            listState = listState,
-                            onThrowWaterBalloon = { friend ->
+                            hasMore = hasMoreFriends,
+                            onLoadMore = viewModel::loadMore,
+                            onThrowWaterBalloon = {
                                 // TODO: 물풍선 던지기 기능 구현
                             },
-                            onDeleteFriend = { friend ->
-                                friendToDelete = friend
-                            },
+                            onDeleteFriend = { friendToDelete = it },
                         )
                     }
                 }
@@ -141,10 +133,14 @@ fun FriendsScreen(
 private fun FriendItems(
     friends: List<Friend>,
     displayMode: FriendsDisplayMode,
-    listState: LazyListState,
+    hasMore: Boolean,
+    onLoadMore: () -> Unit,
     onThrowWaterBalloon: (Friend) -> Unit,
     onDeleteFriend: (Friend) -> Unit,
 ) {
+    val listState = rememberLazyListState()
+    listState.onLoadMore(isLoadMoreEnabled = hasMore, action = onLoadMore)
+
     LazyColumn(
         state = listState,
         modifier = Modifier.fillMaxSize(),
@@ -187,7 +183,8 @@ private fun FriendItemsPreview() {
                     Friend(id = 3L, nickname = "이든"),
                 ),
             displayMode = FriendsDisplayMode.VIEWING,
-            listState = rememberLazyListState(),
+            hasMore = true,
+            onLoadMore = {},
             onThrowWaterBalloon = {},
             onDeleteFriend = {},
         )
