@@ -62,7 +62,7 @@ fun FriendDeleteConfirmationDialog(
                 )
             }
 
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(12.dp))
 
             Text(
                 text = stringResource(R.string.friends_delete_dialog_title, friend.nickname),
@@ -71,7 +71,7 @@ fun FriendDeleteConfirmationDialog(
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(4.dp))
 
             Text(
                 text = stringResource(R.string.friends_delete_dialog_description),
@@ -80,19 +80,19 @@ fun FriendDeleteConfirmationDialog(
                 textAlign = TextAlign.Center,
             )
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(18.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(10.dp),
             ) {
                 Button(
                     onClick = onConfirm,
                     modifier =
                         Modifier
                             .weight(1f)
-                            .height(48.dp),
-                    shape = RoundedCornerShape(14.dp),
+                            .height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = Primary100,
@@ -110,8 +110,8 @@ fun FriendDeleteConfirmationDialog(
                     modifier =
                         Modifier
                             .weight(1f)
-                            .height(48.dp),
-                    shape = RoundedCornerShape(14.dp),
+                            .height(40.dp),
+                    shape = RoundedCornerShape(8.dp),
                     colors =
                         ButtonDefaults.buttonColors(
                             containerColor = Gray100,
