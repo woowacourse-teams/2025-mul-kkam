@@ -4,12 +4,14 @@ import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTok
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 @Async
+@Profile("worker")
 @RequiredArgsConstructor
 @Component
 public class NotificationEventHandler {
