@@ -21,6 +21,12 @@ spring:
     database:
       replace: none
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
 fcm:
   base64-encoding-key: ${DEV_FCM_BASE64_ENCODING_KEY}
   project-id: ${DEV_FCM_PROJECT_ID}
