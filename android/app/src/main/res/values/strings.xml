@@ -269,4 +269,28 @@
     <string name="achievement_heatmap_widget_label">일일 달성도 위젯</string>
     <string name="intake_widget_label">마시기 위젯</string>
     <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
+
+    <string name="search_friends_top_app_bar_title">친구 찾기</string>
+    <string name="search_friends_empty">닉네임을 찾을 수 없어요</string>
+    <string name="search_friends_request_success">친구 신청을 완료했어요!</string>
+    <string name="search_friends_request_failed">친구 신청에 실패했어요</string>
+    <string name="search_friends_accept_success">%s님과 친구가 되었어요</string>
+    <string name="search_friends_already_friend">이미 친구</string>
+    <string name="search_friends_requested">신청 완료!</string>
+
+    <string name="pending_friends_top_app_bar_title">신청 목록</string>
+    <string name="pending_friends_received_request">받은 신청</string>
+    <string name="pending_friends_sent_request">보낸 신청</string>
+    <string name="pending_friends_hours_ago">%d시간 전</string>
+    <string name="pending_friends_days_ago">%d일 전</string>
+    <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>
+    <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>
+    <string name="pending_friends_accept_success">%s 님과 친구가 되었습니다</string>
+    <string name="pending_friends_accept_failed">친구 승인에 실패했습니다</string>
+    <string name="pending_friends_reject_success">친구 신청을 거절했습니다</string>
+    <string name="pending_friends_cancel_request_confirmed">%s\n친구 신청을 취소하시겠습니까?</string>
+    <string name="pending_friends_cancel_request_warning">취소된 신청을 복구되지 않습니다</string>
+    <string name="pending_friends_cancel_request_confirm">확인</string>
+    <string name="pending_friends_cancel_request_cancel">취소</string>
+    <string name="pending_friends_cancel_success">친구 신청을 취소했습니다</string>
 </resources>
