@@ -39,7 +39,7 @@ public class FriendReminderHistory extends BaseEntity {
     @Column(name="remaining", nullable=false)
     private short remaining;
 
-    public FriendReminderHistory(Long id, Long senderId, Long recipientId, LocalDate quotaDate) {
+    private FriendReminderHistory(Long id, Long senderId, Long recipientId, LocalDate quotaDate) {
         this.id = id;
         this.senderId = senderId;
         this.recipientId = recipientId;
