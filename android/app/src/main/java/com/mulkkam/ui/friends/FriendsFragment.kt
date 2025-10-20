@@ -8,6 +8,8 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
+import com.mulkkam.ui.searchmembers.SearchMembersActivity
 
 class FriendsFragment : Fragment() {
     private val viewModel: FriendsViewModel by viewModels()
@@ -24,10 +26,12 @@ class FriendsFragment : Fragment() {
                     MulkkamTheme {
                         FriendsScreen(
                             navigateToSearch = {
-                                // TODO: 친구 검색으로 이동하는 기능 구현
+                                val intent = SearchMembersActivity.newIntent(requireContext())
+                                startActivity(intent)
                             },
                             navigateToFriendRequests = {
-                                // TODO: 친구 요청 목록으로 이동하는 기능 구현
+                                val intent = PendingFriendsActivity.newIntent(requireContext())
+                                startActivity(intent)
                             },
                             viewModel = viewModel,
                         )
