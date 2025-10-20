@@ -76,19 +76,44 @@ private fun formatRemainingTime(
     requestTime: LocalDateTime,
 ): String {
     val duration = Duration.between(requestTime, currentTime)
+    val minutes = duration.toMinutes()
     val hours = duration.toHours()
 
-    return if (hours < HOURS_PER_DAY) {
-        stringResource(R.string.pending_friends_hours_ago, hours)
-    } else {
-        val days = hours / HOURS_PER_DAY
-        stringResource(R.string.pending_friends_days_ago, days)
+    return when {
+        hours < 1 -> {
+            stringResource(R.string.pending_friends_minutes_ago, minutes)
+        }
+        hours < HOURS_PER_DAY -> {
+            stringResource(R.string.pending_friends_hours_ago, hours)
+        }
+        else -> {
+            val days = hours / HOURS_PER_DAY
+            stringResource(R.string.pending_friends_days_ago, days)
+        }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, name = "n분 전")
 @Composable
-private fun ReceivedRequestItemPreview() {
+private fun ReceivedRequestItemPreview_Minute() {
+    MulkkamTheme {
+        ReceivedRequestItem(
+            receivedRequest =
+                FriendsRequestInfo(
+                    memberId = 1L,
+                    nickname = Nickname("돈가스먹는환노"),
+                    createdAt = LocalDateTime.of(2025, 10, 13, 17, 57),
+                ),
+            currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
+            onAccept = {},
+            onReject = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "n시간 전")
+@Composable
+private fun ReceivedRequestItemPreview_Hour() {
     MulkkamTheme {
         ReceivedRequestItem(
             receivedRequest =
@@ -96,6 +121,24 @@ private fun ReceivedRequestItemPreview() {
                     memberId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
                     createdAt = LocalDateTime.of(2025, 10, 13, 14, 0),
+                ),
+            currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
+            onAccept = {},
+            onReject = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, name = "n일 전")
+@Composable
+private fun ReceivedRequestItemPreview_Day() {
+    MulkkamTheme {
+        ReceivedRequestItem(
+            receivedRequest =
+                FriendsRequestInfo(
+                    memberId = 1L,
+                    nickname = Nickname("돈가스먹는환노"),
+                    createdAt = LocalDateTime.of(2025, 10, 11, 14, 0),
                 ),
             currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
             onAccept = {},
