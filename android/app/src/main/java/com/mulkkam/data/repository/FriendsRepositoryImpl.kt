@@ -26,7 +26,7 @@ class FriendsRepositoryImpl(
         )
     }
 
-    override suspend fun getFriendRequestReceivedCount(): MulKkamResult<Int> {
+    override suspend fun getFriendRequestReceivedCount(): MulKkamResult<Long> {
         val result = friendsService.getFriendRequestReceivedCount()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.count) },

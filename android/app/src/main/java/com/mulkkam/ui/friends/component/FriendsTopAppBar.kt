@@ -35,7 +35,7 @@ private const val MIN_DISPLAY_FRIEND_REQUEST_COUNT: Int = 0
 fun FriendsTopAppBar(
     onSearchClick: () -> Unit,
     onFriendRequestsClick: () -> Unit,
-    friendRequestCount: Int,
+    friendRequestCount: Long,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -71,7 +71,7 @@ fun FriendsTopAppBar(
 
 @Composable
 private fun FriendRequestIconButton(
-    count: Int,
+    count: Long,
     onClick: () -> Unit,
 ) {
     val displayCount: String =

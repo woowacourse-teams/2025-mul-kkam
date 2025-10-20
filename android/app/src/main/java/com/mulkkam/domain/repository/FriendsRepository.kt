@@ -11,7 +11,7 @@ interface FriendsRepository {
         size: Int,
     ): MulKkamResult<FriendsResult>
 
-    suspend fun getFriendRequestReceivedCount(): MulKkamResult<Int>
+    suspend fun getFriendRequestReceivedCount(): MulKkamResult<Long>
 
     suspend fun deleteFriend(memberId: Long): MulKkamResult<Unit>
 

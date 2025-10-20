@@ -54,7 +54,7 @@ fun FriendsScreen(
     val hasMoreFriends by viewModel.hasMoreFriends.collectAsStateWithLifecycle()
     val loadMoreUiState by viewModel.loadMoreUiState.collectAsStateWithLifecycle()
 
-    val friendRequestCount: Int = friendRequestCountUiState.toSuccessDataOrNull() ?: 0
+    val friendRequestCount: Long = friendRequestCountUiState.toSuccessDataOrNull() ?: 0L
 
     listState.onLoadMore(
         isLoadMoreEnabled = hasMoreFriends,

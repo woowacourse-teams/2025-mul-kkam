@@ -19,9 +19,9 @@ class FriendsViewModel : ViewModel() {
         MutableStateFlow(MulKkamUiState.Idle)
     val friendsUiState: StateFlow<MulKkamUiState<FriendsResult>> = _friendsUiState.asStateFlow()
 
-    private val _friendRequestCountUiState: MutableStateFlow<MulKkamUiState<Int>> =
+    private val _friendRequestCountUiState: MutableStateFlow<MulKkamUiState<Long>> =
         MutableStateFlow(MulKkamUiState.Idle)
-    val friendRequestCountUiState: StateFlow<MulKkamUiState<Int>> =
+    val friendRequestCountUiState: StateFlow<MulKkamUiState<Long>> =
         _friendRequestCountUiState.asStateFlow()
 
     private val _loadMoreUiState: MutableStateFlow<MulKkamUiState<Unit>> =

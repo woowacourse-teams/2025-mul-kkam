@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class FriendRequestReceivedCountResponse(
     @SerialName("count")
-    val count: Int,
+    val count: Long,
 )
