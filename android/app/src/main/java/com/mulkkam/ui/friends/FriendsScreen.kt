@@ -123,7 +123,9 @@ fun FriendsScreen(
         }
     }
 
-    friendToDelete?.let { targetFriend ->
+    if (friendToDelete != null) {
+        val targetFriend = friendToDelete ?: return
+
         FriendDeleteConfirmationDialog(
             friend = targetFriend,
             onConfirm = {
