@@ -25,14 +25,25 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
 
     boolean existsByIdAndMemberId(Long id, Long memberId);
 
+//    @Query("""
+//                SELECT r.member.id
+//                FROM ReminderSchedule r
+//                JOIN r.member
+//                WHERE HOUR(r.schedule) = HOUR(:schedule)
+//                  AND MINUTE(r.schedule) = MINUTE(:schedule)
+//                  AND r.member.isReminderEnabled = true
+//                  AND (:lastId IS NULL OR r.id > :lastId)
+//            """)
+//    List<Long> findAllActiveMemberIdsBySchedule(
+//            @Param("schedule") LocalTime schedule,
+//            @Param("lastId") Long lastId,
+//            Pageable pageable
+//    );
+
     @Query("""
-                SELECT r.member.id
-                FROM ReminderSchedule r
-                JOIN r.member
-                WHERE HOUR(r.schedule) = HOUR(:schedule)
-                  AND MINUTE(r.schedule) = MINUTE(:schedule)
-                  AND r.member.isReminderEnabled = true
-                  AND (:lastId IS NULL OR r.id > :lastId)
+                SELECT m.id
+                FROM Member m
+                WHERE (:lastId IS NULL OR r.id > :lastId)
             """)
     List<Long> findAllActiveMemberIdsBySchedule(
             @Param("schedule") LocalTime schedule,
