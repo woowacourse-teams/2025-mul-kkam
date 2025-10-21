@@ -10,68 +10,71 @@ import com.mulkkam.domain.repository.DevicesRepository
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.UUID
+import javax.inject.Inject
 
-class DevicesRepositoryImpl(
-    private val devicesService: DevicesService,
-    private val devicesPreference: DevicesPreference,
-) : DevicesRepository {
-    override suspend fun postDevice(fcmToken: String): MulKkamResult<Unit> {
-        val result =
-            devicesService.postDevice(
-                DeviceRequest(fcmToken),
+class DevicesRepositoryImpl
+    @Inject
+    constructor(
+        private val devicesService: DevicesService,
+        private val devicesPreference: DevicesPreference,
+    ) : DevicesRepository {
+        override suspend fun postDevice(fcmToken: String): MulKkamResult<Unit> {
+            val result =
+                devicesService.postDevice(
+                    DeviceRequest(fcmToken),
+                )
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
+        }
+
+        override suspend fun deleteDevice(deviceId: String): MulKkamResult<Unit> {
+            val result = devicesService.deleteDevice(deviceId)
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun saveNotificationGranted(granted: Boolean): MulKkamResult<Unit> =
+            runCatching {
+                devicesPreference.saveNotificationGranted(granted)
+            }.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+
+        override suspend fun getNotificationGranted(): MulKkamResult<Boolean> =
+            runCatching {
+                devicesPreference.isNotificationGranted
+            }.fold(
+                onSuccess = { MulKkamResult(data = it) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+
+        override suspend fun getDeviceUuid(): MulKkamResult<String> =
+            runCatching {
+                devicesPreference.deviceUuid ?: generateSha256Hash().also {
+                    devicesPreference.saveDeviceUuid(it)
+                }
+            }.fold(
+                onSuccess = { MulKkamResult(data = it) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+
+        private fun generateSha256Hash(): String {
+            val uuid = UUID.randomUUID().toString()
+            val hashBytes =
+                MessageDigest
+                    .getInstance(HASH_ALGORITHM)
+                    .digest(uuid.toByteArray(CHARSET))
+            return hashBytes.take(HASH_LENGTH).joinToString("") { "%02x".format(it) }
+        }
+
+        companion object {
+            private const val HASH_ALGORITHM = "SHA-256"
+            private val CHARSET = StandardCharsets.UTF_8
+            private const val HASH_LENGTH = 4
+        }
     }
-
-    override suspend fun deleteDevice(deviceId: String): MulKkamResult<Unit> {
-        val result = devicesService.deleteDevice(deviceId)
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun saveNotificationGranted(granted: Boolean): MulKkamResult<Unit> =
-        runCatching {
-            devicesPreference.saveNotificationGranted(granted)
-        }.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-
-    override suspend fun getNotificationGranted(): MulKkamResult<Boolean> =
-        runCatching {
-            devicesPreference.isNotificationGranted
-        }.fold(
-            onSuccess = { MulKkamResult(data = it) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-
-    override suspend fun getDeviceUuid(): MulKkamResult<String> =
-        runCatching {
-            devicesPreference.deviceUuid ?: generateSha256Hash().also {
-                devicesPreference.saveDeviceUuid(it)
-            }
-        }.fold(
-            onSuccess = { MulKkamResult(data = it) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-
-    private fun generateSha256Hash(): String {
-        val uuid = UUID.randomUUID().toString()
-        val hashBytes =
-            MessageDigest
-                .getInstance(HASH_ALGORITHM)
-                .digest(uuid.toByteArray(CHARSET))
-        return hashBytes.take(HASH_LENGTH).joinToString("") { "%02x".format(it) }
-    }
-
-    companion object {
-        private const val HASH_ALGORITHM = "SHA-256"
-        private val CHARSET = StandardCharsets.UTF_8
-        private const val HASH_LENGTH = 4
-    }
-}

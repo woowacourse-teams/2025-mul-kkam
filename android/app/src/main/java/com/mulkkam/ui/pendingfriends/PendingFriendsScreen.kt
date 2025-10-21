@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
@@ -43,7 +44,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PendingFriendsScreen(
     navigateToBack: () -> Unit,
-    viewModel: PendingFriendsViewModel = viewModel(),
+    viewModel: PendingFriendsViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val view = LocalView.current

@@ -13,7 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.di.CheckerInjection.achievementHeatmapChecker
 import com.mulkkam.domain.checker.AchievementHeatmapChecker
 import com.mulkkam.domain.model.intake.AchievementLevel
 import com.mulkkam.ui.main.MainActivity
@@ -27,7 +26,13 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
     ) {
         super.onReceive(context, intent)
         val appWidgetManager = AppWidgetManager.getInstance(context.applicationContext)
-        val ids = appWidgetManager.getAppWidgetIds(ComponentName(context, AchievementHeatmapWidget::class.java))
+        val ids =
+            appWidgetManager.getAppWidgetIds(
+                ComponentName(
+                    context,
+                    AchievementHeatmapWidget::class.java,
+                ),
+            )
         ids.forEach { id -> updateWidget(context.applicationContext, appWidgetManager, id) }
     }
 
@@ -46,7 +51,7 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
     ) {
-        val requestId: UUID = achievementHeatmapChecker.fetchAchievementHeatmap()
+        val requestId: UUID = context.widgetEntryPoint().achievementHeatmapChecker().fetchAchievementHeatmap()
         observeWorker(context, appWidgetManager, appWidgetId, requestId)
     }
 
@@ -78,7 +83,10 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
         workInfo: WorkInfo,
     ) {
         val outputData = workInfo.outputData
-        val rates = outputData.getFloatArray(AchievementHeatmapChecker.KEY_RATES) ?: FloatArray(CELL_VIEW_IDS.size)
+        val rates =
+            outputData.getFloatArray(AchievementHeatmapChecker.KEY_RATES) ?: FloatArray(
+                CELL_VIEW_IDS.size,
+            )
         val views = RemoteViews(context.packageName, R.layout.layout_achievement_heatmap_widget)
 
         val cellSizePx = calculateCellSizePx(context, appWidgetManager, appWidgetId)

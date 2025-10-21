@@ -21,7 +21,9 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingFragment
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CupsFragment :
     BindingFragment<FragmentCupsBinding>(
         FragmentCupsBinding::inflate,
