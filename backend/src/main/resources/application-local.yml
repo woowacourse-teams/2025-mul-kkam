@@ -35,3 +35,15 @@ spring:
 app:
   logging:
     mask-auth: false
+
+mulkkam:
+  mq:
+    exchange: notifications.ex
+    queue:
+      token: notifications.token.q
+      tokens: notifications.tokens.q
+      topic: notifications.topic.q
+    routing:
+      token: notify.token
+      tokens: notify.tokens
+      topic: notify.topic
