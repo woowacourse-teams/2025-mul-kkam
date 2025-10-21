@@ -1,29 +1,52 @@
 version: 0.2
 
+env:
+  variables:
+    IMAGE_NAME: "mulkkam/mulkkam-prod"
+    TAG: "${CODEBUILD_RESOLVED_SOURCE_VERSION}"
+
 phases:
   pre_build:
     commands:
-      - echo Logging in to Docker Hub...
+      - echo "== Docker Hub 로그인 =="
       - echo "$DOCKERHUB_TOKEN" | docker login -u "$DOCKERHUB_USERNAME" --password-stdin
+
+      - echo "== QEMU + buildx 세팅 =="
+      - docker run --privileged --rm tonistiigi/binfmt --install all
+      - docker buildx create --name multi --use
+      - docker buildx ls
+
+      - echo "== 빌드 호스트 확인 =="
+      - uname -m
+      - docker info --format '{{.OSType}}/{{.Architecture}}'
 
   build:
     commands:
-      - echo "Building Spring Boot app..."
+      - echo "== Spring Boot 빌드 =="
       - cd backend
       - chmod +x gradlew
       - ./gradlew clean build -x test
-      - echo "Building Docker image..."
-      - docker build -t mulkkam/mulkkam-prod:$CODEBUILD_RESOLVED_SOURCE_VERSION .
-      - docker push mulkkam/mulkkam-prod:$CODEBUILD_RESOLVED_SOURCE_VERSION
+
+      - echo "== 멀티아치 Docker 빌드 & 푸시 =="
+      # Dockerfile이 backend/ 아래에 있다고 가정
+      - |
+        docker buildx build \
+          --platform linux/amd64,linux/arm64 \
+          -t ${IMAGE_NAME}:${TAG} \
+          --push \
+          .
 
   post_build:
     commands:
-      - echo "Preparing deployment bundle..."
+      - echo "== 매니페스트 확인 =="
+      - docker buildx imagetools inspect ${IMAGE_NAME}:${TAG}
+
+      - echo "== CodeDeploy 번들 준비 =="
       - cd ..
       - rm -rf bundle && mkdir -p bundle/scripts bundle/env
       - cp codedeploy/appspec.yml bundle/appspec.yml
       - cp scripts/*.sh bundle/scripts/
-      - echo "IMAGE_TAG=$CODEBUILD_RESOLVED_SOURCE_VERSION" > bundle/env/image.env
+      - echo "IMAGE_TAG=${TAG}" > bundle/env/image.env
 
 artifacts:
   base-directory: bundle
