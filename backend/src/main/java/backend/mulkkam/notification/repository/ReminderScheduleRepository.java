@@ -43,7 +43,7 @@ public interface ReminderScheduleRepository extends JpaRepository<ReminderSchedu
     @Query("""
                 SELECT m.id
                 FROM Member m
-                WHERE (:lastId IS NULL OR r.id > :lastId)
+                WHERE (:lastId IS NULL OR m.id > :lastId)
             """)
     List<Long> findAllActiveMemberIdsBySchedule(
             @Param("schedule") LocalTime schedule,
