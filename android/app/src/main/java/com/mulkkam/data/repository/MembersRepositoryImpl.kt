@@ -21,117 +21,120 @@ import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class MembersRepositoryImpl(
-    private val membersService: MembersService,
-    private val membersPreference: MembersPreference,
-) : MembersRepository {
-    override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
-        val result = membersService.getMembersNicknameValidation(nickname)
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit> {
-        val result = membersService.patchMembersNickname(MemberNicknameRequest(nickname))
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getMembersNickname(): MulKkamResult<String> {
-        val result = membersService.getMembersNickname()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.memberNickname) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getMembers(): MulKkamResult<MemberInfo> {
-        val result = membersService.getMembers()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun postMembersPhysicalAttributes(
-        gender: Gender,
-        weight: BioWeight,
-    ): MulKkamResult<Unit> {
-        val result =
-            membersService.postMembersPhysicalAttributes(
-                MembersPhysicalAtrributesRequest(
-                    gender.name,
-                    weight.value.toDouble(),
-                ),
+class MembersRepositoryImpl
+    @Inject
+    constructor(
+        private val membersService: MembersService,
+        private val membersPreference: MembersPreference,
+    ) : MembersRepository {
+        override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
+            val result = membersService.getMembersNicknameValidation(nickname)
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
+        }
+
+        override suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit> {
+            val result = membersService.patchMembersNickname(MemberNicknameRequest(nickname))
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getMembersNickname(): MulKkamResult<String> {
+            val result = membersService.getMembersNickname()
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.memberNickname) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getMembers(): MulKkamResult<MemberInfo> {
+            val result = membersService.getMembers()
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun postMembersPhysicalAttributes(
+            gender: Gender,
+            weight: BioWeight,
+        ): MulKkamResult<Unit> {
+            val result =
+                membersService.postMembersPhysicalAttributes(
+                    MembersPhysicalAtrributesRequest(
+                        gender.name,
+                        weight.value.toDouble(),
+                    ),
+                )
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
+            val result = membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun patchMembersNotificationNight(isNightNotificationAgreed: Boolean): MulKkamResult<Unit> {
+            val result =
+                membersService.patchMembersNotificationNight(NightNotificationAgreedRequest(isNightNotificationAgreed))
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit> {
+            val result =
+                membersService.patchMembersNotificationMarketing(MarketingNotificationAgreedRequest(isMarketingNotificationAgreed))
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo> {
+            val result = membersService.getMembersNotificationSettings()
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun deleteMembers(): MulKkamResult<Unit> {
+            val result = membersService.deleteMembers()
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getIsFirstLaunch(): MulKkamResult<Boolean> =
+            runCatching {
+                membersPreference.isFirstLaunch
+            }.toMulKkamResult()
+
+        override suspend fun saveIsFirstLaunch(): MulKkamResult<Unit> =
+            runCatching {
+                membersPreference.saveIsFirstLaunch()
+            }.toMulKkamResult()
+
+        override suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit> {
+            val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
     }
-
-    override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
-        val result = membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun patchMembersNotificationNight(isNightNotificationAgreed: Boolean): MulKkamResult<Unit> {
-        val result =
-            membersService.patchMembersNotificationNight(NightNotificationAgreedRequest(isNightNotificationAgreed))
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit> {
-        val result =
-            membersService.patchMembersNotificationMarketing(MarketingNotificationAgreedRequest(isMarketingNotificationAgreed))
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo> {
-        val result = membersService.getMembersNotificationSettings()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun deleteMembers(): MulKkamResult<Unit> {
-        val result = membersService.deleteMembers()
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getIsFirstLaunch(): MulKkamResult<Boolean> =
-        runCatching {
-            membersPreference.isFirstLaunch
-        }.toMulKkamResult()
-
-    override suspend fun saveIsFirstLaunch(): MulKkamResult<Unit> =
-        runCatching {
-            membersPreference.saveIsFirstLaunch()
-        }.toMulKkamResult()
-
-    override suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit> {
-        val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-}
