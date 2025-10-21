@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -28,7 +29,7 @@ import com.mulkkam.ui.util.extensions.onLoadMore
 fun NotificationScreen(
     navigateToBack: () -> Unit,
     state: LazyListState = rememberLazyListState(),
-    viewModel: NotificationViewModel = viewModel(),
+    viewModel: NotificationViewModel = hiltViewModel(),
 ) {
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
