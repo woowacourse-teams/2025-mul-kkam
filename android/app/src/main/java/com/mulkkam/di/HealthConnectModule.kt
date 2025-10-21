@@ -18,8 +18,8 @@ object HealthConnectModule {
     @Singleton
     fun provideHealthConnectClient(
         @ApplicationContext context: Context,
-    ): HealthConnectClient =
+    ): HealthConnectClient? =
         runCatching {
             HealthConnectClient.getOrCreate(context)
-        }.getOrNull() ?: error("")
+        }.getOrNull()
 }

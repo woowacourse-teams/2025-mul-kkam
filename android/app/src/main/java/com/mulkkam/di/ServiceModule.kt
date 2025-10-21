@@ -45,7 +45,7 @@ object ServiceModule {
 
     @Provides
     @Singleton
-    fun provideHealthService(client: HealthConnectClient): HealthService = HealthService(client)
+    fun provideHealthService(client: HealthConnectClient?): HealthService = HealthService(client)
 
     @Provides
     @Singleton
