@@ -56,7 +56,7 @@ class SearchMembersViewModel : ViewModel() {
     }
 
     fun updateName(newName: String) {
-        _isTyping.value = true
+        _isTyping.value = name.value != newName
         _name.value = newName
         lastId = null
     }

@@ -1,6 +1,5 @@
 package com.mulkkam.ui.searchmembers.component
 
-import android.R.attr.name
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -27,7 +27,9 @@ fun SearchMembersTextField(
     BasicTextField(
         value = name,
         onValueChange = {
-            onValueChanged(it)
+            if (it.length <= Nickname.NICKNAME_LENGTH_MAX) {
+                onValueChanged(it)
+            }
         },
         modifier =
             Modifier
