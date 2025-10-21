@@ -26,7 +26,9 @@ import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.hideKeyboard
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NicknameFragment :
     BindingFragment<FragmentNicknameBinding>(
         FragmentNicknameBinding::inflate,

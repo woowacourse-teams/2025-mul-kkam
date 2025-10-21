@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.dialog.adpater
+package com.mulkkam.ui.settingcups.dialog.adapter
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter

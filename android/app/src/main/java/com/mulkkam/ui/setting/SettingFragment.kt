@@ -25,7 +25,9 @@ import com.mulkkam.ui.settingreminder.SettingReminderActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.extensions.getParcelableArrayListExtraCompat
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingFragment :
     Fragment(),
     Refreshable {

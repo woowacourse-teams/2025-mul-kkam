@@ -11,6 +11,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -27,9 +28,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()

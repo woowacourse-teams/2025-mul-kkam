@@ -7,8 +7,7 @@ import android.os.Build
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.di.HealthConnectInjection
-import com.mulkkam.di.HealthConnectInjection.PROVIDER_PACKAGE_NAME
+import com.mulkkam.di.HealthConnectModule.PROVIDER_PACKAGE_NAME
 
 private const val MIN_VERSION_NAME: String = "0.0.0"
 
@@ -19,7 +18,7 @@ private const val MIN_VERSION_NAME: String = "0.0.0"
  */
 fun Context.isHealthConnectAvailable(): Boolean =
     when {
-        HealthConnectInjection.healthConnectClient == null -> false
+        runCatching { HealthConnectClient.getOrCreate(this) }.getOrNull() == null -> false
         HealthConnectClient.getSdkStatus(this, PROVIDER_PACKAGE_NAME) ==
             HealthConnectClient.SDK_AVAILABLE -> true
 
@@ -30,8 +29,10 @@ fun Context.isHealthConnectAvailable(): Boolean =
  * Health Connect 설치 또는 업데이트 화면(Play 스토어)을 연다.
  */
 fun Context.navigateToHealthConnectStore() {
-    val marketUri = "market://details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
-    val webUri = "https://play.google.com/store/apps/details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
+    val marketUri =
+        "market://details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
+    val webUri =
+        "https://play.google.com/store/apps/details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
 
     val marketIntent =
         Intent(Intent.ACTION_VIEW, marketUri).apply {

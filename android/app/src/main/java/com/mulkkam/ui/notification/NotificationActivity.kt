@@ -13,7 +13,9 @@ import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class NotificationActivity : ComponentActivity() {
     private val viewModel: NotificationViewModel by viewModels()
 
