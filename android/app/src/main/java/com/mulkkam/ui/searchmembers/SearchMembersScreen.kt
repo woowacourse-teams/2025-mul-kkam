@@ -42,6 +42,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun SearchMembersScreen(
     navigateToBack: () -> Unit,
+    onFriendAccepted: () -> Unit,
     state: LazyListState = rememberLazyListState(),
     viewModel: SearchMembersViewModel = viewModel(),
 ) {
@@ -64,7 +65,12 @@ fun SearchMembersScreen(
 
         launch {
             viewModel.onAcceptFriends.collect { state ->
-                handleAcceptFriendsAction(state, view, context)
+                handleAcceptFriendsAction(
+                    state = state,
+                    view = view,
+                    context = context,
+                    onFriendAccepted = onFriendAccepted,
+                )
             }
         }
     }
@@ -150,6 +156,7 @@ private fun handleAcceptFriendsAction(
     state: MulKkamUiState<String>,
     view: View,
     context: Context,
+    onFriendAccepted: () -> Unit,
 ) {
     when (state) {
         is MulKkamUiState.Success<String> -> {
@@ -159,6 +166,7 @@ private fun handleAcceptFriendsAction(
                     context.getString(R.string.search_friends_accept_success, state.toSuccessDataOrNull()),
                     R.drawable.ic_terms_all_check_on,
                 ).show()
+            onFriendAccepted()
         }
 
         is MulKkamUiState.Failure -> Unit
@@ -170,6 +178,9 @@ private fun handleAcceptFriendsAction(
 @Composable
 private fun SearchMembersScreenPreview() {
     MulkkamTheme {
-        SearchMembersScreen(navigateToBack = {})
+        SearchMembersScreen(
+            navigateToBack = {},
+            onFriendAccepted = {},
+        )
     }
 }

@@ -43,6 +43,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun PendingFriendsScreen(
     navigateToBack: () -> Unit,
+    onFriendAccepted: () -> Unit,
     viewModel: PendingFriendsViewModel = viewModel(),
 ) {
     val context = LocalContext.current
@@ -62,7 +63,12 @@ fun PendingFriendsScreen(
     LaunchedEffect(Unit) {
         launch {
             viewModel.onAcceptRequest.collect { state ->
-                handleAcceptRequestAction(state, view, context)
+                handleAcceptRequestAction(
+                    state = state,
+                    view = view,
+                    context = context,
+                    onFriendAccepted = onFriendAccepted,
+                )
             }
         }
 
@@ -149,6 +155,7 @@ private fun handleAcceptRequestAction(
     state: MulKkamUiState<String>,
     view: View,
     context: Context,
+    onFriendAccepted: () -> Unit,
 ) {
     when (state) {
         is MulKkamUiState.Success<String> -> {
@@ -159,6 +166,7 @@ private fun handleAcceptRequestAction(
                     context.getString(R.string.pending_friends_accept_success, nickname),
                     R.drawable.ic_terms_all_check_on,
                 ).show()
+            onFriendAccepted()
         }
 
         is MulKkamUiState.Failure -> {
@@ -218,6 +226,9 @@ private fun handleCancelRequestAction(
 @Composable
 private fun PendingFriendsScreenPreview() {
     MulkkamTheme {
-        PendingFriendsScreen(navigateToBack = {})
+        PendingFriendsScreen(
+            navigateToBack = {},
+            onFriendAccepted = {},
+        )
     }
 }
