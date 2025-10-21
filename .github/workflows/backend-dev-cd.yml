@@ -67,6 +67,9 @@ jobs:
           DEV_DATASOURCE_RW_PASSWORD=${{ secrets.DEV_DATASOURCE_RW_PASSWORD }}
           DEV_DATASOURCE_MIGRATION_USERNAME=${{ secrets.DEV_DATASOURCE_MIGRATION_USERNAME }}
           DEV_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.DEV_DATASOURCE_MIGRATION_PASSWORD }}
+          MQ_HOST=${{ secrets.MQ_HOST }}
+          MQ_USER=${{ secrets.MQ_USER }}
+          MQ_PASSWORD=${{ secrets.MQ_PASSWORD }}
           EOF
 
       - name: Decide colors (by health + nginx)
