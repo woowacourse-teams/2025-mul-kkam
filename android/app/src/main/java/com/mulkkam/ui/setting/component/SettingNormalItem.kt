@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -16,6 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
+import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.SettingItem
@@ -30,7 +32,8 @@ fun SettingNormalItem(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .clickable { onSettingClick(item.type) },
+                .clickable { onSettingClick(item.type) }
+                .padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -38,16 +41,16 @@ fun SettingNormalItem(
             text = item.label,
             style = MulKkamTheme.typography.body2,
             color = Black,
-            modifier = Modifier.padding(start = 24.dp, top = 14.dp, bottom = 14.dp),
+            modifier = Modifier.padding(start = 8.dp),
         )
 
         Icon(
             painter = painterResource(id = R.drawable.ic_setting_next),
             contentDescription = null,
-            modifier =
-                Modifier
-                    .size(40.dp)
-                    .padding(8.dp),
+            modifier = Modifier
+                .size(40.dp)
+                .padding(8.dp),
+            tint = Gray400,
         )
     }
 }
