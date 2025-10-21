@@ -7,9 +7,9 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -25,7 +25,7 @@ fun SettingTitleItem(item: SettingItem.TitleItem) {
         Text(
             text = item.title,
             style = MulKkamTheme.typography.label1,
-            color = Color.Black,
+            color = Black,
             modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp),
         )
         HorizontalDivider(
