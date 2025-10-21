@@ -1,11 +1,10 @@
 version: 0.0
 os: linux
 
-# files 섹션이 꼭 필요한 건 아님. (도커 기반이면 생략 가능)
-# 필요한 경우 예) 리눅스 서버에 파일을 풀어둘 때
-# files:
-#   - source: /
-#     destination: /home/ubuntu/mulkkam
+files:
+  - source: env/
+    destination: /opt/mulkkam/env
+    file_exists_behavior: OVERWRITE
 
 hooks:
   BeforeInstall:
