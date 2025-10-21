@@ -1,16 +1,22 @@
-#!/usr/bin/env bash
-set -euo pipefail
+version: 0.0
+os: linux
 
-HEALTH_URL="http://localhost/actuator/health"
+# files 섹션이 꼭 필요한 건 아님. (도커 기반이면 생략 가능)
+# 필요한 경우 예) 리눅스 서버에 파일을 풀어둘 때
+# files:
+#   - source: /
+#     destination: /home/ubuntu/mulkkam
 
-for i in {1..20}; do
-if curl -fsS "$HEALTH_URL" >/dev/null; then
-echo "[validate] OK"
-exit 0
-fi
-echo "[validate] retry $i"
-sleep 3
-done
-
-echo "[validate] FAILED"
-exit 1
+hooks:
+  BeforeInstall:
+    - location: scripts/pull.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start.sh
+      timeout: 300
+      runas: root
+  ValidateService:
+    - location: scripts/validate.sh
+      timeout: 180
+      runas: root
