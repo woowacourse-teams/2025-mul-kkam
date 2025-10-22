@@ -130,7 +130,7 @@ class FriendControllerTest extends ControllerTest {
                             .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
                             .contentType(APPLICATION_JSON)
                             .content(objectMapper.writeValueAsString(request)))
-                    .andExpect(status().isOk());
+                    .andExpect(status().isNoContent());
         }
 
         @DisplayName("친구 관계가 아닌 경우 예외가 발생한다")
@@ -167,7 +167,7 @@ class FriendControllerTest extends ControllerTest {
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + tokenOfRequester)
                                 .contentType(APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(request)))
-                        .andExpect(status().isOk());
+                        .andExpect(status().isNoContent());
             }
 
             // when & then - 11번째 시도는 실패
