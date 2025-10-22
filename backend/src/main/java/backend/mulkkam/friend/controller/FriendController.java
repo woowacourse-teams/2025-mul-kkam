@@ -4,6 +4,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.service.FriendReminderHistoryService;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendController {
 
     private final FriendService friendService;
+    private final FriendReminderHistoryService friendReminderHistoryService;
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @ApiResponse(responseCode = "204", description = "친구 삭제 성공")
@@ -58,7 +60,7 @@ public class FriendController {
     }
 
     @Operation(summary = "친구에게 물풍선 던지기", description = "사용자 친구에게 리마인드 알림을 보냅니다.")
-    @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공", content = @Content(schema = @Schema(implementation = FriendRelationResponse.class)))
+    @ApiResponse(responseCode = "200", description = "리마인드 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping("/reminder")
     public void createReminder(
@@ -66,6 +68,6 @@ public class FriendController {
             @Valid CreateFriendReminderRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-
+        friendReminderHistoryService.createAndSendReminder(request, memberDetails);
     }
 }
