@@ -32,6 +32,7 @@ public enum BadRequestErrorCode implements ErrorCode {
     ALREADY_ACCEPTED,
 
     NOT_ALLOWED_SELF_REMINDER,
+    EXCEED_FRIEND_REMINDER_LIMIT,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;
