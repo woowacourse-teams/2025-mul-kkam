@@ -1,7 +1,6 @@
-package com.mulkkam.ui.setting
+package com.mulkkam.ui.setting.model
 
-import com.mulkkam.ui.setting.SettingViewType
-import com.mulkkam.ui.setting.model.SettingType
+import com.mulkkam.ui.setting.model.SettingViewType
 
 sealed class SettingItem(
     val viewType: SettingViewType,

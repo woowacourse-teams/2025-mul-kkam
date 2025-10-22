@@ -16,10 +16,10 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.setting.SettingItem
 import com.mulkkam.ui.setting.component.SettingDividerItem
 import com.mulkkam.ui.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.component.SettingTitleItem
+import com.mulkkam.ui.setting.model.SettingItem
 import com.mulkkam.ui.setting.model.SettingType
 
 @Composable
