@@ -88,6 +88,11 @@ public class SuggestionNotificationService {
     @Transactional
     public void createAndSendNotification(NotificationMessageTemplate template, Long memberId) {
         List<Device> devices = deviceRepository.findAllByMemberId(memberId);
+        if (devices.isEmpty()) {
+            log.warn("memberId={} has no registered devices. ignored notification.", memberId);
+            return;
+        }
+
         List<String> tokens = devices.stream()
                 .map(Device::getToken)
                 .toList();
