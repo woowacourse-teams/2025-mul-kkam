@@ -32,7 +32,7 @@ spring:
 
   rabbitmq:
     host: ${MQ_HOST}
-    port: 80
+    port: 5672
     username: ${MQ_USER}
     password: ${MQ_PASSWORD}
 
