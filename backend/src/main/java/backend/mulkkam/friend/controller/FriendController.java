@@ -2,6 +2,7 @@ package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.friend.dto.request.SendFriendReminderRequest;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -10,10 +11,12 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,5 +55,17 @@ public class FriendController {
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         return friendService.read(lastId, size, memberDetails);
+    }
+
+    @Operation(summary = "친구에게 물풍선 던지기", description = "사용자 친구에게 리마인드 알림을 보냅니다.")
+    @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공", content = @Content(schema = @Schema(implementation = FriendRelationResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @PostMapping("/reminder")
+    public void sendReminder(
+            @Parameter(description = "물풍선 보내기 요청 body")
+            @Valid SendFriendReminderRequest request,
+            @Parameter(hidden = true) MemberDetails memberDetails
+    ) {
+
     }
 }
