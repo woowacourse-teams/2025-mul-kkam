@@ -9,6 +9,7 @@ import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -61,14 +62,22 @@ public class FriendController {
     }
 
     @Operation(summary = "친구에게 물풍선 던지기", description = "사용자 친구에게 리마인드 알림을 보냅니다.")
-    @ApiResponse(responseCode = "200", description = "리마인드 성공")
+    @ApiResponse(responseCode = "204", description = "리마인드 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "일일 할당량을 초과한 경우", value = "{\"code\":\"EXCEED_FRIEND_REMINDER_LIMIT\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "관련 리소스를 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 관계가 아닌 경우", value = "{\"code\":\"NOT_FOUND_FRIEND\"}"),
+            @ExampleObject(name = "찾을 수 없는 회원인 경우", value = "{\"code\":\"NOT_FOUND_MEMBER\"}")
+    }))
     @PostMapping("/reminder")
-    public void createReminder(
+    public ResponseEntity<Void> createReminder(
             @Parameter(description = "물풍선 보내기 요청 body")
             @RequestBody @Valid CreateFriendReminderRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         friendReminderHistoryService.createAndSendReminder(request, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 }
