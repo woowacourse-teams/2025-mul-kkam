@@ -14,7 +14,7 @@ class SearchMembersActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             MulkkamTheme {
-                SearchMembersScreen(navigateToBack = { finish() })
+                SearchMembersScreen(navigateToBack = ::finish)
             }
         }
     }
