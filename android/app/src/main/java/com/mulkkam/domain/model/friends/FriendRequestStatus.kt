@@ -1,6 +1,6 @@
-package com.mulkkam.domain.model.members
+package com.mulkkam.domain.model.friends
 
-enum class Status {
+enum class FriendRequestStatus {
     ACCEPTED,
     REQUESTED,
     REJECTED,
@@ -8,7 +8,7 @@ enum class Status {
     ;
 
     companion object {
-        fun from(status: String): Status =
+        fun from(status: String): FriendRequestStatus =
             when (status) {
                 ACCEPTED.name -> ACCEPTED
                 REQUESTED.name -> REQUESTED

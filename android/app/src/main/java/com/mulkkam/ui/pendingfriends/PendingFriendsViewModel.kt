@@ -2,8 +2,8 @@ package com.mulkkam.ui.pendingfriends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
-import com.mulkkam.domain.model.members.Status
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.FriendsRepository
 import com.mulkkam.ui.model.MulKkamUiState
@@ -88,7 +88,7 @@ class PendingFriendsViewModel
                     friendsRepository
                         .patchFriendRequest(
                             friendsRequest.memberId,
-                            Status.ACCEPTED,
+                            FriendRequestStatus.ACCEPTED,
                         ).getOrError()
                 }.onSuccess {
                     _onAcceptRequest.emit(MulKkamUiState.Success(friendsRequest.nickname.name))
@@ -107,7 +107,7 @@ class PendingFriendsViewModel
                     friendsRepository
                         .patchFriendRequest(
                             friendsRequest.memberId,
-                            Status.REJECTED,
+                            FriendRequestStatus.REJECTED,
                         ).getOrError()
                 }.onSuccess {
                     _onRejectRequest.emit(MulKkamUiState.Success(Unit))

@@ -1,7 +1,7 @@
 package com.mulkkam.domain.repository
 
+import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.friends.FriendsRequestResult
-import com.mulkkam.domain.model.members.Status
 import com.mulkkam.domain.model.result.MulKkamResult
 
 interface FriendsRepository {
@@ -11,7 +11,7 @@ interface FriendsRepository {
 
     suspend fun patchFriendRequest(
         requestId: Long,
-        status: Status,
+        status: FriendRequestStatus,
     ): MulKkamResult<Unit>
 
     suspend fun getFriendsRequestReceived(

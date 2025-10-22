@@ -2,9 +2,9 @@ package com.mulkkam.ui.searchmembers
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.domain.model.members.Direction
+import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.members.MemberSearchInfo
-import com.mulkkam.domain.model.members.Status
+import com.mulkkam.domain.model.members.RequestDirection
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.FriendsRepository
 import com.mulkkam.domain.repository.MembersRepository
@@ -118,14 +118,14 @@ class SearchMembersViewModel
             viewModelScope.launch {
                 runCatching {
                     friendsRepository
-                        .patchFriendRequest(memberSearchInfo.id, Status.ACCEPTED)
+                        .patchFriendRequest(memberSearchInfo.id, FriendRequestStatus.ACCEPTED)
                         .getOrError()
                 }.onSuccess {
                     _onAcceptFriends.emit(MulKkamUiState.Success(memberSearchInfo.nickname.name))
                     updateSearchMembersUiState(
                         memberSearchInfo.id,
-                        Status.ACCEPTED,
-                        Direction.REQUESTED_TO_ME,
+                        FriendRequestStatus.ACCEPTED,
+                        RequestDirection.REQUESTED_TO_ME,
                     )
                 }.onFailure {
                     _onAcceptFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
@@ -138,7 +138,7 @@ class SearchMembersViewModel
                 friendsRepository.postFriendRequest(id).getOrError()
             }.onSuccess {
                 _onRequestFriends.emit(MulKkamUiState.Success(Unit))
-                updateSearchMembersUiState(id, Status.REQUESTED, Direction.REQUESTED_BY_ME)
+                updateSearchMembersUiState(id, FriendRequestStatus.REQUESTED, RequestDirection.REQUESTED_BY_ME)
             }.onFailure {
                 _onRequestFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
@@ -146,8 +146,8 @@ class SearchMembersViewModel
 
         private fun updateSearchMembersUiState(
             id: Long,
-            status: Status,
-            direction: Direction,
+            status: FriendRequestStatus,
+            direction: RequestDirection,
         ) {
             val currentList = _memberSearchUiState.value.toSuccessDataOrNull() ?: return
             val updatedList =

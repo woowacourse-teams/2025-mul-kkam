@@ -27,10 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mulkkam.R
-import com.mulkkam.domain.model.members.Direction
+import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
-import com.mulkkam.domain.model.members.Status
+import com.mulkkam.domain.model.members.RequestDirection
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -139,8 +139,8 @@ private fun CancelFriendsRequestDialogPreview() {
                 MemberSearchInfo(
                     id = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    status = Status.REQUESTED,
-                    direction = Direction.REQUESTED_TO_ME,
+                    status = FriendRequestStatus.REQUESTED,
+                    direction = RequestDirection.REQUESTED_TO_ME,
                 ),
             onConfirm = {},
             onDismiss = {},

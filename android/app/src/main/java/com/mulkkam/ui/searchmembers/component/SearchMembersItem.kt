@@ -23,10 +23,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.domain.model.members.Direction
+import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
-import com.mulkkam.domain.model.members.Status
+import com.mulkkam.domain.model.members.RequestDirection
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray200
@@ -115,8 +115,8 @@ private fun SearchMembersItemPreview_None() {
                 MemberSearchInfo(
                     id = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    status = Status.NONE,
-                    direction = Direction.NONE,
+                    status = FriendRequestStatus.NONE,
+                    direction = RequestDirection.NONE,
                 ),
             onClick = {},
         )
@@ -132,8 +132,8 @@ private fun SearchMembersItemPreview_Friend() {
                 MemberSearchInfo(
                     id = 1L,
                     nickname = Nickname("돈가스싫은이든"),
-                    status = Status.ACCEPTED,
-                    direction = Direction.NONE,
+                    status = FriendRequestStatus.ACCEPTED,
+                    direction = RequestDirection.NONE,
                 ),
             onClick = {},
         )
@@ -149,8 +149,8 @@ private fun SearchMembersItemPreview_Requested() {
                 MemberSearchInfo(
                     id = 1L,
                     nickname = Nickname("돈가스좋은공백"),
-                    status = Status.REQUESTED,
-                    direction = Direction.REQUESTED_BY_ME,
+                    status = FriendRequestStatus.REQUESTED,
+                    direction = RequestDirection.REQUESTED_BY_ME,
                 ),
             onClick = {},
         )
