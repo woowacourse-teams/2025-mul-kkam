@@ -15,6 +15,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
@@ -23,8 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
+import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -32,6 +35,7 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton
+import com.mulkkam.ui.searchmembers.component.AcceptFriendsRequestDialog
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
@@ -56,6 +60,9 @@ fun SearchMembersScreen(
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.onLoadMore(action = { viewModel.loadMoreMembers() })
 
+    var receivedMemberSearchInfo: MemberSearchInfo? by remember { mutableStateOf(null) }
+    var showDialog by remember { mutableStateOf(false) }
+
     LaunchedEffect(Unit) {
         launch {
             viewModel.onRequestFriends.collect { state ->
@@ -68,12 +75,33 @@ fun SearchMembersScreen(
                 handleAcceptFriendsAction(state, view, context)
             }
         }
+
+        launch {
+            viewModel.receivedMemberSearchInfo.collect { state ->
+                receivedMemberSearchInfo = state.toSuccessDataOrNull()
+                showDialog = true
+            }
+        }
     }
 
     Scaffold(
         topBar = { SearchMembersTopAppBar(navigateToBack) },
         containerColor = White,
     ) { innerPadding ->
+        if (showDialog) {
+            val memberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
+            AcceptFriendsRequestDialog(
+                memberSearchInfo = memberSearchInfo,
+                onConfirm = {
+                    viewModel.acceptFriendRequest(
+                        memberSearchInfo,
+                    )
+                    showDialog = false
+                },
+                onDismiss = { showDialog = false },
+            )
+        }
+
         Column(
             modifier = Modifier.padding(innerPadding),
         ) {
@@ -157,7 +185,10 @@ private fun handleAcceptFriendsAction(
             CustomSnackBar
                 .make(
                     view,
-                    context.getString(R.string.search_friends_accept_success, state.toSuccessDataOrNull()),
+                    context.getString(
+                        R.string.search_friends_accept_success,
+                        state.toSuccessDataOrNull(),
+                    ),
                     R.drawable.ic_terms_all_check_on,
                 ).show()
         }

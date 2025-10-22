@@ -82,43 +82,43 @@ class PendingFriendsViewModel
             }
         }
 
-    fun acceptFriend(friendsRequest: FriendsRequestInfo) {
-        viewModelScope.launch {
-            runCatching {
-                friendsRepository
-                    .patchFriendRequest(
-                        friendsRequest.memberId,
-                        Status.ACCEPTED,
-                    ).getOrError()
-            }.onSuccess {
-                _onAcceptRequest.emit(MulKkamUiState.Success(friendsRequest.nickname.name))
-                val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
-                _receivedRequests.value =
-                    MulKkamUiState.Success(currentList.filter { it != friendsRequest })
-            }.onFailure {
-                _onAcceptRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+        fun acceptFriend(friendsRequest: FriendsRequestInfo) {
+            viewModelScope.launch {
+                runCatching {
+                    friendsRepository
+                        .patchFriendRequest(
+                            friendsRequest.memberId,
+                            Status.ACCEPTED,
+                        ).getOrError()
+                }.onSuccess {
+                    _onAcceptRequest.emit(MulKkamUiState.Success(friendsRequest.nickname.name))
+                    val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
+                    _receivedRequests.value =
+                        MulKkamUiState.Success(currentList.filter { it != friendsRequest })
+                }.onFailure {
+                    _onAcceptRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+                }
             }
         }
-    }
 
-    fun rejectFriend(friendsRequest: FriendsRequestInfo) {
-        viewModelScope.launch {
-            runCatching {
-                friendsRepository
-                    .patchFriendRequest(
-                        friendsRequest.memberId,
-                        Status.REJECTED,
-                    ).getOrError()
-            }.onSuccess {
-                _onRejectRequest.emit(MulKkamUiState.Success(Unit))
-                val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
-                _receivedRequests.value =
-                    MulKkamUiState.Success(currentList.filter { it != friendsRequest })
-            }.onFailure {
-                _onRejectRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+        fun rejectFriend(friendsRequest: FriendsRequestInfo) {
+            viewModelScope.launch {
+                runCatching {
+                    friendsRepository
+                        .patchFriendRequest(
+                            friendsRequest.memberId,
+                            Status.REJECTED,
+                        ).getOrError()
+                }.onSuccess {
+                    _onRejectRequest.emit(MulKkamUiState.Success(Unit))
+                    val currentList = receivedRequests.value.toSuccessDataOrNull() ?: return@launch
+                    _receivedRequests.value =
+                        MulKkamUiState.Success(currentList.filter { it != friendsRequest })
+                }.onFailure {
+                    _onRejectRequest.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+                }
             }
         }
-    }
 
         fun cancelRequest(friendsRequest: FriendsRequestInfo) {
             viewModelScope.launch {

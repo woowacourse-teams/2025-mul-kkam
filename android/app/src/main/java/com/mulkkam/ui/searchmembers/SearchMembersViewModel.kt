@@ -55,6 +55,10 @@ class SearchMembersViewModel
             MutableSharedFlow<MulKkamUiState<String>>()
         val onAcceptFriends: SharedFlow<MulKkamUiState<String>> = _onAcceptFriends.asSharedFlow()
 
+        private val _receivedMemberSearchInfo: MutableSharedFlow<MulKkamUiState<MemberSearchInfo>> =
+            MutableSharedFlow()
+        val receivedMemberSearchInfo: SharedFlow<MulKkamUiState<MemberSearchInfo>> = _receivedMemberSearchInfo.asSharedFlow()
+
         init {
             viewModelScope.launch {
                 _name.debounce(300L).collect { query ->
@@ -103,21 +107,29 @@ class SearchMembersViewModel
         fun requestFriends(memberSearchInfo: MemberSearchInfo) {
             viewModelScope.launch {
                 if (memberSearchInfo.isRequestedToMe()) {
-                    acceptFriendRequest(memberSearchInfo)
+                    _receivedMemberSearchInfo.emit(MulKkamUiState.Success(memberSearchInfo))
                     return@launch
                 }
                 sendFriendRequest(memberSearchInfo.id)
             }
         }
 
-        private suspend fun acceptFriendRequest(memberSearchInfo: MemberSearchInfo) {
-            runCatching {
-                friendsRepository.patchFriendRequest(memberSearchInfo.id, Status.ACCEPTED).getOrError()
-            }.onSuccess {
-                _onAcceptFriends.emit(MulKkamUiState.Success(memberSearchInfo.nickname.name))
-                updateSearchMembersUiState(memberSearchInfo.id, Status.ACCEPTED, Direction.REQUESTED_TO_ME)
-            }.onFailure {
-                _onAcceptFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+        fun acceptFriendRequest(memberSearchInfo: MemberSearchInfo) {
+            viewModelScope.launch {
+                runCatching {
+                    friendsRepository
+                        .patchFriendRequest(memberSearchInfo.id, Status.ACCEPTED)
+                        .getOrError()
+                }.onSuccess {
+                    _onAcceptFriends.emit(MulKkamUiState.Success(memberSearchInfo.nickname.name))
+                    updateSearchMembersUiState(
+                        memberSearchInfo.id,
+                        Status.ACCEPTED,
+                        Direction.REQUESTED_TO_ME,
+                    )
+                }.onFailure {
+                    _onAcceptFriends.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+                }
             }
         }
 
