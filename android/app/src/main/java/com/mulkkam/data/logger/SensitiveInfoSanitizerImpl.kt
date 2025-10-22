@@ -1,13 +1,13 @@
 package com.mulkkam.data.logger
 
-import com.mulkkam.domain.logger.SensitiveInfoSanitizer
+import com.mulkkam.domain.logger.LogSanitizer
 
 /**
  * token, access_token, refresh_token, deviceId, Authorization: Bearer ... 형태를 마스킹합니다.
  */
 class SensitiveInfoSanitizerImpl(
     private val mask: String = DEFAULT_MASK,
-) : SensitiveInfoSanitizer {
+) : LogSanitizer {
     override fun sanitize(input: String): String {
         var out = input
 

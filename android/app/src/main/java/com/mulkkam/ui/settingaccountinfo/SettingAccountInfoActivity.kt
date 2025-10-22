@@ -14,7 +14,9 @@ import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountLogoutDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBinding>(ActivitySettingAccountInfoBinding::inflate) {
     private val viewModel: SettingAccountInfoViewModel by viewModels()
 

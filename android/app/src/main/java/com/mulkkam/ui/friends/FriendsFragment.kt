@@ -14,7 +14,9 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
 import com.mulkkam.ui.searchmembers.SearchMembersActivity
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class FriendsFragment :
     Fragment(),
     Refreshable {

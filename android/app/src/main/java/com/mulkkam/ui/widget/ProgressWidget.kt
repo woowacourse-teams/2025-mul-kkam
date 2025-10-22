@@ -10,7 +10,6 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.di.CheckerInjection.progressChecker
 import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
@@ -42,7 +41,7 @@ class ProgressWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = progressChecker.checkCurrentAchievementRate()
+        val requestId = context.widgetEntryPoint().progressChecker().checkCurrentAchievementRate()
 
         observeWorker(context, appWidgetId, requestId)
     }

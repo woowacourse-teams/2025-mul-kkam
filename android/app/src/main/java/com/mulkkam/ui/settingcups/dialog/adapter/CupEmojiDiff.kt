@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.dialog.adpater
+package com.mulkkam.ui.settingcups.dialog.adapter
 
 import androidx.recyclerview.widget.DiffUtil
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel

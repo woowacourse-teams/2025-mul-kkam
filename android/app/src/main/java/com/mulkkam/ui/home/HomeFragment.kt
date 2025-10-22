@@ -27,7 +27,9 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class HomeFragment :
     Fragment(),
     Refreshable {

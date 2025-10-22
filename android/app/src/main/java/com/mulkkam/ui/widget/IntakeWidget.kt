@@ -13,8 +13,6 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
-import com.mulkkam.di.CheckerInjection.intakeChecker
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_EMOJI_BYTES
@@ -43,7 +41,7 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = intakeChecker.checkWidgetInfo()
+        val requestId = context.widgetEntryPoint().intakeChecker().checkWidgetInfo()
 
         val workManager = WorkManager.getInstance(context.applicationContext)
         val live = workManager.getWorkInfoByIdLiveData(requestId)
@@ -94,8 +92,8 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
     ) {
         val cupId = intent.getLongExtra(KEY_EXTRA_CUP_ID, 0L)
-        mulKkamLogger.info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
-        val requestId = intakeChecker.drink(cupId)
+        context.widgetEntryPoint().logger().info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
+        val requestId = context.widgetEntryPoint().intakeChecker().drink(cupId)
         observeDrinkWorker(context, requestId)
     }
 

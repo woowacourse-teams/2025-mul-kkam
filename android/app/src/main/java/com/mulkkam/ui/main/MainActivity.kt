@@ -30,7 +30,9 @@ import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.AchievementHeatmapWidget
 import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
