@@ -1,6 +1,5 @@
-package backend.mulkkam.friend.service;
+package backend.mulkkam.friend.service.command;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND_REQUEST;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
@@ -39,9 +38,6 @@ public class FriendCommandService {
             Long addresseeId,
             Long requesterId
     ) {
-        if (addresseeId.equals(requesterId)) {
-            throw new CommonException(INVALID_FRIEND_REQUEST);
-        }
         if (!memberRepository.existsById(addresseeId)) {
             throw new CommonException(NOT_FOUND_MEMBER);
         }

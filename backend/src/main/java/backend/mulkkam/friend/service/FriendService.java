@@ -3,6 +3,8 @@ package backend.mulkkam.friend.service;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.utils.paging.PagingResult;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.service.command.FriendCommandService;
+import backend.mulkkam.friend.service.query.FriendQueryService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

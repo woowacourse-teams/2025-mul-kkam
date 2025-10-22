@@ -1,4 +1,6 @@
-package backend.mulkkam.friend.service;
+package backend.mulkkam.friend.service.query;
+
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.utils.paging.PagingResult;
