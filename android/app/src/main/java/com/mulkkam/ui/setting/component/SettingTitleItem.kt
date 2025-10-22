@@ -13,7 +13,7 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.setting.SettingItem
+import com.mulkkam.ui.setting.model.SettingItem
 
 @Composable
 fun SettingTitleItem(item: SettingItem.TitleItem) {
