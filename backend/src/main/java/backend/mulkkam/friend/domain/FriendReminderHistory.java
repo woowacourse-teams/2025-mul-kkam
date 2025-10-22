@@ -21,7 +21,7 @@ import java.time.LocalDate;
 @Entity
 public class FriendReminderHistory extends BaseEntity {
 
-    private static final short MAX_TRY_COUNT = 10;
+    private static final short INIT_REMAINING_VALUE = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,7 +44,7 @@ public class FriendReminderHistory extends BaseEntity {
         this.senderId = senderId;
         this.recipientId = recipientId;
         this.quotaDate = quotaDate;
-        this.remaining = MAX_TRY_COUNT;
+        this.remaining = INIT_REMAINING_VALUE;
     }
 
     public FriendReminderHistory(Long senderId, Long recipientId, LocalDate quotaDate) {
