@@ -13,7 +13,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.MemberSearchInfo
@@ -39,9 +39,9 @@ import com.mulkkam.ui.searchmembers.component.AcceptFriendsRequestDialog
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.onLoadMore
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
@@ -52,6 +52,7 @@ fun SearchMembersScreen(
 ) {
     val context = LocalContext.current
     val view = LocalView.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
@@ -63,25 +64,17 @@ fun SearchMembersScreen(
     var receivedMemberSearchInfo: MemberSearchInfo? by remember { mutableStateOf(null) }
     var showDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        launch {
-            viewModel.onRequestFriends.collect { state ->
-                handleRequestFriendsAction(state, view, context)
-            }
-        }
+    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { state ->
+        handleRequestFriendsAction(state, view, context)
+    }
 
-        launch {
-            viewModel.onAcceptFriends.collect { state ->
-                handleAcceptFriendsAction(state, view, context)
-            }
-        }
+    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { state ->
+        handleAcceptFriendsAction(state, view, context)
+    }
 
-        launch {
-            viewModel.receivedMemberSearchInfo.collect { state ->
-                receivedMemberSearchInfo = state.toSuccessDataOrNull()
-                showDialog = true
-            }
-        }
+    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { state ->
+        receivedMemberSearchInfo = state.toSuccessDataOrNull()
+        showDialog = true
     }
 
     Scaffold(
