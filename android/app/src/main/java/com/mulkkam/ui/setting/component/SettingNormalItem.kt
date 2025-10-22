@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
@@ -47,9 +46,10 @@ fun SettingNormalItem(
         Icon(
             painter = painterResource(id = R.drawable.ic_setting_next),
             contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(8.dp),
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .padding(8.dp),
             tint = Gray400,
         )
     }
