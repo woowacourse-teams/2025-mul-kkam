@@ -2,7 +2,7 @@ name: backend-dev-cd.yml
 
 on:
   push:
-    branches: [ "develop-be", "feat/977" ]
+    branches: [ "develop-be" ]
     paths:
       - "backend/**"
 
