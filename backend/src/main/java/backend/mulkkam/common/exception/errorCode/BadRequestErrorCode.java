@@ -30,6 +30,8 @@ public enum BadRequestErrorCode implements ErrorCode {
 
     INVALID_FRIEND_REQUEST,
     ALREADY_ACCEPTED,
+
+    NOT_ALLOWED_SELF_REMINDER,
     ;
 
     private static final HttpStatus status = HttpStatus.BAD_REQUEST;
