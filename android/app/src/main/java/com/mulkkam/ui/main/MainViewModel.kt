@@ -15,6 +15,9 @@ import com.mulkkam.domain.repository.VersionsRepository
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -41,6 +44,10 @@ class MainViewModel
         private val _onFirstLaunch: MutableSingleLiveData<Unit> = MutableSingleLiveData()
         val onFirstLaunch: SingleLiveData<Unit>
             get() = _onFirstLaunch
+
+        private val _onReceiveFriendsReminder: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
+        val onReceiveFriendsReminder: SharedFlow<Unit>
+            get() = _onReceiveFriendsReminder.asSharedFlow()
 
         private val _isAppOutdated: MutableSingleLiveData<Boolean> = MutableSingleLiveData()
         val isAppOutdated: SingleLiveData<Boolean> get() = _isAppOutdated
@@ -167,6 +174,12 @@ class MainViewModel
                 if (currentPart > minimumPart) return false
             }
             return false
+        }
+
+        fun receiveFriendsReminder() {
+            viewModelScope.launch {
+                _onReceiveFriendsReminder.emit(Unit)
+            }
         }
 
         private fun String.toNumericPart(): Int = numericPattern.find(this)?.value?.toIntOrNull() ?: 0

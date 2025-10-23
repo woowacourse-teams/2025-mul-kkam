@@ -22,6 +22,9 @@ class HomeUiStateHolder internal constructor(
     var playConfetti by mutableStateOf(false)
         private set
 
+    var playFriendsReminder by mutableStateOf(false)
+        private set
+
     fun triggerDrinkAnimation() {
         if (isDrinking) return
         scope.launch {
@@ -37,6 +40,14 @@ class HomeUiStateHolder internal constructor(
 
     fun onConfettiFinished() {
         playConfetti = false
+    }
+
+    fun triggerFriendsReminderOnce() {
+        playFriendsReminder = true
+    }
+
+    fun onFriendsReminderFinished() {
+        playFriendsReminder = false
     }
 }
 

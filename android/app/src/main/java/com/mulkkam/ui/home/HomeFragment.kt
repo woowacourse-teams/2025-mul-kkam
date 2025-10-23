@@ -23,6 +23,7 @@ import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.notification.NotificationActivity
@@ -34,6 +35,7 @@ class HomeFragment :
     Fragment(),
     Refreshable {
     private val viewModel: HomeViewModel by activityViewModels()
+    private val parentViewModel: MainViewModel by activityViewModels()
     private lateinit var notificationResultLauncher: ActivityResultLauncher<Intent>
     private var snackbarAnchorView: View? = null
 
@@ -48,6 +50,7 @@ class HomeFragment :
                     MulkkamTheme {
                         HomeScreen(
                             viewModel = viewModel,
+                            parentViewModel = parentViewModel,
                             navigateToNotification = {
                                 val intent = NotificationActivity.newIntent(requireContext())
                                 notificationResultLauncher.launch(intent)

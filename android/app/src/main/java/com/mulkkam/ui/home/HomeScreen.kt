@@ -12,16 +12,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
+import com.mulkkam.ui.home.component.FriendsReminderLottie
 import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
 import com.mulkkam.ui.home.component.HomeTopBar
 import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
+import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import kotlinx.coroutines.flow.collectLatest
@@ -31,7 +34,10 @@ fun HomeScreen(
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
+    parentViewModel: MainViewModel = viewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
@@ -48,6 +54,12 @@ fun HomeScreen(
     LaunchedEffect(Unit) {
         viewModel.isGoalAchieved.collectLatest {
             uiStateHolder.triggerConfettiOnce()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        parentViewModel.onReceiveFriendsReminder.collectLatest {
+            uiStateHolder.triggerFriendsReminderOnce()
         }
     }
 
@@ -92,6 +104,11 @@ fun HomeScreen(
         HomeConfetti(
             playConfetti = uiStateHolder.playConfetti,
             onFinished = { uiStateHolder.onConfettiFinished() },
+        )
+
+        FriendsReminderLottie(
+            playConfetti = uiStateHolder.playFriendsReminder,
+            onFinished = { uiStateHolder.onFriendsReminderFinished() },
         )
     }
 }
