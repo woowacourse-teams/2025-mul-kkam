@@ -116,7 +116,7 @@ class FriendsFragment :
                 R.string.friends_throw_water_balloon_success,
                 friend.nickname,
             )
-        CustomSnackBar.make(anchorView, message, R.drawable.ic_info_circle).show()
+        CustomSnackBar.make(anchorView, message, R.drawable.ic_terms_all_check_on).show()
     }
 
     private fun handleThrowWaterBalloonFailure(
