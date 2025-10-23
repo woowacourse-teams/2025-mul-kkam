@@ -17,11 +17,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
+import com.mulkkam.ui.home.component.FriendWaterBalloonExplodeLottie
 import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
 import com.mulkkam.ui.home.component.HomeTopBar
 import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
+import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
@@ -31,6 +33,7 @@ fun HomeScreen(
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
+    parentViewModel: MainViewModel = viewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
@@ -47,6 +50,10 @@ fun HomeScreen(
         if (state is MulKkamUiState.Success) {
             uiStateHolder.triggerDrinkAnimation()
         }
+    }
+
+    parentViewModel.onReceiveFriendWaterBalloon.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerFriendWaterBalloonExplode()
     }
 
     Scaffold(
@@ -90,6 +97,11 @@ fun HomeScreen(
         HomeConfetti(
             playConfetti = uiStateHolder.playConfetti,
             onFinished = { uiStateHolder.onConfettiFinished() },
+        )
+
+        FriendWaterBalloonExplodeLottie(
+            playConfetti = uiStateHolder.playFriendWaterBalloonExplode,
+            onFinished = { uiStateHolder.onFriendWaterBalloonExplodeFinished() },
         )
     }
 }

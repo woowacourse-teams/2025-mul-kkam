@@ -3,6 +3,7 @@ package com.mulkkam.ui.notification
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -38,6 +39,7 @@ fun NotificationScreen(
     Scaffold(
         topBar = { NotificationTopAppBar(navigateToBack) },
         containerColor = White,
+        modifier = Modifier.systemBarsPadding(),
     ) { innerPadding ->
         if (notifications.toSuccessDataOrNull()?.isEmpty() == true) {
             EmptyNotificationScreen(

@@ -15,6 +15,7 @@ import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
@@ -116,7 +117,11 @@ class FriendsFragment :
                 R.string.friends_throw_water_balloon_success,
                 friend.nickname,
             )
-        CustomSnackBar.make(anchorView, message, R.drawable.ic_terms_all_check_on).show()
+        CustomSnackBar
+            .make(anchorView, message, R.drawable.ic_terms_all_check_on)
+            .apply {
+                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+            }.show()
     }
 
     private fun handleThrowWaterBalloonFailure(
@@ -129,7 +134,11 @@ class FriendsFragment :
             } else {
                 R.string.network_check_error to R.drawable.ic_alert_circle
             }
-        CustomSnackBar.make(anchorView, getString(messageResId), iconResId).show()
+        CustomSnackBar
+            .make(anchorView, getString(messageResId), iconResId)
+            .apply {
+                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
+            }.show()
     }
 
     private enum class ActivityResultSource(
