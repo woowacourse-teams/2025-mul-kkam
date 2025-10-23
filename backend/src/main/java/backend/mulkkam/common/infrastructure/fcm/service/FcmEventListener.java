@@ -11,7 +11,7 @@ import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
 // TODO: MQ 구현 완료되는 시점에 제거
-@Async
+@Async("producerExecutor")
 @RequiredArgsConstructor
 @Component
 public class FcmEventListener {

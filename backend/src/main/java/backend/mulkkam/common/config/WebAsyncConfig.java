@@ -10,6 +10,7 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 @Profile({"prod", "dev"})
 @EnableAsync
 public class WebAsyncConfig {
+
     @Bean("producerExecutor")
     public ThreadPoolTaskExecutor producerExecutor() {
         var ex = new ThreadPoolTaskExecutor();
@@ -20,4 +21,5 @@ public class WebAsyncConfig {
         ex.initialize();
         return ex;
     }
+
 }

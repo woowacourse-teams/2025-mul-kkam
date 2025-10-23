@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.event.TransactionPhase;
 import org.springframework.transaction.event.TransactionalEventListener;
 
-@Async
+@Async("producerExecutor")
 @RequiredArgsConstructor
 @Component
 public class NotificationEventHandler {
