@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
@@ -16,7 +17,6 @@ import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.Black
@@ -39,6 +39,7 @@ import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.pendingfriends.component.PendingFriendsTopAppBar
 import com.mulkkam.ui.pendingfriends.component.ReceivedTab
 import com.mulkkam.ui.pendingfriends.component.SentTab
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.launch
 
 @Composable
@@ -49,6 +50,7 @@ fun PendingFriendsScreen(
 ) {
     val context = LocalContext.current
     val view = LocalView.current
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val tabTitles =
         listOf(
@@ -61,29 +63,21 @@ fun PendingFriendsScreen(
     val receivedRequests by viewModel.receivedRequests.collectAsStateWithLifecycle()
     val sentRequests by viewModel.sentRequests.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
-        launch {
-            viewModel.onAcceptRequest.collect { state ->
-                handleAcceptRequestAction(
-                    state = state,
-                    view = view,
-                    context = context,
-                    onFriendAccepted = onFriendAccepted,
-                )
-            }
-        }
+    viewModel.onAcceptRequest.collectWithLifecycle(lifecycleOwner) { state ->
+        handleAcceptRequestAction(
+            state = state,
+            view = view,
+            context = context,
+            onFriendAccepted = onFriendAccepted,
+        )
+    }
 
-        launch {
-            viewModel.onRejectRequest.collect { state ->
-                handleRejectRequestAction(state, view, context)
-            }
-        }
+    viewModel.onRejectRequest.collectWithLifecycle(lifecycleOwner) { state ->
+        handleRejectRequestAction(state, view, context)
+    }
 
-        launch {
-            viewModel.onCancelRequest.collect { state ->
-                handleCancelRequestAction(state, view, context)
-            }
-        }
+    viewModel.onCancelRequest.collectWithLifecycle(lifecycleOwner) { state ->
+        handleRejectRequestAction(state, view, context)
     }
 
     Scaffold(
@@ -91,6 +85,7 @@ fun PendingFriendsScreen(
             PendingFriendsTopAppBar(navigateToBack)
         },
         containerColor = White,
+        modifier = Modifier.systemBarsPadding(),
     ) { innerPadding ->
         Column(
             modifier = Modifier.padding(innerPadding),
