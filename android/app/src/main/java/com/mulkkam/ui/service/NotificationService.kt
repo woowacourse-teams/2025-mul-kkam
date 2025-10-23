@@ -8,19 +8,33 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mulkkam.R
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
-import com.mulkkam.di.PreferenceInjection.devicesPreference
-import com.mulkkam.di.RepositoryInjection.devicesRepository
-import com.mulkkam.di.RepositoryInjection.tokenRepository
+import com.mulkkam.data.local.preference.DevicesPreference
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.repository.DevicesRepository
+import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.main.MainActivity
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.UUID
-import kotlin.jvm.java
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class NotificationService : FirebaseMessagingService() {
+    @Inject
+    lateinit var tokenRepository: TokenRepository
+
+    @Inject
+    lateinit var devicesRepository: DevicesRepository
+
+    @Inject
+    lateinit var devicesPreference: DevicesPreference
+
+    @Inject
+    lateinit var logger: Logger
+
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         CoroutineScope(Dispatchers.IO).launch {
@@ -28,9 +42,9 @@ class NotificationService : FirebaseMessagingService() {
                 tokenRepository.saveFcmToken(token)
                 devicesRepository.postDevice(token)
             }.onSuccess {
-                mulKkamLogger.info(LogEvent.PUSH_NOTIFICATION, "FCM Token Saved")
+                logger.info(LogEvent.PUSH_NOTIFICATION, "FCM Token Saved")
             }.onFailure {
-                mulKkamLogger.error(
+                logger.error(
                     LogEvent.PUSH_NOTIFICATION,
                     "FCM Token Save Failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
                 )
@@ -49,8 +63,9 @@ class NotificationService : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        val title = remoteMessage.data["title"] ?: remoteMessage.notification?.title ?: getString(R.string.app_name)
-        val body = remoteMessage.data["body"] ?: remoteMessage.notification?.body ?: ""
+        val title =
+            remoteMessage.data["title"] ?: getString(R.string.app_name)
+        val body = remoteMessage.data["body"] ?: ""
         val action = remoteMessage.data["action"] ?: NotificationAction.UNKNOWN.name
 
         showNotification(title, body, action)
@@ -64,7 +79,7 @@ class NotificationService : FirebaseMessagingService() {
         val notificationId = UUID.randomUUID().hashCode() xor System.currentTimeMillis().hashCode()
         val pendingIntent = createPendingIntent(action, notificationId)
 
-        mulKkamLogger.info(
+        logger.info(
             LogEvent.PUSH_NOTIFICATION,
             "Displaying notification (id=$notificationId) with action=$action",
         )
@@ -81,7 +96,8 @@ class NotificationService : FirebaseMessagingService() {
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .build()
 
-        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as? NotificationManager ?: return
+        val notificationManager =
+            getSystemService(NOTIFICATION_SERVICE) as? NotificationManager ?: return
         notificationManager.notify(notificationId, notification)
     }
 
@@ -93,7 +109,7 @@ class NotificationService : FirebaseMessagingService() {
             Intent(this, MainActivity::class.java).apply {
                 putExtra(EXTRA_ACTION, action)
                 putExtra(EXTRA_NOTIFICATION_ID, notificationId)
-                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
             }
 
         return PendingIntent.getActivity(

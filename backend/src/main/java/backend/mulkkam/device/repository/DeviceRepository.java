@@ -14,6 +14,8 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
 
     List<Device> findAllByMember(Member member);
 
+    List<Device> findAllByMemberId(Long memberId);
+
     void deleteByMember(Member member);
 
     void deleteByMemberIdAndDeviceUuid(Long memberId, String deviceUuid);
@@ -23,6 +25,5 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     FROM Device d 
     WHERE d.member.id IN :memberIds
     """)
-    List<String> findAllTokenByMemberIdIn(@Param("memberIds") List<Long> memberIds
-    );
+    List<String> findAllTokenByMemberIdIn(@Param("memberIds") List<Long> memberIds);
 }

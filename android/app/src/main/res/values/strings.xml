@@ -27,6 +27,27 @@
     <string name="notification_delete_description">알림 삭제 아이콘</string>
     <string name="notification_load_more_button">더 로드하기</string>
 
+    <string name="friends_title">친구</string>
+    <string name="friends_search_button_description">친구 검색</string>
+    <string name="friends_friend_request_button_description">친구 신청 목록</string>
+    <string name="friends_friend_request_button_description_with_count">친구 신청 목록 %s건</string>
+    <string name="friends_friend_request_count_overflow">99+</string>
+    <string name="friends_edit_button">친구 편집</string>
+    <string name="friends_edit_cancel_button">편집 취소</string>
+    <string name="friends_throw_water_balloon_content_description">친구에게 물풍선을 던지기</string>
+    <string name="friends_delete_friend_content_description">%s님을 친구 목록에서 삭제</string>
+    <string name="friends_empty_title">아직 친구가 없어요</string>
+    <string name="friends_empty_description">검색을 통해 친구를 찾아보세요.</string>
+    <string name="friends_error_message">친구 목록을 불러오지 못했어요</string>
+    <string name="friends_retry_button">다시 시도하기</string>
+    <string name="friends_load_more_button">더 보기</string>
+    <string name="friends_water_balloon_limit_exceeded">해당 친구에게 오늘 보낼 수 있는 물풍선을 모두 사용했어요!</string>
+    <string name="friends_throw_water_balloon_success">%s님에게 물풍선을 던졌어요</string>
+    <string name="friends_delete_dialog_title">%s 님을\n친구 목록에서 삭제하시겠어요?</string>
+    <string name="friends_delete_dialog_description">삭제된 친구는 복구되지 않습니다.</string>
+    <string name="friends_delete_dialog_confirm">확인</string>
+    <string name="friends_delete_dialog_cancel">취소</string>
+
     <string name="home_character_description">하뭉이는 물을 마셔요</string>
     <string name="home_label">물깜</string>
     <string name="home_daily_intake_summary">%,dml / %,dml</string>
@@ -250,4 +271,33 @@
     <string name="achievement_heatmap_widget_label">일일 달성도 위젯</string>
     <string name="intake_widget_label">마시기 위젯</string>
     <string name="progress_widget_info_widget">오늘의 달성도 위젯</string>
+
+    <string name="search_friends_top_app_bar_title">친구 찾기</string>
+    <string name="search_friends_empty">닉네임을 찾을 수 없어요</string>
+    <string name="search_friends_request_success">친구 신청을 완료했어요!</string>
+    <string name="search_friends_request_failed">친구 신청에 실패했어요</string>
+    <string name="search_friends_accept_request_confirmed">%s\n친구 신청을 수락하시겠습니까?</string>
+    <string name="search_friends_accept_request_warning">친구에게 물풍선을 던져 보세요</string>
+    <string name="search_friends_accept_success">%s님과 친구가 되었어요</string>
+    <string name="search_friends_already_friend">이미 친구</string>
+    <string name="search_friends_requested">신청 완료!</string>
+
+    <string name="pending_friends_top_app_bar_title">신청 목록</string>
+    <string name="pending_friends_received_request">받은 신청</string>
+    <string name="pending_friends_sent_request">보낸 신청</string>
+    <string name="pending_friends_minutes_ago">%d분 전</string>
+    <string name="pending_friends_hours_ago">%d시간 전</string>
+    <string name="pending_friends_days_ago">%d일 전</string>
+    <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>
+    <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>
+    <string name="pending_friends_reject_request_confirmed">%s\n친구 신청을 거절하시겠습니까?</string>
+    <string name="pending_friends_reject_request_warning">거절된 신청을 복구되지 않습니다</string>
+    <string name="pending_friends_accept_success">%s 님과 친구가 되었습니다</string>
+    <string name="pending_friends_accept_failed">친구 승인에 실패했습니다</string>
+    <string name="pending_friends_reject_success">친구 신청을 거절했습니다</string>
+    <string name="pending_friends_cancel_request_confirmed">%s\n친구 신청을 취소하시겠습니까?</string>
+    <string name="pending_friends_cancel_request_warning">취소된 신청을 복구되지 않습니다</string>
+    <string name="pending_friends_cancel_request_confirm">확인</string>
+    <string name="pending_friends_cancel_request_cancel">취소</string>
+    <string name="pending_friends_cancel_success">친구 신청을 취소했습니다</string>
 </resources>

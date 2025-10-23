@@ -175,5 +175,13 @@
             android:name=".ui.settingnotification.SettingNotificationActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.pendingfriends.PendingFriendsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.searchmembers.SearchMembersActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
     </application>
 </manifest>

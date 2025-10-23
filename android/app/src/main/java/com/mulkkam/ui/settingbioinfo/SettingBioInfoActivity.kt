@@ -21,7 +21,9 @@ import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingBioInfoActivity :
     BindingActivity<ActivitySettingBioInfoBinding>(
         ActivitySettingBioInfoBinding::inflate,

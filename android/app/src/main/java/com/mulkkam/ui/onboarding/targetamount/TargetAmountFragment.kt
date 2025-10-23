@@ -24,8 +24,10 @@ import com.mulkkam.ui.util.extensions.hideKeyboard
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
+@AndroidEntryPoint
 class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(FragmentTargetAmountBinding::inflate) {
     private val parentViewModel: OnboardingViewModel by activityViewModels()
     private val viewModel: TargetAmountViewModel by viewModels()

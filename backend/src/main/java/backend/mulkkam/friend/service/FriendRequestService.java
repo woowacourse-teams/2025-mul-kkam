@@ -1,0 +1,120 @@
+package backend.mulkkam.friend.service;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.ALREADY_ACCEPTED;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
+
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.utils.paging.PagingResult;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.dto.request.CreateFriendRequestRequest;
+import backend.mulkkam.friend.dto.request.PatchFriendStatusRequest;
+import backend.mulkkam.friend.dto.response.CreateFriendRequestResponse;
+import backend.mulkkam.friend.dto.response.FriendRelationRequestResponse;
+import backend.mulkkam.friend.dto.response.GetReceivedFriendRequestCountResponse;
+import backend.mulkkam.friend.dto.response.ReadReceivedFriendRelationResponse;
+import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
+import backend.mulkkam.friend.service.command.FriendCommandService;
+import backend.mulkkam.friend.service.query.FriendQueryService;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@AllArgsConstructor
+@Service
+public class FriendRequestService {
+
+    private final FriendQueryService friendQueryService;
+    private final FriendCommandService friendCommandService;
+
+    @Transactional(readOnly = true)
+    public ReadReceivedFriendRelationResponse readReceived(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PagingResult<FriendRelationRequestResponse, Long> pagingResult = friendQueryService.getFriendRequestsByPaging(memberDetails, lastId, size);
+        return new ReadReceivedFriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
+    }
+
+    @Transactional(readOnly = true)
+    public GetReceivedFriendRequestCountResponse getReceivedCount(MemberDetails memberDetails) {
+        Long count = friendQueryService.getReceivedFriendRequestCount(memberDetails);
+        return new GetReceivedFriendRequestCountResponse(count);
+    }
+
+    @Transactional(readOnly = true)
+    public ReadSentFriendRelationResponse readSent(
+            MemberDetails memberDetails,
+            Long lastId,
+            int size
+    ) {
+        PagingResult<ReadSentFriendRelationResponse.SentFriendRelationInfo, Long> pagingResult
+                = friendQueryService.getSentFriendRelationInfosByPaging(memberDetails, lastId, size);
+
+        return new ReadSentFriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
+    }
+
+    @Transactional
+    public CreateFriendRequestResponse create(
+            CreateFriendRequestRequest request,
+            MemberDetails memberDetails
+    ) {
+        Long requesterId = memberDetails.id();
+        Long addresseeId = request.memberId();
+        return friendCommandService.create(addresseeId, requesterId);
+    }
+
+    @Transactional
+    public void cancel(
+            Long addresseeId,
+            MemberDetails memberDetails
+    ) {
+        FriendRelation friendRelation = getModifiableRequest(memberDetails.id(), addresseeId);
+        friendCommandService.deleteFriendRequest(friendRelation.getId());
+    }
+
+    @Transactional
+    public void modifyFriendStatus(
+            PatchFriendStatusRequest request,
+            MemberDetails memberDetails
+    ) {
+        switch (request.status()) {
+            case ACCEPTED -> acceptFriend(request.memberId(), memberDetails);
+            case REJECTED -> rejectFriendRequest(request.memberId(), memberDetails);
+        }
+    }
+
+    private void acceptFriend(
+            Long requesterId,
+            MemberDetails memberDetails
+    ) {
+        FriendRelation friendRelation = getModifiableRequest(requesterId, memberDetails.id());
+        friendRelation.updateAccepted();
+    }
+
+    private void rejectFriendRequest(
+            Long requesterId,
+            MemberDetails memberDetails
+    ) {
+        FriendRelation friendRelation = getModifiableRequest(requesterId, memberDetails.id());
+        friendCommandService.deleteFriendRequest(friendRelation.getId());
+    }
+
+    private FriendRelation getModifiableRequest(Long requesterId, Long addresseeId) {
+        FriendRelation friendRelation = friendQueryService.getFriendRelation(requesterId, addresseeId)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_REQUEST));
+        if (!friendRelation.isPending()) {
+            throw new CommonException(ALREADY_ACCEPTED);
+        }
+        return friendRelation;
+    }
+}

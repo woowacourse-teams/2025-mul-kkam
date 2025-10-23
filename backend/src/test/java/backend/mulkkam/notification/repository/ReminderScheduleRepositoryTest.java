@@ -43,7 +43,7 @@ class ReminderScheduleRepositoryTest {
 
     @DisplayName("특정 시간(시, 분)에 해당하는 활성화된 멤버 ID들을 조회한다")
     @Test
-    void success_findAllActiveMemberIdsByHourAndMinute() {
+    void success_findAllActiveMemberIdsBySchedule() {
         // given
         LocalTime targetTime = LocalTime.of(14, 30);
 
@@ -55,7 +55,7 @@ class ReminderScheduleRepositoryTest {
 
         // when
         Pageable pageable = PageRequest.of(0, 10);
-        List<Long> result = reminderScheduleRepository.findAllActiveMemberIdsByHourAndMinute(
+        List<Long> result = reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
                 targetTime, null, pageable
         );
 

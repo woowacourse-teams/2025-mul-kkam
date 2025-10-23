@@ -1,69 +1,43 @@
 package backend.mulkkam.friend.service;
 
-import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_FRIEND;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND_REQUEST;
-
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.friend.domain.Friend;
-import backend.mulkkam.friend.domain.FriendRequest;
-import backend.mulkkam.friend.repository.FriendRepository;
-import backend.mulkkam.friend.repository.FriendRequestRepository;
-import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
+import backend.mulkkam.common.utils.paging.PagingResult;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.service.command.FriendCommandService;
+import backend.mulkkam.friend.service.query.FriendQueryService;
+import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@RequiredArgsConstructor
+@AllArgsConstructor
 @Service
 public class FriendService {
 
-    private final FriendRepository friendRepository;
-    private final FriendRequestRepository friendRequestRepository;
-
-    public void delete(Long memberId, MemberDetails memberDetails) {
-        friendRepository.findByFriendIdAndMemberId(memberId, memberDetails.id())
-                .ifPresent(friendRepository::delete);
-    }
+    private final FriendCommandService friendCommandService;
+    private final FriendQueryService friendQueryService;
 
     @Transactional
-    public void acceptFriendRequest(
-            Long friendRequestId,
+    public void delete(
+            Long friendId,
             MemberDetails memberDetails
     ) {
-        FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
-
-        if (friendRepository.existsFriendByRequesterIdAndAddresseeId(
-                friendRequest.getRequesterId(),
-                friendRequest.getAddresseeId()
-        )) {
-            throw new CommonException(DUPLICATED_FRIEND);
-        }
-
-        Friend friend = new Friend(friendRequest);
-        friendRepository.save(friend);
-        friendRequestRepository.delete(friendRequest);
+        friendCommandService.deleteFriend(friendId, memberDetails);
     }
 
-    @Transactional
-    public void rejectFriendRequest(
-            Long friendRequestId,
+    @Transactional(readOnly = true)
+    public FriendRelationResponse read(
+            Long lastId,
+            int size,
             MemberDetails memberDetails
     ) {
-        FriendRequest friendRequest = getValidFriendRequest(friendRequestId, memberDetails);
-        friendRequestRepository.delete(friendRequest);
-    }
+        PagingResult<FriendRelationResponse.MemberInfo, Long> pagingResult = friendQueryService.getMemberInfosByPaging(
+                memberDetails, lastId, size
+        );
 
-    private FriendRequest getFriendRequest(Long friendRequestId) {
-        return friendRequestRepository.findById(friendRequestId)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_FRIEND_REQUEST));
-    }
-
-    private FriendRequest getValidFriendRequest(Long friendRequestId, MemberDetails memberDetails) {
-        FriendRequest friendRequest = getFriendRequest(friendRequestId);
-        if (!friendRequest.validatePermission(memberDetails.id())) {
-            throw new CommonException(NOT_PERMITTED_FOR_PROCESS_FRIEND_REQUEST);
-        }
-        return friendRequest;
+        return new FriendRelationResponse(
+                pagingResult.content(),
+                pagingResult.nextCursor(),
+                pagingResult.hasNext()
+        );
     }
 }

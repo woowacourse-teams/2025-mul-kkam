@@ -7,47 +7,53 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
+import com.mulkkam.ui.home.component.FriendWaterBalloonExplodeLottie
 import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
 import com.mulkkam.ui.home.component.HomeTopBar
 import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
+import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
-import kotlinx.coroutines.flow.collectLatest
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 @Composable
 fun HomeScreen(
-    viewModel: HomeViewModel,
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
+    viewModel: HomeViewModel = hiltViewModel(),
+    parentViewModel: MainViewModel = viewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
-    val drinkUiState by viewModel.drinkUiState.collectAsStateWithLifecycle()
 
     val uiStateHolder = rememberHomeUiStateHolder()
 
-    LaunchedEffect(drinkUiState) {
-        if (drinkUiState is MulKkamUiState.Success) {
+    viewModel.isGoalAchieved.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerConfettiOnce()
+    }
+
+    viewModel.drinkUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        if (state is MulKkamUiState.Success) {
             uiStateHolder.triggerDrinkAnimation()
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.isGoalAchieved.collectLatest {
-            uiStateHolder.triggerConfettiOnce()
-        }
+    parentViewModel.onReceiveFriendWaterBalloon.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerFriendWaterBalloonExplode()
     }
 
     Scaffold(
@@ -91,6 +97,11 @@ fun HomeScreen(
         HomeConfetti(
             playConfetti = uiStateHolder.playConfetti,
             onFinished = { uiStateHolder.onConfettiFinished() },
+        )
+
+        FriendWaterBalloonExplodeLottie(
+            playConfetti = uiStateHolder.playFriendWaterBalloonExplode,
+            onFinished = { uiStateHolder.onFriendWaterBalloonExplodeFinished() },
         )
     }
 }

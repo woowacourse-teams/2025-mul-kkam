@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
@@ -33,7 +34,7 @@ import java.time.LocalTime
 @Composable
 fun SettingReminderScreen(
     navigateToBack: () -> Unit,
-    viewModel: SettingReminderViewModel = viewModel(),
+    viewModel: SettingReminderViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val view = LocalView.current

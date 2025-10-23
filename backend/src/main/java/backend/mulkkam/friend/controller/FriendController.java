@@ -1,66 +1,83 @@
 package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
+import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.service.FriendReminderHistoryService;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @Tag(name = "친구", description = "친구 API")
 @RequiredArgsConstructor
-@RestController
 @RequestMapping("/friends")
+@RestController
 public class FriendController {
 
     private final FriendService friendService;
+    private final FriendReminderHistoryService friendReminderHistoryService;
 
-    @Operation(summary = "친구 삭제", description = "로그인 멤버와 지정 멤버 사이의 친구 관계를 삭제합니다.")
-    @DeleteMapping("/{memberId}")
-    public void deleteFriend(
-            @Parameter(description = "삭제할 친구의 id", required = true)
-            @PathVariable Long memberId,
+    @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
+    @ApiResponse(responseCode = "204", description = "친구 삭제 성공")
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @DeleteMapping
+    public ResponseEntity<Void> deleteFriend(
+            @Parameter(description = "삭제할 친구의 멤버 ID", required = true)
+            @RequestParam Long memberId,
             @Parameter(hidden = true)
             MemberDetails memberDetails
     ) {
         friendService.delete(memberId, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "친구 요청 거절", description = "사용자에게 온 친구 요청을 거절합니다.")
-    @ApiResponse(responseCode = "200", description = "거절 성공")
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
-    @ApiResponse(responseCode = "403", description = "거절할 권한이 없는 사용자의 요청")
-    @PostMapping("request/{requestId}/reject")
-    public ResponseEntity<Void> rejectFriendRequest(
-            @PathVariable Long requestId,
+    @Operation(summary = "친구 목록 조회", description = "사용자의 친구 목록을 조회합니다.")
+    @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공", content = @Content(schema = @Schema(implementation = FriendRelationResponse.class)))
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @GetMapping
+    public FriendRelationResponse readFriendRelationsInStatusAccepted(
+            @Parameter(description = "커서 lastId(최초 요청시 생략)")
+            @RequestParam(required = false) Long lastId,
+            @Parameter(description = "size 값, 미지정시 10", example = "10")
+            @RequestParam(defaultValue = "10") int size,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.rejectFriendRequest(requestId, memberDetails);
-        return ResponseEntity.ok().build();
+        return friendService.read(lastId, size, memberDetails);
     }
 
-    @Operation(summary = "친구 요청 수락", description = "사용자에게 온 친구 요청을 수락합니다.")
-    @ApiResponse(responseCode = "200", description = "수락 성공")
-    @ApiResponse(responseCode = "404", description = "존재하지 않는 친구 요청 id")
-    @ApiResponse(responseCode = "403", description = "수락할 권한이 없는 사용자의 요청")
-    @ApiResponse(responseCode = "409", description = "이미 친구 관계가 존재하는 경우에 대한 요청")
-    @PostMapping("request/{requestId}/accept")
-    public ResponseEntity<Void> acceptFriendRequest(
-            @PathVariable Long requestId,
+    @Operation(summary = "친구에게 물풍선 던지기", description = "사용자 친구에게 리마인드 알림을 보냅니다.")
+    @ApiResponse(responseCode = "204", description = "리마인드 성공")
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "일일 할당량을 초과한 경우", value = "{\"code\":\"EXCEED_FRIEND_REMINDER_LIMIT\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "관련 리소스를 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 관계가 아닌 경우", value = "{\"code\":\"NOT_FOUND_FRIEND\"}"),
+            @ExampleObject(name = "찾을 수 없는 회원인 경우", value = "{\"code\":\"NOT_FOUND_MEMBER\"}")
+    }))
+    @PostMapping("/reminder")
+    public ResponseEntity<Void> createReminder(
+            @Parameter(description = "물풍선 보내기 요청 body")
+            @RequestBody @Valid CreateFriendReminderRequest request,
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
-        friendService.acceptFriendRequest(requestId, memberDetails);
-        return ResponseEntity.ok().build();
+        friendReminderHistoryService.createAndSendReminder(request, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 }
