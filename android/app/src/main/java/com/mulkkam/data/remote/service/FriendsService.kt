@@ -1,6 +1,7 @@
 package com.mulkkam.data.remote.service
 
 import com.mulkkam.data.remote.model.request.friends.FriendRequest
+import com.mulkkam.data.remote.model.request.friends.FriendWaterBalloonRequest
 import com.mulkkam.data.remote.model.request.friends.PatchFriendRequest
 import com.mulkkam.data.remote.model.response.friends.FriendRequestReceivedCountResponse
 import com.mulkkam.data.remote.model.response.friends.FriendsRequestResponse
@@ -30,6 +31,11 @@ interface FriendsService {
     @POST("/friend-requests")
     suspend fun postFriendRequest(
         @Body friendRequest: FriendRequest,
+    ): Result<Unit>
+
+    @POST("/friends/reminder")
+    suspend fun postFriendWaterBalloon(
+        @Body friendWaterBalloonRequest: FriendWaterBalloonRequest,
     ): Result<Unit>
 
     @PATCH("/friend-requests")

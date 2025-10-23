@@ -3,6 +3,7 @@ package com.mulkkam.data.repository
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.friends.FriendRequest
+import com.mulkkam.data.remote.model.request.friends.FriendWaterBalloonRequest
 import com.mulkkam.data.remote.model.request.friends.PatchFriendRequest
 import com.mulkkam.data.remote.model.response.friends.toDomain
 import com.mulkkam.data.remote.service.FriendsService
@@ -39,6 +40,14 @@ class FriendsRepositoryImpl
 
         override suspend fun deleteFriend(memberId: Long): MulKkamResult<Unit> {
             val result = friendsService.deleteFriend(memberId)
+            return result.fold(
+                onSuccess = { MulKkamResult(data = Unit) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun postFriendWaterBalloon(memberId: Long): MulKkamResult<Unit> {
+            val result = friendsService.postFriendWaterBalloon(FriendWaterBalloonRequest(memberId))
             return result.fold(
                 onSuccess = { MulKkamResult(data = Unit) },
                 onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },

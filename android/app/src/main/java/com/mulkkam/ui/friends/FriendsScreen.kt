@@ -101,8 +101,8 @@ fun FriendsScreen(
                             displayMode = displayMode,
                             hasMore = hasMoreFriends,
                             onLoadMore = viewModel::loadMore,
-                            onThrowWaterBalloon = {
-                                // TODO: 물풍선 던지기 기능 구현
+                            onThrowWaterBalloon = { friend ->
+                                viewModel.throwWaterBalloon(friend.id)
                             },
                             onDeleteFriend = { friendToDelete = it },
                         )

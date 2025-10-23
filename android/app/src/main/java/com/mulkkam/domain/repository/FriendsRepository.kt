@@ -15,6 +15,8 @@ interface FriendsRepository {
 
     suspend fun deleteFriend(memberId: Long): MulKkamResult<Unit>
 
+    suspend fun postFriendWaterBalloon(memberId: Long): MulKkamResult<Unit>
+
     suspend fun postFriendRequest(id: Long): MulKkamResult<Unit>
 
     suspend fun patchFriendRequest(
