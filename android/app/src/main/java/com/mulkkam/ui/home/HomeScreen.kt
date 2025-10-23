@@ -27,6 +27,7 @@ import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -57,10 +58,8 @@ fun HomeScreen(
         }
     }
 
-    LaunchedEffect(Unit) {
-        parentViewModel.onReceiveFriendWaterBalloon.collectLatest {
-            uiStateHolder.triggerFriendWaterBalloonExplode()
-        }
+    parentViewModel.onReceiveFriendWaterBalloon.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerFriendWaterBalloonExplode()
     }
 
     Scaffold(
