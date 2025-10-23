@@ -1,6 +1,9 @@
-package backend.mulkkam.friend.service;
+package backend.mulkkam.friend.service.query;
+
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_FRIEND;
 
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.utils.paging.PagingResult;
 import backend.mulkkam.common.utils.paging.PagingUtils;
 import backend.mulkkam.friend.domain.FriendRelation;
@@ -26,6 +29,13 @@ import java.util.function.Function;
 public class FriendQueryService {
 
     private final FriendRelationRepository friendRelationRepository;
+
+    public void validateFriends(Long friendId, Long memberId) {
+        if (friendRelationRepository.existsFriendship(friendId, memberId)) {
+            return;
+        }
+        throw new CommonException(NOT_FOUND_FRIEND);
+    }
 
     public Optional<FriendRelation> getFriendRelation(Long requesterId, Long addresseeId) {
         return friendRelationRepository.findByRequesterIdAndAddresseeId(requesterId, addresseeId);

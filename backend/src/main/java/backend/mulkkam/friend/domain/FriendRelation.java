@@ -1,8 +1,10 @@
 package backend.mulkkam.friend.domain;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FRIEND_REQUEST;
 import static backend.mulkkam.friend.domain.FriendRelationStatus.REQUESTED;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -10,14 +12,12 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
 @SQLRestriction("deleted_at IS NULL")
 @SQLDelete(sql = "UPDATE friend_relation SET deleted_at = NOW() WHERE id = ?")
@@ -38,22 +38,22 @@ public class FriendRelation extends BaseEntity {
     @Column(nullable = false)
     private FriendRelationStatus friendRelationStatus;
 
+    private FriendRelation(Long id, Long requesterId, Long addresseeId, FriendRelationStatus status) {
+        if (addresseeId.equals(requesterId)) {
+            throw new CommonException(INVALID_FRIEND_REQUEST);
+        }
+        this.id = id;
+        this.requesterId = requesterId;
+        this.addresseeId = addresseeId;
+        this.friendRelationStatus = status;
+    }
+
     public FriendRelation(
             Long requesterId,
             Long addresseeId,
             FriendRelationStatus friendRelationStatus
     ) {
-        this.requesterId = requesterId;
-        this.addresseeId = addresseeId;
-        this.friendRelationStatus = friendRelationStatus;
-    }
-
-    public boolean isAddresseeMemberId(Long id) {
-        return id.equals(addresseeId);
-    }
-
-    public boolean isRequesterMemberId(Long id) {
-        return id.equals(requesterId);
+        this(null, requesterId, addresseeId, friendRelationStatus);
     }
 
     public void updateAccepted() {
