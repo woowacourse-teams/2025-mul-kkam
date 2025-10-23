@@ -75,7 +75,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 }
 
                 NotificationAction.FRIEND_REMINDER -> {
-                    viewModel.receiveFriendsReminder()
+                    viewModel.receiveFriendWaterBalloon()
                 }
 
                 NotificationAction.UNKNOWN -> Unit

@@ -14,7 +14,7 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
-fun FriendsReminderLottie(
+fun FriendWaterBalloonExplodeLottie(
     playConfetti: Boolean,
     onFinished: () -> Unit,
     modifier: Modifier = Modifier,
@@ -43,9 +43,9 @@ fun FriendsReminderLottie(
 
 @Preview(showBackground = true)
 @Composable
-private fun HomeConfettiPreview() {
+private fun FriendWaterBalloonExplodeLottiePreview() {
     MulkkamTheme {
-        FriendsReminderLottie(
+        FriendWaterBalloonExplodeLottie(
             playConfetti = true,
             onFinished = {},
         )

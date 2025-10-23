@@ -18,7 +18,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
-import com.mulkkam.ui.home.component.FriendsReminderLottie
+import com.mulkkam.ui.home.component.FriendWaterBalloonExplodeLottie
 import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
@@ -58,8 +58,8 @@ fun HomeScreen(
     }
 
     LaunchedEffect(Unit) {
-        parentViewModel.onReceiveFriendsReminder.collectLatest {
-            uiStateHolder.triggerFriendsReminderOnce()
+        parentViewModel.onReceiveFriendWaterBalloon.collectLatest {
+            uiStateHolder.triggerFriendWaterBalloonExplode()
         }
     }
 
@@ -106,9 +106,9 @@ fun HomeScreen(
             onFinished = { uiStateHolder.onConfettiFinished() },
         )
 
-        FriendsReminderLottie(
-            playConfetti = uiStateHolder.playFriendsReminder,
-            onFinished = { uiStateHolder.onFriendsReminderFinished() },
+        FriendWaterBalloonExplodeLottie(
+            playConfetti = uiStateHolder.playFriendWaterBalloonExplode,
+            onFinished = { uiStateHolder.onFriendWaterBalloonExplodeFinished() },
         )
     }
 }

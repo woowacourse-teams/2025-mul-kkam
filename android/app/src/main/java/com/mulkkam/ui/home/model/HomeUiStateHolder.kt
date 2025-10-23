@@ -22,7 +22,7 @@ class HomeUiStateHolder internal constructor(
     var playConfetti by mutableStateOf(false)
         private set
 
-    var playFriendsReminder by mutableStateOf(false)
+    var playFriendWaterBalloonExplode by mutableStateOf(false)
         private set
 
     fun triggerDrinkAnimation() {
@@ -42,12 +42,12 @@ class HomeUiStateHolder internal constructor(
         playConfetti = false
     }
 
-    fun triggerFriendsReminderOnce() {
-        playFriendsReminder = true
+    fun triggerFriendWaterBalloonExplode() {
+        playFriendWaterBalloonExplode = true
     }
 
-    fun onFriendsReminderFinished() {
-        playFriendsReminder = false
+    fun onFriendWaterBalloonExplodeFinished() {
+        playFriendWaterBalloonExplode = false
     }
 }
 

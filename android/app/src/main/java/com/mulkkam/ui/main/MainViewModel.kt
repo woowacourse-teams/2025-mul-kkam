@@ -45,9 +45,9 @@ class MainViewModel
         val onFirstLaunch: SingleLiveData<Unit>
             get() = _onFirstLaunch
 
-        private val _onReceiveFriendsReminder: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
-        val onReceiveFriendsReminder: SharedFlow<Unit>
-            get() = _onReceiveFriendsReminder.asSharedFlow()
+        private val _onReceiveFriendWaterBalloon: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
+        val onReceiveFriendWaterBalloon: SharedFlow<Unit>
+            get() = _onReceiveFriendWaterBalloon.asSharedFlow()
 
         private val _isAppOutdated: MutableSingleLiveData<Boolean> = MutableSingleLiveData()
         val isAppOutdated: SingleLiveData<Boolean> get() = _isAppOutdated
@@ -176,9 +176,9 @@ class MainViewModel
             return false
         }
 
-        fun receiveFriendsReminder() {
+        fun receiveFriendWaterBalloon() {
             viewModelScope.launch {
-                _onReceiveFriendsReminder.emit(Unit)
+                _onReceiveFriendWaterBalloon.emit(Unit)
             }
         }
 
