@@ -25,6 +25,18 @@ public interface FriendRelationRepository extends JpaRepository<FriendRelation, 
     boolean existsByMemberIds(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
 
     @Query("""
+        SELECT (EXISTS(
+                SELECT fr
+                FROM FriendRelation fr
+                WHERE
+                    fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED
+                    AND ((fr.requesterId = :friendId AND fr.addresseeId = :memberId)
+                        OR (fr.requesterId = :memberId AND fr.addresseeId = :friendId))
+                    ))
+    """)
+    boolean existsFriendship(@Param("friendId") Long friendId, @Param("memberId") Long memberId);
+
+    @Query("""
             SELECT fr
             FROM FriendRelation fr
             WHERE fr.friendRelationStatus = backend.mulkkam.friend.domain.FriendRelationStatus.ACCEPTED

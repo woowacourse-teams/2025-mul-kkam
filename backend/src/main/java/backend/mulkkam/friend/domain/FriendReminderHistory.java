@@ -1,6 +1,9 @@
 package backend.mulkkam.friend.domain;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALLOWED_SELF_REMINDER;
+
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.common.exception.CommonException;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -40,6 +43,9 @@ public class FriendReminderHistory extends BaseEntity {
     private short remaining;
 
     private FriendReminderHistory(Long id, Long senderId, Long recipientId, LocalDate quotaDate) {
+        if (senderId.equals(recipientId)) {
+            throw new CommonException(NOT_ALLOWED_SELF_REMINDER);
+        }
         this.id = id;
         this.senderId = senderId;
         this.recipientId = recipientId;

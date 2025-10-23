@@ -2,18 +2,24 @@ package backend.mulkkam.friend.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
+import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.dto.response.FriendRelationResponse;
+import backend.mulkkam.friend.service.FriendReminderHistoryService;
 import backend.mulkkam.friend.service.FriendService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class FriendController {
 
     private final FriendService friendService;
+    private final FriendReminderHistoryService friendReminderHistoryService;
 
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @ApiResponse(responseCode = "204", description = "친구 삭제 성공")
@@ -52,5 +59,25 @@ public class FriendController {
             @Parameter(hidden = true) MemberDetails memberDetails
     ) {
         return friendService.read(lastId, size, memberDetails);
+    }
+
+    @Operation(summary = "친구에게 물풍선 던지기", description = "사용자 친구에게 리마인드 알림을 보냅니다.")
+    @ApiResponse(responseCode = "204", description = "리마인드 성공")
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "일일 할당량을 초과한 경우", value = "{\"code\":\"EXCEED_FRIEND_REMINDER_LIMIT\"}")
+    }))
+    @ApiResponse(responseCode = "404", description = "관련 리소스를 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
+            @ExampleObject(name = "친구 관계가 아닌 경우", value = "{\"code\":\"NOT_FOUND_FRIEND\"}"),
+            @ExampleObject(name = "찾을 수 없는 회원인 경우", value = "{\"code\":\"NOT_FOUND_MEMBER\"}")
+    }))
+    @PostMapping("/reminder")
+    public ResponseEntity<Void> createReminder(
+            @Parameter(description = "물풍선 보내기 요청 body")
+            @RequestBody @Valid CreateFriendReminderRequest request,
+            @Parameter(hidden = true) MemberDetails memberDetails
+    ) {
+        friendReminderHistoryService.createAndSendReminder(request, memberDetails);
+        return ResponseEntity.noContent().build();
     }
 }
