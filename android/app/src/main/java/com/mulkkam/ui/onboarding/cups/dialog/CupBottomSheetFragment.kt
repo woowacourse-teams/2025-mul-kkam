@@ -21,7 +21,7 @@ import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
-import com.mulkkam.ui.settingcups.dialog.adpater.CupEmojiAdapter
+import com.mulkkam.ui.settingcups.dialog.adapter.CupEmojiAdapter
 import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
@@ -31,7 +31,9 @@ import com.mulkkam.ui.util.extensions.getParcelableCompat
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 import com.mulkkam.ui.util.extensions.setOnImeActionDoneListener
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class CupBottomSheetFragment :
     BindingBottomSheetDialogFragment<FragmentSettingCupBinding>(
         FragmentSettingCupBinding::inflate,

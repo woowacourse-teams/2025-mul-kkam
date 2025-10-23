@@ -2,6 +2,7 @@ package com.mulkkam.data.remote.model.error
 
 import com.mulkkam.data.remote.model.error.ResponseError.AccountError
 import com.mulkkam.data.remote.model.error.ResponseError.DatabaseError
+import com.mulkkam.data.remote.model.error.ResponseError.FriendsError
 import com.mulkkam.data.remote.model.error.ResponseError.HistoryError
 import com.mulkkam.data.remote.model.error.ResponseError.NetworkUnavailable
 import com.mulkkam.data.remote.model.error.ResponseError.NicknameError
@@ -91,6 +92,15 @@ sealed class ResponseError(
         }
     }
 
+    // 친구 관련 에러
+    sealed class FriendsError(
+        code: String,
+    ) : ResponseError(code) {
+        data object ReminderLimitExceeded : FriendsError("EXCEED_FRIEND_REMINDER_LIMIT") {
+            private fun readResolve(): Any = ReminderLimitExceeded
+        }
+    }
+
     // 리마인더 관련 에러
     sealed class ReminderError(
         code: String,
@@ -105,6 +115,10 @@ sealed class ResponseError(
     ) : ResponseError(code) {
         data object Member : NotFoundError("NOT_FOUND_MEMBER") {
             private fun readResolve(): Any = Member
+        }
+
+        data object Friend : NotFoundError("NOT_FOUND_FRIEND") {
+            private fun readResolve(): Any = Friend
         }
 
         data object Cup : NotFoundError("NOT_FOUND_CUP") {
@@ -153,11 +167,15 @@ sealed class ResponseError(
                 // History
                 HistoryError.InvalidDateRange.code -> HistoryError.InvalidDateRange
 
+                // Friends
+                FriendsError.ReminderLimitExceeded.code -> FriendsError.ReminderLimitExceeded
+
                 // Reminder
                 ReminderError.DuplicatedReminderSchedule.code -> ReminderError.DuplicatedReminderSchedule
 
                 // NotFound
                 NotFoundError.Member.code -> NotFoundError.Member
+                NotFoundError.Friend.code -> NotFoundError.Friend
                 NotFoundError.Cup.code -> NotFoundError.Cup
                 NotFoundError.IntakeType.code -> NotFoundError.IntakeType
 
@@ -194,11 +212,15 @@ fun ResponseError.toDomain(): MulKkamError =
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
         HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
 
+        // Friends
+        FriendsError.ReminderLimitExceeded -> MulKkamError.FriendsError.ReminderLimitExceeded
+
         // Reminder
         ReminderError.DuplicatedReminderSchedule -> MulKkamError.ReminderError.DuplicatedReminderSchedule
 
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member
+        NotFoundError.Friend -> MulKkamError.NotFoundError.Friend
         NotFoundError.Cup -> MulKkamError.NotFoundError.Cup
         NotFoundError.IntakeType -> MulKkamError.NotFoundError.IntakeType
 

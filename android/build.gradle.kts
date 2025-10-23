@@ -7,6 +7,7 @@ plugins {
     alias(libs.plugins.google.services) apply false
     alias(libs.plugins.firebase.crashlytics) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    id("com.google.dagger.hilt.android") version "2.57.2" apply false
 }
 
 allprojects {

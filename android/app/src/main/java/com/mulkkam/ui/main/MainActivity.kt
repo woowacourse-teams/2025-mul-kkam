@@ -30,7 +30,9 @@ import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.AchievementHeatmapWidget
 import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
@@ -39,6 +41,12 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private var backPressedTime: Long = 0L
 
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleNotificationEvent()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel.checkAppVersion(getAppVersion())
@@ -46,7 +54,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         if (savedInstanceState == null) {
             switchFragment(MainTab.HOME)
         }
-        handleNotificationEvent()
         initDoubleBackToExit()
         initObservers()
 
@@ -59,13 +66,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         intent?.let {
             val action =
                 NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
-
             when (action) {
                 NotificationAction.GO_HOME -> Unit
                 NotificationAction.GO_NOTIFICATION -> {
                     val intent = NotificationActivity.newIntent(this)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
                     startActivity(intent)
+                }
+
+                NotificationAction.FRIEND_REMINDER -> {
+                    viewModel.receiveFriendWaterBalloon()
                 }
 
                 NotificationAction.UNKNOWN -> Unit
@@ -203,8 +213,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
 
-        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String = HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
-        val PERMISSION_ACTIVE_CALORIES_BURNED: String = HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
+        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String =
+            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+        val PERMISSION_ACTIVE_CALORIES_BURNED: String =
+            HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
 

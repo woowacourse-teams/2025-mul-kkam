@@ -19,120 +19,123 @@ import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import javax.inject.Inject
 
-class IntakeRepositoryImpl(
-    private val intakeService: IntakeService,
-) : IntakeRepository {
-    override suspend fun getIntakeHistory(
-        from: LocalDate,
-        to: LocalDate,
-    ): MulKkamResult<IntakeHistorySummaries> {
-        val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
-        return result.fold(
-            onSuccess = { intakeHistorySummary ->
-                MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
-            },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getAchievementRates(
-        from: LocalDate,
-        to: LocalDate,
-    ): MulKkamResult<List<AchievementRate>> {
-        val result = intakeService.getAchievementRates(dateToString(from), dateToString(to))
-        return result.fold(
-            onSuccess = { response -> MulKkamResult(data = response.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun postIntakeHistoryInput(
-        dateTime: LocalDateTime,
-        intakeType: IntakeType,
-        amount: CupAmount,
-    ): MulKkamResult<IntakeHistoryResult> {
-        val result =
-            intakeService.postIntakeHistoryInput(
-                IntakeHistoryInputRequest(
-                    dateTime.toString(),
-                    intakeType.name,
-                    amount.value,
-                ),
+class IntakeRepositoryImpl
+    @Inject
+    constructor(
+        private val intakeService: IntakeService,
+    ) : IntakeRepository {
+        override suspend fun getIntakeHistory(
+            from: LocalDate,
+            to: LocalDate,
+        ): MulKkamResult<IntakeHistorySummaries> {
+            val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
+            return result.fold(
+                onSuccess = { intakeHistorySummary ->
+                    MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
+                },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
+        }
 
-    override suspend fun postIntakeHistoryCup(
-        dateTime: LocalDateTime,
-        cupId: Long,
-    ): MulKkamResult<IntakeHistoryResult> {
-        val result =
-            intakeService.postIntakeHistoryCup(
-                IntakeHistoryCupRequest(
-                    dateTime.toString(),
-                    cupId,
-                ),
+        override suspend fun getAchievementRates(
+            from: LocalDate,
+            to: LocalDate,
+        ): MulKkamResult<List<AchievementRate>> {
+            val result = intakeService.getAchievementRates(dateToString(from), dateToString(to))
+            return result.fold(
+                onSuccess = { response -> MulKkamResult(data = response.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
+        }
 
-    private fun dateToString(date: LocalDate) = date.format(formatter)
-
-    override suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit> {
-        val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getIntakeTarget(): MulKkamResult<Int> {
-        val result = intakeService.getIntakeTarget()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getIntakeAmountRecommended(): MulKkamResult<Int> {
-        val result = intakeService.getIntakeAmountRecommended()
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
-
-    override suspend fun getIntakeAmountTargetRecommended(
-        gender: Gender?,
-        weight: BioWeight?,
-    ): MulKkamResult<Int> {
-        val result =
-            intakeService.getIntakeAmountTargetRecommended(
-                gender?.name,
-                weight?.value?.toDouble(),
+        override suspend fun postIntakeHistoryInput(
+            dateTime: LocalDateTime,
+            intakeType: IntakeType,
+            amount: CupAmount,
+        ): MulKkamResult<IntakeHistoryResult> {
+            val result =
+                intakeService.postIntakeHistoryInput(
+                    IntakeHistoryInputRequest(
+                        dateTime.toString(),
+                        intakeType.name,
+                        amount.value,
+                    ),
+                )
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
-        return result.fold(
-            onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
+        }
 
-    override suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit> {
-        val result = intakeService.deleteIntakeHistoryDetails(id)
-        return result.fold(
-            onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
-        )
-    }
+        override suspend fun postIntakeHistoryCup(
+            dateTime: LocalDateTime,
+            cupId: Long,
+        ): MulKkamResult<IntakeHistoryResult> {
+            val result =
+                intakeService.postIntakeHistoryCup(
+                    IntakeHistoryCupRequest(
+                        dateTime.toString(),
+                        cupId,
+                    ),
+                )
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
 
-    companion object {
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        private fun dateToString(date: LocalDate) = date.format(formatter)
+
+        override suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit> {
+            val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getIntakeTarget(): MulKkamResult<Int> {
+            val result = intakeService.getIntakeTarget()
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.amount) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getIntakeAmountRecommended(): MulKkamResult<Int> {
+            val result = intakeService.getIntakeAmountRecommended()
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.amount) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getIntakeAmountTargetRecommended(
+            gender: Gender?,
+            weight: BioWeight?,
+        ): MulKkamResult<Int> {
+            val result =
+                intakeService.getIntakeAmountTargetRecommended(
+                    gender?.name,
+                    weight?.value?.toDouble(),
+                )
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.amount) },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit> {
+            val result = intakeService.deleteIntakeHistoryDetails(id)
+            return result.fold(
+                onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        companion object {
+            val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+        }
     }
-}

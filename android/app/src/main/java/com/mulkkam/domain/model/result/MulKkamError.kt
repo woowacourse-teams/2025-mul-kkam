@@ -97,9 +97,19 @@ sealed class MulKkamError : Throwable() {
         }
     }
 
+    sealed class FriendsError : MulKkamError() {
+        data object ReminderLimitExceeded : FriendsError() {
+            private fun readResolve(): Any = ReminderLimitExceeded
+        }
+    }
+
     sealed class NotFoundError : MulKkamError() {
         data object Member : NotFoundError() {
             private fun readResolve(): Any = Member
+        }
+
+        data object Friend : NotFoundError() {
+            private fun readResolve(): Any = Friend
         }
 
         data object Cup : NotFoundError() {
