@@ -102,7 +102,7 @@ fun FriendsScreen(
                             hasMore = hasMoreFriends,
                             onLoadMore = viewModel::loadMore,
                             onThrowWaterBalloon = { friend ->
-                                viewModel.throwWaterBalloon(friend.id)
+                                viewModel.throwWaterBalloon(friend)
                             },
                             onDeleteFriend = { friendToDelete = it },
                         )

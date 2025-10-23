@@ -41,7 +41,8 @@
     <string name="friends_error_message">친구 목록을 불러오지 못했어요</string>
     <string name="friends_retry_button">다시 시도하기</string>
     <string name="friends_load_more_button">더 보기</string>
-    <string name="friends_water_balloon_limit_exceeded">오늘 보낼 수 있는 물풍선을 모두 사용했어요!</string>
+    <string name="friends_water_balloon_limit_exceeded">해당 친구에게 오늘 보낼 수 있는 물풍선을 모두 사용했어요!</string>
+    <string name="friends_throw_water_balloon_success">%s님에게 물풍선을 던졌어요</string>
     <string name="friends_delete_dialog_title">%s 님을\n친구 목록에서 삭제하시겠어요?</string>
     <string name="friends_delete_dialog_description">삭제된 친구는 복구되지 않습니다.</string>
     <string name="friends_delete_dialog_confirm">확인</string>

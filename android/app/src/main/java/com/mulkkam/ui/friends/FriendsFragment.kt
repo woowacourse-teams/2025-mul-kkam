@@ -11,6 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.mulkkam.R
+import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -99,10 +100,23 @@ class FriendsFragment :
     private fun collectThrowWaterBalloonResult(anchorView: View) {
         viewModel.throwWaterBalloonResult.collectWithLifecycle(viewLifecycleOwner) { state ->
             when (state) {
+                is MulKkamUiState.Success -> handleThrowWaterBalloonSuccess(anchorView, state.data)
                 is MulKkamUiState.Failure -> handleThrowWaterBalloonFailure(anchorView, state.error)
                 else -> Unit
             }
         }
+    }
+
+    private fun handleThrowWaterBalloonSuccess(
+        anchorView: View,
+        friend: Friend,
+    ) {
+        val message: String =
+            getString(
+                R.string.friends_throw_water_balloon_success,
+                friend.nickname,
+            )
+        CustomSnackBar.make(anchorView, message, R.drawable.ic_info_circle).show()
     }
 
     private fun handleThrowWaterBalloonFailure(

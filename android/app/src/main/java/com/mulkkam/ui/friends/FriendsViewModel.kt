@@ -45,9 +45,9 @@ class FriendsViewModel
         private val _hasMoreFriends: MutableStateFlow<Boolean> = MutableStateFlow(false)
         val hasMoreFriends: StateFlow<Boolean> = _hasMoreFriends.asStateFlow()
 
-        private val _throwWaterBalloonResult: MutableSharedFlow<MulKkamUiState<Unit>> =
+        private val _throwWaterBalloonResult: MutableSharedFlow<MulKkamUiState<Friend>> =
             MutableSharedFlow()
-        val throwWaterBalloonResult: SharedFlow<MulKkamUiState<Unit>> =
+        val throwWaterBalloonResult: SharedFlow<MulKkamUiState<Friend>> =
             _throwWaterBalloonResult.asSharedFlow()
 
         private var nextCursor: Long? = null
@@ -155,12 +155,12 @@ class FriendsViewModel
             }
         }
 
-        fun throwWaterBalloon(friendId: Long) {
+        fun throwWaterBalloon(friend: Friend) {
             viewModelScope.launch {
                 runCatching {
-                    friendsRepository.postFriendWaterBalloon(friendId).getOrError()
+                    friendsRepository.postFriendWaterBalloon(friend.id).getOrError()
                 }.onSuccess {
-                    _throwWaterBalloonResult.emit(MulKkamUiState.Success(Unit))
+                    _throwWaterBalloonResult.emit(MulKkamUiState.Success(friend))
                 }.onFailure {
                     _throwWaterBalloonResult.emit(MulKkamUiState.Failure(it.toMulKkamError()))
                 }
