@@ -54,9 +54,11 @@ class HomeViewModel
             MutableStateFlow(MulKkamUiState.Idle)
         val alarmCountUiState: StateFlow<MulKkamUiState<Long>> get() = _alarmCountUiState.asStateFlow()
 
-        private val _drinkUiState: MutableStateFlow<MulKkamUiState<IntakeInfo>> =
-            MutableStateFlow(MulKkamUiState.Idle)
-        val drinkUiState: StateFlow<MulKkamUiState<IntakeInfo>> get() = _drinkUiState.asStateFlow()
+        private val _drinkUiState: MutableSharedFlow<MulKkamUiState<IntakeInfo>> =
+            MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
+        val drinkUiState: SharedFlow<MulKkamUiState<IntakeInfo>> get() = _drinkUiState.asSharedFlow()
+
+        private var isPostingDrink: Boolean = false
 
         private val _isGoalAchieved: MutableSharedFlow<Unit> = MutableSharedFlow()
         val isGoalAchieved: SharedFlow<Unit> get() = _isGoalAchieved.asSharedFlow()
@@ -116,21 +118,22 @@ class HomeViewModel
             val cups = cupsUiState.value.toSuccessDataOrNull() ?: return
             val cup = cups.findCupById(cupId) ?: return
 
-            if (drinkUiState.value is MulKkamUiState.Loading) return
+            if (isPostingDrink) return
             viewModelScope.launch {
                 runCatching {
                     logger.info(
                         LogEvent.USER_ACTION,
                         "Posting cup intake for cupId=${cup.id}",
                     )
-                    _drinkUiState.value = MulKkamUiState.Loading
+                    isPostingDrink = true
                     intakeRepository
                         .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
                         .getOrError()
                 }.onSuccess { intakeHistory ->
                     updateIntakeHistory(intakeHistory)
                 }.onFailure {
-                    _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                    isPostingDrink = false
+                    _drinkUiState.tryEmit(MulKkamUiState.Failure(it.toMulKkamError()))
                 }
             }
         }
@@ -145,8 +148,12 @@ class HomeViewModel
                         comment = intakeHistory.comment,
                     ),
                 )
-            _drinkUiState.value =
-                MulKkamUiState.Success(IntakeInfo(intakeHistory.intakeType, intakeHistory.intakeAmount))
+            isPostingDrink = false
+            _drinkUiState.tryEmit(
+                MulKkamUiState.Success(
+                    IntakeInfo(intakeHistory.intakeType, intakeHistory.intakeAmount),
+                ),
+            )
             if (current.achievementRate < ACHIEVEMENT_RATE_MAX && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_MAX) {
                 viewModelScope.launch { _isGoalAchieved.emit(Unit) }
             }
@@ -156,13 +163,13 @@ class HomeViewModel
             intakeType: IntakeType,
             amount: Int,
         ) {
-            if (drinkUiState.value is MulKkamUiState.Loading) return
+            if (isPostingDrink) return
             runCatching {
                 CupAmount(amount)
             }.onSuccess { realAmount ->
                 addWaterIntake(intakeType, realAmount)
             }.onFailure {
-                _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _drinkUiState.tryEmit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
 
@@ -170,21 +177,22 @@ class HomeViewModel
             intakeType: IntakeType,
             amount: CupAmount,
         ) {
-            if (drinkUiState.value is MulKkamUiState.Loading) return
+            if (isPostingDrink) return
             viewModelScope.launch {
                 runCatching {
                     logger.info(
                         LogEvent.USER_ACTION,
                         "Posting manual intake type=${intakeType.name}",
                     )
-                    _drinkUiState.value = MulKkamUiState.Loading
+                    isPostingDrink = true
                     intakeRepository
                         .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
                         .getOrError()
                 }.onSuccess { intakeHistory ->
                     updateIntakeHistory(intakeHistory)
                 }.onFailure {
-                    _drinkUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                    isPostingDrink = false
+                    _drinkUiState.tryEmit(MulKkamUiState.Failure(it.toMulKkamError()))
                 }
             }
         }

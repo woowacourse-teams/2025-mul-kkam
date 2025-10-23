@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,7 +27,6 @@ import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeScreen(
@@ -38,23 +36,19 @@ fun HomeScreen(
     parentViewModel: MainViewModel = viewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
-    val drinkUiState by viewModel.drinkUiState.collectAsStateWithLifecycle()
 
     val uiStateHolder = rememberHomeUiStateHolder()
 
-    LaunchedEffect(drinkUiState) {
-        if (drinkUiState is MulKkamUiState.Success) {
-            uiStateHolder.triggerDrinkAnimation()
-        }
+    viewModel.isGoalAchieved.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerConfettiOnce()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.isGoalAchieved.collectLatest {
-            uiStateHolder.triggerConfettiOnce()
+    viewModel.drinkUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        if (state is MulKkamUiState.Success) {
+            uiStateHolder.triggerDrinkAnimation()
         }
     }
 
