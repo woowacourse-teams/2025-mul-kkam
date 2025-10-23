@@ -7,11 +7,11 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -24,7 +24,7 @@ import com.mulkkam.ui.home.component.HomeTopBar
 import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
-import kotlinx.coroutines.flow.collectLatest
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 @Composable
 fun HomeScreen(
@@ -32,22 +32,20 @@ fun HomeScreen(
     onManualDrink: () -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
-    val drinkUiState by viewModel.drinkUiState.collectAsStateWithLifecycle()
 
     val uiStateHolder = rememberHomeUiStateHolder()
 
-    LaunchedEffect(drinkUiState) {
-        if (drinkUiState is MulKkamUiState.Success) {
-            uiStateHolder.triggerDrinkAnimation()
-        }
+    viewModel.isGoalAchieved.collectWithLifecycle(lifecycleOwner) {
+        uiStateHolder.triggerConfettiOnce()
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.isGoalAchieved.collectLatest {
-            uiStateHolder.triggerConfettiOnce()
+    viewModel.drinkUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        if (state is MulKkamUiState.Success) {
+            uiStateHolder.triggerDrinkAnimation()
         }
     }
 

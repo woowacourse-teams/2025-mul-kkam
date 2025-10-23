@@ -10,8 +10,11 @@ import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -41,6 +44,11 @@ class FriendsViewModel
 
         private val _hasMoreFriends: MutableStateFlow<Boolean> = MutableStateFlow(false)
         val hasMoreFriends: StateFlow<Boolean> = _hasMoreFriends.asStateFlow()
+
+        private val _throwWaterBalloonResult: MutableSharedFlow<MulKkamUiState<Friend>> =
+            MutableSharedFlow()
+        val throwWaterBalloonResult: SharedFlow<MulKkamUiState<Friend>> =
+            _throwWaterBalloonResult.asSharedFlow()
 
         private var nextCursor: Long? = null
 
@@ -143,6 +151,18 @@ class FriendsViewModel
                     }
                 }.onFailure {
                     loadFriends()
+                }
+            }
+        }
+
+        fun throwWaterBalloon(friend: Friend) {
+            viewModelScope.launch {
+                runCatching {
+                    friendsRepository.postFriendWaterBalloon(friend.id).getOrError()
+                }.onSuccess {
+                    _throwWaterBalloonResult.emit(MulKkamUiState.Success(friend))
+                }.onFailure {
+                    _throwWaterBalloonResult.emit(MulKkamUiState.Failure(it.toMulKkamError()))
                 }
             }
         }
