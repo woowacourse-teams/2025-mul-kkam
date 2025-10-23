@@ -35,19 +35,17 @@ fun HomeScreen(
     val todayProgressUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
-    val drinkUiState by viewModel.drinkUiState.collectAsStateWithLifecycle()
 
     val uiStateHolder = rememberHomeUiStateHolder()
-
-    LaunchedEffect(drinkUiState) {
-        if (drinkUiState is MulKkamUiState.Success) {
-            uiStateHolder.triggerDrinkAnimation()
-        }
-    }
 
     LaunchedEffect(Unit) {
         viewModel.isGoalAchieved.collectLatest {
             uiStateHolder.triggerConfettiOnce()
+        }
+        viewModel.drinkUiState.collectLatest { state ->
+            if (state is MulKkamUiState.Success) {
+                uiStateHolder.triggerDrinkAnimation()
+            }
         }
     }
 
