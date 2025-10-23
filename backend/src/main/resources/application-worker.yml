@@ -22,6 +22,18 @@ spring:
   flyway:
     enabled: false
 
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    access:
+      expire-length: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expire-length: ${REFRESH_TOKEN_EXPIRE}
+
+open-weather:
+  api:
+    key: ${OPEN_WEATHER_API_KEY}
+
 # MQ 토폴로지
 mulkkam:
   mq:
