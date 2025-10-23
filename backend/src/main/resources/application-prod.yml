@@ -30,6 +30,25 @@ spring:
     user: ${PROD_DATASOURCE_MIGRATION_USERNAME}
     password: ${PROD_DATASOURCE_MIGRATION_PASSWORD}
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
+# MQ 토폴로지
+mulkkam:
+  mq:
+    exchange: notifications.ex
+    queue:
+      token: notifications.token.q
+      tokens: notifications.tokens.q
+      topic: notifications.topic.q
+    routing:
+      token: notify.token
+      tokens: notify.tokens
+      topic: notify.topic
+
 security:
   jwt:
     secret-key: ${JWT_SECRET}

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 @Slf4j
 @RequiredArgsConstructor
 @Component
+// TODO: 구현 모두 끝내면 @Profile("worker") 추가하기
 public class FcmClient {
 
     private static final String ACTION = "action";
@@ -24,15 +25,6 @@ public class FcmClient {
     private final FirebaseMessaging firebaseMessaging;
 
     public void sendMessageByToken(SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest) {
-//        try {
-//            log.info("[MOCK FCM] token={}, title={}, body={}, action={}",
-//                    sendMessageByFcmTokenRequest.token(), sendMessageByFcmTokenRequest.title(),
-//                    sendMessageByFcmTokenRequest.body(), sendMessageByFcmTokenRequest.action());
-//            Thread.sleep(350);
-//        } catch (InterruptedException e) {
-//            log.warn("[MOCK FCM] sleep interrupted");
-//        }
-
         try {
             firebaseMessaging.send(Message.builder()
                     .setNotification(Notification.builder()
@@ -48,15 +40,6 @@ public class FcmClient {
     }
 
     public void sendMessageByTopic(SendMessageByFcmTopicRequest sendFcmTokenMessageRequest) {
-//        try {
-//            log.info("[MOCK FCM] topic={}, title={}, body={}, action={}",
-//                    sendFcmTokenMessageRequest.topic(), sendFcmTokenMessageRequest.title(),
-//                    sendFcmTokenMessageRequest.body(), sendFcmTokenMessageRequest.action());
-//            Thread.sleep(350);
-//        } catch (InterruptedException e) {
-//            log.warn("[MOCK FCM] sleep interrupted");
-//        }
-
         try {
             firebaseMessaging.send(Message.builder()
                     .setNotification(Notification.builder()

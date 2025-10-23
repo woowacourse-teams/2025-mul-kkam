@@ -30,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,6 +39,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
@@ -58,6 +60,8 @@ public class NotificationService {
 
         while (true) {
             List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
+
+            log.info("member id 의 크기: {}", memberIds.size());
 
             if (memberIds.isEmpty()) {
                 break;
