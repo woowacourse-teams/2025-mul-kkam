@@ -14,6 +14,7 @@ import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.MemberSearchResult
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -79,7 +80,8 @@ class MembersRepositoryImpl
         }
 
         override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
-            val result = membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
+            val result =
+                membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
             return result.fold(
                 onSuccess = { MulKkamResult(data = it.toDomain()) },
                 onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -88,7 +90,11 @@ class MembersRepositoryImpl
 
         override suspend fun patchMembersNotificationNight(isNightNotificationAgreed: Boolean): MulKkamResult<Unit> {
             val result =
-                membersService.patchMembersNotificationNight(NightNotificationAgreedRequest(isNightNotificationAgreed))
+                membersService.patchMembersNotificationNight(
+                    NightNotificationAgreedRequest(
+                        isNightNotificationAgreed,
+                    ),
+                )
             return result.fold(
                 onSuccess = { MulKkamResult() },
                 onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -97,7 +103,11 @@ class MembersRepositoryImpl
 
         override suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit> {
             val result =
-                membersService.patchMembersNotificationMarketing(MarketingNotificationAgreedRequest(isMarketingNotificationAgreed))
+                membersService.patchMembersNotificationMarketing(
+                    MarketingNotificationAgreedRequest(
+                        isMarketingNotificationAgreed,
+                    ),
+                )
             return result.fold(
                 onSuccess = { MulKkamResult() },
                 onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -134,6 +144,18 @@ class MembersRepositoryImpl
             val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
             return result.fold(
                 onSuccess = { MulKkamResult() },
+                onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            )
+        }
+
+        override suspend fun getMembersSearch(
+            word: String,
+            lastId: Long?,
+            size: Int,
+        ): MulKkamResult<MemberSearchResult> {
+            val result = membersService.getMembersSearch(word, lastId, size)
+            return result.fold(
+                onSuccess = { MulKkamResult(data = it.toDomain()) },
                 onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
             )
         }
