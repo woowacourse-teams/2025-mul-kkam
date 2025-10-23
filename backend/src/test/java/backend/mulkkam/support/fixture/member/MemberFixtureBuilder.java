@@ -40,6 +40,7 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+
     public MemberFixtureBuilder gender(Gender gender) {
         this.gender = gender;
         this.physicalAttributes = new PhysicalAttributes(this.gender, this.weight);

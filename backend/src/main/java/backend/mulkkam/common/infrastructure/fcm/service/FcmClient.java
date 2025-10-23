@@ -74,11 +74,9 @@ public class FcmClient {
     public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
         try {
             BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
-                    .setNotification(Notification.builder()
-                            .setTitle(sendMessageByFcmTokensRequest.title())
-                            .setBody(sendMessageByFcmTokensRequest.body())
-                            .build())
                     .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
+                    .putData("title", sendMessageByFcmTokensRequest.title())
+                    .putData("body", sendMessageByFcmTokensRequest.body())
                     .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
                     .build());
             log.warn("multicast batchResponse : {}", batchResponse.toString());
