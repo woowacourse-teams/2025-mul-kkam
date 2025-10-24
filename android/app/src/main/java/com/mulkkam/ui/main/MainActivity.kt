@@ -56,6 +56,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
         initDoubleBackToExit()
         initObservers()
+        handleNotificationEvent()
 
         if (isHealthConnectAvailable()) {
             viewModel.checkHealthPermissions(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
@@ -75,6 +76,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 }
 
                 NotificationAction.FRIEND_REMINDER -> {
+                    if (binding.bnvMain.selectedItemId != R.id.item_home) {
+                        switchFragment(MainTab.HOME)
+                        binding.bnvMain.selectedItemId = R.id.item_home
+                    }
                     viewModel.receiveFriendWaterBalloon()
                 }
 
