@@ -62,6 +62,11 @@
                 android:resource="@xml/intake_widget_info" />
         </receiver>
 
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            tools:node="remove" />
+
         <service
             android:name=".ui.service.NotificationService"
             android:exported="false">
