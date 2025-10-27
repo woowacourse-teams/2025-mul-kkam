@@ -54,6 +54,7 @@ fun HomeScreen(
 
     parentViewModel.onReceiveFriendWaterBalloon.collectWithLifecycle(lifecycleOwner) {
         uiStateHolder.triggerFriendWaterBalloonExplode()
+        parentViewModel.clearBuffer()
     }
 
     Scaffold(
