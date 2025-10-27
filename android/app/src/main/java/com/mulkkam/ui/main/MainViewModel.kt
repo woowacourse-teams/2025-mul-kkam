@@ -45,7 +45,7 @@ class MainViewModel
         val onFirstLaunch: SingleLiveData<Unit>
             get() = _onFirstLaunch
 
-        private val _onReceiveFriendWaterBalloon: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 1)
+        private val _onReceiveFriendWaterBalloon: MutableSharedFlow<Unit> = MutableSharedFlow(replay = 0)
         val onReceiveFriendWaterBalloon: SharedFlow<Unit>
             get() = _onReceiveFriendWaterBalloon.asSharedFlow()
 
