@@ -13,7 +13,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,6 +47,9 @@ public class IntakeHistory extends BaseEntity {
 
     @Column(nullable = false)
     private int streak;
+
+    @OneToMany(mappedBy = "intakeHistory")
+    private final List<IntakeHistoryDetail> intakeHistoryDetails = new ArrayList<>();
 
     public IntakeHistory(
             Member member,

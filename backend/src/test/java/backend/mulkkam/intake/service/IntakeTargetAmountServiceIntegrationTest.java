@@ -56,7 +56,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -81,7 +81,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -103,7 +103,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -127,7 +127,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int memberTargetAmount = 1_500;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(memberTargetAmount))
+                    .targetAmount(memberTargetAmount)
                     .build();
 
             memberRepository.save(member);
@@ -163,7 +163,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(1500))
+                    .targetAmount(1500)
                     .build();
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
@@ -240,7 +240,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int expected = 1_000;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(expected))
+                    .targetAmount(expected)
                     .build();
             Member savedMember = memberRepository.save(member);
 

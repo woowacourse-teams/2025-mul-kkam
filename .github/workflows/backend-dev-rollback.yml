@@ -1,0 +1,71 @@
+name: backend-dev-rollback
+
+on:
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: "롤백할 Docker 이미지 태그(SHA). 비우면 기존 컨테이너로만 스위치"
+        required: false
+
+jobs:
+  rollback:
+    runs-on: [ self-hosted, linux, dev ]
+    steps:
+      - name: Decide current/target color (always opposite)
+        id: pick
+        run: |
+          # 현재 Nginx 업스트림을 기준으로 active 색상 판별
+          if grep -q '127.0.0.1:8081' /etc/nginx/snippets/mulkkam_upstream.conf; then
+            CURRENT=blue
+          elif grep -q '127.0.0.1:8082' /etc/nginx/snippets/mulkkam_upstream.conf; then
+            CURRENT=green
+          else
+            CURRENT=blue
+          fi
+
+          # 항상 반대 색으로 롤백
+          if [ "$CURRENT" = "blue" ]; then TO=green; PORT=8082; else TO=blue; PORT=8081; fi
+
+          echo "current=$CURRENT" >> "$GITHUB_OUTPUT"
+          echo "to=$TO" >> "$GITHUB_OUTPUT"
+          echo "port=$PORT" >> "$GITHUB_OUTPUT"
+
+      - name: Start target color with specific image tag (optional)
+        if: ${{ github.event.inputs.image_tag != '' }}
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          TAG="${{ github.event.inputs.image_tag }}"
+          echo "Rolling back ${{ steps.pick.outputs.to }} to tag: $TAG"
+          sudo IMAGE_TAG="$TAG" docker compose pull backend-${{ steps.pick.outputs.to }}
+          sudo IMAGE_TAG="$TAG" docker compose up -d backend-${{ steps.pick.outputs.to }}
+
+      - name: Wait for health on target color
+        run: |
+          PORT=${{ steps.pick.outputs.port }}
+          echo "Waiting health on :$PORT ..."
+          for i in {1..60}; do
+            if curl -fsS "http://127.0.0.1:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
+              echo "Target color is healthy."
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Health check failed on port ${PORT}"
+          exit 1
+
+      - name: Switch Nginx to target color
+        run: |
+          PORT=${{ steps.pick.outputs.port }}
+          echo "set \$mulkkam_upstream http://127.0.0.1:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
+          sudo nginx -t
+          sudo systemctl reload nginx
+          echo "Switched Nginx to $PORT."
+
+      - name: Stop the other color (keep container for quick re-switch)
+        run: |
+          if [ "${{ steps.pick.outputs.to }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
+          sudo docker stop "$OLD" || true
+
+      - name: Done
+        run: |
+          echo "Rolled back to ${{ steps.pick.outputs.to }} on port ${{ steps.pick.outputs.port }}."

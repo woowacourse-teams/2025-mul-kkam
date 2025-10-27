@@ -14,11 +14,14 @@ import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.notification.domain.DefaultRemindSchedule;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import java.time.LocalDate;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +35,7 @@ public class OnboardingService {
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
     private final OauthAccountRepository oauthAccountRepository;
     private final NotificationRepository notificationRepository;
+    private final ReminderScheduleRepository reminderScheduleRepository;
 
     @Transactional
     public void create(
@@ -47,7 +51,6 @@ public class OnboardingService {
 
         TargetAmountSnapshot targetAmountSnapshot = new TargetAmountSnapshot(
                 member,
-                LocalDate.now(),
                 new TargetAmount(createMemberRequest.targetIntakeAmount())
         );
         targetAmountSnapshotRepository.save(targetAmountSnapshot);
@@ -66,12 +69,19 @@ public class OnboardingService {
                 LocalDateTime.now(),
                 member)
         );
+
+        createDefaultReminders(member);
     }
 
     public OnboardingStatusResponse checkOnboardingStatus(OauthAccountDetails accountDetails) {
         OauthAccount oauthAccount = getOauthAccount(accountDetails);
         boolean finishedOnboarding = oauthAccount.finishedOnboarding();
         return new OnboardingStatusResponse(finishedOnboarding);
+    }
+
+    private void createDefaultReminders(Member member) {
+        List<ReminderSchedule> reminderSchedules = DefaultRemindSchedule.of(member);
+        reminderScheduleRepository.saveAll(reminderSchedules);
     }
 
     private OauthAccount getOauthAccount(OauthAccountDetails accountDetails) {

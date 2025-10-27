@@ -7,31 +7,31 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
+import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.GetNotificationResponse;
-import backend.mulkkam.notification.dto.GetSuggestionNotificationResponse;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
-import backend.mulkkam.notification.dto.NotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.response.GetNotificationResponse;
+import backend.mulkkam.notification.dto.response.GetSuggestionNotificationResponse;
+import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.response.NotificationResponse;
+import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -41,35 +41,49 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService {
 
     private static final int DAY_LIMIT = 7;
-    private static final String DAILY_2PM_CRON = "0 0 14 * * *";
-    private static final String DAILY_7PM_CRON = "0 0 19 * * *";
+    private static final int CHUNK_SIZE = 1_000;
 
+    private final SuggestionNotificationService suggestionNotificationService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final SuggestionNotificationRepository suggestionNotificationRepository;
-    private final MemberRepository memberRepository;
-    private final SuggestionNotificationService suggestionNotificationService;
+    private final NotificationBatchRepository notificationBatchRepository;
+    private final ReminderScheduleRepository reminderScheduleRepository;
     private final ApplicationEventPublisher publisher;
 
     @Transactional
-    @Scheduled(cron = DAILY_2PM_CRON)
-    @Scheduled(cron = DAILY_7PM_CRON)
-    public void notifyRemindNotification() {
-        NotificationMessageTemplate remindNotificationMessage = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
-        createAndSendTopicNotification(remindNotificationMessage, LocalDateTime.now());
+    public void processReminderNotifications(LocalDateTime now) {
+        NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
+
+        Long lastId = null;
+
+        while (true) {
+            List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
+
+            if (memberIds.isEmpty()) {
+                break;
+            }
+
+            saveAndSendNotifications(memberIds, template);
+
+            if (isLastChunk(memberIds)) {
+                break;
+            }
+
+            lastId = memberIds.getLast();
+        }
     }
 
-    @Transactional
-    public void createAndSendTopicNotification(NotificationMessageTemplate notificationMessageTemplate, LocalDateTime now) {
-        List<Member> members = memberRepository.findAll();
-
-        List<Notification> notifications = members.stream()
-                .map(member -> notificationMessageTemplate.toNotification(member, now))
-                .toList();
-        notificationRepository.saveAll(notifications);
-
-        SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = notificationMessageTemplate.toSendMessageByFcmTopicRequest();
-        publisher.publishEvent(sendMessageByFcmTopicRequest);
+    private List<Long> getMemberIdsForSendingNotification(LocalDateTime now, Long lastId) {
+        return ChunkReader.readChunk(
+                (id, pageable) -> reminderScheduleRepository
+                        .findAllActiveMemberIdsBySchedule(
+                                now.toLocalTime(),
+                                id,
+                                pageable
+                        ),
+                lastId,
+                CHUNK_SIZE
+        );
     }
 
     @Transactional
@@ -86,21 +100,26 @@ public class NotificationService {
         Pageable pageable = Pageable.ofSize(size + 1);
 
         Long lastId = readNotificationsRequest.lastId();
-        List<Notification> pagedNotifications = getNotificationsByLastIdAndMember(
+        List<ReadNotificationRow> pagedNotificationResponses = getNotificationResponsesByLastIdAndMember(
                 memberDetails,
                 lastId,
                 limitStartDateTime,
                 pageable
         );
 
-        boolean hasNext = pagedNotifications.size() > size;
+        boolean hasNext = pagedNotificationResponses.size() > size;
 
-        Long nextCursor = getNextCursor(hasNext, pagedNotifications);
-        List<Notification> notifications = getNotifications(hasNext, pagedNotifications);
-        List<NotificationResponse> readNotificationResponses = toNotificationResponses(notifications);
-        notifications.forEach(
-                notification -> notification.updateIsRead(true)
-        );
+        List<ReadNotificationRow> readNotificationRows = dropExtraNotificationResponse(hasNext,
+                pagedNotificationResponses);
+
+        Long nextCursor = getNextCursor(hasNext, readNotificationRows);
+        List<NotificationResponse> readNotificationResponses = toNotificationResponses(readNotificationRows);
+
+        List<Long> ids = readNotificationRows.stream()
+                .map(ReadNotificationRow::id)
+                .toList();
+
+        notificationRepository.markReadInBulk(ids);
 
         return new ReadNotificationsResponse(readNotificationResponses, nextCursor);
     }
@@ -111,12 +130,16 @@ public class NotificationService {
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         notificationRepository.save(createTokenNotificationRequest.toNotification());
-        sendNotificationByMember(createTokenNotificationRequest, devicesByMember);
+
+        sendPushToMemberDevices(createTokenNotificationRequest, devicesByMember);
     }
 
-    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails) {
+    public GetUnreadNotificationsCountResponse getUnReadNotificationsCount(MemberDetails memberDetails,
+                                                                           LocalDateTime clientTime) {
         Long memberId = memberDetails.id();
-        long count = notificationRepository.countByIsReadFalseAndMemberId(memberId);
+        LocalDateTime limitStartDateTime = clientTime.minusDays(DAY_LIMIT);
+
+        long count = notificationRepository.countUnReadByMemberId(memberId, limitStartDateTime);
         return new GetUnreadNotificationsCountResponse(count);
     }
 
@@ -148,17 +171,17 @@ public class NotificationService {
 
     private Long getNextCursor(
             boolean hasNext,
-            List<Notification> notifications
+            List<ReadNotificationRow> notifications
     ) {
         if (hasNext) {
-            return notifications.getLast().getId();
+            return notifications.getLast().id();
         }
         return null;
     }
 
-    private List<Notification> getNotifications(
+    private List<ReadNotificationRow> dropExtraNotificationResponse(
             boolean hasNext,
-            List<Notification> notifications
+            List<ReadNotificationRow> notifications
     ) {
         if (hasNext) {
             notifications.removeLast();
@@ -166,7 +189,7 @@ public class NotificationService {
         return notifications;
     }
 
-    private List<Notification> getNotificationsByLastIdAndMember(
+    private List<ReadNotificationRow> getNotificationResponsesByLastIdAndMember(
             MemberDetails memberDetails,
             Long lastId,
             LocalDateTime limitStartDateTime,
@@ -174,35 +197,72 @@ public class NotificationService {
     ) {
         Long memberId = memberDetails.id();
         if (lastId == null) {
-            return notificationRepository.findLatest(memberId, limitStartDateTime, pageable);
+            return notificationRepository.findLatestRows(memberId, limitStartDateTime, pageable);
         }
-        return notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, pageable);
+        return notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime, pageable);
     }
 
-    private List<NotificationResponse> toNotificationResponses(List<Notification> notifications) {
-        return notifications.stream()
+    private List<NotificationResponse> toNotificationResponses(List<ReadNotificationRow> readNotificationRows) {
+        return readNotificationRows.stream()
                 .map(this::getNotificationResponse)
                 .collect(Collectors.toList());
     }
 
-    private NotificationResponse getNotificationResponse(Notification notification) {
-        if (notification.getNotificationType() != NotificationType.SUGGESTION) {
-            return new GetNotificationResponse(notification);
+    private NotificationResponse getNotificationResponse(ReadNotificationRow readNotificationRow) {
+        if (readNotificationRow.notificationType() != NotificationType.SUGGESTION) {
+            return new GetNotificationResponse(readNotificationRow);
         }
-        SuggestionNotification suggestionNotification = suggestionNotificationRepository.getSuggestionNotificationByNotification(
-                notification);
-        return new GetSuggestionNotificationResponse(notification, suggestionNotification);
+        return new GetSuggestionNotificationResponse(readNotificationRow);
     }
 
-    private void sendNotificationByMember(
+    private void sendPushToMemberDevices(
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
-        for (Device device : devicesByMember) {
-            SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
-            publisher.publishEvent(sendMessageByFcmTokenRequest);
-        }
+        List<String> tokens = extractTokensFromDevices(devicesByMember);
+        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
+                tokens);
+        publisher.publishEvent(sendMessageByFcmTokensRequest);
+    }
+
+    private List<String> extractTokensFromDevices(List<Device> devices) {
+        return devices.stream()
+                .map(Device::getToken)
+                .toList();
+    }
+
+    private void saveAndSendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        savedNotifications(memberIds, template);
+        sendNotifications(memberIds, template);
+    }
+
+    private void savedNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
+                .map(memberId -> new NotificationInsertDto(template, memberId))
+                .toList();
+        notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
+    }
+
+    private void sendNotifications(
+            List<Long> memberIds,
+            NotificationMessageTemplate template
+    ) {
+        List<String> tokens = readDeviceTokens(memberIds);
+        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+    }
+
+    private List<String> readDeviceTokens(List<Long> memberIds) {
+        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
+    }
+
+    private boolean isLastChunk(List<Long> memberIds) {
+        return memberIds.size() < CHUNK_SIZE;
     }
 
     private Notification getNotification(Long id) {

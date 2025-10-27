@@ -34,7 +34,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             /* etc - for additional functions */
             HttpEndpoint.prefix("/actuator", HttpMethod.GET),
             HttpEndpoint.prefix("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST),
-            HttpEndpoint.prefix("/versions", HttpMethod.GET)
+            HttpEndpoint.prefix("/versions", HttpMethod.GET),
+
+            // TODO: 알림 성능 확인 이후 제거
+            HttpEndpoint.prefix("/notifications/test", HttpMethod.GET)
     );
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;

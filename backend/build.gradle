@@ -31,7 +31,7 @@ dependencies {
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.8'
 
-    implementation 'com.google.firebase:firebase-admin:9.1.1'
+    implementation 'com.google.firebase:firebase-admin:9.7.0'
     implementation 'com.squareup.okhttp3:okhttp:4.11.0'
 
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'

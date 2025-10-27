@@ -4,8 +4,12 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -13,19 +17,22 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.ReadNotificationsRequest;
-import backend.mulkkam.notification.dto.GetUnreadNotificationsCountResponse;
-import backend.mulkkam.notification.dto.NotificationResponse;
-import backend.mulkkam.notification.dto.ReadNotificationsResponse;
+import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
+import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
+import backend.mulkkam.notification.dto.response.NotificationResponse;
+import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
+import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.fixture.NotificationFixtureBuilder;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -59,7 +66,13 @@ class NotificationServiceUnitTest {
     private DeviceRepository deviceRepository;
 
     @Mock
-    private ApplicationEventPublisher applicationEventPublisher;
+    private ApplicationEventPublisher publisher;
+
+    @Mock
+    private NotificationBatchRepository notificationBatchRepository;
+
+    @Mock
+    private ReminderScheduleRepository reminderScheduleRepository;
 
     @InjectMocks
     private NotificationService notificationService;
@@ -72,9 +85,10 @@ class NotificationServiceUnitTest {
         private final LocalDateTime limitStartDateTime = requestTime.minusDays(DAY_LIMIT);
         private final int defaultSize = 5;
 
-        private List<Notification> createNotifications(LocalDate... dates) {
+        private List<ReadNotificationRow> createReadNotificationRows(LocalDate... dates) {
             return Arrays.stream(dates)
-                    .map(date -> NotificationFixtureBuilder.withMember(member).createdAt(date).build())
+                    .map(date -> new ReadNotificationRow(null, date.atStartOfDay(), "c", NotificationType.SUGGESTION,
+                            false, 1000, false))
                     .toList();
         }
 
@@ -85,9 +99,9 @@ class NotificationServiceUnitTest {
             Long lastId = 10L;
             ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, defaultSize);
 
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(createNotifications(
+                    .thenReturn(createReadNotificationRows(
                             LocalDate.of(2025, 8, 9),
                             LocalDate.of(2025, 8, 8),
                             LocalDate.of(2025, 8, 7),
@@ -118,9 +132,9 @@ class NotificationServiceUnitTest {
         void success_returnsAllWhenDataSizeEqualsRequestSize() {
             // given
             Long lastId = 6L;
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime,
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime,
                     Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(createNotifications(
+                    .thenReturn(createReadNotificationRows(
                             LocalDate.of(2025, 8, 9),
                             LocalDate.of(2025, 8, 8),
                             LocalDate.of(2025, 8, 7),
@@ -143,15 +157,15 @@ class NotificationServiceUnitTest {
         void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
             // given
             Long lastId = 6L;
-            List<Notification> notifications = createNotifications(
+            List<ReadNotificationRow> readNotificationRows = createReadNotificationRows(
                     LocalDate.of(2025, 8, 9),
                     LocalDate.of(2025, 8, 8),
                     LocalDate.of(2025, 8, 7),
                     LocalDate.of(2025, 8, 6),
                     LocalDate.of(2025, 8, 5)
             );
-            when(notificationRepository.findByCursor(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
-                    .thenReturn(notifications);
+            when(notificationRepository.findByCursorRows(memberId, lastId, limitStartDateTime, Pageable.ofSize(10 + 1)))
+                    .thenReturn(readNotificationRows);
 
             ReadNotificationsRequest request = new ReadNotificationsRequest(lastId, requestTime, 10);
 
@@ -161,7 +175,7 @@ class NotificationServiceUnitTest {
 
             // then
             AssertionsForClassTypes.assertThat(response.readNotificationResponses().size())
-                    .isEqualTo(notifications.size());
+                    .isEqualTo(readNotificationRows.size());
         }
 
         @DisplayName("lastId가 null이 들어오면 맨 마지막부터 불러와진다")
@@ -170,10 +184,10 @@ class NotificationServiceUnitTest {
             // given
             Notification latestNotification = NotificationFixtureBuilder
                     .withMember(member)
-                    .createdAt(LocalDate.of(2025, 8, 9))
+                    .createdAt(LocalDateTime.of(2025, 8, 9, 0, 0, 0))
                     .build();
 
-            List<Notification> notifications = createNotifications(
+            List<ReadNotificationRow> readNotificationRows = createReadNotificationRows(
                     LocalDate.of(2025, 8, 9),
                     LocalDate.of(2025, 8, 8),
                     LocalDate.of(2025, 8, 7),
@@ -181,8 +195,8 @@ class NotificationServiceUnitTest {
                     LocalDate.of(2025, 8, 5)
             );
 
-            when(notificationRepository.findLatest(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
-                    .thenReturn(notifications);
+            when(notificationRepository.findLatestRows(memberId, limitStartDateTime, Pageable.ofSize(defaultSize + 1)))
+                    .thenReturn(readNotificationRows);
 
             ReadNotificationsRequest request = new ReadNotificationsRequest(null, requestTime, defaultSize);
 
@@ -253,11 +267,11 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllByMember(member);
 
-            verify(applicationEventPublisher).publishEvent(
-                    argThat((SendMessageByFcmTokenRequest evt) ->
+            verify(publisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest evt) ->
                             evt.title().equals("title")
                                     && evt.body().equals("body")
-                                    && evt.token().equals("token-1")
+                                    && evt.allTokens().equals(List.of("token-1"))
                                     && evt.action() == Action.GO_HOME)
             );
         }
@@ -272,14 +286,119 @@ class NotificationServiceUnitTest {
         @ValueSource(longs = {0L, 1L, 3L})
         void success_validMember(long count) {
             // given
-            when(notificationRepository.countByIsReadFalseAndMemberId(any(Long.class))).thenReturn(count);
+            when(notificationRepository.countUnReadByMemberId(any(Long.class), any())).thenReturn(count);
 
             // when
             GetUnreadNotificationsCountResponse getUnreadNotificationsCountResponse = notificationService.getUnReadNotificationsCount(
-                    new MemberDetails(member));
+                    new MemberDetails(member), LocalDateTime.now());
 
             // then
             assertThat(getUnreadNotificationsCountResponse.count()).isEqualTo(count);
         }
     }
+
+    @DisplayName("리마인더 알림을 처리할 때")
+    @Nested
+    class ProcessReminderNotifications {
+
+        @DisplayName("스케줄에 해당하는 멤버들에게 알림을 저장하고 FCM 이벤트를 발행한다")
+        @Test
+        void success_whenSchedulesExist() {
+            // given
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 30);
+
+            Long member1Id = 1L;
+            Long member2Id = 2L;
+            List<Long> memberIds = List.of(member1Id, member2Id);
+
+            String token1 = "fcm-token-1";
+            String token2 = "fcm-token-2";
+            List<String> tokens = List.of(token1, token2);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(memberIds);
+
+            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+                    .thenReturn(tokens);
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository).batchInsert(
+                    argThat(dtos -> dtos.size() == 2 &&
+                            dtos.stream()
+                                    .allMatch(dto -> dto.notificationType() == NotificationType.REMIND)
+                    ),
+                    eq(1000)
+            );
+
+            verify(deviceRepository).findAllTokenByMemberIdIn(memberIds);
+
+            verify(publisher).publishEvent(
+                    argThat((SendMessageByFcmTokensRequest event) ->
+                            event.allTokens().containsAll(tokens)
+                    )
+            );
+        }
+
+        @DisplayName("스케줄이 비어있으면 알림을 저장하지 않고 FCM 이벤트도 발행하지 않는다")
+        @Test
+        void success_whenEmptySchedules() {
+            // given
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(List.of());
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository, never()).batchInsert(anyList(), eq(1000));
+            verify(publisher, never()).publishEvent(any());
+        }
+
+        @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
+        @Test
+        void success_whenMemberHasNoDevices() {
+            // given
+            Long member1Id = 1L;
+            Long member2Id = 2L;
+            List<Long> memberIds = List.of(member1Id, member2Id);
+
+            LocalDateTime now = LocalDateTime.of(2025, 1, 15, 14, 0);
+
+            when(reminderScheduleRepository.findAllActiveMemberIdsBySchedule(
+                    eq(now.toLocalTime()),
+                    isNull(),
+                    any(Pageable.class)
+            )).thenReturn(memberIds);
+
+            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+                    .thenReturn(List.of());
+
+            // when
+            notificationService.processReminderNotifications(now);
+
+            // then
+            verify(notificationBatchRepository).batchInsert(
+                    argThat(dtos -> dtos.size() == 2 &&
+                            dtos.stream()
+                                    .allMatch(dto -> dto.notificationType() == NotificationType.REMIND)
+                    ),
+                    eq(1000)
+            );
+
+            // 2. FCM 이벤트 발행 검증
+            verify(publisher, never()).publishEvent(any());
+        }
+    }
 }
+

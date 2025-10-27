@@ -4,11 +4,14 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
+import backend.mulkkam.averageTemperature.domain.City;
+import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.domain.vo.ExtraIntakeAmount;
@@ -16,23 +19,25 @@ import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRe
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.notification.domain.City;
-import backend.mulkkam.notification.domain.CityDateTime;
+import backend.mulkkam.notification.domain.NightNotificationTimezone;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
-import backend.mulkkam.notification.dto.CreateTokenSuggestionNotificationRequest;
-import backend.mulkkam.notification.dto.CreateWeatherNotification;
+import backend.mulkkam.notification.dto.NotificationMessageTemplate;
+import backend.mulkkam.notification.dto.request.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.CreateTokenSuggestionNotificationRequest;
+import backend.mulkkam.notification.dto.request.CreateWeatherNotification;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -64,7 +69,7 @@ public class SuggestionNotificationService {
             return;
         }
 
-        List<Member> members = memberRepository.findAll();
+        List<Member> members = memberRepository.findAll(); // TODO: 배치 처리 및 대량 리펙터링 필요
         for (Member member : members) {
             try {
                 createAndSendSuggestionNotification(
@@ -81,12 +86,28 @@ public class SuggestionNotificationService {
     }
 
     @Transactional
+    public void createAndSendNotification(NotificationMessageTemplate template, Long memberId) {
+        List<Device> devices = deviceRepository.findAllByMemberId(memberId);
+        if (devices.isEmpty()) {
+            log.warn("memberId={} has no registered devices. ignored notification.", memberId);
+            return;
+        }
+
+        List<String> tokens = devices.stream()
+                .map(Device::getToken)
+                .toList();
+        SendMessageByFcmTokensRequest eventRequest = new SendMessageByFcmTokensRequest(template, tokens);
+        publisher.publishEvent(eventRequest);
+    }
+
+    @Transactional
     public void createActivityNotification(
             CreateActivityNotification createActivityNotification,
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(member);
+        CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest = createActivityNotification.toFcmToken(
+                member);
         createAndSendSuggestionNotification(createTokenSuggestionNotificationRequest);
     }
 
@@ -94,6 +115,15 @@ public class SuggestionNotificationService {
     public void createAndSendSuggestionNotification(
             CreateTokenSuggestionNotificationRequest createTokenSuggestionNotificationRequest) {
         Member member = createTokenSuggestionNotificationRequest.member();
+
+        LocalTime requestTime = createTokenSuggestionNotificationRequest.createdAt().toLocalTime();
+        if (!member.isNightNotificationAgreed()
+                && NightNotificationTimezone.isNightTimezoneForNotification(requestTime)) {
+            log.info("[NIGHT_NOTIFICATION_BLOCKED] memberId={}, requestTime={}",
+                    member.getId(), requestTime);
+            return;
+        }
+
         List<Device> devicesByMember = deviceRepository.findAllByMember(member);
 
         Notification notification = createTokenSuggestionNotificationRequest.toNotification();
@@ -145,7 +175,8 @@ public class SuggestionNotificationService {
             Member member
     ) {
         Double weight = member.getPhysicalAttributes().getWeight();
-        ExtraIntakeAmount extraIntakeAmount = ExtraIntakeAmount.calculateWithAverageTemperature(averageTemperature.getTemperature(), weight);
+        ExtraIntakeAmount extraIntakeAmount = ExtraIntakeAmount.calculateWithAverageTemperature(
+                averageTemperature.getTemperature(), weight);
 
         CreateWeatherNotification createWeatherNotification = new CreateWeatherNotification(averageTemperature,
                 extraIntakeAmount, member, todayDateTime);

@@ -19,6 +19,9 @@ import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
 import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
 import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
@@ -41,17 +44,14 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import org.apache.http.HttpHeaders;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 
-@SpringBootTest
-@AutoConfigureMockMvc
 class IntakeHistoryControllerTest extends ControllerTest {
 
     @Autowired
@@ -81,7 +81,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
     private final Member member = MemberFixtureBuilder
             .builder()
             .weight(70.0)
-            .targetAmount(new TargetAmount(1500))
+            .targetAmount(1500)
             .build();
 
     private String token;
@@ -462,6 +462,100 @@ class IntakeHistoryControllerTest extends ControllerTest {
                 softly.assertThat(actual.get(1).intakeDetails()).hasSize(0);
                 softly.assertThat(actual.get(2).intakeDetails()).hasSize(0);
             });
+        }
+    }
+
+    @DisplayName("섭취 달성률을 조회할 때")
+    @Nested
+    class ReadAchieveRatesByDateRange {
+
+        @DisplayName("날짜의 범위에 해당하는 섭취 달성률들을 조회한다")
+        @Test
+        void success_byValidInput() throws Exception {
+            // given
+            LocalDate from = LocalDate.of(2025, 10, 20);
+            LocalDate to = LocalDate.of(2025, 10, 22);
+
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 21))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 22))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory
+            ));
+
+            List<IntakeHistoryDetail> intakeHistoryDetailByFirstIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(firstHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+
+            List<IntakeHistoryDetail> intakeHistoryDetailBySecondIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(secondHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(secondHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+
+            List<IntakeHistoryDetail> intakeHistoryDetailByThirdIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByFirstIntakeHistory);
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailBySecondIntakeHistory);
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByThirdIntakeHistory);
+
+            // when
+            String json = mockMvc.perform(get("/intake/history/achievement-rates")
+                            .param("from", from.toString())
+                            .param("to", to.toString())
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                    .andExpect(status().isOk())
+                    .andReturn().getResponse().getContentAsString();
+
+            // then
+            ReadAchievementRateByDatesResponse actual = objectMapper.readValue(
+                    json, new TypeReference<>() {
+                    }
+            );
+
+            List<Double> actualAchievementRates = actual.readAchievementRateByDateResponses().stream()
+                    .map(ReadAchievementRateByDateResponse::achievementRate)
+                    .toList();
+
+            Assertions.assertThat(actualAchievementRates)
+                    .containsExactly(50.0, 100.0, 100.0);
         }
     }
 

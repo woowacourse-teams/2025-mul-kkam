@@ -11,13 +11,12 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.util.Objects;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
-
-import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -53,6 +52,27 @@ public class Member extends BaseEntity {
 
     @Column(unique = true)
     private String activeNickname;
+
+    @Column(nullable = false)
+    private boolean isReminderEnabled = true;
+
+    public Member(
+            MemberNickname memberNickname,
+            PhysicalAttributes physicalAttributes,
+            TargetAmount targetAmount,
+            boolean isMarketingNotificationAgreed,
+            boolean isNightNotificationAgreed,
+            String activeNickname,
+            boolean isReminderEnabled
+    ) {
+        this.memberNickname = memberNickname;
+        this.physicalAttributes = physicalAttributes;
+        this.targetAmount = targetAmount;
+        this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+        this.isNightNotificationAgreed = isNightNotificationAgreed;
+        this.activeNickname = activeNickname;
+        this.isReminderEnabled = isReminderEnabled;
+    }
 
     public Member(
             MemberNickname memberNickname,
@@ -100,6 +120,10 @@ public class Member extends BaseEntity {
 
     public void modifyIsMarketingNotificationAgreed(boolean isMarketingNotificationAgreed) {
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
+    }
+
+    public void modifyIsReminderEnabled(boolean isReminderEnabled) {
+        this.isReminderEnabled = isReminderEnabled;
     }
 
     @Override

@@ -2,7 +2,7 @@ package backend.mulkkam.notification.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.notification.dto.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.CreateActivityNotification;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
