@@ -36,10 +36,10 @@ public class FcmClient {
         try {
             firebaseMessaging.send(Message.builder()
                     .setNotification(Notification.builder()
-                            .setTitle(sendMessageByFcmTokenRequest.title())
-                            .setBody(sendMessageByFcmTokenRequest.body())
                             .build())
                     .setToken(sendMessageByFcmTokenRequest.token())
+                    .putData("title", sendMessageByFcmTokenRequest.title())
+                    .putData("body", sendMessageByFcmTokenRequest.body())
                     .putData(ACTION, sendMessageByFcmTokenRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
