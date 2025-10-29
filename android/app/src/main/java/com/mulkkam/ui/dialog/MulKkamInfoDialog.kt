@@ -1,4 +1,4 @@
-package com.mulkkam.ui.searchmembers.component
+package com.mulkkam.ui.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -27,10 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.mulkkam.R
-import com.mulkkam.domain.model.friends.FriendRequestStatus
-import com.mulkkam.domain.model.members.MemberSearchInfo
-import com.mulkkam.domain.model.members.Nickname
-import com.mulkkam.domain.model.members.RequestDirection
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -41,10 +37,12 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
-fun AcceptFriendsRequestDialog(
-    memberSearchInfo: MemberSearchInfo,
+fun MulKkamInfoDialog(
+    title: String,
+    description: String,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -57,6 +55,7 @@ fun AcceptFriendsRequestDialog(
         Surface(
             shape = RoundedCornerShape(14.dp),
             color = White,
+            modifier = modifier,
         ) {
             Column(
                 modifier =
@@ -74,18 +73,14 @@ fun AcceptFriendsRequestDialog(
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text =
-                        stringResource(
-                            R.string.search_friends_accept_request_confirmed,
-                            memberSearchInfo.nickname.name,
-                        ),
+                    text = title,
                     color = Gray400,
                     style = MulKkamTheme.typography.title1,
                     textAlign = TextAlign.Center,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = stringResource(R.string.search_friends_accept_request_warning),
+                    text = description,
                     color = Primary200,
                     style = MulKkamTheme.typography.body2,
                 )
@@ -132,16 +127,11 @@ fun AcceptFriendsRequestDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun CancelFriendsRequestDialogPreview() {
+private fun MulKkamInfoDialogPreview() {
     MulkkamTheme {
-        AcceptFriendsRequestDialog(
-            memberSearchInfo =
-                MemberSearchInfo(
-                    id = 1L,
-                    nickname = Nickname("돈가스먹는환노"),
-                    status = FriendRequestStatus.REQUESTED,
-                    direction = RequestDirection.REQUESTED_TO_ME,
-                ),
+        MulKkamInfoDialog(
+            title = "돈가스먹는환노\n친구 신청을 수락하시겠습니까?",
+            description = "친구에게 물풍선을 던져 보세요",
             onConfirm = {},
             onDismiss = {},
         )
