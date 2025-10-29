@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
@@ -33,10 +34,10 @@ import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.dialog.MulKkamInfoDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton
-import com.mulkkam.ui.searchmembers.component.AcceptFriendsRequestDialog
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
@@ -91,8 +92,13 @@ fun SearchMembersScreen(
     ) { innerPadding ->
         if (showDialog) {
             val memberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
-            AcceptFriendsRequestDialog(
-                memberSearchInfo = memberSearchInfo,
+            MulKkamInfoDialog(
+                title =
+                    stringResource(
+                        R.string.search_friends_accept_request_confirmed,
+                        memberSearchInfo.nickname.name,
+                    ),
+                description = stringResource(R.string.search_friends_accept_request_warning),
                 onConfirm = {
                     viewModel.acceptFriendRequest(
                         memberSearchInfo,
