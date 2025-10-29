@@ -184,7 +184,7 @@ class MainViewModel
         }
 
         @OptIn(ExperimentalCoroutinesApi::class)
-        fun clearBuffer() {
+        fun clearFriendWaterBalloonEvent() {
             _onReceiveFriendWaterBalloon.resetReplayCache()
         }
 
