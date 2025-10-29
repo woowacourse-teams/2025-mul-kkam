@@ -10,10 +10,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
@@ -46,10 +49,15 @@ fun SentTab(
     }
 
     if (showDialog) {
-        CancelFriendsRequestDialog(
-            friendsRequest = requestToCancel ?: return,
+        MulKkamAlertDialog(
+            title =
+                stringResource(
+                    R.string.pending_friends_cancel_request_confirmed,
+                    requestToCancel?.nickname?.name ?: return,
+                ),
+            description = stringResource(R.string.pending_friends_cancel_request_warning),
             onConfirm = {
-                onCancel(requestToCancel ?: return@CancelFriendsRequestDialog)
+                onCancel(requestToCancel ?: return@MulKkamAlertDialog)
                 showDialog = false
             },
             onDismiss = { showDialog = false },
