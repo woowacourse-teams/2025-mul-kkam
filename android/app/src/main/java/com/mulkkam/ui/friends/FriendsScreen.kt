@@ -16,17 +16,18 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.friend.FriendsResult
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.friends.component.FriendDeleteConfirmationDialog
+import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.friends.component.FriendItem
 import com.mulkkam.ui.friends.component.FriendsEditModeButton
 import com.mulkkam.ui.friends.component.FriendsEmptyContent
@@ -119,8 +120,9 @@ fun FriendsScreen(
     if (friendToDelete != null) {
         val targetFriend = friendToDelete ?: return
 
-        FriendDeleteConfirmationDialog(
-            friend = targetFriend,
+        MulKkamAlertDialog(
+            title = stringResource(R.string.friends_delete_dialog_title, targetFriend.nickname),
+            description = stringResource(R.string.friends_delete_dialog_description),
             onConfirm = {
                 viewModel.deleteFriend(targetFriend.id)
                 friendToDelete = null
