@@ -15,6 +15,7 @@ import com.mulkkam.domain.repository.VersionsRepository
 import com.mulkkam.ui.util.MutableSingleLiveData
 import com.mulkkam.ui.util.SingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -180,6 +181,11 @@ class MainViewModel
             viewModelScope.launch {
                 _onReceiveFriendWaterBalloon.emit(Unit)
             }
+        }
+
+        @OptIn(ExperimentalCoroutinesApi::class)
+        fun clearFriendWaterBalloonEvent() {
+            _onReceiveFriendWaterBalloon.resetReplayCache()
         }
 
         private fun String.toNumericPart(): Int = numericPattern.find(this)?.value?.toIntOrNull() ?: 0
