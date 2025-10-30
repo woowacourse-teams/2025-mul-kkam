@@ -84,7 +84,7 @@ fun MulKkamSnackbarHost(
 }
 
 @Composable
-fun MulKkamSnackbar(
+private fun MulKkamSnackbar(
     message: String,
     @DrawableRes iconResourceId: Int,
     modifier: Modifier = Modifier,
@@ -103,7 +103,7 @@ fun MulKkamSnackbar(
 }
 
 @Composable
-fun MulKkamActionSnackbar(
+private fun MulKkamActionSnackbar(
     message: String,
     @DrawableRes iconResourceId: Int,
     actionLabel: String,
@@ -189,7 +189,7 @@ private fun MulKkamSnackbarAction(
     }
 }
 
-internal data class MulKkamSnackbarVisuals(
+private data class MulKkamSnackbarVisuals(
     override val message: String,
     @param:DrawableRes val iconResourceId: Int,
     override val actionLabel: String?,
@@ -202,13 +202,12 @@ suspend fun SnackbarHostState.showMulKkamSnackbar(
     @DrawableRes iconResourceId: Int,
     duration: SnackbarDuration = SnackbarDuration.Short,
 ): SnackbarResult {
-    val visuals: MulKkamSnackbarVisuals =
-        MulKkamSnackbarVisuals(
-            message = message,
-            iconResourceId = iconResourceId,
-            actionLabel = null,
-            duration = duration,
-        )
+    val visuals = MulKkamSnackbarVisuals(
+        message = message,
+        iconResourceId = iconResourceId,
+        actionLabel = null,
+        duration = duration,
+    )
     return showSnackbar(visuals = visuals)
 }
 
@@ -219,13 +218,12 @@ suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     duration: SnackbarDuration = SnackbarDuration.Short,
     onActionPerformed: () -> Unit = {},
 ): SnackbarResult {
-    val visuals: MulKkamSnackbarVisuals =
-        MulKkamSnackbarVisuals(
-            message = message,
-            iconResourceId = iconResourceId,
-            actionLabel = actionLabel,
-            duration = duration,
-        )
+    val visuals = MulKkamSnackbarVisuals(
+        message = message,
+        iconResourceId = iconResourceId,
+        actionLabel = actionLabel,
+        duration = duration,
+    )
     val result: SnackbarResult = showSnackbar(visuals = visuals)
     if (result == SnackbarResult.ActionPerformed) {
         onActionPerformed()
