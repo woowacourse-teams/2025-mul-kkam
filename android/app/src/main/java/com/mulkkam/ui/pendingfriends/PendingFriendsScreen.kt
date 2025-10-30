@@ -78,7 +78,7 @@ fun PendingFriendsScreen(
     }
 
     viewModel.onCancelRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleRejectRequestAction(state, snackbarHostState, context)
+        handleCancelRequestAction(state, snackbarHostState, context)
     }
 
     Scaffold(
@@ -186,6 +186,24 @@ private suspend fun handleRejectRequestAction(
         is MulKkamUiState.Success<Unit> -> {
             snackbarHostState.showMulKkamSnackbar(
                 message = context.getString(R.string.pending_friends_reject_success),
+                iconResourceId = R.drawable.ic_terms_all_check_on,
+            )
+        }
+
+        is MulKkamUiState.Failure -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+    }
+}
+
+private suspend fun handleCancelRequestAction(
+    state: MulKkamUiState<Unit>,
+    snackbarHostState: SnackbarHostState,
+    context: Context,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            snackbarHostState.showMulKkamSnackbar(
+                message = context.getString(R.string.pending_friends_cancel_success),
                 iconResourceId = R.drawable.ic_terms_all_check_on,
             )
         }
