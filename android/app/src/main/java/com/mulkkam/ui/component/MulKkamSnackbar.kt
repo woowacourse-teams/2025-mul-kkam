@@ -178,8 +178,7 @@ private fun MulKkamSnackbarAction(
                 .clickable(
                     onClick = currentOnActionClick,
                     onClickLabel = actionLabel,
-                )
-                .padding(horizontal = 8.dp, vertical = 6.dp),
+                ).padding(horizontal = 8.dp, vertical = 6.dp),
     ) {
         Text(
             text = actionLabel,
@@ -202,12 +201,13 @@ suspend fun SnackbarHostState.showMulKkamSnackbar(
     @DrawableRes iconResourceId: Int,
     duration: SnackbarDuration = SnackbarDuration.Short,
 ): SnackbarResult {
-    val visuals = MulKkamSnackbarVisuals(
-        message = message,
-        iconResourceId = iconResourceId,
-        actionLabel = null,
-        duration = duration,
-    )
+    val visuals =
+        MulKkamSnackbarVisuals(
+            message = message,
+            iconResourceId = iconResourceId,
+            actionLabel = null,
+            duration = duration,
+        )
     return showSnackbar(visuals = visuals)
 }
 
@@ -218,12 +218,13 @@ suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     duration: SnackbarDuration = SnackbarDuration.Short,
     onActionPerformed: () -> Unit = {},
 ): SnackbarResult {
-    val visuals = MulKkamSnackbarVisuals(
-        message = message,
-        iconResourceId = iconResourceId,
-        actionLabel = actionLabel,
-        duration = duration,
-    )
+    val visuals =
+        MulKkamSnackbarVisuals(
+            message = message,
+            iconResourceId = iconResourceId,
+            actionLabel = actionLabel,
+            duration = duration,
+        )
     val result: SnackbarResult = showSnackbar(visuals = visuals)
     if (result == SnackbarResult.ActionPerformed) {
         onActionPerformed()

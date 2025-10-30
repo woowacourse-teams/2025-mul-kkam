@@ -89,9 +89,10 @@ fun PendingFriendsScreen(
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .navigationBarsPadding(),
+            modifier =
+                Modifier
+                    .padding(innerPadding)
+                    .navigationBarsPadding(),
         ) {
             TabRow(
                 selectedTabIndex = pagerState.currentPage,
