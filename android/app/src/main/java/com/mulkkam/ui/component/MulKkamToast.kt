@@ -66,12 +66,6 @@ class MulKkamToastState {
             currentToastFlow.emit(value = null)
         }
     }
-
-    suspend fun dismissMulKkamToast() {
-        mutex.withLock {
-            currentToastFlow.emit(value = null)
-        }
-    }
 }
 
 @Composable
@@ -113,7 +107,7 @@ fun MulKkamToastHost(
 }
 
 @Composable
-fun MulKkamToast(
+private fun MulKkamToast(
     message: String,
     @DrawableRes iconResourceId: Int,
     modifier: Modifier = Modifier,
