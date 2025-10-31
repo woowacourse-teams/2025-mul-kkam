@@ -32,7 +32,7 @@ import com.mulkkam.ui.designsystem.White
 
 @Composable
 fun AppUpdateDialog(
-    openPlayStoreAndExit: () -> Unit,
+    navigateToPlayStoreAndExit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Dialog(
@@ -79,7 +79,7 @@ fun AppUpdateDialog(
                 )
 
                 Button(
-                    onClick = openPlayStoreAndExit,
+                    onClick = navigateToPlayStoreAndExit,
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -106,6 +106,6 @@ fun AppUpdateDialog(
 @Composable
 private fun AppUpdateDialogPreview() {
     MulkkamTheme {
-        AppUpdateDialog(openPlayStoreAndExit = {})
+        AppUpdateDialog(navigateToPlayStoreAndExit = {})
     }
 }
