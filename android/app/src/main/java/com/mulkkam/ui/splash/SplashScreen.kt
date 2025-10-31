@@ -27,6 +27,8 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.splash.component.SplashLottie
 
+private const val LOTTIE_START_PROGRESS: Float = 0.65f
+private const val LOTTIE_END_PROGRESS: Float = 1f
 private const val BLINK_PROGRESS: Float = 0.80f
 
 @Composable
@@ -41,7 +43,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     val progress by animateLottieCompositionAsState(
         composition = composition,
         iterations = 1,
-        clipSpec = LottieClipSpec.Progress(0.65f, 1f),
+        clipSpec = LottieClipSpec.Progress(LOTTIE_START_PROGRESS, LOTTIE_END_PROGRESS),
     )
 
     var isLottieFinished by rememberSaveable { mutableStateOf(false) }
@@ -49,7 +51,7 @@ fun SplashScreen(onFinished: () -> Unit) {
     LaunchedEffect(progress) {
         when {
             progress >= BLINK_PROGRESS && !isLottieFinished -> isLottieFinished = true
-            progress >= 1f -> onFinished()
+            progress >= LOTTIE_END_PROGRESS -> onFinished()
         }
     }
 
