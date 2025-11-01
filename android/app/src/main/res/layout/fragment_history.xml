@@ -67,7 +67,7 @@
                 android:backgroundTint="@color/white"
                 android:contentDescription="@string/history_week_next"
                 android:padding="8dp"
-                android:src="@drawable/btn_history_week_next"
+                android:src="@drawable/ic_common_next"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="@id/ib_week_prev" />
 
