@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.designsystem.White
 
 @Composable
 fun GradientDonutChart(
@@ -39,7 +38,7 @@ fun GradientDonutChart(
     val normalizedProgress = progress.coerceIn(0f, 100f) / 100f
 
     Box(
-        modifier = modifier.background(White),
+        modifier = modifier.background(Color.Transparent),
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)

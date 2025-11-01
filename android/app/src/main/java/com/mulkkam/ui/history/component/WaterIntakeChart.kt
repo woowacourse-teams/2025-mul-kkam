@@ -1,6 +1,5 @@
 package com.mulkkam.ui.history.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -23,7 +22,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
-import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -49,7 +47,6 @@ fun WaterIntakeChart(
         modifier =
             modifier
                 .clip(RoundedCornerShape(4.dp))
-                .background(Gray10)
                 .height(74.dp)
                 .width(40.dp)
                 .padding(4.dp),
