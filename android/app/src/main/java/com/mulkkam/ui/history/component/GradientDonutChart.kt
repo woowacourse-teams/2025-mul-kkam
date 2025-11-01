@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -36,12 +37,13 @@ fun GradientDonutChart(
     rotationOffset: Float = -90f,
 ) {
     val normalizedProgress = progress.coerceIn(0f, 100f) / 100f
+    val strokePx = with(LocalDensity.current) { strokeWidth.toPx() }
 
     Box(
         modifier = modifier.background(Color.Transparent),
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
-            val stroke = Stroke(width = strokeWidth.toPx(), cap = StrokeCap.Round)
+            val stroke = Stroke(width = strokePx, cap = StrokeCap.Round)
             val pairs =
                 gradientStops.zip(gradientColors) { stop, color -> stop to color }.toTypedArray()
 
