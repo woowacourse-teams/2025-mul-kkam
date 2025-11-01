@@ -2,7 +2,6 @@ package com.mulkkam.ui.history.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +17,7 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.extensions.noRippleClickable
 import java.time.LocalDate
 
 @Composable
@@ -47,7 +47,7 @@ fun WeeklyWaterIntakeChart(
 
             WaterIntakeChart(
                 intakeHistorySummary = it,
-                modifier = chartModifier.clickable { onClickDate(it, currentDate) },
+                modifier = chartModifier.noRippleClickable(onClick = { onClickDate(it, currentDate) }).weight(1f),
             )
         }
     }

@@ -5,9 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -47,8 +45,6 @@ fun WaterIntakeChart(
         modifier =
             modifier
                 .clip(RoundedCornerShape(4.dp))
-                .height(74.dp)
-                .width(40.dp)
                 .padding(4.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
