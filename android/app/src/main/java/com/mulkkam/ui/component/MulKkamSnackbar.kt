@@ -201,6 +201,7 @@ suspend fun SnackbarHostState.showMulKkamSnackbar(
     @DrawableRes iconResourceId: Int,
     duration: SnackbarDuration = SnackbarDuration.Short,
 ): SnackbarResult {
+    currentSnackbarData?.dismiss()
     val visuals =
         MulKkamSnackbarVisuals(
             message = message,
@@ -218,6 +219,7 @@ suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     duration: SnackbarDuration = SnackbarDuration.Short,
     onActionPerformed: () -> Unit = {},
 ): SnackbarResult {
+    currentSnackbarData?.dismiss()
     val visuals =
         MulKkamSnackbarVisuals(
             message = message,

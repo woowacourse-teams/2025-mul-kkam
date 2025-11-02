@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +29,8 @@ import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -42,6 +45,7 @@ fun SettingReminderScreen(
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
     val reminderUpdateUiState by viewModel.reminderUpdateUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
     val showBottomSheet = reminderUpdateUiState !is ReminderUpdateUiState.Idle
 
@@ -51,6 +55,7 @@ fun SettingReminderScreen(
                 state = state,
                 snackbarHostState = snackbarHostState,
                 context = context,
+                coroutineScope = coroutineScope,
             )
         }
     }
@@ -89,23 +94,28 @@ fun SettingReminderScreen(
     }
 }
 
-private suspend fun handleReminderUpdateAction(
+private fun handleReminderUpdateAction(
     state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
     context: Context,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Failure -> {
             if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(context, R.string.setting_reminder_duplicated_schedule),
-                    iconResourceId = R.drawable.ic_info_circle,
-                )
+                coroutineScope.launch {
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(context, R.string.setting_reminder_duplicated_schedule),
+                        iconResourceId = R.drawable.ic_info_circle,
+                    )
+                }
             } else {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(context, R.string.network_check_error),
-                    iconResourceId = R.drawable.ic_info_circle,
-                )
+                coroutineScope.launch {
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(context, R.string.network_check_error),
+                        iconResourceId = R.drawable.ic_info_circle,
+                    )
+                }
             }
         }
 

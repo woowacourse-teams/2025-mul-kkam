@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -43,7 +44,9 @@ import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.onLoadMore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
@@ -56,6 +59,7 @@ fun SearchMembersScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
@@ -72,6 +76,7 @@ fun SearchMembersScreen(
             state = state,
             snackbarHostState = snackbarHostState,
             context = context,
+            coroutineScope = coroutineScope,
         )
     }
 
@@ -81,6 +86,7 @@ fun SearchMembersScreen(
             snackbarHostState = snackbarHostState,
             context = context,
             onFriendAccepted = onFriendAccepted,
+            coroutineScope = coroutineScope,
         )
     }
 
@@ -159,46 +165,54 @@ fun SearchMembersScreen(
     }
 }
 
-private suspend fun handleRequestFriendsAction(
+private fun handleRequestFriendsAction(
     state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
     context: Context,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message = getString(context, R.string.search_friends_request_success),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(context, R.string.search_friends_request_success),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
         }
 
         is MulKkamUiState.Failure -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message = getString(context, R.string.search_friends_request_failed),
-                iconResourceId = R.drawable.ic_alert_circle,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(context, R.string.search_friends_request_failed),
+                    iconResourceId = R.drawable.ic_alert_circle,
+                )
+            }
         }
 
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
     }
 }
 
-private suspend fun handleAcceptFriendsAction(
+private fun handleAcceptFriendsAction(
     state: MulKkamUiState<String>,
     snackbarHostState: SnackbarHostState,
     context: Context,
     onFriendAccepted: () -> Unit,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<String> -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message =
-                    context.getString(
-                        R.string.search_friends_accept_success,
-                        state.toSuccessDataOrNull(),
-                    ),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message =
+                        context.getString(
+                            R.string.search_friends_accept_success,
+                            state.toSuccessDataOrNull(),
+                        ),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
             onFriendAccepted()
         }
 

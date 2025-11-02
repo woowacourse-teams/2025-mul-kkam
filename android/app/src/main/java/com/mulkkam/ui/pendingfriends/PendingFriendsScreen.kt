@@ -41,6 +41,7 @@ import com.mulkkam.ui.pendingfriends.component.PendingFriendsTopAppBar
 import com.mulkkam.ui.pendingfriends.component.ReceivedTab
 import com.mulkkam.ui.pendingfriends.component.SentTab
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -70,15 +71,26 @@ fun PendingFriendsScreen(
             snackbarHostState = snackbarHostState,
             context = context,
             onFriendAccepted = onFriendAccepted,
+            coroutineScope = coroutineScope,
         )
     }
 
     viewModel.onRejectRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleRejectRequestAction(state, snackbarHostState, context)
+        handleRejectRequestAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            context = context,
+            coroutineScope = coroutineScope,
+        )
     }
 
     viewModel.onCancelRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleCancelRequestAction(state, snackbarHostState, context)
+        handleCancelRequestAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            context = context,
+            coroutineScope = coroutineScope,
+        )
     }
 
     Scaffold(
@@ -151,44 +163,52 @@ fun PendingFriendsScreen(
     }
 }
 
-private suspend fun handleAcceptRequestAction(
+private fun handleAcceptRequestAction(
     state: MulKkamUiState<String>,
     snackbarHostState: SnackbarHostState,
     context: Context,
     onFriendAccepted: () -> Unit,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<String> -> {
             val nickname = state.toSuccessDataOrNull() ?: return
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.pending_friends_accept_success, nickname),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.pending_friends_accept_success, nickname),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
             onFriendAccepted()
         }
 
         is MulKkamUiState.Failure -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message = getString(context, R.string.pending_friends_accept_failed),
-                iconResourceId = R.drawable.ic_info_circle,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(context, R.string.pending_friends_accept_failed),
+                    iconResourceId = R.drawable.ic_info_circle,
+                )
+            }
         }
 
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
     }
 }
 
-private suspend fun handleRejectRequestAction(
+private fun handleRejectRequestAction(
     state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
     context: Context,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.pending_friends_reject_success),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.pending_friends_reject_success),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
         }
 
         is MulKkamUiState.Failure -> Unit
@@ -196,17 +216,20 @@ private suspend fun handleRejectRequestAction(
     }
 }
 
-private suspend fun handleCancelRequestAction(
+private fun handleCancelRequestAction(
     state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
     context: Context,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.pending_friends_cancel_success),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.pending_friends_cancel_success),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
         }
 
         is MulKkamUiState.Failure -> Unit

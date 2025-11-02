@@ -59,6 +59,7 @@ fun HomeRoute(
             state = state,
             context = context,
             snackbarHostState = snackbarHostState,
+            coroutineScope = coroutineScope,
             onNavigateToCoffeeEncyclopedia = currentNavigateToCoffeeEncyclopedia.value,
         )
     }
@@ -97,10 +98,12 @@ private suspend fun handleTodayProgressFailure(
         }
 
         else ->
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.load_info_error),
-                iconResourceId = R.drawable.ic_alert_circle,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.load_info_error),
+                    iconResourceId = R.drawable.ic_alert_circle,
+                )
+            }
     }
 }
 
@@ -108,6 +111,7 @@ private suspend fun handleDrinkUiState(
     state: MulKkamUiState<IntakeInfo>,
     context: Context,
     snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
 ) {
     when (state) {
@@ -117,14 +121,17 @@ private suspend fun handleDrinkUiState(
                 amount = state.data.amount,
                 context = context,
                 snackbarHostState = snackbarHostState,
+                coroutineScope = coroutineScope,
                 onNavigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
             )
 
         is MulKkamUiState.Failure ->
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.manual_drink_network_error),
-                iconResourceId = R.drawable.ic_alert_circle,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.manual_drink_network_error),
+                    iconResourceId = R.drawable.ic_alert_circle,
+                )
+            }
 
         MulKkamUiState.Idle,
         MulKkamUiState.Loading,
@@ -137,22 +144,27 @@ private suspend fun showIntakeSuccessSnackbar(
     amount: Int,
     context: Context,
     snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
 ) {
     when (intakeType) {
         IntakeType.WATER ->
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(R.string.manual_drink_success, amount),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.manual_drink_success, amount),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
 
         IntakeType.COFFEE ->
-            snackbarHostState.showMulKkamActionSnackbar(
-                message = context.getString(R.string.manual_drink_success_coffee, amount),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-                actionLabel = context.getString(R.string.manual_drink_coffee_why),
-                onActionPerformed = onNavigateToCoffeeEncyclopedia,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamActionSnackbar(
+                    message = context.getString(R.string.manual_drink_success_coffee, amount),
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                    actionLabel = context.getString(R.string.manual_drink_coffee_why),
+                    onActionPerformed = onNavigateToCoffeeEncyclopedia,
+                )
+            }
 
         IntakeType.UNKNOWN -> Unit
     }

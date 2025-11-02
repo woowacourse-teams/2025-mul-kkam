@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -13,6 +14,8 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @Composable
 fun FriendsRoute(
@@ -23,12 +26,14 @@ fun FriendsRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    val coroutineScope = rememberCoroutineScope()
 
     viewModel.throwWaterBalloonResult.collectWithLifecycle(lifecycleOwner) { state ->
         handleThrowWaterBalloonResult(
             state = state,
             context = context,
             snackbarHostState = snackbarHostState,
+            coroutineScope = coroutineScope,
         )
     }
 
@@ -40,10 +45,11 @@ fun FriendsRoute(
     )
 }
 
-private suspend fun handleThrowWaterBalloonResult(
+private fun handleThrowWaterBalloonResult(
     state: MulKkamUiState<Friend>,
     context: Context,
     snackbarHostState: SnackbarHostState,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success -> {
@@ -53,10 +59,12 @@ private suspend fun handleThrowWaterBalloonResult(
                     R.string.friends_throw_water_balloon_success,
                     friend.nickname,
                 )
-            snackbarHostState.showMulKkamSnackbar(
-                message = message,
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = message,
+                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                )
+            }
         }
 
         is MulKkamUiState.Failure -> {
@@ -66,10 +74,12 @@ private suspend fun handleThrowWaterBalloonResult(
                 } else {
                     R.string.network_check_error to R.drawable.ic_alert_circle
                 }
-            snackbarHostState.showMulKkamSnackbar(
-                message = context.getString(messageResourceId),
-                iconResourceId = iconResourceId,
-            )
+            coroutineScope.launch {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(messageResourceId),
+                    iconResourceId = iconResourceId,
+                )
+            }
         }
 
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
