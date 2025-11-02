@@ -1,7 +1,5 @@
 package com.mulkkam.ui.splash
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
@@ -13,6 +11,9 @@ import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.UserAuthState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,9 +25,9 @@ class SplashViewModel
         private val onboardingRepository: OnboardingRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> =
-            MutableLiveData<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
-        val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
+        private val _authUiState: MutableStateFlow<MulKkamUiState<UserAuthState>> =
+            MutableStateFlow<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
+        val authUiState: StateFlow<MulKkamUiState<UserAuthState>> get() = _authUiState.asStateFlow()
 
         init {
             updateAuthState()
