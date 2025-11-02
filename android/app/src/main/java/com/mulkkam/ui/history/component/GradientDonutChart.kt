@@ -3,6 +3,7 @@ package com.mulkkam.ui.history.component
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -40,7 +41,7 @@ fun GradientDonutChart(
     val strokePx = with(LocalDensity.current) { strokeWidth.toPx() }
 
     Box(
-        modifier = modifier.background(Color.Transparent),
+        modifier = modifier.background(Color.Transparent).aspectRatio(1f),
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
             val stroke = Stroke(width = strokePx, cap = StrokeCap.Round)

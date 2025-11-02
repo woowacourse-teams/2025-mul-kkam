@@ -23,7 +23,7 @@ import java.time.LocalDate
 @Composable
 fun WeeklyWaterIntakeChart(
     intakeHistorySummaries: IntakeHistorySummaries,
-    onClickDate: (IntakeHistorySummary, LocalDate) -> Unit,
+    onClickDate: (IntakeHistorySummary) -> Unit,
     modifier: Modifier = Modifier,
     currentDate: LocalDate = LocalDate.now(),
 ) {
@@ -47,7 +47,7 @@ fun WeeklyWaterIntakeChart(
 
             WaterIntakeChart(
                 intakeHistorySummary = it,
-                modifier = chartModifier.noRippleClickable(onClick = { onClickDate(it, currentDate) }).weight(1f),
+                modifier = chartModifier.noRippleClickable(onClick = { onClickDate(it) }).weight(1f),
             )
         }
     }
@@ -113,7 +113,7 @@ private fun WeeklyWaterIntakeChartPreview() {
                             ),
                         ),
                 ),
-            onClickDate = { _, _ -> },
+            onClickDate = { _ -> },
         )
     }
 }
