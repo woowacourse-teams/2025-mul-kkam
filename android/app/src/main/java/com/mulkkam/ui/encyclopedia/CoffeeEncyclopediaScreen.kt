@@ -75,7 +75,7 @@ fun CoffeeEncyclopediaScreen(
                         .noRippleClickable(
                             onClick = { navigateToInformationSource(url.toUri()) },
                         ),
-                text = stringResource(R.string.coffee_encyclopedia_source_link),
+                text = stringResource(R.string.coffee_encyclopedia_source),
                 style = MulKkamTheme.typography.body5,
                 color = Primary300,
                 textDecoration = TextDecoration.Underline,
