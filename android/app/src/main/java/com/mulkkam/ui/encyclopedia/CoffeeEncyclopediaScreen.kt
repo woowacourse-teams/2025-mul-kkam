@@ -26,10 +26,8 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 @Composable
 fun CoffeeEncyclopediaScreen(
     navigateToBack: () -> Unit,
-    navigateToInformationSource: (Uri) -> Unit,
+    navigateToInformationSource: () -> Unit,
 ) {
-    val url = stringResource(R.string.coffee_encyclopedia_source)
-
     Scaffold(
         topBar = { CoffeeEncyclopediaTopAppBar(onBackClick = navigateToBack) },
         containerColor = White,
@@ -73,7 +71,7 @@ fun CoffeeEncyclopediaScreen(
                 modifier =
                     Modifier
                         .noRippleClickable(
-                            onClick = { navigateToInformationSource(url.toUri()) },
+                            onClick = { navigateToInformationSource() },
                         ),
                 text = stringResource(R.string.coffee_encyclopedia_source),
                 style = MulKkamTheme.typography.body5,

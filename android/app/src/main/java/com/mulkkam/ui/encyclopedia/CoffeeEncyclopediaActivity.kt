@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.core.net.toUri
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulkkamTheme
 
 class CoffeeEncyclopediaActivity : ComponentActivity() {
@@ -14,11 +16,11 @@ class CoffeeEncyclopediaActivity : ComponentActivity() {
             MulkkamTheme {
                 CoffeeEncyclopediaScreen(
                     navigateToBack = ::finish,
-                    navigateToInformationSource = { uri ->
+                    navigateToInformationSource = {
                         val intent =
                             Intent(
                                 Intent.ACTION_VIEW,
-                                uri,
+                                getString(R.string.coffee_encyclopedia_source).toUri(),
                             )
                         startActivity(intent)
                     },
