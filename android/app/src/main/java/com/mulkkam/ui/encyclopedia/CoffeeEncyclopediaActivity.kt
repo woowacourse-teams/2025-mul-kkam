@@ -14,7 +14,7 @@ class CoffeeEncyclopediaActivity : ComponentActivity() {
             MulkkamTheme {
                 CoffeeEncyclopediaScreen(
                     navigateToBack = ::finish,
-                    navigateToSource = { uri ->
+                    navigateToInformationSource = { uri ->
                         val intent =
                             Intent(
                                 Intent.ACTION_VIEW,
