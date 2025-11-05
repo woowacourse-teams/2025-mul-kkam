@@ -109,9 +109,10 @@ private fun SettingCupsHeader(
             text = stringResource(R.string.setting_cups_reset_default),
             style = MulKkamTheme.typography.label2,
             color = Gray300,
-            modifier = Modifier
-                .padding(12.dp)
-                .noRippleClickable(onClick = onResetClick),
+            modifier =
+                Modifier
+                    .padding(12.dp)
+                    .noRippleClickable(onClick = onResetClick),
         )
     }
 }
