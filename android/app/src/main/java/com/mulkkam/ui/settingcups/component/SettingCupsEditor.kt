@@ -3,8 +3,6 @@ package com.mulkkam.ui.settingcups.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,6 +45,8 @@ import kotlin.math.roundToInt
 val SETTING_CUPS_CUP_HEIGHT: Dp = 64.dp
 private val SETTING_CUPS_AUTO_SCROLL_THRESHOLD: Dp = 60.dp
 private val SETTING_CUPS_AUTO_SCROLL_STEP: Dp = 24.dp
+
+private const val ADD_CUP_KEY: String = "ADD_CUP_KEY"
 
 @Composable
 fun SettingCupsEditor(
@@ -272,7 +272,7 @@ private fun finishDrag(
 private fun SettingCupsItem.toStableKey(): Any =
     when (this) {
         is SettingCupsItem.CupItem -> value.id
-        SettingCupsItem.AddItem -> "add_item"
+        SettingCupsItem.AddItem -> ADD_CUP_KEY
     }
 
 private fun SnapshotStateList<SettingCupsItem>.move(
