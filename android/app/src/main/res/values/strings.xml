@@ -85,9 +85,11 @@
     <string name="setting_bio_info_complete_description">신체 정보가 저장되었어요</string>
 
     <string name="setting_cups_toolbar_title">나의 컵 설정</string>
+    <string name="setting_cups_toolbar_back_btn_description">나의 컵 설정 화면 뒤로가기 버튼</string>
     <string name="setting_cups_label_water">물</string>
     <string name="setting_cups_increment">+ %dml</string>
     <string name="setting_cups_cup_title">나만의 컵 목록</string>
+    <string name="setting_cups_reset_default">기본값으로 재설정</string>
     <string name="setting_cups_intake_type_water">물</string>
     <string name="setting_cups_intake_type_coffee">커피</string>
     <string name="setting_cups_intake_type_unknown">알 수 없음</string>
