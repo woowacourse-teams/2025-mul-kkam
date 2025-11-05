@@ -10,17 +10,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.mulkkam.R
-import com.mulkkam.domain.model.friend.Friend
-import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.main.Refreshable
-import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
 import com.mulkkam.ui.searchmembers.SearchMembersActivity
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -45,7 +38,7 @@ class FriendsFragment :
             ComposeView(requireContext()).apply {
                 setContent {
                     MulkkamTheme {
-                        FriendsScreen(
+                        FriendsRoute(
                             navigateToSearch = {
                                 val intent = SearchMembersActivity.newIntent(requireContext())
                                 activityResultSource = ActivityResultSource.SEARCH_MEMBERS
@@ -62,14 +55,6 @@ class FriendsFragment :
                 }
             }
         return composeView
-    }
-
-    override fun onViewCreated(
-        view: View,
-        savedInstanceState: Bundle?,
-    ) {
-        super.onViewCreated(view, savedInstanceState)
-        collectThrowWaterBalloonResult(view)
     }
 
     private fun initActivityResultLauncher() {
@@ -96,49 +81,6 @@ class FriendsFragment :
     override fun onReselected() {
         super.onReselected()
         refreshFriends()
-    }
-
-    private fun collectThrowWaterBalloonResult(anchorView: View) {
-        viewModel.throwWaterBalloonResult.collectWithLifecycle(viewLifecycleOwner) { state ->
-            when (state) {
-                is MulKkamUiState.Success -> handleThrowWaterBalloonSuccess(anchorView, state.data)
-                is MulKkamUiState.Failure -> handleThrowWaterBalloonFailure(anchorView, state.error)
-                else -> Unit
-            }
-        }
-    }
-
-    private fun handleThrowWaterBalloonSuccess(
-        anchorView: View,
-        friend: Friend,
-    ) {
-        val message: String =
-            getString(
-                R.string.friends_throw_water_balloon_success,
-                friend.nickname,
-            )
-        CustomSnackBar
-            .make(anchorView, message, R.drawable.ic_terms_all_check_on)
-            .apply {
-                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-            }.show()
-    }
-
-    private fun handleThrowWaterBalloonFailure(
-        anchorView: View,
-        error: MulKkamError,
-    ) {
-        val (messageResId, iconResId) =
-            if (error is MulKkamError.FriendsError.ReminderLimitExceeded) {
-                R.string.friends_water_balloon_limit_exceeded to R.drawable.ic_info_circle
-            } else {
-                R.string.network_check_error to R.drawable.ic_alert_circle
-            }
-        CustomSnackBar
-            .make(anchorView, getString(messageResId), iconResId)
-            .apply {
-                setTranslationY(MainActivity.SNACK_BAR_BOTTOM_NAV_OFFSET)
-            }.show()
     }
 
     private enum class ActivityResultSource(
