@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.mulkkam.R
@@ -29,8 +30,11 @@ import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
+import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
@@ -144,5 +148,32 @@ private fun IntakeType.toColorOrDefault(): Color {
         Gray200
     } else {
         Color(colorHex.toColorInt())
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsCupPreview() {
+    MulkkamTheme {
+        SettingCupsCup(
+            item =
+                SettingCupsItem.CupItem(
+                    CupUiModel(
+                        id = 1L,
+                        name = "대표 컵",
+                        amount = 300,
+                        rank = 1,
+                        intakeType = IntakeType.WATER,
+                        emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
+                        isRepresentative = true,
+                    ),
+                ),
+            onEdit = {},
+            dragHandleModifier = Modifier,
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
+        )
     }
 }

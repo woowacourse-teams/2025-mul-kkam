@@ -14,11 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,5 +57,13 @@ fun SettingCupsTopAppBar(onBackClick: () -> Unit) {
             thickness = 1.dp,
             color = Gray100,
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsTopAppBarPreview() {
+    MulkkamTheme {
+        SettingCupsTopAppBar(onBackClick = {})
     }
 }

@@ -14,22 +14,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.component.SETTING_CUPS_CUP_HEIGHT
 import com.mulkkam.ui.settingcups.component.SettingCupsEditor
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -126,3 +132,61 @@ fun SettingCupsLoading(modifier: Modifier = Modifier) {
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsScreenPreview() {
+    MulkkamTheme {
+        val previewItems =
+            remember {
+                mutableStateListOf<SettingCupsItem>().apply {
+                    addAll(previewCupItems().map { cup -> SettingCupsItem.CupItem(cup) })
+                    add(SettingCupsItem.AddItem)
+                }
+            }
+        SettingCupsScreen(
+            cupsUiState = MulKkamUiState.Success(CupsUiModel(previewCupItems(), isAddable = true)),
+            items = previewItems,
+            onResetClick = {},
+            onEditCup = {},
+            onAddCup = {},
+            onReorderCups = {},
+            paddingValues = PaddingValues(),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsLoadingPreview() {
+    MulkkamTheme {
+        SettingCupsLoading(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp),
+        )
+    }
+}
+
+private fun previewCupItems(): List<CupUiModel> =
+    listOf(
+        CupUiModel(
+            id = 1L,
+            name = "대표 컵",
+            amount = 300,
+            rank = 1,
+            intakeType = IntakeType.WATER,
+            emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
+            isRepresentative = true,
+        ),
+        CupUiModel(
+            id = 2L,
+            name = "커피 컵",
+            amount = 200,
+            rank = 2,
+            intakeType = IntakeType.COFFEE,
+            emoji = CupEmojiUiModel(id = 2L, cupEmojiUrl = ""),
+            isRepresentative = false,
+        ),
+    )

@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -24,14 +26,20 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -59,6 +67,7 @@ fun SettingCupsEditor(
     var dragOffset by remember { mutableFloatStateOf(0f) }
     var initialCupOrder by remember { mutableStateOf(emptyList<Long>()) }
     var initialSnapshot by remember { mutableStateOf(emptyList<SettingCupsItem>()) }
+    var autoScrollJob by remember { mutableStateOf<Job?>(null) }
 
     LazyColumn(
         state = lazyListState,
@@ -80,7 +89,7 @@ fun SettingCupsEditor(
                             .zIndex(if (isDragging) 1f else 0f)
                             .offset { IntOffset(x = 0, y = if (isDragging) dragOffset.roundToInt() else 0) }
                     val dragHandleModifier: Modifier =
-                        Modifier.pointerInput(items.size, draggingItemKey, itemKey) {
+                        Modifier.pointerInput(itemKey) {
                             detectDragGestures(
                                 onDragStart = {
                                     draggingItemKey = itemKey
@@ -119,17 +128,22 @@ fun SettingCupsEditor(
                                         dragOffset -= direction * adjustment
                                     }
 
-                                    autoScrollIfNeeded(
-                                        lazyListState = lazyListState,
-                                        draggedKey = itemKey,
-                                        dragOffset = dragOffset,
-                                        threshold = autoScrollThresholdPx,
-                                        scrollAmount = autoScrollStepPx,
-                                        coroutineScope = coroutineScope,
-                                    )
+                                    autoScrollJob?.cancel()
+                                    autoScrollJob =
+                                        autoScrollIfNeeded(
+                                            lazyListState = lazyListState,
+                                            draggedKey = itemKey,
+                                            dragOffset = dragOffset,
+                                            threshold = autoScrollThresholdPx,
+                                            scrollAmount = autoScrollStepPx,
+                                            coroutineScope = coroutineScope,
+                                            onAutoScroll = { scrolled -> dragOffset += scrolled },
+                                        )
                                 },
                                 onDragEnd = {
                                     if (draggingItemKey != itemKey) return@detectDragGestures
+                                    autoScrollJob?.cancel()
+                                    autoScrollJob = null
                                     finishDrag(
                                         items = items,
                                         initialCupOrder = initialCupOrder,
@@ -143,6 +157,8 @@ fun SettingCupsEditor(
                                 },
                                 onDragCancel = {
                                     if (draggingItemKey != itemKey) return@detectDragGestures
+                                    autoScrollJob?.cancel()
+                                    autoScrollJob = null
                                     if (initialSnapshot.isNotEmpty()) {
                                         items.replaceAll(initialSnapshot)
                                     }
@@ -175,6 +191,52 @@ fun SettingCupsEditor(
         }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsEditorPreview() {
+    MulkkamTheme {
+        val previewItems =
+            remember {
+                mutableStateListOf<SettingCupsItem>().apply {
+                    addAll(previewCupItems().map { cup -> SettingCupsItem.CupItem(cup) })
+                    add(SettingCupsItem.AddItem)
+                }
+            }
+        SettingCupsEditor(
+            items = previewItems,
+            onEditCup = {},
+            onAddCup = {},
+            onReorderCups = {},
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+        )
+    }
+}
+
+private fun previewCupItems(): List<CupUiModel> =
+    listOf(
+        CupUiModel(
+            id = 1L,
+            name = "대표 컵",
+            amount = 300,
+            rank = 1,
+            intakeType = IntakeType.WATER,
+            emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
+            isRepresentative = true,
+        ),
+        CupUiModel(
+            id = 2L,
+            name = "보조 컵",
+            amount = 250,
+            rank = 2,
+            intakeType = IntakeType.COFFEE,
+            emoji = CupEmojiUiModel(id = 2L, cupEmojiUrl = ""),
+            isRepresentative = false,
+        ),
+    )
 
 private fun calculateTargetIndex(
     lazyListState: LazyListState,
@@ -211,21 +273,34 @@ private fun autoScrollIfNeeded(
     threshold: Float,
     scrollAmount: Float,
     coroutineScope: CoroutineScope,
-) {
+    onAutoScroll: (Float) -> Unit,
+): Job? {
     val layoutInfo = lazyListState.layoutInfo
     val draggedItemInfo: LazyListItemInfo =
-        layoutInfo.visibleItemsInfo.firstOrNull { it.key == draggedKey } ?: return
+        layoutInfo.visibleItemsInfo.firstOrNull { it.key == draggedKey } ?: return null
     val viewportStart = layoutInfo.viewportStartOffset
     val viewportEnd = layoutInfo.viewportEndOffset
     val draggedTop = draggedItemInfo.offset + dragOffset
     val draggedBottom = draggedTop + draggedItemInfo.size
 
-    when {
+    return when {
         draggedTop < viewportStart + threshold ->
-            coroutineScope.launch { lazyListState.scrollBy(-scrollAmount) }
+            coroutineScope.launch {
+                val consumed = lazyListState.scrollBy(-scrollAmount)
+                if (consumed != 0f) {
+                    onAutoScroll(consumed)
+                }
+            }
 
         draggedBottom > viewportEnd - threshold ->
-            coroutineScope.launch { lazyListState.scrollBy(scrollAmount) }
+            coroutineScope.launch {
+                val consumed = lazyListState.scrollBy(scrollAmount)
+                if (consumed != 0f) {
+                    onAutoScroll(consumed)
+                }
+            }
+
+        else -> null
     }
 }
 
