@@ -52,7 +52,7 @@ fun SettingCupsCup(
         modifier =
             modifier
                 .background(White)
-                .padding(vertical = 12.dp),
+                .padding(vertical = 12.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Image(
@@ -60,10 +60,11 @@ fun SettingCupsCup(
             contentDescription = null,
             modifier =
                 Modifier
-                    .padding(start = 18.dp, end = 12.dp)
-                    .size(24.dp)
+                    .size(40.dp)
+                    .padding(8.dp)
                     .then(dragHandleModifier),
         )
+        Spacer(modifier = Modifier.width(6.dp))
         Row(
             modifier =
                 Modifier
@@ -135,8 +136,8 @@ fun SettingCupsCup(
                 contentDescription = null,
                 modifier =
                     Modifier
-                        .padding(end = 18.dp, start = 6.dp)
-                        .size(24.dp),
+                        .size(40.dp)
+                        .padding(6.dp),
             )
         }
     }

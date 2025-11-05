@@ -5,10 +5,12 @@ import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
@@ -32,7 +34,6 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import com.mulkkam.domain.model.intake.IntakeType
-import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -72,8 +73,6 @@ fun SettingCupsEditor(
     LazyColumn(
         state = lazyListState,
         modifier = modifier.background(White),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(vertical = 8.dp),
     ) {
         itemsIndexed(
             items = items,
@@ -179,6 +178,7 @@ fun SettingCupsEditor(
                 }
 
                 SettingCupsItem.AddItem -> {
+                    Spacer(modifier = Modifier.size(18.dp))
                     SettingCupsAdd(
                         onClick = onAddCup,
                         modifier =
@@ -191,52 +191,6 @@ fun SettingCupsEditor(
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-private fun SettingCupsEditorPreview() {
-    MulkkamTheme {
-        val previewItems =
-            remember {
-                mutableStateListOf<SettingCupsItem>().apply {
-                    addAll(previewCupItems().map { cup -> SettingCupsItem.CupItem(cup) })
-                    add(SettingCupsItem.AddItem)
-                }
-            }
-        SettingCupsEditor(
-            items = previewItems,
-            onEditCup = {},
-            onAddCup = {},
-            onReorderCups = {},
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 24.dp),
-        )
-    }
-}
-
-private fun previewCupItems(): List<CupUiModel> =
-    listOf(
-        CupUiModel(
-            id = 1L,
-            name = "대표 컵",
-            amount = 300,
-            rank = 1,
-            intakeType = IntakeType.WATER,
-            emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
-            isRepresentative = true,
-        ),
-        CupUiModel(
-            id = 2L,
-            name = "보조 컵",
-            amount = 250,
-            rank = 2,
-            intakeType = IntakeType.COFFEE,
-            emoji = CupEmojiUiModel(id = 2L, cupEmojiUrl = ""),
-            isRepresentative = false,
-        ),
-    )
 
 private fun calculateTargetIndex(
     lazyListState: LazyListState,
@@ -336,3 +290,48 @@ private fun SnapshotStateList<SettingCupsItem>.replaceAll(newItems: List<Setting
 }
 
 private fun SnapshotStateList<SettingCupsItem>.cupItems(): List<SettingCupsItem.CupItem> = filterIsInstance<SettingCupsItem.CupItem>()
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingCupsEditorPreview() {
+    MulkkamTheme {
+        val previewItems =
+            remember {
+                mutableStateListOf<SettingCupsItem>().apply {
+                    addAll(
+                        listOf(
+                            CupUiModel(
+                                id = 1L,
+                                name = "대표 컵",
+                                amount = 300,
+                                rank = 1,
+                                intakeType = IntakeType.WATER,
+                                emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
+                                isRepresentative = true,
+                            ),
+                            CupUiModel(
+                                id = 2L,
+                                name = "보조 컵",
+                                amount = 250,
+                                rank = 2,
+                                intakeType = IntakeType.COFFEE,
+                                emoji = CupEmojiUiModel(id = 2L, cupEmojiUrl = ""),
+                                isRepresentative = false,
+                            ),
+                        ).map { cup -> SettingCupsItem.CupItem(cup) },
+                    )
+                    add(SettingCupsItem.AddItem)
+                }
+            }
+        SettingCupsEditor(
+            items = previewItems,
+            onEditCup = {},
+            onAddCup = {},
+            onReorderCups = {},
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 24.dp),
+        )
+    }
+}

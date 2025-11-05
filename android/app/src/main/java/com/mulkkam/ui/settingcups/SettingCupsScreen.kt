@@ -26,10 +26,10 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.designsystem.Gray100
+import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -61,10 +61,10 @@ fun SettingCupsScreen(
             modifier =
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 24.dp, end = 24.dp, top = 24.dp),
+                    .padding(start = 24.dp, end = 12.dp, top = 24.dp),
             onResetClick = onResetClick,
         )
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(2.dp))
         Box(
             modifier =
                 Modifier
@@ -107,9 +107,11 @@ private fun SettingCupsHeader(
         Spacer(modifier = Modifier.weight(1f))
         Text(
             text = stringResource(R.string.setting_cups_reset_default),
-            style = MulKkamTheme.typography.body4,
-            color = Primary200,
-            modifier = Modifier.noRippleClickable(onClick = onResetClick),
+            style = MulKkamTheme.typography.label2,
+            color = Gray300,
+            modifier = Modifier
+                .padding(12.dp)
+                .noRippleClickable(onClick = onResetClick),
         )
     }
 }
