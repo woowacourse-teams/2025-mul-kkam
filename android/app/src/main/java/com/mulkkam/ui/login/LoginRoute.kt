@@ -68,8 +68,8 @@ fun LoginRoute(
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
 
-            MulKkamUiState.Idle,
-            MulKkamUiState.Loading,
+            is MulKkamUiState.Idle,
+            is MulKkamUiState.Loading,
             -> Unit
         }
     }
