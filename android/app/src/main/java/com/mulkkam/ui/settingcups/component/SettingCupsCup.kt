@@ -45,111 +45,139 @@ fun SettingCupsCup(
     @SuppressLint("ModifierParameter") dragHandleModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
-    val intakeTypeColor: Color = item.value.intakeType.toColorOrDefault()
-    val intakeTypeLabel: String = item.value.intakeType.toLabel()
+    val intakeTypeColor = item.value.intakeType.toColorOrDefault()
+    val intakeTypeLabel = item.value.intakeType.toLabel()
 
     Row(
-        modifier =
-            modifier
-                .background(White)
-                .padding(vertical = 12.dp, horizontal = 18.dp),
+        modifier = modifier
+            .background(White)
+            .padding(vertical = 12.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Image(
-            painter = painterResource(R.drawable.btn_setting_cup_move),
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .size(40.dp)
-                    .padding(8.dp)
-                    .then(dragHandleModifier),
-        )
+        DragHandle(dragHandleModifier)
         Spacer(modifier = Modifier.width(6.dp))
-        Row(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .noRippleClickable(onClick = onEdit),
-            verticalAlignment = Alignment.CenterVertically,
+
+        CupBody(
+            name = item.value.name,
+            emojiUrl = item.value.emoji.cupEmojiUrl,
+            isRepresentative = item.value.isRepresentative,
+            intakeTypeLabel = intakeTypeLabel,
+            intakeTypeColor = intakeTypeColor,
+            onEdit = onEdit,
+            modifier = Modifier.weight(1f),
+        )
+
+        Spacer(modifier = Modifier.width(12.dp))
+        AmountWithEdit(
+            amount = item.value.amount,
+            color = intakeTypeColor,
+        )
+    }
+}
+
+@Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.btn_setting_cup_move),
+        contentDescription = null,
+        modifier = Modifier
+            .size(40.dp)
+            .padding(8.dp)
+            .then(modifier),
+    )
+}
+
+@Composable
+private fun CupBody(
+    name: String,
+    emojiUrl: String,
+    isRepresentative: Boolean,
+    intakeTypeLabel: String,
+    intakeTypeColor: Color,
+    onEdit: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Row(
+        modifier = modifier.noRippleClickable(onClick = onEdit),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        NetworkImage(
+            url = emojiUrl,
+            placeholderRes = R.drawable.img_cup_placeholder,
+            modifier = Modifier
+                .size(32.dp)
+                .clip(RoundedCornerShape(12.dp)),
+            shape = ImageShape.Rounded(12),
+        )
+        Spacer(modifier = Modifier.width(12.dp))
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.Center,
         ) {
-            NetworkImage(
-                url = item.value.emoji.cupEmojiUrl,
-                placeholderRes = R.drawable.img_cup_placeholder,
-                modifier =
-                    Modifier
-                        .size(32.dp)
-                        .clip(RoundedCornerShape(12.dp)),
-                shape = ImageShape.Rounded(12),
-            )
-            Spacer(modifier = Modifier.width(12.dp))
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    if (item.value.isRepresentative) {
-                        Text(
-                            text = stringResource(R.string.setting_cup_representative),
-                            style = MulKkamTheme.typography.label2,
-                            color = White,
-                            modifier =
-                                Modifier
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(Black)
-                                    .padding(horizontal = 4.dp, vertical = 2.dp),
-                        )
-                        Spacer(modifier = Modifier.width(6.dp))
-                    }
-                    if (intakeTypeLabel.isNotBlank()) {
-                        Text(
-                            text = intakeTypeLabel,
-                            style = MulKkamTheme.typography.label2,
-                            color = White,
-                            modifier =
-                                Modifier
-                                    .clip(RoundedCornerShape(4.dp))
-                                    .background(intakeTypeColor)
-                                    .padding(horizontal = 4.dp, vertical = 2.dp),
-                        )
-                    }
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (isRepresentative) {
+                    Text(
+                        text = stringResource(R.string.setting_cup_representative),
+                        style = MulKkamTheme.typography.label2,
+                        color = White,
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(Black)
+                                .padding(horizontal = 4.dp, vertical = 2.dp),
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
                 }
-                Text(
-                    text = item.value.name,
-                    style = MulKkamTheme.typography.body4,
-                    color = Black,
-                    modifier = Modifier.padding(top = 2.dp),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (intakeTypeLabel.isNotBlank()) {
+                    Text(
+                        text = intakeTypeLabel,
+                        style = MulKkamTheme.typography.label2,
+                        color = White,
+                        modifier =
+                            Modifier
+                                .clip(RoundedCornerShape(4.dp))
+                                .background(intakeTypeColor)
+                                .padding(horizontal = 4.dp, vertical = 2.dp),
+                    )
+                }
             }
-            Spacer(modifier = Modifier.width(12.dp))
             Text(
-                text = stringResource(R.string.setting_cups_increment, item.value.amount),
+                text = name,
                 style = MulKkamTheme.typography.body4,
-                color = intakeTypeColor,
-            )
-            Spacer(modifier = Modifier.width(6.dp))
-            Image(
-                painter = painterResource(R.drawable.btn_setting_cups_edit),
-                contentDescription = null,
-                modifier =
-                    Modifier
-                        .size(40.dp)
-                        .padding(6.dp),
+                color = Black,
+                modifier = Modifier.padding(top = 2.dp),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
     }
 }
 
-private fun IntakeType.toColorOrDefault(): Color {
-    val colorHex: String = toColorHex()
-    return if (colorHex.isBlank()) {
-        Gray200
-    } else {
-        Color(colorHex.toColorInt())
+@Composable
+private fun AmountWithEdit(
+    amount: Int,
+    color: Color,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = stringResource(R.string.setting_cups_increment, amount),
+            style = MulKkamTheme.typography.body4,
+            color = color,
+        )
+        Spacer(modifier = Modifier.width(6.dp))
+        Image(
+            painter = painterResource(R.drawable.btn_setting_cups_edit),
+            contentDescription = null,
+            modifier = Modifier
+                .size(40.dp)
+                .padding(6.dp),
+        )
     }
+}
+
+private fun IntakeType.toColorOrDefault(): Color {
+    val colorHex = toColorHex()
+    return if (colorHex.isBlank()) Gray200 else Color(colorHex.toColorInt())
 }
 
 @Preview(showBackground = true)
@@ -161,8 +189,8 @@ private fun SettingCupsCupPreview() {
                 SettingCupsItem.CupItem(
                     CupUiModel(
                         id = 1L,
-                        name = "대표 컵",
-                        amount = 300,
+                        name = "종이컵 1컵",
+                        amount = 1200,
                         rank = 1,
                         intakeType = IntakeType.WATER,
                         emoji = CupEmojiUiModel(id = 1L, cupEmojiUrl = ""),
@@ -171,10 +199,9 @@ private fun SettingCupsCupPreview() {
                 ),
             onEdit = {},
             dragHandleModifier = Modifier,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 24.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp),
         )
     }
 }
