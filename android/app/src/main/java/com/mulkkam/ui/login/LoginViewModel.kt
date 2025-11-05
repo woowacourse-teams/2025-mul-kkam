@@ -1,7 +1,5 @@
 package com.mulkkam.ui.login
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -11,9 +9,13 @@ import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.domain.repository.VersionsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.UserAuthState
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,22 +28,22 @@ class LoginViewModel
         private val authRepository: AuthRepository,
         private val tokenRepository: TokenRepository,
     ) : ViewModel() {
-        private val _authUiState: MutableLiveData<MulKkamUiState<UserAuthState>> =
-            MutableLiveData<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
-        val authUiState: LiveData<MulKkamUiState<UserAuthState>> get() = _authUiState
+        private val _authUiState: MutableStateFlow<MulKkamUiState<UserAuthState>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val authUiState: StateFlow<MulKkamUiState<UserAuthState>> get() = _authUiState.asStateFlow()
 
-        private val _isAppOutdated: MutableSingleLiveData<Boolean> = MutableSingleLiveData()
-        val isAppOutdated: SingleLiveData<Boolean> get() = _isAppOutdated
+        private val _isAppOutdated: MutableSharedFlow<Boolean> =
+            MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
+        val isAppOutdated: SharedFlow<Boolean> get() = _isAppOutdated.asSharedFlow()
 
         private val numericPattern = Regex("""^\d+""")
 
         fun checkAppVersion(currentVersionName: String) {
             viewModelScope.launch {
-                runCatching {
-                    versionsRepository.getMinimumVersion().getOrError()
-                }.onSuccess { minimumVersion ->
-                    _isAppOutdated.setValue(isOutdated(currentVersionName, minimumVersion))
-                }
+                val minimumVersionResult: Result<String> =
+                    runCatching { versionsRepository.getMinimumVersion().getOrError() }
+                val minimumVersion: String = minimumVersionResult.getOrNull() ?: return@launch
+                _isAppOutdated.emit(isOutdated(currentVersionName, minimumVersion))
             }
         }
 
