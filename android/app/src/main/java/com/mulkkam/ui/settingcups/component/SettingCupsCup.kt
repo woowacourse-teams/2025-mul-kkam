@@ -49,9 +49,10 @@ fun SettingCupsCup(
     val intakeTypeLabel = item.value.intakeType.toLabel()
 
     Row(
-        modifier = modifier
-            .background(White)
-            .padding(vertical = 12.dp, horizontal = 18.dp),
+        modifier =
+            modifier
+                .background(White)
+                .padding(vertical = 12.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         DragHandle(dragHandleModifier)
@@ -80,10 +81,11 @@ private fun DragHandle(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.btn_setting_cup_move),
         contentDescription = null,
-        modifier = Modifier
-            .size(40.dp)
-            .padding(8.dp)
-            .then(modifier),
+        modifier =
+            Modifier
+                .size(40.dp)
+                .padding(8.dp)
+                .then(modifier),
     )
 }
 
@@ -104,9 +106,10 @@ private fun CupBody(
         NetworkImage(
             url = emojiUrl,
             placeholderRes = R.drawable.img_cup_placeholder,
-            modifier = Modifier
-                .size(32.dp)
-                .clip(RoundedCornerShape(12.dp)),
+            modifier =
+                Modifier
+                    .size(32.dp)
+                    .clip(RoundedCornerShape(12.dp)),
             shape = ImageShape.Rounded(12),
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -168,9 +171,10 @@ private fun AmountWithEdit(
         Image(
             painter = painterResource(R.drawable.btn_setting_cups_edit),
             contentDescription = null,
-            modifier = Modifier
-                .size(40.dp)
-                .padding(6.dp),
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .padding(6.dp),
         )
     }
 }
@@ -199,9 +203,10 @@ private fun SettingCupsCupPreview() {
                 ),
             onEdit = {},
             dragHandleModifier = Modifier,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 24.dp),
         )
     }
 }
