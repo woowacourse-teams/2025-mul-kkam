@@ -1,20 +1,29 @@
 package com.mulkkam.ui.history
 
+import android.R.attr.top
 import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -27,6 +36,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,6 +57,8 @@ import com.mulkkam.ui.history.component.IntakeHistoryItem
 import com.mulkkam.ui.history.component.WeeklyWaterIntakeChart
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.notification.component.NotificationShimmerItem
+import com.mulkkam.ui.util.LoadingShimmerEffect
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -86,6 +98,16 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
             Modifier
                 .fillMaxSize(),
     ) {
+        if (weeklyIntakeHistories == MulKkamUiState.Loading) {
+            LoadingShimmerEffect {
+                HistoryShimmerScreen(it)
+            }
+        }
+
+        val weeklyIntakeHistorySummaries =
+            weeklyIntakeHistories.toSuccessDataOrNull() ?: return@Box
+        val date = dailyIntakeHistory.date
+
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
         ) {
@@ -100,10 +122,6 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                 Spacer(modifier = Modifier.height(16.dp))
             }
             stickyHeader {
-                val weeklyIntakeHistorySummaries =
-                    weeklyIntakeHistories.toSuccessDataOrNull() ?: return@stickyHeader
-                val date = dailyIntakeHistory.date
-
                 WeeklyWaterIntakeChart(
                     weeklyIntakeHistorySummaries = weeklyIntakeHistorySummaries,
                     onClickDate = { intakeHistorySummary ->
