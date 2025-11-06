@@ -45,7 +45,7 @@ class HistoryViewModel
         val waterIntakeState: StateFlow<WaterIntakeState> get() = _waterIntakeState.asStateFlow()
 
         private val _deleteUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-            MutableStateFlow<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+            MutableStateFlow(MulKkamUiState.Idle)
         val deleteUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteUiState
 
         init {

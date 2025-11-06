@@ -166,6 +166,7 @@ sealed class ResponseError(
 
                 // History
                 HistoryError.InvalidDateRange.code -> HistoryError.InvalidDateRange
+                HistoryError.InvalidDateForDelete.code -> HistoryError.InvalidDateForDelete
 
                 // Friends
                 FriendsError.ReminderLimitExceeded.code -> FriendsError.ReminderLimitExceeded
