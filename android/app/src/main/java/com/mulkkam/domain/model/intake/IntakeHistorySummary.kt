@@ -27,8 +27,8 @@ data class IntakeHistorySummary(
         }
     }
 
-    fun afterDeleteHistory(history: IntakeHistory): IntakeHistorySummary {
-        val updatedHistories = this.intakeHistories.filter { it.id != history.id }
+    fun afterDeleteHistory(historyId: Int): IntakeHistorySummary {
+        val updatedHistories = this.intakeHistories.filter { it.id != historyId }
         val newTotalAmount = updatedHistories.sumOf { it.intakeAmount }
         val newAchievementRate =
             if (this.targetAmount > INTAKE_AMOUNT_EMPTY) {
