@@ -137,27 +137,15 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                 items = dailyIntakeHistory.intakeHistories,
                 key = { it.id },
             ) { intakeHistory ->
-                var visible by remember { mutableStateOf(false) }
-
-                LaunchedEffect(Unit) {
-                    visible = true
-                }
-
-                AnimatedVisibility(
-                    visible = visible,
-                    enter = fadeIn() + expandVertically(),
-                    exit = fadeOut() + shrinkVertically(),
-                ) {
-                    IntakeHistoryItem(
-                        intakeHistory = intakeHistory,
-                        modifier =
-                            Modifier
-                                .clickable {
-                                    deletedHistory = intakeHistory.id
-                                    showDialog = true
-                                },
-                    )
-                }
+                IntakeHistoryItem(
+                    intakeHistory = intakeHistory,
+                    modifier =
+                        Modifier
+                            .clickable {
+                                deletedHistory = intakeHistory.id
+                                showDialog = true
+                            },
+                )
             }
         }
 
