@@ -1,11 +1,15 @@
 package com.mulkkam.ui.history.component
 
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
@@ -37,27 +41,33 @@ fun GradientDonutChart(
     gradientStops: List<Float> = listOf(0.0f, 0.15f, 0.70f, 1.0f),
     rotationOffset: Float = -90f,
 ) {
-    val normalizedProgress = progress.coerceIn(0f, 100f) / 100f
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress.coerceIn(0f, 100f),
+        animationSpec = tween(800, easing = FastOutSlowInEasing),
+        label = "donut",
+    )
+
+    val normalized = animatedProgress / 100f
     val strokePx = with(LocalDensity.current) { strokeWidth.toPx() }
 
     Box(
-        modifier = modifier.background(Color.Transparent).aspectRatio(1f),
+        modifier =
+            modifier
+                .background(Color.Transparent)
+                .aspectRatio(1f),
     ) {
         Canvas(modifier = Modifier.matchParentSize()) {
-            val stroke = Stroke(width = strokePx, cap = StrokeCap.Round)
-            val pairs =
-                gradientStops.zip(gradientColors) { stop, color -> stop to color }.toTypedArray()
+            val diameter = size.minDimension
+            val inset = strokePx / 2f
 
-            val size = size.minDimension
-            val rect =
+            val arcRect =
                 Rect(
-                    offset =
-                        Offset(
-                            (this.size.width - size) / 2f + stroke.width / 2f,
-                            (this.size.height - size) / 2f + stroke.width / 2f,
-                        ),
-                    size = Size(size - stroke.width, size - stroke.width),
+                    offset = Offset(inset, inset),
+                    size = Size(diameter - strokePx, diameter - strokePx),
                 )
+
+            val stroke = Stroke(width = strokePx, cap = StrokeCap.Round)
+            val gradientPairs = gradientStops.zip(gradientColors)
 
             drawArc(
                 color = backgroundColor,
@@ -65,23 +75,25 @@ fun GradientDonutChart(
                 sweepAngle = 360f,
                 useCenter = false,
                 style = stroke,
-                topLeft = rect.topLeft,
-                size = rect.size,
+                topLeft = arcRect.topLeft,
+                size = arcRect.size,
             )
 
-            drawArc(
-                brush =
-                    Brush.sweepGradient(
-                        *pairs,
-                        center = center,
-                    ),
-                startAngle = rotationOffset,
-                sweepAngle = 360f * normalizedProgress,
-                useCenter = false,
-                style = stroke,
-                topLeft = rect.topLeft,
-                size = rect.size,
-            )
+            if (normalized > 0f) {
+                drawArc(
+                    brush =
+                        Brush.sweepGradient(
+                            colorStops = gradientPairs.toTypedArray(),
+                            center = center,
+                        ),
+                    startAngle = rotationOffset,
+                    sweepAngle = 360f * normalized,
+                    useCenter = false,
+                    style = stroke,
+                    topLeft = arcRect.topLeft,
+                    size = arcRect.size,
+                )
+            }
         }
     }
 }
