@@ -23,6 +23,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
@@ -45,12 +47,14 @@ import com.mulkkam.ui.history.component.IntakeHistoryItem
 import com.mulkkam.ui.history.component.WeeklyWaterIntakeChart
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
 
     val weeklyIntakeHistories by viewModel.weeklyIntakeHistoriesUiState.collectAsStateWithLifecycle()
     val dailyIntakeHistory by viewModel.dailyIntakeHistories.collectAsStateWithLifecycle()
@@ -142,6 +146,15 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                     modifier =
                         Modifier
                             .clickable {
+                                if (waterIntakeState !is WaterIntakeState.Present) {
+                                    coroutineScope.launch {
+                                        snackbarHostState.showMulKkamSnackbar(
+                                            message = context.getString(R.string.history_delete_failure_past),
+                                            iconResourceId = R.drawable.ic_alert_circle,
+                                        )
+                                    }
+                                    return@clickable
+                                }
                                 deletedHistory = intakeHistory.id
                                 showDialog = true
                             },
