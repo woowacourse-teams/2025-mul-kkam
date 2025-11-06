@@ -50,7 +50,7 @@ fun DailyWaterIntakeChart(
         Box(
             modifier =
                 Modifier
-                    .height(48.dp)
+                    .height(40.dp)
                     .fillMaxWidth(),
             contentAlignment = Alignment.BottomStart,
         ) {
