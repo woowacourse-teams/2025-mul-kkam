@@ -1,19 +1,27 @@
 package com.mulkkam.ui.home
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.ui.component.MulKkamSnackbarHost
+import com.mulkkam.ui.component.MulKkamToastHost
+import com.mulkkam.ui.component.MulKkamToastState
+import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
@@ -32,6 +40,8 @@ import com.mulkkam.ui.util.extensions.collectWithLifecycle
 fun HomeScreen(
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    toastState: MulKkamToastState,
     viewModel: HomeViewModel = hiltViewModel(),
     parentViewModel: MainViewModel = viewModel(),
 ) {
@@ -57,52 +67,63 @@ fun HomeScreen(
         parentViewModel.clearFriendWaterBalloonEvent()
     }
 
-    Scaffold(
-        topBar = {
-            HomeTopBar(
-                alarmUnreadCount = alarmCountUiState.toSuccessDataOrNull() ?: 0L,
-                onNotificationClick = navigateToNotification,
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                HomeTopBar(
+                    alarmUnreadCount = alarmCountUiState.toSuccessDataOrNull() ?: 0L,
+                    onNotificationClick = navigateToNotification,
+                )
+            },
+            floatingActionButton = {
+                DrinkButton(
+                    cups = cupsUiState.toSuccessDataOrNull(),
+                    onSelectCup = { cupId -> viewModel.addWaterIntakeByCup(cupId) },
+                    onManual = onManualDrink,
+                )
+            },
+        ) { padding ->
+            val today = todayProgressUiState.toSuccessDataOrNull()
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(White)
+                        .navigationBarsPadding()
+                        .padding(padding),
+            ) {
+                HomeProgressOverview(
+                    nickname = today?.nickname,
+                    streak = today?.streak,
+                    achievementRate = today?.achievementRate ?: 0f,
+                    totalAmount = today?.totalAmount,
+                    targetAmount = today?.targetAmount,
+                )
+                HomeCharacter(
+                    isDrinking = uiStateHolder.isDrinking,
+                    comment = today?.comment,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+
+            HomeConfetti(
+                playConfetti = uiStateHolder.playConfetti,
+                onFinished = { uiStateHolder.onConfettiFinished() },
             )
-        },
-        floatingActionButton = {
-            DrinkButton(
-                cups = cupsUiState.toSuccessDataOrNull(),
-                onSelectCup = { cupId -> viewModel.addWaterIntakeByCup(cupId) },
-                onManual = onManualDrink,
-            )
-        },
-    ) { padding ->
-        val today = todayProgressUiState.toSuccessDataOrNull()
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(White)
-                    .navigationBarsPadding()
-                    .padding(padding),
-        ) {
-            HomeProgressOverview(
-                nickname = today?.nickname,
-                streak = today?.streak,
-                achievementRate = today?.achievementRate ?: 0f,
-                totalAmount = today?.totalAmount,
-                targetAmount = today?.targetAmount,
-            )
-            HomeCharacter(
-                isDrinking = uiStateHolder.isDrinking,
-                comment = today?.comment,
-                modifier = Modifier.weight(1f),
+
+            FriendWaterBalloonExplodeLottie(
+                playConfetti = uiStateHolder.playFriendWaterBalloonExplode,
+                onFinished = { uiStateHolder.onFriendWaterBalloonExplodeFinished() },
             )
         }
 
-        HomeConfetti(
-            playConfetti = uiStateHolder.playConfetti,
-            onFinished = { uiStateHolder.onConfettiFinished() },
+        MulKkamSnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
-
-        FriendWaterBalloonExplodeLottie(
-            playConfetti = uiStateHolder.playFriendWaterBalloonExplode,
-            onFinished = { uiStateHolder.onFriendWaterBalloonExplodeFinished() },
+        MulKkamToastHost(
+            state = toastState,
+            modifier = Modifier.align(Alignment.BottomCenter),
         )
     }
 }
@@ -110,13 +131,19 @@ fun HomeScreen(
 @Preview(showBackground = true)
 @Composable
 private fun HomeScreenPreview() {
+    val parentViewModel: MainViewModel = viewModel()
     val viewModel: HomeViewModel = viewModel()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val toastState = rememberMulKkamToastState()
 
     MulkkamTheme {
         HomeScreen(
-            viewModel = viewModel,
             navigateToNotification = {},
             onManualDrink = {},
+            snackbarHostState = snackbarHostState,
+            toastState = toastState,
+            viewModel = viewModel,
+            parentViewModel = parentViewModel,
         )
     }
 }

@@ -1,25 +1,26 @@
 package com.mulkkam.ui.settingreminder
 
 import android.content.Context
-import android.view.View
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.component.MulKkamSnackbarHost
+import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
@@ -28,6 +29,8 @@ import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,23 +40,30 @@ fun SettingReminderScreen(
     viewModel: SettingReminderViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
-    val view = LocalView.current
+    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val modalBottomSheetState = rememberModalBottomSheetState()
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
     val reminderUpdateUiState by viewModel.reminderUpdateUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
     val showBottomSheet = reminderUpdateUiState !is ReminderUpdateUiState.Idle
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(snackbarHostState) {
         viewModel.onReminderUpdated.collect { state ->
-            handleReminderUpdateAction(state, view, context)
+            handleReminderUpdateAction(
+                state = state,
+                snackbarHostState = snackbarHostState,
+                context = context,
+                coroutineScope = coroutineScope,
+            )
         }
     }
 
     Scaffold(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
         containerColor = White,
+        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
@@ -86,25 +96,26 @@ fun SettingReminderScreen(
 
 private fun handleReminderUpdateAction(
     state: MulKkamUiState<Unit>,
-    view: View,
+    snackbarHostState: SnackbarHostState,
     context: Context,
+    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Failure -> {
             if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
-                CustomSnackBar
-                    .make(
-                        view,
-                        getString(context, R.string.setting_reminder_duplicated_schedule),
-                        R.drawable.ic_info_circle,
-                    ).show()
+                coroutineScope.launch {
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(context, R.string.setting_reminder_duplicated_schedule),
+                        iconResourceId = R.drawable.ic_info_circle,
+                    )
+                }
             } else {
-                CustomSnackBar
-                    .make(
-                        view,
-                        getString(context, R.string.network_check_error),
-                        R.drawable.ic_info_circle,
-                    ).show()
+                coroutineScope.launch {
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(context, R.string.network_check_error),
+                        iconResourceId = R.drawable.ic_info_circle,
+                    )
+                }
             }
         }
 
