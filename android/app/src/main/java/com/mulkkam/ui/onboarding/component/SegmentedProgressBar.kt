@@ -1,15 +1,11 @@
 package com.mulkkam.ui.onboarding.component
 
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.snapping.SnapPosition
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,12 +16,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mulkkam.ui.custom.progress.SegmentedProgressBarView
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.designsystem.Secondary100
-import com.mulkkam.ui.designsystem.White
 
 private const val MAX_SEGMENT_COUNT_DEFAULT: Int = 5
 private const val PROCESS_MIN_VALUE: Int = 0
