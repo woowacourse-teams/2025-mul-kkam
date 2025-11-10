@@ -113,7 +113,7 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                         )
                     },
                     currentDate = date,
-                    onClickButton = { offset -> viewModel.moveWeek(offset) },
+                    onClickButton = { weeksToMove -> viewModel.moveWeek(weeksToMove) },
                     isNotCurrentWeek = isNotCurrentWeek,
                 )
             }

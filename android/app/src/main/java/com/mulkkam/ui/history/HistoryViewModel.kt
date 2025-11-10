@@ -104,11 +104,11 @@ class HistoryViewModel
             _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)
         }
 
-        fun moveWeek(offset: Long) {
+        fun moveWeek(weeksToMove: Long) {
             val current = weeklyIntakeHistoriesUiState.value
             if (current !is MulKkamUiState.Success) return
 
-            val newReferenceDate = current.data.getDateByWeekOffset(offset)
+            val newReferenceDate = current.data.getDateByWeekOffset(weeksToMove)
             loadIntakeHistories(newReferenceDate)
         }
 
