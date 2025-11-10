@@ -29,7 +29,7 @@ fun HistoryShimmerScreen(brush: Brush) {
         Spacer(
             modifier =
                 Modifier
-                    .size(120.dp, 28.dp)
+                    .size(width = 120.dp, height = 28.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush),
         )
@@ -90,7 +90,7 @@ fun HistoryShimmerScreen(brush: Brush) {
             modifier =
                 Modifier
                     .padding(top = 48.dp)
-                    .size(148.dp, 26.dp)
+                    .size(width = 148.dp, height = 26.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush),
         )
@@ -110,7 +110,7 @@ fun HistoryShimmerScreen(brush: Brush) {
             modifier =
                 Modifier
                     .padding(top = 18.dp)
-                    .size(160.dp, 22.dp)
+                    .size(width = 160.dp, height = 22.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush),
         )
@@ -119,7 +119,7 @@ fun HistoryShimmerScreen(brush: Brush) {
             modifier =
                 Modifier
                     .padding(top = 38.dp)
-                    .size(60.dp, 22.dp)
+                    .size(width = 60.dp, height = 22.dp)
                     .clip(RoundedCornerShape(10.dp))
                     .background(brush),
         )
