@@ -98,7 +98,7 @@ class HistoryViewModel
 
         fun updateDailyIntakeHistories(
             dailySummary: IntakeHistorySummary,
-            today: LocalDate,
+            today: LocalDate = LocalDate.now(),
         ) {
             _dailyIntakeHistories.value = dailySummary
             _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)

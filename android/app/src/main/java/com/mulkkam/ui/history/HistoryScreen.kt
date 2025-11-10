@@ -1,6 +1,5 @@
 package com.mulkkam.ui.history
 
-import android.R.attr.top
 import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -45,7 +44,6 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.LoadingShimmerEffect
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -112,7 +110,6 @@ fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
                     onClickDate = { intakeHistorySummary ->
                         viewModel.updateDailyIntakeHistories(
                             dailySummary = intakeHistorySummary,
-                            today = LocalDate.now(),
                         )
                     },
                     currentDate = date,
