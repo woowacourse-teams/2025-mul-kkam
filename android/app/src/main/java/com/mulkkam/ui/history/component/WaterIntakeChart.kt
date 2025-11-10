@@ -85,7 +85,7 @@ fun WaterIntakeChart(
             text =
                 intakeHistorySummary.date.dayOfWeek.getDisplayName(
                     TextStyle.SHORT,
-                    Locale.KOREAN,
+                    Locale.getDefault(),
                 ),
             color = getColorByDate(intakeHistorySummary.date),
             style = MulKkamTheme.typography.title3,

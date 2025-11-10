@@ -1,5 +1,6 @@
 package com.mulkkam.ui.history.component
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -13,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,8 +34,6 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val FORMATTER_DATE_WITH_DAY: DateTimeFormatter =
-    DateTimeFormatter.ofPattern("M월 d일 (E)", Locale.KOREAN)
 private const val INTAKE_AMOUNT_EMPTY: Int = 0
 
 @Composable
@@ -42,6 +42,7 @@ fun DailyWaterIntakeChart(
     waterIntakeState: WaterIntakeState,
     modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     val date = dailyIntakeHistory.date
 
     Column(
@@ -67,9 +68,9 @@ fun DailyWaterIntakeChart(
             fullText =
                 stringResource(
                     R.string.history_daily_chart_label,
-                    date.format(FORMATTER_DATE_WITH_DAY),
+                    date.format(getDateFormatter(context)),
                 ),
-            highlightedTexts = listOf(date.format(FORMATTER_DATE_WITH_DAY)),
+            highlightedTexts = listOf(date.format(getDateFormatter(context))),
             highlightColor = Primary200,
             style = MulKkamTheme.typography.title1,
             color = Black,
@@ -128,6 +129,9 @@ fun DailyWaterIntakeChart(
         )
     }
 }
+
+private fun getDateFormatter(context: Context): DateTimeFormatter =
+    DateTimeFormatter.ofPattern(context.getString(R.string.history_date_with_day_pattern), Locale.getDefault())
 
 private fun getCharacterImage(waterIntakeState: WaterIntakeState) =
     when (waterIntakeState) {
