@@ -38,7 +38,7 @@ class ResponseCall<T>(
     private fun parseResponse(response: Response<T>): Result<T> {
         val errorCode = parseErrorCode(response.errorBody())
         if (errorCode != null) {
-            return Result.failure(ResponseError.from(errorCode) ?: ResponseError.Unknown)
+            return Result.failure(ResponseError.from(errorCode))
         }
 
         val body = response.body()

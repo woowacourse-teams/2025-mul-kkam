@@ -59,6 +59,7 @@
     <string name="history_daily_chart_label">%s의 기록</string>
     <string name="history_week_range">%s - %s</string>
     <string name="history_daily_intake_summary">%,dml / %,dml</string>
+    <string name="history_date_with_day_pattern">M월 d일 (E)</string>
     <string name="history_intake_history_label">상세 내역</string>
     <string name="history_intake_amount">+%,dml</string>
     <string name="history_no_intake_histories">해당 날짜는 기록된 일지가 없어요…</string>
