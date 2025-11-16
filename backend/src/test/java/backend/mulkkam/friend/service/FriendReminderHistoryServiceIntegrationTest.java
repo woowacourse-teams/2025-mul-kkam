@@ -1,6 +1,6 @@
 package backend.mulkkam.friend.service;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.friend.domain.FriendRelation;
@@ -50,9 +50,6 @@ class FriendReminderHistoryServiceIntegrationTest extends ServiceIntegrationTest
 
         FriendRelation friendRelation = new FriendRelation(sender.getId(), friend.getId(), FriendRelationStatus.ACCEPTED);
         friendRelationRepository.save(friendRelation);
-
-        FriendReminderHistory initialHistory = new FriendReminderHistory(sender.getId(), friend.getId(), TODAY);
-        friendReminderHistoryRepository.save(initialHistory);
     }
 
     @Test
@@ -85,6 +82,10 @@ class FriendReminderHistoryServiceIntegrationTest extends ServiceIntegrationTest
         FriendReminderHistory resultHistory = friendReminderHistoryRepository.findBySenderIdAndRecipientIdAndQuotaDate(
                 sender.getId(), friend.getId(), TODAY
         ).orElseThrow();
-        assertThat(resultHistory.getRemaining()).isEqualTo((short) 0);
+
+        assertSoftly(softly -> {
+            softly.assertThat(friendReminderHistoryRepository.findAll()).hasSize(1);
+            softly.assertThat(resultHistory.getRemaining()).isEqualTo((short) 0);
+        });
     }
 }
