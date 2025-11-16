@@ -66,7 +66,7 @@ public class FriendController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "400", description = "잘못된 요청 데이터", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "일일 할당량을 초과한 경우", value = "{\"code\":\"EXCEED_FRIEND_REMINDER_LIMIT\"}"),
-            @ExampleObject(name = "자기 자신에게 보낸 경우", value = "{\"code:\":\"NOT_ALLOWED_SELF_REMINDER\"}")
+            @ExampleObject(name = "자기 자신에게 보낸 경우", value = "{\"code\":\"NOT_ALLOWED_SELF_REMINDER\"}")
     }))
     @ApiResponse(responseCode = "404", description = "관련 리소스를 찾을 수 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "친구 관계가 아닌 경우", value = "{\"code\":\"NOT_FOUND_FRIEND\"}"),
