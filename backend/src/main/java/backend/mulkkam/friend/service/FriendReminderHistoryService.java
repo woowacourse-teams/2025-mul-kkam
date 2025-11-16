@@ -1,8 +1,11 @@
 package backend.mulkkam.friend.service;
 
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.NOT_ALLOWED_SELF_REMINDER;
+
 import backend.mulkkam.averageTemperature.domain.City;
 import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.friend.domain.FriendReminderHistory;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.service.command.FriendReminderHistoryCommandService;
@@ -37,6 +40,9 @@ public class FriendReminderHistoryService {
     ) {
         Long senderId = memberDetails.id();
         Long friendId = request.memberId();
+        if (senderId.equals(friendId)) {
+            throw new CommonException(NOT_ALLOWED_SELF_REMINDER);
+        }
         friendQueryService.validateFriends(friendId, memberDetails.id());
 
         LocalDate today = CityDateTime.now(City.SEOUL).getLocalDate();
