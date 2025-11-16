@@ -143,18 +143,10 @@ class FriendReminderHistoryServiceUnitTest {
             // given
             CreateFriendReminderRequest selfRequest = new CreateFriendReminderRequest(senderId);
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(senderId), any(LocalDate.class)))
-                    .thenThrow(new CommonException(NOT_ALLOWED_SELF_REMINDER));
-
             // when & then
             assertThatThrownBy(() -> friendReminderHistoryService.createAndSendReminder(selfRequest, memberDetails))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_ALLOWED_SELF_REMINDER.name());
-
-            verify(friendQueryService).validateFriends(senderId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(senderId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
-            verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
     }
 }
