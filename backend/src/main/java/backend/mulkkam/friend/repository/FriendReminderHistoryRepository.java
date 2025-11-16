@@ -25,7 +25,7 @@ public interface FriendReminderHistoryRepository extends JpaRepository<FriendRem
     @Query(value = """
             INSERT INTO friend_reminder_history(sender_id, recipient_id, quota_date, remaining)
             VALUES (:senderId, :friendId, :quotaDate, :initRemaining)
-            ON DUPLICATE KEY UPDATE remaining = friend_reminder_history.remaining
+            ON DUPLICATE KEY UPDATE id = id
             """, nativeQuery = true)
     void createIfAbsent(
             @Param("senderId") Long senderId,
