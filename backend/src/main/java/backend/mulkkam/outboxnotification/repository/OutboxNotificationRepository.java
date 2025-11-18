@@ -10,14 +10,11 @@ import org.springframework.data.repository.query.Param;
 
 public interface OutboxNotificationRepository extends JpaRepository<OutboxNotification, Long> {
 
-    /**
-     * READY 상태이면서 next_attempt_at <= NOW() 인 레코드를 LIMIT 만큼 가져옴. - SKIP LOCKED 로 다른 dispatcher 실행과 충돌 방지
-     */
     @Query(
             value = """
                     SELECT *
                     FROM outbox_notification
-                    WHERE status = 'READY'
+                    WHERE status IN ('READY', 'RETRY')
                       AND (next_attempt_at IS NULL OR next_attempt_at <= NOW())
                     ORDER BY id
                     LIMIT :limit
@@ -27,10 +24,6 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
     )
     List<OutboxNotification> fetchReadyForSend(@Param("limit") int limit);
 
-
-    /**
-     * SENDING 상태로 변경. attemptCount += 1
-     */
     @Modifying
     @Query("""
             UPDATE OutboxNotification o
@@ -40,10 +33,6 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
             """)
     void markSending(@Param("id") Long id);
 
-
-    /**
-     * 성공 처리 (SENT)
-     */
     @Modifying
     @Query("""
             UPDATE OutboxNotification o
@@ -52,10 +41,6 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
             """)
     void markSent(@Param("id") Long id);
 
-
-    /**
-     * 실패 처리 (Retry or Fail) attempts < 8 → RETRY attempts >= 8 → FAIL
-     */
     @Modifying
     @Query("""
             UPDATE OutboxNotification o
