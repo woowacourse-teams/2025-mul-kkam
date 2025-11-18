@@ -8,8 +8,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -17,7 +17,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class OutboxNotification extends BaseEntity {
 
     @Id
@@ -50,9 +49,33 @@ public class OutboxNotification extends BaseEntity {
 
     private String lastError;
 
-    private java.time.LocalDateTime nextAttemptAt;
+    private LocalDateTime nextAttemptAt;
 
     public enum Status {
         READY, SENDING, SENT, RETRY, FAIL
+    }
+
+    public OutboxNotification(
+            String type,
+            Long memberId,
+            String token,
+            String title,
+            String body,
+            Status status,
+            String dedupeKey,
+            int attemptCount,
+            String lastError,
+            LocalDateTime nextAttemptAt
+    ) {
+        this.type = type;
+        this.memberId = memberId;
+        this.token = token;
+        this.title = title;
+        this.body = body;
+        this.status = status;
+        this.dedupeKey = dedupeKey;
+        this.attemptCount = attemptCount;
+        this.lastError = lastError;
+        this.nextAttemptAt = nextAttemptAt;
     }
 }
