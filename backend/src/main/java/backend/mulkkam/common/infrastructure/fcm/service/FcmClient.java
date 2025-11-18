@@ -10,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -101,6 +102,38 @@ public class FcmClient {
                     e.getMessagingErrorCode(),
                     e.getMessage(),
                     sendMessageByFcmTokensRequest.action());
+            throw new AlarmException(e);
+        }
+    }
+
+    public BatchResponse sendMulticast(String title, String body, String action, List<String> tokens) {
+
+        try {
+            MulticastMessage message = MulticastMessage.builder()
+                    .addAllTokens(tokens)
+                    .putData("title", title)
+                    .putData("body", body)
+                    .putData(ACTION, action)
+                    .build();
+
+            BatchResponse res = firebaseMessaging.sendEachForMulticast(message);
+
+            log.info("[FCM MULTICAST] success={}, fail={}, total={}, action={}",
+                    res.getSuccessCount(),
+                    res.getFailureCount(),
+                    tokens.size(),
+                    action
+            );
+
+            return res;
+
+        } catch (FirebaseMessagingException e) {
+            log.error("[FCM MULTICAST FAILED] total={}, errorCode={}, errorMessage={}, action={}",
+                    tokens.size(),
+                    e.getMessagingErrorCode(),
+                    e.getMessage(),
+                    action
+            );
             throw new AlarmException(e);
         }
     }

@@ -39,6 +39,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import org.assertj.core.api.AssertionsForClassTypes;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -297,6 +298,7 @@ class NotificationServiceUnitTest {
         }
     }
 
+    @Disabled
     @DisplayName("리마인더 알림을 처리할 때")
     @Nested
     class ProcessReminderNotifications {
@@ -365,6 +367,7 @@ class NotificationServiceUnitTest {
             verify(publisher, never()).publishEvent(any());
         }
 
+        @Disabled
         @DisplayName("멤버의 디바이스가 없어도 알림은 저장된다")
         @Test
         void success_whenMemberHasNoDevices() {

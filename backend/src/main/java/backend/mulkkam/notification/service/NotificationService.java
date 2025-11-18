@@ -26,6 +26,7 @@ import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
 import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
+import backend.mulkkam.outboxnotification.service.OutboxNotificationService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -49,21 +50,23 @@ public class NotificationService {
     private final NotificationBatchRepository notificationBatchRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
     private final ApplicationEventPublisher publisher;
+    private final OutboxNotificationService outboxNotificationService;
 
     @Transactional
     public void processReminderNotifications(LocalDateTime now) {
-        NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
+
+        NotificationMessageTemplate template =
+                RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
         Long lastId = null;
 
         while (true) {
             List<Long> memberIds = getMemberIdsForSendingNotification(now, lastId);
-
             if (memberIds.isEmpty()) {
                 break;
             }
 
-            saveAndSendNotifications(memberIds, template);
+            saveAndSendNotifications(memberIds, now, template);
 
             if (isLastChunk(memberIds)) {
                 break;
@@ -233,10 +236,11 @@ public class NotificationService {
 
     private void saveAndSendNotifications(
             List<Long> memberIds,
+            LocalDateTime now,
             NotificationMessageTemplate template
     ) {
         savedNotifications(memberIds, template);
-        sendNotifications(memberIds, template);
+        outboxNotificationService.enqueueOutbox(memberIds, now, template);
     }
 
     private void savedNotifications(
