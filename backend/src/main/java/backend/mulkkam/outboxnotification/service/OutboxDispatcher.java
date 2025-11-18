@@ -22,21 +22,18 @@ public class OutboxDispatcher {
     private final OutboxNotificationRepository outboxRepository;
     private final FcmClient fcmClient;
 
-    private static final int FETCH_SIZE = 200;
     private static final int MULTICAST_SIZE = 500;
 
     @Scheduled(fixedDelay = 5000)
     @Transactional
     public void dispatch() {
         List<OutboxNotification> jobs =
-                outboxRepository.fetchReadyForSend(FETCH_SIZE);
+                outboxRepository.fetchReadyForSend(MULTICAST_SIZE);
 
         if (jobs.isEmpty()) {
             return;
         }
-
         jobs.forEach(job -> outboxRepository.markSending(job.getId()));
-
         List<String> tokens = jobs.stream()
                 .map(OutboxNotification::getToken)
                 .toList();
@@ -84,7 +81,7 @@ public class OutboxDispatcher {
                     ? result.getException().getMessage()
                     : error;
 
-            if (isPermanentError(reason)) {
+            if (isPermanentError(error)) {
                 outboxRepository.markFail(
                         job.getId(),
                         reason
