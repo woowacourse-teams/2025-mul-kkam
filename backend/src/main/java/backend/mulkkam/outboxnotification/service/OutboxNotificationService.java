@@ -15,24 +15,23 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class OutboxNotificationService {
-    
+
     private final DeviceRepository deviceRepository;
     private final OutboxNotificationJdbcRepository outboxNotificationJdbcRepository;
 
     @Transactional
     public void enqueueOutbox(
             List<Long> memberIds,
-            LocalDateTime now,
+            LocalDateTime time,
             NotificationMessageTemplate template
     ) {
-
         List<Object[]> memberTokenPairs = deviceRepository.findMemberIdAndTokenByMemberIdIn(memberIds);
         List<OutboxNotification> outboxList = new ArrayList<>();
 
         for (Object[] pair : memberTokenPairs) {
             Long memberId = (Long) pair[0];
             String token = (String) pair[1];
-            String dedupeKey = buildDedupeKey("REMIND", memberId, now, token);
+            String dedupeKey = buildDedupeKey("REMIND", memberId, time);
 
             OutboxNotification outboxNotification = new OutboxNotification(
                     "REMIND",
@@ -54,9 +53,8 @@ public class OutboxNotificationService {
     public String buildDedupeKey(
             String type,
             Long memberId,
-            LocalDateTime dateTime,
-            String token
+            LocalDateTime time
     ) {
-        return type + ":" + memberId + ":" + dateTime + ":" + token;
+        return type + ":" + memberId + ":" + time;
     }
 }
