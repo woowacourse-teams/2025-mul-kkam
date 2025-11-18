@@ -23,7 +23,7 @@ public class OutboxNotification extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
+
     @Column(nullable = false)
     private String type;
 
@@ -40,6 +40,7 @@ public class OutboxNotification extends BaseEntity {
     private String body;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private Status status;
 
     @Column(unique = true, nullable = false)
