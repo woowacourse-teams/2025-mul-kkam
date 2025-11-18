@@ -46,10 +46,9 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
             UPDATE OutboxNotification o
                SET o.status =
                     CASE
-                        WHEN o.attemptCount + 1 < 3 THEN 'RETRY'
+                        WHEN o.attemptCount < 3 THEN 'RETRY'
                         ELSE 'FAIL'
                     END,
-                   o.attemptCount = o.attemptCount + 1,
                    o.nextAttemptAt = :nextAttemptAt,
                    o.lastError = :reason
              WHERE o.id = :id
