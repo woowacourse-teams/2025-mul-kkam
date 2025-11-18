@@ -1,5 +1,7 @@
 package backend.mulkkam.outboxnotification.service;
 
+import static backend.mulkkam.common.exception.errorCode.FirebaseErrorCode.isPermanentError;
+
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.repository.OutboxNotificationRepository;
@@ -10,7 +12,6 @@ import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -77,33 +78,20 @@ public class OutboxDispatcher {
 
             MessagingErrorCode errorCode = result.getException().getMessagingErrorCode();
             String error = (errorCode != null) ? errorCode.name() : "UNKNOWN";
-            String reason = (result.getException().getMessage() != null)
-                    ? result.getException().getMessage()
-                    : error;
 
             if (isPermanentError(error)) {
                 outboxRepository.markFail(
                         job.getId(),
-                        reason
+                        error
                 );
             } else {
                 outboxRepository.markRetryOrFail(
                         job.getId(),
                         nextBackoffTime(job.getAttemptCount()),
-                        reason
+                        error
                 );
             }
         }
-    }
-
-    private boolean isPermanentError(String error) {
-        return Set.of(
-                "UNREGISTERED",
-                "INVALID_ARGUMENT",
-                "INVALID_REGISTRATION_TOKEN",
-                "MISMATCH_SENDER_ID",
-                "THIRD_PARTY_AUTH_ERROR"
-        ).contains(error);
     }
 
     private LocalDateTime nextBackoffTime(int attempt) {

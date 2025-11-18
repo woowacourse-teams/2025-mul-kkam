@@ -31,7 +31,7 @@ public class OutboxNotificationService {
         for (Object[] pair : memberTokenPairs) {
             Long memberId = (Long) pair[0];
             String token = (String) pair[1];
-            String dedupeKey = buildDedupeKey("REMIND", memberId, time);
+            String dedupeKey = buildDedupeKey("REMIND", memberId, time, token);
 
             OutboxNotification outboxNotification = new OutboxNotification(
                     "REMIND",
@@ -53,8 +53,9 @@ public class OutboxNotificationService {
     public String buildDedupeKey(
             String type,
             Long memberId,
-            LocalDateTime time
+            LocalDateTime time,
+            String token
     ) {
-        return type + ":" + memberId + ":" + time;
+        return type + ":" + memberId + ":" + time + ":" + token;
     }
 }
