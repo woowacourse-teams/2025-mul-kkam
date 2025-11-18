@@ -28,16 +28,9 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     List<String> findAllTokenByMemberIdIn(@Param("memberIds") List<Long> memberIds);
 
     @Query("""
-            SELECT d.member.id, d.token
-            FROM Device d
-            WHERE d.member.id IN :memberIds
-            """)
-    List<Object[]> findMemberIdAndTokenByMemberIdIn(@Param("memberIds") List<Long> memberIds);
-
-    @Query("""
             SELECT d.token
             FROM Device d
-            WHERE d.member.id = :memberIds
+            WHERE d.member.id = :memberId
             """)
     List<String> findAllTokenByMemberId(Long memberId);
 }
