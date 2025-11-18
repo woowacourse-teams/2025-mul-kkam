@@ -4,7 +4,9 @@ import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.repository.OutboxNotificationRepository;
 import com.google.firebase.messaging.BatchResponse;
+import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.SendResponse;
+import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,9 +26,8 @@ public class OutboxDispatcher {
     private static final int MULTICAST_SIZE = 500;
 
     @Scheduled(fixedDelay = 5000)
+    @Transactional
     public void dispatch() {
-
-        // SKIP LOCKED로 200개 가져오기
         List<OutboxNotification> jobs =
                 outboxRepository.fetchReadyForSend(FETCH_SIZE);
 
@@ -34,7 +35,6 @@ public class OutboxDispatcher {
             return;
         }
 
-        // 상태 → SENDING (+ attemptCount++)
         jobs.forEach(job -> outboxRepository.markSending(job.getId()));
 
         List<String> tokens = jobs.stream()
@@ -78,18 +78,22 @@ public class OutboxDispatcher {
                 continue;
             }
 
-            String error = result.getException().getMessagingErrorCode().name();
+            MessagingErrorCode errorCode = result.getException().getMessagingErrorCode();
+            String error = (errorCode != null) ? errorCode.name() : "UNKNOWN";
+            String reason = (result.getException().getMessage() != null)
+                    ? result.getException().getMessage()
+                    : error;
 
-            if (isPermanentError(error)) {
+            if (isPermanentError(reason)) {
                 outboxRepository.markFail(
                         job.getId(),
-                        error
+                        reason
                 );
             } else {
                 outboxRepository.markRetryOrFail(
                         job.getId(),
                         nextBackoffTime(job.getAttemptCount()),
-                        error
+                        reason
                 );
             }
         }
