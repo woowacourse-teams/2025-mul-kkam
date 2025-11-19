@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.friend.domain.FriendReminderHistory;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.service.command.FriendReminderHistoryCommandService;
 import backend.mulkkam.friend.service.query.FriendQueryService;
@@ -85,7 +84,7 @@ class FriendReminderHistoryServiceUnitTest {
 
             // then
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(senderId, friendId, now);
+            verify(friendReminderHistoryCommandService).consumeRemainingCount(senderId, friendId, now);
             verify(memberQueryService).getNickname(senderId);
             verify(suggestionNotificationService).createAndSendNotification(any(NotificationMessageTemplate.class), eq(friendId));
         }
@@ -104,7 +103,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(NOT_FOUND_FRIEND.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong(), anyLong(), any(LocalDate.class));
+            verify(friendReminderHistoryCommandService, never()).consumeRemainingCount(anyLong(), anyLong(), any(LocalDate.class));
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 
@@ -116,7 +115,7 @@ class FriendReminderHistoryServiceUnitTest {
 
             doThrow(new CommonException(EXCEED_FRIEND_REMINDER_LIMIT))
                     .when(friendReminderHistoryCommandService)
-                    .reduceRemainingCount(senderId, friendId, now);
+                    .consumeRemainingCount(senderId, friendId, now);
 
             // when & then
             assertThatThrownBy(() -> friendReminderHistoryService.createAndSendReminder(request, memberDetails))
@@ -124,7 +123,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(EXCEED_FRIEND_REMINDER_LIMIT.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(senderId, friendId, now);
+            verify(friendReminderHistoryCommandService).consumeRemainingCount(senderId, friendId, now);
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 

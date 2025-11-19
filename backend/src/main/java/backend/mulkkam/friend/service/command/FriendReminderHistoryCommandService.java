@@ -18,14 +18,11 @@ public class FriendReminderHistoryCommandService {
 
     private final FriendReminderHistoryRepository friendReminderHistoryRepository;
 
-    public void reduceRemainingCount(Long senderId, Long recipientId, LocalDate date) {
+    public void consumeRemainingCount(Long senderId, Long recipientId, LocalDate date) {
+        friendReminderHistoryRepository.createIfAbsent(senderId, recipientId, date, INIT_REMAINING_VALUE);
         int updated = friendReminderHistoryRepository.tryReduceRemaining(senderId, recipientId, date);
         if (updated == 0) {
             throw new CommonException(EXCEED_FRIEND_REMINDER_LIMIT);
         }
-    }
-
-    public void createIfAbsent(Long senderId, Long friendId, LocalDate today) {
-        friendReminderHistoryRepository.createIfAbsent(senderId, friendId, today, INIT_REMAINING_VALUE);
     }
 }

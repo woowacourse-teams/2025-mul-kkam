@@ -43,9 +43,7 @@ public class FriendReminderHistoryService {
         friendQueryService.validateFriends(friendId, memberDetails.id());
 
         LocalDate today = CityDateTime.now(City.SEOUL).getLocalDate();
-        friendReminderHistoryCommandService.createIfAbsent(senderId, friendId, today);
-
-        friendReminderHistoryCommandService.reduceRemainingCount(senderId, friendId, today);
+        friendReminderHistoryCommandService.consumeRemainingCount(senderId, friendId, today);
 
         sendNotification(senderId, friendId);
     }
