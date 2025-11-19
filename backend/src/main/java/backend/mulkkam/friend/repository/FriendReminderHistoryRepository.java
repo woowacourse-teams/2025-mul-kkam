@@ -17,9 +17,16 @@ public interface FriendReminderHistoryRepository extends JpaRepository<FriendRem
     @Query("""
            UPDATE FriendReminderHistory h
            SET h.remaining = h.remaining - 1
-           WHERE h.id = :id AND h.remaining > 0
+           WHERE h.senderId = :senderId
+                AND h.recipientId = :friendId
+                AND h.quotaDate = :quotaDate
+                AND h.remaining > 0
            """)
-    int tryReduceRemaining(@Param("id") Long id);
+    int tryReduceRemaining(
+            @Param("senderId") Long senderId,
+            @Param("friendId") Long friendId,
+            @Param("quotaDate") LocalDate quotaDate
+    );
 
     @Modifying
     @Query(value = """

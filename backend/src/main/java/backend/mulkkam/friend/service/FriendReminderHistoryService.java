@@ -6,11 +6,9 @@ import backend.mulkkam.averageTemperature.domain.City;
 import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.friend.domain.FriendReminderHistory;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.service.command.FriendReminderHistoryCommandService;
 import backend.mulkkam.friend.service.query.FriendQueryService;
-import backend.mulkkam.friend.service.query.FriendReminderHistoryQueryService;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.service.MemberQueryService;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
@@ -28,7 +26,6 @@ public class FriendReminderHistoryService {
 
     private final MemberQueryService memberQueryService;
     private final FriendQueryService friendQueryService;
-    private final FriendReminderHistoryQueryService friendReminderHistoryQueryService;
     private final FriendReminderHistoryCommandService friendReminderHistoryCommandService;
 
     private final SuggestionNotificationService suggestionNotificationService;
@@ -46,11 +43,9 @@ public class FriendReminderHistoryService {
         friendQueryService.validateFriends(friendId, memberDetails.id());
 
         LocalDate today = CityDateTime.now(City.SEOUL).getLocalDate();
-        FriendReminderHistory reminderHistory = friendReminderHistoryQueryService.getOrCreateDefault(
-                senderId, friendId, today
-        );
+        friendReminderHistoryCommandService.createIfAbsent(senderId, friendId, today);
 
-        friendReminderHistoryCommandService.reduceRemainingCount(reminderHistory.getId());
+        friendReminderHistoryCommandService.reduceRemainingCount(senderId, friendId, today);
 
         sendNotification(senderId, friendId);
     }

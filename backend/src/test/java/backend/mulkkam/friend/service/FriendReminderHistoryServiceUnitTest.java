@@ -76,11 +76,8 @@ class FriendReminderHistoryServiceUnitTest {
         void success_whenValidFriend() {
             // given
             LocalDate now = LocalDate.now();
-            FriendReminderHistory reminderHistory = new FriendReminderHistory(senderId, friendId, now);
             MemberNickname senderNickname = new MemberNickname("테스터");
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(friendId), eq(now)))
-                    .thenReturn(reminderHistory);
             when(memberQueryService.getNickname(senderId)).thenReturn(senderNickname);
 
             // when
@@ -88,8 +85,7 @@ class FriendReminderHistoryServiceUnitTest {
 
             // then
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
+            verify(friendReminderHistoryCommandService).reduceRemainingCount(senderId, friendId, now);
             verify(memberQueryService).getNickname(senderId);
             verify(suggestionNotificationService).createAndSendNotification(any(NotificationMessageTemplate.class), eq(friendId));
         }
@@ -108,8 +104,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(NOT_FOUND_FRIEND.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService, never()).getOrCreateDefault(anyLong(), anyLong(), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
+            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong(), anyLong(), any(LocalDate.class));
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 
@@ -118,13 +113,10 @@ class FriendReminderHistoryServiceUnitTest {
         void fail_whenExceedDailyLimit() {
             // given
             LocalDate now = LocalDate.now();
-            FriendReminderHistory reminderHistory = new FriendReminderHistory(senderId, friendId, now);
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(friendId), eq(now)))
-                    .thenReturn(reminderHistory);
             doThrow(new CommonException(EXCEED_FRIEND_REMINDER_LIMIT))
                     .when(friendReminderHistoryCommandService)
-                    .reduceRemainingCount(reminderHistory.getId());
+                    .reduceRemainingCount(senderId, friendId, now);
 
             // when & then
             assertThatThrownBy(() -> friendReminderHistoryService.createAndSendReminder(request, memberDetails))
@@ -132,8 +124,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(EXCEED_FRIEND_REMINDER_LIMIT.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
+            verify(friendReminderHistoryCommandService).reduceRemainingCount(senderId, friendId, now);
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 
