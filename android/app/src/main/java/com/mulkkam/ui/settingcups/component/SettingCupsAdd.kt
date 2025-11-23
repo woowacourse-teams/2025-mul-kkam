@@ -34,7 +34,7 @@ fun SettingCupsAdd(
                 .noRippleClickable(onClick = onClick)
                 .heightIn(min = 46.dp)
                 .padding(vertical = 12.dp),
-        contentAlignment = Alignment.Companion.Center,
+        contentAlignment = Alignment.Center,
     ) {
         Icon(
             painter = painterResource(R.drawable.ic_setting_add),
