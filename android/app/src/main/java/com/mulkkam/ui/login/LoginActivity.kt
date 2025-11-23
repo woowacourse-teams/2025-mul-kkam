@@ -7,8 +7,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -22,10 +20,9 @@ import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -91,12 +88,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun collectIsAppOutdated() {
-        lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.isAppOutdated.collectLatest { isAppOutdated ->
-                    if (isAppOutdated) showUpdateDialog()
-                }
-            }
+        viewModel.isAppOutdated.collectWithLifecycle(this, Lifecycle.State.STARTED) { isAppOutdated ->
+            if (isAppOutdated) showUpdateDialog()
         }
     }
 
