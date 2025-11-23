@@ -1,11 +1,8 @@
 package com.mulkkam.ui.history
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
@@ -15,6 +12,9 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -28,22 +28,25 @@ class HistoryViewModel
         private val intakeRepository: IntakeRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _weeklyIntakeHistoriesUiState: MutableLiveData<MulKkamUiState<IntakeHistorySummaries>> =
-            MutableLiveData(MulKkamUiState.Idle)
-        val weeklyIntakeHistoriesUiState: LiveData<MulKkamUiState<IntakeHistorySummaries>> get() = _weeklyIntakeHistoriesUiState
+        private val _weeklyIntakeHistoriesUiState: MutableStateFlow<MulKkamUiState<IntakeHistorySummaries>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val weeklyIntakeHistoriesUiState: StateFlow<MulKkamUiState<IntakeHistorySummaries>>
+            get() = _weeklyIntakeHistoriesUiState.asStateFlow()
 
-        private val _dailyIntakeHistories: MutableLiveData<IntakeHistorySummary> =
-            MutableLiveData(EMPTY_DAILY_WATER_INTAKE)
-        val dailyIntakeHistories: LiveData<IntakeHistorySummary> get() = _dailyIntakeHistories
+        private val _dailyIntakeHistories: MutableStateFlow<IntakeHistorySummary> =
+            MutableStateFlow(EMPTY_DAILY_WATER_INTAKE)
+        val dailyIntakeHistories: StateFlow<IntakeHistorySummary> get() = _dailyIntakeHistories.asStateFlow()
 
-        private val _isNotCurrentWeek: MutableLiveData<Boolean> = MutableLiveData()
-        val isNotCurrentWeek: LiveData<Boolean> get() = _isNotCurrentWeek
+        private val _isNotCurrentWeek: MutableStateFlow<Boolean> = MutableStateFlow(false)
+        val isNotCurrentWeek: StateFlow<Boolean> get() = _isNotCurrentWeek.asStateFlow()
 
-        private val _waterIntakeState: MutableLiveData<WaterIntakeState> = MutableLiveData()
-        val waterIntakeState: LiveData<WaterIntakeState> get() = _waterIntakeState
+        private val _waterIntakeState: MutableStateFlow<WaterIntakeState> =
+            MutableStateFlow(WaterIntakeState.Present.NotFull)
+        val waterIntakeState: StateFlow<WaterIntakeState> get() = _waterIntakeState.asStateFlow()
 
-        private val _deleteUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val deleteUiState: LiveData<MulKkamUiState<Unit>> get() = _deleteUiState
+        private val _deleteUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val deleteUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteUiState
 
         init {
             loadIntakeHistories()
@@ -95,47 +98,47 @@ class HistoryViewModel
 
         fun updateDailyIntakeHistories(
             dailySummary: IntakeHistorySummary,
-            today: LocalDate,
+            today: LocalDate = LocalDate.now(),
         ) {
             _dailyIntakeHistories.value = dailySummary
             _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)
         }
 
-        fun moveWeek(offset: Long) {
+        fun moveWeek(weeksToMove: Long) {
             val current = weeklyIntakeHistoriesUiState.value
             if (current !is MulKkamUiState.Success) return
 
-            val newReferenceDate = current.data.getDateByWeekOffset(offset)
+            val newReferenceDate = current.data.getDateByWeekOffset(weeksToMove)
             loadIntakeHistories(newReferenceDate)
         }
 
-        fun deleteIntakeHistory(history: IntakeHistory) {
+        fun deleteIntakeHistory(historyId: Int) {
             if (deleteUiState.value is MulKkamUiState.Loading) return
 
             viewModelScope.launch {
                 runCatching {
                     logger.info(
                         LogEvent.USER_ACTION,
-                        "Confirmed delete for intake history id=${history.id}",
+                        "Confirmed delete for intake history id=$historyId",
                     )
                     _deleteUiState.value = MulKkamUiState.Loading
                     intakeRepository
-                        .deleteIntakeHistoryDetails(history.id)
+                        .deleteIntakeHistoryDetails(historyId)
                         .getOrError()
                 }.onSuccess {
                     _deleteUiState.value = MulKkamUiState.Success(Unit)
-                    updateIntakeHistoriesAfterDeletion(history)
+                    updateIntakeHistoriesAfterDeletion(historyId)
                 }.onFailure {
                     _deleteUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
             }
         }
 
-        private fun updateIntakeHistoriesAfterDeletion(history: IntakeHistory) {
+        private fun updateIntakeHistoriesAfterDeletion(historyId: Int) {
             val current = weeklyIntakeHistoriesUiState.value
             if (current !is MulKkamUiState.Success) return
 
-            val newDailySummary = dailyIntakeHistories.value?.afterDeleteHistory(history) ?: return
+            val newDailySummary = dailyIntakeHistories.value.afterDeleteHistory(historyId)
 
             _dailyIntakeHistories.value = newDailySummary
 
@@ -149,7 +152,7 @@ class HistoryViewModel
                     }
                 }
             _weeklyIntakeHistoriesUiState.value =
-                MulKkamUiState.Success<IntakeHistorySummaries>(IntakeHistorySummaries(newWeeklyList))
+                MulKkamUiState.Success(IntakeHistorySummaries(newWeeklyList))
         }
 
         companion object {

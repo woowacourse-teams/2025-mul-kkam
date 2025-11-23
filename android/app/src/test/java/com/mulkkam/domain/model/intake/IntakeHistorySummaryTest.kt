@@ -91,7 +91,7 @@ class IntakeHistorySummaryTest {
         val summary = FULL_INTAKE_HISTORY
 
         // when
-        val actual = summary.afterDeleteHistory(SAMPLE_INTAKE_HISTORY).intakeHistories
+        val actual = summary.afterDeleteHistory(SAMPLE_INTAKE_HISTORY.id).intakeHistories
         val expected = summary.intakeHistories.filterNot { it == SAMPLE_INTAKE_HISTORY }
 
         // then
