@@ -39,6 +39,19 @@ import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.btn_setting_cup_move),
+        contentDescription = null,
+        modifier =
+            Modifier
+                .size(40.dp)
+                .padding(8.dp)
+                .then(modifier),
+    )
+}
+
+@Composable
 fun SettingCupsCup(
     item: SettingCupsItem.CupItem,
     onEdit: () -> Unit,
@@ -69,24 +82,12 @@ fun SettingCupsCup(
         )
 
         Spacer(modifier = Modifier.width(12.dp))
-        AmountWithEdit(
-            amount = item.value.amount,
-            color = intakeTypeColor,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            SettingCupAmount(item.value.amount, intakeTypeColor)
+            Spacer(modifier = Modifier.width(6.dp))
+            SettingCupEditButton()
+        }
     }
-}
-
-@Composable
-private fun DragHandle(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(R.drawable.btn_setting_cup_move),
-        contentDescription = null,
-        modifier =
-            Modifier
-                .size(40.dp)
-                .padding(8.dp)
-                .then(modifier),
-    )
 }
 
 @Composable
@@ -156,32 +157,33 @@ private fun CupBody(
     }
 }
 
-@Composable
-private fun AmountWithEdit(
-    amount: Int,
-    color: Color,
-) {
-    Row(verticalAlignment = Alignment.CenterVertically) {
-        Text(
-            text = stringResource(R.string.setting_cups_increment, amount),
-            style = MulKkamTheme.typography.body4,
-            color = color,
-        )
-        Spacer(modifier = Modifier.width(6.dp))
-        Image(
-            painter = painterResource(R.drawable.btn_setting_cups_edit),
-            contentDescription = null,
-            modifier =
-                Modifier
-                    .size(40.dp)
-                    .padding(6.dp),
-        )
-    }
-}
-
 private fun IntakeType.toColorOrDefault(): Color {
     val colorHex = toColorHex()
     return if (colorHex.isBlank()) Gray200 else Color(colorHex.toColorInt())
+}
+
+@Composable
+private fun SettingCupAmount(
+    amount: Int,
+    textColor: Color,
+) {
+    Text(
+        text = stringResource(R.string.setting_cups_increment, amount),
+        style = MulKkamTheme.typography.body4,
+        color = textColor,
+    )
+}
+
+@Composable
+private fun SettingCupEditButton() {
+    Image(
+        painter = painterResource(R.drawable.btn_setting_cups_edit),
+        contentDescription = null,
+        modifier =
+            Modifier
+                .size(40.dp)
+                .padding(6.dp),
+    )
 }
 
 @Preview(showBackground = true)
