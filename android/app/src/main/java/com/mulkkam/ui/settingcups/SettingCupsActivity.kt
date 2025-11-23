@@ -25,7 +25,7 @@ class SettingCupsActivity : AppCompatActivity() {
             MulkkamTheme {
                 SettingCupsRoute(
                     viewModel = viewModel,
-                    onBackClick = { finish() },
+                    onBackClick = ::finish,
                     onConfirmReset = { viewModel.resetCups() },
                     onEditCup = ::showEditBottomSheetDialog,
                     onAddCup = { showEditBottomSheetDialog(null) },
