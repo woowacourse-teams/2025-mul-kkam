@@ -104,7 +104,7 @@ fun SettingCupsEditor(
                     )
                 }
 
-                SettingCupsItem.AddItem -> {
+                is SettingCupsItem.AddItem -> {
                     Spacer(modifier = Modifier.size(18.dp))
                     SettingCupsAdd(
                         onClick = onAddCup,
