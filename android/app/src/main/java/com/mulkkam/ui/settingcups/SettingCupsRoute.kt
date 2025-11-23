@@ -28,7 +28,6 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 fun SettingCupsRoute(
     viewModel: SettingCupsViewModel,
     onBackClick: () -> Unit,
-    onConfirmReset: () -> Unit,
     onEditCup: (CupUiModel) -> Unit,
     onAddCup: () -> Unit,
     onReorderCups: (List<CupUiModel>) -> Unit,
@@ -36,7 +35,6 @@ fun SettingCupsRoute(
     val cupsUiState: MulKkamUiState<CupsUiModel> by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val cupsResetUiState: MulKkamUiState<Unit> by viewModel.cupsResetUiState.collectAsStateWithLifecycle()
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val currentOnConfirmReset = rememberUpdatedState(newValue = onConfirmReset)
     var isResetDialogVisible: Boolean by rememberSaveable { mutableStateOf(false) }
     val loadErrorMessage: String = stringResource(R.string.load_info_error)
     val resetSuccessMessage: String = stringResource(R.string.setting_cups_reset_success)
@@ -105,7 +103,7 @@ fun SettingCupsRoute(
             title = stringResource(R.string.setting_cups_reset_title),
             description = stringResource(R.string.setting_cups_reset_description),
             onConfirm = {
-                currentOnConfirmReset.value()
+                viewModel.resetCups()
                 isResetDialogVisible = false
             },
             onDismiss = { isResetDialogVisible = false },

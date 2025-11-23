@@ -26,7 +26,6 @@ class SettingCupsActivity : AppCompatActivity() {
                 SettingCupsRoute(
                     viewModel = viewModel,
                     onBackClick = ::finish,
-                    onConfirmReset = { viewModel.resetCups() },
                     onEditCup = ::showEditBottomSheetDialog,
                     onAddCup = { showEditBottomSheetDialog(null) },
                     onReorderCups = ::reorderCups,
