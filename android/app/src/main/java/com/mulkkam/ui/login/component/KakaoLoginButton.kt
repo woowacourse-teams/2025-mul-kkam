@@ -42,25 +42,25 @@ fun KakaoLoginButton(
         onClick = onClick,
         enabled = isEnabled,
     ) {
-        Box(modifier = Modifier.Companion.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(id = R.drawable.ic_login_kakao),
                 contentDescription = stringResource(R.string.login_kakao),
                 modifier =
-                    Modifier.Companion
+                    Modifier
                         .padding(start = 30.dp)
                         .size(16.dp)
-                        .align(Alignment.Companion.CenterStart),
+                        .align(Alignment.CenterStart),
             )
             Text(
                 text = stringResource(R.string.login_kakao),
                 modifier =
-                    Modifier.Companion
+                    Modifier
                         .padding(start = 16.dp)
-                        .align(Alignment.Companion.Center),
+                        .align(Alignment.Center),
                 style = MulKkamTheme.typography.title2,
                 color = Black,
-                textAlign = TextAlign.Companion.Center,
+                textAlign = TextAlign.Center,
             )
         }
     }
