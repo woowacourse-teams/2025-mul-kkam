@@ -8,5 +8,6 @@
     <string name="play_store_app">market://details?id=%s</string>
     <string name="play_store_web">https://play.google.com/store/apps/details?id=%s</string>
     <string name="play_store">com.android.vending</string>
+    <string name="coffee_encyclopedia_source">https://www.coffeeandhealth.org/health/wellbeing/fluid-balance/coffee-caffeine-hydration-in-the-general-population</string>
 </resources>
 

@@ -61,7 +61,7 @@ fun ReminderScheduleItemComponent(
             )
         }
         Icon(
-            painter = painterResource(R.drawable.ic_setting_next),
+            painter = painterResource(R.drawable.ic_common_next),
             contentDescription = null,
             tint = Gray400,
         )

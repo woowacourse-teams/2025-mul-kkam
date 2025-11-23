@@ -44,7 +44,7 @@ fun SettingNormalItem(
         )
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_setting_next),
+            painter = painterResource(id = R.drawable.ic_common_next),
             contentDescription = null,
             modifier =
                 Modifier
