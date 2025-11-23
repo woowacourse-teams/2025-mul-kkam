@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -25,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
@@ -35,6 +37,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.component.SETTING_CUPS_CUP_HEIGHT
 import com.mulkkam.ui.settingcups.component.SettingCupsEditor
+import com.mulkkam.ui.settingcups.component.SettingCupsTopAppBar
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
@@ -48,43 +51,50 @@ fun SettingCupsScreen(
     onEditCup: (CupUiModel) -> Unit,
     onAddCup: () -> Unit,
     onReorderCups: (List<CupUiModel>) -> Unit,
-    paddingValues: PaddingValues,
+    onBackClick: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(White),
-    ) {
-        SettingCupsHeader(
+    Scaffold(
+        topBar = { SettingCupsTopAppBar(onBackClick = onBackClick) },
+        containerColor = White,
+        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+    ) { paddingValues ->
+        Column(
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .padding(start = 24.dp, end = 12.dp, top = 24.dp),
-            onResetClick = onResetClick,
-        )
-        Spacer(modifier = Modifier.height(2.dp))
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .weight(1f),
+                    .fillMaxSize()
+                    .padding(paddingValues)
+                    .background(White),
         ) {
-            SettingCupsEditor(
-                items = items,
-                onEditCup = onEditCup,
-                onAddCup = onAddCup,
-                onReorderCups = onReorderCups,
-                modifier = Modifier.fillMaxSize(),
+            SettingCupsHeader(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 24.dp, end = 12.dp, top = 24.dp),
+                onResetClick = onResetClick,
             )
-            if (cupsUiState is MulKkamUiState.Loading) {
-                SettingCupsLoading(
-                    modifier =
-                        Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(horizontal = 24.dp),
+            Spacer(modifier = Modifier.height(2.dp))
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+            ) {
+                SettingCupsEditor(
+                    items = items,
+                    onEditCup = onEditCup,
+                    onAddCup = onAddCup,
+                    onReorderCups = onReorderCups,
+                    modifier = Modifier.fillMaxSize(),
                 )
+                if (cupsUiState is MulKkamUiState.Loading) {
+                    SettingCupsLoading(
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(horizontal = 24.dp),
+                    )
+                }
             }
         }
     }
@@ -154,7 +164,8 @@ private fun SettingCupsScreenPreview() {
             onEditCup = {},
             onAddCup = {},
             onReorderCups = {},
-            paddingValues = PaddingValues(),
+            onBackClick = {},
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }

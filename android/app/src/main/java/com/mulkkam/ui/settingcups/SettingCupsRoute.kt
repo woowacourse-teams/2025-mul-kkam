@@ -1,6 +1,5 @@
 package com.mulkkam.ui.settingcups
 
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -13,13 +12,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.component.SettingCupsTopAppBar
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 
@@ -81,21 +77,16 @@ fun SettingCupsRoute(
         }
     }
 
-    Scaffold(
-        topBar = { SettingCupsTopAppBar(onBackClick = onBackClick) },
-        containerColor = White,
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
-    ) { innerPadding ->
-        SettingCupsScreen(
-            cupsUiState = cupsUiState,
-            items = listItems,
-            onResetClick = { isResetDialogVisible = true },
-            onEditCup = onEditCup,
-            onAddCup = onAddCup,
-            onReorderCups = onReorderCups,
-            paddingValues = innerPadding,
-        )
-    }
+    SettingCupsScreen(
+        cupsUiState = cupsUiState,
+        items = listItems,
+        onResetClick = { isResetDialogVisible = true },
+        onEditCup = onEditCup,
+        onAddCup = onAddCup,
+        onReorderCups = onReorderCups,
+        onBackClick = onBackClick,
+        snackbarHostState = snackbarHostState,
+    )
 
     if (isResetDialogVisible) {
         MulKkamAlertDialog(
