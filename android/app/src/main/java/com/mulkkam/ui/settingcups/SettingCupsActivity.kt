@@ -1,5 +1,6 @@
 package com.mulkkam.ui.settingcups
 
+import android.R.attr.data
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -49,7 +50,7 @@ class SettingCupsActivity : AppCompatActivity() {
     }
 
     private fun saveOrderResult(cups: List<CupUiModel>) {
-        val data: Intent =
+        val data =
             Intent().apply {
                 putParcelableArrayListExtra(EXTRA_KEY_LATEST_CUPS_ORDER, ArrayList(cups))
             }
