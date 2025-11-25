@@ -105,4 +105,13 @@ public class NotificationController {
         notificationService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "전체 회원 점검 알림 전송", description = "모든 회원에게 점검 안내 알림을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "알림 전송 성공")
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @PostMapping("/maintenance/all")
+    public ResponseEntity<Void> sendMaintenanceNotificationToAllMembers() {
+        notificationService.sendMaintenanceNotificationToAllMembers();
+        return ResponseEntity.ok().build();
+    }
 }
