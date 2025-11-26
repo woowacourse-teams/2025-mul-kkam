@@ -39,6 +39,7 @@ fun MulKkamTextField(
     state: MulKkamTextFieldState = MulKkamTextFieldState.NORMAL,
     prefix: @Composable (Modifier) -> Unit = {},
     suffix: @Composable (Modifier) -> Unit = {},
+    keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -79,7 +80,7 @@ fun MulKkamTextField(
                     suffix(Modifier.padding(start = 16.dp))
                 }
             },
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+            keyboardOptions = keyboardOptions,
             keyboardActions =
                 KeyboardActions(onDone = {
                     keyboardController?.hide()
