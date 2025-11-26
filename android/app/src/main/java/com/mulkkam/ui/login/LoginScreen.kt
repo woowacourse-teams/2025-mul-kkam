@@ -41,20 +41,20 @@ fun LoginScreen(
                 Modifier.Companion
                     .fillMaxSize()
                     .padding(innerPadding),
-            horizontalAlignment = Alignment.Companion.CenterHorizontally,
+            horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.img_home_character),
                 contentDescription = null,
                 modifier =
-                    Modifier.Companion
+                    Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 62.dp)
                         .aspectRatio(1f),
-                contentScale = ContentScale.Companion.Fit,
+                contentScale = ContentScale.Fit,
             )
-            Spacer(modifier = Modifier.Companion.height(64.dp))
+            Spacer(modifier = Modifier.height(64.dp))
             KakaoLoginButton(
                 onClick = onLoginClick,
                 isEnabled = isLoginLoading.not(),
