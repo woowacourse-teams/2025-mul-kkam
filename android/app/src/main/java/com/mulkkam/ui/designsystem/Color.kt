@@ -26,3 +26,5 @@ val GrayAlert = Color(0xCC394258)
 val WhiteWidgetBg = Color(0xD9FFFFFF)
 val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF121212)
+
+val KakaoYellow = Color(0xFFFEE500)
