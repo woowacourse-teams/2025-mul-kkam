@@ -14,7 +14,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const androidTeam = ['junseo511', 'devfeijoa', 'hwannow'];
+            const androidTeam = ['junseo511', 'hwannow'];
             const backendTeam = ['CheChe903', 'Jin409', '2Jin1031', 'minSsan'];
 
             const author = context.payload.pull_request.user.login;
