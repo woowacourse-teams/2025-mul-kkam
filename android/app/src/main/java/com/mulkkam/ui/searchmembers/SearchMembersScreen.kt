@@ -148,7 +148,7 @@ fun SearchMembersScreen(
                     )
                 },
                 maxLength = Nickname.NICKNAME_LENGTH_MAX,
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             )
 
             if (!isTyping && name.isNotEmpty() && memberSearchUiState.toSuccessDataOrNull()?.size == 0) {
