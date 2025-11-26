@@ -117,7 +117,7 @@ class NicknameFragment :
                     isCheckDuplicateEnabled = true,
                 )
 
-            SAME_AS_BEFORE -> Unit
+            SAME_AS_BEFORE, NicknameValidationUiState.NONE -> Unit
         }
     }
 
