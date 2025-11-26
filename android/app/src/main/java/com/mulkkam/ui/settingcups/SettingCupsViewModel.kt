@@ -1,7 +1,5 @@
 package com.mulkkam.ui.settingcups
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
@@ -16,6 +14,9 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import com.mulkkam.ui.settingcups.model.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -26,17 +27,20 @@ class SettingCupsViewModel
         private val cupsRepository: CupsRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private var _cupsUiState: MutableLiveData<MulKkamUiState<CupsUiModel>> =
-            MutableLiveData(MulKkamUiState.Idle)
-        val cupsUiState: LiveData<MulKkamUiState<CupsUiModel>> get() = _cupsUiState
+        private val _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
 
-        private var _cupsReorderUiState: MutableLiveData<MulKkamUiState<Unit>> =
-            MutableLiveData(MulKkamUiState.Idle)
-        val cupsReorderUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsReorderUiState
+        private val _cupsReorderUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val cupsReorderUiState: StateFlow<MulKkamUiState<Unit>>
+            get() = _cupsReorderUiState.asStateFlow()
 
-        private var _cupsResetUiState: MutableLiveData<MulKkamUiState<Unit>> =
-            MutableLiveData(MulKkamUiState.Idle)
-        val cupsResetUiState: LiveData<MulKkamUiState<Unit>> get() = _cupsResetUiState
+        private val _cupsResetUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val cupsResetUiState: StateFlow<MulKkamUiState<Unit>> get() = _cupsResetUiState.asStateFlow()
+
+        private var previousCupsUiModel: CupsUiModel? = null
 
         init {
             loadCups()
@@ -49,7 +53,9 @@ class SettingCupsViewModel
                     _cupsUiState.value = MulKkamUiState.Loading
                     cupsRepository.getCups().getOrError()
                 }.onSuccess { cups ->
-                    _cupsUiState.value = MulKkamUiState.Success<CupsUiModel>(cups.toUi())
+                    val cupsUiModel: CupsUiModel = cups.toUi()
+                    _cupsUiState.value = MulKkamUiState.Success<CupsUiModel>(cupsUiModel)
+                    previousCupsUiModel = cupsUiModel
                 }.onFailure {
                     _cupsUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
@@ -57,27 +63,33 @@ class SettingCupsViewModel
         }
 
         fun updateCupOrder(newOrder: List<CupUiModel>) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
-            val isReordering = cupsReorderUiState.value is MulKkamUiState.Loading
+            val currentCups: CupsUiModel = cupsUiState.value.toSuccessDataOrNull() ?: return
+            val isReordering: Boolean = cupsReorderUiState.value is MulKkamUiState.Loading
+            if (isReordering) return
 
-            if (newOrder == currentCups.cups || isReordering) {
-                _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
+            val reorderedCups: Cups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
+            val reorderedUiModel: CupsUiModel = reorderedCups.toUi()
+            val newOrderIds: List<Long> = reorderedUiModel.cups.map { cup -> cup.id }
+            val lastSyncedIds: List<Long>? = previousCupsUiModel?.cups?.map { cup -> cup.id }
+
+            if (newOrderIds == lastSyncedIds) {
+                _cupsUiState.value = MulKkamUiState.Success(reorderedUiModel)
                 return
             }
 
-            val reorderedCups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
             viewModelScope.launch {
                 logger.info(LogEvent.USER_ACTION, "Saving cup reorder from settings")
                 _cupsReorderUiState.value = MulKkamUiState.Loading
                 runCatching {
                     cupsRepository.putCupsRank(reorderedCups).getOrError()
                 }.onSuccess { cups ->
-                    if (reorderedCups != cups) {
-                        _cupsUiState.value = MulKkamUiState.Success(cups.toUi())
-                    }
+                    val updatedUiModel: CupsUiModel = cups.toUi()
+                    previousCupsUiModel = updatedUiModel
+                    _cupsUiState.value = MulKkamUiState.Success(updatedUiModel)
                     _cupsReorderUiState.value = MulKkamUiState.Success(Unit)
                 }.onFailure {
-                    _cupsUiState.value = MulKkamUiState.Success(currentCups.toDomain().toUi())
+                    val fallbackUiModel: CupsUiModel = previousCupsUiModel ?: currentCups
+                    _cupsUiState.value = MulKkamUiState.Success(fallbackUiModel)
                     _cupsReorderUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
             }
