@@ -34,15 +34,25 @@ public class FcmClient {
 //        }
 
         try {
-            firebaseMessaging.send(Message.builder()
+            String messageId = firebaseMessaging.send(Message.builder()
                     .setNotification(Notification.builder()
-                            .setTitle(sendMessageByFcmTokenRequest.title())
-                            .setBody(sendMessageByFcmTokenRequest.body())
                             .build())
                     .setToken(sendMessageByFcmTokenRequest.token())
+                    .putData("title", sendMessageByFcmTokenRequest.title())
+                    .putData("body", sendMessageByFcmTokenRequest.body())
                     .putData(ACTION, sendMessageByFcmTokenRequest.action().name())
                     .build());
+
+            log.info("[FCM SUCCESS] token={}, messageId={}, action={}",
+                    sendMessageByFcmTokenRequest.token(),
+                    messageId,
+                    sendMessageByFcmTokenRequest.action());
         } catch (FirebaseMessagingException e) {
+            log.error("[FCM FAILED] token={}, errorCode={}, errorMessage={}, action={}",
+                    sendMessageByFcmTokenRequest.token(),
+                    e.getMessagingErrorCode(),
+                    e.getMessage(),
+                    sendMessageByFcmTokenRequest.action());
             throw new AlarmException(e);
         }
     }
@@ -60,10 +70,10 @@ public class FcmClient {
         try {
             firebaseMessaging.send(Message.builder()
                     .setNotification(Notification.builder()
-                            .setTitle(sendFcmTokenMessageRequest.title())
-                            .setBody(sendFcmTokenMessageRequest.body())
                             .build())
                     .setTopic(sendFcmTokenMessageRequest.topic())
+                    .putData("title", sendFcmTokenMessageRequest.title())
+                    .putData("body", sendFcmTokenMessageRequest.body())
                     .putData(ACTION, sendFcmTokenMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
@@ -79,8 +89,18 @@ public class FcmClient {
                     .putData("body", sendMessageByFcmTokensRequest.body())
                     .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
                     .build());
-            log.warn("multicast batchResponse : {}", batchResponse.toString());
+            log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
+                    batchResponse.getSuccessCount(),
+                    batchResponse.getFailureCount(),
+                    sendMessageByFcmTokensRequest.allTokens().size(),
+                    sendMessageByFcmTokensRequest.action());
+
         } catch (FirebaseMessagingException e) {
+            log.error("[FCM MULTICAST FAILED] tokenCount={}, errorCode={}, errorMessage={}, action={}",
+                    sendMessageByFcmTokensRequest.allTokens().size(),
+                    e.getMessagingErrorCode(),
+                    e.getMessage(),
+                    sendMessageByFcmTokensRequest.action());
             throw new AlarmException(e);
         }
     }
