@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
 import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_SECRET_KEY_FOR_NOTIFICATION;
 
+import org.springframework.beans.factory.annotation.Value;
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -34,7 +35,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
