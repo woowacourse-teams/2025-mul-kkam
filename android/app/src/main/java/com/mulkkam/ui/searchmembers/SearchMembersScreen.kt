@@ -4,13 +4,17 @@ import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation.Companion.keyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -21,7 +25,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.getString
@@ -30,9 +36,12 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.MemberSearchInfo
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.MulKkamSnackbarHost
+import com.mulkkam.ui.component.MulKkamTextField
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray100
+import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.dialog.MulKkamInfoDialog
@@ -40,7 +49,6 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
-import com.mulkkam.ui.searchmembers.component.SearchMembersTextField
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.onLoadMore
@@ -123,7 +131,25 @@ fun SearchMembersScreen(
         Column(
             modifier = Modifier.padding(innerPadding),
         ) {
-            SearchMembersTextField(name) { viewModel.updateName(it) }
+            MulKkamTextField(
+                value = name,
+                onValueChanged = { viewModel.updateName(it) },
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(24.dp)
+                        .height(44.dp),
+                prefix = {
+                    Icon(
+                        modifier = it,
+                        painter = painterResource(R.drawable.ic_search_friends_search),
+                        contentDescription = null,
+                        tint = Gray300,
+                    )
+                },
+                maxLength = Nickname.NICKNAME_LENGTH_MAX,
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
+            )
 
             if (!isTyping && name.isNotEmpty() && memberSearchUiState.toSuccessDataOrNull()?.size == 0) {
                 EmptySearchMembersScreen(
