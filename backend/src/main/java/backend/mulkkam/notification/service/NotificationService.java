@@ -174,7 +174,7 @@ public class NotificationService {
 
     @Transactional
     public void sendMaintenanceNotificationToAllMembers(MaintenanceNotificationRequest maintenanceNotificationRequest) {
-        if (!maintenanceNotificationRequest.secretKey().equals(secretKeyForNotification)) {
+        if (!secretKeyForNotification.equals(maintenanceNotificationRequest.secretKey())) {
             throw new CommonException(INVALID_SECRET_KEY_FOR_NOTIFICATION);
         }
 
