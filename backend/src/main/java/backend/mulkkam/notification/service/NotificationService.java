@@ -8,10 +8,12 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.NotificationInsertDto;
@@ -48,6 +50,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
     private final NotificationBatchRepository notificationBatchRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
+    private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
 
     @Transactional
@@ -161,6 +164,42 @@ public class NotificationService {
         }
 
         notificationRepository.delete(notification);
+    }
+
+    @Transactional
+    public void sendMaintenanceNotificationToAllMembers() {
+        NotificationMessageTemplate template = new NotificationMessageTemplate(
+                "점검 안내",
+                "11월 27일 14시부터 16시까지 점검이 있을 예정입니다.",
+                Action.GO_HOME,
+                NotificationType.NOTICE
+        );
+
+        Long lastId = null;
+
+        while (true) {
+            List<Long> memberIds = getAllMemberIds(lastId);
+
+            if (memberIds.isEmpty()) {
+                break;
+            }
+
+            saveAndSendNotifications(memberIds, template);
+
+            if (isLastChunk(memberIds)) {
+                break;
+            }
+
+            lastId = memberIds.getLast();
+        }
+    }
+
+    private List<Long> getAllMemberIds(Long lastId) {
+        return ChunkReader.readChunk(
+                memberRepository::findIdsAfter,
+                lastId,
+                CHUNK_SIZE
+        );
     }
 
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
