@@ -99,6 +99,7 @@ jobs:
           PROD_FCM_BASE64_ENCODING_KEY=${{ secrets.PROD_FCM_BASE64_ENCODING_KEY }}
           PROD_FCM_PROJECT_ID=${{ secrets.PROD_FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
+          NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
           SPRING_PROFILES_ACTIVE=prod
           EOF
           echo "Injected IMAGE_TAG=${IMAGE_TAG}"

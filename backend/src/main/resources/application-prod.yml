@@ -42,6 +42,9 @@ fcm:
   base64-encoding-key: ${PROD_FCM_BASE64_ENCODING_KEY}
   project-id: ${PROD_FCM_PROJECT_ID}
 
+notification:
+  secret-key: ${NOTIFICATION_SECRET_KEY}
+
 open-weather:
   api:
     key: ${OPEN_WEATHER_API_KEY}

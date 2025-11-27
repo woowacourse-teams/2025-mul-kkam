@@ -3,6 +3,7 @@ package backend.mulkkam.notification.controller;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.request.CreateActivityNotification;
+import backend.mulkkam.notification.dto.request.MaintenanceNotificationRequest;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
@@ -104,5 +105,15 @@ public class NotificationController {
     ) {
         notificationService.delete(memberDetails, id);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "전체 회원 점검 알림 전송", description = "모든 회원에게 점검 안내 알림을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "알림 전송 성공")
+    @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @PostMapping("/maintenance/all")
+    public ResponseEntity<Void> sendMaintenanceNotificationToAllMembers(
+            @RequestBody MaintenanceNotificationRequest maintenanceNotificationRequest) {
+        notificationService.sendMaintenanceNotificationToAllMembers(maintenanceNotificationRequest);
+        return ResponseEntity.ok().build();
     }
 }
