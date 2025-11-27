@@ -1,0 +1,51 @@
+server:
+  # 명시적으로 웹 띄우지 않도록 하기
+  port: 0
+
+spring:
+  main:
+    web-application-type: none
+
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 5672
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
+  # 스케줄러/웹/DB 관련 자동기능 끄기
+  task:
+    scheduling:
+      enabled: false
+
+  flyway:
+    enabled: false
+
+security:
+  jwt:
+    secret-key: ${JWT_SECRET}
+    access:
+      expire-length: ${ACCESS_TOKEN_EXPIRE}
+    refresh:
+      expire-length: ${REFRESH_TOKEN_EXPIRE}
+
+open-weather:
+  api:
+    key: ${OPEN_WEATHER_API_KEY}
+
+# MQ 토폴로지
+mulkkam:
+  mq:
+    exchange: notifications.ex
+    queue:
+      token: notifications.token.q
+      tokens: notifications.tokens.q
+      topic: notifications.topic.q
+    routing:
+      token: notify.token
+      tokens: notify.tokens
+      topic: notify.topic
+
+# FCM은 워커가 실제 발송하므로 유지
+fcm:
+  base64-encoding-key: ${DEV_FCM_BASE64_ENCODING_KEY}
+  project-id: ${DEV_FCM_PROJECT_ID}

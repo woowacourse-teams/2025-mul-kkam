@@ -21,6 +21,12 @@ spring:
     database:
       replace: none
 
+  rabbitmq:
+    host: ${MQ_HOST}
+    port: 80
+    username: ${MQ_USER}
+    password: ${MQ_PASSWORD}
+
 fcm:
   base64-encoding-key: ${DEV_FCM_BASE64_ENCODING_KEY}
   project-id: ${DEV_FCM_PROJECT_ID}
@@ -36,3 +42,16 @@ security:
 open-weather:
   api:
     key: temp-key
+
+# MQ 토폴로지
+mulkkam:
+  mq:
+    exchange: notifications.ex
+    queue:
+      token: notifications.token.q
+      tokens: notifications.tokens.q
+      topic: notifications.topic.q
+    routing:
+      token: notify.token
+      tokens: notify.tokens
+      topic: notify.topic

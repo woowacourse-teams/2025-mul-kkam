@@ -41,6 +41,8 @@ dependencies {
     implementation 'org.flywaydb:flyway-core:10.12.0'
     implementation 'org.flywaydb:flyway-mysql:10.12.0'
 
+    implementation 'org.springframework.boot:spring-boot-starter-amqp'
+
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
