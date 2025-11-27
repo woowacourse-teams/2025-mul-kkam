@@ -2,6 +2,7 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_SECRET_KEY_FOR_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
@@ -33,6 +34,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -42,6 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
+
+    @Value("${notification.secret-key}")
+    private String secretKeyForNotification;
 
     private static final int DAY_LIMIT = 7;
     private static final int CHUNK_SIZE = 1_000;
@@ -169,6 +174,10 @@ public class NotificationService {
 
     @Transactional
     public void sendMaintenanceNotificationToAllMembers(MaintenanceNotificationRequest maintenanceNotificationRequest) {
+        if (!maintenanceNotificationRequest.secretKey().equals(secretKeyForNotification)) {
+            throw new CommonException(INVALID_SECRET_KEY_FOR_NOTIFICATION);
+        }
+
         NotificationMessageTemplate template = new NotificationMessageTemplate(
                 maintenanceNotificationRequest.title(),
                 maintenanceNotificationRequest.body(),
