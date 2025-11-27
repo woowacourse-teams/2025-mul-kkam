@@ -116,5 +116,6 @@ jobs:
           JWT_SECRET: ${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE: ${{ secrets.ACCESS_TOKEN_EXPIRE }}
           REFRESH_TOKEN_EXPIRE: ${{ secrets.REFRESH_TOKEN_EXPIRE }}
+          NOTIFICATION_SECRET_KEY: ${{ secrets.NOTIFICATION_SECRET_KEY }}
         run: SPRING_PROFILES_ACTIVE=ci ./gradlew clean test
         working-directory: ./backend

@@ -2,7 +2,9 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_SECRET_KEY_FOR_NOTIFICATION;
 
+import org.springframework.beans.factory.annotation.Value;
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -19,6 +21,7 @@ import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.request.MaintenanceNotificationRequest;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetNotificationResponse;
 import backend.mulkkam.notification.dto.response.GetSuggestionNotificationResponse;
@@ -41,6 +44,9 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 @Service
 public class NotificationService {
+
+    @Value("${notification.secret-key}")
+    private String secretKeyForNotification;
 
     private static final int DAY_LIMIT = 7;
     private static final int CHUNK_SIZE = 1_000;
@@ -167,10 +173,14 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendMaintenanceNotificationToAllMembers() {
+    public void sendMaintenanceNotificationToAllMembers(MaintenanceNotificationRequest maintenanceNotificationRequest) {
+        if (!secretKeyForNotification.equals(maintenanceNotificationRequest.secretKey())) {
+            throw new CommonException(INVALID_SECRET_KEY_FOR_NOTIFICATION);
+        }
+
         NotificationMessageTemplate template = new NotificationMessageTemplate(
-                "점검 안내",
-                "11월 27일 14시부터 16시까지 점검이 있을 예정입니다.",
+                maintenanceNotificationRequest.title(),
+                maintenanceNotificationRequest.body(),
                 Action.GO_HOME,
                 NotificationType.NOTICE
         );
