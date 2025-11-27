@@ -19,6 +19,7 @@ import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.request.MaintenanceNotificationRequest;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetNotificationResponse;
 import backend.mulkkam.notification.dto.response.GetSuggestionNotificationResponse;
@@ -167,10 +168,10 @@ public class NotificationService {
     }
 
     @Transactional
-    public void sendMaintenanceNotificationToAllMembers() {
+    public void sendMaintenanceNotificationToAllMembers(MaintenanceNotificationRequest maintenanceNotificationRequest) {
         NotificationMessageTemplate template = new NotificationMessageTemplate(
-                "점검 안내",
-                "11월 27일 14시부터 16시까지 점검이 있을 예정입니다.",
+                maintenanceNotificationRequest.title(),
+                maintenanceNotificationRequest.body(),
                 Action.GO_HOME,
                 NotificationType.NOTICE
         );
