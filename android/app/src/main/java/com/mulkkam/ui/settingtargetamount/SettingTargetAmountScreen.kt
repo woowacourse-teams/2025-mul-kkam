@@ -1,0 +1,184 @@
+package com.mulkkam.ui.settingtargetamount
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.OutlinedTextFieldDefaults.contentPadding
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.mulkkam.R
+import com.mulkkam.ui.component.MulKkamToastHost
+import com.mulkkam.ui.component.MulKkamToastState
+import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.designsystem.Gray200
+import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.Primary200
+import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
+import com.mulkkam.ui.settingtargetamount.component.SettingTargetAmountTopAppBar
+import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
+
+@Composable
+fun SettingTargetAmountScreen(
+    navigateToBack: () -> Unit,
+    viewModel: SettingTargetAmountViewModel = hiltViewModel(),
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+
+    var targetAmount by rememberSaveable { mutableStateOf("") }
+    val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
+    val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
+    val saveTargetAmountUiState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
+
+    val toastState: MulKkamToastState = rememberMulKkamToastState()
+
+    viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        when (state) {
+            is MulKkamUiState.Success -> {
+                toastState.showMulKkamToast(
+                    message = context.getString(R.string.setting_target_amount_complete_description),
+                    iconResourceId = R.drawable.ic_info_circle,
+                )
+                navigateToBack()
+            }
+
+            is MulKkamUiState.Failure -> {
+                toastState.showMulKkamToast(
+                    message = context.getString(R.string.network_check_error),
+                    iconResourceId = R.drawable.ic_alert_circle,
+                )
+            }
+
+            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
+        }
+    }
+
+    LaunchedEffect(targetInfoUiState) {
+        val previous = targetInfoUiState.toSuccessDataOrNull()?.previousTargetAmount?.value ?: 0
+        targetAmount = previous.toString()
+    }
+
+    Scaffold(
+        topBar = { SettingTargetAmountTopAppBar { navigateToBack() } },
+        modifier =
+            Modifier
+                .background(White)
+                .systemBarsPadding(),
+        containerColor = White,
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier.fillMaxHeight(),
+        ) {
+            Column(
+                modifier =
+                    Modifier
+                        .padding(innerPadding),
+            ) {
+                TargetAmountInputSection(
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 24.dp),
+                    targetAmount = targetAmount,
+                    targetAmountValidityUiState = targetAmountValidityUiState,
+                    onTargetAmountChanged = { newValue ->
+                        if (newValue.all { it.isDigit() }) {
+                            val cleaned =
+                                when {
+                                    newValue.isEmpty() -> ""
+                                    newValue.all { it == '0' } -> "0"
+                                    else -> newValue.trimStart('0')
+                                }
+
+                            targetAmount = cleaned
+                            if (cleaned.isNotEmpty()) {
+                                viewModel.updateTargetAmount(cleaned.toInt())
+                            }
+                        }
+                    },
+                )
+
+                RecommendedTargetAmount(
+                    nickname =
+                        targetInfoUiState.toSuccessDataOrNull()?.nickname
+                            ?: return@Column,
+                    recommended =
+                        targetInfoUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
+                            ?: return@Column,
+                    modifier =
+                        Modifier
+                            .padding(horizontal = 24.dp)
+                            .padding(top = 58.dp),
+                )
+            }
+
+            Button(
+                onClick = { viewModel.saveTargetAmount() },
+                enabled = targetAmountValidityUiState is MulKkamUiState.Success && saveTargetAmountUiState !is MulKkamUiState.Loading,
+                colors =
+                    ButtonColors(
+                        containerColor = Primary200,
+                        contentColor = White,
+                        disabledContainerColor = Gray200,
+                        disabledContentColor = White,
+                    ),
+                shape = RoundedCornerShape(8.dp),
+                contentPadding = PaddingValues(0.dp),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 24.dp)
+                        .padding(bottom = 24.dp)
+                        .align(Alignment.BottomCenter),
+            ) {
+                Text(
+                    text = stringResource(R.string.setting_save),
+                    style = MulKkamTheme.typography.title2,
+                    modifier = Modifier.padding(vertical = 14.dp),
+                )
+            }
+
+            MulKkamToastHost(
+                state = toastState,
+                modifier = Modifier.align(Alignment.BottomCenter),
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SettingTargetAmountScreenPreview() {
+    MulkkamTheme {
+        SettingTargetAmountScreen(navigateToBack = {})
+    }
+}

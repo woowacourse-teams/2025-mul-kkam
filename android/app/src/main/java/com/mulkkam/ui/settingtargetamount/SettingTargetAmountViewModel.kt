@@ -1,7 +1,5 @@
 package com.mulkkam.ui.settingtargetamount
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
@@ -16,6 +14,9 @@ import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -27,21 +28,20 @@ class SettingTargetAmountViewModel
         private val membersRepository: MembersRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _targetInfoUiState: MutableLiveData<MulKkamUiState<TargetAmountUiModel>> =
-            MutableLiveData<MulKkamUiState<TargetAmountUiModel>>(MulKkamUiState.Idle)
-        val targetInfoUiState: LiveData<MulKkamUiState<TargetAmountUiModel>> get() = _targetInfoUiState
+        private val targetAmountInput: MutableStateFlow<TargetAmount> =
+            MutableStateFlow(EMPTY_TARGET_AMOUNT)
 
-        private val _targetAmountInput: MutableLiveData<TargetAmount> =
-            MutableLiveData<TargetAmount>(EMPTY_TARGET_AMOUNT)
-        val targetAmountInput: LiveData<TargetAmount> get() = _targetAmountInput
+        private val _targetInfoUiState: MutableStateFlow<MulKkamUiState<TargetAmountUiModel>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val targetInfoUiState: StateFlow<MulKkamUiState<TargetAmountUiModel>> get() = _targetInfoUiState.asStateFlow()
 
-        private val _saveTargetAmountUiState: MutableLiveData<MulKkamUiState<Unit>> =
-            MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val saveTargetAmountUiState: LiveData<MulKkamUiState<Unit>> get() = _saveTargetAmountUiState
+        private val _saveTargetAmountUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val saveTargetAmountUiState: StateFlow<MulKkamUiState<Unit>> get() = _saveTargetAmountUiState.asStateFlow()
 
-        private val _targetAmountValidityUiState: MutableLiveData<MulKkamUiState<Unit>> =
-            MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val targetAmountValidityUiState: LiveData<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState
+        private val _targetAmountValidityUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val targetAmountValidityUiState: StateFlow<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState.asStateFlow()
 
         init {
             loadInitialTargetInfo()
@@ -69,7 +69,7 @@ class SettingTargetAmountViewModel
                     )
                 }.onSuccess { targetAmountUiModel ->
                     _targetInfoUiState.value = MulKkamUiState.Success(targetAmountUiModel)
-                    _targetAmountInput.value = targetAmountUiModel.previousTargetAmount
+                    targetAmountInput.value = targetAmountUiModel.previousTargetAmount
                 }.onFailure {
                     _targetInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
@@ -78,7 +78,7 @@ class SettingTargetAmountViewModel
 
         fun updateTargetAmount(newTargetAmount: Int) {
             runCatching {
-                _targetAmountInput.value = TargetAmount(newTargetAmount)
+                targetAmountInput.value = TargetAmount(newTargetAmount)
             }.onSuccess {
                 _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure { error ->
@@ -87,7 +87,7 @@ class SettingTargetAmountViewModel
         }
 
         fun saveTargetAmount() {
-            val amount = _targetAmountInput.value ?: return
+            val amount = targetAmountInput.value
             if (_saveTargetAmountUiState.value is MulKkamUiState.Loading) return
 
             viewModelScope.launch {
@@ -98,7 +98,7 @@ class SettingTargetAmountViewModel
                 }.onSuccess {
                     _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)
 
-                    targetInfoUiState.value?.toSuccessDataOrNull()?.let { current ->
+                    targetInfoUiState.value.toSuccessDataOrNull()?.let { current ->
                         _targetInfoUiState.value =
                             MulKkamUiState.Success(
                                 current.copy(previousTargetAmount = amount),
