@@ -13,6 +13,9 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,27 +26,18 @@ class SettingBioInfoViewModel
         private val membersRepository: MembersRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _gender = MutableLiveData<Gender?>()
-        val gender: LiveData<Gender?>
-            get() = _gender
+        private val _gender: MutableStateFlow<Gender?> = MutableStateFlow(null)
+        val gender: StateFlow<Gender?>
+            get() = _gender.asStateFlow()
 
-        private val _weight = MutableLiveData<BioWeight?>()
-        val weight: MutableLiveData<BioWeight?>
-            get() = _weight
+        private val _weight: MutableStateFlow<BioWeight?> = MutableStateFlow(null)
+        val weight: StateFlow<BioWeight?>
+            get() = _weight.asStateFlow()
 
-        private val _bioInfoChangeUiState = MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val bioInfoChangeUiState: LiveData<MulKkamUiState<Unit>>
+        private val _bioInfoChangeUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val bioInfoChangeUiState: StateFlow<MulKkamUiState<Unit>>
             get() = _bioInfoChangeUiState
-
-        val canSave =
-            MediatorLiveData<Boolean>().apply {
-                fun update() {
-                    value = _gender.value != null && _weight.value != null
-                }
-
-                addSource(_gender) { update() }
-                addSource(_weight) { update() }
-            }
 
         init {
             loadMemberInfo()
