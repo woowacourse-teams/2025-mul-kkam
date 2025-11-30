@@ -43,6 +43,7 @@ import com.mulkkam.ui.settingbioinfo.component.WeightSection
 fun SettingBioInfoScreen(
     navigateToBack: () -> Unit,
     navigateToHealthConnect: () -> Unit,
+    onClickWeightSection: () -> Unit,
     viewModel: SettingBioInfoViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
@@ -103,7 +104,7 @@ fun SettingBioInfoScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp, start = 24.dp, end = 24.dp),
-                    onClickSection = { },
+                    onClickSection = { onClickWeightSection() },
                 )
 
                 HealthConnectSection(
@@ -153,6 +154,10 @@ fun SettingBioInfoScreen(
 @Composable
 private fun SettingBioInfoScreenPreview() {
     MulkkamTheme {
-        SettingBioInfoScreen(navigateToBack = {}, navigateToHealthConnect = {})
+        SettingBioInfoScreen(
+            navigateToBack = {},
+            navigateToHealthConnect = {},
+            onClickWeightSection = {},
+        )
     }
 }
