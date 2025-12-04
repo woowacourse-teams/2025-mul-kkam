@@ -11,11 +11,16 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,6 +30,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.rememberMulKkamToastState
@@ -38,14 +44,18 @@ import com.mulkkam.ui.settingbioinfo.component.GenderSection
 import com.mulkkam.ui.settingbioinfo.component.HealthConnectSection
 import com.mulkkam.ui.settingbioinfo.component.SettingBioInfoTopAppBar
 import com.mulkkam.ui.settingbioinfo.component.WeightSection
+import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightBottomSheet
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingBioInfoScreen(
     navigateToBack: () -> Unit,
     navigateToHealthConnect: () -> Unit,
-    onClickWeightSection: () -> Unit,
     viewModel: SettingBioInfoViewModel = hiltViewModel(),
 ) {
+    var isShowBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val modalBottomSheetState = rememberModalBottomSheetState()
+
     val context = LocalContext.current
 
     val gender by viewModel.gender.collectAsStateWithLifecycle()
@@ -83,6 +93,15 @@ fun SettingBioInfoScreen(
                 .background(White)
                 .systemBarsPadding(),
     ) { innerPadding ->
+        if (isShowBottomSheet) {
+            SettingWeightBottomSheet(
+                initialWeight = weight?.value ?: WEIGHT_DEFAULT,
+                sheetState = modalBottomSheetState,
+                onDismiss = { isShowBottomSheet = false },
+                onSave = { weight -> viewModel.updateWeight(weight) },
+            )
+        }
+
         Box(
             modifier = Modifier.fillMaxHeight(),
         ) {
@@ -104,7 +123,7 @@ fun SettingBioInfoScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 24.dp, start = 24.dp, end = 24.dp),
-                    onClickSection = { onClickWeightSection() },
+                    onClickSection = { isShowBottomSheet = true },
                 )
 
                 HealthConnectSection(
@@ -157,7 +176,6 @@ private fun SettingBioInfoScreenPreview() {
         SettingBioInfoScreen(
             navigateToBack = {},
             navigateToHealthConnect = {},
-            onClickWeightSection = {},
         )
     }
 }
