@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
+import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -139,31 +140,17 @@ fun SettingTargetAmountScreen(
                 )
             }
 
-            Button(
+            SaveButton(
                 onClick = { viewModel.saveTargetAmount() },
-                enabled = targetAmountValidityUiState is MulKkamUiState.Success && saveTargetAmountUiState !is MulKkamUiState.Loading,
-                colors =
-                    ButtonColors(
-                        containerColor = Primary200,
-                        contentColor = White,
-                        disabledContainerColor = Gray200,
-                        disabledContentColor = White,
-                    ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(0.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 24.dp)
                         .align(Alignment.BottomCenter),
-            ) {
-                Text(
-                    text = stringResource(R.string.setting_save),
-                    style = MulKkamTheme.typography.title2,
-                    modifier = Modifier.padding(vertical = 14.dp),
-                )
-            }
+                enabled = targetAmountValidityUiState is MulKkamUiState.Success && saveTargetAmountUiState !is MulKkamUiState.Loading,
+                disabledContainerColor = Primary200,
+            )
 
             MulKkamToastHost(
                 state = toastState,
