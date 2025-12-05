@@ -99,9 +99,7 @@ fun SettingTargetAmountScreen(
             modifier = Modifier.fillMaxHeight(),
         ) {
             Column(
-                modifier =
-                    Modifier
-                        .padding(innerPadding),
+                modifier = Modifier.padding(innerPadding),
             ) {
                 TargetAmountInputSection(
                     modifier =
