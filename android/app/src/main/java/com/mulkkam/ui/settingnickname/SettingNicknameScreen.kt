@@ -3,14 +3,10 @@ package com.mulkkam.ui.settingnickname
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
@@ -35,13 +31,12 @@ import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
+import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
@@ -130,30 +125,15 @@ fun SettingNicknameScreen(
                 )
             }
 
-            Button(
+            SaveButton(
                 onClick = { viewModel.saveNickname(nickname) },
-                enabled = nicknameValidationUiState == NicknameValidationUiState.VALID,
-                colors =
-                    ButtonColors(
-                        containerColor = Primary200,
-                        contentColor = White,
-                        disabledContainerColor = Gray200,
-                        disabledContentColor = White,
-                    ),
-                shape = RoundedCornerShape(8.dp),
-                contentPadding = PaddingValues(0.dp),
                 modifier =
                     Modifier
                         .fillMaxWidth()
                         .align(Alignment.BottomCenter)
                         .padding(24.dp),
-            ) {
-                Text(
-                    text = stringResource(R.string.setting_save),
-                    style = MulKkamTheme.typography.title2,
-                    modifier = Modifier.padding(vertical = 14.dp),
-                )
-            }
+                enabled = nicknameValidationUiState == NicknameValidationUiState.VALID,
+            )
 
             MulKkamSnackbarHost(
                 hostState = snackbarHostState,
