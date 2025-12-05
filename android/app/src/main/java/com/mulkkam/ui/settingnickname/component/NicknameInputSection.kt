@@ -21,7 +21,7 @@ fun NicknameInputSection(
     nickname: String,
     nicknameValidationState: NicknameValidationUiState,
     nicknameError: MulKkamError?,
-    onNicknameChange: (String) -> Unit,
+    onNicknameChange: (nickname: String) -> Unit,
     onCheckDuplicate: () -> Unit,
 ) {
     Column {
