@@ -50,7 +50,7 @@ fun SettingWeightBottomSheet(
     initialWeight: Int,
     sheetState: SheetState,
     onDismiss: () -> Unit,
-    onSave: (Int) -> Unit,
+    onSave: (weight: Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var weight by rememberSaveable { mutableIntStateOf(initialWeight) }
