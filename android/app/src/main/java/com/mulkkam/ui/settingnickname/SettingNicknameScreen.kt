@@ -81,8 +81,8 @@ fun SettingNicknameScreen(
                 navigateToBack()
             }
 
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
+
             is MulKkamUiState.Failure ->
                 snackbarHostState.showMulKkamSnackbar(
                     message = context.getString(R.string.network_check_error),
