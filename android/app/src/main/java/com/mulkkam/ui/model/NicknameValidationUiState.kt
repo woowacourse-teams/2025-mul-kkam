@@ -12,4 +12,11 @@ enum class NicknameValidationUiState {
 
     /** 이전 닉네임과 같은 닉네임으로 변경 → 초기화 */
     SAME_AS_BEFORE,
+
+    NONE,
+    ;
+
+    companion object {
+        fun isError(validateUiState: NicknameValidationUiState): Boolean = validateUiState == INVALID || validateUiState == SAME_AS_BEFORE
+    }
 }

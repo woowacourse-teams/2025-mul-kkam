@@ -1,7 +1,5 @@
 package com.mulkkam.ui.settingnickname
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
@@ -15,8 +13,10 @@ import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.model.NicknameValidationUiState
-import com.mulkkam.ui.util.MutableSingleLiveData
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,29 +28,27 @@ class SettingNicknameViewModel
         private val nicknameRepository: NicknameRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _newNickname: MutableLiveData<Nickname> = MutableLiveData<Nickname>()
-        val newNickname: LiveData<Nickname>
-            get() = _newNickname
+        private var newNickname: Nickname? = null
 
-        private val _originalNicknameUiState: MutableLiveData<MulKkamUiState<Nickname>> =
-            MutableLiveData(MulKkamUiState.Idle)
-        val originalNicknameUiState: LiveData<MulKkamUiState<Nickname>>
+        private val _originalNicknameUiState: MutableStateFlow<MulKkamUiState<Nickname>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val originalNicknameUiState: StateFlow<MulKkamUiState<Nickname>>
             get() = _originalNicknameUiState
 
-        private val _nicknameValidationState: MutableLiveData<NicknameValidationUiState> =
-            MutableLiveData()
-        val nicknameValidationState: MutableLiveData<NicknameValidationUiState>
-            get() = _nicknameValidationState
+        private val _nicknameValidationState: MutableStateFlow<NicknameValidationUiState> =
+            MutableStateFlow(NicknameValidationUiState.NONE)
+        val nicknameValidationState: StateFlow<NicknameValidationUiState>
+            get() = _nicknameValidationState.asStateFlow()
 
-        private val _onNicknameValidationError: MutableSingleLiveData<MulKkamError> =
-            MutableSingleLiveData()
-        val onNicknameValidationError: MutableSingleLiveData<MulKkamError>
-            get() = _onNicknameValidationError
+        private val _onNicknameValidationError: MutableStateFlow<MulKkamError?> =
+            MutableStateFlow(null)
+        val onNicknameValidationError: StateFlow<MulKkamError?>
+            get() = _onNicknameValidationError.asStateFlow()
 
-        private val _nicknameChangeUiState: MutableLiveData<MulKkamUiState<Unit>> =
-            MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val nicknameChangeUiState: LiveData<MulKkamUiState<Unit>>
-            get() = _nicknameChangeUiState
+        private val _nicknameChangeUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+        val nicknameChangeUiState: StateFlow<MulKkamUiState<Unit>>
+            get() = _nicknameChangeUiState.asStateFlow()
 
         init {
             loadOriginalNickname()
@@ -65,7 +63,7 @@ class SettingNicknameViewModel
                     membersRepository.getMembersNickname().getOrError()
                 }.onSuccess { nickname ->
                     _originalNicknameUiState.value =
-                        MulKkamUiState.Success<Nickname>(Nickname(nickname))
+                        MulKkamUiState.Success(Nickname(nickname))
                 }.onFailure {
                     _originalNicknameUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
@@ -74,11 +72,11 @@ class SettingNicknameViewModel
 
         fun updateNickname(nickname: String) {
             runCatching {
-                _newNickname.value = Nickname(nickname)
+                newNickname = Nickname(nickname)
             }.onSuccess {
                 when (nickname) {
-                    originalNicknameUiState.value?.toSuccessDataOrNull()?.name -> {
-                        _nicknameValidationState.value = NicknameValidationUiState.SAME_AS_BEFORE
+                    originalNicknameUiState.value.toSuccessDataOrNull()?.name -> {
+                        _nicknameValidationState.value = NicknameValidationUiState.NONE
                     }
 
                     else -> {
@@ -88,7 +86,7 @@ class SettingNicknameViewModel
                 }
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationUiState.INVALID
-                _onNicknameValidationError.setValue(error as? NicknameError ?: MulKkamError.Unknown)
+                _onNicknameValidationError.value = error as? NicknameError ?: MulKkamError.Unknown
             }
         }
 
@@ -101,10 +99,10 @@ class SettingNicknameViewModel
                 }.onFailure { error ->
                     _nicknameValidationState.value = NicknameValidationUiState.INVALID
                     if (error !is NicknameError) {
-                        _onNicknameValidationError.setValue(MulKkamError.NetworkUnavailable)
+                        _onNicknameValidationError.value = MulKkamError.NetworkUnavailable
                         return@onFailure
                     }
-                    _onNicknameValidationError.setValue(error)
+                    _onNicknameValidationError.value = error
                 }
             }
         }
