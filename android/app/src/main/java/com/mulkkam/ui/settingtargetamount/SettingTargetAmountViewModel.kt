@@ -28,8 +28,7 @@ class SettingTargetAmountViewModel
         private val membersRepository: MembersRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val targetAmountInput: MutableStateFlow<TargetAmount> =
-            MutableStateFlow(EMPTY_TARGET_AMOUNT)
+        private var targetAmountInput: TargetAmount = EMPTY_TARGET_AMOUNT
 
         private val _targetInfoUiState: MutableStateFlow<MulKkamUiState<TargetAmountUiModel>> =
             MutableStateFlow(MulKkamUiState.Idle)
@@ -69,7 +68,7 @@ class SettingTargetAmountViewModel
                     )
                 }.onSuccess { targetAmountUiModel ->
                     _targetInfoUiState.value = MulKkamUiState.Success(targetAmountUiModel)
-                    targetAmountInput.value = targetAmountUiModel.previousTargetAmount
+                    targetAmountInput = targetAmountUiModel.previousTargetAmount
                 }.onFailure {
                     _targetInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
@@ -78,7 +77,7 @@ class SettingTargetAmountViewModel
 
         fun updateTargetAmount(newTargetAmount: Int) {
             runCatching {
-                targetAmountInput.value = TargetAmount(newTargetAmount)
+                targetAmountInput = TargetAmount(newTargetAmount)
             }.onSuccess {
                 _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure { error ->
@@ -94,14 +93,14 @@ class SettingTargetAmountViewModel
                 runCatching {
                     logger.info(LogEvent.USER_ACTION, "Saving target amount: $amount")
                     _saveTargetAmountUiState.value = MulKkamUiState.Loading
-                    intakeRepository.patchIntakeTarget(amount.value).getOrError()
+                    intakeRepository.patchIntakeTarget(amount).getOrError()
                 }.onSuccess {
                     _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)
 
                     targetInfoUiState.value.toSuccessDataOrNull()?.let { current ->
                         _targetInfoUiState.value =
                             MulKkamUiState.Success(
-                                current.copy(previousTargetAmount = amount),
+                                current.copy(previousTargetAmount = targetAmountInput),
                             )
                     }
                 }.onFailure {
