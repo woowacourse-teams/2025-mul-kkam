@@ -9,6 +9,7 @@ import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
@@ -22,15 +23,17 @@ fun SaveButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    containerColor: Color = Primary200,
+    disabledContainerColor: Color = Gray200,
 ) {
     Button(
         onClick = { onClick() },
         enabled = enabled,
         colors =
             ButtonColors(
-                containerColor = Primary200,
+                containerColor = containerColor,
                 contentColor = White,
-                disabledContainerColor = Gray200,
+                disabledContainerColor = disabledContainerColor,
                 disabledContentColor = White,
             ),
         shape = RoundedCornerShape(8.dp),
