@@ -3,52 +3,27 @@ package com.mulkkam.ui.settingfeedback
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.core.net.toUri
-import com.mulkkam.R
-import com.mulkkam.databinding.ActivitySettingFeedbackBinding
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.ui.util.binding.BindingActivity
-import com.mulkkam.ui.util.extensions.getAppearanceSpannable
-import com.mulkkam.ui.util.extensions.setSingleClickListener
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class SettingFeedbackActivity : BindingActivity<ActivitySettingFeedbackBinding>(ActivitySettingFeedbackBinding::inflate) {
+class SettingFeedbackActivity : ComponentActivity() {
     @Inject
     lateinit var logger: Logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        initHighlight()
-        initClickListeners()
-    }
-
-    private fun initHighlight() {
-        binding.tvFeedbackDescription.text =
-            getString(R.string.setting_feedback_description).getAppearanceSpannable(
-                this,
-                R.style.title2,
-                getString(R.string.setting_feedback_description_highlight),
-            )
-    }
-
-    private fun initClickListeners() {
-        binding.tvEmail.setSingleClickListener {
-            logger.info(LogEvent.USER_ACTION, "Opened feedback email link")
-            val intent =
-                Intent(
-                    Intent.ACTION_VIEW,
-                    getString(R.string.feedback_email)
-                        .toUri(),
+        setContent {
+            MulkkamTheme {
+                SettingFeedbackRoute(
+                    logger = logger,
+                    onBackClick = ::finish,
                 )
-            startActivity(intent)
-        }
-
-        binding.ivBack.setSingleClickListener {
-            finish()
+            }
         }
     }
 
