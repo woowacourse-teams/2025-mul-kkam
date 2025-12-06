@@ -39,7 +39,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 @Composable
 fun MulKkamAlertDialog(
     title: String,
-    description: String,
+    description: String = "",
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
