@@ -1,7 +1,6 @@
 package com.mulkkam.ui.settingfeedback
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +24,7 @@ import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingTopAppBar
 import com.mulkkam.ui.util.extensions.getStyledText
+import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
 fun SettingFeedbackScreen(
@@ -67,7 +67,7 @@ fun SettingFeedbackScreen(
                     Modifier
                         .fillMaxWidth()
                         .background(Primary10, RoundedCornerShape(12.dp))
-                        .clickable(onClick = onEmailClick)
+                        .noRippleClickable(onClick = onEmailClick)
                         .padding(vertical = 12.dp),
                 textAlign = TextAlign.Center,
             )
