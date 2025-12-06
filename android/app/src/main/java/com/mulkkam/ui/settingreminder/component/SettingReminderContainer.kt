@@ -32,7 +32,7 @@ fun SettingReminderContainer(
     isReminderEnabled: Boolean,
     reminders: List<ReminderSchedule>,
     updateBottomSheetMode: (ReminderUpdateUiState) -> Unit,
-    updateReminderEnabled: () -> Unit,
+    updateReminderEnabled: (enabled: Boolean) -> Unit,
     removeReminder: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -41,7 +41,8 @@ fun SettingReminderContainer(
     ) {
         ReminderSwitchRow(
             checked = isReminderEnabled,
-        ) { updateReminderEnabled() }
+            onCheckedChange = updateReminderEnabled,
+        )
 
         AnimatedVisibility(
             visible = isReminderEnabled,

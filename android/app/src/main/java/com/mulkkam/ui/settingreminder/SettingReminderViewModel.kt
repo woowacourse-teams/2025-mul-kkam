@@ -9,7 +9,6 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.ReminderRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -66,13 +65,12 @@ class SettingReminderViewModel
             }
         }
 
-        fun updateReminderEnabled() {
+        fun updateReminderEnabled(enabled: Boolean) {
             viewModelScope.launch {
-                val isEnabled = isReminderEnabled.value.toSuccessDataOrNull() ?: return@launch
                 runCatching {
-                    logger.info(LogEvent.USER_ACTION, "Toggled reminder enabled to ${!isEnabled}")
-                    _isReminderEnabled.value = MulKkamUiState.Success(!isEnabled)
-                    membersRepository.patchMembersReminder(!isEnabled).getOrError()
+                    logger.info(LogEvent.USER_ACTION, "Toggled reminder enabled to $enabled")
+                    _isReminderEnabled.value = MulKkamUiState.Success(enabled)
+                    membersRepository.patchMembersReminder(enabled).getOrError()
                 }.onSuccess {
                     loadReminderSchedules()
                 }
@@ -98,7 +96,9 @@ class SettingReminderViewModel
                     addReminder(selectedTime)
                 }
 
-                is ReminderUpdateUiState.Idle -> Unit
+                is ReminderUpdateUiState.Idle -> {
+                    Unit
+                }
             }
             updateReminderUpdateUiState(ReminderUpdateUiState.Idle)
         }
