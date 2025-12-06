@@ -12,7 +12,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
-import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -48,7 +48,7 @@ class SplashActivity : ComponentActivity() {
             when (authUiState) {
                 is MulKkamUiState.Success<UserAuthState> -> {
                     when (authUiState.data) {
-                        UNONBOARDED -> OnboardingActivity.newIntent(this)
+                        UNONBOARDED -> OnboardingTermsActivity.newIntent(this)
                         ACTIVE_USER -> MainActivity.newIntent(this)
                     }
                 }
