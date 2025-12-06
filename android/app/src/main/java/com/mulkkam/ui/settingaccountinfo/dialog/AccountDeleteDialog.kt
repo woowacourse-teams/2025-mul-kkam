@@ -39,7 +39,7 @@ import com.mulkkam.ui.util.extensions.getColoredText
 fun AccountDeleteDialog(
     value: String,
     deleteComment: String,
-    onValueChanged: (String) -> Unit,
+    onValueChanged: (input: String) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
