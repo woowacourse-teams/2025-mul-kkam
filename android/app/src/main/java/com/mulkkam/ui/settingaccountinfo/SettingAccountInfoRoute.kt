@@ -34,7 +34,7 @@ fun SettingAccountInfoRoute(
 
     val toastState: MulKkamToastState = rememberMulKkamToastState()
 
-    viewModel.settingAccountInfoEventFlow.collectWithLifecycle(lifecycleOwner) { accountInfoEvent ->
+    viewModel.settingAccountInfoEvent.collectWithLifecycle(lifecycleOwner) { accountInfoEvent ->
         when (accountInfoEvent) {
             SettingAccountInfoEvent.DeleteSuccess -> {
                 toastState.showMulKkamToast(

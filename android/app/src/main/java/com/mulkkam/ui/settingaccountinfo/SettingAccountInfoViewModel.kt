@@ -32,10 +32,10 @@ class SettingAccountInfoViewModel
             MutableStateFlow(accountInfoList)
         val accountInfo: StateFlow<List<SettingAccountUiModel>> = _accountInfo.asStateFlow()
 
-        private val _settingAccountInfoEventFlow: MutableSharedFlow<SettingAccountInfoEvent> =
+        private val _settingAccountInfoEvent: MutableSharedFlow<SettingAccountInfoEvent> =
             MutableSharedFlow()
-        val settingAccountInfoEventFlow: SharedFlow<SettingAccountInfoEvent> =
-            _settingAccountInfoEventFlow.asSharedFlow()
+        val settingAccountInfoEvent: SharedFlow<SettingAccountInfoEvent> =
+            _settingAccountInfoEvent.asSharedFlow()
 
         fun deleteAccount() {
             viewModelScope.launch {
@@ -47,7 +47,7 @@ class SettingAccountInfoViewModel
                     membersRepository.deleteMembers().getOrError()
                 }.onSuccess {
                     deleteTokens()
-                    _settingAccountInfoEventFlow.emit(SettingAccountInfoEvent.DeleteSuccess)
+                    _settingAccountInfoEvent.emit(SettingAccountInfoEvent.DeleteSuccess)
                 }.onFailure {
                     // TODO: 에러 처리
                 }
@@ -64,7 +64,7 @@ class SettingAccountInfoViewModel
                     authRepository.postAuthLogout().getOrError()
                 }.onSuccess {
                     deleteTokens()
-                    _settingAccountInfoEventFlow.emit(SettingAccountInfoEvent.LogoutSuccess)
+                    _settingAccountInfoEvent.emit(SettingAccountInfoEvent.LogoutSuccess)
                 }.onFailure {
                     // TODO: 에러 처리
                 }
