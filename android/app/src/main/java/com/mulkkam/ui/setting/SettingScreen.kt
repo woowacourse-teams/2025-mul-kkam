@@ -87,8 +87,14 @@ fun SettingScreen(navigateToSettingType: (SettingType) -> Unit) {
         ) {
             items(settingItems) { item ->
                 when (item) {
-                    is SettingItem.TitleItem -> SettingTitleItem(item)
-                    is SettingItem.NormalItem -> SettingNormalItem(item, navigateToSettingType)
+                    is SettingItem.TitleItem -> SettingTitleItem(label = item.title)
+                    is SettingItem.NormalItem ->
+                        SettingNormalItem(
+                            label = item.label,
+                            onClick = {
+                                navigateToSettingType(item.type)
+                            },
+                        )
                     is SettingItem.DividerItem -> SettingDividerItem()
                 }
             }
