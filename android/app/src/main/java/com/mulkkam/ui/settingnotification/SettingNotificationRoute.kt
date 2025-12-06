@@ -11,7 +11,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
@@ -26,7 +25,8 @@ fun SettingNotificationRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
-    val settingsUiState: MulKkamUiState<NotificationAgreedInfo> by viewModel.settingsUiState.collectAsStateWithLifecycle()
+    val marketingNotificationState: MulKkamUiState<Boolean> by viewModel.marketingNotificationState.collectAsStateWithLifecycle()
+    val nightNotificationState: MulKkamUiState<Boolean> by viewModel.nightNotificationState.collectAsStateWithLifecycle()
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
     viewModel.notificationEvents.collectWithLifecycle(lifecycleOwner) { event ->
@@ -69,7 +69,8 @@ fun SettingNotificationRoute(
     }
 
     SettingNotificationScreen(
-        settingsUiState = settingsUiState,
+        marketingNotificationState = marketingNotificationState,
+        nightNotificationState = nightNotificationState,
         snackbarHostState = snackbarHostState,
         onBackClick = onBackClick,
         onMarketingChecked = viewModel::updateMarketingNotification,

@@ -4,11 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,9 +26,11 @@ class SettingNotificationViewModel
         private val membersRepository: MembersRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _settingsUiState: MutableStateFlow<MulKkamUiState<NotificationAgreedInfo>> =
-            MutableStateFlow(MulKkamUiState.Idle)
-        val settingsUiState: StateFlow<MulKkamUiState<NotificationAgreedInfo>> get() = _settingsUiState.asStateFlow()
+        private val _marketingNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> = MutableStateFlow(MulKkamUiState.Idle)
+        val marketingNotificationState: StateFlow<MulKkamUiState<Boolean>> get() = _marketingNotificationState.asStateFlow()
+
+        private val _nightNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> = MutableStateFlow(MulKkamUiState.Idle)
+        val nightNotificationState: StateFlow<MulKkamUiState<Boolean>> get() = _nightNotificationState.asStateFlow()
 
         private val _notificationEvents: MutableSharedFlow<SettingNotificationEvent> = MutableSharedFlow()
         val notificationEvents: SharedFlow<SettingNotificationEvent> get() = _notificationEvents.asSharedFlow()
@@ -39,60 +42,61 @@ class SettingNotificationViewModel
         private fun loadSettings() {
             viewModelScope.launch {
                 runCatching {
-                    _settingsUiState.value = MulKkamUiState.Loading
+                    _marketingNotificationState.value = MulKkamUiState.Loading
+                    _nightNotificationState.value = MulKkamUiState.Loading
                     membersRepository.getMembersNotificationSettings().getOrError()
                 }.onSuccess { settings ->
-                    _settingsUiState.value = MulKkamUiState.Success(settings)
+                    _marketingNotificationState.value = MulKkamUiState.Success(settings.isMarketingNotificationAgreed)
+                    _nightNotificationState.value = MulKkamUiState.Success(settings.isNightNotificationAgreed)
                 }.onFailure {
-                    _settingsUiState.value = MulKkamUiState.Idle
+                    _marketingNotificationState.value = MulKkamUiState.Idle
+                    _nightNotificationState.value = MulKkamUiState.Idle
                     _notificationEvents.emit(SettingNotificationEvent.Error)
                 }
             }
         }
 
         fun updateNightNotification(agreed: Boolean) {
-            if (settingsUiState.value is MulKkamUiState.Loading) return
-            val current: NotificationAgreedInfo = (settingsUiState.value as? MulKkamUiState.Success)?.data ?: return
+            val previousValue: Boolean = nightNotificationState.value.toSuccessDataOrNull() ?: return
 
+            _nightNotificationState.value = MulKkamUiState.Success(agreed)
             viewModelScope.launch {
                 runCatching {
                     logger.info(
                         LogEvent.PUSH_NOTIFICATION,
                         "Night notification preference updated to $agreed",
                     )
-                    _settingsUiState.value = MulKkamUiState.Loading
                     membersRepository.patchMembersNotificationNight(agreed).getOrError()
                 }.onSuccess {
-                    _settingsUiState.value =
-                        MulKkamUiState.Success(current.copy(isNightNotificationAgreed = agreed))
                     _notificationEvents.emit(SettingNotificationEvent.NightUpdated(agreed))
-                }.onFailure {
-                    _settingsUiState.value =
-                        MulKkamUiState.Success(current.copy(isNightNotificationAgreed = !agreed))
+                }.onFailure { throwable ->
+                    if (throwable is CancellationException) return@onFailure
+                    if (_nightNotificationState.value.toSuccessDataOrNull() == agreed) {
+                        _nightNotificationState.value = MulKkamUiState.Success(previousValue)
+                    }
                     _notificationEvents.emit(SettingNotificationEvent.Error)
                 }
             }
         }
 
         fun updateMarketingNotification(agreed: Boolean) {
-            if (settingsUiState.value is MulKkamUiState.Loading) return
-            val current: NotificationAgreedInfo = (settingsUiState.value as? MulKkamUiState.Success)?.data ?: return
+            val previousValue: Boolean = marketingNotificationState.value.toSuccessDataOrNull() ?: return
 
+            _marketingNotificationState.value = MulKkamUiState.Success(agreed)
             viewModelScope.launch {
                 runCatching {
                     logger.info(
                         LogEvent.PUSH_NOTIFICATION,
                         "Marketing notification preference updated to $agreed",
                     )
-                    _settingsUiState.value = MulKkamUiState.Loading
                     membersRepository.patchMembersNotificationMarketing(agreed).getOrError()
                 }.onSuccess {
-                    _settingsUiState.value =
-                        MulKkamUiState.Success(current.copy(isMarketingNotificationAgreed = agreed))
                     _notificationEvents.emit(SettingNotificationEvent.MarketingUpdated(agreed))
-                }.onFailure {
-                    _settingsUiState.value =
-                        MulKkamUiState.Success(current.copy(isMarketingNotificationAgreed = !agreed))
+                }.onFailure { throwable ->
+                    if (throwable is CancellationException) return@onFailure
+                    if (_marketingNotificationState.value.toSuccessDataOrNull() == agreed) {
+                        _marketingNotificationState.value = MulKkamUiState.Success(previousValue)
+                    }
                     _notificationEvents.emit(SettingNotificationEvent.Error)
                 }
             }

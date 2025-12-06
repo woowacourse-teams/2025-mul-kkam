@@ -12,7 +12,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.R
-import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -24,7 +23,8 @@ import com.mulkkam.ui.setting.component.SettingTopAppBar
 
 @Composable
 fun SettingNotificationScreen(
-    settingsUiState: MulKkamUiState<NotificationAgreedInfo>,
+    marketingNotificationState: MulKkamUiState<Boolean>,
+    nightNotificationState: MulKkamUiState<Boolean>,
     snackbarHostState: SnackbarHostState,
     onBackClick: () -> Unit,
     onMarketingChecked: (checked: Boolean) -> Unit,
@@ -43,17 +43,18 @@ fun SettingNotificationScreen(
                     .padding(paddingValues)
                     .background(White),
         ) {
-            val notificationInfo: NotificationAgreedInfo? = settingsUiState.toSuccessDataOrNull()
+            val isMarketingAgreed: Boolean = marketingNotificationState.toSuccessDataOrNull() ?: false
+            val isNightAgreed: Boolean = nightNotificationState.toSuccessDataOrNull() ?: false
 
             SettingSwitchItem(
                 label = stringResource(id = R.string.setting_item_marketing),
-                checked = notificationInfo?.isMarketingNotificationAgreed ?: false,
+                checked = isMarketingAgreed,
                 onCheckedChange = { isChecked -> onMarketingChecked(isChecked) },
                 modifier = Modifier.fillMaxWidth(),
             )
             SettingSwitchItem(
                 label = stringResource(id = R.string.setting_item_night),
-                checked = notificationInfo?.isNightNotificationAgreed ?: false,
+                checked = isNightAgreed,
                 onCheckedChange = { isChecked -> onNightChecked(isChecked) },
                 modifier = Modifier.fillMaxWidth(),
             )
@@ -71,10 +72,8 @@ fun SettingNotificationScreen(
 private fun SettingNotificationScreenPreview() {
     MulkkamTheme {
         SettingNotificationScreen(
-            settingsUiState =
-                MulKkamUiState.Success(
-                    NotificationAgreedInfo(isMarketingNotificationAgreed = true, isNightNotificationAgreed = false),
-                ),
+            marketingNotificationState = MulKkamUiState.Success(true),
+            nightNotificationState = MulKkamUiState.Success(false),
             snackbarHostState = SnackbarHostState(),
             onBackClick = {},
             onMarketingChecked = {},
