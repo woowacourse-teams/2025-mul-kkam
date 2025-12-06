@@ -46,7 +46,7 @@ class SettingNicknameViewModel
             get() = _onNicknameValidationError.asStateFlow()
 
         private val _nicknameChangeUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-            MutableStateFlow<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
+            MutableStateFlow(MulKkamUiState.Idle)
         val nicknameChangeUiState: StateFlow<MulKkamUiState<Unit>>
             get() = _nicknameChangeUiState.asStateFlow()
 
