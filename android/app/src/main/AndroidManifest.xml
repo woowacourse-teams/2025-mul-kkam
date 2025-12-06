@@ -111,6 +111,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.onboarding.bioinfo.OnboardingBioInfoActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.settingfeedback.SettingFeedbackActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

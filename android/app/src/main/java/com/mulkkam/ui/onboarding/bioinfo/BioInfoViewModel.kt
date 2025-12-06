@@ -1,30 +1,20 @@
 package com.mulkkam.ui.onboarding.bioinfo
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class BioInfoViewModel : ViewModel() {
-    private val _gender = MutableLiveData<Gender>()
-    val gender: LiveData<Gender>
-        get() = _gender
+    private val _gender: MutableStateFlow<Gender?> = MutableStateFlow(null)
+    val gender: StateFlow<Gender?>
+        get() = _gender.asStateFlow()
 
-    private val _weight = MutableLiveData<BioWeight>()
-    val weight: MutableLiveData<BioWeight>
-        get() = _weight
-
-    val canNext =
-        MediatorLiveData<Boolean>().apply {
-            fun update() {
-                value = _gender.value != null && _weight.value != null
-            }
-
-            addSource(_gender) { update() }
-            addSource(_weight) { update() }
-        }
+    private val _weight: MutableStateFlow<BioWeight?> = MutableStateFlow(null)
+    val weight: StateFlow<BioWeight?>
+        get() = _weight.asStateFlow()
 
     fun updateWeight(value: Int) {
         runCatching {
