@@ -38,6 +38,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 fun TermsAgreementScreen(
     navigateToBack: () -> Unit,
     loadToPage: (uri: Int) -> Unit,
+    navigateToNextStep: () -> Unit,
     currentProgress: Int,
     viewModel: TermsAgreementViewModel = viewModel(),
 ) {
@@ -117,8 +118,7 @@ fun TermsAgreementScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { },
-                modifier = Modifier.padding(),
+                onClick = { navigateToNextStep() },
                 enabled = canNext,
             )
         }
@@ -132,6 +132,7 @@ private fun TermsAgreementScreenPreview() {
         TermsAgreementScreen(
             navigateToBack = {},
             loadToPage = {},
+            navigateToNextStep = {},
             currentProgress = 1,
         )
     }

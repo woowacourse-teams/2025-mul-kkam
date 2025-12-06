@@ -103,6 +103,14 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.onboarding.terms.OnboardingTermsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".ui.onboarding.nickname.OnboardingNicknameActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.settingfeedback.SettingFeedbackActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

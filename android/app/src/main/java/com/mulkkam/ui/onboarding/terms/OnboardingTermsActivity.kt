@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.onboarding.nickname.OnboardingNicknameActivity
 import com.mulkkam.ui.util.extensions.openTermsLink
 
 class OnboardingTermsActivity : ComponentActivity() {
@@ -20,6 +21,7 @@ class OnboardingTermsActivity : ComponentActivity() {
                 TermsAgreementScreen(
                     navigateToBack = ::finish,
                     loadToPage = { openTermsLink(it) },
+                    navigateToNextStep = { startActivity(OnboardingNicknameActivity.newIntent(this)) },
                     currentProgress = CURRENT_PROGRESS,
                     viewModel = viewModel,
                 )
