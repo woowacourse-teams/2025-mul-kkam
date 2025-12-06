@@ -7,19 +7,17 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
@@ -30,9 +28,12 @@ import com.mulkkam.ui.component.MulKkamTextFieldState
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
+import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.extensions.getColoredText
 
 @Composable
 fun AccountDeleteDialog(
@@ -63,6 +64,7 @@ fun AccountDeleteDialog(
                 Icon(
                     painter = painterResource(R.drawable.ic_alert_circle),
                     contentDescription = null,
+                    modifier = Modifier.size(48.dp),
                     tint = Secondary200,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
@@ -73,15 +75,22 @@ fun AccountDeleteDialog(
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = rememberDeleteDescription(),
-                    style = MulKkamTheme.typography.body2,
+                    text =
+                        stringResource(
+                            R.string.setting_account_info_delete_description,
+                        ).getColoredText(
+                            colorResId = R.color.secondary_200,
+                            highlightedText = arrayOf(stringResource(R.string.setting_account_info_delete_description_highlight)),
+                        ),
                     color = Gray400,
+                    textAlign = TextAlign.Center,
+                    style = MulKkamTheme.typography.body2,
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
                     text = deleteComment,
                     style = MulKkamTheme.typography.title3,
-                    color = Primary100,
+                    color = Primary200,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 MulKkamTextField(
@@ -100,6 +109,7 @@ fun AccountDeleteDialog(
                         containerColor = Primary100,
                         textColor = White,
                         onClick = onConfirm,
+                        modifier = Modifier.weight(1f),
                         enabled = value == deleteComment,
                     )
                     SettingAccountInfoDialogButton(
@@ -107,31 +117,9 @@ fun AccountDeleteDialog(
                         containerColor = Gray100,
                         textColor = Gray400,
                         onClick = onDismiss,
+                        modifier = Modifier.weight(1f),
                     )
                 }
-            }
-        }
-    }
-}
-
-@Composable
-private fun rememberDeleteDescription(): AnnotatedString {
-    val description: String = stringResource(R.string.setting_account_info_delete_description)
-    val highlight: String = stringResource(R.string.setting_account_info_delete_description_highlight)
-    val highlightStart: Int = description.indexOf(highlight)
-
-    // TODO: 색상 체크
-    return remember(description, highlight, highlightStart) {
-        if (highlightStart < 0) {
-            AnnotatedString(description)
-        } else {
-            buildAnnotatedString {
-                append(description)
-                addStyle(
-                    style = SpanStyle(color = Secondary200),
-                    start = highlightStart,
-                    end = highlightStart + highlight.length,
-                )
             }
         }
     }
@@ -140,11 +128,13 @@ private fun rememberDeleteDescription(): AnnotatedString {
 @Preview
 @Composable
 private fun AccountDeleteDialogPreview() {
-    AccountDeleteDialog(
-        value = "MULKKAM",
-        deleteComment = "MULKKAM",
-        onValueChanged = {},
-        onConfirm = {},
-        onDismiss = {},
-    )
+    MulkkamTheme {
+        AccountDeleteDialog(
+            value = "물깜 회원을 탈퇴하겠습니다",
+            deleteComment = "물깜 회원을 탈퇴하겠습니다",
+            onValueChanged = {},
+            onConfirm = {},
+            onDismiss = {},
+        )
+    }
 }

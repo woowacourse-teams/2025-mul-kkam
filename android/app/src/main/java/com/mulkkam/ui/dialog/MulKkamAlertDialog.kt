@@ -78,12 +78,14 @@ fun MulKkamAlertDialog(
                     style = MulKkamTheme.typography.title1,
                     textAlign = TextAlign.Center,
                 )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = description,
-                    color = Secondary200,
-                    style = MulKkamTheme.typography.body2,
-                )
+                if (description.isNotBlank()) {
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = description,
+                        color = Secondary200,
+                        style = MulKkamTheme.typography.body2,
+                    )
+                }
                 Spacer(modifier = Modifier.height(18.dp))
                 Row {
                     Box(
@@ -130,7 +132,7 @@ fun MulKkamAlertDialog(
 private fun MulKkamAlertDialogPreview() {
     MulkkamTheme {
         MulKkamAlertDialog(
-            title = "돈가스먹는환노\n친구 신처을 취소하시겠습니까?",
+            title = "돈가스먹는환노\n친구 신청을 취소하시겠습니까?",
             description = "취소된 신청은 복구되지 않습니다.",
             onConfirm = {},
             onDismiss = {},

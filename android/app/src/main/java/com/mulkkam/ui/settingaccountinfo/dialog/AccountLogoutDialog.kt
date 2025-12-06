@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.R
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.dialog.MulKkamAlertDialog
 
 @Composable
@@ -21,8 +22,10 @@ fun AccountLogoutDialog(
     )
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun AccountLogoutDialogPreview() {
-    AccountLogoutDialog(onConfirm = {}, onDismiss = {})
+    MulkkamTheme {
+        AccountLogoutDialog(onConfirm = {}, onDismiss = {})
+    }
 }

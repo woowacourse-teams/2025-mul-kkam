@@ -32,8 +32,6 @@ fun SettingAccountInfoRoute(
     var isDeleteDialogShown: Boolean by rememberSaveable { mutableStateOf(false) }
     var deleteAccountInput: String by rememberSaveable { mutableStateOf("") }
 
-    // TODO: 스트링 소스 점검
-    val deleteComment: String = stringResource(R.string.setting_account_info_delete_comment)
     val toastState: MulKkamToastState = rememberMulKkamToastState()
 
     viewModel.settingAccountInfoEventFlow.collectWithLifecycle(lifecycleOwner) { accountInfoEvent ->
@@ -80,7 +78,7 @@ fun SettingAccountInfoRoute(
     if (isDeleteDialogShown) {
         AccountDeleteDialog(
             value = deleteAccountInput,
-            deleteComment = deleteComment,
+            deleteComment = stringResource(R.string.setting_account_info_delete_comment),
             onValueChanged = { deleteAccountInput = it },
             onConfirm = {
                 viewModel.deleteAccount()

@@ -45,7 +45,7 @@ fun SettingAccountInfoTopAppBar(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun SettingAccountInfoTopAppBarPreview() {
     MulkkamTheme {
