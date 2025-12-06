@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.onboarding.targetamount.OnboardingTargetAmountActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,9 +20,16 @@ class OnboardingBioInfoActivity : ComponentActivity() {
             MulkkamTheme {
                 BioInfoScreen(
                     navigateToBack = ::finish,
-                    navigateToNextStep = { },
-                    skipBioInfo = { },
+                    navigateToNextStep = {
+                        startActivity(
+                            OnboardingTargetAmountActivity.newIntent(
+                                this,
+                            ),
+                        )
+                    },
+                    skipBioInfo = { startActivity(OnboardingTargetAmountActivity.newIntent(this)) },
                     currentProgress = CURRENT_PROGRESS,
+                    viewModel = viewModel,
                 )
             }
         }
