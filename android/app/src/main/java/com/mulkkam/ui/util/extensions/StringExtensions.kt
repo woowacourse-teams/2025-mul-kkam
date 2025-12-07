@@ -8,7 +8,10 @@ import android.text.style.TextAppearanceSpan
 import androidx.annotation.ColorRes
 import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 
@@ -99,6 +102,29 @@ fun SpannableString.getColoredSpannable(
     }
 
     return this
+}
+
+@Composable
+fun String.getColoredText(
+    @ColorRes colorResId: Int,
+    vararg highlightedText: String,
+): AnnotatedString {
+    val color: Color = colorResource(id = colorResId)
+
+    return buildAnnotatedString {
+        append(this@getColoredText)
+
+        highlightedText.forEach { target ->
+            val startIndex = this@getColoredText.indexOf(target)
+            if (startIndex != -1) {
+                addStyle(
+                    style = SpanStyle(color = color),
+                    start = startIndex,
+                    end = startIndex + target.length,
+                )
+            }
+        }
+    }
 }
 
 fun String.sanitizeLeadingZeros(): String =

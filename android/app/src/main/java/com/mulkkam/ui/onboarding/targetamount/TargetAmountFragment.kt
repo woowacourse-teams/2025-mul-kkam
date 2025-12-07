@@ -121,11 +121,17 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
                 updateSaveEnabled(true)
             }
 
-            is MulKkamUiState.Loading -> updateSaveEnabled(false)
+            is MulKkamUiState.Loading -> {
+                updateSaveEnabled(false)
+            }
 
-            is MulKkamUiState.Failure -> updateSaveEnabled(false)
+            is MulKkamUiState.Failure -> {
+                updateSaveEnabled(false)
+            }
 
-            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Idle -> {
+                Unit
+            }
         }
     }
 
@@ -143,15 +149,23 @@ class TargetAmountFragment : BindingFragment<FragmentTargetAmountBinding>(Fragme
 
     private fun handleTargetAmountValidityUiState(targetAmountValidityUiState: MulKkamUiState<Unit>) {
         when (targetAmountValidityUiState) {
-            is MulKkamUiState.Success -> updateTargetAmountValidationUI(true)
+            is MulKkamUiState.Success -> {
+                updateTargetAmountValidationUI(true)
+            }
+
             is MulKkamUiState.Failure -> {
                 updateTargetAmountValidationUI(false)
                 binding.tvTargetAmountWarningMessage.text =
                     (targetAmountValidityUiState.error as? TargetAmountError)?.toMessageRes() ?: return
             }
 
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Idle -> updateTargetAmountValidationUI(null)
+            is MulKkamUiState.Loading -> {
+                Unit
+            }
+
+            is MulKkamUiState.Idle -> {
+                updateTargetAmountValidationUI(null)
+            }
         }
     }
 
