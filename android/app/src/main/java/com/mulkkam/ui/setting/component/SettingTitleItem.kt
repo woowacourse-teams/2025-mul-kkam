@@ -38,7 +38,7 @@ fun SettingTitleItem(
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSettingTitleItem() {
+private fun PreviewSettingTitleItem() {
     MulkkamTheme {
         SettingTitleItem(label = "계정 정보 설정")
     }
