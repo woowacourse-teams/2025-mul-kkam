@@ -21,7 +21,7 @@ class SettingAccountInfoActivity : ComponentActivity() {
             MulkkamTheme {
                 SettingAccountInfoRoute(
                     viewModel = viewModel,
-                    onBackClick = ::finish,
+                    navigateToBack = ::finish,
                     onNavigateToLogin = ::navigateToLogin,
                 )
             }

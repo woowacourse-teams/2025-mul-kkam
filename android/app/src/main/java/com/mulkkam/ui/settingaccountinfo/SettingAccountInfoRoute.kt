@@ -20,7 +20,7 @@ import com.mulkkam.ui.util.extensions.collectWithLifecycle
 @Composable
 fun SettingAccountInfoRoute(
     viewModel: SettingAccountInfoViewModel,
-    onBackClick: () -> Unit,
+    navigateToBack: () -> Unit,
     onNavigateToLogin: () -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -56,7 +56,7 @@ fun SettingAccountInfoRoute(
 
     SettingAccountInfoScreen(
         items = accountItems,
-        onBackClick = onBackClick,
+        onBackClick = navigateToBack,
         onLogoutClick = { isLogoutDialogShown = true },
         onDeleteAccountClick = {
             isDeleteDialogShown = true
