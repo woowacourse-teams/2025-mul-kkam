@@ -44,7 +44,7 @@ fun SettingAccountInfoScreen(
     Scaffold(
         topBar = {
             SettingTopAppBar(
-                titleResId = R.string.setting_account_info,
+                title = stringResource(R.string.setting_account_info),
                 onBackClick = onBackClick,
             )
         },

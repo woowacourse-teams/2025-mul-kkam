@@ -34,7 +34,7 @@ fun SettingFeedbackScreen(
     Scaffold(
         topBar = {
             SettingTopAppBar(
-                titleResId = R.string.setting_feedback_toolbar_title,
+                title = stringResource(R.string.setting_feedback_toolbar_title),
                 onBackClick = onBackClick,
             )
         },

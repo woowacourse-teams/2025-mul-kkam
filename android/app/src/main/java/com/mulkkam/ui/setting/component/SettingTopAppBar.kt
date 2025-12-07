@@ -1,6 +1,5 @@
 package com.mulkkam.ui.setting.component
 
-import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -27,14 +26,14 @@ import com.mulkkam.ui.designsystem.White
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingTopAppBar(
-    @StringRes titleResId: Int,
+    title: String,
     onBackClick: () -> Unit,
 ) {
     Column {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(titleResId),
+                    text = title,
                     style = MulKkamTheme.typography.title2,
                 )
             },
@@ -68,6 +67,6 @@ fun SettingTopAppBar(
 @Composable
 private fun SettingTopAppBarPreview() {
     MulkkamTheme {
-        SettingTopAppBar(titleResId = R.string.setting_item_push_notification, onBackClick = {})
+        SettingTopAppBar(title = "푸시 알림 설정", onBackClick = {})
     }
 }

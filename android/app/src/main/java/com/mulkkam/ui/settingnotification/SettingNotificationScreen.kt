@@ -32,7 +32,12 @@ fun SettingNotificationScreen(
     onSystemNotificationClick: () -> Unit,
 ) {
     Scaffold(
-        topBar = { SettingTopAppBar(titleResId = R.string.setting_item_push_notification, onBackClick = onBackClick) },
+        topBar = {
+            SettingTopAppBar(
+                title = stringResource(R.string.setting_item_push_notification),
+                onBackClick = onBackClick,
+            )
+        },
         containerColor = White,
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { paddingValues ->

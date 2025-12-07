@@ -23,7 +23,12 @@ fun SettingTermsScreen(
     onBackClick: () -> Unit,
 ) {
     Scaffold(
-        topBar = { SettingTopAppBar(titleResId = R.string.setting_terms_toolbar_title, onBackClick = onBackClick) },
+        topBar = {
+            SettingTopAppBar(
+                title = stringResource(R.string.setting_terms_toolbar_title),
+                onBackClick = onBackClick,
+            )
+        },
         containerColor = White,
     ) { paddingValues ->
         Column(
