@@ -1,7 +1,5 @@
 package com.mulkkam.ui.settingaccountinfo
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.R
@@ -10,9 +8,14 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.TokenRepository
-import com.mulkkam.ui.util.MutableSingleLiveData
-import com.mulkkam.ui.util.SingleLiveData
+import com.mulkkam.ui.settingaccountinfo.model.SettingAccountInfoEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,18 +28,14 @@ class SettingAccountInfoViewModel
         private val authRepository: AuthRepository,
         private val logger: Logger,
     ) : ViewModel() {
-        private val _accountInfo: MutableLiveData<List<SettingAccountUiModel>> = MutableLiveData()
-        val accountInfo: LiveData<List<SettingAccountUiModel>> = _accountInfo
+        private val _accountInfo: MutableStateFlow<List<SettingAccountUiModel>> =
+            MutableStateFlow(accountInfoList)
+        val accountInfo: StateFlow<List<SettingAccountUiModel>> = _accountInfo.asStateFlow()
 
-        private val _onDeleteAccount: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-        val onDeleteAccount: SingleLiveData<Unit> = _onDeleteAccount
-
-        private val _onLogout: MutableSingleLiveData<Unit> = MutableSingleLiveData()
-        val onLogout: SingleLiveData<Unit> = _onLogout
-
-        init {
-            _accountInfo.value = accountInfoList
-        }
+        private val _settingAccountInfoEvent: MutableSharedFlow<SettingAccountInfoEvent> =
+            MutableSharedFlow()
+        val settingAccountInfoEvent: SharedFlow<SettingAccountInfoEvent> =
+            _settingAccountInfoEvent.asSharedFlow()
 
         fun deleteAccount() {
             viewModelScope.launch {
@@ -48,7 +47,7 @@ class SettingAccountInfoViewModel
                     membersRepository.deleteMembers().getOrError()
                 }.onSuccess {
                     deleteTokens()
-                    _onDeleteAccount.setValue(Unit)
+                    _settingAccountInfoEvent.emit(SettingAccountInfoEvent.DeleteSuccess)
                 }.onFailure {
                     // TODO: 에러 처리
                 }
@@ -65,7 +64,7 @@ class SettingAccountInfoViewModel
                     authRepository.postAuthLogout().getOrError()
                 }.onSuccess {
                     deleteTokens()
-                    _onLogout.setValue(Unit)
+                    _settingAccountInfoEvent.emit(SettingAccountInfoEvent.LogoutSuccess)
                 }.onFailure {
                     // TODO: 에러 처리
                 }
