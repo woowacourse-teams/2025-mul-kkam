@@ -19,7 +19,7 @@ class SettingNotificationActivity : ComponentActivity() {
             MulkkamTheme {
                 SettingNotificationRoute(
                     viewModel = viewModel,
-                    onBackClick = ::finish,
+                    navigateToBack = ::finish,
                 )
             }
         }

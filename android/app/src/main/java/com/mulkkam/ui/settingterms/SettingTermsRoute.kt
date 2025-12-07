@@ -15,7 +15,7 @@ import com.mulkkam.ui.util.extensions.openTermsLink
 @Composable
 fun SettingTermsRoute(
     viewModel: SettingTermsViewModel,
-    onBackClick: () -> Unit,
+    navigateToBack: () -> Unit,
 ) {
     val context = LocalContext.current
     val healthConnectIntent = remember { Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS) }
@@ -33,9 +33,11 @@ fun SettingTermsRoute(
                     }
                 }
 
-                else -> context.openTermsLink(termsAgreement.uri)
+                else -> {
+                    context.openTermsLink(termsAgreement.uri)
+                }
             }
         },
-        onBackClick = onBackClick,
+        onBackClick = navigateToBack,
     )
 }

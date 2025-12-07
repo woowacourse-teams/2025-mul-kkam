@@ -21,7 +21,7 @@ class SettingFeedbackActivity : ComponentActivity() {
             MulkkamTheme {
                 SettingFeedbackRoute(
                     logger = logger,
-                    onBackClick = ::finish,
+                    navigateToBack = ::finish,
                 )
             }
         }

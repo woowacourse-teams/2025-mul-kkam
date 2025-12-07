@@ -11,7 +11,7 @@ import com.mulkkam.domain.model.logger.LogEvent
 @Composable
 fun SettingFeedbackRoute(
     logger: Logger,
-    onBackClick: () -> Unit,
+    navigateToBack: () -> Unit,
 ) {
     val context = LocalContext.current
 
@@ -21,6 +21,6 @@ fun SettingFeedbackRoute(
             val intent = Intent(Intent.ACTION_VIEW, context.getString(R.string.feedback_email).toUri())
             context.startActivity(intent)
         },
-        onBackClick = onBackClick,
+        onBackClick = navigateToBack,
     )
 }

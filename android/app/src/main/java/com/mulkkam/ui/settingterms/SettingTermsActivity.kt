@@ -17,7 +17,7 @@ class SettingTermsActivity : ComponentActivity() {
             MulkkamTheme {
                 SettingTermsRoute(
                     viewModel = viewModel,
-                    onBackClick = ::finish,
+                    navigateToBack = ::finish,
                 )
             }
         }

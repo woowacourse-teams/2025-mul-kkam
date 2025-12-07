@@ -21,7 +21,7 @@ private const val TIME_PATTERN: String = "yyyy.MM.dd a h:mm"
 @Composable
 fun SettingNotificationRoute(
     viewModel: SettingNotificationViewModel,
-    onBackClick: () -> Unit,
+    navigateToBack: () -> Unit,
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -72,7 +72,7 @@ fun SettingNotificationRoute(
         marketingNotificationState = marketingNotificationState,
         nightNotificationState = nightNotificationState,
         snackbarHostState = snackbarHostState,
-        onBackClick = onBackClick,
+        onBackClick = navigateToBack,
         onMarketingChecked = viewModel::updateMarketingNotification,
         onNightChecked = viewModel::updateNightNotification,
         onSystemNotificationClick = {
