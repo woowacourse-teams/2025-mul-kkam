@@ -39,10 +39,10 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 @Composable
 fun MulKkamAlertDialog(
     title: String,
-    description: String = "",
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier,
+    description: String = "",
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -133,9 +133,9 @@ private fun MulKkamAlertDialogPreview() {
     MulkkamTheme {
         MulKkamAlertDialog(
             title = "돈가스먹는환노\n친구 신청을 취소하시겠습니까?",
-            description = "취소된 신청은 복구되지 않습니다.",
             onConfirm = {},
             onDismiss = {},
+            description = "취소된 신청은 복구되지 않습니다.",
         )
     }
 }
