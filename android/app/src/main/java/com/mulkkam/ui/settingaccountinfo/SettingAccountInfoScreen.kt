@@ -52,9 +52,7 @@ fun SettingAccountInfoScreen(
                     .background(White),
         ) {
             Column(
-                modifier =
-                    Modifier
-                        .padding(paddingValues),
+                modifier = Modifier.padding(paddingValues),
             ) {
                 HorizontalDivider(color = Gray100, thickness = 1.dp)
                 LazyColumn {
