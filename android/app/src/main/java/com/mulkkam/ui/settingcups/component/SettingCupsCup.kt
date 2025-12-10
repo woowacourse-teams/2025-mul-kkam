@@ -56,7 +56,7 @@ fun SettingCupsCup(
                 .padding(vertical = 12.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        DragHandle(dragHandleModifier)
+        OrderDragHandle(dragHandleModifier)
         Spacer(modifier = Modifier.width(6.dp))
 
         CupBody(
@@ -78,7 +78,7 @@ fun SettingCupsCup(
 }
 
 @Composable
-private fun DragHandle(modifier: Modifier = Modifier) {
+private fun OrderDragHandle(modifier: Modifier = Modifier) {
     Image(
         painter = painterResource(R.drawable.btn_setting_cup_move),
         contentDescription = null,
