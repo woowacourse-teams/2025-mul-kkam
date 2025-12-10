@@ -13,17 +13,17 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.setting.model.SettingItem
 
 @Composable
-fun SettingTitleItem(item: SettingItem.TitleItem) {
+fun SettingTitleItem(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
     Column(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
     ) {
         Text(
-            text = item.title,
+            text = label,
             style = MulKkamTheme.typography.label1,
             color = Black,
             modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp),
@@ -31,19 +31,15 @@ fun SettingTitleItem(item: SettingItem.TitleItem) {
         HorizontalDivider(
             color = Gray50,
             thickness = 1.dp,
-            modifier =
-                Modifier
-                    .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
         )
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun PreviewSettingTitleItem() {
+private fun PreviewSettingTitleItem() {
     MulkkamTheme {
-        SettingTitleItem(
-            item = SettingItem.TitleItem("계정 정보 설정"),
-        )
+        SettingTitleItem(label = "계정 정보 설정")
     }
 }

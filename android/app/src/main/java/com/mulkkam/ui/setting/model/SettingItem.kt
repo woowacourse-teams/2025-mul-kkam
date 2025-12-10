@@ -1,18 +1,14 @@
 package com.mulkkam.ui.setting.model
 
-import com.mulkkam.ui.setting.model.SettingViewType
-
-sealed class SettingItem(
-    val viewType: SettingViewType,
-) {
+sealed class SettingItem {
     data class TitleItem(
         val title: String,
-    ) : SettingItem(SettingViewType.TITLE)
+    ) : SettingItem()
 
     data class NormalItem(
         val label: String,
         val type: SettingType,
-    ) : SettingItem(SettingViewType.NORMAL)
+    ) : SettingItem()
 
-    data object DividerItem : SettingItem(SettingViewType.DIVIDER)
+    data object DividerItem : SettingItem()
 }
