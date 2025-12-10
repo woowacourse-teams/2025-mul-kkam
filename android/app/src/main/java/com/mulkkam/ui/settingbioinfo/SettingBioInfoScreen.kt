@@ -35,8 +35,8 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.component.GenderSection
 import com.mulkkam.ui.settingbioinfo.component.HealthConnectSection
 import com.mulkkam.ui.settingbioinfo.component.SettingBioInfoTopAppBar
-import com.mulkkam.ui.settingbioinfo.component.WeightSection
 import com.mulkkam.ui.settingbioinfo.component.SettingWeightBottomSheet
+import com.mulkkam.ui.settingbioinfo.component.WeightSection
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

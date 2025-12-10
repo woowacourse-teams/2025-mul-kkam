@@ -1,0 +1,89 @@
+package com.mulkkam.ui.settingcups.component
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.unit.dp
+import com.mulkkam.R
+import com.mulkkam.ui.component.NetworkImage
+import com.mulkkam.ui.designsystem.Primary100
+import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
+import com.mulkkam.ui.util.ImageShape
+import com.mulkkam.ui.util.extensions.noRippleClickable
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun EmojiSection(
+    cupEmojisUiState: MulKkamUiState<CupEmojisUiModel>,
+    onSelect: (emojiId: Long) -> Unit,
+) {
+    when (cupEmojisUiState) {
+        is MulKkamUiState.Success -> {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                cupEmojisUiState.data.cupEmojis.forEach { emoji ->
+                    EmojiItem(
+                        emojiUrl = emoji.cupEmojiUrl,
+                        isSelected = emoji.isSelected,
+                        onClick = { onSelect(emoji.id) },
+                    )
+                }
+            }
+        }
+
+        else -> {
+            Unit
+        }
+    }
+}
+
+@Composable
+private fun EmojiItem(
+    emojiUrl: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+) {
+    Box(
+        modifier =
+            Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .background(color = if (isSelected) Primary100 else Transparent)
+                .noRippleClickable(onClick = onClick),
+        contentAlignment = Alignment.Center,
+    ) {
+        NetworkImage(
+            url = emojiUrl,
+            shape = ImageShape.Circle,
+            placeholderRes = R.drawable.img_cup_placeholder,
+            modifier =
+                Modifier
+                    .size(36.dp)
+                    .background(color = White, shape = CircleShape),
+        )
+
+        if (isSelected) {
+            Box(
+                modifier =
+                    Modifier
+                        .matchParentSize()
+                        .background(color = Transparent, shape = CircleShape),
+            )
+        }
+    }
+}
