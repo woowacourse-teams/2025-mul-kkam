@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo.dialog
+package com.mulkkam.ui.settingaccountinfo.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
