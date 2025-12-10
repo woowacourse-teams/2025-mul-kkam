@@ -48,6 +48,7 @@ import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import kotlinx.coroutines.flow.collectLatest
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -86,7 +87,7 @@ fun SettingCupBottomSheet(
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.saveSuccess.collect {
+        viewModel.saveSuccess.collectLatest {
             toastState.showMulKkamToast(
                 message = context.getString(R.string.setting_cup_save_result),
                 iconResourceId = R.drawable.ic_terms_all_check_on,
@@ -97,7 +98,7 @@ fun SettingCupBottomSheet(
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.deleteSuccess.collect {
+        viewModel.deleteSuccess.collectLatest {
             toastState.showMulKkamToast(
                 message = context.getString(R.string.setting_cup_delete_result),
                 iconResourceId = R.drawable.ic_terms_all_check_on,
