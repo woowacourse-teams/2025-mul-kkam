@@ -25,7 +25,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 @Composable
 fun IntakeTypeChips(
     selectedIntakeType: IntakeType,
-    onSelect: (IntakeType) -> Unit,
+    onSelect: (intakeType: IntakeType) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
