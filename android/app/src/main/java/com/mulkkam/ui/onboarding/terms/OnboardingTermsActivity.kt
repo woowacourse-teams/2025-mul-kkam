@@ -21,7 +21,9 @@ class OnboardingTermsActivity : ComponentActivity() {
                 TermsAgreementScreen(
                     navigateToBack = ::finish,
                     loadToPage = { openTermsLink(it) },
-                    navigateToNextStep = { startActivity(OnboardingNicknameActivity.newIntent(this)) },
+                    navigateToNextStep = { onboardingInfo ->
+                        startActivity(OnboardingNicknameActivity.newIntent(this, onboardingInfo))
+                    },
                     currentProgress = CURRENT_PROGRESS,
                     viewModel = viewModel,
                 )

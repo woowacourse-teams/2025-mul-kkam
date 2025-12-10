@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -33,7 +34,7 @@ import com.mulkkam.ui.settingnickname.component.NicknameInputSection
 @Composable
 fun NicknameScreen(
     navigateToBack: () -> Unit,
-    navigateToNextStep: () -> Unit,
+    navigateToNextStep: (nickname: Nickname) -> Unit,
     currentProgress: Int,
     viewModel: NicknameViewModel = hiltViewModel(),
 ) {
@@ -86,7 +87,7 @@ fun NicknameScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep() },
+                onClick = { navigateToNextStep(Nickname(nickname)) },
                 enabled = nicknameValidationState == NicknameValidationUiState.VALID,
             )
         }

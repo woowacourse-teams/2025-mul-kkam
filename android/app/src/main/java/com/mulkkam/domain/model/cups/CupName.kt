@@ -1,11 +1,12 @@
 package com.mulkkam.domain.model.cups
 
 import com.mulkkam.domain.model.result.MulKkamError
+import java.io.Serializable
 
 @JvmInline
 value class CupName(
     val value: String,
-) {
+) : Serializable {
     init {
         val trimmed: String = value.trim()
 

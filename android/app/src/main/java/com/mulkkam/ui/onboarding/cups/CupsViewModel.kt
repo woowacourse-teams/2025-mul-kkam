@@ -2,9 +2,13 @@ package com.mulkkam.ui.onboarding.cups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
+import com.mulkkam.domain.repository.OnboardingRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -22,14 +26,28 @@ import javax.inject.Inject
 class CupsViewModel
     @Inject
     constructor(
+        private val onboardingRepository: OnboardingRepository,
         private val cupsRepository: CupsRepository,
+        private val logger: Logger,
     ) : ViewModel() {
+        private val _saveOnboardingUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val saveOnboardingUiState: StateFlow<MulKkamUiState<Unit>>
+            get() = _saveOnboardingUiState.asStateFlow()
+
+        var onboardingInfo: OnboardingInfo = OnboardingInfo()
+            private set
+
         private var _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
             MutableStateFlow(MulKkamUiState.Idle)
         val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
 
         init {
             loadCups()
+        }
+
+        fun updateOnboardingInfo(onboardingInfo: OnboardingInfo) {
+            this.onboardingInfo = onboardingInfo
         }
 
         fun loadCups() {
@@ -90,5 +108,33 @@ class CupsViewModel
                 Cups(addedCups.cups.map { it.toDomain() }).reorderRanks().toUi()
 
             _cupsUiState.value = MulKkamUiState.Success(updatedCups)
+        }
+
+        fun completeOnboarding() {
+            if (saveOnboardingUiState.value is MulKkamUiState.Loading) return
+            onboardingInfo =
+                onboardingInfo.copy(
+                    cups =
+                        cupsUiState.value
+                            .toSuccessDataOrNull()
+                            ?.cups
+                            ?.map { it.toDomain() }
+                            ?: emptyList(),
+                )
+            viewModelScope.launch {
+                runCatching {
+                    logger.info(LogEvent.ONBOARDING, "Onboarding submission succeeded")
+                    logger.info(
+                        LogEvent.ONBOARDING,
+                        "isMarketingNotificationAgreed: ${onboardingInfo.isMarketingNotificationAgreed}, isNightNotificationAgreed: ${onboardingInfo.isNightNotificationAgreed}",
+                    )
+                    _saveOnboardingUiState.value = MulKkamUiState.Loading
+                    onboardingRepository.postOnboarding(onboardingInfo).getOrError()
+                }.onSuccess {
+                    _saveOnboardingUiState.value = MulKkamUiState.Success(Unit)
+                }.onFailure {
+                    _saveOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                }
+            }
         }
     }

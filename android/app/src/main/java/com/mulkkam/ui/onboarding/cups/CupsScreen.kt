@@ -1,6 +1,7 @@
 package com.mulkkam.ui.onboarding.cups
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,20 +10,29 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.StyledText
+import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -30,23 +40,30 @@ import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.component.NextButton
+import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.cups.component.CupsEditor
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
 @Composable
 fun CupsScreen(
     navigateToBack: () -> Unit,
     currentProgress: Int,
-    nickname: String,
+    onCompleteOnboarding: () -> Unit,
     onEditCup: (CupUiModel) -> Unit = {},
     onAddCup: () -> Unit = {},
     viewModel: CupsViewModel = hiltViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
+    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
+    var showDialog by remember { mutableStateOf(false) }
+
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
-    val listItems = remember { mutableStateListOf<SettingCupsItem>() }
+    val listItems = rememberSaveable { mutableStateListOf<SettingCupsItem>() }
 
     LaunchedEffect(cupsUiState) {
         if (cupsUiState is MulKkamUiState.Success<CupsUiModel>) {
@@ -62,59 +79,91 @@ fun CupsScreen(
         }
     }
 
-    Scaffold(
-        topBar = {
-            OnboardingTopAppBar(
-                onBackClick = { navigateToBack() },
-                currentProgress = currentProgress,
-            )
-        },
-        containerColor = White,
-        modifier =
-            Modifier
-                .background(White)
-                .systemBarsPadding(),
-    ) { innerPadding ->
-        Column(
+    viewModel.saveOnboardingUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        when (state) {
+            is MulKkamUiState.Success<Unit> -> showDialog = true
+            is MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Failure ->
+                snackbarHostState.showMulKkamSnackbar(
+                    message = context.getString(R.string.network_check_error),
+                    iconResourceId = R.drawable.ic_alert_circle,
+                )
+        }
+    }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                OnboardingTopAppBar(
+                    onBackClick = { navigateToBack() },
+                    currentProgress = currentProgress,
+                )
+            },
+            containerColor = White,
             modifier =
                 Modifier
-                    .padding(innerPadding)
-                    .fillMaxSize(),
-        ) {
-            StyledText(
-                fullText = stringResource(R.string.cups_input_hint, nickname),
-                highlightedTexts = listOf(stringResource(R.string.cups_input_hint_highlight)),
-                highlightStyle = MulKkamTheme.typography.title1,
-                style = MulKkamTheme.typography.body1,
-                color = Black,
-                modifier = Modifier.padding(top = 24.dp, start = 24.dp),
-            )
+                    .background(White)
+                    .systemBarsPadding(),
+        ) { innerPadding ->
+            if (showDialog) {
+                OnboardingCompleteDialog(
+                    nickname = viewModel.onboardingInfo.nickname?.name ?: "",
+                    onConfirm = { onCompleteOnboarding() },
+                )
+            }
 
-            Text(
-                text = stringResource(R.string.cups_input_hint_description),
-                style = MulKkamTheme.typography.label2,
-                color = Gray300,
-                modifier = Modifier.padding(top = 8.dp, start = 24.dp),
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            CupsEditor(
-                items = listItems,
-                onEditCup = onEditCup,
-                onAddCup = onAddCup,
-                onReorderCups = { viewModel.updateCupOrder(it) },
-                modifier = Modifier,
-            )
-
-            Spacer(modifier = Modifier.weight(1f))
-
-            NextButton(
-                onClick = { },
+            Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                        .padding(innerPadding)
+                        .fillMaxSize(),
+            ) {
+                StyledText(
+                    fullText =
+                        stringResource(
+                            R.string.cups_input_hint,
+                            viewModel.onboardingInfo.nickname?.name ?: "",
+                        ),
+                    highlightedTexts = listOf(stringResource(R.string.cups_input_hint_highlight)),
+                    highlightStyle = MulKkamTheme.typography.title1,
+                    style = MulKkamTheme.typography.body1,
+                    color = Black,
+                    modifier = Modifier.padding(top = 24.dp, start = 24.dp),
+                )
+
+                Text(
+                    text = stringResource(R.string.cups_input_hint_description),
+                    style = MulKkamTheme.typography.label2,
+                    color = Gray300,
+                    modifier = Modifier.padding(top = 8.dp, start = 24.dp),
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                CupsEditor(
+                    items = listItems,
+                    onEditCup = onEditCup,
+                    onAddCup = onAddCup,
+                    onReorderCups = { viewModel.updateCupOrder(it) },
+                    modifier = Modifier,
+                )
+
+                Spacer(modifier = Modifier.weight(1f))
+
+                NextButton(
+                    onClick = { viewModel.completeOnboarding() },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                    buttonText = stringResource(R.string.onboarding_complete),
+                )
+            }
+
+            MulKkamSnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.BottomCenter),
             )
         }
     }
@@ -127,7 +176,7 @@ private fun CupsScreenPreview() {
         CupsScreen(
             navigateToBack = {},
             currentProgress = 5,
-            nickname = "돈가스먹는환노",
+            onCompleteOnboarding = {},
         )
     }
 }

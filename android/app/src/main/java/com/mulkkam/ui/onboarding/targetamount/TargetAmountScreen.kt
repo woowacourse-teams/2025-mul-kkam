@@ -34,7 +34,7 @@ import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
 @Composable
 fun TargetAmountScreen(
     navigateToBack: () -> Unit,
-    navigateToNextStep: () -> Unit,
+    navigateToNextStep: (targetAmount: Int) -> Unit,
     currentProgress: Int,
     hasBioInfo: Boolean,
     viewModel: TargetAmountViewModel = hiltViewModel(),
@@ -99,7 +99,7 @@ fun TargetAmountScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep() },
+                onClick = { navigateToNextStep(targetAmount.toInt()) },
                 enabled = targetAmountValidityUiState is MulKkamUiState.Success,
             )
         }

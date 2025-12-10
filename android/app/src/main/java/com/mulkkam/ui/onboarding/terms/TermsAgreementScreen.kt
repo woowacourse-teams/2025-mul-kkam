@@ -13,7 +13,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
+import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -38,7 +41,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 fun TermsAgreementScreen(
     navigateToBack: () -> Unit,
     loadToPage: (uri: Int) -> Unit,
-    navigateToNextStep: () -> Unit,
+    navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
     viewModel: TermsAgreementViewModel = viewModel(),
 ) {
@@ -47,6 +50,17 @@ fun TermsAgreementScreen(
     val termsAgreements by viewModel.termsAgreements.collectAsStateWithLifecycle()
     val isAllChecked by viewModel.isAllChecked.collectAsStateWithLifecycle()
     val canNext by viewModel.canNext.collectAsStateWithLifecycle()
+
+    val onboardingInfo by remember(termsAgreements) {
+        derivedStateOf {
+            OnboardingInfo().copy(
+                isMarketingNotificationAgreed =
+                    termsAgreements.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true,
+                isNightNotificationAgreed =
+                    termsAgreements.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true,
+            )
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -118,7 +132,7 @@ fun TermsAgreementScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep() },
+                onClick = { navigateToNextStep(onboardingInfo) },
                 enabled = canNext,
             )
         }

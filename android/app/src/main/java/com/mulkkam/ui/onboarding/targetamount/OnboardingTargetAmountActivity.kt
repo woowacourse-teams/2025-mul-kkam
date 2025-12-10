@@ -6,39 +6,59 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.onboarding.cups.OnboardingCupsActivity
+import com.mulkkam.ui.util.extensions.getSerializableCompat
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class OnboardingTargetAmountActivity : ComponentActivity() {
     private val viewModel: TargetAmountViewModel by viewModels()
 
+    val onboardingInfo: OnboardingInfo? by lazy {
+        intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // TODO: 이전 acitivity와 정보 연동 필요
         viewModel.loadRecommendedTargetAmount(
-            nickname = "hwannow",
-            gender = null,
-            weight = null,
+            nickname = onboardingInfo?.nickname?.name ?: return,
+            gender = onboardingInfo?.gender,
+            weight = onboardingInfo?.weight,
         )
 
         setContent {
             MulkkamTheme {
                 TargetAmountScreen(
                     navigateToBack = ::finish,
-                    navigateToNextStep = { startActivity(OnboardingCupsActivity.newIntent(this)) },
+                    navigateToNextStep = { targetAmount ->
+                        startActivity(
+                            OnboardingCupsActivity.newIntent(
+                                this,
+                                onboardingInfo = onboardingInfo?.copy(targetAmount = targetAmount) ?: return@TargetAmountScreen,
+                            ),
+                        )
+                    },
                     currentProgress = CURRENT_PROGRESS,
-                    hasBioInfo = false,
+                    hasBioInfo = onboardingInfo?.hasBioInfo() ?: false,
                 )
             }
         }
     }
 
     companion object {
+        private const val KEY_ONBOARDING_INFO: String = "KEY_ONBOARDING_INFO"
         private const val CURRENT_PROGRESS: Int = 4
 
-        fun newIntent(context: Context): Intent = Intent(context, OnboardingTargetAmountActivity::class.java)
+        fun newIntent(
+            context: Context,
+            onboardingInfo: OnboardingInfo?,
+        ): Intent =
+            Intent(context, OnboardingTargetAmountActivity::class.java).apply {
+                onboardingInfo
+                putExtra(KEY_ONBOARDING_INFO, onboardingInfo)
+            }
     }
 }

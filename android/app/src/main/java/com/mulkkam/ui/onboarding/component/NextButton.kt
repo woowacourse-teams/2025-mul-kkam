@@ -22,6 +22,7 @@ import com.mulkkam.ui.designsystem.White
 fun NextButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    buttonText: String = stringResource(R.string.onboarding_next_step),
     enabled: Boolean = true,
     containerColor: Color = Primary200,
     disabledContainerColor: Color = Gray200,
@@ -41,7 +42,7 @@ fun NextButton(
         modifier = modifier.fillMaxWidth(),
     ) {
         Text(
-            text = stringResource(R.string.onboarding_next_step),
+            text = buttonText,
             style = MulKkamTheme.typography.title2,
             modifier = Modifier.padding(vertical = 14.dp),
         )

@@ -21,9 +21,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
+import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
+import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -39,7 +40,7 @@ import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightBottomSheet
 @Composable
 fun BioInfoScreen(
     navigateToBack: () -> Unit,
-    navigateToNextStep: () -> Unit,
+    navigateToNextStep: (gender: Gender?, weight: BioWeight?) -> Unit,
     skipBioInfo: () -> Unit,
     currentProgress: Int,
     viewModel: BioInfoViewModel = hiltViewModel(),
@@ -110,7 +111,7 @@ fun BioInfoScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep() },
+                onClick = { navigateToNextStep(gender, weight) },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = gender != null && weight != null,
             )
@@ -124,7 +125,7 @@ private fun BioInfoScreenPreview() {
     MulkkamTheme {
         BioInfoScreen(
             navigateToBack = {},
-            navigateToNextStep = {},
+            navigateToNextStep = { _, _ -> },
             skipBioInfo = {},
             currentProgress = 3,
         )
