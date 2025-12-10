@@ -30,7 +30,7 @@ import com.mulkkam.ui.designsystem.White
 @Composable
 fun RoundedSwitch(
     checked: Boolean,
-    onCheckedChange: () -> Unit,
+    onCheckedChange: (checked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     width: Dp = 48.dp,
     height: Dp = 24.dp,
@@ -49,7 +49,7 @@ fun RoundedSwitch(
                 .height(height)
                 .clip(RoundedCornerShape(100))
                 .background(if (checked) switchColor else trackColor)
-                .clickable { onCheckedChange() }
+                .clickable { onCheckedChange(!checked) }
                 .padding(2.dp),
     ) {
         Box(

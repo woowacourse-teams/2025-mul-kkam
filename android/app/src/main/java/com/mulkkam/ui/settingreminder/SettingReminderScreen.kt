@@ -68,9 +68,9 @@ fun SettingReminderScreen(
         SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
             reminders = reminders.toSuccessDataOrNull() ?: return@Scaffold,
-            updateBottomSheetMode = { viewModel.updateReminderUpdateUiState(it) },
-            updateReminderEnabled = { viewModel.updateReminderEnabled() },
-            removeReminder = { viewModel.deleteReminder(it) },
+            updateBottomSheetMode = viewModel::updateReminderUpdateUiState,
+            updateReminderEnabled = viewModel::updateReminderEnabled,
+            removeReminder = viewModel::deleteReminder,
             modifier = Modifier.padding(innerPadding),
         )
 
@@ -100,27 +100,21 @@ private fun handleReminderUpdateAction(
     context: Context,
     coroutineScope: CoroutineScope,
 ) {
-    when (state) {
-        is MulKkamUiState.Failure -> {
-            if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
-                coroutineScope.launch {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(context, R.string.setting_reminder_duplicated_schedule),
-                        iconResourceId = R.drawable.ic_info_circle,
-                    )
-                }
-            } else {
-                coroutineScope.launch {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(context, R.string.network_check_error),
-                        iconResourceId = R.drawable.ic_info_circle,
-                    )
-                }
-            }
+    if (state !is MulKkamUiState.Failure) return
+    if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
+        coroutineScope.launch {
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(context, R.string.setting_reminder_duplicated_schedule),
+                iconResourceId = R.drawable.ic_info_circle,
+            )
         }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
-        is MulKkamUiState.Success<Unit> -> Unit
+    } else {
+        coroutineScope.launch {
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(context, R.string.network_check_error),
+                iconResourceId = R.drawable.ic_info_circle,
+            )
+        }
     }
 }
 

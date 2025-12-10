@@ -30,7 +30,7 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.settingaccountinfo.component.SettingAccountInfoTopAppBar
+import com.mulkkam.ui.setting.component.SettingTopAppBar
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
@@ -42,7 +42,12 @@ fun SettingAccountInfoScreen(
     toastState: MulKkamToastState,
 ) {
     Scaffold(
-        topBar = { SettingAccountInfoTopAppBar(onBackClick = onBackClick) },
+        topBar = {
+            SettingTopAppBar(
+                title = stringResource(R.string.setting_account_info),
+                onBackClick = onBackClick,
+            )
+        },
         containerColor = White,
     ) { paddingValues ->
         Box(
