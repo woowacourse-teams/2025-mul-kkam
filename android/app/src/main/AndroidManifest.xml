@@ -99,10 +99,6 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.onboarding.OnboardingActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.onboarding.terms.OnboardingTermsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
