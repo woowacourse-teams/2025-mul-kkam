@@ -88,7 +88,7 @@ fun SettingCupsRoute(
                 )
             }
 
-            else -> {
+            is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
                 Unit
             }
         }
