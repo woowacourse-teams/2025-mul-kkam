@@ -39,19 +39,6 @@ import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
-private fun DragHandle(modifier: Modifier = Modifier) {
-    Image(
-        painter = painterResource(R.drawable.btn_setting_cup_move),
-        contentDescription = null,
-        modifier =
-            Modifier
-                .size(40.dp)
-                .padding(8.dp)
-                .then(modifier),
-    )
-}
-
-@Composable
 fun SettingCupsCup(
     item: SettingCupsItem.CupItem,
     onEdit: () -> Unit,
@@ -64,6 +51,7 @@ fun SettingCupsCup(
     Row(
         modifier =
             modifier
+                .noRippleClickable(onEdit)
                 .background(White)
                 .padding(vertical = 12.dp, horizontal = 18.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -77,7 +65,6 @@ fun SettingCupsCup(
             isRepresentative = item.value.isRepresentative,
             intakeTypeLabel = intakeTypeLabel,
             intakeTypeColor = intakeTypeColor,
-            onEdit = onEdit,
             modifier = Modifier.weight(1f),
         )
 
@@ -91,17 +78,29 @@ fun SettingCupsCup(
 }
 
 @Composable
+private fun DragHandle(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(R.drawable.btn_setting_cup_move),
+        contentDescription = null,
+        modifier =
+            Modifier
+                .size(40.dp)
+                .padding(8.dp)
+                .then(modifier),
+    )
+}
+
+@Composable
 private fun CupBody(
     name: String,
     emojiUrl: String,
     isRepresentative: Boolean,
     intakeTypeLabel: String,
     intakeTypeColor: Color,
-    onEdit: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.noRippleClickable(onClick = onEdit),
+        modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
         NetworkImage(
