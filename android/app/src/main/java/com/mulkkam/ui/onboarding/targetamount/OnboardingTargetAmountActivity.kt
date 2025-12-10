@@ -7,6 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.onboarding.cups.OnboardingCupsActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -27,7 +28,7 @@ class OnboardingTargetAmountActivity : ComponentActivity() {
             MulkkamTheme {
                 TargetAmountScreen(
                     navigateToBack = ::finish,
-                    navigateToNextStep = { },
+                    navigateToNextStep = { startActivity(OnboardingCupsActivity.newIntent(this)) },
                     currentProgress = CURRENT_PROGRESS,
                     hasBioInfo = false,
                 )

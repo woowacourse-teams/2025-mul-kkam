@@ -1,7 +1,5 @@
 package com.mulkkam.ui.onboarding.cups
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.model.cups.Cups
@@ -14,6 +12,9 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import com.mulkkam.ui.settingcups.model.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -23,8 +24,9 @@ class CupsViewModel
     constructor(
         private val cupsRepository: CupsRepository,
     ) : ViewModel() {
-        private var _cupsUiState: MutableLiveData<MulKkamUiState<CupsUiModel>> = MutableLiveData(MulKkamUiState.Idle)
-        val cupsUiState: LiveData<MulKkamUiState<CupsUiModel>> get() = _cupsUiState
+        private var _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
 
         init {
             loadCups()
@@ -50,7 +52,7 @@ class CupsViewModel
         }
 
         fun updateCup(updatedCup: CupUiModel) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull()?.cups ?: return
 
             val newCups =
                 currentCups.map { cup ->
@@ -61,13 +63,13 @@ class CupsViewModel
                 MulKkamUiState.Success(
                     CupsUiModel(
                         newCups,
-                        cupsUiState.value?.toSuccessDataOrNull()?.isAddable == true,
+                        cupsUiState.value.toSuccessDataOrNull()?.isAddable == true,
                     ),
                 )
         }
 
         fun deleteCup(rank: Int) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull()?.cups ?: return
             val updatedCups =
                 currentCups
                     .asSequence()
@@ -82,7 +84,7 @@ class CupsViewModel
         }
 
         fun addCup(newCup: CupUiModel) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull() ?: return
             val addedCups = currentCups.copy(cups = currentCups.cups + newCup)
             val updatedCups =
                 Cups(addedCups.cups.map { it.toDomain() }).reorderRanks().toUi()

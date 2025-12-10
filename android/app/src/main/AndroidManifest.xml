@@ -119,6 +119,10 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".ui.onboarding.cups.OnboardingCupsActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.settingfeedback.SettingFeedbackActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
