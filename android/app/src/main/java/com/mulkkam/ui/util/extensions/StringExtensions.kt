@@ -15,28 +15,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 
-fun String.getAppearanceSpannable(
-    context: Context,
-    @StyleRes typographyResId: Int,
-    vararg highlightedText: String,
-): SpannableString {
-    val spannable = SpannableString(this)
-
-    highlightedText.forEach { target ->
-        val startIndex = this.indexOf(target)
-        if (startIndex != -1) {
-            spannable.setSpan(
-                TextAppearanceSpan(context, typographyResId),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
-        }
-    }
-
-    return spannable
-}
-
 @Composable
 fun String.getStyledText(
     style: TextStyle,

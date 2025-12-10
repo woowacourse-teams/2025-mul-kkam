@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,7 +26,6 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
 import com.mulkkam.domain.model.bio.Gender
-import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -35,6 +35,7 @@ import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingbioinfo.component.GenderSection
 import com.mulkkam.ui.settingbioinfo.component.WeightSection
 import com.mulkkam.ui.settingbioinfo.dialog.SettingWeightBottomSheet
+import com.mulkkam.ui.util.extensions.getStyledText
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -82,10 +83,12 @@ fun BioInfoScreen(
                     .fillMaxSize()
                     .padding(24.dp),
         ) {
-            StyledText(
-                fullText = stringResource(R.string.bio_info_input_hint),
-                highlightedTexts = listOf(stringResource(R.string.bio_info_input_hint_highlight)),
-                highlightStyle = MulKkamTheme.typography.title1,
+            Text(
+                text =
+                    stringResource(R.string.bio_info_input_hint).getStyledText(
+                        style = MulKkamTheme.typography.title1,
+                        highlightedText = arrayOf(stringResource(R.string.bio_info_input_hint_highlight)),
+                    ),
                 style = MulKkamTheme.typography.body2,
                 color = Gray400,
             )

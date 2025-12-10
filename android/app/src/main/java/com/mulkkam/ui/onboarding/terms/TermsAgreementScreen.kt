@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -35,6 +34,7 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementCheckBox
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementItem
+import com.mulkkam.ui.util.extensions.getStyledText
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
@@ -83,10 +83,12 @@ fun TermsAgreementScreen(
                     .padding(24.dp)
                     .background(White),
         ) {
-            StyledText(
-                fullText = stringResource(R.string.terms_agree_hint),
-                highlightedTexts = listOf(stringResource(R.string.terms_agree_hint_highlight)),
-                highlightStyle = MulKkamTheme.typography.title1,
+            Text(
+                text =
+                    stringResource(R.string.terms_agree_hint).getStyledText(
+                        highlightedText = arrayOf(stringResource(R.string.terms_agree_hint_highlight)),
+                        style = MulKkamTheme.typography.title1,
+                    ),
                 style = MulKkamTheme.typography.body1,
                 modifier = Modifier.padding(start = 8.dp),
             )

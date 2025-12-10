@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +22,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.Nickname
-import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -30,6 +30,7 @@ import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingnickname.component.NicknameInputSection
+import com.mulkkam.ui.util.extensions.getStyledText
 
 @Composable
 fun NicknameScreen(
@@ -63,10 +64,12 @@ fun NicknameScreen(
                     .fillMaxSize()
                     .padding(24.dp),
         ) {
-            StyledText(
-                fullText = stringResource(R.string.nickname_input_hint),
-                highlightedTexts = listOf(stringResource(R.string.nickname_input_hint_highlight)),
-                highlightStyle = MulKkamTheme.typography.title1,
+            Text(
+                text =
+                    stringResource(R.string.nickname_input_hint).getStyledText(
+                        highlightedText = arrayOf(stringResource(R.string.nickname_input_hint_highlight)),
+                        style = MulKkamTheme.typography.title1,
+                    ),
                 style = MulKkamTheme.typography.body2,
                 color = Black,
             )

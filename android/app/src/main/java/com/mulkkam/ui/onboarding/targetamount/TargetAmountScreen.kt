@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -19,7 +20,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
@@ -30,6 +30,7 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
+import com.mulkkam.ui.util.extensions.getStyledText
 
 @Composable
 fun TargetAmountScreen(
@@ -64,10 +65,12 @@ fun TargetAmountScreen(
                     .fillMaxWidth()
                     .padding(24.dp),
         ) {
-            StyledText(
-                fullText = stringResource(R.string.target_amount_input_hint),
-                highlightedTexts = listOf(stringResource(R.string.target_amount_input_hint_highlight)),
-                highlightStyle = MulKkamTheme.typography.title1,
+            Text(
+                text =
+                    stringResource(R.string.target_amount_input_hint).getStyledText(
+                        highlightedText = arrayOf(stringResource(R.string.target_amount_input_hint_highlight)),
+                        style = MulKkamTheme.typography.title1,
+                    ),
                 style = MulKkamTheme.typography.body2,
                 color = Black,
             )

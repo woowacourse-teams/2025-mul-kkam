@@ -31,7 +31,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.StyledText
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
@@ -47,6 +46,7 @@ import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import com.mulkkam.ui.util.extensions.getStyledText
 
 @Composable
 fun CupsScreen(
@@ -119,14 +119,15 @@ fun CupsScreen(
                         .padding(innerPadding)
                         .fillMaxSize(),
             ) {
-                StyledText(
-                    fullText =
+                Text(
+                    text =
                         stringResource(
                             R.string.cups_input_hint,
                             viewModel.onboardingInfo.nickname?.name ?: "",
+                        ).getStyledText(
+                            highlightedText = arrayOf(stringResource(R.string.cups_input_hint_highlight)),
+                            style = MulKkamTheme.typography.title1,
                         ),
-                    highlightedTexts = listOf(stringResource(R.string.cups_input_hint_highlight)),
-                    highlightStyle = MulKkamTheme.typography.title1,
                     style = MulKkamTheme.typography.body1,
                     color = Black,
                     modifier = Modifier.padding(top = 24.dp, start = 24.dp),
