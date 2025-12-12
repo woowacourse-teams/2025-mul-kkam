@@ -46,7 +46,7 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
             UPDATE OutboxNotification o
                SET o.status =
                     CASE
-                        WHEN o.attemptCount < 3 THEN 'RETRY'
+                        WHEN o.attemptCount < :maxRetryCount THEN 'RETRY'
                         ELSE 'FAIL'
                     END,
                    o.nextAttemptAt = :nextAttemptAt,
@@ -55,7 +55,9 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
             """)
     void markRetryOrFail(@Param("id") Long id,
                          @Param("nextAttemptAt") LocalDateTime nextAttemptAt,
-                         @Param("reason") String reason);
+                         @Param("reason") String reason,
+                         @Param("maxRetryCount") int maxRetryCount
+    );
 
 
     @Modifying

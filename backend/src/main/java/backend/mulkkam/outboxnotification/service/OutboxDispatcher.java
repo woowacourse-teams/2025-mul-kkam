@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class OutboxDispatcher {
 
+    private static final int MAX_RETRY_COUNT = 3;
+
     private final OutboxNotificationRepository outboxRepository;
     private final FcmClient fcmClient;
 
@@ -88,7 +90,8 @@ public class OutboxDispatcher {
                 outboxRepository.markRetryOrFail(
                         job.getId(),
                         nextBackoffTime(job.getAttemptCount()),
-                        error
+                        error,
+                        MAX_RETRY_COUNT
                 );
             }
         }
