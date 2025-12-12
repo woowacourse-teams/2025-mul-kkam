@@ -5,12 +5,13 @@ import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification.Status;
 import backend.mulkkam.outboxnotification.repository.OutboxNotificationJdbcRepository;
-import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class OutboxNotificationService {
     private final DeviceRepository deviceRepository;
     private final OutboxNotificationJdbcRepository outboxNotificationJdbcRepository;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void enqueueOutbox(
             List<Long> memberIds,
             LocalDateTime time,
@@ -32,7 +33,7 @@ public class OutboxNotificationService {
         for (Object[] pair : memberTokenPairs) {
             Long memberId = (Long) pair[0];
             String token = (String) pair[1];
-            String dedupeKey = buildDedupeKey(messageType, memberId, time, token);
+            String dedupeKey = buildIdempotencyKey(messageType, memberId, time, token);
 
             OutboxNotification outboxNotification = new OutboxNotification(
                     messageType,
@@ -51,7 +52,7 @@ public class OutboxNotificationService {
         outboxNotificationJdbcRepository.batchSaveIgnoringDuplicate(outboxList);
     }
 
-    public String buildDedupeKey(
+    public String buildIdempotencyKey(
             String type,
             Long memberId,
             LocalDateTime time,

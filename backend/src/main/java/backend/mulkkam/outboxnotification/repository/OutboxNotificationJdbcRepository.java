@@ -17,7 +17,7 @@ public class OutboxNotificationJdbcRepository {
     public void batchSaveIgnoringDuplicate(List<OutboxNotification> outboxList) {
         String sql = """
                 INSERT INTO outbox_notification 
-                (type, member_id, token, title, body, status, dedupe_key)
+                (type, member_id, token, title, body, status, idempotency_key)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE id = id
                 """;
@@ -30,7 +30,7 @@ public class OutboxNotificationJdbcRepository {
                     ps.setString(4, outbox.getTitle());
                     ps.setString(5, outbox.getBody());
                     ps.setString(6, outbox.getStatus().name());
-                    ps.setString(7, outbox.getDedupeKey());
+                    ps.setString(7, outbox.getIdempotencyKey());
                 });
     }
 }

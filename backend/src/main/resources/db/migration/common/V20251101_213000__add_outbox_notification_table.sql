@@ -9,7 +9,7 @@ CREATE TABLE outbox_notification (
 
     status VARCHAR(20) NOT NULL,
 
-    dedupe_key VARCHAR(255) NOT NULL UNIQUE,
+    idempotency_key VARCHAR(255) NOT NULL UNIQUE,
 
     attempt_count INT NOT NULL DEFAULT 0,
 

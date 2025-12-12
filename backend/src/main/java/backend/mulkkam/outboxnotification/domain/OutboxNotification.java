@@ -43,7 +43,7 @@ public class OutboxNotification extends BaseEntity {
     private Status status;
 
     @Column(unique = true, nullable = false)
-    private String dedupeKey;
+    private String idempotencyKey;
 
     private int attemptCount;
 
@@ -62,7 +62,7 @@ public class OutboxNotification extends BaseEntity {
             String title,
             String body,
             Status status,
-            String dedupeKey,
+            String idempotencyKey,
             int attemptCount,
             String lastError,
             LocalDateTime nextAttemptAt
@@ -73,7 +73,7 @@ public class OutboxNotification extends BaseEntity {
         this.title = title;
         this.body = body;
         this.status = status;
-        this.dedupeKey = dedupeKey;
+        this.idempotencyKey = idempotencyKey;
         this.attemptCount = attemptCount;
         this.lastError = lastError;
         this.nextAttemptAt = nextAttemptAt;

@@ -91,7 +91,7 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, now, template);
+            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
 
             // then
             List<OutboxNotification> savedOutboxes = outboxNotificationRepository.findAll();
@@ -127,7 +127,7 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, now, template);
+            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
 
             // then
             List<OutboxNotification> savedOutboxes = outboxNotificationRepository.findAll();
@@ -157,8 +157,8 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, now, template);
-            outboxNotificationService.enqueueOutbox(memberIds, now, template);
+            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
+            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
 
             // then
             List<OutboxNotification> savedOutboxes = outboxNotificationRepository.findAll();
@@ -182,7 +182,7 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, now, template);
+            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
 
             // then
             List<OutboxNotification> savedOutboxes = outboxNotificationRepository.findAll();
@@ -204,14 +204,14 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, time1, template);
-            outboxNotificationService.enqueueOutbox(memberIds, time2, template);
+            outboxNotificationService.enqueueOutbox(memberIds, time1, template, "REMIND");
+            outboxNotificationService.enqueueOutbox(memberIds, time2, template, "REMIND");
 
             // then
             List<OutboxNotification> savedOutboxes = outboxNotificationRepository.findAll();
             List<String> dedupeKeys = savedOutboxes
                     .stream()
-                    .map(OutboxNotification::getDedupeKey)
+                    .map(OutboxNotification::getIdempotencyKey)
                     .toList();
 
             assertSoftly(softly -> {
@@ -226,11 +226,11 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("Dedupe key를 생성할 때")
+    @DisplayName("멱등키를 생성할 때")
     @Nested
     class BuildDedupeKey {
 
-        @DisplayName("올바른 형식의 dedupe key가 생성된다")
+        @DisplayName("올바른 형식의 멱등키가 생성된다")
         @Test
         void success_generatesCorrectFormat() {
             // given
@@ -239,7 +239,7 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDateTime time = LocalDateTime.of(2025, 11, 18, 14, 30);
 
             // when
-            String dedupeKey = outboxNotificationService.buildDedupeKey(type, memberId, time, "token");
+            String dedupeKey = outboxNotificationService.buildIdempotencyKey(type, memberId, time, "token");
 
             // then
             assertThat(dedupeKey).isEqualTo("REMIND:123:2025-11-18T14:30:token");
