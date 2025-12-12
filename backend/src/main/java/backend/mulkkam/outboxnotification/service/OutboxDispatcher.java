@@ -1,7 +1,6 @@
 package backend.mulkkam.outboxnotification.service;
 
 import static backend.mulkkam.common.exception.errorCode.FirebaseErrorCode.isPermanentError;
-import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
 
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.errorCode.ErrorCode;
@@ -75,7 +74,7 @@ public class OutboxDispatcher {
                 return alarmException.getErrorCode();
             }
         }
-        return INTER_SERVER_ERROR_CODE;
+        return FirebaseErrorCode.INTERNAL;
     }
 
     private LocalDateTime nextBackoffTime(int attempt) {
