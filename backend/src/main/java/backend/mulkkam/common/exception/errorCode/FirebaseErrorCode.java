@@ -35,10 +35,11 @@ public enum FirebaseErrorCode implements ErrorCode {
                 .orElseThrow(() -> new CommonException(INTER_SERVER_ERROR_CODE, name));
     }
 
-    public static boolean isPermanentError(String error) {
-        FirebaseErrorCode errorCode = findByName(error);
-        return errorCode == UNREGISTERED || errorCode == INVALID_ARGUMENT || errorCode == SENDER_ID_MISMATCH
-                || errorCode == THIRD_PARTY_AUTH_ERROR;
+    public static boolean isPermanentError(FirebaseErrorCode firebaseErrorCode) {
+        return firebaseErrorCode == UNREGISTERED
+                || firebaseErrorCode == INVALID_ARGUMENT
+                || firebaseErrorCode == SENDER_ID_MISMATCH
+                || firebaseErrorCode == THIRD_PARTY_AUTH_ERROR;
     }
 
     @Override

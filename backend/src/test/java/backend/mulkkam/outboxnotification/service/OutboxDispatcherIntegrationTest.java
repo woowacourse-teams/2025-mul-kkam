@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.notification.domain.NotificationType;
@@ -168,7 +169,7 @@ class OutboxDispatcherIntegrationTest extends ServiceIntegrationTest {
         FirebaseMessagingException exception = Mockito.mock(FirebaseMessagingException.class);
         Mockito.when(exception.getMessagingErrorCode()).thenReturn(errorCode);
 
-        Mockito.doThrow(new RuntimeException(exception))
+        Mockito.doThrow(new AlarmException(exception))
                 .when(fcmClient)
                 .sendMessageByToken(argThat(req -> req.token().equals(token)));
     }

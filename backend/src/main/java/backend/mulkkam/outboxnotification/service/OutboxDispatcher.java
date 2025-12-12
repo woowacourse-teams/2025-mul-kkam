@@ -1,8 +1,11 @@
 package backend.mulkkam.outboxnotification.service;
 
 import static backend.mulkkam.common.exception.errorCode.FirebaseErrorCode.isPermanentError;
+import static backend.mulkkam.common.exception.errorCode.InternalServerErrorErrorCode.INTER_SERVER_ERROR_CODE;
 
 import backend.mulkkam.common.exception.AlarmException;
+import backend.mulkkam.common.exception.errorCode.ErrorCode;
+import backend.mulkkam.common.exception.errorCode.FirebaseErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
@@ -53,27 +56,26 @@ public class OutboxDispatcher {
             OutboxNotification job,
             Exception exception
     ) {
-        String error = extractErrorCode(exception);
-        if (isPermanentError(error)) {
-            outboxRepository.markFail(job.getId(), error);
+        FirebaseErrorCode firebaseErrorCode = (FirebaseErrorCode) extractErrorCode(exception);
+        if (isPermanentError(firebaseErrorCode)) {
+            outboxRepository.markFail(job.getId(), firebaseErrorCode.name());
             return;
         }
         outboxRepository.markRetryOrFail(
                 job.getId(),
                 nextBackoffTime(job.getAttemptCount()),
-                error,
+                firebaseErrorCode.name(),
                 MAX_RETRY_COUNT
         );
     }
 
-    private String extractErrorCode(Exception exception) {
-        if (exception.getCause() instanceof AlarmException alarmException) {
+    private ErrorCode extractErrorCode(Exception exception) {
+        if (exception instanceof AlarmException alarmException) {
             if (alarmException.getErrorCode() != null) {
-                return alarmException.getErrorCode().name();
+                return alarmException.getErrorCode();
             }
-            return "UNKNOWN";
         }
-        return "UNKNOWN";
+        return INTER_SERVER_ERROR_CODE;
     }
 
     private LocalDateTime nextBackoffTime(int attempt) {
