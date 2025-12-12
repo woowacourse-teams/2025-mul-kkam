@@ -19,7 +19,7 @@ CREATE TABLE outbox_notification (
     next_attempt_at TIMESTAMP NULL,
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    deleted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    deleted_at TIMESTAMP NULL DEFAULT NULL
 );
 
 ALTER TABLE outbox_notification

@@ -14,11 +14,15 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
-@Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE outbox_notification SET deleted_at = NOW() WHERE id = ?")
+@Entity
 public class OutboxNotification extends BaseEntity {
 
     @Id
