@@ -2,15 +2,11 @@ package backend.mulkkam.common.infrastructure.fcm.service;
 
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
-import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -78,62 +74,6 @@ public class FcmClient {
                     .putData(ACTION, sendFcmTokenMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
-            throw new AlarmException(e);
-        }
-    }
-
-    public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
-        try {
-            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
-                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
-                    .putData("title", sendMessageByFcmTokensRequest.title())
-                    .putData("body", sendMessageByFcmTokensRequest.body())
-                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
-                    .build());
-            log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
-                    batchResponse.getSuccessCount(),
-                    batchResponse.getFailureCount(),
-                    sendMessageByFcmTokensRequest.allTokens().size(),
-                    sendMessageByFcmTokensRequest.action());
-
-        } catch (FirebaseMessagingException e) {
-            log.error("[FCM MULTICAST FAILED] tokenCount={}, errorCode={}, errorMessage={}, action={}",
-                    sendMessageByFcmTokensRequest.allTokens().size(),
-                    e.getMessagingErrorCode(),
-                    e.getMessage(),
-                    sendMessageByFcmTokensRequest.action());
-            throw new AlarmException(e);
-        }
-    }
-
-    public BatchResponse sendMulticast(String title, String body, String action, List<String> tokens) {
-
-        try {
-            MulticastMessage message = MulticastMessage.builder()
-                    .addAllTokens(tokens)
-                    .putData("title", title)
-                    .putData("body", body)
-                    .putData(ACTION, action)
-                    .build();
-
-            BatchResponse res = firebaseMessaging.sendEachForMulticast(message);
-
-            log.info("[FCM MULTICAST] success={}, fail={}, total={}, action={}",
-                    res.getSuccessCount(),
-                    res.getFailureCount(),
-                    tokens.size(),
-                    action
-            );
-
-            return res;
-
-        } catch (FirebaseMessagingException e) {
-            log.error("[FCM MULTICAST FAILED] total={}, errorCode={}, errorMessage={}, action={}",
-                    tokens.size(),
-                    e.getMessagingErrorCode(),
-                    e.getMessage(),
-                    action
-            );
             throw new AlarmException(e);
         }
     }
