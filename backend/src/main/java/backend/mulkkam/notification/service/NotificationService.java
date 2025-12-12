@@ -236,12 +236,12 @@ public class NotificationService {
 
     private void saveAndSendNotifications(
             List<Long> memberIds,
-            LocalDateTime now,
+            LocalDateTime localDateTime,
             NotificationMessageTemplate template,
             String messageType
     ) {
         savedNotifications(memberIds, template);
-        outboxNotificationService.enqueueOutbox(memberIds, now, template, messageType);
+        outboxNotificationService.enqueueOutbox(memberIds, localDateTime, template, messageType);
     }
 
     private void savedNotifications(
