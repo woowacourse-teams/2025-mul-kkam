@@ -1,6 +1,7 @@
 package backend.mulkkam.outboxnotification.service;
 
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification.Status;
@@ -24,8 +25,7 @@ public class OutboxNotificationService {
     public void enqueueOutbox(
             List<Long> memberIds,
             LocalDateTime time,
-            NotificationMessageTemplate template,
-            String messageType
+            NotificationMessageTemplate template
     ) {
         List<Object[]> memberTokenPairs = deviceRepository.findMemberIdAndTokenByMemberIdIn(memberIds);
         List<OutboxNotification> outboxList = new ArrayList<>();
@@ -33,7 +33,7 @@ public class OutboxNotificationService {
         for (Object[] pair : memberTokenPairs) {
             Long memberId = (Long) pair[0];
             String token = (String) pair[1];
-            String dedupeKey = buildIdempotencyKey(messageType, memberId, time, token);
+            String dedupeKey = buildIdempotencyKey(template.type(), memberId, time, token);
 
             OutboxNotification outboxNotification = new OutboxNotification(
                     memberId,
@@ -54,7 +54,7 @@ public class OutboxNotificationService {
     }
 
     public String buildIdempotencyKey(
-            String type,
+            NotificationType type,
             Long memberId,
             LocalDateTime time,
             String token

@@ -85,7 +85,7 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
+            outboxNotificationService.enqueueOutbox(memberIds, now, template);
 
             // then
             List<OutboxNotification> saved = outboxNotificationRepository.findAll();
@@ -113,8 +113,8 @@ class OutboxNotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     NotificationType.REMIND
             );
 
-            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
-            outboxNotificationService.enqueueOutbox(memberIds, now, template, "REMIND");
+            outboxNotificationService.enqueueOutbox(memberIds, now, template);
+            outboxNotificationService.enqueueOutbox(memberIds, now, template);
 
             List<OutboxNotification> saved = outboxNotificationRepository.findAll();
             assertThat(saved).hasSize(2);

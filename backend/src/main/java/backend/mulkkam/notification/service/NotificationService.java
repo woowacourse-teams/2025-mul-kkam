@@ -66,7 +66,7 @@ public class NotificationService {
                 break;
             }
 
-            saveAndSendNotifications(memberIds, now, template, "REMIND");
+            saveAndSendNotifications(memberIds, now, template);
 
             if (isLastChunk(memberIds)) {
                 break;
@@ -237,11 +237,10 @@ public class NotificationService {
     private void saveAndSendNotifications(
             List<Long> memberIds,
             LocalDateTime localDateTime,
-            NotificationMessageTemplate template,
-            String messageType
+            NotificationMessageTemplate template
     ) {
         savedNotifications(memberIds, template);
-        outboxNotificationService.enqueueOutbox(memberIds, localDateTime, template, messageType);
+        outboxNotificationService.enqueueOutbox(memberIds, localDateTime, template);
     }
 
     private void savedNotifications(
@@ -254,6 +253,7 @@ public class NotificationService {
         notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
     }
 
+    //현재 사용하지 않습니다. #1029
     private void sendNotifications(
             List<Long> memberIds,
             NotificationMessageTemplate template
