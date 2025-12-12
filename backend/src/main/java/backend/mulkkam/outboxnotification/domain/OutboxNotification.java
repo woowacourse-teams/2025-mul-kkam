@@ -101,12 +101,12 @@ public class OutboxNotification extends BaseEntity {
     }
 
     public void markRetryOrFail(int maxRetryCount) {
-        if (attemptCount + 1 == maxRetryCount) {
+        this.attemptCount += 1;
+        if (this.attemptCount >= maxRetryCount) {
             this.status = Status.FAIL;
             return;
         }
         this.status = Status.RETRY;
-        this.attemptCount += 1;
         this.nextAttemptAt = nextBackoffTime(this.attemptCount);
     }
 
