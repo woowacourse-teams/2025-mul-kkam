@@ -3,7 +3,6 @@ package backend.mulkkam.outboxnotification.service;
 import static backend.mulkkam.common.exception.errorCode.FirebaseErrorCode.isPermanentError;
 
 import backend.mulkkam.common.exception.AlarmException;
-import backend.mulkkam.common.exception.errorCode.ErrorCode;
 import backend.mulkkam.common.exception.errorCode.FirebaseErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
@@ -45,17 +44,17 @@ public class OutboxDispatcher {
                 fcmClient.sendMessageByToken(
                         new SendMessageByFcmTokenRequest(notificationMessageTemplate, job.getToken()));
                 outboxRepository.markSent(job.getId());
-            } catch (Exception exception) {
-                handleFailure(job, exception);
+            } catch (AlarmException alarmException) {
+                handleFailure(job, alarmException);
             }
         }
     }
 
     private void handleFailure(
             OutboxNotification job,
-            Exception exception
+            AlarmException alarmException
     ) {
-        FirebaseErrorCode firebaseErrorCode = (FirebaseErrorCode) extractErrorCode(exception);
+        FirebaseErrorCode firebaseErrorCode = extractErrorCode(alarmException);
         if (isPermanentError(firebaseErrorCode)) {
             outboxRepository.markFail(job.getId(), firebaseErrorCode.name());
             return;
@@ -68,11 +67,9 @@ public class OutboxDispatcher {
         );
     }
 
-    private ErrorCode extractErrorCode(Exception exception) {
-        if (exception instanceof AlarmException alarmException) {
-            if (alarmException.getErrorCode() != null) {
-                return alarmException.getErrorCode();
-            }
+    private FirebaseErrorCode extractErrorCode(AlarmException alarmException) {
+        if (alarmException.getErrorCode() != null) {
+            return FirebaseErrorCode.findByName(alarmException.getErrorCode().name());
         }
         return FirebaseErrorCode.INTERNAL;
     }

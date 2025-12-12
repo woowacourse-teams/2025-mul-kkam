@@ -118,6 +118,9 @@ class OutboxDispatcherIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_mixedResultsHandledCorrectly() {
             // given
+            Mockito.doNothing()
+                    .when(fcmClient)
+                    .sendMessageByToken(argThat(req -> req.token().equals("token-1")));
             mockTokenFailure("token-2", MessagingErrorCode.UNAVAILABLE);
             mockTokenFailure("token-3", MessagingErrorCode.INVALID_ARGUMENT);
 
