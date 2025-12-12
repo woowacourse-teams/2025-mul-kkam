@@ -15,6 +15,9 @@ public class OutboxNotificationJdbcRepository {
     }
 
     public void batchSaveIgnoringDuplicate(List<OutboxNotification> outboxList) {
+        if (outboxList.isEmpty()) {
+            return;
+        }
         String sql = """
                 INSERT INTO outbox_notification 
                 (member_id, token, title, body, action, type, status, idempotency_key)
