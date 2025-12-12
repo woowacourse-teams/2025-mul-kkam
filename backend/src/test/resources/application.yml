@@ -14,11 +14,13 @@ spring:
       mode: never
   flyway:
     locations: classpath:db/migration/common, classpath:db/migration/h2
-
   jpa:
     hibernate:
       ddl-auto: none
     defer-datasource-initialization: false
+  task:
+    scheduling:
+      enabled: false
 
 open-weather:
   api:

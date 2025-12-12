@@ -107,7 +107,7 @@ class OutboxDispatcherIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(updatedOutboxes)
                         .allMatch(outbox -> outbox.getStatus() == Status.SENT);
                 softly.assertThat(updatedOutboxes)
-                        .allMatch(outbox -> outbox.getAttemptCount() == 1);
+                        .allMatch(outbox -> outbox.getAttemptCount() == 0);
             });
 
             verify(fcmClient, times(3))

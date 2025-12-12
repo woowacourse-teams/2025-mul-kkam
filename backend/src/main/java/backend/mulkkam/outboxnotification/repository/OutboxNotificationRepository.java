@@ -26,10 +26,9 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
 
     @Modifying
     @Query("""
-            UPDATE OutboxNotification o
-               SET o.status = 'SENDING',
-                   o.attemptCount = o.attemptCount + 1
-             WHERE o.id = :id
+                UPDATE OutboxNotification o
+                   SET o.status = 'SENDING'
+                 WHERE o.id = :id
             """)
     void markSending(@Param("id") Long id);
 
@@ -43,20 +42,22 @@ public interface OutboxNotificationRepository extends JpaRepository<OutboxNotifi
 
     @Modifying
     @Query("""
-            UPDATE OutboxNotification o
-               SET o.status =
-                    CASE
-                        WHEN o.attemptCount < :maxRetryCount THEN 'RETRY'
-                        ELSE 'FAIL'
-                    END,
-                   o.nextAttemptAt = :nextAttemptAt,
-                   o.lastError = :reason
-             WHERE o.id = :id
+                UPDATE OutboxNotification o
+                   SET o.attemptCount = o.attemptCount + 1,
+                       o.status =
+                            CASE
+                                WHEN o.attemptCount + 1 < :maxRetryCount THEN 'RETRY'
+                                ELSE 'FAIL'
+                            END,
+                       o.nextAttemptAt = :nextAttemptAt,
+                       o.lastError = :reason
+                 WHERE o.id = :id
             """)
-    void markRetryOrFail(@Param("id") Long id,
-                         @Param("nextAttemptAt") LocalDateTime nextAttemptAt,
-                         @Param("reason") String reason,
-                         @Param("maxRetryCount") int maxRetryCount
+    void markRetryOrFail(
+            @Param("id") Long id,
+            @Param("nextAttemptAt") LocalDateTime nextAttemptAt,
+            @Param("reason") String reason,
+            @Param("maxRetryCount") int maxRetryCount
     );
 
 
