@@ -36,11 +36,12 @@ public class OutboxNotificationService {
             String dedupeKey = buildIdempotencyKey(messageType, memberId, time, token);
 
             OutboxNotification outboxNotification = new OutboxNotification(
-                    messageType,
                     memberId,
                     token,
                     template.title(),
                     template.body(),
+                    template.action(),
+                    template.type(),
                     Status.READY,
                     dedupeKey,
                     0,

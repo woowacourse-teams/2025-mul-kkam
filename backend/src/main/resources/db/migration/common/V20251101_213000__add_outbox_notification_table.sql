@@ -6,6 +6,7 @@ CREATE TABLE outbox_notification (
     token VARCHAR(512) NOT NULL,
     title VARCHAR(255) NOT NULL,
     body VARCHAR(1000) NOT NULL,
+    action VARCHAR(50) NOT NULL,
 
     status VARCHAR(20) NOT NULL,
 

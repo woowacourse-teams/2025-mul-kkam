@@ -1,6 +1,8 @@
 package backend.mulkkam.outboxnotification.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
+import backend.mulkkam.notification.domain.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -24,9 +26,6 @@ public class OutboxNotification extends BaseEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String type;
-
-    @Column(nullable = false)
     private Long memberId;
 
     @Column(nullable = false)
@@ -37,6 +36,14 @@ public class OutboxNotification extends BaseEntity {
 
     @Column(nullable = false)
     private String body;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Action action;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NotificationType type;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,22 +63,24 @@ public class OutboxNotification extends BaseEntity {
     }
 
     public OutboxNotification(
-            String type,
             Long memberId,
             String token,
             String title,
             String body,
+            Action action,
+            NotificationType type,
             Status status,
             String idempotencyKey,
             int attemptCount,
             String lastError,
             LocalDateTime nextAttemptAt
     ) {
-        this.type = type;
         this.memberId = memberId;
         this.token = token;
         this.title = title;
         this.body = body;
+        this.action = action;
+        this.type = type;
         this.status = status;
         this.idempotencyKey = idempotencyKey;
         this.attemptCount = attemptCount;
