@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -21,7 +20,7 @@ public class OutboxNotificationService {
     private final DeviceRepository deviceRepository;
     private final OutboxNotificationJdbcRepository outboxNotificationJdbcRepository;
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Transactional
     public void enqueueOutbox(
             List<Long> memberIds,
             LocalDateTime time,

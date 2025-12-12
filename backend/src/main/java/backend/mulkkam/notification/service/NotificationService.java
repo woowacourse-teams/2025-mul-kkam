@@ -14,7 +14,6 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
@@ -23,10 +22,8 @@ import backend.mulkkam.notification.dto.response.GetSuggestionNotificationRespon
 import backend.mulkkam.notification.dto.response.GetUnreadNotificationsCountResponse;
 import backend.mulkkam.notification.dto.response.NotificationResponse;
 import backend.mulkkam.notification.dto.response.ReadNotificationsResponse;
-import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
-import backend.mulkkam.outboxnotification.service.OutboxNotificationService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,20 +38,17 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationService {
 
-    private static final int DAY_LIMIT = 7;
     private static final int CHUNK_SIZE = 1_000;
+    private static final int DAY_LIMIT = 7;
 
     private final SuggestionNotificationService suggestionNotificationService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
-    private final NotificationBatchRepository notificationBatchRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
     private final ApplicationEventPublisher publisher;
-    private final OutboxNotificationService outboxNotificationService;
-
-    @Transactional
+    private final NotificationChunkService notificationChunkService;
+    
     public void processReminderNotifications(LocalDateTime now) {
-
         NotificationMessageTemplate template =
                 RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
@@ -66,7 +60,7 @@ public class NotificationService {
                 break;
             }
 
-            saveAndSendNotifications(memberIds, now, template);
+            notificationChunkService.processChunk(memberIds, now, template);
 
             if (isLastChunk(memberIds)) {
                 break;
@@ -232,25 +226,6 @@ public class NotificationService {
         return devices.stream()
                 .map(Device::getToken)
                 .toList();
-    }
-
-    private void saveAndSendNotifications(
-            List<Long> memberIds,
-            LocalDateTime localDateTime,
-            NotificationMessageTemplate template
-    ) {
-        savedNotifications(memberIds, template);
-        outboxNotificationService.enqueueOutbox(memberIds, localDateTime, template);
-    }
-
-    private void savedNotifications(
-            List<Long> memberIds,
-            NotificationMessageTemplate template
-    ) {
-        List<NotificationInsertDto> notificationInsertDtos = memberIds.stream()
-                .map(memberId -> new NotificationInsertDto(template, memberId))
-                .toList();
-        notificationBatchRepository.batchInsert(notificationInsertDtos, CHUNK_SIZE);
     }
 
     //현재 사용하지 않습니다. #1029
