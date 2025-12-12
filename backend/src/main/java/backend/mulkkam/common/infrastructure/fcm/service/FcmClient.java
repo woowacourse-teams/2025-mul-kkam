@@ -2,10 +2,13 @@ package backend.mulkkam.common.infrastructure.fcm.service;
 
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,6 +77,30 @@ public class FcmClient {
                     .putData(ACTION, sendFcmTokenMessageRequest.action().name())
                     .build());
         } catch (FirebaseMessagingException e) {
+            throw new AlarmException(e);
+        }
+    }
+
+    public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
+        try {
+            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
+                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
+                    .putData("title", sendMessageByFcmTokensRequest.title())
+                    .putData("body", sendMessageByFcmTokensRequest.body())
+                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
+                    .build());
+            log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
+                    batchResponse.getSuccessCount(),
+                    batchResponse.getFailureCount(),
+                    sendMessageByFcmTokensRequest.allTokens().size(),
+                    sendMessageByFcmTokensRequest.action());
+
+        } catch (FirebaseMessagingException e) {
+            log.error("[FCM MULTICAST FAILED] tokenCount={}, errorCode={}, errorMessage={}, action={}",
+                    sendMessageByFcmTokensRequest.allTokens().size(),
+                    e.getMessagingErrorCode(),
+                    e.getMessage(),
+                    sendMessageByFcmTokensRequest.action());
             throw new AlarmException(e);
         }
     }

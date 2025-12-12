@@ -26,6 +26,7 @@ public class FcmEventListener {
         fcmClient.sendMessageByToken(sendMessageByFcmTokenRequest);
     }
 
+    // 사용하지 않는 이벤트 리스너 #1029
 //    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
 //    public void onTokens(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
 //        Lists.partition(sendMessageByFcmTokensRequest.allTokens(), FCM_BATCH_SIZE)
