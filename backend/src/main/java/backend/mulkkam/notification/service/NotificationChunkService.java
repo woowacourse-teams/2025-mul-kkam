@@ -33,12 +33,11 @@ public class NotificationChunkService {
             LocalDateTime localDateTime,
             NotificationMessageTemplate template
     ) {
-        savedNotifications(memberIds, template);
+        saveNotifications(memberIds, template);
         outboxNotificationService.enqueueOutbox(memberIds, localDateTime, template);
     }
 
-
-    private void savedNotifications(
+    private void saveNotifications(
             List<Long> memberIds,
             NotificationMessageTemplate template
     ) {
