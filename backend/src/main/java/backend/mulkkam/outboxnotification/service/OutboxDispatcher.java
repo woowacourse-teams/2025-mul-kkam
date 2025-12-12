@@ -2,12 +2,12 @@ package backend.mulkkam.outboxnotification.service;
 
 import static backend.mulkkam.common.exception.errorCode.FirebaseErrorCode.isPermanentError;
 
+import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.repository.OutboxNotificationRepository;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -43,8 +43,8 @@ public class OutboxDispatcher {
                 fcmClient.sendMessageByToken(
                         new SendMessageByFcmTokenRequest(notificationMessageTemplate, job.getToken()));
                 outboxRepository.markSent(job.getId());
-            } catch (Exception e) {
-                handleFailure(job, e);
+            } catch (Exception exception) {
+                handleFailure(job, exception);
             }
         }
     }
@@ -67,10 +67,11 @@ public class OutboxDispatcher {
     }
 
     private String extractErrorCode(Exception exception) {
-        if (exception.getCause() instanceof FirebaseMessagingException firebaseMessagingException) {
-            return firebaseMessagingException.getMessagingErrorCode() != null
-                    ? firebaseMessagingException.getMessagingErrorCode().name()
-                    : "UNKNOWN";
+        if (exception.getCause() instanceof AlarmException alarmException) {
+            if (alarmException.getErrorCode() != null) {
+                return alarmException.getErrorCode().name();
+            }
+            return "UNKNOWN";
         }
         return "UNKNOWN";
     }
