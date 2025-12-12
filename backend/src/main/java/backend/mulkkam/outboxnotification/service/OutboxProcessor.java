@@ -42,6 +42,8 @@ public class OutboxProcessor {
                 job.markSent();
             } catch (AlarmException alarmException) {
                 handleFailure(job, alarmException);
+            } catch (Exception exception) {
+                job.markFail();
             }
         }
     }
