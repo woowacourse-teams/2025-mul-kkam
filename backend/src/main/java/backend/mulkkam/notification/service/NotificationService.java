@@ -2,20 +2,24 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION;
+import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.INVALID_SECRET_KEY_FOR_NOTIFICATION;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
+import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.dto.ReadNotificationRow;
+import backend.mulkkam.notification.dto.request.MaintenanceNotificationRequest;
 import backend.mulkkam.notification.dto.request.ReadNotificationsRequest;
 import backend.mulkkam.notification.dto.response.GetNotificationResponse;
 import backend.mulkkam.notification.dto.response.GetSuggestionNotificationResponse;
@@ -28,6 +32,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -38,19 +43,22 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationService {
 
-    private static final int CHUNK_SIZE = 1_000;
+    @Value("${notification.secret-key}")
+    private String secretKeyForNotification;
+
     private static final int DAY_LIMIT = 7;
+    private static final int CHUNK_SIZE = 1_000;
 
     private final SuggestionNotificationService suggestionNotificationService;
     private final DeviceRepository deviceRepository;
     private final NotificationRepository notificationRepository;
     private final ReminderScheduleRepository reminderScheduleRepository;
+    private final MemberRepository memberRepository;
     private final ApplicationEventPublisher publisher;
     private final NotificationChunkService notificationChunkService;
-    
+
     public void processReminderNotifications(LocalDateTime now) {
-        NotificationMessageTemplate template =
-                RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
+        NotificationMessageTemplate template = RemindNotificationMessageTemplateProvider.getRandomMessageTemplate();
 
         Long lastId = null;
 
@@ -158,6 +166,46 @@ public class NotificationService {
         }
 
         notificationRepository.delete(notification);
+    }
+    
+    public void sendMaintenanceNotificationToAllMembers(MaintenanceNotificationRequest maintenanceNotificationRequest) {
+        if (!secretKeyForNotification.equals(maintenanceNotificationRequest.secretKey())) {
+            throw new CommonException(INVALID_SECRET_KEY_FOR_NOTIFICATION);
+        }
+
+        NotificationMessageTemplate template = new NotificationMessageTemplate(
+                maintenanceNotificationRequest.title(),
+                maintenanceNotificationRequest.body(),
+                Action.GO_HOME,
+                NotificationType.NOTICE
+        );
+
+        Long lastId = null;
+        LocalDateTime now = LocalDateTime.now();
+
+        while (true) {
+            List<Long> memberIds = getAllMemberIds(lastId);
+
+            if (memberIds.isEmpty()) {
+                break;
+            }
+
+            notificationChunkService.processChunk(memberIds, now, template);
+
+            if (isLastChunk(memberIds)) {
+                break;
+            }
+
+            lastId = memberIds.getLast();
+        }
+    }
+
+    private List<Long> getAllMemberIds(Long lastId) {
+        return ChunkReader.readChunk(
+                memberRepository::findIdsAfter,
+                lastId,
+                CHUNK_SIZE
+        );
     }
 
     private void validateSizeRange(ReadNotificationsRequest readNotificationsRequest) {
