@@ -23,7 +23,8 @@ public class OutboxNotificationService {
     public void enqueueOutbox(
             List<Long> memberIds,
             LocalDateTime time,
-            NotificationMessageTemplate template
+            NotificationMessageTemplate template,
+            String messageType
     ) {
         List<Object[]> memberTokenPairs = deviceRepository.findMemberIdAndTokenByMemberIdIn(memberIds);
         List<OutboxNotification> outboxList = new ArrayList<>();
@@ -31,10 +32,10 @@ public class OutboxNotificationService {
         for (Object[] pair : memberTokenPairs) {
             Long memberId = (Long) pair[0];
             String token = (String) pair[1];
-            String dedupeKey = buildDedupeKey("REMIND", memberId, time, token);
+            String dedupeKey = buildDedupeKey(messageType, memberId, time, token);
 
             OutboxNotification outboxNotification = new OutboxNotification(
-                    "REMIND",
+                    messageType,
                     memberId,
                     token,
                     template.title(),

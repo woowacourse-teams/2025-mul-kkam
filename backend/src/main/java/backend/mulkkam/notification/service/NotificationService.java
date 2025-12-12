@@ -66,7 +66,7 @@ public class NotificationService {
                 break;
             }
 
-            saveAndSendNotifications(memberIds, now, template);
+            saveAndSendNotifications(memberIds, now, template, "REMIND");
 
             if (isLastChunk(memberIds)) {
                 break;
@@ -237,10 +237,11 @@ public class NotificationService {
     private void saveAndSendNotifications(
             List<Long> memberIds,
             LocalDateTime now,
-            NotificationMessageTemplate template
+            NotificationMessageTemplate template,
+            String messageType
     ) {
         savedNotifications(memberIds, template);
-        outboxNotificationService.enqueueOutbox(memberIds, now, template);
+        outboxNotificationService.enqueueOutbox(memberIds, now, template, messageType);
     }
 
     private void savedNotifications(
