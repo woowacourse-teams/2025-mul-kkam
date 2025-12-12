@@ -9,7 +9,6 @@ import backend.mulkkam.common.infrastructure.fcm.service.FcmClient;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.outboxnotification.domain.OutboxNotification;
 import backend.mulkkam.outboxnotification.repository.OutboxNotificationRepository;
-import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -34,13 +33,13 @@ public class OutboxProcessor {
             return;
         }
         for (OutboxNotification job : jobs) {
-            outboxNotificationRepository.markSending(job.getId());
+            job.markSending();
             NotificationMessageTemplate notificationMessageTemplate = new NotificationMessageTemplate(job.getTitle(),
                     job.getBody(), job.getAction(), job.getType());
             try {
                 fcmClient.sendMessageByToken(
                         new SendMessageByFcmTokenRequest(notificationMessageTemplate, job.getToken()));
-                outboxNotificationRepository.markSent(job.getId());
+                job.markSent();
             } catch (AlarmException alarmException) {
                 handleFailure(job, alarmException);
             }
@@ -53,15 +52,12 @@ public class OutboxProcessor {
     ) {
         FirebaseErrorCode firebaseErrorCode = extractErrorCode(alarmException);
         if (isPermanentError(firebaseErrorCode)) {
-            outboxNotificationRepository.markFail(job.getId(), firebaseErrorCode.name());
+            job.markFail();
+            job.updateLastError(firebaseErrorCode.name());
             return;
         }
-        outboxNotificationRepository.markRetryOrFail(
-                job.getId(),
-                nextBackoffTime(job.getAttemptCount()),
-                firebaseErrorCode.name(),
-                MAX_RETRY_COUNT
-        );
+        job.markRetryOrFail(MAX_RETRY_COUNT);
+        job.updateLastError(firebaseErrorCode.name());
     }
 
     private FirebaseErrorCode extractErrorCode(AlarmException alarmException) {
@@ -69,10 +65,5 @@ public class OutboxProcessor {
             return FirebaseErrorCode.findByName(alarmException.getErrorCode().name());
         }
         return FirebaseErrorCode.INTERNAL;
-    }
-
-    private LocalDateTime nextBackoffTime(int attempt) {
-        long sec = Math.min(60, (long) (2 * Math.pow(2, attempt)));
-        return LocalDateTime.now().plusSeconds(sec);
     }
 }

@@ -18,9 +18,6 @@ spring:
     hibernate:
       ddl-auto: none
     defer-datasource-initialization: false
-  task:
-    scheduling:
-      enabled: false
 
 open-weather:
   api:

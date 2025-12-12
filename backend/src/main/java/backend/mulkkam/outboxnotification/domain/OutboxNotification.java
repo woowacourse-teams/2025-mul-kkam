@@ -91,4 +91,35 @@ public class OutboxNotification extends BaseEntity {
         this.lastError = lastError;
         this.nextAttemptAt = nextAttemptAt;
     }
+
+    public void markSending() {
+        this.status = Status.SENDING;
+    }
+
+    public void markSent() {
+        this.status = Status.SENT;
+    }
+
+    public void markRetryOrFail(int maxRetryCount) {
+        if (attemptCount + 1 == maxRetryCount) {
+            this.status = Status.FAIL;
+            return;
+        }
+        this.status = Status.RETRY;
+        this.attemptCount += 1;
+        this.nextAttemptAt = nextBackoffTime(this.attemptCount);
+    }
+
+    public void markFail() {
+        this.status = Status.FAIL;
+    }
+
+    public void updateLastError(String errorName) {
+        this.lastError = errorName;
+    }
+
+    private LocalDateTime nextBackoffTime(int attempt) {
+        long sec = Math.min(60, (long) (2 * Math.pow(2, attempt)));
+        return LocalDateTime.now().plusSeconds(sec);
+    }
 }
