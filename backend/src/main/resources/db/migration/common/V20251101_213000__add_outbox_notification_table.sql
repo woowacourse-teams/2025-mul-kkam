@@ -31,6 +31,3 @@ CREATE INDEX idx_outbox_status_nextAttempt
 
 CREATE INDEX idx_outbox_memberId
     ON outbox_notification (member_id);
-
-CREATE INDEX idx_outbox_token
-    ON outbox_notification (token);
