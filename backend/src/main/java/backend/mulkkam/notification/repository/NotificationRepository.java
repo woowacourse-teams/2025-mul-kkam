@@ -29,7 +29,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         LEFT JOIN SuggestionNotification s ON s.id = n.id
         WHERE n.createdAt >= :limitStartDateTime
           AND n.member.id = :memberId
-        ORDER BY n.id DESC
+        ORDER BY n.createdAt DESC, n.id DESC
     """)
     List<ReadNotificationRow> findLatestRows(
             Long memberId,
@@ -52,7 +52,7 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
         WHERE n.id < :lastId
           AND n.createdAt >= :limitStartDateTime
           AND n.member.id = :memberId
-        ORDER BY n.id DESC
+        ORDER BY n.createdAt DESC, n.id DESC
     """)
     List<ReadNotificationRow> findByCursorRows(
             Long memberId,
