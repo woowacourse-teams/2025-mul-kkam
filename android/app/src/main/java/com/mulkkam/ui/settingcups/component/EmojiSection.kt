@@ -13,12 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Transparent
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -86,4 +88,29 @@ private fun EmojiItem(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun EmojiSectionPreview() {
+    EmojiSection(
+        cupEmojisUiState =
+            MulKkamUiState.Success(
+                CupEmojisUiModel(
+                    cupEmojis =
+                        listOf(
+                            CupEmojiUiModel(
+                                id = 1L,
+                                cupEmojiUrl = "https://example.com/emoji1.png",
+                                isSelected = true,
+                            ),
+                            CupEmojiUiModel(
+                                id = 2L,
+                                cupEmojiUrl = "https://example.com/emoji2.png",
+                            ),
+                        ),
+                ),
+            ),
+        onSelect = {},
+    )
 }
