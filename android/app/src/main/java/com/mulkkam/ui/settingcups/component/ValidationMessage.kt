@@ -11,7 +11,7 @@ import com.mulkkam.ui.designsystem.Secondary200
 @Composable
 fun ValidationMessage(
     message: String,
-    modifier: Modifier = Modifier.Companion,
+    modifier: Modifier = Modifier,
 ) {
     if (message.isNotBlank()) {
         Text(
