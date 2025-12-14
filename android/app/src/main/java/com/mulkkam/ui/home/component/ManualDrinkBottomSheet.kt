@@ -12,7 +12,6 @@ import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +57,7 @@ fun ManualDrinkBottomSheet(
 
     LaunchedEffect(Unit) {
         amountText = ""
-    }
-
-    DisposableEffect(Unit) {
-        onDispose { viewModel.updateIntakeType(IntakeType.WATER) }
+        viewModel.updateIntakeType(IntakeType.WATER)
     }
 
     ModalBottomSheet(
