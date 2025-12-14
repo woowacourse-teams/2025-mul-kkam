@@ -56,9 +56,12 @@ class SettingCupViewModel
             MutableStateFlow(MulKkamUiState.Idle)
         val cupEmojisUiState: StateFlow<MulKkamUiState<CupEmojisUiModel>> get() = _cupEmojisUiState.asStateFlow()
 
+        private val _actionInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
+        val actionInProgress: StateFlow<Boolean> = _actionInProgress.asStateFlow()
+
         private var originalCup: CupUiModel = CupUiModel.EMPTY_CUP_UI_MODEL
 
-        val hasChanges: StateFlow<Boolean> =
+        private val hasChanges: StateFlow<Boolean> =
             combine(_cup, _cupEmojisUiState) { cupValue, emojiState ->
                 val emoji = emojiState.toSuccessDataOrNull()?.selectedCupEmoji
                 (cupValue != originalCup) || (emoji != null)
@@ -78,6 +81,7 @@ class SettingCupViewModel
                     _cupEmojisUiState,
                     hasChanges,
                     _editType,
+                    actionInProgress,
                 ),
             ) { values ->
 
@@ -191,8 +195,8 @@ class SettingCupViewModel
             }
         }
 
-        private fun addCup() {
-            viewModelScope.launch {
+        private fun addCup() =
+            launchSingleAction {
                 val currentCup = cup.value.toDomain()
 
                 runCatching {
@@ -206,14 +210,26 @@ class SettingCupViewModel
                                     .toSuccessDataOrNull()
                                     ?.selectedCupEmoji
                                     ?.id
-                                    ?: return@launch,
+                                    ?: return@launchSingleAction,
                         ).getOrError()
                 }.onSuccess { _saveSuccess.emit(Unit) }
             }
+
+        private fun launchSingleAction(block: suspend () -> Unit) {
+            if (_actionInProgress.value) return
+
+            viewModelScope.launch {
+                _actionInProgress.value = true
+                try {
+                    block()
+                } finally {
+                    _actionInProgress.value = false
+                }
+            }
         }
 
-        private fun editCup() {
-            viewModelScope.launch {
+        private fun editCup() =
+            launchSingleAction {
                 val currentCup = cup.value.toDomain()
 
                 runCatching {
@@ -228,20 +244,18 @@ class SettingCupViewModel
                                     .toSuccessDataOrNull()
                                     ?.selectedCupEmoji
                                     ?.id
-                                    ?: return@launch,
+                                    ?: return@launchSingleAction,
                         ).getOrError()
                 }.onSuccess { _saveSuccess.emit(Unit) }
             }
-        }
 
-        fun deleteCup() {
-            viewModelScope.launch {
+        fun deleteCup() =
+            launchSingleAction {
+                logger.info(LogEvent.USER_ACTION, "Deleting cup id=${cup.value.id}")
                 runCatching {
-                    logger.info(LogEvent.USER_ACTION, "Deleting cup id=${cup.value.id}")
                     cupsRepository.deleteCup(cup.value.id).getOrError()
                 }.onSuccess { _deleteSuccess.emit(Unit) }
             }
-        }
 
         fun selectEmoji(emojiId: Long) {
             val emoji = cupEmojisUiState.value.toSuccessDataOrNull() ?: return
