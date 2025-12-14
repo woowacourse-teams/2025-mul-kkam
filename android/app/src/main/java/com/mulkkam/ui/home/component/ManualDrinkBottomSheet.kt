@@ -125,26 +125,7 @@ fun ManualDrinkBottomSheet(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             )
             Spacer(modifier = Modifier.height(6.dp))
-            ValidationMessage(
-                message =
-                    when (amountValidity) {
-                        is MulKkamUiState.Failure -> {
-                            if ((amountValidity as MulKkamUiState.Failure).error is MulKkamError.SettingCupsError.InvalidAmount) {
-                                stringResource(
-                                    R.string.home_manual_drink_invalid_range,
-                                    CupAmount.MIN_ML,
-                                    CupAmount.MAX_ML,
-                                )
-                            } else {
-                                ""
-                            }
-                        }
-
-                        else -> {
-                            ""
-                        }
-                    },
-            )
+            ValidationMessage(message = amountValidity.toManualDrinkAmountMessage())
 
             Spacer(modifier = Modifier.height(28.dp))
             SaveButton(
@@ -162,4 +143,24 @@ private fun MulKkamUiState<Unit>.toTextFieldState(): MulKkamTextFieldState =
         is MulKkamUiState.Success -> MulKkamTextFieldState.VALID
         is MulKkamUiState.Failure -> MulKkamTextFieldState.ERROR
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> MulKkamTextFieldState.NORMAL
+    }
+
+@Composable
+private fun MulKkamUiState<Unit>.toManualDrinkAmountMessage(): String =
+    when (this) {
+        is MulKkamUiState.Failure -> {
+            if (error is MulKkamError.SettingCupsError.InvalidAmount) {
+                stringResource(
+                    R.string.home_manual_drink_invalid_range,
+                    CupAmount.MIN_ML,
+                    CupAmount.MAX_ML,
+                )
+            } else {
+                ""
+            }
+        }
+
+        else -> {
+            ""
+        }
     }
