@@ -151,9 +151,7 @@ fun ManualDrinkBottomSheet(
                 onClick = { onSave(intakeType, amountText.toInt()) },
                 enabled = isSaveAvailable,
                 text = stringResource(id = R.string.manual_drink_perform),
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }
