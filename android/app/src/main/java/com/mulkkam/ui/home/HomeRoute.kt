@@ -157,9 +157,7 @@ private suspend fun handleDrinkUiState(
             }
         }
 
-        MulKkamUiState.Idle,
-        MulKkamUiState.Loading,
-        -> {
+        is MulKkamUiState.Idle, is MulKkamUiState.Loading -> {
             Unit
         }
     }
