@@ -24,7 +24,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.cups.CupAmount
@@ -60,8 +59,8 @@ fun SettingCupBottomSheet(
     onDeleted: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     toastState: MulKkamToastState,
+    viewModel: SettingCupViewModel,
     modifier: Modifier = Modifier,
-    viewModel: SettingCupViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
 

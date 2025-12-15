@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.component.MulKkamToastHost
@@ -29,6 +30,7 @@ import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.component.SettingCupBottomSheet
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -145,6 +147,10 @@ fun SettingCupsRoute(
             },
             onNavigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
             toastState = toastState,
+            viewModel =
+                hiltViewModel(
+                    key = selectedCup?.id?.toString() ?: (SettingWaterCupEditType.ADD.name + System.currentTimeMillis()),
+                ),
         )
     }
 }
