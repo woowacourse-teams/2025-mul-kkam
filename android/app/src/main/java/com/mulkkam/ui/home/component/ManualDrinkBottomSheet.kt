@@ -107,7 +107,7 @@ fun ManualDrinkBottomSheet(
                         viewModel.updateAmount(sanitized.toIntOrNull())
                     }
                 },
-                maxLength = 5,
+                maxLength = CupAmount.MAX_ML.toString().length,
                 placeHolder = stringResource(R.string.setting_target_amount_hint_input_goal),
                 suffix = { suffixModifier ->
                     Text(
