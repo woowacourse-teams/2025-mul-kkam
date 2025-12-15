@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingbioinfo.dialog
+package com.mulkkam.ui.settingbioinfo.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

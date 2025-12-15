@@ -15,7 +15,6 @@ import com.mulkkam.ui.onboarding.cups.dialog.CupBottomSheetFragment
 import com.mulkkam.ui.settingcups.adapter.CupsItemTouchHelperCallback
 import com.mulkkam.ui.settingcups.adapter.SettingCupsAdapter
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.util.binding.BindingFragment
@@ -59,10 +58,10 @@ class CupsFragment :
         }
 
     private fun showEditBottomSheetDialog(cup: CupUiModel?) {
-        if (parentFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
+        if (parentFragmentManager.findFragmentByTag(CupBottomSheetFragment.TAG) != null) return
         CupBottomSheetFragment
             .newInstance(cup)
-            .show(parentFragmentManager, SettingCupFragment.TAG)
+            .show(parentFragmentManager, CupBottomSheetFragment.TAG)
     }
 
     override fun onViewCreated(
@@ -100,9 +99,18 @@ class CupsFragment :
 
     private fun handleCupsUiState(cupsUiState: MulKkamUiState<CupsUiModel>) {
         when (cupsUiState) {
-            is MulKkamUiState.Success<CupsUiModel> -> showCupsInfo(cupsUiState)
-            is MulKkamUiState.Loading -> binding.sflCups.visibility = View.VISIBLE
-            is MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Success<CupsUiModel> -> {
+                showCupsInfo(cupsUiState)
+            }
+
+            is MulKkamUiState.Loading -> {
+                binding.sflCups.visibility = View.VISIBLE
+            }
+
+            is MulKkamUiState.Idle -> {
+                Unit
+            }
+
             is MulKkamUiState.Failure -> {
                 CustomSnackBar
                     .make(

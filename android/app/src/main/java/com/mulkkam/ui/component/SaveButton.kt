@@ -11,10 +11,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 
@@ -25,6 +27,7 @@ fun SaveButton(
     enabled: Boolean = true,
     containerColor: Color = Primary200,
     disabledContainerColor: Color = Gray200,
+    text: String = stringResource(id = R.string.setting_save),
 ) {
     Button(
         onClick = { onClick() },
@@ -41,9 +44,19 @@ fun SaveButton(
         modifier = modifier.fillMaxWidth(),
     ) {
         Text(
-            text = stringResource(R.string.setting_save),
+            text = text,
             style = MulKkamTheme.typography.title2,
             modifier = Modifier.padding(vertical = 14.dp),
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SaveButtonPreview() {
+    MulkkamTheme {
+        SaveButton(
+            onClick = {},
         )
     }
 }

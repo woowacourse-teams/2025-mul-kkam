@@ -38,7 +38,7 @@ fun LoginScreen(
     ) { innerPadding ->
         Column(
             modifier =
-                Modifier.Companion
+                Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,

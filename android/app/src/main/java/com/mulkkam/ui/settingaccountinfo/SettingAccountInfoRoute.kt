@@ -12,8 +12,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialog
-import com.mulkkam.ui.settingaccountinfo.dialog.AccountLogoutDialog
+import com.mulkkam.ui.settingaccountinfo.component.AccountDeleteDialog
+import com.mulkkam.ui.settingaccountinfo.component.AccountLogoutDialog
 import com.mulkkam.ui.settingaccountinfo.model.SettingAccountInfoEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
