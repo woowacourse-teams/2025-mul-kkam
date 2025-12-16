@@ -24,7 +24,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
 fun TermsAgreementCheckBox(
-    onCheckedChange: (Boolean) -> Unit,
+    onCheckedChange: (checked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
 ) {
