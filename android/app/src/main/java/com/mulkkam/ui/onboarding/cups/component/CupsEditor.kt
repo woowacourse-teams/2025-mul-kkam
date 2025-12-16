@@ -43,9 +43,9 @@ private const val ADD_CUP_KEY: String = "ADD_CUP_KEY"
 @Composable
 fun CupsEditor(
     items: SnapshotStateList<SettingCupsItem>,
-    onEditCup: (CupUiModel) -> Unit,
+    onEditCup: (cup: CupUiModel) -> Unit,
     onAddCup: () -> Unit,
-    onReorderCups: (List<CupUiModel>) -> Unit,
+    onReorderCups: (reorderCups: List<CupUiModel>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val lazyListState = rememberLazyListState()
