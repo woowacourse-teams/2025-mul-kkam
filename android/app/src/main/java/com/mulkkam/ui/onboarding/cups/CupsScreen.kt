@@ -202,12 +202,11 @@ fun CupsScreen(
                     buttonText = stringResource(R.string.onboarding_complete),
                 )
             }
-
-            MulKkamSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
         }
+        MulKkamSnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier.align(Alignment.BottomCenter),
+        )
     }
 }
 
