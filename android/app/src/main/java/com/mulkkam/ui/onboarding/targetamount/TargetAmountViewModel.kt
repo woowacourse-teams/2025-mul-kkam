@@ -27,9 +27,7 @@ class TargetAmountViewModel
         private val _targetAmountOnboardingUiState: MutableStateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>> =
             MutableStateFlow(MulKkamUiState.Idle)
         val targetAmountOnboardingUiState: StateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>>
-            get() =
-                _targetAmountOnboardingUiState
-                    .asStateFlow()
+            get() = _targetAmountOnboardingUiState.asStateFlow()
 
         private val _targetAmountValidityUiState: MutableStateFlow<MulKkamUiState<Unit>> =
             MutableStateFlow(MulKkamUiState.Idle)
