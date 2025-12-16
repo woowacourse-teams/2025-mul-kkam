@@ -20,8 +20,6 @@ class NicknameViewModel
     constructor(
         private val nicknameRepository: NicknameRepository,
     ) : ViewModel() {
-        private var newNickname: Nickname? = null
-
         private val _nicknameValidationState: MutableStateFlow<NicknameValidationUiState> =
             MutableStateFlow(NicknameValidationUiState.NONE)
         val nicknameValidationState: StateFlow<NicknameValidationUiState>
@@ -34,7 +32,7 @@ class NicknameViewModel
 
         fun updateNickname(nickname: String) {
             runCatching {
-                newNickname = Nickname(nickname)
+                Nickname(nickname)
             }.onSuccess {
                 _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
             }.onFailure { error ->
