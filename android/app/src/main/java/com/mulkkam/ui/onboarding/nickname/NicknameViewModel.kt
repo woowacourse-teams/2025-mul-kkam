@@ -27,10 +27,10 @@ class NicknameViewModel
         val nicknameValidationState: StateFlow<NicknameValidationUiState>
             get() = _nicknameValidationState.asStateFlow()
 
-        private val _onNicknameValidationError: MutableStateFlow<MulKkamError?> =
+        private val _nicknameValidationError: MutableStateFlow<MulKkamError?> =
             MutableStateFlow(null)
-        val onNicknameValidationError: StateFlow<MulKkamError?>
-            get() = _onNicknameValidationError.asStateFlow()
+        val nicknameValidationError: StateFlow<MulKkamError?>
+            get() = _nicknameValidationError.asStateFlow()
 
         fun updateNickname(nickname: String) {
             runCatching {
@@ -39,7 +39,7 @@ class NicknameViewModel
                 _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
             }.onFailure { error ->
                 _nicknameValidationState.value = NicknameValidationUiState.INVALID
-                _onNicknameValidationError.value = error as? NicknameError ?: MulKkamError.Unknown
+                _nicknameValidationError.value = error as? NicknameError ?: MulKkamError.Unknown
             }
         }
 
@@ -52,10 +52,10 @@ class NicknameViewModel
                 }.onFailure { error ->
                     _nicknameValidationState.value = NicknameValidationUiState.INVALID
                     if (error !is NicknameError) {
-                        _onNicknameValidationError.value = MulKkamError.NetworkUnavailable
+                        _nicknameValidationError.value = MulKkamError.NetworkUnavailable
                         return@onFailure
                     }
-                    _onNicknameValidationError.value = error
+                    _nicknameValidationError.value = error
                 }
             }
         }

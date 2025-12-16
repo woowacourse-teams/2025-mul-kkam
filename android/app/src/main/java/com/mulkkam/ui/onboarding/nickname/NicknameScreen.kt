@@ -42,7 +42,7 @@ fun NicknameScreen(
     var nickname by rememberSaveable { mutableStateOf("") }
 
     val nicknameValidationState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
-    val onNicknameValidationError by viewModel.onNicknameValidationError.collectAsStateWithLifecycle()
+    val onNicknameValidationError by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
 
     Scaffold(
         topBar = {
