@@ -121,7 +121,7 @@ fun CupsEditor(
 private fun SettingCupsItem.toStableKey(): Any =
     when (this) {
         is SettingCupsItem.CupItem -> this.hashCode()
-        SettingCupsItem.AddItem -> ADD_CUP_KEY
+        is SettingCupsItem.AddItem -> ADD_CUP_KEY
     }
 
 @Preview(showBackground = true)
