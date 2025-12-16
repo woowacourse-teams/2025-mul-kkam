@@ -1,6 +1,5 @@
 package com.mulkkam.ui.onboarding.terms.component
 
-import android.R.attr.onClick
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
