@@ -33,8 +33,8 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingbioinfo.component.GenderSection
-import com.mulkkam.ui.settingbioinfo.component.WeightSection
 import com.mulkkam.ui.settingbioinfo.component.SettingWeightBottomSheet
+import com.mulkkam.ui.settingbioinfo.component.WeightSection
 import com.mulkkam.ui.util.extensions.getStyledText
 
 @OptIn(ExperimentalMaterial3Api::class)
