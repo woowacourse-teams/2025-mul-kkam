@@ -26,12 +26,12 @@ import androidx.compose.ui.zIndex
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.onboarding.cups.model.rememberCupsReorderState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.component.SettingCupsAdd
 import com.mulkkam.ui.settingcups.component.SettingCupsCup
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.rememberSettingCupsReorderState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -51,7 +51,7 @@ fun CupsEditor(
     val lazyListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val reorderState =
-        rememberSettingCupsReorderState(
+        rememberCupsReorderState(
             lazyListState = lazyListState,
             coroutineScope = scope,
             cupHeight = SETTING_CUPS_CUP_HEIGHT,

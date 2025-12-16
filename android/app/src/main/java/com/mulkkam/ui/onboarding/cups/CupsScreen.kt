@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,26 +43,32 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
+import com.mulkkam.ui.onboarding.cups.component.CupBottomSheet
 import com.mulkkam.ui.onboarding.cups.component.CupsEditor
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CupsScreen(
     navigateToBack: () -> Unit,
+    navigateToCoffeeEncyclopedia: () -> Unit,
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
-    onEditCup: (CupUiModel) -> Unit = {},
-    onAddCup: () -> Unit = {},
     viewModel: CupsViewModel = hiltViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     var showDialog by remember { mutableStateOf(false) }
+
+    var isBottomSheetVisible: Boolean by rememberSaveable { mutableStateOf(false) }
+    val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+    var selectedCup: CupUiModel? by rememberSaveable { mutableStateOf(null) }
 
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val listItems = rememberSaveable { mutableStateListOf<SettingCupsItem>() }
@@ -113,6 +121,33 @@ fun CupsScreen(
                 )
             }
 
+            if (isBottomSheetVisible) {
+                CupBottomSheet(
+                    sheetState = modalBottomSheetState,
+                    initialCup = selectedCup,
+                    onDismiss = { isBottomSheetVisible = false },
+                    onAdd = { cup ->
+                        viewModel.addCup(cup)
+                        isBottomSheetVisible = false
+                    },
+                    onUpdate = { cup ->
+                        viewModel.updateCup(cup)
+                        isBottomSheetVisible = false
+                    },
+                    onDelete = { rank ->
+                        viewModel.deleteCup(rank)
+                        isBottomSheetVisible = false
+                    },
+                    onNavigateToCoffeeEncyclopedia = navigateToCoffeeEncyclopedia,
+                    viewModel =
+                        hiltViewModel(
+                            key =
+                                selectedCup?.id?.toString()
+                                    ?: (SettingWaterCupEditType.ADD.name + System.currentTimeMillis()),
+                        ),
+                )
+            }
+
             Column(
                 modifier =
                     Modifier
@@ -144,8 +179,14 @@ fun CupsScreen(
 
                 CupsEditor(
                     items = listItems,
-                    onEditCup = onEditCup,
-                    onAddCup = onAddCup,
+                    onEditCup = { cup ->
+                        selectedCup = cup
+                        isBottomSheetVisible = true
+                    },
+                    onAddCup = {
+                        selectedCup = null
+                        isBottomSheetVisible = true
+                    },
                     onReorderCups = { viewModel.updateCupOrder(it) },
                     modifier = Modifier,
                 )
@@ -176,6 +217,7 @@ private fun CupsScreenPreview() {
     MulkkamTheme {
         CupsScreen(
             navigateToBack = {},
+            navigateToCoffeeEncyclopedia = {},
             currentProgress = 5,
             onCompleteOnboarding = {},
         )

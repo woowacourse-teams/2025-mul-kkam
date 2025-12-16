@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,10 +30,9 @@ class OnboardingCupsActivity : ComponentActivity() {
             MulkkamTheme {
                 CupsScreen(
                     navigateToBack = ::finish,
+                    navigateToCoffeeEncyclopedia = { startActivity(CoffeeEncyclopediaActivity.newIntent(this)) },
                     currentProgress = CURRENT_PROGRESS,
                     viewModel = viewModel,
-                    onEditCup = {},
-                    onAddCup = {},
                     onCompleteOnboarding = {
                         startActivity(
                             MainActivity.newIntent(this).apply {
