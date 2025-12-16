@@ -57,7 +57,6 @@ class OnboardingTargetAmountActivity : ComponentActivity() {
             onboardingInfo: OnboardingInfo?,
         ): Intent =
             Intent(context, OnboardingTargetAmountActivity::class.java).apply {
-                onboardingInfo
                 putExtra(KEY_ONBOARDING_INFO, onboardingInfo)
             }
     }
