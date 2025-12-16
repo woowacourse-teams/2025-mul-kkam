@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class OnboardingBioInfoActivity : ComponentActivity() {
     private val viewModel: BioInfoViewModel by viewModels()
 
-    val onboardingInfo: OnboardingInfo? by lazy {
+    private val onboardingInfo: OnboardingInfo? by lazy {
         intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
     }
 

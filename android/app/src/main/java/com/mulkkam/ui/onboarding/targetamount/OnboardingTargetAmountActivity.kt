@@ -16,7 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 class OnboardingTargetAmountActivity : ComponentActivity() {
     private val viewModel: TargetAmountViewModel by viewModels()
 
-    val onboardingInfo: OnboardingInfo? by lazy {
+    private val onboardingInfo: OnboardingInfo? by lazy {
         intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
     }
 
