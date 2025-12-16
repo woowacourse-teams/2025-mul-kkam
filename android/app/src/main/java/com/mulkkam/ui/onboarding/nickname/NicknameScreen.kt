@@ -80,9 +80,9 @@ fun NicknameScreen(
                 nickname = nickname,
                 nicknameValidationState = nicknameValidationState,
                 nicknameError = onNicknameValidationError,
-                onNicknameChange = {
-                    nickname = it
-                    viewModel.updateNickname(nickname)
+                onNicknameChange = { newNickname ->
+                    nickname = newNickname
+                    viewModel.updateNickname(newNickname)
                 },
                 onCheckDuplicate = { viewModel.checkNicknameAvailability(nickname) },
             )
