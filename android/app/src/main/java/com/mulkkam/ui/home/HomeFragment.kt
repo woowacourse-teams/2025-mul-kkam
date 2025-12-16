@@ -13,7 +13,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
-import com.mulkkam.ui.home.dialog.ManualDrinkFragment
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable
@@ -43,12 +42,6 @@ class HomeFragment :
                             navigateToNotification = {
                                 val intent = NotificationActivity.newIntent(requireContext())
                                 notificationResultLauncher.launch(intent)
-                            },
-                            onManualDrink = {
-                                if (childFragmentManager.findFragmentByTag(ManualDrinkFragment.TAG) != null) return@HomeRoute
-                                ManualDrinkFragment
-                                    .newInstance()
-                                    .show(childFragmentManager, ManualDrinkFragment.TAG)
                             },
                             onNavigateToLogin = { navigateToLogin() },
                             onNavigateToCoffeeEncyclopedia = {

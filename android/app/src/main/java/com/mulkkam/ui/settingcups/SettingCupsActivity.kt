@@ -1,6 +1,5 @@
 package com.mulkkam.ui.settingcups
 
-import android.R.attr.data
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -10,7 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.settingcups.dialog.SettingCupFragment
+import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -25,21 +24,18 @@ class SettingCupsActivity : AppCompatActivity() {
         setContent {
             MulkkamTheme {
                 SettingCupsRoute(
-                    viewModel = viewModel,
                     onBackClick = ::finish,
-                    onEditCup = ::showEditBottomSheetDialog,
-                    onAddCup = { showEditBottomSheetDialog(null) },
                     onReorderCups = ::reorderCups,
+                    onNavigateToCoffeeEncyclopedia = ::navigateToCoffeeEncyclopedia,
+                    viewModel = viewModel,
                 )
             }
         }
     }
 
-    private fun showEditBottomSheetDialog(cup: CupUiModel?) {
-        if (supportFragmentManager.findFragmentByTag(SettingCupFragment.TAG) != null) return
-        SettingCupFragment
-            .newInstance(cup)
-            .show(supportFragmentManager, SettingCupFragment.TAG)
+    private fun navigateToCoffeeEncyclopedia() {
+        val intent = CoffeeEncyclopediaActivity.newIntent(this)
+        startActivity(intent)
     }
 
     private fun reorderCups(newCups: List<CupUiModel>) {
