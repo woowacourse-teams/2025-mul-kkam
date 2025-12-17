@@ -8,7 +8,8 @@ plugins {
     alias(libs.plugins.google.services)
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.firebase.crashlytics)
-    alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.ktlint)
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
 }
@@ -115,6 +116,8 @@ android {
 }
 
 dependencies {
+    implementation(projects.shared)
+
     // Android Core 및 UI 라이브러리
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

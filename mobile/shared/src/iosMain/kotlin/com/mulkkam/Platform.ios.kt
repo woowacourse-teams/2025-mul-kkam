@@ -1,3 +1,5 @@
 package com.mulkkam
 
-actual fun platform() = "iOS"
+import platform.UIKit.UIDevice
+
+actual fun platform(): String = UIDevice.currentDevice.systemName() + " " + UIDevice.currentDevice.systemVersion
