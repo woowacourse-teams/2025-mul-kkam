@@ -1,12 +1,14 @@
 package com.mulkkam.ui.onboarding.cups
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
+import com.mulkkam.domain.repository.OnboardingRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.settingcups.model.CupUiModel
@@ -14,6 +16,9 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.toDomain
 import com.mulkkam.ui.settingcups.model.toUi
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,13 +26,28 @@ import javax.inject.Inject
 class CupsViewModel
     @Inject
     constructor(
+        private val onboardingRepository: OnboardingRepository,
         private val cupsRepository: CupsRepository,
+        private val logger: Logger,
     ) : ViewModel() {
-        private var _cupsUiState: MutableLiveData<MulKkamUiState<CupsUiModel>> = MutableLiveData(MulKkamUiState.Idle)
-        val cupsUiState: LiveData<MulKkamUiState<CupsUiModel>> get() = _cupsUiState
+        private val _saveOnboardingUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val saveOnboardingUiState: StateFlow<MulKkamUiState<Unit>>
+            get() = _saveOnboardingUiState.asStateFlow()
+
+        var onboardingInfo: OnboardingInfo = OnboardingInfo()
+            private set
+
+        private var _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
 
         init {
             loadCups()
+        }
+
+        fun updateOnboardingInfo(onboardingInfo: OnboardingInfo) {
+            this.onboardingInfo = onboardingInfo
         }
 
         fun loadCups() {
@@ -50,7 +70,7 @@ class CupsViewModel
         }
 
         fun updateCup(updatedCup: CupUiModel) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull()?.cups ?: return
 
             val newCups =
                 currentCups.map { cup ->
@@ -61,13 +81,13 @@ class CupsViewModel
                 MulKkamUiState.Success(
                     CupsUiModel(
                         newCups,
-                        cupsUiState.value?.toSuccessDataOrNull()?.isAddable == true,
+                        cupsUiState.value.toSuccessDataOrNull()?.isAddable == true,
                     ),
                 )
         }
 
         fun deleteCup(rank: Int) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull()?.cups ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull()?.cups ?: return
             val updatedCups =
                 currentCups
                     .asSequence()
@@ -82,11 +102,39 @@ class CupsViewModel
         }
 
         fun addCup(newCup: CupUiModel) {
-            val currentCups = cupsUiState.value?.toSuccessDataOrNull() ?: return
+            val currentCups = cupsUiState.value.toSuccessDataOrNull() ?: return
             val addedCups = currentCups.copy(cups = currentCups.cups + newCup)
             val updatedCups =
                 Cups(addedCups.cups.map { it.toDomain() }).reorderRanks().toUi()
 
             _cupsUiState.value = MulKkamUiState.Success(updatedCups)
+        }
+
+        fun completeOnboarding() {
+            if (saveOnboardingUiState.value is MulKkamUiState.Loading) return
+            onboardingInfo =
+                onboardingInfo.copy(
+                    cups =
+                        cupsUiState.value
+                            .toSuccessDataOrNull()
+                            ?.cups
+                            ?.map { it.toDomain() }
+                            ?: emptyList(),
+                )
+            viewModelScope.launch {
+                runCatching {
+                    logger.info(LogEvent.ONBOARDING, "Onboarding submission succeeded")
+                    logger.info(
+                        LogEvent.ONBOARDING,
+                        "isMarketingNotificationAgreed: ${onboardingInfo.isMarketingNotificationAgreed}, isNightNotificationAgreed: ${onboardingInfo.isNightNotificationAgreed}",
+                    )
+                    _saveOnboardingUiState.value = MulKkamUiState.Loading
+                    onboardingRepository.postOnboarding(onboardingInfo).getOrError()
+                }.onSuccess {
+                    _saveOnboardingUiState.value = MulKkamUiState.Success(Unit)
+                }.onFailure {
+                    _saveOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                }
+            }
         }
     }

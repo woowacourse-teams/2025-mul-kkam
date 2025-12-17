@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.onboarding.cups.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -26,10 +26,12 @@ import androidx.compose.ui.zIndex
 import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.onboarding.cups.model.rememberCupsReorderState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
+import com.mulkkam.ui.settingcups.component.SettingCupsAdd
+import com.mulkkam.ui.settingcups.component.SettingCupsCup
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.rememberSettingCupsReorderState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -39,7 +41,7 @@ private val SETTING_CUPS_AUTO_SCROLL_STEP: Dp = 24.dp
 private const val ADD_CUP_KEY: String = "ADD_CUP_KEY"
 
 @Composable
-fun SettingCupsEditor(
+fun CupsEditor(
     items: SnapshotStateList<SettingCupsItem>,
     onEditCup: (cup: CupUiModel) -> Unit,
     onAddCup: () -> Unit,
@@ -49,7 +51,7 @@ fun SettingCupsEditor(
     val lazyListState = rememberLazyListState()
     val scope = rememberCoroutineScope()
     val reorderState =
-        rememberSettingCupsReorderState(
+        rememberCupsReorderState(
             lazyListState = lazyListState,
             coroutineScope = scope,
             cupHeight = SETTING_CUPS_CUP_HEIGHT,
@@ -118,13 +120,13 @@ fun SettingCupsEditor(
 
 private fun SettingCupsItem.toStableKey(): Any =
     when (this) {
-        is SettingCupsItem.CupItem -> value.id
+        is SettingCupsItem.CupItem -> this.hashCode()
         is SettingCupsItem.AddItem -> ADD_CUP_KEY
     }
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsEditorPreview() {
+private fun CupsEditorPreview() {
     MulkkamTheme {
         val previewItems =
             remember {
@@ -154,7 +156,7 @@ private fun SettingCupsEditorPreview() {
                     add(SettingCupsItem.AddItem)
                 }
             }
-        SettingCupsEditor(
+        CupsEditor(
             items = previewItems,
             onEditCup = {},
             onAddCup = {},

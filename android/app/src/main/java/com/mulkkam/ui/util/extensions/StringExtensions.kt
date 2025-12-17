@@ -4,9 +4,7 @@ import android.content.Context
 import android.text.SpannableString
 import android.text.Spanned
 import android.text.style.ForegroundColorSpan
-import android.text.style.TextAppearanceSpan
 import androidx.annotation.ColorRes
-import androidx.annotation.StyleRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -14,28 +12,6 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
-
-fun String.getAppearanceSpannable(
-    context: Context,
-    @StyleRes typographyResId: Int,
-    vararg highlightedText: String,
-): SpannableString {
-    val spannable = SpannableString(this)
-
-    highlightedText.forEach { target ->
-        val startIndex = this.indexOf(target)
-        if (startIndex != -1) {
-            spannable.setSpan(
-                TextAppearanceSpan(context, typographyResId),
-                startIndex,
-                startIndex + target.length,
-                Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-            )
-        }
-    }
-
-    return spannable
-}
 
 @Composable
 fun String.getStyledText(

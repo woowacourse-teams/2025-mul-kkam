@@ -21,7 +21,15 @@ fun RecommendedTargetAmount(
     nickname: String,
     recommended: Int,
     modifier: Modifier = Modifier,
+    hasBioInfo: Boolean = true,
 ) {
+    val recommendationDescription =
+        if (hasBioInfo) {
+            stringResource(R.string.target_amount_recommended_description)
+        } else {
+            stringResource(R.string.target_amount_recommended_description_default)
+        }
+
     Column(modifier = modifier) {
         ColoredText(
             fullText =
@@ -40,7 +48,7 @@ fun RecommendedTargetAmount(
         )
 
         Text(
-            text = stringResource(R.string.target_amount_recommended_description),
+            text = recommendationDescription,
             style = MulKkamTheme.typography.body5,
             color = Gray200,
             modifier = Modifier.padding(top = 24.dp),

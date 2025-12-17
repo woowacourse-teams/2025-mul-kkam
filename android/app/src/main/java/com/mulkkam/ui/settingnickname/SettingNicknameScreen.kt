@@ -55,7 +55,7 @@ fun SettingNicknameScreen(
 
     var nickname: String by remember { mutableStateOf("") }
     val nicknameValidationUiState: NicknameValidationUiState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
-    val onNicknameValidationError: MulKkamError? by viewModel.onNicknameValidationError.collectAsStateWithLifecycle()
+    val onNicknameValidationError: MulKkamError? by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
 
     val toastState: MulKkamToastState = rememberMulKkamToastState()
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }

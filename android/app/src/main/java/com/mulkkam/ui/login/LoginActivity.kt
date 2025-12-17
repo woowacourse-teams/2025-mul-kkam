@@ -18,7 +18,7 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
-import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
@@ -103,7 +103,7 @@ class LoginActivity : AppCompatActivity() {
     private fun navigateToNextScreen(userAuthState: UserAuthState) {
         val intent =
             when (userAuthState) {
-                UNONBOARDED -> OnboardingActivity.newIntent(this)
+                UNONBOARDED -> OnboardingTermsActivity.newIntent(this)
                 ACTIVE_USER -> MainActivity.newIntent(this)
             }
         startActivity(intent)

@@ -1,7 +1,5 @@
 package com.mulkkam.ui.onboarding.targetamount
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.model.bio.BioWeight
@@ -12,6 +10,9 @@ import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.targetamount.model.TargetAmountOnboardingUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -21,16 +22,17 @@ class TargetAmountViewModel
     constructor(
         private val intakeRepository: IntakeRepository,
     ) : ViewModel() {
-        private val _targetAmountOnboardingUiState =
-            MutableLiveData<MulKkamUiState<TargetAmountOnboardingUiModel>>(MulKkamUiState.Idle)
-        val targetAmountOnboardingUiState: LiveData<MulKkamUiState<TargetAmountOnboardingUiModel>> get() = _targetAmountOnboardingUiState
+        private var targetAmountInput: TargetAmount? = null
 
-        private val _targetAmountInput = MutableLiveData<TargetAmount?>()
-        val targetAmountInput: LiveData<TargetAmount?> get() = _targetAmountInput
+        private val _targetAmountOnboardingUiState: MutableStateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val targetAmountOnboardingUiState: StateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>>
+            get() = _targetAmountOnboardingUiState.asStateFlow()
 
-        private val _targetAmountValidityUiState =
-            MutableLiveData<MulKkamUiState<Unit>>(MulKkamUiState.Idle)
-        val targetAmountValidityUiState: LiveData<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState
+        private val _targetAmountValidityUiState: MutableStateFlow<MulKkamUiState<Unit>> =
+            MutableStateFlow(MulKkamUiState.Idle)
+        val targetAmountValidityUiState: StateFlow<MulKkamUiState<Unit>>
+            get() = _targetAmountValidityUiState.asStateFlow()
 
         fun loadRecommendedTargetAmount(
             nickname: String,
@@ -53,8 +55,7 @@ class TargetAmountViewModel
                 }.onSuccess { targetAmountOnboardingUiModel ->
                     _targetAmountOnboardingUiState.value =
                         MulKkamUiState.Success(targetAmountOnboardingUiModel)
-                    _targetAmountInput.value = targetAmountOnboardingUiModel.recommendedTargetAmount
-                    _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
+                    targetAmountInput = targetAmountOnboardingUiModel.recommendedTargetAmount
                 }.onFailure {
                     _targetAmountOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
                 }
@@ -63,7 +64,7 @@ class TargetAmountViewModel
 
         fun updateTargetAmount(newTargetAmount: Int?) {
             if (newTargetAmount == null) {
-                _targetAmountInput.value = null
+                targetAmountInput = null
                 _targetAmountValidityUiState.value = MulKkamUiState.Idle
                 return
             }
@@ -71,7 +72,7 @@ class TargetAmountViewModel
             runCatching {
                 TargetAmount(newTargetAmount)
             }.onSuccess { targetAmount ->
-                _targetAmountInput.value = targetAmount
+                targetAmountInput = targetAmount
                 _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
             }.onFailure {
                 _targetAmountValidityUiState.value = MulKkamUiState.Failure(it.toMulKkamError())

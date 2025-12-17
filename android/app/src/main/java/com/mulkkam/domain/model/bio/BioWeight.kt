@@ -1,9 +1,11 @@
 package com.mulkkam.domain.model.bio
 
+import java.io.Serializable
+
 @JvmInline
 value class BioWeight(
     val value: Int = WEIGHT_DEFAULT,
-) {
+) : Serializable {
     init {
         require(value in WEIGHT_MIN..WEIGHT_MAX) { throw IllegalArgumentException() }
     }

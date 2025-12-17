@@ -1,11 +1,12 @@
 package com.mulkkam.domain.model.members
 
 import com.mulkkam.domain.model.result.MulKkamError
+import java.io.Serializable
 
 @JvmInline
 value class Nickname(
     val name: String,
-) {
+) : Serializable {
     init {
         check(name.length in NICKNAME_LENGTH_MIN..NICKNAME_LENGTH_MAX) {
             throw MulKkamError.NicknameError.InvalidLength

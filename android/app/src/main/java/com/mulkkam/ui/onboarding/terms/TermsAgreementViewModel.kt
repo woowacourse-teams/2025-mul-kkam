@@ -1,26 +1,35 @@
 package com.mulkkam.ui.onboarding.terms
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
+import androidx.lifecycle.viewModelScope
 import com.mulkkam.R
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 class TermsAgreementViewModel : ViewModel() {
-    private val _termsAgreements = MutableLiveData<List<TermsAgreementUiModel>>()
-    val termsAgreements: LiveData<List<TermsAgreementUiModel>> get() = _termsAgreements
+    private val _termsAgreements: MutableStateFlow<List<TermsAgreementUiModel>> = MutableStateFlow(emptyList())
+    val termsAgreements: StateFlow<List<TermsAgreementUiModel>> get() = _termsAgreements
 
-    val isAllChecked: LiveData<Boolean> =
-        termsAgreements.map {
-            it.all { agreement -> agreement.isChecked }
-        }
+    val isAllChecked: StateFlow<Boolean> =
+        termsAgreements
+            .map { list -> list.all { it.isChecked } }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = false,
+            )
 
-    val canNext: LiveData<Boolean> =
-        termsAgreements.map {
-            it
-                .filter { it.isRequired }
-                .all { it.isChecked }
-        }
+    val canNext: StateFlow<Boolean> =
+        termsAgreements
+            .map { list -> list.filter { it.isRequired }.all { it.isChecked } }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5000),
+                initialValue = false,
+            )
 
     init {
         _termsAgreements.value = TERMS_AGREEMENTS

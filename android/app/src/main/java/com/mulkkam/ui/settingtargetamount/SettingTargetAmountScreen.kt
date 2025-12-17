@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,6 +18,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -27,6 +29,8 @@ import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.designsystem.Gray400
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
@@ -92,6 +96,13 @@ fun SettingTargetAmountScreen(
             Column(
                 modifier = Modifier.padding(innerPadding),
             ) {
+                Text(
+                    text = stringResource(R.string.setting_target_amount_edit_goal_label),
+                    style = MulKkamTheme.typography.title2,
+                    color = Gray400,
+                    modifier = Modifier.padding(bottom = 12.dp),
+                )
+
                 TargetAmountInputSection(
                     modifier =
                         Modifier
