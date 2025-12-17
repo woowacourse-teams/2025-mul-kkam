@@ -27,7 +27,7 @@ jobs:
           ~/.gradle/caches
           ~/.gradle/wrapper
           mobile/.gradle
-        key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+        key: gradle-cache-${{ runner.os }}-${{ hashFiles('mobile/**/*.gradle*', 'mobile/**/gradle-wrapper.properties') }}
         restore-keys: |
           gradle-cache-${{ runner.os }}-
     
@@ -72,7 +72,6 @@ jobs:
       
     - name: Check ktlint format
       run: ./gradlew ktlintCheck
-      
       
     - name: Perform Gradle Test
       run: ./gradlew test --build-cache --parallel
