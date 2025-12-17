@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -50,6 +50,8 @@ jobs:
   deploy:
     runs-on: [ self-hosted, linux, dev ]
     needs: build-and-push
+    env:
+      DEV_WAS_IP: ${{ secrets.DEV_WAS_IP }}
     steps:
       - name: Create/Update .env for container
         run: |
@@ -75,8 +77,8 @@ jobs:
         run: |
           HEALTH="/actuator/health"
           BLUE_UP=0; GREEN_UP=0
-          curl -fsS "http://127.0.0.1:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
-          curl -fsS "http://127.0.0.1:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
+          curl -fsS "http://${DEV_WAS_IP}:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
+          curl -fsS "http://${DEV_WAS_IP}:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
 
           CURRENT=""
           if [ "$BLUE_UP" -eq 1 ] && [ "$GREEN_UP" -eq 0 ]; then
@@ -86,8 +88,8 @@ jobs:
           else
             # 둘 다 살아있거나 둘 다 죽었으면 nginx 스니펫으로 판단, 없으면 blue
             if [ -f /etc/nginx/snippets/mulkkam_upstream.conf ]; then
-              grep -q '127.0.0.1:8081' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="blue" || true
-              grep -q '127.0.0.1:8082' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="green" || true
+              grep -q '${DEV_WAS_IP}:8081' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="blue" || true
+              grep -q '${DEV_WAS_IP}:8082' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="green" || true
             fi
             [ -z "$CURRENT" ] && CURRENT="blue"
           fi
@@ -108,7 +110,7 @@ jobs:
           if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
           echo "Waiting health on :$PORT ..."
           for i in {1..60}; do
-            if curl -fsS "http://127.0.0.1:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
+            if curl -fsS "http://${DEV_WAS_IP}:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
               echo "Healthy!"
               exit 0
             fi
@@ -120,7 +122,7 @@ jobs:
       - name: Switch Nginx upstream to next color
         run: |
           if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
-          echo "set \$mulkkam_upstream http://127.0.0.1:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
+          echo "set \$mulkkam_upstream http://${DEV_WAS_IP}:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
           sudo nginx -t
           sudo systemctl reload nginx
 
