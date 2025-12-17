@@ -1,7 +1,6 @@
 package com.mulkkam.data.work
 
 import android.content.Context
-import android.util.Log
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
@@ -17,7 +16,6 @@ class AchievementHeatmapWorker(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result =
         runCatching {
-            Log.d("hwannow_log", "in doWork")
             val endDate: LocalDate = LocalDate.now()
             val startDate: LocalDate = endDate.minusDays((TOTAL_CELL_COUNT - 1).toLong())
             val achievementRates =
