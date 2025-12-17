@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
@@ -30,6 +32,7 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 
 @Composable
@@ -41,9 +44,13 @@ fun TargetAmountScreen(
     viewModel: TargetAmountViewModel = hiltViewModel(),
 ) {
     var targetAmount by rememberSaveable { mutableStateOf("") }
-
     val targetAmountOnboardingUiState by viewModel.targetAmountOnboardingUiState.collectAsStateWithLifecycle()
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(targetAmountOnboardingUiState) {
+        val previous = targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value ?: 0
+        targetAmount = previous.toString()
+    }
 
     Scaffold(
         topBar = {
