@@ -1,4 +1,4 @@
-name: Mobile CI
+name: Android CI
 
 on:
   pull_request:
@@ -53,16 +53,16 @@ jobs:
         GOOGLE_SERVICES_DEBUG: ${{ secrets.GOOGLE_SERVICES_DEBUG }}
       run: |
         set -euo pipefail
-        mkdir -p app/src/debug
-        printf '%s' "$GOOGLE_SERVICES_DEBUG" > app/src/debug/google-services.json
+        mkdir -p androidApp/src/debug
+        printf '%s' "$GOOGLE_SERVICES_DEBUG" > androidApp/src/debug/google-services.json
 
     - name: set up google-services.json for release
       env:
         GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
       run: |
         set -euo pipefail
-        mkdir -p app/src/release
-        printf '%s' "$GOOGLE_SERVICES_RELEASE" > app/src/release/google-services.json
+        mkdir -p androidApp/src/release
+        printf '%s' "$GOOGLE_SERVICES_RELEASE" > androidApp/src/release/google-services.json
 
     - name: grant execute permission for gradlew
       run: chmod +x gradlew
