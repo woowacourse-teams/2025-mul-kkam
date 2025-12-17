@@ -39,6 +39,11 @@ firebase-crashlytics = "3.0.5"
 coil = "3.3.0"
 activityCompose = "1.10.1"
 composeBom = "2025.08.01"
+kotlinStdlib = "2.2.0"
+kotlinTest = "2.2.0"
+runner = "1.5.2"
+core = "1.5.0"
+junit = "1.3.0"
 
 [libraries]
 # AndroidX 및 UI
@@ -109,6 +114,11 @@ androidx-work-runtime-ktx = { module = "androidx.work:work-runtime-ktx", version
 
 # 스켈레톤
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
+kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
+kotlin-test = { group = "org.jetbrains.kotlin", name = "kotlin-test", version.ref = "kotlinTest" }
+androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
+androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junit" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
@@ -120,3 +130,6 @@ google-services = { id = "com.google.gms.google-services", version.ref = "google
 kotlin-parcelize = { id = "kotlin-parcelize" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+android-kotlin-multiplatform-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
+android-lint = { id = "com.android.lint", version.ref = "agp" }

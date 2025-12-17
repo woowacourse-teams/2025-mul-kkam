@@ -23,4 +23,5 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "MulKkam"
-include(":app")
+include(":androidApp")
+include(":shared")
