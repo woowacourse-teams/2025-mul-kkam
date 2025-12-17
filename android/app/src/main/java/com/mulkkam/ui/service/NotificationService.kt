@@ -14,26 +14,17 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.main.MainActivity
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import java.util.UUID
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class NotificationService : FirebaseMessagingService() {
-    @Inject
-    lateinit var tokenRepository: TokenRepository
-
-    @Inject
-    lateinit var devicesRepository: DevicesRepository
-
-    @Inject
-    lateinit var devicesPreference: DevicesPreference
-
-    @Inject
-    lateinit var logger: Logger
+    private val tokenRepository: TokenRepository by inject()
+    private val devicesRepository: DevicesRepository by inject()
+    private val devicesPreference: DevicesPreference by inject()
+    private val logger: Logger by inject()
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)

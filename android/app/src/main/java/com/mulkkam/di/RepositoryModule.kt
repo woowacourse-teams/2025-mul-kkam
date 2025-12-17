@@ -26,64 +26,21 @@ import com.mulkkam.domain.repository.OnboardingRepository
 import com.mulkkam.domain.repository.ReminderRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.domain.repository.VersionsRepository
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class RepositoryModule {
-    @Binds
-    @Singleton
-    abstract fun bindIntakeRepository(impl: IntakeRepositoryImpl): IntakeRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindCupsRepository(impl: CupsRepositoryImpl): CupsRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindTokenRepository(impl: TokenRepositoryImpl): TokenRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindAuthRepository(impl: AuthRepositoryImpl): AuthRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindHealthRepository(impl: HealthRepositoryImpl): HealthRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindMembersRepository(impl: MembersRepositoryImpl): MembersRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindNicknameRepository(impl: NicknameRepositoryImpl): NicknameRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindDevicesRepository(impl: DevicesRepositoryImpl): DevicesRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindNotificationRepository(impl: NotificationRepositoryImpl): NotificationRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindVersionsRepository(impl: VersionsRepositoryImpl): VersionsRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindOnboardingRepository(impl: OnboardingRepositoryImpl): OnboardingRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindReminderRepository(impl: ReminderRepositoryImpl): ReminderRepository
-
-    @Binds
-    @Singleton
-    abstract fun bindFriendsRepository(impl: FriendsRepositoryImpl): FriendsRepository
-}
+val repositoryModule =
+    module {
+        single<IntakeRepository> { IntakeRepositoryImpl(get()) }
+        single<CupsRepository> { CupsRepositoryImpl(get()) }
+        single<TokenRepository> { TokenRepositoryImpl(get()) }
+        single<AuthRepository> { AuthRepositoryImpl(get()) }
+        single<HealthRepository> { HealthRepositoryImpl(get()) }
+        single<MembersRepository> { MembersRepositoryImpl(get(), get()) }
+        single<NicknameRepository> { NicknameRepositoryImpl(get()) }
+        single<DevicesRepository> { DevicesRepositoryImpl(get(), get()) }
+        single<NotificationRepository> { NotificationRepositoryImpl(get()) }
+        single<VersionsRepository> { VersionsRepositoryImpl(get()) }
+        single<OnboardingRepository> { OnboardingRepositoryImpl(get()) }
+        single<ReminderRepository> { ReminderRepositoryImpl(get()) }
+        single<FriendsRepository> { FriendsRepositoryImpl(get()) }
+    }

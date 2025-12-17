@@ -6,16 +6,14 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.settingcups.model.CupUiModel
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class SettingCupsActivity : AppCompatActivity() {
-    private val viewModel: SettingCupsViewModel by viewModels()
+    private val viewModel: SettingCupsViewModel by viewModel()
     private val debounceHandler: Handler = Handler(Looper.getMainLooper())
     private var debounceRunnable: Runnable? = null
 

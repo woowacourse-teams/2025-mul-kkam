@@ -21,7 +21,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
@@ -40,11 +39,12 @@ import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun SettingTargetAmountScreen(
     navigateToBack: () -> Unit,
-    viewModel: SettingTargetAmountViewModel = hiltViewModel(),
+    viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current

@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
@@ -14,12 +13,11 @@ import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("CustomSplashScreen")
-@AndroidEntryPoint
 class SplashActivity : ComponentActivity() {
-    private val viewModel: SplashViewModel by viewModels()
+    private val viewModel: SplashViewModel by viewModel()
     private var isSplashFinished: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
