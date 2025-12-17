@@ -4,84 +4,84 @@ import kotlinx.serialization.Serializable
 
 sealed interface AppRoute {
     @Serializable
-    data object Splash : com.mulkkam.ui.navigation.AppRoute
+    data object Splash : AppRoute
 
     @Serializable
-    data object Login : com.mulkkam.ui.navigation.AppRoute
+    data object Login : AppRoute
 }
 
 sealed interface OnboardingRoute {
     @Serializable
-    data object Terms : com.mulkkam.ui.navigation.OnboardingRoute
+    data object Terms : OnboardingRoute
 
     @Serializable
-    data object Nickname : com.mulkkam.ui.navigation.OnboardingRoute
+    data object Nickname : OnboardingRoute
 
     @Serializable
-    data object BioInfo : com.mulkkam.ui.navigation.OnboardingRoute
+    data object BioInfo : OnboardingRoute
 
     @Serializable
-    data object TargetAmount : com.mulkkam.ui.navigation.OnboardingRoute
+    data object TargetAmount : OnboardingRoute
 
     @Serializable
-    data object Cups : com.mulkkam.ui.navigation.OnboardingRoute
+    data object Cups : OnboardingRoute
 }
 
 sealed interface HomeRoute {
     @Serializable
-    data object Home : com.mulkkam.ui.navigation.HomeRoute
+    data object Home : HomeRoute
 
     @Serializable
-    data object Encyclopedia : com.mulkkam.ui.navigation.HomeRoute
+    data object Encyclopedia : HomeRoute
 
     @Serializable
-    data object Notification : com.mulkkam.ui.navigation.HomeRoute
+    data object Notification : HomeRoute
 }
 
 sealed interface FriendsRoute {
     @Serializable
-    data object Friends : com.mulkkam.ui.navigation.FriendsRoute
+    data object Friends : FriendsRoute
 
     @Serializable
-    data object PendingFriends : com.mulkkam.ui.navigation.FriendsRoute
+    data object PendingFriends : FriendsRoute
 
     @Serializable
-    data object SearchMembers : com.mulkkam.ui.navigation.FriendsRoute
+    data object SearchMembers : FriendsRoute
 }
 
 sealed interface HistoryRoute {
     @Serializable
-    data object History : com.mulkkam.ui.navigation.HistoryRoute
+    data object History : HistoryRoute
 }
 
 sealed interface SettingRoute {
     @Serializable
-    data object Setting : com.mulkkam.ui.navigation.SettingRoute
+    data object Setting : SettingRoute
 
     @Serializable
-    data object AccountInfo : com.mulkkam.ui.navigation.SettingRoute
+    data object AccountInfo : SettingRoute
 
     @Serializable
-    data object BioInfo : com.mulkkam.ui.navigation.SettingRoute
+    data object BioInfo : SettingRoute
 
     @Serializable
-    data object Cups : com.mulkkam.ui.navigation.SettingRoute
+    data object Cups : SettingRoute
 
     @Serializable
-    data object Feedback : com.mulkkam.ui.navigation.SettingRoute
+    data object Feedback : SettingRoute
 
     @Serializable
-    data object Nickname : com.mulkkam.ui.navigation.SettingRoute
+    data object Nickname : SettingRoute
 
     @Serializable
-    data object Notification : com.mulkkam.ui.navigation.SettingRoute
+    data object Notification : SettingRoute
 
     @Serializable
-    data object Reminder : com.mulkkam.ui.navigation.SettingRoute
+    data object Reminder : SettingRoute
 
     @Serializable
-    data object TargetAmount : com.mulkkam.ui.navigation.SettingRoute
+    data object TargetAmount : SettingRoute
 
     @Serializable
-    data object Terms : com.mulkkam.ui.navigation.SettingRoute
+    data object Terms : SettingRoute
 }

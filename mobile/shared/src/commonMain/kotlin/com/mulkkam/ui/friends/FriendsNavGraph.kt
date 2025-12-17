@@ -2,41 +2,46 @@ package com.mulkkam.ui.friends
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.friends.friends.FriendsScreen
+import com.mulkkam.ui.friends.pendingfriends.PendingFriendsScreen
+import com.mulkkam.ui.friends.searchmembers.SearchMembersScreen
 import com.mulkkam.ui.navigation.FriendsRoute
 import com.mulkkam.ui.navigation.MainNavigator
+import com.mulkkam.ui.navigation.NavEntry
+import com.mulkkam.ui.navigation.entry
 
 object FriendsNavGraph {
     @Composable
     fun entryProvider(
-        route: com.mulkkam.ui.navigation.FriendsRoute,
+        route: FriendsRoute,
         padding: PaddingValues,
-        navigator: com.mulkkam.ui.navigation.MainNavigator,
-    ): com.mulkkam.ui.core.NavEntry<com.mulkkam.ui.navigation.FriendsRoute> =
+        navigator: MainNavigator,
+    ): NavEntry<FriendsRoute> =
         when (route) {
-            is com.mulkkam.ui.navigation.FriendsRoute.Friends -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.friends.friends.FriendsScreen(
+            is FriendsRoute.Friends -> {
+                entry(route) {
+                    FriendsScreen(
                         padding = padding,
-                        onNavigateToPendingFriends = com.mulkkam.ui.navigation.MainNavigator::navigateToPendingFriends,
-                        onNavigateToSearchMembers = com.mulkkam.ui.navigation.MainNavigator::navigateToSearchMembers,
+                        onNavigateToPendingFriends = navigator::navigateToPendingFriends,
+                        onNavigateToSearchMembers = navigator::navigateToSearchMembers,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.FriendsRoute.PendingFriends -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.friends.pendingfriends.PendingFriendsScreen(
+            is FriendsRoute.PendingFriends -> {
+                entry(route) {
+                    PendingFriendsScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.FriendsRoute.SearchMembers -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.friends.searchmembers.SearchMembersScreen(
+            is FriendsRoute.SearchMembers -> {
+                entry(route) {
+                    SearchMembersScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }

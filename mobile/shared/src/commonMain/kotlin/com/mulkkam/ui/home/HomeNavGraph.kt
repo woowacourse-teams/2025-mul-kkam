@@ -2,41 +2,46 @@ package com.mulkkam.ui.home
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.home.encyclopedia.EncyclopediaScreen
+import com.mulkkam.ui.home.home.HomeScreen
+import com.mulkkam.ui.home.notification.NotificationScreen
 import com.mulkkam.ui.navigation.HomeRoute
 import com.mulkkam.ui.navigation.MainNavigator
+import com.mulkkam.ui.navigation.NavEntry
+import com.mulkkam.ui.navigation.entry
 
 object HomeNavGraph {
     @Composable
     fun entryProvider(
-        route: com.mulkkam.ui.navigation.HomeRoute,
+        route: HomeRoute,
         padding: PaddingValues,
-        navigator: com.mulkkam.ui.navigation.MainNavigator,
-    ): com.mulkkam.ui.core.NavEntry<com.mulkkam.ui.navigation.HomeRoute> =
+        navigator: MainNavigator,
+    ): NavEntry<HomeRoute> =
         when (route) {
-            is com.mulkkam.ui.navigation.HomeRoute.Home -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.home.home.HomeScreen(
+            is HomeRoute.Home -> {
+                entry(route) {
+                    HomeScreen(
                         padding = padding,
-                        onNavigateToEncyclopedia = com.mulkkam.ui.navigation.MainNavigator::navigateToEncyclopedia,
-                        onNavigateToNotification = com.mulkkam.ui.navigation.MainNavigator::navigateToHomeNotification,
+                        onNavigateToEncyclopedia = navigator::navigateToEncyclopedia,
+                        onNavigateToNotification = navigator::navigateToHomeNotification,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.HomeRoute.Encyclopedia -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.home.encyclopedia.EncyclopediaScreen(
+            is HomeRoute.Encyclopedia -> {
+                entry(route) {
+                    EncyclopediaScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.HomeRoute.Notification -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.home.notification.NotificationScreen(
+            is HomeRoute.Notification -> {
+                entry(route) {
+                    NotificationScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }

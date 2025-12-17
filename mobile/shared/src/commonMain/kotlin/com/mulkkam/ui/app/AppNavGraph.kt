@@ -2,32 +2,36 @@ package com.mulkkam.ui.app
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.app.login.LoginScreen
+import com.mulkkam.ui.app.splash.SplashScreen
 import com.mulkkam.ui.navigation.AppRoute
 import com.mulkkam.ui.navigation.MainNavigator
+import com.mulkkam.ui.navigation.NavEntry
+import com.mulkkam.ui.navigation.entry
 
 object AppNavGraph {
     @Composable
     fun entryProvider(
-        route: com.mulkkam.ui.navigation.AppRoute,
+        route: AppRoute,
         padding: PaddingValues,
-        navigator: com.mulkkam.ui.navigation.MainNavigator,
-    ): com.mulkkam.ui.core.NavEntry<com.mulkkam.ui.navigation.AppRoute> =
+        navigator: MainNavigator,
+    ): NavEntry<AppRoute> =
         when (route) {
-            is com.mulkkam.ui.navigation.AppRoute.Splash -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.app.splash.SplashScreen(
+            is AppRoute.Splash -> {
+                entry(route) {
+                    SplashScreen(
                         padding = padding,
-                        onNavigateToLogin = com.mulkkam.ui.navigation.MainNavigator::navigateToLogin,
-                        onNavigateToMain = com.mulkkam.ui.navigation.MainNavigator::navigateToHome,
+                        onNavigateToLogin = navigator::navigateToLogin,
+                        onNavigateToMain = navigator::navigateToHome,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.AppRoute.Login -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.app.login.LoginScreen(
+            is AppRoute.Login -> {
+                entry(route) {
+                    LoginScreen(
                         padding = padding,
-                        onNavigateToOnboarding = com.mulkkam.ui.navigation.MainNavigator::navigateToOnboardingTerms,
+                        onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
                     )
                 }
             }

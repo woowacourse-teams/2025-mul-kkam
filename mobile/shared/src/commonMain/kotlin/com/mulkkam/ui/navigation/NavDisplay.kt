@@ -1,4 +1,4 @@
-package com.mulkkam.ui.core
+package com.mulkkam.ui.navigation
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ContentTransform
@@ -16,10 +16,8 @@ private const val ANIMATION_DURATION_MILLIS: Int = 300
 @Composable
 fun NavDisplay(
     backStack: SnapshotStateList<Any>,
-    transitionSpec: ContentTransform =
-        _root_ide_package_.com.mulkkam.ui.core
-            .defaultTransitionSpec(),
-    entryProvider: @Composable (route: Any) -> com.mulkkam.ui.core.NavEntry<*>,
+    transitionSpec: ContentTransform = defaultTransitionSpec(),
+    entryProvider: @Composable (route: Any) -> NavEntry<*>,
 ) {
     val currentRoute = backStack.lastOrNull()
 
@@ -37,15 +35,15 @@ fun NavDisplay(
 private fun defaultTransitionSpec(): ContentTransform {
     val enterTransition =
         slideInHorizontally(
-            animationSpec = tween(durationMillis = _root_ide_package_.com.mulkkam.ui.core.ANIMATION_DURATION_MILLIS),
+            animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS),
             initialOffsetX = { fullWidth -> fullWidth },
-        ) + fadeIn(animationSpec = tween(durationMillis = _root_ide_package_.com.mulkkam.ui.core.ANIMATION_DURATION_MILLIS))
+        ) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS))
 
     val exitTransition =
         slideOutHorizontally(
-            animationSpec = tween(durationMillis = _root_ide_package_.com.mulkkam.ui.core.ANIMATION_DURATION_MILLIS),
+            animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS),
             targetOffsetX = { fullWidth -> -fullWidth },
-        ) + fadeOut(animationSpec = tween(durationMillis = _root_ide_package_.com.mulkkam.ui.core.ANIMATION_DURATION_MILLIS))
+        ) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS))
 
     return enterTransition togetherWith exitTransition
 }

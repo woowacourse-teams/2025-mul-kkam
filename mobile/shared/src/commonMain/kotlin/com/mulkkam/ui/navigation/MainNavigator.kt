@@ -31,67 +31,66 @@ class MainNavigator internal constructor(
     }
 
     // App
-    fun navigateToSplash() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.AppRoute.Splash)
+    fun navigateToSplash() = navigateAndClearBackStack(AppRoute.Splash)
 
-    fun navigateToLogin() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.AppRoute.Login)
+    fun navigateToLogin() = navigate(AppRoute.Login)
 
     // Onboarding
-    fun navigateToOnboardingTerms() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.OnboardingRoute.Terms)
+    fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms)
 
-    fun navigateToOnboardingNickname() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.OnboardingRoute.Nickname)
+    fun navigateToOnboardingNickname() = navigate(OnboardingRoute.Nickname)
 
-    fun navigateToOnboardingBioInfo() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.OnboardingRoute.BioInfo)
+    fun navigateToOnboardingBioInfo() = navigate(OnboardingRoute.BioInfo)
 
-    fun navigateToOnboardingTargetAmount() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.OnboardingRoute.TargetAmount)
+    fun navigateToOnboardingTargetAmount() = navigate(OnboardingRoute.TargetAmount)
 
-    fun navigateToOnboardingCups() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.OnboardingRoute.Cups)
+    fun navigateToOnboardingCups() = navigate(OnboardingRoute.Cups)
 
     // Home (Bottom Tab)
-    fun navigateToHome() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.HomeRoute.Home)
+    fun navigateToHome() = navigateAndClearBackStack(HomeRoute.Home)
 
-    fun navigateToEncyclopedia() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.HomeRoute.Encyclopedia)
+    fun navigateToEncyclopedia() = navigate(HomeRoute.Encyclopedia)
 
-    fun navigateToHomeNotification() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.HomeRoute.Notification)
+    fun navigateToHomeNotification() = navigate(HomeRoute.Notification)
 
     // History (Bottom Tab)
-    fun navigateToHistory() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.HistoryRoute.History)
+    fun navigateToHistory() = navigateAndClearBackStack(HistoryRoute.History)
 
     // Friends (Bottom Tab)
-    fun navigateToFriends() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.FriendsRoute.Friends)
+    fun navigateToFriends() = navigateAndClearBackStack(FriendsRoute.Friends)
 
-    fun navigateToPendingFriends() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.FriendsRoute.PendingFriends)
+    fun navigateToPendingFriends() = navigate(FriendsRoute.PendingFriends)
 
-    fun navigateToSearchMembers() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.FriendsRoute.SearchMembers)
+    fun navigateToSearchMembers() = navigate(FriendsRoute.SearchMembers)
 
     // Setting (Bottom Tab)
-    fun navigateToSetting() = navigateAndClearBackStack(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Setting)
+    fun navigateToSetting() = navigateAndClearBackStack(SettingRoute.Setting)
 
-    fun navigateToAccountInfo() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.AccountInfo)
+    fun navigateToAccountInfo() = navigate(SettingRoute.AccountInfo)
 
-    fun navigateToSettingBioInfo() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.BioInfo)
+    fun navigateToSettingBioInfo() = navigate(SettingRoute.BioInfo)
 
-    fun navigateToSettingCups() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Cups)
+    fun navigateToSettingCups() = navigate(SettingRoute.Cups)
 
-    fun navigateToFeedback() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Feedback)
+    fun navigateToFeedback() = navigate(SettingRoute.Feedback)
 
-    fun navigateToSettingNickname() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Nickname)
+    fun navigateToSettingNickname() = navigate(SettingRoute.Nickname)
 
-    fun navigateToSettingNotification() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Notification)
+    fun navigateToSettingNotification() = navigate(SettingRoute.Notification)
 
-    fun navigateToReminder() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Reminder)
+    fun navigateToReminder() = navigate(SettingRoute.Reminder)
 
-    fun navigateToSettingTargetAmount() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.TargetAmount)
+    fun navigateToSettingTargetAmount() = navigate(SettingRoute.TargetAmount)
 
-    fun navigateToSettingTerms() = navigate(_root_ide_package_.com.mulkkam.ui.navigation.SettingRoute.Terms)
+    fun navigateToSettingTerms() = navigate(SettingRoute.Terms)
 }
 
 @Composable
 fun rememberMainNavigator(
-    startDestination: Any = _root_ide_package_.com.mulkkam.ui.navigation.AppRoute.Splash,
-): com.mulkkam.ui.navigation.MainNavigator {
+    startDestination: Any = AppRoute.Splash,
+): MainNavigator {
     val backStack = remember { listOf(startDestination).toMutableStateList() }
     return remember(backStack) {
-        _root_ide_package_.com.mulkkam.ui.navigation
-            .MainNavigator(backStack)
+        MainNavigator(backStack)
     }
 }

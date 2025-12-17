@@ -1,4 +1,4 @@
-package com.mulkkam.ui.core
+package com.mulkkam.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -13,6 +13,4 @@ class NavEntry<T : Any>(
 fun <T : Any> entry(
     key: T,
     content: @Composable () -> Unit,
-): com.mulkkam.ui.core.NavEntry<T> =
-    _root_ide_package_.com.mulkkam.ui.core
-        .NavEntry(key = key, content = content)
+): NavEntry<T> = NavEntry(key = key, content = content)

@@ -12,56 +12,56 @@ import com.mulkkam.ui.setting.SettingNavGraph
 
 @Composable
 fun MainNavHost(
-    navigator: com.mulkkam.ui.navigation.MainNavigator,
+    navigator: MainNavigator,
     padding: PaddingValues,
     modifier: Modifier = Modifier,
 ) {
-    _root_ide_package_.com.mulkkam.ui.core.NavDisplay(
+    NavDisplay(
         backStack = navigator.backStack,
         entryProvider = { route ->
             when (route) {
-                is com.mulkkam.ui.navigation.AppRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.app.AppNavGraph.entryProvider(
+                is AppRoute -> {
+                    AppNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
                     )
                 }
 
-                is com.mulkkam.ui.navigation.OnboardingRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.onboarding.OnboardingNavGraph.entryProvider(
+                is OnboardingRoute -> {
+                    OnboardingNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
                     )
                 }
 
-                is com.mulkkam.ui.navigation.HomeRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.home.HomeNavGraph.entryProvider(
+                is HomeRoute -> {
+                    HomeNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
                     )
                 }
 
-                is com.mulkkam.ui.navigation.HistoryRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.history.HistoryNavGraph.entryProvider(
+                is HistoryRoute -> {
+                    HistoryNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
                     )
                 }
 
-                is com.mulkkam.ui.navigation.FriendsRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.friends.FriendsNavGraph.entryProvider(
+                is FriendsRoute -> {
+                    FriendsNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
                     )
                 }
 
-                is com.mulkkam.ui.navigation.SettingRoute -> {
-                    _root_ide_package_.com.mulkkam.ui.setting.SettingNavGraph.entryProvider(
+                is SettingRoute -> {
+                    SettingNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
@@ -69,8 +69,7 @@ fun MainNavHost(
                 }
 
                 else -> {
-                    _root_ide_package_.com.mulkkam.ui.core
-                        .entry(route) {}
+                    entry(route) {}
                 }
             }
         },

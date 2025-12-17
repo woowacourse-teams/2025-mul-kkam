@@ -3,110 +3,122 @@ package com.mulkkam.ui.setting
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.navigation.MainNavigator
+import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.SettingRoute
+import com.mulkkam.ui.navigation.entry
+import com.mulkkam.ui.setting.accountinfo.AccountInfoScreen
+import com.mulkkam.ui.setting.bioinfo.BioInfoScreen
+import com.mulkkam.ui.setting.cups.CupsScreen
+import com.mulkkam.ui.setting.feedback.FeedbackScreen
+import com.mulkkam.ui.setting.nickname.NicknameScreen
+import com.mulkkam.ui.setting.notification.NotificationScreen
+import com.mulkkam.ui.setting.reminder.ReminderScreen
+import com.mulkkam.ui.setting.setting.SettingScreen
+import com.mulkkam.ui.setting.targetamount.TargetAmountScreen
+import com.mulkkam.ui.setting.terms.TermsScreen
 
 object SettingNavGraph {
     @Composable
     fun entryProvider(
-        route: com.mulkkam.ui.navigation.SettingRoute,
+        route: SettingRoute,
         padding: PaddingValues,
-        navigator: com.mulkkam.ui.navigation.MainNavigator,
-    ): com.mulkkam.ui.core.NavEntry<com.mulkkam.ui.navigation.SettingRoute> =
+        navigator: MainNavigator,
+    ): NavEntry<SettingRoute> =
         when (route) {
-            is com.mulkkam.ui.navigation.SettingRoute.Setting -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.setting.SettingScreen(
+            is SettingRoute.Setting -> {
+                entry(route) {
+                    SettingScreen(
                         padding = padding,
-                        onNavigateToAccountInfo = com.mulkkam.ui.navigation.MainNavigator::navigateToAccountInfo,
-                        onNavigateToBioInfo = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingBioInfo,
-                        onNavigateToCups = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingCups,
-                        onNavigateToFeedback = com.mulkkam.ui.navigation.MainNavigator::navigateToFeedback,
-                        onNavigateToNickname = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingNickname,
-                        onNavigateToNotification = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingNotification,
-                        onNavigateToReminder = com.mulkkam.ui.navigation.MainNavigator::navigateToReminder,
-                        onNavigateToTargetAmount = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingTargetAmount,
-                        onNavigateToTerms = com.mulkkam.ui.navigation.MainNavigator::navigateToSettingTerms,
+                        onNavigateToAccountInfo = navigator::navigateToAccountInfo,
+                        onNavigateToBioInfo = navigator::navigateToSettingBioInfo,
+                        onNavigateToCups = navigator::navigateToSettingCups,
+                        onNavigateToFeedback = navigator::navigateToFeedback,
+                        onNavigateToNickname = navigator::navigateToSettingNickname,
+                        onNavigateToNotification = navigator::navigateToSettingNotification,
+                        onNavigateToReminder = navigator::navigateToReminder,
+                        onNavigateToTargetAmount = navigator::navigateToSettingTargetAmount,
+                        onNavigateToTerms = navigator::navigateToSettingTerms,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.AccountInfo -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.accountinfo.AccountInfoScreen(
+            is SettingRoute.AccountInfo -> {
+                entry(route) {
+                    AccountInfoScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.BioInfo -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.bioinfo.BioInfoScreen(
+            is SettingRoute.BioInfo -> {
+                entry(route) {
+                    BioInfoScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Cups -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.cups.CupsScreen(
+            is SettingRoute.Cups -> {
+                entry(route) {
+                    CupsScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Feedback -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.feedback.FeedbackScreen(
+            is SettingRoute.Feedback -> {
+                entry(route) {
+                    FeedbackScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Nickname -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.nickname.NicknameScreen(
+            is SettingRoute.Nickname -> {
+                entry(route) {
+                    NicknameScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Notification -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.notification.NotificationScreen(
+            is SettingRoute.Notification -> {
+                entry(route) {
+                    NotificationScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Reminder -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.reminder.ReminderScreen(
+            is SettingRoute.Reminder -> {
+                entry(route) {
+                    ReminderScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.TargetAmount -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.targetamount.TargetAmountScreen(
+            is SettingRoute.TargetAmount -> {
+                entry(route) {
+                    TargetAmountScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
 
-            is com.mulkkam.ui.navigation.SettingRoute.Terms -> {
-                _root_ide_package_.com.mulkkam.ui.core.entry(route) {
-                    _root_ide_package_.com.mulkkam.ui.setting.terms.TermsScreen(
+            is SettingRoute.Terms -> {
+                entry(route) {
+                    TermsScreen(
                         padding = padding,
-                        onNavigateBack = com.mulkkam.ui.navigation.MainNavigator::popBackStack,
+                        onNavigateBack = navigator::popBackStack,
                     )
                 }
             }
