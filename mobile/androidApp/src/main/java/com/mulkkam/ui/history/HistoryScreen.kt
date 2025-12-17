@@ -36,7 +36,7 @@ import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.history.component.DailyWaterIntakeChart
 import com.mulkkam.ui.history.component.IntakeHistoryItem
 import com.mulkkam.ui.history.component.WeeklyWaterIntakeChart

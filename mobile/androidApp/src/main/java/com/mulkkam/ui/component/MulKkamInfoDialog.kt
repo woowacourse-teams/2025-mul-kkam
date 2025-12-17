@@ -1,4 +1,4 @@
-package com.mulkkam.ui.dialog
+package com.mulkkam.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

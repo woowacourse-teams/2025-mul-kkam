@@ -31,7 +31,7 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.friends.component.FriendItem
 import com.mulkkam.ui.friends.component.FriendsEditModeButton
 import com.mulkkam.ui.friends.component.FriendsEmptyContent

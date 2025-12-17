@@ -6,7 +6,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
+import com.mulkkam.ui.component.MulKkamAlertDialog
 
 @Composable
 fun AccountLogoutDialog(

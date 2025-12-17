@@ -16,7 +16,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.util.extensions.onLoadMore
 
 @Composable
