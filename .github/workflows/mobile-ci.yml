@@ -1,10 +1,10 @@
-name: Android CI
+name: Mobile CI
 
 on:
   pull_request:
     branches: [ "develop", "develop-an" ]
     paths:
-      - 'android/**'
+      - 'mobile/**'
 
 jobs:
   build:
@@ -12,7 +12,7 @@ jobs:
     
     defaults:
       run:
-        working-directory: ./android
+        working-directory: ./mobile
 
     steps:
     - name: checkout repository
@@ -26,7 +26,7 @@ jobs:
         path: |
           ~/.gradle/caches
           ~/.gradle/wrapper
-          android/.gradle
+          mobile/.gradle
         key: gradle-cache-${{ runner.os }}-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
         restore-keys: |
           gradle-cache-${{ runner.os }}-
@@ -72,6 +72,7 @@ jobs:
       
     - name: Check ktlint format
       run: ./gradlew ktlintCheck
+      
       
     - name: Perform Gradle Test
       run: ./gradlew test --build-cache --parallel
