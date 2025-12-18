@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ktlint)
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -183,9 +182,8 @@ dependencies {
     implementation(libs.shimmer)
 
     // DI
-    ksp(libs.hilt.compiler)
-    ksp(libs.androidx.hilt.compiler)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.work)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.workmanager)
+    implementation(libs.koin.compose.viewmodel)
 }

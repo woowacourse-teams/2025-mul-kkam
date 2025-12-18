@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.di.HealthConnectModule.PROVIDER_PACKAGE_NAME
+import com.mulkkam.di.PROVIDER_PACKAGE_NAME
 
 private const val MIN_VERSION_NAME: String = "0.0.0"
 

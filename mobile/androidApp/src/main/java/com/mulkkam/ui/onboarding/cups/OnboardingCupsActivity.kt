@@ -5,17 +5,15 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class OnboardingCupsActivity : ComponentActivity() {
-    private val viewModel: CupsViewModel by viewModels()
+    private val viewModel: CupsViewModel by viewModel()
 
     private val onboardingInfo: OnboardingInfo? by lazy {
         intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
