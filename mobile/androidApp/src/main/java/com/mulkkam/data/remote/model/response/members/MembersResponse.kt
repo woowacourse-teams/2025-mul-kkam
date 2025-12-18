@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.model.response.members
 
-import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.members.MemberInfo
 import com.mulkkam.domain.model.members.Nickname
 import kotlinx.serialization.SerialName

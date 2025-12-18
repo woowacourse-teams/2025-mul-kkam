@@ -16,8 +16,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.mulkkam.R
-import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme

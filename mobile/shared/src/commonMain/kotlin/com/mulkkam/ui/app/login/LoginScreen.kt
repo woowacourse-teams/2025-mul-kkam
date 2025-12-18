@@ -21,9 +21,10 @@ internal fun LoginScreen(
     onNavigateToOnboarding: () -> Unit,
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

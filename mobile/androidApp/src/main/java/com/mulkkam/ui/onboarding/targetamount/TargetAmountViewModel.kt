@@ -2,8 +2,8 @@ package com.mulkkam.ui.onboarding.targetamount
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.intake.TargetAmount
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository

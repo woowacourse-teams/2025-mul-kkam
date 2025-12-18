@@ -39,17 +39,13 @@ class MainNavigator internal constructor(
     // Onboarding
     fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms)
 
-    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo? = null) =
-        navigate(OnboardingRoute.Nickname(onboardingInfo))
+    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo? = null) = navigate(OnboardingRoute.Nickname(onboardingInfo))
 
-    fun navigateToOnboardingBioInfo(onboardingInfo: OnboardingInfo) =
-        navigate(OnboardingRoute.BioInfo(onboardingInfo))
+    fun navigateToOnboardingBioInfo(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.BioInfo(onboardingInfo))
 
-    fun navigateToOnboardingTargetAmount(onboardingInfo: OnboardingInfo) =
-        navigate(OnboardingRoute.TargetAmount(onboardingInfo))
+    fun navigateToOnboardingTargetAmount(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.TargetAmount(onboardingInfo))
 
-    fun navigateToOnboardingCups(onboardingInfo: OnboardingInfo) =
-        navigate(OnboardingRoute.Cups(onboardingInfo))
+    fun navigateToOnboardingCups(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.Cups(onboardingInfo))
 
     // Home (Bottom Tab)
     fun navigateToHome() = navigateAndClearBackStack(HomeRoute.Home)
@@ -91,9 +87,7 @@ class MainNavigator internal constructor(
 }
 
 @Composable
-fun rememberMainNavigator(
-    startDestination: Any = AppRoute.Splash,
-): MainNavigator {
+fun rememberMainNavigator(startDestination: Any = AppRoute.Splash): MainNavigator {
     val backStack = remember { listOf(startDestination).toMutableStateList() }
     return remember(backStack) {
         MainNavigator(backStack)

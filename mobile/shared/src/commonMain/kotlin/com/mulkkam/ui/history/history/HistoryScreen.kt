@@ -12,13 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun HistoryScreen(
-    padding: PaddingValues,
-) {
+internal fun HistoryScreen(padding: PaddingValues) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(padding),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(padding),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {

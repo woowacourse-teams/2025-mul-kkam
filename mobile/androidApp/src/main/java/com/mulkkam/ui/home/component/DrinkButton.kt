@@ -15,12 +15,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
+import com.mulkkam.domain.model.CupEmoji
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
-import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.domain.model.IntakeType
 
 @Composable
 fun DrinkButton(

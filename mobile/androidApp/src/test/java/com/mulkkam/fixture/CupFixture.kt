@@ -1,10 +1,10 @@
 package com.mulkkam.fixture
 
+import com.mulkkam.domain.model.CupEmoji
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
-import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.cups.CupName
-import com.mulkkam.domain.model.IntakeType
 
 val HWANNOW_CUP =
     Cup(
