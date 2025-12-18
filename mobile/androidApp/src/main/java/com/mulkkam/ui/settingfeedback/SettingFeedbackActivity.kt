@@ -7,13 +7,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.ui.designsystem.MulkkamTheme
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class SettingFeedbackActivity : ComponentActivity() {
-    @Inject
-    lateinit var logger: Logger
+    private val logger: Logger by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

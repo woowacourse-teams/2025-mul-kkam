@@ -22,7 +22,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
@@ -41,6 +40,7 @@ import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.extensions.onLoadMore
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun FriendsScreen(
@@ -48,7 +48,7 @@ fun FriendsScreen(
     navigateToFriendRequests: () -> Unit,
     snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    viewModel: FriendsViewModel = hiltViewModel(),
+    viewModel: FriendsViewModel = koinViewModel(),
 ) {
     val friendsUiState by viewModel.friendsUiState.collectAsStateWithLifecycle()
     val friendRequestCountUiState by viewModel.friendRequestCountUiState.collectAsStateWithLifecycle()

@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Lifecycle
 import com.kakao.sdk.auth.model.OAuthToken
@@ -22,15 +21,12 @@ import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class LoginActivity : AppCompatActivity() {
-    private val viewModel: LoginViewModel by viewModels()
-
-    @Inject
-    lateinit var logger: Logger
+    private val viewModel: LoginViewModel by viewModel()
+    private val logger: Logger by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
