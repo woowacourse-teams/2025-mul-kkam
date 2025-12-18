@@ -15,7 +15,7 @@ internal fun NicknameScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo?,
     onNavigateBack: () -> Boolean,
-    onNavigateToBioInfo: (OnboardingInfo) -> Unit,
+    onNavigateToBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(
         modifier =

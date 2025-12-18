@@ -15,7 +15,7 @@ internal fun TargetAmountScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
     onNavigateBack: () -> Boolean,
-    onNavigateToCups: (OnboardingInfo) -> Unit,
+    onNavigateToCups: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(
         modifier =

@@ -13,7 +13,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 @Composable
 internal fun TermsScreen(
     padding: PaddingValues,
-    onNavigateToNickname: (OnboardingInfo?) -> Unit,
+    onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
 ) {
     Box(
         modifier =

@@ -15,7 +15,7 @@ internal fun BioInfoScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
     onNavigateBack: () -> Boolean,
-    onNavigateToTargetAmount: (OnboardingInfo) -> Unit,
+    onNavigateToTargetAmount: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(
         modifier =
