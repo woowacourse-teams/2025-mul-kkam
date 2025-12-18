@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.sp
 import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
-internal fun TermsScreen(
+fun TermsScreen(
     padding: PaddingValues,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
 ) {

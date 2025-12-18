@@ -19,7 +19,7 @@ import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
-internal fun BioInfoScreen(
+fun BioInfoScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Boolean,

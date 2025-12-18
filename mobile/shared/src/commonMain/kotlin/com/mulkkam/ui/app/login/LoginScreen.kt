@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun LoginScreen(
+fun LoginScreen(
     padding: PaddingValues,
     onNavigateToOnboarding: () -> Unit,
 ) {

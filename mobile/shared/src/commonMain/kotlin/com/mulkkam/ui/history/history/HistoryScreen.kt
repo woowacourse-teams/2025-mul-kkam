@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun HistoryScreen(padding: PaddingValues) {
+fun HistoryScreen(padding: PaddingValues) {
     Column(
         modifier =
             Modifier

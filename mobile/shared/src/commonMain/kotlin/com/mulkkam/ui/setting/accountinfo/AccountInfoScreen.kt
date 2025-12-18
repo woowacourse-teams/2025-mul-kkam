@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun AccountInfoScreen(
+fun AccountInfoScreen(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
 ) {

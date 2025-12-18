@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun SettingScreen(
+fun SettingScreen(
     padding: PaddingValues,
     onNavigateToAccountInfo: () -> Unit,
     onNavigateToBioInfo: () -> Unit,

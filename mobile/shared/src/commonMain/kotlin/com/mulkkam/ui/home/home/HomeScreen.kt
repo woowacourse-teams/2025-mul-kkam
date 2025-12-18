@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun HomeScreen(
+fun HomeScreen(
     padding: PaddingValues,
     onNavigateToEncyclopedia: () -> Unit,
     onNavigateToNotification: () -> Unit,

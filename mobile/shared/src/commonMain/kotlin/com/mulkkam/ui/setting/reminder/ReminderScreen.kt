@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 @Composable
-internal fun ReminderScreen(
+fun ReminderScreen(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
 ) {

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
-internal fun CupsScreen(
+fun CupsScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Boolean,

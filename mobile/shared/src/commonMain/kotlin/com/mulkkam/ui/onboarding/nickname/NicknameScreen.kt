@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
-internal fun NicknameScreen(
+fun NicknameScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo?,
     onNavigateToBack: () -> Boolean,
