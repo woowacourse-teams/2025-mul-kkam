@@ -20,7 +20,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -121,7 +121,7 @@ private fun handleReminderUpdateAction(
 @Preview(showBackground = true)
 @Composable
 private fun SettingRemindScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingReminderScreen(
             navigateToBack = {},
         )

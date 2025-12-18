@@ -7,7 +7,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.targetamount.OnboardingTargetAmountActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
 
@@ -21,7 +21,7 @@ class OnboardingBioInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 BioInfoScreen(
                     navigateToBack = ::finish,
                     navigateToNextStep = { gender, weight ->

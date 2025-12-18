@@ -30,7 +30,6 @@ import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
@@ -188,7 +187,7 @@ private fun SettingCupEditButton() {
 @Preview(showBackground = true)
 @Composable
 private fun SettingCupsCupPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingCupsCup(
             item =
                 SettingCupsItem.CupItem(

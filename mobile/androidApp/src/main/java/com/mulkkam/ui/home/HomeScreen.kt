@@ -21,7 +21,7 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
 import com.mulkkam.ui.home.component.FriendWaterBalloonExplodeLottie
@@ -136,7 +136,7 @@ private fun HomeScreenPreview() {
     val snackbarHostState = remember { SnackbarHostState() }
     val toastState = rememberMulKkamToastState()
 
-    MulkkamTheme {
+    MulKkamTheme {
         HomeScreen(
             navigateToNotification = {},
             onManualDrink = {},

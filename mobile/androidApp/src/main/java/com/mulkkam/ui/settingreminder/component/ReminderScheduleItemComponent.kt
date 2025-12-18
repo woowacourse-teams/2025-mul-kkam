@@ -21,7 +21,6 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import java.time.Duration
 import java.time.LocalTime
@@ -94,7 +93,7 @@ private fun formatRemainingTime(
 @Preview(showBackground = true, name = "1시간 이상 남은 경우")
 @Composable
 private fun ReminderScheduleItemComponentPreview_OverOneHour() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleItemComponent(
             reminder =
                 ReminderSchedule(
@@ -109,7 +108,7 @@ private fun ReminderScheduleItemComponentPreview_OverOneHour() {
 @Preview(showBackground = true, name = "1시간 미만으로 남은 경우")
 @Composable
 private fun ReminderScheduleItemComponentPreview_LessThanOneHour() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleItemComponent(
             reminder =
                 ReminderSchedule(

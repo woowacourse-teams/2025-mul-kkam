@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.login.LoginActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -16,7 +16,7 @@ class SettingAccountInfoActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingAccountInfoRoute(
                     viewModel = viewModel,
                     navigateToBack = ::finish,

@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.nickname.OnboardingNicknameActivity
 import com.mulkkam.ui.util.extensions.openTermsLink
 
@@ -17,7 +17,7 @@ class OnboardingTermsActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 TermsAgreementScreen(
                     navigateToBack = ::finish,
                     loadToPage = { openTermsLink(it) },

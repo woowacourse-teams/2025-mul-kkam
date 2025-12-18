@@ -4,7 +4,7 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
@@ -23,7 +23,7 @@ class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SplashScreen {
                     isSplashFinished = true
                     navigateToNextScreen(viewModel.authUiState.value)

@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
@@ -51,7 +50,7 @@ fun BottomSheetHeader(
 @Preview(showBackground = true)
 @Composable
 private fun BottomSheetHeaderPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         BottomSheetHeader(
             title = "돈까스먹는환노",
             onDismiss = {},

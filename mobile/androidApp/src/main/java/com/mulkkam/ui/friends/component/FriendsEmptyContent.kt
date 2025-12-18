@@ -16,7 +16,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun FriendsEmptyContent(modifier: Modifier = Modifier) {
@@ -46,7 +45,7 @@ fun FriendsEmptyContent(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun FriendsEmptyContentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendsEmptyContent()
     }
 }

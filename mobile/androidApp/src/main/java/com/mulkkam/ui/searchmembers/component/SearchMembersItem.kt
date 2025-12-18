@@ -31,7 +31,6 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -109,7 +108,7 @@ fun SearchMembersItem(
 @Preview(showBackground = true, name = "아무 사이도 아닌 멤버 결과")
 @Composable
 private fun SearchMembersItemPreview_None() {
-    MulkkamTheme {
+    MulKkamTheme {
         SearchMembersItem(
             memberSearchInfo =
                 MemberSearchInfo(
@@ -126,7 +125,7 @@ private fun SearchMembersItemPreview_None() {
 @Preview(showBackground = true, name = "이미 친구인 멤버 결과")
 @Composable
 private fun SearchMembersItemPreview_Friend() {
-    MulkkamTheme {
+    MulKkamTheme {
         SearchMembersItem(
             memberSearchInfo =
                 MemberSearchInfo(
@@ -143,7 +142,7 @@ private fun SearchMembersItemPreview_Friend() {
 @Preview(showBackground = true, name = "친구 신청 보낸 멤버 결과")
 @Composable
 private fun SearchMembersItemPreview_Requested() {
-    MulkkamTheme {
+    MulKkamTheme {
         SearchMembersItem(
             memberSearchInfo =
                 MemberSearchInfo(

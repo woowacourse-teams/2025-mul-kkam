@@ -12,7 +12,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun SettingTitleItem(
@@ -39,7 +38,7 @@ fun SettingTitleItem(
 @Preview(showBackground = true)
 @Composable
 private fun PreviewSettingTitleItem() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingTitleItem(label = "계정 정보 설정")
     }
 }

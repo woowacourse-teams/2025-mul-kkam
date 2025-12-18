@@ -28,7 +28,6 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
@@ -144,7 +143,7 @@ fun TermsAgreementScreen(
 @Preview(showBackground = true)
 @Composable
 private fun TermsAgreementScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         TermsAgreementScreen(
             navigateToBack = {},
             loadToPage = {},

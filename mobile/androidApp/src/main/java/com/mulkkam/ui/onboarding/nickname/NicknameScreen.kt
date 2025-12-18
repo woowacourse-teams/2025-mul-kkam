@@ -23,7 +23,6 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.onboarding.component.NextButton
@@ -100,7 +99,7 @@ fun NicknameScreen(
 @Preview(showBackground = true)
 @Composable
 private fun NicknameScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NicknameScreen(
             navigateToBack = {},
             navigateToNextStep = {},

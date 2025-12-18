@@ -20,7 +20,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +62,7 @@ fun SettingNicknameTopAppBar(onBackClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun SettingNicknameTopAppBarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingNicknameTopAppBar { }
     }
 }

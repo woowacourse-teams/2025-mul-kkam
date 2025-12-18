@@ -28,7 +28,6 @@ import com.mulkkam.ui.component.MulKkamTextFieldState
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
@@ -128,7 +127,7 @@ fun AccountDeleteDialog(
 @Preview
 @Composable
 private fun AccountDeleteDialogPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         AccountDeleteDialog(
             value = "물깜 회원을 탈퇴하겠습니다",
             deleteComment = "물깜 회원을 탈퇴하겠습니다",

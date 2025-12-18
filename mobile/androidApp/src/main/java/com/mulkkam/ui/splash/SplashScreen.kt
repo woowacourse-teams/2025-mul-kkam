@@ -23,7 +23,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.splash.component.SplashLottie
 
@@ -96,7 +96,7 @@ fun SplashScreen(onFinished: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun SplashScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SplashScreen(onFinished = {})
     }
 }

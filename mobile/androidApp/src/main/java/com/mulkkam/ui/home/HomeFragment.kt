@@ -10,7 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainViewModel
@@ -33,7 +33,7 @@ class HomeFragment :
         val composeView =
             ComposeView(requireContext()).apply {
                 setContent {
-                    MulkkamTheme {
+                    MulKkamTheme {
                         HomeRoute(
                             viewModel = viewModel,
                             parentViewModel = parentViewModel,

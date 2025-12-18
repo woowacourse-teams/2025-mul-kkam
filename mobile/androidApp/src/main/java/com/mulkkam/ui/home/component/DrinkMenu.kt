@@ -23,8 +23,7 @@ import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.ui.designsystem.MulkkamTheme
-import java.lang.System.exit
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
 fun DrinkMenu(
@@ -80,7 +79,7 @@ fun DrinkMenu(
 @Preview(showBackground = true)
 @Composable
 private fun DrinkMenuPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         val cups =
             Cups(
                 listOf(

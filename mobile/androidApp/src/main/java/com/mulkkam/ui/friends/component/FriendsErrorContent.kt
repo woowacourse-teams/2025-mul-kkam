@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -57,7 +56,7 @@ fun FriendsErrorContent(
 @Preview(showBackground = true)
 @Composable
 private fun FriendsErrorContentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendsErrorContent(
             onRetry = {},
         )

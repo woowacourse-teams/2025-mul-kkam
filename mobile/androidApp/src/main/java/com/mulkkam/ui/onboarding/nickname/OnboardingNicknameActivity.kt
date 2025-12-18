@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.bioinfo.OnboardingBioInfoActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +21,7 @@ class OnboardingNicknameActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 NicknameScreen(
                     navigateToBack = ::finish,
                     navigateToNextStep = { nickname ->

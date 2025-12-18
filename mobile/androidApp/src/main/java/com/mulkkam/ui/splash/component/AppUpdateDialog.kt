@@ -25,7 +25,6 @@ import com.mulkkam.ui.component.ColoredText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
@@ -105,7 +104,7 @@ fun AppUpdateDialog(
 @Preview(showBackground = true)
 @Composable
 private fun AppUpdateDialogPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         AppUpdateDialog(navigateToPlayStoreAndExit = {})
     }
 }

@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
 
@@ -112,7 +111,7 @@ fun snapFlingBehavior(listState: LazyListState): FlingBehavior =
 @Preview(showBackground = true)
 @Composable
 private fun NumberPickerPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         CustomNumberPicker(
             range = IntRange(1, 10),
             value = 6,

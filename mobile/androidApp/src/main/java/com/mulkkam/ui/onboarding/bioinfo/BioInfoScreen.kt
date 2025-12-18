@@ -28,7 +28,6 @@ import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
@@ -125,7 +124,7 @@ fun BioInfoScreen(
 @Preview(showBackground = true)
 @Composable
 private fun BioInfoScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         BioInfoScreen(
             navigateToBack = {},
             navigateToNextStep = { _, _ -> },

@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.Refreshable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -23,7 +23,7 @@ class HistoryFragment :
         val composeView =
             ComposeView(requireContext()).apply {
                 setContent {
-                    MulkkamTheme {
+                    MulKkamTheme {
                         HistoryScreen(viewModel = viewModel)
                     }
                 }

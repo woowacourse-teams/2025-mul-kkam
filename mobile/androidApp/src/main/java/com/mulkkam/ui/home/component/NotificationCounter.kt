@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -71,7 +70,7 @@ fun NotificationCounter(
 @Preview(showBackground = true)
 @Composable
 private fun NotificationCounterPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationCounter(
             count = 12,
             onClick = {},

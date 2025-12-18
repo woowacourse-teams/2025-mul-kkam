@@ -16,7 +16,6 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun GenderSection(
@@ -56,7 +55,7 @@ fun GenderSection(
 @Preview(showBackground = true)
 @Composable
 private fun GenderSectionPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         GenderSection(gender = Gender.FEMALE, onClickGender = {})
     }
 }

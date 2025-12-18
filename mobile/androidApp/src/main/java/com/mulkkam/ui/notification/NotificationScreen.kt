@@ -13,7 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -103,7 +103,7 @@ fun NotificationScreen(
 @Preview(showBackground = true)
 @Composable
 private fun NotificationScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         Column {
             NotificationScreen(
                 navigateToBack = {},
