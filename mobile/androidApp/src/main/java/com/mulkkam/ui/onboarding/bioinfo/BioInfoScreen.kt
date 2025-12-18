@@ -25,7 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
-import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.MulkkamTheme

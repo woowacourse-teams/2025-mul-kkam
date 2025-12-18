@@ -8,12 +8,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
 internal fun BioInfoScreen(
     padding: PaddingValues,
+    onboardingInfo: OnboardingInfo,
     onNavigateBack: () -> Boolean,
-    onNavigateToTargetAmount: () -> Unit,
+    onNavigateToTargetAmount: (OnboardingInfo) -> Unit,
 ) {
     Box(
         modifier =

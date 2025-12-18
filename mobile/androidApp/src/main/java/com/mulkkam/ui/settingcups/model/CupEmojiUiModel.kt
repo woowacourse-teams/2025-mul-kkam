@@ -1,7 +1,7 @@
 package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
-import com.mulkkam.domain.model.cups.CupEmoji
+import com.mulkkam.domain.model.CupEmoji
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

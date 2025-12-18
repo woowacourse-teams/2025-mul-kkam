@@ -1,4 +1,4 @@
-package com.mulkkam
+package com.mulkkam.ui.app
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding

@@ -2,7 +2,7 @@ package com.mulkkam.ui.onboarding.bioinfo
 
 import androidx.lifecycle.ViewModel
 import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.Gender
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

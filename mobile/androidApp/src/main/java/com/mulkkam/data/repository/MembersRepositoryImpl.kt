@@ -12,7 +12,7 @@ import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.model.response.notifications.toDomain
 import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.members.MemberInfo
 import com.mulkkam.domain.model.members.MemberSearchResult
 import com.mulkkam.domain.model.members.NotificationAgreedInfo

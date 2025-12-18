@@ -5,6 +5,7 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
+import com.mulkkam.domain.model.OnboardingInfo
 
 @Stable
 class MainNavigator internal constructor(
@@ -38,13 +39,17 @@ class MainNavigator internal constructor(
     // Onboarding
     fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms)
 
-    fun navigateToOnboardingNickname() = navigate(OnboardingRoute.Nickname)
+    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo? = null) =
+        navigate(OnboardingRoute.Nickname(onboardingInfo))
 
-    fun navigateToOnboardingBioInfo() = navigate(OnboardingRoute.BioInfo)
+    fun navigateToOnboardingBioInfo(onboardingInfo: OnboardingInfo) =
+        navigate(OnboardingRoute.BioInfo(onboardingInfo))
 
-    fun navigateToOnboardingTargetAmount() = navigate(OnboardingRoute.TargetAmount)
+    fun navigateToOnboardingTargetAmount(onboardingInfo: OnboardingInfo) =
+        navigate(OnboardingRoute.TargetAmount(onboardingInfo))
 
-    fun navigateToOnboardingCups() = navigate(OnboardingRoute.Cups)
+    fun navigateToOnboardingCups(onboardingInfo: OnboardingInfo) =
+        navigate(OnboardingRoute.Cups(onboardingInfo))
 
     // Home (Bottom Tab)
     fun navigateToHome() = navigateAndClearBackStack(HomeRoute.Home)

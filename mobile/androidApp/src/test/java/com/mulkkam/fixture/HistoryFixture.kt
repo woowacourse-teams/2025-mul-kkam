@@ -3,7 +3,7 @@ package com.mulkkam.fixture
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.LocalTime

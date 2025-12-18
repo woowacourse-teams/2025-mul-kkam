@@ -17,10 +17,10 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
-import com.mulkkam.domain.model.cups.CupEmoji
+import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 
 @Composable
 fun DrinkButton(

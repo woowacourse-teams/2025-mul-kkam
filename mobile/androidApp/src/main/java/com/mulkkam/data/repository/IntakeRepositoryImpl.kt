@@ -8,12 +8,12 @@ import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
 import com.mulkkam.data.remote.model.response.intake.toDomain
 import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.intake.AchievementRate
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
 import java.time.LocalDate

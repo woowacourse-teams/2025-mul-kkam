@@ -9,7 +9,7 @@ import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
 import com.mulkkam.domain.model.intake.IntakeInfo
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO

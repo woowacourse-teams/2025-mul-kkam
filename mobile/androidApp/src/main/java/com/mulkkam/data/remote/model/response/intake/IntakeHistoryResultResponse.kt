@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.model.response.intake
 
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

@@ -3,7 +3,7 @@ package com.mulkkam.data.remote.model.response.cups
 import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
-import com.mulkkam.domain.model.intake.IntakeType
+import com.mulkkam.domain.model.IntakeType
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

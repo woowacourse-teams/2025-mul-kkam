@@ -1,18 +1,16 @@
-package com.mulkkam.domain.model.members
+package com.mulkkam.domain.model
 
-import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.Gender
-import com.mulkkam.domain.model.cups.Cup
-import java.io.Serializable
+import kotlinx.serialization.Serializable
 
+@Serializable
 data class OnboardingInfo(
-    val nickname: Nickname? = null,
-    val weight: BioWeight? = null,
+    val nickname: String? = null,
+    val weight: Int? = null,
     val gender: Gender? = null,
     val targetAmount: Int? = null,
     val isMarketingNotificationAgreed: Boolean = false,
     val isNightNotificationAgreed: Boolean = false,
     val cups: List<Cup> = emptyList(),
-) : Serializable {
+) {
     fun hasBioInfo(): Boolean = weight != null && gender != null
 }
