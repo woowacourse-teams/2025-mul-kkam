@@ -10,13 +10,17 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
+import com.mulkkam.domain.checker.ProgressChecker
 import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
+import org.koin.core.context.GlobalContext
 import java.util.UUID
 
 class ProgressWidget : AppWidgetProvider() {
+    private fun progressChecker(): ProgressChecker = GlobalContext.get().get()
+
     override fun onReceive(
         context: Context,
         intent: Intent,
@@ -41,7 +45,7 @@ class ProgressWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = context.widgetEntryPoint().progressChecker().checkCurrentAchievementRate()
+        val requestId = progressChecker().checkCurrentAchievementRate()
 
         observeWorker(context, appWidgetId, requestId)
     }

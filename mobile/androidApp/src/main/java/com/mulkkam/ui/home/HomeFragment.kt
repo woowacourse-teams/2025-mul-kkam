@@ -10,21 +10,19 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.activityViewModel
 
-@AndroidEntryPoint
 class HomeFragment :
     Fragment(),
     Refreshable {
-    private val viewModel: HomeViewModel by activityViewModels()
-    private val parentViewModel: MainViewModel by activityViewModels()
+    private val viewModel: HomeViewModel by activityViewModel()
+    private val parentViewModel: MainViewModel by activityViewModel()
     private lateinit var notificationResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
@@ -65,10 +63,10 @@ class HomeFragment :
 
     private fun initActivityResultLauncher() {
         notificationResultLauncher =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-                if (it.resultCode == Activity.RESULT_OK) {
+            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                if (result.resultCode == Activity.RESULT_OK) {
                     val isApply =
-                        it.data?.getBooleanExtra(NotificationActivity.EXTRA_KEY_IS_APPLY, false)
+                        result.data?.getBooleanExtra(NotificationActivity.EXTRA_KEY_IS_APPLY, false)
                     viewModel.loadAlarmCount()
                     if (isApply == true) {
                         viewModel.loadTodayProgressInfo()

@@ -10,9 +10,7 @@ import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.onboarding.targetamount.OnboardingTargetAmountActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
-import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class OnboardingBioInfoActivity : ComponentActivity() {
     private val viewModel: BioInfoViewModel by viewModels()
 

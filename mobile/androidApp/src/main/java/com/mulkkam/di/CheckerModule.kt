@@ -8,28 +8,12 @@ import com.mulkkam.domain.checker.AchievementHeatmapChecker
 import com.mulkkam.domain.checker.CalorieChecker
 import com.mulkkam.domain.checker.IntakeChecker
 import com.mulkkam.domain.checker.ProgressChecker
-import dagger.Binds
-import dagger.Module
-import dagger.hilt.InstallIn
-import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+import org.koin.dsl.module
 
-@Module
-@InstallIn(SingletonComponent::class)
-abstract class CheckerModule {
-    @Binds
-    @Singleton
-    abstract fun bindAchievementHeatmapChecker(impl: AchievementHeatmapCheckerImpl): AchievementHeatmapChecker
-
-    @Binds
-    @Singleton
-    abstract fun bindCalorieChecker(impl: CalorieCheckerImpl): CalorieChecker
-
-    @Binds
-    @Singleton
-    abstract fun bindProgressChecker(impl: ProgressCheckerImpl): ProgressChecker
-
-    @Binds
-    @Singleton
-    abstract fun bindIntakeChecker(impl: IntakeCheckerImpl): IntakeChecker
-}
+val checkerModule =
+    module {
+        single<AchievementHeatmapChecker> { AchievementHeatmapCheckerImpl(get()) }
+        single<CalorieChecker> { CalorieCheckerImpl(get()) }
+        single<ProgressChecker> { ProgressCheckerImpl(get()) }
+        single<IntakeChecker> { IntakeCheckerImpl(get()) }
+    }

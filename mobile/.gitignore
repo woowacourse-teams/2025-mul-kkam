@@ -217,4 +217,8 @@ fabric.properties
 
 !/gradle/wrapper/gradle-wrapper.jar
 
+# Kotlin local cache
+.kotlin/
+**/.kotlin/
+
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,kotlin

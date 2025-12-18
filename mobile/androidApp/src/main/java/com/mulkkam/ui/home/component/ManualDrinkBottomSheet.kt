@@ -21,8 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
@@ -48,7 +48,7 @@ fun ManualDrinkBottomSheet(
     onSave: (intakeType: IntakeType, amount: Int) -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ManualDrinkViewModel = hiltViewModel(),
+    viewModel: ManualDrinkViewModel = viewModel(),
 ) {
     var amountText by rememberSaveable { mutableStateOf("") }
     val intakeType: IntakeType by viewModel.intakeType.collectAsStateWithLifecycle()

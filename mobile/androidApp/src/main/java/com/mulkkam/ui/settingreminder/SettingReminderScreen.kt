@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.result.MulKkamError
@@ -31,13 +30,14 @@ import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingReminderScreen(
     navigateToBack: () -> Unit,
-    viewModel: SettingReminderViewModel = hiltViewModel(),
+    viewModel: SettingReminderViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }

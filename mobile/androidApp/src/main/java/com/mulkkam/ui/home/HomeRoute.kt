@@ -13,7 +13,6 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
@@ -31,6 +30,7 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,7 +38,7 @@ fun HomeRoute(
     navigateToNotification: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
     parentViewModel: MainViewModel = viewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current

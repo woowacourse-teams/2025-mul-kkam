@@ -11,58 +11,53 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import java.util.concurrent.atomic.AtomicReference
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
-class TokenRefresher
-    @Inject
-    constructor(
-        private val tokenPreference: TokenPreference,
-        private val devicesPreference: DevicesPreference,
-        private val authService: dagger.Lazy<AuthService>,
-    ) {
-        private val currentJob = AtomicReference<Deferred<String?>?>(null)
+class TokenRefresher(
+    private val tokenPreference: TokenPreference,
+    private val devicesPreference: DevicesPreference,
+    private val authService: AuthService,
+) {
+    private val currentJob = AtomicReference<Deferred<String?>?>(null)
 
-        fun refresh(): String? =
-            runBlocking {
-                currentJob.get()?.let { return@runBlocking it.await() }
+    fun refresh(): String? =
+        runBlocking {
+            currentJob.get()?.let { return@runBlocking it.await() }
 
-                val newJob =
-                    async(Dispatchers.IO, start = CoroutineStart.LAZY) {
-                        val refreshToken = tokenPreference.refreshToken ?: return@async null
-                        val deviceUuid = devicesPreference.deviceUuid ?: return@async null
+            val newJob =
+                async(Dispatchers.IO, start = CoroutineStart.LAZY) {
+                    val refreshToken = tokenPreference.refreshToken ?: return@async null
+                    val deviceUuid = devicesPreference.deviceUuid ?: return@async null
 
-                        val result =
-                            runCatching {
-                                authService.get().postAuthTokenReissue(
-                                    AuthReissueRequest(
-                                        refreshToken,
-                                        deviceUuid,
-                                    ),
-                                )
-                            }.getOrNull() ?: return@async null
+                    val result =
+                        runCatching {
+                            authService.postAuthTokenReissue(
+                                AuthReissueRequest(
+                                    refreshToken,
+                                    deviceUuid,
+                                ),
+                            )
+                        }.getOrNull() ?: return@async null
 
-                        return@async runCatching {
-                            val info = result.toMulKkamResult().getOrError()
-                            tokenPreference.saveAccessToken(info.accessToken)
-                            tokenPreference.saveRefreshToken(info.refreshToken)
-                            info.accessToken
-                        }.getOrElse {
-                            null
-                        }
+                    return@async runCatching {
+                        val info = result.toMulKkamResult().getOrError()
+                        tokenPreference.saveAccessToken(info.accessToken)
+                        tokenPreference.saveRefreshToken(info.refreshToken)
+                        info.accessToken
+                    }.getOrElse {
+                        null
                     }
-
-                if (currentJob.compareAndSet(null, newJob)) {
-                    try {
-                        newJob.start()
-                        newJob.await()
-                    } finally {
-                        currentJob.set(null)
-                    }
-                } else {
-                    newJob.cancel()
-                    currentJob.get()?.await()
                 }
+
+            if (currentJob.compareAndSet(null, newJob)) {
+                try {
+                    newJob.start()
+                    newJob.await()
+                } finally {
+                    currentJob.set(null)
+                }
+            } else {
+                newJob.cancel()
+                currentJob.get()?.await()
             }
-    }
+        }
+}
