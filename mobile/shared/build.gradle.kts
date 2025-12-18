@@ -61,8 +61,6 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
-                // Navigation3 스타일 API 직접 구현 (KMP iOS 완전 지원을 위해)
-                // androidx.navigation3는 아직 iOS arm64를 지원하지 않음
             }
         }
 
