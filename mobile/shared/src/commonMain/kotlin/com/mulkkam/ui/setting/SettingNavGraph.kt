@@ -46,7 +46,7 @@ object SettingNavGraph {
                 entry(route) {
                     AccountInfoScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -55,7 +55,7 @@ object SettingNavGraph {
                 entry(route) {
                     BioInfoScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -64,7 +64,7 @@ object SettingNavGraph {
                 entry(route) {
                     CupsScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -73,7 +73,7 @@ object SettingNavGraph {
                 entry(route) {
                     FeedbackScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -82,7 +82,7 @@ object SettingNavGraph {
                 entry(route) {
                     NicknameScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -91,7 +91,7 @@ object SettingNavGraph {
                 entry(route) {
                     NotificationScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -100,7 +100,7 @@ object SettingNavGraph {
                 entry(route) {
                     ReminderScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -109,7 +109,7 @@ object SettingNavGraph {
                 entry(route) {
                     TargetAmountScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -118,7 +118,7 @@ object SettingNavGraph {
                 entry(route) {
                     TermsScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }

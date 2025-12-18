@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 internal fun EncyclopediaScreen(
     padding: PaddingValues,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
 ) {
     Box(
         modifier =

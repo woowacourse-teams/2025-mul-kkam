@@ -32,7 +32,7 @@ object HomeNavGraph {
                 entry(route) {
                     EncyclopediaScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -41,7 +41,7 @@ object HomeNavGraph {
                 entry(route) {
                     NotificationScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }

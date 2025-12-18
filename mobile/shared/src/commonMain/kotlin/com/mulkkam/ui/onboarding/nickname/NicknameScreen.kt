@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 internal fun NicknameScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo?,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
     onNavigateToBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(

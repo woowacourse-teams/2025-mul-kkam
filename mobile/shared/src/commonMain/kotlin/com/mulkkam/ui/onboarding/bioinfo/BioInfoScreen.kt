@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 internal fun BioInfoScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
     onNavigateToTargetAmount: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(

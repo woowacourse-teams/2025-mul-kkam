@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 internal fun TargetAmountScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
     onNavigateToCups: (onboardingInfo: OnboardingInfo) -> Unit,
 ) {
     Box(

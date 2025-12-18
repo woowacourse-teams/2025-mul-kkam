@@ -2,10 +2,10 @@ package com.mulkkam.ui.onboarding
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import com.mulkkam.ui.navigation.NavEntry
-import com.mulkkam.ui.navigation.entry
 import com.mulkkam.ui.navigation.MainNavigator
+import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.OnboardingRoute
+import com.mulkkam.ui.navigation.entry
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoScreen
 import com.mulkkam.ui.onboarding.cups.CupsScreen
 import com.mulkkam.ui.onboarding.nickname.NicknameScreen
@@ -34,7 +34,7 @@ object OnboardingNavGraph {
                     NicknameScreen(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                         onNavigateToBioInfo = navigator::navigateToOnboardingBioInfo,
                     )
                 }
@@ -45,7 +45,7 @@ object OnboardingNavGraph {
                     BioInfoScreen(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                         onNavigateToTargetAmount = navigator::navigateToOnboardingTargetAmount,
                     )
                 }
@@ -56,7 +56,7 @@ object OnboardingNavGraph {
                     TargetAmountScreen(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                         onNavigateToCups = navigator::navigateToOnboardingCups,
                     )
                 }
@@ -67,7 +67,7 @@ object OnboardingNavGraph {
                     CupsScreen(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                         onNavigateToMain = navigator::navigateToHome,
                     )
                 }

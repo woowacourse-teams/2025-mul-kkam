@@ -12,7 +12,7 @@ import androidx.compose.ui.Modifier
 @Composable
 internal fun ReminderScreen(
     padding: PaddingValues,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
 ) {
     Box(
         modifier =

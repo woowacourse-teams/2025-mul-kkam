@@ -14,7 +14,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 internal fun CupsScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateBack: () -> Boolean,
+    onNavigateToBack: () -> Boolean,
     onNavigateToMain: () -> Unit,
 ) {
     Box(

@@ -32,7 +32,7 @@ object FriendsNavGraph {
                 entry(route) {
                     PendingFriendsScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
@@ -41,7 +41,7 @@ object FriendsNavGraph {
                 entry(route) {
                     SearchMembersScreen(
                         padding = padding,
-                        onNavigateBack = navigator::popBackStack,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }
