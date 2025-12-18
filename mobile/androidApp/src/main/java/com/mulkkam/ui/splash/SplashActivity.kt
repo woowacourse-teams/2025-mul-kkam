@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.mulkkam.HwannowScreen
+import com.mulkkam.MulKkamApp
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
@@ -25,15 +25,8 @@ class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-//            MulkkamTheme {
-//                SplashScreen {
-//                    isSplashFinished = true
-//                    navigateToNextScreen(viewModel.authUiState.value)
-//                }
-//            }
-            HwannowScreen()
+            MulKkamApp()
         }
-//        initObservers()
     }
 
     private fun initObservers() {
