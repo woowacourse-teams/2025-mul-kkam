@@ -48,7 +48,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:${{ github.sha }}
 
   deploy:
-    runs-on: [ self-hosted, linux, dev ]
+    runs-on: [ self-hosted, linux, x64, dev ]
     needs: build-and-push
     env:
       DEV_WAS_IP: ${{ secrets.DEV_WAS_IP }}
