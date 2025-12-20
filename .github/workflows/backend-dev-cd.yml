@@ -54,6 +54,7 @@ jobs:
       DEV_WAS_IP: ${{ secrets.DEV_WAS_IP }}
       DEV_NGINX_IP: ${{ secrets.DEV_NGINX_IP }}
       DEV_NGINX_PEM_KEY: ${{ secrets.DEV_NGINX_PEM_KEY }}
+
     steps:
       - name: Create/Update .env for container
         run: |
