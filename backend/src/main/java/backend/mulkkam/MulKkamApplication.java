@@ -9,5 +9,4 @@ public class MulKkamApplication {
         SpringApplication.run(MulKkamApplication.class, args);
 
     }
-
 }
