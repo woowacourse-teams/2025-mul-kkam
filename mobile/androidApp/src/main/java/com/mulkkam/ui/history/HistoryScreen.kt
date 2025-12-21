@@ -34,7 +34,6 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.history.component.DailyWaterIntakeChart
 import com.mulkkam.ui.history.component.IntakeHistoryItem
@@ -214,7 +213,7 @@ private suspend fun handleDeleteSuccess(
 @Preview(showBackground = true)
 @Composable
 private fun HistoryScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         HistoryScreen()
     }
 }

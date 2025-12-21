@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -56,7 +55,7 @@ fun DrinkMenuItem(
 @Preview(showBackground = true)
 @Composable
 private fun DrinkMenuItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         DrinkMenuItem(
             label = "스타벅스 텀블러",
             icon = {

@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -21,7 +21,7 @@ class SettingBioInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingBioInfoScreen(
                     navigateToBack = ::finish,
                     navigateToHealthConnect = {

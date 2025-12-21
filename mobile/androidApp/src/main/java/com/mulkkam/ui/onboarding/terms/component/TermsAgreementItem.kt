@@ -17,7 +17,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
@@ -80,7 +79,7 @@ private fun getCheckIconTint(isChecked: Boolean): Color =
 @Preview(showBackground = true, name = "체크된 상태일 때")
 @Composable
 private fun TermsAgreementItemPreview_Checked() {
-    MulkkamTheme {
+    MulKkamTheme {
         TermsAgreementItem(
             termsLabel = "서비스 이용 약관 동의 (필수)",
             isChecked = true,
@@ -93,7 +92,7 @@ private fun TermsAgreementItemPreview_Checked() {
 @Preview(showBackground = true, name = "체크되지 않은 상태일 때")
 @Composable
 private fun TermsAgreementItemPreview_Unchecked() {
-    MulkkamTheme {
+    MulKkamTheme {
         TermsAgreementItem(
             termsLabel = "서비스 이용 약관 동의 (필수)",
             isChecked = false,

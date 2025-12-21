@@ -28,7 +28,7 @@ import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.friend.FriendsResult
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.friends.component.FriendItem
@@ -177,7 +177,7 @@ private fun FriendItems(
 @Preview(showBackground = true)
 @Composable
 private fun FriendsScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         val snackbarHostState = remember { SnackbarHostState() }
         FriendsScreen(
             navigateToSearch = {},
@@ -190,7 +190,7 @@ private fun FriendsScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FriendItemsPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendItems(
             friends =
                 listOf(

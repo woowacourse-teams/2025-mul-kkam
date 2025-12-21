@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -85,7 +85,7 @@ private fun CheckBoxUnSelected(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun CheckBoxSelectedPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         CheckBoxSelected()
     }
 }
@@ -93,7 +93,7 @@ private fun CheckBoxSelectedPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun CheckBoxUnSelectedPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         CheckBoxUnSelected()
     }
 }

@@ -18,7 +18,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.component.SettingTitleItem
 import com.mulkkam.ui.setting.model.SettingItem
@@ -118,7 +117,7 @@ fun SettingScreen(navigateToSettingType: (SettingType) -> Unit) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewSettingScreen() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingScreen(
             navigateToSettingType = {},
         )

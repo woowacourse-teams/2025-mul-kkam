@@ -30,7 +30,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
@@ -128,7 +127,7 @@ fun MulKkamInfoDialog(
 @Preview(showBackground = true)
 @Composable
 private fun MulKkamInfoDialogPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamInfoDialog(
             title = "돈가스먹는환노\n친구 신청을 수락하시겠습니까?",
             description = "친구에게 물풍선을 던져 보세요",

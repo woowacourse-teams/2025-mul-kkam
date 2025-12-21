@@ -16,12 +16,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.mulkkam.R
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeHistory
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.util.ImageShape
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
@@ -77,7 +76,7 @@ fun IntakeHistoryItem(
 @Preview(showBackground = true)
 @Composable
 private fun IntakeHistoryItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         IntakeHistoryItem(
             intakeHistory =
                 IntakeHistory(

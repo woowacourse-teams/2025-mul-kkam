@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 class SettingTermsActivity : ComponentActivity() {
     private val viewModel: SettingTermsViewModel by viewModels()
@@ -14,7 +14,7 @@ class SettingTermsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingTermsRoute(
                     viewModel = viewModel,
                     navigateToBack = ::finish,

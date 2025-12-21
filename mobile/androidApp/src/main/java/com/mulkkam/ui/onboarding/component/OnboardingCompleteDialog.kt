@@ -21,7 +21,6 @@ import com.mulkkam.ui.component.ColoredText
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
@@ -87,7 +86,7 @@ fun OnboardingCompleteDialog(
 @Preview(showBackground = true)
 @Composable
 private fun OnboardingCompleteDialogPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         OnboardingCompleteDialog(
             nickname = "돈가스먹는환노",
             onConfirm = {},

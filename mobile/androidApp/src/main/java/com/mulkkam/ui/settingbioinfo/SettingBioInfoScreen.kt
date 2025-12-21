@@ -28,7 +28,7 @@ import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.component.GenderSection
@@ -149,7 +149,7 @@ fun SettingBioInfoScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingBioInfoScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingBioInfoScreen(
             navigateToBack = {},
             navigateToHealthConnect = {},

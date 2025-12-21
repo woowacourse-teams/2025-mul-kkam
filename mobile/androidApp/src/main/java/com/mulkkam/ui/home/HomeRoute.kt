@@ -16,8 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeInfo
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamToastState

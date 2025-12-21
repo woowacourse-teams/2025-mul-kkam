@@ -23,7 +23,6 @@ import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Primary300
@@ -116,7 +115,7 @@ private fun getColorByDate(date: LocalDate): Color {
 @Preview(showBackground = true, name = "토요일 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_Saturday() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(
@@ -133,7 +132,7 @@ private fun WaterIntakeChartPreview_Saturday() {
 @Preview(showBackground = true, name = "일요일 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_Sunday() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(
@@ -150,7 +149,7 @@ private fun WaterIntakeChartPreview_Sunday() {
 @Preview(showBackground = true, name = "목표량을 전부 채운 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_FullAchievementRate() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(

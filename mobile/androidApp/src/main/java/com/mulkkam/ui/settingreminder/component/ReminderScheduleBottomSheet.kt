@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import java.time.LocalTime
@@ -108,7 +107,7 @@ fun ReminderScheduleBottomSheet(
 @Preview(showBackground = true)
 @Composable
 private fun ReminderScheduleBottomSheetPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleBottomSheet(
             sheetState = rememberStandardBottomSheetState(),
             onDismiss = {},

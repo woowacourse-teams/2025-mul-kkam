@@ -20,7 +20,6 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import java.time.Duration
 import java.time.LocalDateTime
 
@@ -96,7 +95,7 @@ private fun formatRemainingTime(
 @Preview(showBackground = true, name = "n분 전")
 @Composable
 private fun ReceivedRequestItemPreview_Minute() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReceivedRequestItem(
             receivedRequest =
                 FriendsRequestInfo(
@@ -114,7 +113,7 @@ private fun ReceivedRequestItemPreview_Minute() {
 @Preview(showBackground = true, name = "n시간 전")
 @Composable
 private fun ReceivedRequestItemPreview_Hour() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReceivedRequestItem(
             receivedRequest =
                 FriendsRequestInfo(
@@ -132,7 +131,7 @@ private fun ReceivedRequestItemPreview_Hour() {
 @Preview(showBackground = true, name = "n일 전")
 @Composable
 private fun ReceivedRequestItemPreview_Day() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReceivedRequestItem(
             receivedRequest =
                 FriendsRequestInfo(

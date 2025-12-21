@@ -1,5 +1,6 @@
 package com.mulkkam.domain.model.intake
 
+import com.mulkkam.domain.model.IntakeType
 import java.time.LocalTime
 
 data class IntakeHistory(

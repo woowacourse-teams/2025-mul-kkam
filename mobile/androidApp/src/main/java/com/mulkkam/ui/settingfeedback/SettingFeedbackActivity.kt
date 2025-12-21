@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import org.koin.android.ext.android.inject
 
 class SettingFeedbackActivity : ComponentActivity() {
@@ -15,7 +15,7 @@ class SettingFeedbackActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingFeedbackRoute(
                     logger = logger,
                     navigateToBack = ::finish,

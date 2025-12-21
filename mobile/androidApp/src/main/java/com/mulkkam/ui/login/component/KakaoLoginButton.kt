@@ -22,7 +22,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.KakaoYellow
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun KakaoLoginButton(
@@ -69,7 +68,7 @@ fun KakaoLoginButton(
 @Preview(showBackground = true)
 @Composable
 fun KakaoLoginButtonPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         KakaoLoginButton(
             onClick = {},
             isEnabled = true,

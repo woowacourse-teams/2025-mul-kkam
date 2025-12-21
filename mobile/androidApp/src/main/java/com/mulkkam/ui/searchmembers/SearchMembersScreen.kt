@@ -40,7 +40,7 @@ import com.mulkkam.ui.component.MulKkamTextField
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.component.MulKkamInfoDialog
 import com.mulkkam.ui.model.MulKkamUiState
@@ -249,7 +249,7 @@ private fun handleAcceptFriendsAction(
 @Preview(showBackground = true)
 @Composable
 private fun SearchMembersScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SearchMembersScreen(
             navigateToBack = {},
             onFriendAccepted = {},

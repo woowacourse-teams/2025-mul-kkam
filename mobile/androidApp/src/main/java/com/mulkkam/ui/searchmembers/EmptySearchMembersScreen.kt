@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun EmptySearchMembersScreen(modifier: Modifier = Modifier) {
@@ -41,7 +40,7 @@ fun EmptySearchMembersScreen(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun EmptySearchMembersScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         EmptySearchMembersScreen(modifier = Modifier.fillMaxSize())
     }
 }

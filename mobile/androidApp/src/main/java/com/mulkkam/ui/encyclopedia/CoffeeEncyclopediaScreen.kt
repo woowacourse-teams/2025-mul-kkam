@@ -14,7 +14,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary300
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.encyclopedia.component.CoffeeEncyclopediaTopAppBar
@@ -111,7 +110,7 @@ fun CoffeeEncyclopediaScreen(
 @Preview(showBackground = true)
 @Composable
 private fun CoffeeEncyclopediaScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         CoffeeEncyclopediaScreen(navigateToBack = {}, navigateToInformationSource = {})
     }
 }

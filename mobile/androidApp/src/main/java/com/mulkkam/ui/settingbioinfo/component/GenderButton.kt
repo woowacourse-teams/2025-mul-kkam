@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -54,7 +53,7 @@ fun GenderButton(
 @Preview(showBackground = true, name = "선택된 상태일 때")
 @Composable
 private fun GenderButtonPreview_Selected() {
-    MulkkamTheme {
+    MulKkamTheme {
         GenderButton(
             text = "남성",
             isSelected = true,
@@ -66,7 +65,7 @@ private fun GenderButtonPreview_Selected() {
 @Preview(showBackground = true, name = "선택되지 않은 상태일 때")
 @Composable
 private fun GenderButtonPreview_Unselected() {
-    MulkkamTheme {
+    MulKkamTheme {
         GenderButton(
             text = "남성",
             isSelected = false,

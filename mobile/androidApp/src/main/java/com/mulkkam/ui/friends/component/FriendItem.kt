@@ -22,7 +22,6 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
 
@@ -88,7 +87,7 @@ fun FriendItem(
 @Preview(showBackground = true)
 @Composable
 private fun FriendItemViewingPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendItem(
             friend = Friend(id = 1L, nickname = "공백"),
             displayMode = FriendsDisplayMode.VIEWING,
@@ -101,7 +100,7 @@ private fun FriendItemViewingPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun FriendItemEditingPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendItem(
             friend = Friend(id = 1L, nickname = "공백"),
             displayMode = FriendsDisplayMode.EDITING,

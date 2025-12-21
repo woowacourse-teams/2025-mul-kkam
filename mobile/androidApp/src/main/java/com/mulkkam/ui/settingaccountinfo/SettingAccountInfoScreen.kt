@@ -28,7 +28,6 @@ import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingTopAppBar
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -123,7 +122,7 @@ private fun SettingAccountInfoItem(
 @Preview(showBackground = true)
 @Composable
 private fun SettingAccountInfoScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingAccountInfoScreen(
             items =
                 listOf(
@@ -141,7 +140,7 @@ private fun SettingAccountInfoScreenPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun SettingAccountInfoItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingAccountInfoItem(
             item = SettingAccountUiModel(title = R.string.setting_account_info_logout),
             onClick = {},

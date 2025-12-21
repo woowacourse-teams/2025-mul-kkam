@@ -18,7 +18,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun SettingNormalItem(
@@ -51,7 +50,7 @@ fun SettingNormalItem(
 @Preview(showBackground = true)
 @Composable
 private fun SettingNormalItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingNormalItem(label = "서비스 운영 정책", onClick = {})
     }
 }
