@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.notification.NotificationType
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import java.time.LocalDateTime
 
@@ -79,7 +79,7 @@ fun NotificationItemComponent(
 @Preview(showBackground = true, name = "공지 알림 프리뷰")
 @Composable
 private fun NoticeNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(
@@ -100,7 +100,7 @@ private fun NoticeNotificationItemComponentPreview() {
 @Preview(showBackground = true, name = "제안 알림 프리뷰")
 @Composable
 private fun SuggestionNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(
@@ -121,7 +121,7 @@ private fun SuggestionNotificationItemComponentPreview() {
 @Preview(showBackground = true, name = "읽지 않은 알림 프리뷰")
 @Composable
 private fun UnreadNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(

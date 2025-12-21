@@ -17,7 +17,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun HomeCharacter(
@@ -69,7 +68,7 @@ fun HomeCharacter(
 @Preview(showBackground = true)
 @Composable
 private fun HomeCharacterPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         HomeCharacter(
             isDrinking = false,
             comment = "오늘도 물 한잔 어때요?",

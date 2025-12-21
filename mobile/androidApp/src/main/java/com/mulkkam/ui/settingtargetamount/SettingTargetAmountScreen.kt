@@ -30,7 +30,6 @@ import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
@@ -176,7 +175,7 @@ private fun handleNumericInput(
 @Preview(showBackground = true)
 @Composable
 private fun SettingTargetAmountScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingTargetAmountScreen(navigateToBack = {})
     }
 }

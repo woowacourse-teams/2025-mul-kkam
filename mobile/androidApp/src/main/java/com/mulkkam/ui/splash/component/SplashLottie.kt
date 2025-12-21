@@ -15,7 +15,7 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.airbnb.lottie.compose.rememberLottieDynamicProperties
 import com.airbnb.lottie.compose.rememberLottieDynamicProperty
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 
 @Composable
@@ -52,7 +52,7 @@ fun SplashLottie(
 @Preview(showBackground = true)
 @Composable
 private fun SplashLottiePreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SplashLottie(progress = { 0.5f })
     }
 }

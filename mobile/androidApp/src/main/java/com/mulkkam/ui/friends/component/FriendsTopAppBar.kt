@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
 
@@ -129,7 +128,7 @@ private fun FriendRequestIconButton(
 @Preview(showBackground = false)
 @Composable
 private fun FriendsTopAppBarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendsTopAppBar(
             onSearchClick = {},
             onFriendRequestsClick = {},

@@ -5,7 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingTargetAmountActivity : ComponentActivity() {
@@ -14,7 +14,7 @@ class SettingTargetAmountActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingTargetAmountScreen(
                     navigateToBack = ::finish,
                     viewModel = viewModel,

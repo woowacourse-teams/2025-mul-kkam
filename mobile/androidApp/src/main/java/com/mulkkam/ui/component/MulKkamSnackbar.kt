@@ -35,7 +35,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.GrayAlert
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 
 private val DEFAULT_SNACKBAR_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
@@ -237,7 +236,7 @@ suspend fun SnackbarHostState.showMulKkamActionSnackbar(
 @Preview(showBackground = true)
 @Composable
 private fun MulKkamSnackbarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamSnackbar(
             message = "돈먹환돈먹환돈먹환 안녕하세요",
             iconResourceId = R.drawable.ic_info_circle,
@@ -249,7 +248,7 @@ private fun MulKkamSnackbarPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun MulKkamActionSnackbarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamActionSnackbar(
             message = "환노는 돈까스를 먹으러",
             iconResourceId = R.drawable.ic_info_circle,

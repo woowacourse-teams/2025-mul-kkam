@@ -19,7 +19,6 @@ import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.ImageShape
 
@@ -63,7 +62,7 @@ fun DrinkCupOption(
 @Preview(showBackground = true)
 @Composable
 private fun DrinkCupOptionPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         DrinkCupOption(
             emojiUrl = "https://example.com/",
             label = "200ml",

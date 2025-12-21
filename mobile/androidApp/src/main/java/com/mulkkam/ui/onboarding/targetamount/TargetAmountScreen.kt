@@ -21,7 +21,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -132,7 +131,7 @@ private fun handleNumericInput(
 @Preview(showBackground = true)
 @Composable
 private fun TargetAmountScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         TargetAmountScreen(
             navigateToBack = {},
             navigateToNextStep = {},

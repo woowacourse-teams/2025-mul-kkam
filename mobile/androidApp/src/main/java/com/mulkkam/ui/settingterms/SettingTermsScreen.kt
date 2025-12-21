@@ -11,7 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.component.SettingTopAppBar
@@ -58,7 +58,7 @@ private fun SettingTermsScreenPreview() {
             TermsUiModel(labelId = R.string.setting_terms_agree_privacy),
             TermsUiModel(labelId = R.string.setting_terms_agree_health_connect),
         )
-    MulkkamTheme {
+    MulKkamTheme {
         SettingTermsScreen(terms = previewTerms, onTermsClick = {}, onBackClick = {})
     }
 }

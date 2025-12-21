@@ -12,7 +12,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.component.ColoredText
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import java.util.Locale
 
@@ -59,7 +58,7 @@ fun RecommendedTargetAmount(
 @Preview(showBackground = true)
 @Composable
 private fun RecommendedTargetAmountPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         RecommendedTargetAmount(nickname = "돈가스먹는환노", recommended = 1800)
     }
 }

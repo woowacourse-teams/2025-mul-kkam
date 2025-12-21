@@ -39,7 +39,6 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -139,7 +138,7 @@ fun SettingWeightBottomSheet(
 @Preview(showBackground = true)
 @Composable
 private fun SettingWeightBottomSheetPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingWeightBottomSheet(
             initialWeight = 60,
             onDismiss = {},

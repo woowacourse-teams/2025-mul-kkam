@@ -26,7 +26,7 @@ private val LocalTypography =
     staticCompositionLocalOf<Typography> { error("No Typography provided") }
 
 @Composable
-fun MulkkamTheme(
+fun MulKkamTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit,

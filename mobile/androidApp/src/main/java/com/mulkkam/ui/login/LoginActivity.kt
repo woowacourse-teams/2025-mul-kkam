@@ -12,7 +12,7 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewModel.checkAppVersion(getAppVersion())
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 LoginRoute(
                     viewModel = viewModel,
                     onLoginWithKakao = ::loginWithKakao,

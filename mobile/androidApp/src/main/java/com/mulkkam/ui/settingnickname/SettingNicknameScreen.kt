@@ -35,7 +35,6 @@ import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
@@ -150,7 +149,7 @@ fun SettingNicknameScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingNicknameScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingNicknameScreen(navigateToBack = {})
     }
 }

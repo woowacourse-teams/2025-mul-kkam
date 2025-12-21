@@ -12,7 +12,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
 fun OnboardingCompleteLottie(modifier: Modifier = Modifier) {
@@ -35,7 +35,7 @@ fun OnboardingCompleteLottie(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 private fun OnboardingCompleteLottiePreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         OnboardingCompleteLottie()
     }
 }

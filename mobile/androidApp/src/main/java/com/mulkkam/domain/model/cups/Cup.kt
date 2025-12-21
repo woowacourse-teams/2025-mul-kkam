@@ -1,7 +1,8 @@
 package com.mulkkam.domain.model.cups
 
+import com.mulkkam.domain.model.CupEmoji
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.Cups.Companion.REPRESENT_CUP_RANK
-import com.mulkkam.domain.model.intake.IntakeType
 import java.io.Serializable
 
 data class Cup(

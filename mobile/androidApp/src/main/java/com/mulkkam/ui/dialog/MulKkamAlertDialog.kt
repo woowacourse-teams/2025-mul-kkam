@@ -30,7 +30,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
@@ -130,7 +129,7 @@ fun MulKkamAlertDialog(
 @Preview(showBackground = true)
 @Composable
 private fun MulKkamAlertDialogPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamAlertDialog(
             title = "돈가스먹는환노\n친구 신청을 취소하시겠습니까?",
             onConfirm = {},

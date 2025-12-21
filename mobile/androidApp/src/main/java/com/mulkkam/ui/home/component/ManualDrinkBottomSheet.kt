@@ -24,8 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.R
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.BottomSheetHandle
 import com.mulkkam.ui.component.BottomSheetHeader

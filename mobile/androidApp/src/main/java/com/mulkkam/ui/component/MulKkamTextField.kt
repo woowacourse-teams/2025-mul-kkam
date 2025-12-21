@@ -22,7 +22,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 
@@ -105,7 +104,7 @@ enum class MulKkamTextFieldState {
 @Preview(showBackground = true, name = "텍스트 필드가 비어 있는 경우")
 @Composable
 private fun MulKkamTextFieldPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "",
             onValueChanged = {},
@@ -117,7 +116,7 @@ private fun MulKkamTextFieldPreview() {
 @Preview(showBackground = true, name = "텍스트 필드가 NORMAL 상태인 경우")
 @Composable
 private fun MulKkamTextFieldPreview_Normal() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "돈가스먹는환노",
             onValueChanged = {},
@@ -130,7 +129,7 @@ private fun MulKkamTextFieldPreview_Normal() {
 @Preview(showBackground = true, name = "텍스트 필드가 ERROR 상태인 경우")
 @Composable
 private fun MulKkamTextFieldPreview_Error() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "돈가스안먹는환노",
             onValueChanged = {},
@@ -143,7 +142,7 @@ private fun MulKkamTextFieldPreview_Error() {
 @Preview(showBackground = true, name = "텍스트 필드가 VALID 상태인 경우")
 @Composable
 private fun MulKkamTextFieldPreview_Valid() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "돈가스좋아하는환노",
             onValueChanged = {},
@@ -156,7 +155,7 @@ private fun MulKkamTextFieldPreview_Valid() {
 @Preview(showBackground = true, name = "prefix가 붙은 경우")
 @Composable
 private fun MulKkamTextFieldPreview_Prefix() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "돈가스먹는환노",
             onValueChanged = {},
@@ -177,7 +176,7 @@ private fun MulKkamTextFieldPreview_Prefix() {
 @Preview(showBackground = true, name = "suffix가 붙은 경우")
 @Composable
 private fun MulKkamTextFieldPreview_Suffix() {
-    MulkkamTheme {
+    MulKkamTheme {
         MulKkamTextField(
             value = "돈가스먹는환노",
             onValueChanged = {},

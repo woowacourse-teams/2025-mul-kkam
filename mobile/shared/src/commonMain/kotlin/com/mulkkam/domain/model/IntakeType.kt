@@ -1,12 +1,14 @@
-package com.mulkkam.domain.model.intake
+package com.mulkkam.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class IntakeType {
     WATER,
     COFFEE,
     UNKNOWN,
     ;
 
-    // TODO: 추후 서버에서 받아오는 IntakeType 반영
     fun toLabel(): String =
         when (this) {
             WATER -> "물"

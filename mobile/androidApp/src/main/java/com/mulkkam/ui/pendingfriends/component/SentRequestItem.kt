@@ -17,7 +17,6 @@ import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun SentRequestItem(
@@ -59,7 +58,7 @@ fun SentRequestItem(
 @Preview(showBackground = true)
 @Composable
 private fun SentRequestItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SentRequestItem(
             FriendsRequestInfo(
                 memberId = 1L,

@@ -9,7 +9,7 @@ import androidx.activity.OnBackPressedCallback
 import androidx.activity.compose.setContent
 import com.mulkkam.R
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -20,7 +20,7 @@ class NotificationActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 NotificationScreen(
                     navigateToBack = { finishWithResult() },
                     viewModel = viewModel,

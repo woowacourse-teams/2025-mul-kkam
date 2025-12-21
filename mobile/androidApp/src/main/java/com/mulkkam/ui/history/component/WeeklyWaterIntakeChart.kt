@@ -26,7 +26,6 @@ import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.designsystem.White
@@ -138,7 +137,7 @@ fun WeeklyWaterIntakeChart(
 @Preview(showBackground = true, name = "이번주 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_ThisWeek() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =
@@ -203,7 +202,7 @@ private fun WeeklyWaterIntakeChartPreview_ThisWeek() {
 @Preview(showBackground = true, name = "다른 주 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_DifferentWeek() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =
@@ -269,7 +268,7 @@ private fun WeeklyWaterIntakeChartPreview_DifferentWeek() {
 @Preview(showBackground = true, name = "다른 연도의 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_DifferentYear() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =

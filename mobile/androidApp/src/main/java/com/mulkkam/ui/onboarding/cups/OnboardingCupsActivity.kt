@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
@@ -25,7 +25,7 @@ class OnboardingCupsActivity : ComponentActivity() {
         viewModel.updateOnboardingInfo(onboardingInfo = onboardingInfo ?: return)
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 CupsScreen(
                     navigateToBack = ::finish,
                     navigateToCoffeeEncyclopedia = { startActivity(CoffeeEncyclopediaActivity.newIntent(this)) },

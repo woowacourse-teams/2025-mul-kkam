@@ -6,7 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.cups.OnboardingCupsActivity
 import com.mulkkam.ui.util.extensions.getSerializableCompat
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -28,7 +28,7 @@ class OnboardingTargetAmountActivity : ComponentActivity() {
         )
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 TargetAmountScreen(
                     navigateToBack = ::finish,
                     navigateToNextStep = { targetAmount ->

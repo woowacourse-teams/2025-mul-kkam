@@ -1,5 +1,8 @@
-package com.mulkkam.domain.model.bio
+package com.mulkkam.domain.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 enum class Gender {
     MALE,
     FEMALE,
@@ -10,7 +13,7 @@ enum class Gender {
             when (gender) {
                 MALE.name -> MALE
                 FEMALE.name -> FEMALE
-                else -> throw IllegalArgumentException()
+                else -> throw IllegalArgumentException("Unknown gender: $gender")
             }
     }
 }

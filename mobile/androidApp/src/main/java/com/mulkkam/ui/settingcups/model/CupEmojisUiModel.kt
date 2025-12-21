@@ -1,6 +1,6 @@
 package com.mulkkam.ui.settingcups.model
 
-import com.mulkkam.domain.model.cups.CupEmoji
+import com.mulkkam.domain.model.CupEmoji
 
 data class CupEmojisUiModel(
     val cupEmojis: List<CupEmojiUiModel>,

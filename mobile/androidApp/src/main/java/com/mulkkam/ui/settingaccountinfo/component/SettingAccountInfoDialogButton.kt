@@ -14,7 +14,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -49,7 +48,7 @@ fun SettingAccountInfoDialogButton(
 @Preview(showBackground = true)
 @Composable
 private fun SettingAccountInfoDialogButtonPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingAccountInfoDialogButton(
             text = "Preview",
             containerColor = Primary100,

@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.component.RoundedSwitch
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun SettingSwitchItem(
@@ -45,7 +44,7 @@ fun SettingSwitchItem(
 @Preview(showBackground = true)
 @Composable
 private fun SettingSwitchItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingSwitchItem(label = "마케팅 수신 허용", checked = true, onCheckedChange = {})
     }
 }

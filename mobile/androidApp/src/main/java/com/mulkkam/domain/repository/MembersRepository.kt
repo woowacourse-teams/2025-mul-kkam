@@ -1,7 +1,7 @@
 package com.mulkkam.domain.repository
 
+import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
 import com.mulkkam.domain.model.members.MemberSearchResult
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
