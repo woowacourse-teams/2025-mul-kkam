@@ -2,10 +2,9 @@ package com.mulkkam.data.remote.model.response.notifications
 
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.notification.NotificationType
+import kotlinx.datetime.LocalDateTime
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Serializable
 data class ReadNotificationResponse(
@@ -30,7 +29,7 @@ fun ReadNotificationResponse.toDomain(): Notification =
         id = id,
         title = content,
         type = NotificationType.from(type),
-        createdAt = LocalDateTime.parse(createdAt, DateTimeFormatter.ISO_DATE_TIME),
+        createdAt = LocalDateTime.parse(createdAt),
         recommendedTargetAmount = recommendedTargetAmount ?: 0,
         isRead = isRead,
         applyRecommendAmount = applyRecommendAmount,

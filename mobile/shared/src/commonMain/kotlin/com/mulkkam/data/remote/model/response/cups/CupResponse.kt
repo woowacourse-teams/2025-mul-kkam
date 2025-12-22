@@ -1,7 +1,7 @@
 package com.mulkkam.data.remote.model.response.cups
 
+import com.mulkkam.domain.model.Cup
 import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import kotlinx.serialization.SerialName
