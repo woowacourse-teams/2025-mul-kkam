@@ -11,10 +11,12 @@ class HealthRepositoryImpl(
     private val service: HealthService,
 ) : HealthRepository {
     override suspend fun getActiveCaloriesBurned(
-        start: Instant,
-        end: Instant,
+        startEpochMillis: Long,
+        endEpochMillis: Long,
     ): MulKkamResult<ExerciseCalorie> =
         runCatching {
+            val start = Instant.ofEpochMilli(startEpochMillis)
+            val end = Instant.ofEpochMilli(endEpochMillis)
             val kcal = service.getCalories(start, end)
             ExerciseCalorie(kcal)
         }.fold(

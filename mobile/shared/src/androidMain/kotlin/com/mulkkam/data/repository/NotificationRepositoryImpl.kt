@@ -8,7 +8,7 @@ import com.mulkkam.data.remote.service.NotificationsService
 import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.NotificationRepository
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 class NotificationRepositoryImpl(
     private val notificationService: NotificationsService,

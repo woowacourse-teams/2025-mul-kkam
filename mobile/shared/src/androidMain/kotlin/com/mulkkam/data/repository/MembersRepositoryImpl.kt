@@ -20,8 +20,7 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.MembersRepository
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.LocalDate
 
 class MembersRepositoryImpl(
     private val membersService: MembersService,
@@ -77,8 +76,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
-        val result =
-            membersService.getMembersProgressInfo(date.format(DateTimeFormatter.ISO_LOCAL_DATE))
+        val result = membersService.getMembersProgressInfo(date.toString())
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },

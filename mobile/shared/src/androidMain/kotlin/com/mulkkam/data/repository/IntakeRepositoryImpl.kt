@@ -16,9 +16,8 @@ import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.IntakeRepository
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 class IntakeRepositoryImpl(
     private val intakeService: IntakeService,
@@ -27,7 +26,7 @@ class IntakeRepositoryImpl(
         from: LocalDate,
         to: LocalDate,
     ): MulKkamResult<IntakeHistorySummaries> {
-        val result = intakeService.getIntakeHistory(dateToString(from), dateToString(to))
+        val result = intakeService.getIntakeHistory(from.toString(), to.toString())
         return result.fold(
             onSuccess = { intakeHistorySummary ->
                 MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
@@ -40,7 +39,7 @@ class IntakeRepositoryImpl(
         from: LocalDate,
         to: LocalDate,
     ): MulKkamResult<List<AchievementRate>> {
-        val result = intakeService.getAchievementRates(dateToString(from), dateToString(to))
+        val result = intakeService.getAchievementRates(from.toString(), to.toString())
         return result.fold(
             onSuccess = { response -> MulKkamResult(data = response.toDomain()) },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
@@ -82,8 +81,6 @@ class IntakeRepositoryImpl(
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
     }
-
-    private fun dateToString(date: LocalDate) = date.format(formatter)
 
     override suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit> {
         val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
@@ -130,9 +127,5 @@ class IntakeRepositoryImpl(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
         )
-    }
-
-    companion object {
-        val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     }
 }

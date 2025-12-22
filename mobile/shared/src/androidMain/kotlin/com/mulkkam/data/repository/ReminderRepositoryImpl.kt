@@ -10,7 +10,7 @@ import com.mulkkam.domain.model.reminder.ReminderConfig
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.ReminderRepository
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
 
 class ReminderRepositoryImpl(
     private val reminderService: ReminderService,
