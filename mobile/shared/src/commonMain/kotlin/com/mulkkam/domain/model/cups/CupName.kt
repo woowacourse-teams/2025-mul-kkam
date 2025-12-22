@@ -1,0 +1,27 @@
+package com.mulkkam.domain.model.cups
+
+import com.mulkkam.domain.model.result.MulKkamError
+import kotlinx.serialization.Serializable
+import kotlin.jvm.JvmInline
+
+@JvmInline
+@Serializable
+value class CupName(
+    val value: String,
+) {
+    init {
+        val trimmed: String = value.trim()
+
+        check(trimmed.length in CUP_NAME_LENGTH_MIN..CUP_NAME_LENGTH_MAX) {
+            throw MulKkamError.SettingCupsError.InvalidNicknameLength
+        }
+        check(trimmed.all { it.isLetterOrDigit() || it.isWhitespace() }) {
+            throw MulKkamError.SettingCupsError.InvalidNicknameCharacters
+        }
+    }
+
+    companion object {
+        const val CUP_NAME_LENGTH_MIN: Int = 1
+        const val CUP_NAME_LENGTH_MAX: Int = 10
+    }
+}
