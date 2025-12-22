@@ -1,8 +1,8 @@
 package com.mulkkam.fixture
 
+import com.mulkkam.domain.model.Cup
 import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.domain.model.cups.Cup
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 

@@ -1,5 +1,6 @@
 package com.mulkkam.domain.model.bio
 
+import com.mulkkam.domain.model.Gender
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows

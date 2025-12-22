@@ -1,8 +1,8 @@
 package com.mulkkam.domain.model.member
 
 import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.bio.BioWeight
-import com.mulkkam.domain.model.members.OnboardingInfo
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 
