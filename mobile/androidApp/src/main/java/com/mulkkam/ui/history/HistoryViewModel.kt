@@ -77,7 +77,6 @@ class HistoryViewModel(
     }
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
-        // kotlinx.datetime에서 월요일 찾기
         val daysFromMonday = (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
         val monday = targetDate.minus(daysFromMonday, DateTimeUnit.DAY)
 

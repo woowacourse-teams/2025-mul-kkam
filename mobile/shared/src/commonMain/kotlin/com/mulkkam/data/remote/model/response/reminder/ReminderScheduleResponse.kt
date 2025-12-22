@@ -14,7 +14,6 @@ data class ReminderScheduleResponse(
 )
 
 fun ReminderScheduleResponse.toDomain(): ReminderSchedule {
-    // Parse "HH:mm" or "HH:mm:ss" format
     val parts = schedule.split(":")
     val hour = parts[0].toInt()
     val minute = parts[1].toInt()

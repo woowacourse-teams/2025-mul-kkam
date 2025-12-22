@@ -21,7 +21,6 @@ data class IntakeHistoryResponse(
 )
 
 fun IntakeHistoryResponse.toDomain(): IntakeHistory {
-    // Parse "HH:mm:ss" format
     val parts = dateTime.split(":")
     val hour = parts[0].toInt()
     val minute = parts[1].toInt()
