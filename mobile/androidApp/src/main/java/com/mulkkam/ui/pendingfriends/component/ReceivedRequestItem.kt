@@ -20,8 +20,11 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import java.time.Duration
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 private const val HOURS_PER_DAY: Int = 24
 
@@ -31,7 +34,10 @@ fun ReceivedRequestItem(
     onAccept: () -> Unit,
     onReject: () -> Unit,
     modifier: Modifier = Modifier,
-    currentTime: LocalDateTime = LocalDateTime.now(),
+    currentTime: LocalDateTime =
+        Clock.System
+            .now()
+            .toLocalDateTime(TimeZone.currentSystemDefault()),
 ) {
     Column(
         modifier = modifier,
@@ -74,9 +80,12 @@ private fun formatRemainingTime(
     currentTime: LocalDateTime,
     requestTime: LocalDateTime,
 ): String {
-    val duration = Duration.between(requestTime, currentTime)
-    val minutes = duration.toMinutes()
-    val hours = duration.toHours()
+    val timeZone = TimeZone.currentSystemDefault()
+    val currentInstant = currentTime.toInstant(timeZone)
+    val requestInstant = requestTime.toInstant(timeZone)
+    val duration = currentInstant - requestInstant
+    val minutes = duration.inWholeMinutes
+    val hours = duration.inWholeHours
 
     return when {
         hours < 1 -> {
@@ -101,9 +110,9 @@ private fun ReceivedRequestItemPreview_Minute() {
                 FriendsRequestInfo(
                     memberId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    createdAt = LocalDateTime.of(2025, 10, 13, 17, 57),
+                    createdAt = LocalDateTime(2025, 10, 13, 17, 57),
                 ),
-            currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
+            currentTime = LocalDateTime(2025, 10, 13, 18, 0),
             onAccept = {},
             onReject = {},
         )
@@ -119,9 +128,9 @@ private fun ReceivedRequestItemPreview_Hour() {
                 FriendsRequestInfo(
                     memberId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    createdAt = LocalDateTime.of(2025, 10, 13, 14, 0),
+                    createdAt = LocalDateTime(2025, 10, 13, 14, 0),
                 ),
-            currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
+            currentTime = LocalDateTime(2025, 10, 13, 18, 0),
             onAccept = {},
             onReject = {},
         )
@@ -137,9 +146,9 @@ private fun ReceivedRequestItemPreview_Day() {
                 FriendsRequestInfo(
                     memberId = 1L,
                     nickname = Nickname("돈가스먹는환노"),
-                    createdAt = LocalDateTime.of(2025, 10, 11, 14, 0),
+                    createdAt = LocalDateTime(2025, 10, 11, 14, 0),
                 ),
-            currentTime = LocalDateTime.of(2025, 10, 13, 18, 0),
+            currentTime = LocalDateTime(2025, 10, 13, 18, 0),
             onAccept = {},
             onReject = {},
         )

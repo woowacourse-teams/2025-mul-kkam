@@ -12,9 +12,12 @@ import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import java.time.Duration
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
+import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
 
 private const val ONE_MINUTE: Long = 1L
 private const val ONE_HOUR: Long = 1L
@@ -39,30 +42,32 @@ fun NotificationContent(notification: Notification) {
 
 @Composable
 private fun LocalDateTime.toRelativeTimeString(): String {
-    val now = LocalDateTime.now()
-    val duration = Duration.between(this, now)
+    val timeZone = TimeZone.currentSystemDefault()
+    val nowInstant = Clock.System.now()
+    val thisInstant = this.toInstant(timeZone)
+    val duration = nowInstant - thisInstant
 
     return when {
-        duration.toMinutes() < ONE_MINUTE ->
+        duration.inWholeMinutes < ONE_MINUTE ->
             stringResource(
                 R.string.notification_just_now,
             )
 
-        duration.toHours() < ONE_HOUR ->
+        duration.inWholeHours < ONE_HOUR ->
             stringResource(
                 R.string.notification_minutes_ago,
-            ).format(duration.toMinutes())
+            ).format(duration.inWholeMinutes)
 
-        duration.toDays() < ONE_DAY ->
+        duration.inWholeDays < ONE_DAY ->
             stringResource(
                 R.string.notification_hours_ago,
-            ).format(duration.toHours())
+            ).format(duration.inWholeHours)
 
-        duration.toDays() < TWO_DAYS ->
+        duration.inWholeDays < TWO_DAYS ->
             stringResource(
                 R.string.notification_one_day_ago,
             )
 
-        else -> this.format(dateTimeFormatter)
+        else -> this.toJavaLocalDateTime().format(dateTimeFormatter)
     }
 }

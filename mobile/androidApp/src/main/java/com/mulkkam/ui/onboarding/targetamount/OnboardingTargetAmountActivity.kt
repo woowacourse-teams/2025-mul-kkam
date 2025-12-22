@@ -5,17 +5,20 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mulkkam.domain.model.members.OnboardingInfo
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.cups.OnboardingCupsActivity
-import com.mulkkam.ui.util.extensions.getSerializableCompat
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class OnboardingTargetAmountActivity : ComponentActivity() {
     private val viewModel: TargetAmountViewModel by viewModel()
 
     private val onboardingInfo: OnboardingInfo? by lazy {
-        intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
+        intent.getStringExtra(KEY_ONBOARDING_INFO)?.let {
+            Json.decodeFromString<OnboardingInfo>(it)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,7 +58,9 @@ class OnboardingTargetAmountActivity : ComponentActivity() {
             onboardingInfo: OnboardingInfo?,
         ): Intent =
             Intent(context, OnboardingTargetAmountActivity::class.java).apply {
-                putExtra(KEY_ONBOARDING_INFO, onboardingInfo)
+                onboardingInfo?.let {
+                    putExtra(KEY_ONBOARDING_INFO, Json.encodeToString(it))
+                }
             }
     }
 }

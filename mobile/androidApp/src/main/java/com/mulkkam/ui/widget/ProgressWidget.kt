@@ -45,7 +45,8 @@ class ProgressWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = progressChecker().checkCurrentAchievementRate()
+        val requestIdText = progressChecker().checkCurrentAchievementRate()
+        val requestId: UUID = UUID.fromString(requestIdText)
 
         observeWorker(context, appWidgetId, requestId)
     }

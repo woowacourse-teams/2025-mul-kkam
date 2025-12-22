@@ -3,13 +3,13 @@ package com.mulkkam.ui.splash
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.OnboardingRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.UserAuthState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
