@@ -32,9 +32,9 @@ class MainNavigator internal constructor(
     }
 
     // App
-    fun navigateToSplash() = navigateAndClearBackStack(AppRoute.Splash)
+    fun navigateToSplash() = navigateAndClearBackStack(AuthRoute.Splash)
 
-    fun navigateToLogin() = navigate(AppRoute.Login)
+    fun navigateToLogin() = navigate(AuthRoute.Login)
 
     // Onboarding
     fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms)
@@ -87,7 +87,7 @@ class MainNavigator internal constructor(
 }
 
 @Composable
-fun rememberMainNavigator(startDestination: Any = AppRoute.Splash): MainNavigator {
+fun rememberMainNavigator(startDestination: Any = AuthRoute.Splash): MainNavigator {
     val backStack = remember { listOf(startDestination).toMutableStateList() }
     return remember(backStack) {
         MainNavigator(backStack)

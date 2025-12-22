@@ -1,4 +1,4 @@
-package com.mulkkam.ui.app.splash
+package com.mulkkam.ui.auth.splash
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

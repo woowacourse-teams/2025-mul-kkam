@@ -1,4 +1,4 @@
-package com.mulkkam.ui.app.login
+package com.mulkkam.ui.auth.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

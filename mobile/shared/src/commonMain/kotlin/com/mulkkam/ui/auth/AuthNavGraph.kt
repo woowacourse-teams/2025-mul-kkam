@@ -1,25 +1,23 @@
-package com.mulkkam.ui.app
+package com.mulkkam.ui.auth
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import com.mulkkam.ui.app.login.LoginRoute
-import com.mulkkam.ui.app.login.LoginScreen
-import com.mulkkam.ui.app.splash.SplashRoute
-import com.mulkkam.ui.app.splash.SplashScreen
-import com.mulkkam.ui.navigation.AppRoute
+import com.mulkkam.ui.auth.login.LoginRoute
+import com.mulkkam.ui.auth.splash.SplashRoute
+import com.mulkkam.ui.navigation.AuthRoute
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.entry
 
-object AppNavGraph {
+object AuthNavGraph {
     @Composable
     fun entryProvider(
-        route: AppRoute,
+        route: AuthRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
-    ): NavEntry<AppRoute> =
+    ): NavEntry<AuthRoute> =
         when (route) {
-            is AppRoute.Splash -> {
+            is AuthRoute.Splash -> {
                 entry(route) {
                     SplashRoute(
                         padding = padding,
@@ -29,7 +27,7 @@ object AppNavGraph {
                 }
             }
 
-            is AppRoute.Login -> {
+            is AuthRoute.Login -> {
                 entry(route) {
                     LoginRoute(
                         padding = padding,

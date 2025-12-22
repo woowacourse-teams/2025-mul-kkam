@@ -3,7 +3,7 @@ package com.mulkkam.ui.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.mulkkam.ui.app.AppNavGraph
+import com.mulkkam.ui.auth.AuthNavGraph
 import com.mulkkam.ui.friends.FriendsNavGraph
 import com.mulkkam.ui.history.HistoryNavGraph
 import com.mulkkam.ui.home.HomeNavGraph
@@ -20,8 +20,8 @@ fun MainNavHost(
         backStack = navigator.backStack,
         entryProvider = { route ->
             when (route) {
-                is AppRoute -> {
-                    AppNavGraph.entryProvider(
+                is AuthRoute -> {
+                    AuthNavGraph.entryProvider(
                         route = route,
                         padding = padding,
                         navigator = navigator,
