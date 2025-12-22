@@ -2,8 +2,11 @@ package com.mulkkam.ui.friends
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.friends.friends.FriendsRoute
 import com.mulkkam.ui.friends.friends.FriendsScreen
+import com.mulkkam.ui.friends.pendingfriends.PendingFriendsRoute
 import com.mulkkam.ui.friends.pendingfriends.PendingFriendsScreen
+import com.mulkkam.ui.friends.searchmembers.SearchMembersRoute
 import com.mulkkam.ui.friends.searchmembers.SearchMembersScreen
 import com.mulkkam.ui.navigation.FriendsRoute
 import com.mulkkam.ui.navigation.MainNavigator
@@ -20,7 +23,7 @@ object FriendsNavGraph {
         when (route) {
             is FriendsRoute.Friends -> {
                 entry(route) {
-                    FriendsScreen(
+                    FriendsRoute(
                         padding = padding,
                         onNavigateToPendingFriends = navigator::navigateToPendingFriends,
                         onNavigateToSearchMembers = navigator::navigateToSearchMembers,
@@ -30,7 +33,7 @@ object FriendsNavGraph {
 
             is FriendsRoute.PendingFriends -> {
                 entry(route) {
-                    PendingFriendsScreen(
+                    PendingFriendsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -39,7 +42,7 @@ object FriendsNavGraph {
 
             is FriendsRoute.SearchMembers -> {
                 entry(route) {
-                    SearchMembersScreen(
+                    SearchMembersRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )

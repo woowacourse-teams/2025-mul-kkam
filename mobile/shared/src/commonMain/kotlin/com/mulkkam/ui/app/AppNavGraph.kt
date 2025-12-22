@@ -2,7 +2,9 @@ package com.mulkkam.ui.app
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.app.login.LoginRoute
 import com.mulkkam.ui.app.login.LoginScreen
+import com.mulkkam.ui.app.splash.SplashRoute
 import com.mulkkam.ui.app.splash.SplashScreen
 import com.mulkkam.ui.navigation.AppRoute
 import com.mulkkam.ui.navigation.MainNavigator
@@ -19,7 +21,7 @@ object AppNavGraph {
         when (route) {
             is AppRoute.Splash -> {
                 entry(route) {
-                    SplashScreen(
+                    SplashRoute(
                         padding = padding,
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToMain = navigator::navigateToHome,
@@ -29,7 +31,7 @@ object AppNavGraph {
 
             is AppRoute.Login -> {
                 entry(route) {
-                    LoginScreen(
+                    LoginRoute(
                         padding = padding,
                         onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
                     )

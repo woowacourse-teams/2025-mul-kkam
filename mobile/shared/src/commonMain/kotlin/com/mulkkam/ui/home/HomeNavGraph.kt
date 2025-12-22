@@ -2,8 +2,11 @@ package com.mulkkam.ui.home
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.home.encyclopedia.EncyclopediaRoute
 import com.mulkkam.ui.home.encyclopedia.EncyclopediaScreen
+import com.mulkkam.ui.home.home.HomeRoute
 import com.mulkkam.ui.home.home.HomeScreen
+import com.mulkkam.ui.home.notification.NotificationRoute
 import com.mulkkam.ui.home.notification.NotificationScreen
 import com.mulkkam.ui.navigation.HomeRoute
 import com.mulkkam.ui.navigation.MainNavigator
@@ -20,7 +23,7 @@ object HomeNavGraph {
         when (route) {
             is HomeRoute.Home -> {
                 entry(route) {
-                    HomeScreen(
+                    HomeRoute(
                         padding = padding,
                         onNavigateToEncyclopedia = navigator::navigateToEncyclopedia,
                         onNavigateToNotification = navigator::navigateToHomeNotification,
@@ -30,7 +33,7 @@ object HomeNavGraph {
 
             is HomeRoute.Encyclopedia -> {
                 entry(route) {
-                    EncyclopediaScreen(
+                    EncyclopediaRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -39,7 +42,7 @@ object HomeNavGraph {
 
             is HomeRoute.Notification -> {
                 entry(route) {
-                    NotificationScreen(
+                    NotificationRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
