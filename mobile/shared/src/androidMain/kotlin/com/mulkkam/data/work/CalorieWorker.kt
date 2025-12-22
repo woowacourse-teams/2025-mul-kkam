@@ -8,7 +8,6 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.HealthRepository
 import com.mulkkam.domain.repository.HealthRepository.Companion.SECONDS_IN_TWO_HOURS
 import com.mulkkam.domain.repository.NotificationRepository
-import java.time.Instant
 
 class CalorieWorker(
     appContext: Context,
@@ -18,18 +17,19 @@ class CalorieWorker(
     private val logger: Logger,
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
-        val now = Instant.now()
+        val nowMillis = System.currentTimeMillis()
+        val twoHoursAgoMillis = nowMillis - (SECONDS_IN_TWO_HOURS * 1000)
 
         logger.info(
             LogEvent.HEALTH_CONNECT,
-            "CalorieWorker triggered at $now",
+            "CalorieWorker triggered at $nowMillis",
         )
 
         runCatching {
             healthRepository
                 .getActiveCaloriesBurned(
-                    now.minusSeconds(SECONDS_IN_TWO_HOURS),
-                    now,
+                    twoHoursAgoMillis,
+                    nowMillis,
                 ).getOrError()
         }.onSuccess { exerciseCalorie ->
             if (exerciseCalorie.exercised.not()) return@onSuccess

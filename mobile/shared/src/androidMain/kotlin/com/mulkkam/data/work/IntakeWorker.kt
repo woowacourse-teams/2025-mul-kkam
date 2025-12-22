@@ -24,8 +24,8 @@ import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TAR
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.MembersRepository
+import kotlinx.datetime.toKotlinLocalDate
 import java.io.ByteArrayOutputStream
-import java.time.LocalDate
 
 class IntakeWorker(
     appContext: Context,
@@ -35,8 +35,12 @@ class IntakeWorker(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result =
         runCatching {
+            val today =
+                java.time.LocalDate
+                    .now()
+                    .toKotlinLocalDate()
             val todayProgress =
-                membersRepository.getMembersProgressInfo(LocalDate.now()).getOrError()
+                membersRepository.getMembersProgressInfo(today).getOrError()
             val cups = cupsRepository.getCups().getOrError()
             val representativeCup = cups.representativeCup
             val cupId = representativeCup?.id ?: 0L

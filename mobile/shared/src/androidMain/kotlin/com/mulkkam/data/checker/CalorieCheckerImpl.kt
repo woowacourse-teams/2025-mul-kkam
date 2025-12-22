@@ -21,6 +21,6 @@ class CalorieCheckerImpl(
     }
 
     companion object {
-        private const val CHECK_CALORIE_WORK_NAME = "CHECK_CALORIE_WORK"
+        private const val CHECK_CALORIE_WORK_NAME: String = "CHECK_CALORIE_WORK"
     }
 }

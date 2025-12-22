@@ -6,7 +6,7 @@ import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.domain.repository.MembersRepository
-import java.time.LocalDate
+import kotlinx.datetime.toKotlinLocalDate
 
 class ProgressWorker(
     appContext: Context,
@@ -15,10 +15,13 @@ class ProgressWorker(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result =
         runCatching {
+            val today =
+                java.time.LocalDate
+                    .now()
+                    .toKotlinLocalDate()
             membersRepository
-                .getMembersProgressInfo(
-                    LocalDate.now(),
-                ).getOrError()
+                .getMembersProgressInfo(today)
+                .getOrError()
         }.fold(
             onSuccess = { membersProgressInfo ->
                 val outputData =

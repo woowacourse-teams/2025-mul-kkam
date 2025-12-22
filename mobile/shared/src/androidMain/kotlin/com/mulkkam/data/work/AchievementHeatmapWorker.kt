@@ -7,7 +7,7 @@ import androidx.work.workDataOf
 import com.mulkkam.domain.checker.AchievementHeatmapChecker
 import com.mulkkam.domain.checker.AchievementHeatmapChecker.Companion.TOTAL_CELL_COUNT
 import com.mulkkam.domain.repository.IntakeRepository
-import java.time.LocalDate
+import kotlinx.datetime.toKotlinLocalDate
 
 class AchievementHeatmapWorker(
     appContext: Context,
@@ -16,8 +16,16 @@ class AchievementHeatmapWorker(
 ) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result =
         runCatching {
-            val endDate: LocalDate = LocalDate.now()
-            val startDate: LocalDate = endDate.minusDays((TOTAL_CELL_COUNT - 1).toLong())
+            val endDate =
+                java.time.LocalDate
+                    .now()
+                    .toKotlinLocalDate()
+            val startDate =
+                java.time.LocalDate
+                    .now()
+                    .minusDays((TOTAL_CELL_COUNT - 1).toLong())
+                    .toKotlinLocalDate()
+
             val achievementRates =
                 intakeRepository
                     .getAchievementRates(startDate, endDate)

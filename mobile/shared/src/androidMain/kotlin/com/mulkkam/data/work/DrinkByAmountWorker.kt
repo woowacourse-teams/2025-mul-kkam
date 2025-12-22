@@ -7,7 +7,7 @@ import androidx.work.workDataOf
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.repository.IntakeRepository
-import java.time.LocalDateTime
+import kotlinx.datetime.toKotlinLocalDateTime
 
 class DrinkByAmountWorker(
     appContext: Context,
@@ -18,8 +18,12 @@ class DrinkByAmountWorker(
         val cupId = inputData.getLong(KEY_INTAKE_CHECKER_CUP_ID, 0L)
 
         return runCatching {
+            val now =
+                java.time.LocalDateTime
+                    .now()
+                    .toKotlinLocalDateTime()
             intakeRepository
-                .postIntakeHistoryCup(LocalDateTime.now(), cupId)
+                .postIntakeHistoryCup(now, cupId)
                 .getOrError()
         }.fold(
             onSuccess = { Result.success(workDataOf(KEY_INTAKE_CHECKER_PERFORM_SUCCESS to true)) },

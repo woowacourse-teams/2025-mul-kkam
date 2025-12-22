@@ -6,7 +6,6 @@ import com.google.firebase.Firebase
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.google.firebase.analytics.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
-import com.mulkkam.BuildConfig
 import com.mulkkam.domain.logger.LogSanitizer
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEntry
@@ -17,7 +16,7 @@ class LoggerImpl(
     private val sanitizer: LogSanitizer,
     private val analytics: FirebaseAnalytics = Firebase.analytics,
     private val crashlytics: FirebaseCrashlytics = FirebaseCrashlytics.getInstance(),
-    private val isDebug: Boolean = BuildConfig.DEBUG,
+    private val isDebug: Boolean,
 ) : Logger {
     private var userId: String? = null
 
