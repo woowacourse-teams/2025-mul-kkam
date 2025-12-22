@@ -1,9 +1,7 @@
 package com.mulkkam.domain.checker
 
-import java.util.UUID
-
 interface AchievementHeatmapChecker {
-    fun fetchAchievementHeatmap(): UUID
+    fun fetchAchievementHeatmap(): String
 
     companion object {
         const val COLUMN_COUNT: Int = 7

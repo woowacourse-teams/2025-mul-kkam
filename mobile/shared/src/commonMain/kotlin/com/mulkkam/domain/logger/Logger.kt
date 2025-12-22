@@ -36,7 +36,6 @@ import com.mulkkam.domain.model.logger.LogLevel
  * ```
  *
  */
-
 interface Logger {
     /**
      * 사용자 ID로 로거 초기화.

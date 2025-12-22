@@ -1,8 +1,8 @@
 package com.mulkkam.domain.repository
 
-import com.mulkkam.domain.model.members.OnboardingInfo
+import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.result.MulKkamResult
-import com.mulkkam.ui.model.UserAuthState
 
 interface OnboardingRepository {
     suspend fun postOnboarding(onboardingInfo: OnboardingInfo): MulKkamResult<Unit>

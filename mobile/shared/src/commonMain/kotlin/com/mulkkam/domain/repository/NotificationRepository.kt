@@ -2,7 +2,7 @@ package com.mulkkam.domain.repository
 
 import com.mulkkam.domain.model.notification.NotificationsResult
 import com.mulkkam.domain.model.result.MulKkamResult
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDateTime
 
 interface NotificationRepository {
     suspend fun getNotifications(

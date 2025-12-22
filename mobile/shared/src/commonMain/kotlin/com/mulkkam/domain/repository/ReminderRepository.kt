@@ -3,7 +3,7 @@ package com.mulkkam.domain.repository
 import com.mulkkam.domain.model.reminder.ReminderConfig
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.MulKkamResult
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
 
 interface ReminderRepository {
     suspend fun getReminder(): MulKkamResult<ReminderConfig>

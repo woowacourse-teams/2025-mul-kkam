@@ -8,8 +8,8 @@ import com.mulkkam.domain.model.intake.AchievementRate
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.result.MulKkamResult
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 
 interface IntakeRepository {
     suspend fun getIntakeHistory(

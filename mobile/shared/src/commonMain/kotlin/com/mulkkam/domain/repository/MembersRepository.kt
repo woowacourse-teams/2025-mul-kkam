@@ -7,7 +7,7 @@ import com.mulkkam.domain.model.members.MemberSearchResult
 import com.mulkkam.domain.model.members.NotificationAgreedInfo
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamResult
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
 
 interface MembersRepository {
     suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit>
