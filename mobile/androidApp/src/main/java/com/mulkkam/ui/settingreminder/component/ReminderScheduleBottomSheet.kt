@@ -35,7 +35,8 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toKotlinLocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +45,10 @@ fun ReminderScheduleBottomSheet(
     onDismiss: () -> Unit,
     onSelected: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
-    currentTime: LocalTime = LocalTime.now(),
+    currentTime: LocalTime =
+        java.time.LocalTime
+            .now()
+            .toKotlinLocalTime(),
 ) {
     var hour by rememberSaveable { mutableIntStateOf(currentTime.hour) }
     var minute by rememberSaveable { mutableIntStateOf(currentTime.minute) }
@@ -91,7 +95,7 @@ fun ReminderScheduleBottomSheet(
                         .clip(RoundedCornerShape(8.dp))
                         .background(Primary200)
                         .padding(horizontal = 24.dp)
-                        .clickable { onSelected(LocalTime.of(hour, minute)) }
+                        .clickable { onSelected(LocalTime(hour, minute)) }
                         .wrapContentHeight(Alignment.CenterVertically),
                 style = MulKkamTheme.typography.title2,
                 color = White,

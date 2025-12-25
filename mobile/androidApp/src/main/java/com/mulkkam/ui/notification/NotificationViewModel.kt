@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 class NotificationViewModel(
     private val notificationRepository: NotificationRepository,
@@ -50,7 +52,7 @@ class NotificationViewModel(
                 _notifications.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        LocalDateTime.now(),
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                         NOTIFICATION_SIZE,
                     ).getOrError()
             }.onSuccess { notificationsResult ->
@@ -102,7 +104,7 @@ class NotificationViewModel(
                 _loadUiState.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        time = LocalDateTime.now(),
+                        time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                         size = NOTIFICATION_SIZE,
                         lastId = nextCursor,
                     ).getOrError()

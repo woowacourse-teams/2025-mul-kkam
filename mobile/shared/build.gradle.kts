@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.ktlint)
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 kotlin {
@@ -61,6 +62,20 @@ kotlin {
                 implementation(compose.ui)
                 implementation(compose.components.resources)
                 implementation(compose.components.uiToolingPreview)
+
+                // Ktor (네트워크)
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.serialization.kotlinx.json)
+                implementation(libs.ktor.client.logging)
+
+                // Koin (DI)
+                implementation(libs.koin.core)
+
+                // Kotlinx
+                implementation(libs.kotlinx.serialization.json)
+                implementation(libs.kotlinx.datetime)
+                implementation(libs.kotlinx.coroutines.core)
             }
         }
 
@@ -77,6 +92,41 @@ kotlin {
                 // dependencies declared in commonMain.
                 implementation(compose.preview)
                 implementation(libs.androidx.activity.compose)
+
+                // Ktor Android 엔진
+                implementation(libs.ktor.client.okhttp)
+
+                // Koin Android
+                implementation(libs.koin.android)
+                implementation(libs.koin.androidx.workmanager)
+
+                // Health Connect
+                implementation(libs.androidx.health.connect)
+
+                // WorkManager
+                implementation(libs.androidx.work.runtime.ktx)
+
+                // Retrofit (for Android legacy data layer)
+                implementation(libs.retrofit)
+                implementation(libs.retrofit2.kotlinx.serialization.converter)
+                implementation(libs.okhttp)
+                implementation(libs.okhttp.logging)
+
+                // Firebase
+                // TODO: 버전 카탈로그 이전
+                implementation("com.google.firebase:firebase-analytics:22.0.0")
+                implementation("com.google.firebase:firebase-crashlytics:19.0.0")
+
+                // Timber logging
+                implementation(libs.timber)
+
+                // Coil for image loading
+                implementation(libs.coil)
+                implementation(libs.coil.svg)
+                implementation(libs.coil.network)
+
+                // AndroidX Core
+                implementation(libs.androidx.core.ktx)
             }
         }
 
@@ -95,6 +145,9 @@ kotlin {
                 // part of KMP’s default source set hierarchy. Note that this source set depends
                 // on common by default and will correctly pull the iOS artifacts of any
                 // KMP dependencies declared in commonMain.
+
+                // Ktor iOS 엔진
+                implementation(libs.ktor.client.darwin)
             }
         }
     }

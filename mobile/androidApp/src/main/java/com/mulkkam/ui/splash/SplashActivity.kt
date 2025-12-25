@@ -4,13 +4,13 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import com.mulkkam.domain.model.UserAuthState
+import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
+import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.UserAuthState
-import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
-import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import org.koin.androidx.viewmodel.ext.android.viewModel

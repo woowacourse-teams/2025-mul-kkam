@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.bio.BioWeight
 
 @Composable
 fun BioInfoScreen(
@@ -34,10 +35,10 @@ fun BioInfoScreen(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(text = "Onboarding - BioInfo", fontSize = 24.sp)
-        Text(text = "Nickname: ${onboardingInfo.nickname ?: "N/A"}", fontSize = 14.sp)
+        Text(text = "Nickname: ${onboardingInfo.nickname?.name ?: "N/A"}", fontSize = 14.sp)
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = {
-            val updatedInfo = onboardingInfo.copy(weight = 65, gender = Gender.MALE)
+            val updatedInfo = onboardingInfo.copy(weight = BioWeight(65), gender = Gender.MALE)
             onNavigateToTargetAmount(updatedInfo)
         }) {
             Text("Next → Go to TargetAmount")

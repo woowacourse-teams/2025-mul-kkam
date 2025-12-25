@@ -30,8 +30,8 @@ import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import kotlinx.datetime.toKotlinLocalTime
 import org.koin.androidx.compose.koinViewModel
-import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -78,8 +78,15 @@ fun SettingReminderScreen(
             val currentMode = reminderUpdateUiState
             val initialTime =
                 when (currentMode) {
-                    is ReminderUpdateUiState.Update -> currentMode.reminderSchedule.schedule
-                    is ReminderUpdateUiState.Add, ReminderUpdateUiState.Idle -> LocalTime.now()
+                    is ReminderUpdateUiState.Update -> {
+                        currentMode.reminderSchedule.schedule
+                    }
+
+                    is ReminderUpdateUiState.Add, ReminderUpdateUiState.Idle -> {
+                        java.time.LocalTime
+                            .now()
+                            .toKotlinLocalTime()
+                    }
                 }
 
             ReminderScheduleBottomSheet(

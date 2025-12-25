@@ -6,16 +6,18 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import com.mulkkam.domain.model.members.OnboardingInfo
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.targetamount.OnboardingTargetAmountActivity
-import com.mulkkam.ui.util.extensions.getSerializableCompat
+import kotlinx.serialization.json.Json
 
 class OnboardingBioInfoActivity : ComponentActivity() {
     private val viewModel: BioInfoViewModel by viewModels()
 
     private val onboardingInfo: OnboardingInfo? by lazy {
-        intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
+        intent.getStringExtra(KEY_ONBOARDING_INFO)?.let {
+            Json.decodeFromString<OnboardingInfo>(it)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,14 +26,14 @@ class OnboardingBioInfoActivity : ComponentActivity() {
             MulKkamTheme {
                 BioInfoScreen(
                     navigateToBack = ::finish,
-                    navigateToNextStep = { gender, weight ->
+                    navigateToNextStep = { gender, bioWeight ->
                         startActivity(
                             OnboardingTargetAmountActivity.newIntent(
                                 this,
                                 onboardingInfo =
                                     onboardingInfo?.copy(
                                         gender = gender,
-                                        weight = weight,
+                                        weight = bioWeight,
                                     ),
                             ),
                         )
@@ -60,7 +62,9 @@ class OnboardingBioInfoActivity : ComponentActivity() {
             onboardingInfo: OnboardingInfo?,
         ): Intent =
             Intent(context, OnboardingBioInfoActivity::class.java).apply {
-                putExtra(KEY_ONBOARDING_INFO, onboardingInfo)
+                onboardingInfo?.let {
+                    putExtra(KEY_ONBOARDING_INFO, Json.encodeToString(it))
+                }
             }
     }
 }
