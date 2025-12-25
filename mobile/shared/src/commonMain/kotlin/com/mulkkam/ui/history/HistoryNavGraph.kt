@@ -3,7 +3,6 @@ package com.mulkkam.ui.history
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.history.history.HistoryRoute
-import com.mulkkam.ui.history.history.HistoryScreen
 import com.mulkkam.ui.navigation.HistoryRoute
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
