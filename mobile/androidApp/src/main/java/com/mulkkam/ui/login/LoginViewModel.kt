@@ -2,13 +2,13 @@ package com.mulkkam.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.domain.repository.VersionsRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.UserAuthState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

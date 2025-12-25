@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
-import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.EMPTY_DAILY_WATER_INTAKE
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
@@ -15,9 +14,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjusters
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.minus
+import kotlinx.datetime.plus
+import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 class HistoryViewModel(
     private val intakeRepository: IntakeRepository,
@@ -29,7 +33,7 @@ class HistoryViewModel(
         get() = _weeklyIntakeHistoriesUiState.asStateFlow()
 
     private val _dailyIntakeHistories: MutableStateFlow<IntakeHistorySummary> =
-        MutableStateFlow(EMPTY_DAILY_WATER_INTAKE)
+        MutableStateFlow(IntakeHistorySummary.createEmpty(Clock.System.todayIn(TimeZone.currentSystemDefault())))
     val dailyIntakeHistories: StateFlow<IntakeHistorySummary> get() = _dailyIntakeHistories.asStateFlow()
 
     private val _isNotCurrentWeek: MutableStateFlow<Boolean> = MutableStateFlow(false)
@@ -48,8 +52,8 @@ class HistoryViewModel(
     }
 
     fun loadIntakeHistories(
-        referenceDate: LocalDate = LocalDate.now(),
-        currentDate: LocalDate = LocalDate.now(),
+        referenceDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+        currentDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     ) {
         if (weeklyIntakeHistoriesUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
@@ -73,9 +77,10 @@ class HistoryViewModel(
     }
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
-        val monday = targetDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+        val daysFromMonday = (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
+        val monday = targetDate.minus(daysFromMonday, DateTimeUnit.DAY)
 
-        return List(WEEK_LENGTH) { monday.plusDays(it.toLong()) }
+        return List(WEEK_LENGTH) { monday.plus(it, DateTimeUnit.DAY) }
     }
 
     private fun selectDailySummary(
@@ -86,14 +91,14 @@ class HistoryViewModel(
         val dailySummary =
             when {
                 today in weekDates -> summaries.getByDateOrEmpty(today)
-                else -> summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX)
+                else -> summaries.getByIndex(INTAKE_HISTORY_SUMMARIES_FIRST_INDEX, today)
             }
         updateDailyIntakeHistories(dailySummary, today)
     }
 
     fun updateDailyIntakeHistories(
         dailySummary: IntakeHistorySummary,
-        today: LocalDate = LocalDate.now(),
+        today: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     ) {
         _dailyIntakeHistories.value = dailySummary
         _waterIntakeState.value = dailySummary.determineWaterIntakeState(today)

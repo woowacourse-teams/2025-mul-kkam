@@ -27,9 +27,11 @@ import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_DRINK
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_REFRESH
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
 import org.koin.core.context.GlobalContext
-import java.time.LocalDate
 import java.util.UUID
+import kotlin.time.Clock
 
 class IntakeWidget : AppWidgetProvider() {
     private fun intakeChecker(): IntakeChecker = GlobalContext.get().get()
@@ -48,7 +50,8 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = intakeChecker().checkWidgetInfo()
+        val requestIdText = intakeChecker().checkWidgetInfo()
+        val requestId: UUID = UUID.fromString(requestIdText)
 
         val workManager = WorkManager.getInstance(context.applicationContext)
         val live = workManager.getWorkInfoByIdLiveData(requestId)
@@ -100,7 +103,8 @@ class IntakeWidget : AppWidgetProvider() {
     ) {
         val cupId = intent.getLongExtra(KEY_EXTRA_CUP_ID, 0L)
         logger().info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
-        val requestId = intakeChecker().drink(cupId)
+        val requestIdText = intakeChecker().drink(cupId)
+        val requestId: UUID = UUID.fromString(requestIdText)
         observeDrinkWorker(context, requestId)
     }
 
@@ -152,12 +156,13 @@ class IntakeWidget : AppWidgetProvider() {
             )
         views.setImageViewBitmap(R.id.iv_donut_chart, donut)
 
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         views.setTextViewText(
             R.id.tv_title_date,
             context.getString(
                 R.string.intake_widget_home_target,
-                LocalDate.now().monthValue,
-                LocalDate.now().dayOfMonth,
+                today.monthNumber,
+                today.dayOfMonth,
             ),
         )
 

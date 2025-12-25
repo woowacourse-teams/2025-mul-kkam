@@ -11,12 +11,12 @@ import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.UserAuthState
+import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
+import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.model.UserAuthState
-import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
-import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.extensions.collectWithLifecycle

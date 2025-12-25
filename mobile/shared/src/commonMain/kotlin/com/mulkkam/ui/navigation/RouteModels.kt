@@ -3,12 +3,12 @@ package com.mulkkam.ui.navigation
 import com.mulkkam.domain.model.OnboardingInfo
 import kotlinx.serialization.Serializable
 
-sealed interface AppRoute {
+sealed interface AuthRoute {
     @Serializable
-    data object Splash : AppRoute
+    data object Splash : AuthRoute
 
     @Serializable
-    data object Login : AppRoute
+    data object Login : AuthRoute
 }
 
 sealed interface OnboardingRoute {

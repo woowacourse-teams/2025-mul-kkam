@@ -56,7 +56,8 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
     ) {
-        val requestId: UUID = achievementHeatmapChecker().fetchAchievementHeatmap()
+        val requestIdText = achievementHeatmapChecker().fetchAchievementHeatmap()
+        val requestId: UUID = UUID.fromString(requestIdText)
 
         observeWorker(context, appWidgetManager, appWidgetId, requestId)
     }

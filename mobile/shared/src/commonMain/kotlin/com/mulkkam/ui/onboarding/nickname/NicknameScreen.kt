@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.domain.model.members.Nickname
 
 @Composable
 fun NicknameScreen(
@@ -35,7 +36,7 @@ fun NicknameScreen(
         Text(text = "Onboarding - Nickname", fontSize = 24.sp)
         Spacer(modifier = Modifier.height(32.dp))
         Button(onClick = {
-            val updatedInfo = (onboardingInfo ?: OnboardingInfo()).copy(nickname = "TestUser")
+            val updatedInfo = (onboardingInfo ?: OnboardingInfo()).copy(nickname = Nickname("TestUser"))
             onNavigateToBioInfo(updatedInfo)
         }) {
             Text("Next → Go to BioInfo")

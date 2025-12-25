@@ -15,7 +15,7 @@ import timber.log.Timber
 val loggingModule =
     module {
         single<LogSanitizer> { SensitiveInfoSanitizerImpl() }
-        single<Logger> { LoggerImpl(get()) }
+        single<Logger> { LoggerImpl(sanitizer = get(), isDebug = BuildConfig.DEBUG) }
 
         single(named("release")) { ReleaseLoggingTree(get()) }
         single(named("debug")) { DebugLoggingTree(get()) }

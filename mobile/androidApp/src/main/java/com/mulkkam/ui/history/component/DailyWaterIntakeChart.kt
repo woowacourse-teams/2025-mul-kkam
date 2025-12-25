@@ -29,7 +29,8 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -63,13 +64,14 @@ fun DailyWaterIntakeChart(
             }
         }
 
+        val formattedDate = date.toJavaLocalDate().format(getDateFormatter(context))
         ColoredText(
             fullText =
                 stringResource(
                     R.string.history_daily_chart_label,
-                    date.format(getDateFormatter(context)),
+                    formattedDate,
                 ),
-            highlightedTexts = listOf(date.format(getDateFormatter(context))),
+            highlightedTexts = listOf(formattedDate),
             highlightColor = Primary200,
             style = MulKkamTheme.typography.title1,
             color = Black,
@@ -148,7 +150,7 @@ private fun DailyWaterIntakeChartPreview_PresentFull() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 31),
+                    date = LocalDate(2025, 10, 31),
                     targetAmount = 1000,
                     totalIntakeAmount = 1000,
                     achievementRate = 100f,
@@ -166,7 +168,7 @@ private fun DailyWaterIntakeChartPreview_PresentNotFull() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 31),
+                    date = LocalDate(2025, 10, 31),
                     targetAmount = 1000,
                     totalIntakeAmount = 500,
                     achievementRate = 50f,
@@ -184,7 +186,7 @@ private fun DailyWaterIntakeChartPreview_PastNoRecord() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 0,
                     achievementRate = 0f,
@@ -202,7 +204,7 @@ private fun DailyWaterIntakeChartPreview_PastPartial() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 500,
                     achievementRate = 50f,
@@ -220,7 +222,7 @@ private fun DailyWaterIntakeChartPreview_PastFull() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 1000,
                     achievementRate = 100f,
@@ -238,7 +240,7 @@ private fun DailyWaterIntakeChartPreview_Future() {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 11, 3),
+                    date = LocalDate(2025, 11, 3),
                     targetAmount = 1000,
                     totalIntakeAmount = 0,
                     achievementRate = 0f,

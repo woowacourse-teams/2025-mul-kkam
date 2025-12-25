@@ -3,9 +3,9 @@ package com.mulkkam.ui.onboarding.cups
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.domain.model.members.OnboardingInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.OnboardingRepository

@@ -6,16 +6,16 @@ import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.SettingRoute
 import com.mulkkam.ui.navigation.entry
-import com.mulkkam.ui.setting.accountinfo.AccountInfoScreen
-import com.mulkkam.ui.setting.bioinfo.BioInfoScreen
-import com.mulkkam.ui.setting.cups.CupsScreen
-import com.mulkkam.ui.setting.feedback.FeedbackScreen
-import com.mulkkam.ui.setting.nickname.NicknameScreen
-import com.mulkkam.ui.setting.notification.NotificationScreen
-import com.mulkkam.ui.setting.reminder.ReminderScreen
-import com.mulkkam.ui.setting.setting.SettingScreen
-import com.mulkkam.ui.setting.targetamount.TargetAmountScreen
-import com.mulkkam.ui.setting.terms.TermsScreen
+import com.mulkkam.ui.setting.accountinfo.AccountInfoRoute
+import com.mulkkam.ui.setting.bioinfo.BioInfoRoute
+import com.mulkkam.ui.setting.cups.CupsRoute
+import com.mulkkam.ui.setting.feedback.FeedbackRoute
+import com.mulkkam.ui.setting.nickname.NicknameRoute
+import com.mulkkam.ui.setting.notification.NotificationRoute
+import com.mulkkam.ui.setting.reminder.ReminderRoute
+import com.mulkkam.ui.setting.setting.SettingRoute
+import com.mulkkam.ui.setting.targetamount.TargetAmountRoute
+import com.mulkkam.ui.setting.terms.TermsRoute
 
 object SettingNavGraph {
     @Composable
@@ -27,7 +27,7 @@ object SettingNavGraph {
         when (route) {
             is SettingRoute.Setting -> {
                 entry(route) {
-                    SettingScreen(
+                    SettingRoute(
                         padding = padding,
                         onNavigateToAccountInfo = navigator::navigateToAccountInfo,
                         onNavigateToBioInfo = navigator::navigateToSettingBioInfo,
@@ -44,7 +44,7 @@ object SettingNavGraph {
 
             is SettingRoute.AccountInfo -> {
                 entry(route) {
-                    AccountInfoScreen(
+                    AccountInfoRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -53,7 +53,7 @@ object SettingNavGraph {
 
             is SettingRoute.BioInfo -> {
                 entry(route) {
-                    BioInfoScreen(
+                    BioInfoRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -62,7 +62,7 @@ object SettingNavGraph {
 
             is SettingRoute.Cups -> {
                 entry(route) {
-                    CupsScreen(
+                    CupsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -71,7 +71,7 @@ object SettingNavGraph {
 
             is SettingRoute.Feedback -> {
                 entry(route) {
-                    FeedbackScreen(
+                    FeedbackRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -80,7 +80,7 @@ object SettingNavGraph {
 
             is SettingRoute.Nickname -> {
                 entry(route) {
-                    NicknameScreen(
+                    NicknameRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -89,7 +89,7 @@ object SettingNavGraph {
 
             is SettingRoute.Notification -> {
                 entry(route) {
-                    NotificationScreen(
+                    NotificationRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -98,7 +98,7 @@ object SettingNavGraph {
 
             is SettingRoute.Reminder -> {
                 entry(route) {
-                    ReminderScreen(
+                    ReminderRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -107,7 +107,7 @@ object SettingNavGraph {
 
             is SettingRoute.TargetAmount -> {
                 entry(route) {
-                    TargetAmountScreen(
+                    TargetAmountRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )
@@ -116,7 +116,7 @@ object SettingNavGraph {
 
             is SettingRoute.Terms -> {
                 entry(route) {
-                    TermsScreen(
+                    TermsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                     )

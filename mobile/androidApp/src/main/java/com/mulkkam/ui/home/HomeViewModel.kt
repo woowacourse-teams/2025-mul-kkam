@@ -27,8 +27,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 class HomeViewModel(
     private val membersRepository: MembersRepository,
@@ -70,7 +72,7 @@ class HomeViewModel(
             runCatching {
                 _todayProgressInfoUiState.value = MulKkamUiState.Loading
                 membersRepository
-                    .getMembersProgressInfo(LocalDate.now())
+                    .getMembersProgressInfo(Clock.System.todayIn(TimeZone.currentSystemDefault()))
                     .getOrError()
             }.onSuccess { todayProgressInfoUiState ->
                 _todayProgressInfoUiState.value =
@@ -122,7 +124,7 @@ class HomeViewModel(
                 )
                 isPostingDrink = true
                 intakeRepository
-                    .postIntakeHistoryCup(LocalDateTime.now(), cup.id)
+                    .postIntakeHistoryCup(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()), cup.id)
                     .getOrError()
             }.onSuccess { intakeHistory ->
                 updateIntakeHistory(intakeHistory)
@@ -181,7 +183,7 @@ class HomeViewModel(
                 )
                 isPostingDrink = true
                 intakeRepository
-                    .postIntakeHistoryInput(LocalDateTime.now(), intakeType, amount)
+                    .postIntakeHistoryInput(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()), intakeType, amount)
                     .getOrError()
             }.onSuccess { intakeHistory ->
                 updateIntakeHistory(intakeHistory)

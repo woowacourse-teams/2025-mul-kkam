@@ -4,14 +4,14 @@ import com.mulkkam.fixture.FULL_INTAKE_HISTORY
 import com.mulkkam.fixture.HALF_INTAKE_HISTORY
 import com.mulkkam.fixture.SAMPLE_INTAKE_HISTORY
 import com.mulkkam.fixture.ZERO_INTAKE_HISTORY
+import kotlinx.datetime.LocalDate
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class IntakeHistorySummaryTest {
-    private val pastDay = LocalDate.of(2025, 1, 1)
-    private val currentDay = LocalDate.of(2025, 2, 2)
-    private val futureDay = LocalDate.of(2025, 3, 3)
+    private val pastDay = LocalDate(2025, 1, 1)
+    private val currentDay = LocalDate(2025, 2, 2)
+    private val futureDay = LocalDate(2025, 3, 3)
 
     @Test
     fun `기록의 날짜가 과거이고, 기록이 없다면 Past의 NoRecord 상태이다`() {

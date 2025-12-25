@@ -6,10 +6,15 @@ import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.OnboardingRoute
 import com.mulkkam.ui.navigation.entry
+import com.mulkkam.ui.onboarding.bioinfo.BioInfoRoute
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoScreen
+import com.mulkkam.ui.onboarding.cups.CupsRoute
 import com.mulkkam.ui.onboarding.cups.CupsScreen
+import com.mulkkam.ui.onboarding.nickname.NicknameRoute
 import com.mulkkam.ui.onboarding.nickname.NicknameScreen
+import com.mulkkam.ui.onboarding.targetamount.TargetAmountRoute
 import com.mulkkam.ui.onboarding.targetamount.TargetAmountScreen
+import com.mulkkam.ui.onboarding.terms.TermsRoute
 import com.mulkkam.ui.onboarding.terms.TermsScreen
 
 object OnboardingNavGraph {
@@ -22,7 +27,7 @@ object OnboardingNavGraph {
         when (route) {
             is OnboardingRoute.Terms -> {
                 entry(route) {
-                    TermsScreen(
+                    TermsRoute(
                         padding = padding,
                         onNavigateToNickname = navigator::navigateToOnboardingNickname,
                     )
@@ -31,7 +36,7 @@ object OnboardingNavGraph {
 
             is OnboardingRoute.Nickname -> {
                 entry(route) {
-                    NicknameScreen(
+                    NicknameRoute(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
@@ -42,7 +47,7 @@ object OnboardingNavGraph {
 
             is OnboardingRoute.BioInfo -> {
                 entry(route) {
-                    BioInfoScreen(
+                    BioInfoRoute(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
@@ -53,7 +58,7 @@ object OnboardingNavGraph {
 
             is OnboardingRoute.TargetAmount -> {
                 entry(route) {
-                    TargetAmountScreen(
+                    TargetAmountRoute(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
@@ -64,7 +69,7 @@ object OnboardingNavGraph {
 
             is OnboardingRoute.Cups -> {
                 entry(route) {
-                    CupsScreen(
+                    CupsRoute(
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
