@@ -99,19 +99,16 @@ fun TargetAmountScreen(
                     },
                 )
 
-                RecommendedTargetAmount(
-                    nickname =
-                        targetAmountOnboardingUiState.toSuccessDataOrNull()?.nickname
-                            ?: return@Column,
-                    recommended =
-                        targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
-                            ?: return@Column,
-                    modifier =
-                        Modifier
+                targetAmountOnboardingUiState.toSuccessDataOrNull()?.let { data ->
+                    RecommendedTargetAmount(
+                        nickname = data.nickname,
+                        recommended = data.recommendedTargetAmount.value,
+                        modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(top = 140.dp),
-                    hasBioInfo = hasBioInfo,
-                )
+                        hasBioInfo = hasBioInfo,
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.weight(1f))
