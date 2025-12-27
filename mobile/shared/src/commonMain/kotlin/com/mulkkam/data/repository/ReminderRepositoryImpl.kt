@@ -1,11 +1,11 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.datasource.ReminderDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.reminder.ReminderRequest
 import com.mulkkam.data.remote.model.request.reminder.toData
 import com.mulkkam.data.remote.model.response.reminder.toDomain
-import com.mulkkam.data.remote.service.ReminderService
 import com.mulkkam.domain.model.reminder.ReminderConfig
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.domain.model.result.MulKkamResult
@@ -13,7 +13,7 @@ import com.mulkkam.domain.repository.ReminderRepository
 import kotlinx.datetime.LocalTime
 
 class ReminderRepositoryImpl(
-    private val reminderService: ReminderService,
+    private val reminderService: ReminderDataSource,
 ) : ReminderRepository {
     override suspend fun getReminder(): MulKkamResult<ReminderConfig> {
         val result = reminderService.getReminder()

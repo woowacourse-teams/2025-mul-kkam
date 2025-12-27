@@ -1,11 +1,11 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.datasource.CupsDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.cups.NewCupRequest
 import com.mulkkam.data.remote.model.request.cups.toData
 import com.mulkkam.data.remote.model.response.cups.toDomain
-import com.mulkkam.data.remote.service.CupsService
 import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
@@ -15,7 +15,7 @@ import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 
 class CupsRepositoryImpl(
-    private val cupsService: CupsService,
+    private val cupsService: CupsDataSource,
 ) : CupsRepository {
     override suspend fun getCups(): MulKkamResult<Cups> {
         val result = cupsService.getCups()

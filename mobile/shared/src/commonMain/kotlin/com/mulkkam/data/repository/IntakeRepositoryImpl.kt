@@ -1,12 +1,12 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.datasource.IntakeDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
 import com.mulkkam.data.remote.model.response.intake.toDomain
-import com.mulkkam.data.remote.service.IntakeService
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.bio.BioWeight
@@ -20,7 +20,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalDateTime
 
 class IntakeRepositoryImpl(
-    private val intakeService: IntakeService,
+    private val intakeService: IntakeDataSource,
 ) : IntakeRepository {
     override suspend fun getIntakeHistory(
         from: LocalDate,
