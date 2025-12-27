@@ -103,9 +103,10 @@ fun TargetAmountScreen(
                     RecommendedTargetAmount(
                         nickname = data.nickname,
                         recommended = data.recommendedTargetAmount.value,
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(top = 140.dp),
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopStart)
+                                .padding(top = 140.dp),
                         hasBioInfo = hasBioInfo,
                     )
                 }
