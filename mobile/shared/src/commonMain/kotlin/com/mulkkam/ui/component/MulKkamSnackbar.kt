@@ -27,15 +27,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.GrayAlert
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val DEFAULT_SNACKBAR_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
 
@@ -189,7 +189,7 @@ private fun MulKkamSnackbarAction(
 
 private data class MulKkamSnackbarVisuals(
     override val message: String,
-    @param:DrawableRes val iconResourceId: Int,
+    @DrawableRes val iconResourceId: Int,
     override val actionLabel: String?,
     override val duration: SnackbarDuration,
     override val withDismissAction: Boolean = false,
