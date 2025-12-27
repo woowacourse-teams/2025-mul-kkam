@@ -65,15 +65,16 @@ fun androidSharedModule(
             TokenRefresher(get(), get(), get())
         }
 
+        // TODO:
         includes(
             checkerModule2,
             healthConnectModule2,
             viewModelModule2,
             preferenceModule2,
-            repositoryModule２,
-            serviceModule２,
+            repositoryModule2,
+            serviceModule2,
             sharedModule,
-            workerModule２,
-            workManagerModule２,
+            workerModule2,
+            workManagerModule2,
         )
     }

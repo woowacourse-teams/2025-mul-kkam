@@ -8,7 +8,7 @@ import com.mulkkam.domain.repository.HealthRepository
 import com.mulkkam.domain.repository.MembersRepository
 import org.koin.dsl.module
 
-val repositoryModule２ =
+val repositoryModule2 =
     module {
         single<HealthRepository> { HealthRepositoryImpl(get()) }
         single<DevicesRepository> { DevicesRepositoryImpl(get(), get()) }

@@ -15,7 +15,7 @@ import com.mulkkam.data.remote.service.VersionsService
 import org.koin.dsl.module
 import retrofit2.Retrofit
 
-val serviceModule２ =
+val serviceModule2 =
     module {
         single { get<Retrofit>().create(IntakeService::class.java) }
         single { get<Retrofit>().create(CupsService::class.java) }

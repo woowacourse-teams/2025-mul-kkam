@@ -8,7 +8,7 @@ import com.mulkkam.data.work.ProgressWorker
 import org.koin.androidx.workmanager.dsl.worker
 import org.koin.dsl.module
 
-val workerModule２ =
+val workerModule2 =
     module {
         worker { AchievementHeatmapWorker(get(), get(), get()) }
         worker { IntakeWorker(get(), get(), get(), get()) }
