@@ -14,6 +14,7 @@ val sharedDataSourceModule: Module =
         single<AuthRemoteDataSource> { AuthRemoteDataSourceImpl(get()) }
     }
 
+// TODO: AuthRepository와 TokenRepository가 DataSource를 받도록 변경 필요
 val sharedRepositoryModule: Module =
     module {
         single<AuthRepository> { AuthRepositoryImpl(get()) }
@@ -22,5 +23,10 @@ val sharedRepositoryModule: Module =
 
 val sharedModule: Module =
     module {
-        includes(sharedDataSourceModule, sharedRepositoryModule)
+        includes(
+            sharedDataSourceModule,
+            sharedRepositoryModule,
+            commonRepositoryModule,
+            commonDataSourceModule,
+        )
     }
