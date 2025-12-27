@@ -10,7 +10,7 @@ interface ReminderRepository {
 
     suspend fun postReminder(schedule: LocalTime): MulKkamResult<Unit>
 
-    suspend fun patchReminder(reminder: ReminderSchedule): MulKkamResult<Unit>
+    suspend fun patchReminder(reminderSchedule: ReminderSchedule): MulKkamResult<Unit>
 
     suspend fun deleteReminder(id: Long): MulKkamResult<Unit>
 }

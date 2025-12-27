@@ -7,15 +7,10 @@ import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.OnboardingRoute
 import com.mulkkam.ui.navigation.entry
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoRoute
-import com.mulkkam.ui.onboarding.bioinfo.BioInfoScreen
 import com.mulkkam.ui.onboarding.cups.CupsRoute
-import com.mulkkam.ui.onboarding.cups.CupsScreen
 import com.mulkkam.ui.onboarding.nickname.NicknameRoute
-import com.mulkkam.ui.onboarding.nickname.NicknameScreen
 import com.mulkkam.ui.onboarding.targetamount.TargetAmountRoute
-import com.mulkkam.ui.onboarding.targetamount.TargetAmountScreen
 import com.mulkkam.ui.onboarding.terms.TermsRoute
-import com.mulkkam.ui.onboarding.terms.TermsScreen
 
 object OnboardingNavGraph {
     @Composable
