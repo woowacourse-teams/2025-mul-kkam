@@ -2,14 +2,16 @@ package com.mulkkam.ui.login
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Lifecycle
+import androidx.core.net.toUri
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.mulkkam.R
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
@@ -18,8 +20,6 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
-import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,10 +37,10 @@ class LoginActivity : AppCompatActivity() {
                     viewModel = viewModel,
                     onLoginWithKakao = ::loginWithKakao,
                     onNavigateToNextScreen = ::navigateToNextScreen,
+                    onNavigateToPlayStoreAndExit = ::openPlayStoreAndExit,
                 )
             }
         }
-        collectIsAppOutdated()
     }
 
     private fun loginWithKakao() {
@@ -83,17 +83,28 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun collectIsAppOutdated() {
-        viewModel.isAppOutdated.collectWithLifecycle(this, Lifecycle.State.STARTED) { isAppOutdated ->
-            if (isAppOutdated) showUpdateDialog()
-        }
-    }
+    private fun openPlayStoreAndExit() {
+        val appPackageName: String = packageName
 
-    private fun showUpdateDialog() {
-        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
-        AppUpdateDialogFragment
-            .newInstance()
-            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
+        val playStoreUri: Uri = getString(R.string.play_store_app, appPackageName).toUri()
+        val webUri: Uri = getString(R.string.play_store_web, appPackageName).toUri()
+
+        val playStoreIntent =
+            Intent(Intent.ACTION_VIEW, playStoreUri).apply {
+                setPackage(getString(R.string.play_store))
+                addFlags(
+                    Intent.FLAG_ACTIVITY_NO_HISTORY or
+                        Intent.FLAG_ACTIVITY_NEW_DOCUMENT or
+                        Intent.FLAG_ACTIVITY_MULTIPLE_TASK,
+                )
+            }
+        val webIntent = Intent(Intent.ACTION_VIEW, webUri)
+
+        runCatching { startActivity(playStoreIntent) }
+            .recoverCatching { startActivity(webIntent) }
+
+        finishAffinity()
+        finishAndRemoveTask()
     }
 
     private fun navigateToNextScreen(userAuthState: UserAuthState) {

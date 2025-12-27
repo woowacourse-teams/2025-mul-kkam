@@ -23,19 +23,28 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.login.component.KakaoLoginButton
+import com.mulkkam.ui.splash.component.AppUpdateDialog
 
 @Composable
 fun LoginScreen(
     onLoginClick: () -> Unit,
     snackbarHostState: SnackbarHostState,
     isLoginLoading: Boolean,
+    navigateToPlayStoreAndExit: () -> Unit,
     modifier: Modifier = Modifier,
+    showDialog: Boolean = false,
 ) {
     Scaffold(
         modifier = modifier,
         containerColor = White,
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
+        if (showDialog) {
+            AppUpdateDialog(
+                navigateToPlayStoreAndExit = navigateToPlayStoreAndExit,
+            )
+        }
+
         Column(
             modifier =
                 Modifier
@@ -71,6 +80,7 @@ private fun LoginScreenPreview() {
             onLoginClick = {},
             snackbarHostState = SnackbarHostState(),
             isLoginLoading = false,
+            navigateToPlayStoreAndExit = {},
         )
     }
 }
