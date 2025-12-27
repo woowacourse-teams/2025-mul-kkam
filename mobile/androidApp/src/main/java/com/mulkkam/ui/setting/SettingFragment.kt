@@ -10,8 +10,7 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.model.SettingType
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
@@ -25,13 +24,12 @@ import com.mulkkam.ui.settingreminder.SettingReminderActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import com.mulkkam.ui.util.extensions.getParcelableArrayListExtraCompat
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class SettingFragment :
     Fragment(),
     Refreshable {
-    private val viewModel: SettingViewModel by viewModels()
+    private val viewModel: SettingViewModel by viewModel()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
@@ -43,7 +41,7 @@ class SettingFragment :
 
         return ComposeView(requireContext()).also { composeView ->
             composeView.setContent {
-                MulkkamTheme {
+                MulKkamTheme {
                     SettingScreen(
                         navigateToSettingType = { type -> handleSettingClick(type) },
                     )

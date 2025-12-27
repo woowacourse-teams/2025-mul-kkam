@@ -9,18 +9,16 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.pendingfriends.PendingFriendsActivity
 import com.mulkkam.ui.searchmembers.SearchMembersActivity
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class FriendsFragment :
     Fragment(),
     Refreshable {
-    private val viewModel: FriendsViewModel by viewModels()
+    private val viewModel: FriendsViewModel by viewModel()
     private lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
     private var activityResultSource: ActivityResultSource? = null
 
@@ -37,7 +35,7 @@ class FriendsFragment :
         val composeView =
             ComposeView(requireContext()).apply {
                 setContent {
-                    MulkkamTheme {
+                    MulKkamTheme {
                         FriendsRoute(
                             navigateToSearch = {
                                 val intent = SearchMembersActivity.newIntent(requireContext())

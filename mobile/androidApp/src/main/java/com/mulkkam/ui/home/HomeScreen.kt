@@ -14,7 +14,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -22,7 +21,7 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.component.DrinkButton
 import com.mulkkam.ui.home.component.FriendWaterBalloonExplodeLottie
@@ -35,6 +34,7 @@ import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Loading.toSuccessDataOrNull
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
@@ -42,7 +42,7 @@ fun HomeScreen(
     onManualDrink: () -> Unit,
     snackbarHostState: SnackbarHostState,
     toastState: MulKkamToastState,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: HomeViewModel = koinViewModel(),
     parentViewModel: MainViewModel = viewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -136,7 +136,7 @@ private fun HomeScreenPreview() {
     val snackbarHostState = remember { SnackbarHostState() }
     val toastState = rememberMulKkamToastState()
 
-    MulkkamTheme {
+    MulKkamTheme {
         HomeScreen(
             navigateToNotification = {},
             onManualDrink = {},

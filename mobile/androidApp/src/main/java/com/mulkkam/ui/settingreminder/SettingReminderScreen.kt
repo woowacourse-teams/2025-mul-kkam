@@ -15,13 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -31,13 +30,14 @@ import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import java.time.LocalTime
+import kotlinx.datetime.toKotlinLocalTime
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingReminderScreen(
     navigateToBack: () -> Unit,
-    viewModel: SettingReminderViewModel = hiltViewModel(),
+    viewModel: SettingReminderViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -78,8 +78,15 @@ fun SettingReminderScreen(
             val currentMode = reminderUpdateUiState
             val initialTime =
                 when (currentMode) {
-                    is ReminderUpdateUiState.Update -> currentMode.reminderSchedule.schedule
-                    is ReminderUpdateUiState.Add, ReminderUpdateUiState.Idle -> LocalTime.now()
+                    is ReminderUpdateUiState.Update -> {
+                        currentMode.reminderSchedule.schedule
+                    }
+
+                    is ReminderUpdateUiState.Add, ReminderUpdateUiState.Idle -> {
+                        java.time.LocalTime
+                            .now()
+                            .toKotlinLocalTime()
+                    }
                 }
 
             ReminderScheduleBottomSheet(
@@ -121,7 +128,7 @@ private fun handleReminderUpdateAction(
 @Preview(showBackground = true)
 @Composable
 private fun SettingRemindScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingReminderScreen(
             navigateToBack = {},
         )

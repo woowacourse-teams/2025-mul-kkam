@@ -23,7 +23,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -87,7 +87,7 @@ fun LinearGradientProgress(
 @Preview(showBackground = true)
 @Composable
 private fun LinearGradientProgressPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         LinearGradientProgress(
             progress = 75f,
             modifier =

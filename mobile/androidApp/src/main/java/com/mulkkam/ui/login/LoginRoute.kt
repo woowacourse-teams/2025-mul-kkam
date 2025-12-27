@@ -14,9 +14,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.UserAuthState
 import kotlinx.coroutines.launch
 
 private const val BACK_PRESS_THRESHOLD: Long = 2000L

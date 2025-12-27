@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
@@ -29,7 +28,7 @@ import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingbioinfo.component.GenderSection
@@ -37,13 +36,14 @@ import com.mulkkam.ui.settingbioinfo.component.HealthConnectSection
 import com.mulkkam.ui.settingbioinfo.component.SettingBioInfoTopAppBar
 import com.mulkkam.ui.settingbioinfo.component.SettingWeightBottomSheet
 import com.mulkkam.ui.settingbioinfo.component.WeightSection
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingBioInfoScreen(
     navigateToBack: () -> Unit,
     navigateToHealthConnect: () -> Unit,
-    viewModel: SettingBioInfoViewModel = hiltViewModel(),
+    viewModel: SettingBioInfoViewModel = koinViewModel(),
 ) {
     var isShowBottomSheet by rememberSaveable { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
@@ -149,7 +149,7 @@ fun SettingBioInfoScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingBioInfoScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingBioInfoScreen(
             navigateToBack = {},
             navigateToHealthConnect = {},

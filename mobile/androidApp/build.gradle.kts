@@ -11,7 +11,6 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.ktlint)
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -112,6 +111,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = "21"
+        freeCompilerArgs += listOf("-opt-in=kotlin.time.ExperimentalTime")
     }
 }
 
@@ -144,6 +144,7 @@ dependencies {
     // Kotlin 및 비동기 처리 관련 라이브러리
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.kotlinx.datetime)
 
     // 단위 테스트 의존성
     testImplementation(libs.kotlinx.coroutines.test)
@@ -183,9 +184,8 @@ dependencies {
     implementation(libs.shimmer)
 
     // DI
-    ksp(libs.hilt.compiler)
-    ksp(libs.androidx.hilt.compiler)
-    implementation(libs.hilt.android)
-    implementation(libs.hilt.navigation.compose)
-    implementation(libs.androidx.hilt.work)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.workmanager)
+    implementation(libs.koin.compose.viewmodel)
 }

@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingTopAppBar
@@ -78,7 +77,7 @@ fun SettingFeedbackScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingFeedbackScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingFeedbackScreen(onEmailClick = {}, onBackClick = {})
     }
 }

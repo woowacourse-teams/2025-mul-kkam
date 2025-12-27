@@ -18,26 +18,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingnickname.component.NicknameInputSection
 import com.mulkkam.ui.util.extensions.getStyledText
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NicknameScreen(
     navigateToBack: () -> Unit,
     navigateToNextStep: (nickname: Nickname) -> Unit,
     currentProgress: Int,
-    viewModel: NicknameViewModel = hiltViewModel(),
+    viewModel: NicknameViewModel = koinViewModel(),
 ) {
     var nickname by rememberSaveable { mutableStateOf("") }
 
@@ -100,7 +99,7 @@ fun NicknameScreen(
 @Preview(showBackground = true)
 @Composable
 private fun NicknameScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NicknameScreen(
             navigateToBack = {},
             navigateToNextStep = {},

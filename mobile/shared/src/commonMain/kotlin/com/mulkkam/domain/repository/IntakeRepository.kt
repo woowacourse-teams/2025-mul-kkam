@@ -1,0 +1,48 @@
+package com.mulkkam.domain.repository
+
+import com.mulkkam.domain.model.Gender
+import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.bio.BioWeight
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.intake.AchievementRate
+import com.mulkkam.domain.model.intake.IntakeHistoryResult
+import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.result.MulKkamResult
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
+
+interface IntakeRepository {
+    suspend fun getIntakeHistory(
+        from: LocalDate,
+        to: LocalDate,
+    ): MulKkamResult<IntakeHistorySummaries>
+
+    suspend fun getAchievementRates(
+        from: LocalDate,
+        to: LocalDate,
+    ): MulKkamResult<List<AchievementRate>>
+
+    suspend fun postIntakeHistoryInput(
+        dateTime: LocalDateTime,
+        intakeType: IntakeType,
+        amount: CupAmount,
+    ): MulKkamResult<IntakeHistoryResult>
+
+    suspend fun postIntakeHistoryCup(
+        dateTime: LocalDateTime,
+        cupId: Long,
+    ): MulKkamResult<IntakeHistoryResult>
+
+    suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit>
+
+    suspend fun getIntakeTarget(): MulKkamResult<Int>
+
+    suspend fun getIntakeAmountRecommended(): MulKkamResult<Int>
+
+    suspend fun getIntakeAmountTargetRecommended(
+        gender: Gender?,
+        weight: BioWeight?,
+    ): MulKkamResult<Int>
+
+    suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit>
+}

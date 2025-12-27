@@ -6,19 +6,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.ui.designsystem.MulkkamTheme
-import dagger.hilt.android.AndroidEntryPoint
-import javax.inject.Inject
+import com.mulkkam.ui.designsystem.MulKkamTheme
+import org.koin.android.ext.android.inject
 
-@AndroidEntryPoint
 class SettingFeedbackActivity : ComponentActivity() {
-    @Inject
-    lateinit var logger: Logger
+    private val logger: Logger by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingFeedbackRoute(
                     logger = logger,
                     navigateToBack = ::finish,

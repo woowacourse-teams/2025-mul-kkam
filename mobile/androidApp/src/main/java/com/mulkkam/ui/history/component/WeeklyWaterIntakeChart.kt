@@ -26,13 +26,16 @@ import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toJavaLocalDate
+import kotlinx.datetime.todayIn
 import java.time.format.DateTimeFormatter
+import kotlin.time.Clock
 
 private val FORMATTER_MONTH_DATE: DateTimeFormatter =
     DateTimeFormatter.ofPattern("M월 d일")
@@ -48,7 +51,7 @@ fun WeeklyWaterIntakeChart(
     onClickDate: (IntakeHistorySummary) -> Unit,
     onClickButton: (Long) -> Unit,
     modifier: Modifier = Modifier,
-    currentDate: LocalDate = LocalDate.now(),
+    currentDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     isNotCurrentWeek: Boolean = false,
 ) {
     Column(
@@ -73,14 +76,14 @@ fun WeeklyWaterIntakeChart(
             )
 
             val formatter =
-                if (weeklyIntakeHistorySummaries.isCurrentYear()) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
+                if (weeklyIntakeHistorySummaries.isCurrentYear(currentDate)) FORMATTER_MONTH_DATE else FORMATTER_FULL_DATE
 
             Text(
                 text =
                     stringResource(
                         R.string.history_week_range,
-                        weeklyIntakeHistorySummaries.firstDay.format(formatter),
-                        weeklyIntakeHistorySummaries.lastDay.format(formatter),
+                        weeklyIntakeHistorySummaries.firstDay.toJavaLocalDate().format(formatter),
+                        weeklyIntakeHistorySummaries.lastDay.toJavaLocalDate().format(formatter),
                     ),
                 color = Gray400,
                 style = MulKkamTheme.typography.title2,
@@ -138,55 +141,55 @@ fun WeeklyWaterIntakeChart(
 @Preview(showBackground = true, name = "이번주 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_ThisWeek() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =
                     listOf(
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 27),
+                            date = LocalDate(2025, 10, 27),
                             targetAmount = 1000,
                             totalIntakeAmount = 100,
                             achievementRate = 10f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 28),
+                            date = LocalDate(2025, 10, 28),
                             targetAmount = 1000,
                             totalIntakeAmount = 200,
                             achievementRate = 20f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 29),
+                            date = LocalDate(2025, 10, 29),
                             targetAmount = 1000,
                             totalIntakeAmount = 300,
                             achievementRate = 30f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 30),
+                            date = LocalDate(2025, 10, 30),
                             targetAmount = 1000,
                             totalIntakeAmount = 400,
                             achievementRate = 40f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 31),
+                            date = LocalDate(2025, 10, 31),
                             targetAmount = 1000,
                             totalIntakeAmount = 500,
                             achievementRate = 50f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 11, 1),
+                            date = LocalDate(2025, 11, 1),
                             targetAmount = 1000,
                             totalIntakeAmount = 600,
                             achievementRate = 60f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 11, 2),
+                            date = LocalDate(2025, 11, 2),
                             targetAmount = 1000,
                             totalIntakeAmount = 1000,
                             achievementRate = 100f,
@@ -194,6 +197,7 @@ private fun WeeklyWaterIntakeChartPreview_ThisWeek() {
                         ),
                     ),
             ),
+            currentDate = LocalDate(2025, 10, 31),
             onClickDate = { _ -> },
             onClickButton = {},
         )
@@ -203,55 +207,55 @@ private fun WeeklyWaterIntakeChartPreview_ThisWeek() {
 @Preview(showBackground = true, name = "다른 주 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_DifferentWeek() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =
                     listOf(
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 27),
+                            date = LocalDate(2025, 10, 27),
                             targetAmount = 1000,
                             totalIntakeAmount = 100,
                             achievementRate = 10f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 28),
+                            date = LocalDate(2025, 10, 28),
                             targetAmount = 1000,
                             totalIntakeAmount = 200,
                             achievementRate = 20f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 29),
+                            date = LocalDate(2025, 10, 29),
                             targetAmount = 1000,
                             totalIntakeAmount = 300,
                             achievementRate = 30f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 30),
+                            date = LocalDate(2025, 10, 30),
                             targetAmount = 1000,
                             totalIntakeAmount = 400,
                             achievementRate = 40f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 10, 31),
+                            date = LocalDate(2025, 10, 31),
                             targetAmount = 1000,
                             totalIntakeAmount = 500,
                             achievementRate = 50f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 11, 1),
+                            date = LocalDate(2025, 11, 1),
                             targetAmount = 1000,
                             totalIntakeAmount = 600,
                             achievementRate = 60f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2025, 11, 2),
+                            date = LocalDate(2025, 11, 2),
                             targetAmount = 1000,
                             totalIntakeAmount = 1000,
                             achievementRate = 100f,
@@ -260,6 +264,7 @@ private fun WeeklyWaterIntakeChartPreview_DifferentWeek() {
                     ),
             ),
             isNotCurrentWeek = true,
+            currentDate = LocalDate(2025, 11, 10),
             onClickDate = { _ -> },
             onClickButton = {},
         )
@@ -269,55 +274,55 @@ private fun WeeklyWaterIntakeChartPreview_DifferentWeek() {
 @Preview(showBackground = true, name = "다른 연도의 기록을 조회할 경우")
 @Composable
 private fun WeeklyWaterIntakeChartPreview_DifferentYear() {
-    MulkkamTheme {
+    MulKkamTheme {
         WeeklyWaterIntakeChart(
             IntakeHistorySummaries(
                 intakeHistorySummaries =
                     listOf(
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 10, 27),
+                            date = LocalDate(2024, 10, 27),
                             targetAmount = 1000,
                             totalIntakeAmount = 100,
                             achievementRate = 10f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 10, 28),
+                            date = LocalDate(2024, 10, 28),
                             targetAmount = 1000,
                             totalIntakeAmount = 200,
                             achievementRate = 20f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 10, 29),
+                            date = LocalDate(2024, 10, 29),
                             targetAmount = 1000,
                             totalIntakeAmount = 300,
                             achievementRate = 30f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 10, 30),
+                            date = LocalDate(2024, 10, 30),
                             targetAmount = 1000,
                             totalIntakeAmount = 400,
                             achievementRate = 40f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 10, 31),
+                            date = LocalDate(2024, 10, 31),
                             targetAmount = 1000,
                             totalIntakeAmount = 500,
                             achievementRate = 50f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 11, 1),
+                            date = LocalDate(2024, 11, 1),
                             targetAmount = 1000,
                             totalIntakeAmount = 600,
                             achievementRate = 60f,
                             intakeHistories = listOf(),
                         ),
                         IntakeHistorySummary(
-                            date = LocalDate.of(2024, 11, 2),
+                            date = LocalDate(2024, 11, 2),
                             targetAmount = 1000,
                             totalIntakeAmount = 1000,
                             achievementRate = 100f,
@@ -326,6 +331,7 @@ private fun WeeklyWaterIntakeChartPreview_DifferentYear() {
                     ),
             ),
             isNotCurrentWeek = true,
+            currentDate = LocalDate(2025, 11, 10),
             onClickDate = { _ -> },
             onClickButton = {},
         )

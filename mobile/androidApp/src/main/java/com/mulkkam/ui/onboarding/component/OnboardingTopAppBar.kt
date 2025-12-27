@@ -24,7 +24,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
@@ -87,7 +86,7 @@ fun OnboardingTopAppBar(
 @Preview(showBackground = true, name = "스킵 가능한 경우")
 @Composable
 private fun OnboardingTopAppBarPreview_CanSkip() {
-    MulkkamTheme {
+    MulKkamTheme {
         OnboardingTopAppBar(
             onBackClick = {},
             currentProgress = 1,
@@ -99,7 +98,7 @@ private fun OnboardingTopAppBarPreview_CanSkip() {
 @Preview(showBackground = true, name = "스킵 불가능한 경우")
 @Composable
 private fun OnboardingTopAppBarPreview_CantSkip() {
-    MulkkamTheme {
+    MulKkamTheme {
         OnboardingTopAppBar(
             onBackClick = {},
             currentProgress = 1,

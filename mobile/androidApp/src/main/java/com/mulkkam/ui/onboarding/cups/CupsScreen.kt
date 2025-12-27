@@ -28,7 +28,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
@@ -37,7 +36,6 @@ import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.component.NextButton
@@ -51,6 +49,7 @@ import com.mulkkam.ui.settingcups.model.CupsUiModel
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,7 +58,7 @@ fun CupsScreen(
     navigateToCoffeeEncyclopedia: () -> Unit,
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
-    viewModel: CupsViewModel = hiltViewModel(),
+    viewModel: CupsViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -140,7 +139,7 @@ fun CupsScreen(
                     },
                     onNavigateToCoffeeEncyclopedia = navigateToCoffeeEncyclopedia,
                     viewModel =
-                        hiltViewModel(
+                        koinViewModel(
                             key =
                                 selectedCup?.id?.toString()
                                     ?: (SettingWaterCupEditType.ADD.name + System.currentTimeMillis()),
@@ -213,7 +212,7 @@ fun CupsScreen(
 @Preview(showBackground = true)
 @Composable
 private fun CupsScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         CupsScreen(
             navigateToBack = {},
             navigateToCoffeeEncyclopedia = {},

@@ -25,7 +25,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.content.ContextCompat.getString
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
@@ -33,7 +32,6 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -43,12 +41,13 @@ import com.mulkkam.ui.pendingfriends.component.SentTab
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun PendingFriendsScreen(
     navigateToBack: () -> Unit,
     onFriendAccepted: () -> Unit,
-    viewModel: PendingFriendsViewModel = hiltViewModel(),
+    viewModel: PendingFriendsViewModel = koinViewModel(),
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -240,7 +239,7 @@ private fun handleCancelRequestAction(
 @Preview(showBackground = true)
 @Composable
 private fun PendingFriendsScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         PendingFriendsScreen(
             navigateToBack = {},
             onFriendAccepted = {},

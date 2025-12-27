@@ -23,7 +23,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray10
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
 fun GradientDonutChart(
@@ -101,7 +101,7 @@ fun GradientDonutChart(
 @Preview(showBackground = true)
 @Composable
 private fun GradientDonutChartPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         GradientDonutChart(progress = 10f, modifier = Modifier.size(200.dp))
     }
 }

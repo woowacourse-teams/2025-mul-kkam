@@ -16,14 +16,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.mulkkam.R
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeHistory
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.util.ImageShape
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toJavaLocalTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -49,12 +49,13 @@ fun IntakeHistoryItem(
             shape = ImageShape.Circle,
         )
 
+        val javaTime = intakeHistory.dateTime.toJavaLocalTime()
         Text(
             text =
                 if (intakeHistory.dateTime.minute == 0) {
-                    intakeHistory.dateTime.format(timeFormatterWithoutMinutes)
+                    javaTime.format(timeFormatterWithoutMinutes)
                 } else {
-                    intakeHistory.dateTime.format(timeFormatterWithMinutes)
+                    javaTime.format(timeFormatterWithMinutes)
                 },
             style = MulKkamTheme.typography.body4,
             color = Black,
@@ -77,12 +78,12 @@ fun IntakeHistoryItem(
 @Preview(showBackground = true)
 @Composable
 private fun IntakeHistoryItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         IntakeHistoryItem(
             intakeHistory =
                 IntakeHistory(
                     id = 1,
-                    dateTime = LocalTime.of(12, 31),
+                    dateTime = LocalTime(12, 31),
                     intakeAmount = 350,
                     intakeType = IntakeType.WATER,
                     cupEmojiUrl = "url",

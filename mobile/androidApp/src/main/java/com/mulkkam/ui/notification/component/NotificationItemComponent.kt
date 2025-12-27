@@ -21,9 +21,11 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.notification.NotificationType
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
-import java.time.LocalDateTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 @Composable
 fun NotificationItemComponent(
@@ -79,14 +81,14 @@ fun NotificationItemComponent(
 @Preview(showBackground = true, name = "공지 알림 프리뷰")
 @Composable
 private fun NoticeNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(
                     id = 1,
                     title = "공지 알림입니다 !",
                     type = NotificationType.NOTICE,
-                    createdAt = LocalDateTime.now(),
+                    createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                     recommendedTargetAmount = null,
                     isRead = true,
                     applyRecommendAmount = null,
@@ -100,14 +102,14 @@ private fun NoticeNotificationItemComponentPreview() {
 @Preview(showBackground = true, name = "제안 알림 프리뷰")
 @Composable
 private fun SuggestionNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(
                     id = 1,
                     title = "제안 알림입니다 !",
                     type = NotificationType.SUGGESTION,
-                    createdAt = LocalDateTime.now(),
+                    createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                     recommendedTargetAmount = 100,
                     isRead = true,
                     applyRecommendAmount = false,
@@ -121,14 +123,14 @@ private fun SuggestionNotificationItemComponentPreview() {
 @Preview(showBackground = true, name = "읽지 않은 알림 프리뷰")
 @Composable
 private fun UnreadNotificationItemComponentPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         NotificationItemComponent(
             notification =
                 Notification(
                     id = 1,
                     title = "안 읽은 알림입니다 !",
                     type = NotificationType.SUGGESTION,
-                    createdAt = LocalDateTime.now(),
+                    createdAt = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                     recommendedTargetAmount = 100,
                     isRead = false,
                     applyRecommendAmount = false,

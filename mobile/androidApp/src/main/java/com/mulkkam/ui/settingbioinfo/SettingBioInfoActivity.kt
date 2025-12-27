@@ -5,16 +5,14 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class SettingBioInfoActivity : ComponentActivity() {
-    private val viewModel: SettingBioInfoViewModel by viewModels()
+    private val viewModel: SettingBioInfoViewModel by viewModel()
 
     private val healthConnectIntent: Intent by lazy {
         Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS)
@@ -23,7 +21,7 @@ class SettingBioInfoActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingBioInfoScreen(
                     navigateToBack = ::finish,
                     navigateToHealthConnect = {

@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
@@ -36,19 +35,19 @@ import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.settingnickname.component.NicknameInputSection
 import com.mulkkam.ui.settingnickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingNicknameScreen(
     navigateToBack: () -> Unit,
-    viewModel: SettingNicknameViewModel = hiltViewModel(),
+    viewModel: SettingNicknameViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
@@ -150,7 +149,7 @@ fun SettingNicknameScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingNicknameScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         SettingNicknameScreen(navigateToBack = {})
     }
 }

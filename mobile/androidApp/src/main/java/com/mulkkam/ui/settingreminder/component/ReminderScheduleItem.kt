@@ -20,16 +20,20 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.domain.model.reminder.ReminderSchedule
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
-import java.time.LocalTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toKotlinLocalTime
 
 @Composable
 fun ReminderScheduleItem(
     reminder: ReminderSchedule,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
-    currentTime: LocalTime = LocalTime.now(),
+    currentTime: LocalTime =
+        java.time.LocalTime
+            .now()
+            .toKotlinLocalTime(),
 ) {
     val dismissState =
         rememberSwipeToDismissBoxState(
@@ -81,9 +85,9 @@ fun ReminderScheduleItem(
 @Preview(showBackground = true)
 @Composable
 private fun RemindItemPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleItem(
-            reminder = ReminderSchedule(1L, LocalTime.of(13, 0)),
+            reminder = ReminderSchedule(1L, LocalTime(13, 0)),
             onRemove = {},
         )
     }

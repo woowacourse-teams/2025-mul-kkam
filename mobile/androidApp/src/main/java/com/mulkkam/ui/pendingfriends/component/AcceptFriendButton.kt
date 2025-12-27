@@ -15,7 +15,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.util.extensions.noRippleClickable
@@ -43,7 +43,7 @@ fun AcceptFriendButton(onClick: () -> Unit) {
 @Preview(showBackground = true)
 @Composable
 private fun AcceptFriendButtonPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         AcceptFriendButton(onClick = {})
     }
 }

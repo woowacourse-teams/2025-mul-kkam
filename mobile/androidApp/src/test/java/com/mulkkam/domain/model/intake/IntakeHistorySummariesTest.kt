@@ -2,12 +2,15 @@ package com.mulkkam.domain.model.intake
 
 import com.mulkkam.fixture.FULL_INTAKE_HISTORY
 import com.mulkkam.fixture.getWeeklyIntakeHistories
+import kotlinx.datetime.DatePeriod
+import kotlinx.datetime.DateTimeUnit
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.plus
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.time.LocalDate
 
 class IntakeHistorySummariesTest {
-    private val monday = LocalDate.of(2025, 8, 11)
+    private val monday = LocalDate(2025, 8, 11)
     private val mockedIntakeHistories = getWeeklyIntakeHistories(monday)
 
     @Test
@@ -24,7 +27,7 @@ class IntakeHistorySummariesTest {
     fun `음용 기록 요약의 마지막 날짜를 반환한다`() {
         // given & when
         val actual = mockedIntakeHistories.lastDay
-        val expected = monday.plusDays(LAST_INDEX)
+        val expected = monday.plus(LAST_INDEX.toInt(), DateTimeUnit.DAY)
 
         // then
         assertThat(actual).isEqualTo(expected)
@@ -33,7 +36,7 @@ class IntakeHistorySummariesTest {
     @Test
     fun `현재 날짜의 연도와 다른 연도가 있으면 다른 연도의 기록으로 판단한다`() {
         // given
-        val otherYear = monday.plusYears(1)
+        val otherYear = monday.plus(DatePeriod(years = 1))
 
         // when
         val actual = mockedIntakeHistories.isCurrentYear(otherYear)
@@ -64,7 +67,7 @@ class IntakeHistorySummariesTest {
     @Test
     fun `특정 인덱스의 기록을 반환한다`() {
         // given & when
-        val actual = mockedIntakeHistories.getByIndex(0)
+        val actual = mockedIntakeHistories.getByIndex(0, monday)
         val expected = FULL_INTAKE_HISTORY.copy(date = monday)
 
         // then
@@ -78,7 +81,7 @@ class IntakeHistorySummariesTest {
 
         // when
         val actual = mockedIntakeHistories.getDateByWeekOffset(offset)
-        val expected = monday.plusWeeks(offset)
+        val expected = monday.plus(DatePeriod(days = (offset * 7).toInt()))
 
         // then
         assertThat(actual).isEqualTo(expected)

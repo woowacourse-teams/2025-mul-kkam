@@ -12,9 +12,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -24,12 +23,13 @@ import com.mulkkam.ui.notification.component.NotificationShimmerItem
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
 import com.mulkkam.ui.util.LoadingShimmerEffect
 import com.mulkkam.ui.util.extensions.onLoadMore
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun NotificationScreen(
     navigateToBack: () -> Unit,
     state: LazyListState = rememberLazyListState(),
-    viewModel: NotificationViewModel = hiltViewModel(),
+    viewModel: NotificationViewModel = koinViewModel(),
 ) {
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
@@ -103,7 +103,7 @@ fun NotificationScreen(
 @Preview(showBackground = true)
 @Composable
 private fun NotificationScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         Column {
             NotificationScreen(
                 navigateToBack = {},

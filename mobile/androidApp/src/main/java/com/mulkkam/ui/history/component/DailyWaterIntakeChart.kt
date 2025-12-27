@@ -26,11 +26,11 @@ import com.mulkkam.ui.component.ColoredText
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
-import java.time.LocalDate
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -64,13 +64,14 @@ fun DailyWaterIntakeChart(
             }
         }
 
+        val formattedDate = date.toJavaLocalDate().format(getDateFormatter(context))
         ColoredText(
             fullText =
                 stringResource(
                     R.string.history_daily_chart_label,
-                    date.format(getDateFormatter(context)),
+                    formattedDate,
                 ),
-            highlightedTexts = listOf(date.format(getDateFormatter(context))),
+            highlightedTexts = listOf(formattedDate),
             highlightColor = Primary200,
             style = MulKkamTheme.typography.title1,
             color = Black,
@@ -145,11 +146,11 @@ private fun getCharacterImage(waterIntakeState: WaterIntakeState) =
 @Preview(showBackground = true, name = "오늘 목표량을 다 채운 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_PresentFull() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 31),
+                    date = LocalDate(2025, 10, 31),
                     targetAmount = 1000,
                     totalIntakeAmount = 1000,
                     achievementRate = 100f,
@@ -163,11 +164,11 @@ private fun DailyWaterIntakeChartPreview_PresentFull() {
 @Preview(showBackground = true, name = "오늘 목표량을 다 채우지 않은 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_PresentNotFull() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 31),
+                    date = LocalDate(2025, 10, 31),
                     targetAmount = 1000,
                     totalIntakeAmount = 500,
                     achievementRate = 50f,
@@ -181,11 +182,11 @@ private fun DailyWaterIntakeChartPreview_PresentNotFull() {
 @Preview(showBackground = true, name = "과거 기록이 없는 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_PastNoRecord() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 0,
                     achievementRate = 0f,
@@ -199,11 +200,11 @@ private fun DailyWaterIntakeChartPreview_PastNoRecord() {
 @Preview(showBackground = true, name = "과거 목표량을 다 채우지 않은 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_PastPartial() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 500,
                     achievementRate = 50f,
@@ -217,11 +218,11 @@ private fun DailyWaterIntakeChartPreview_PastPartial() {
 @Preview(showBackground = true, name = "과거 목표량을 다 채운 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_PastFull() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 20),
+                    date = LocalDate(2025, 10, 20),
                     targetAmount = 1000,
                     totalIntakeAmount = 1000,
                     achievementRate = 100f,
@@ -235,11 +236,11 @@ private fun DailyWaterIntakeChartPreview_PastFull() {
 @Preview(showBackground = true, name = "미래인 경우")
 @Composable
 private fun DailyWaterIntakeChartPreview_Future() {
-    MulkkamTheme {
+    MulKkamTheme {
         DailyWaterIntakeChart(
             dailyIntakeHistory =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 11, 3),
+                    date = LocalDate(2025, 11, 3),
                     targetAmount = 1000,
                     totalIntakeAmount = 0,
                     achievementRate = 0f,

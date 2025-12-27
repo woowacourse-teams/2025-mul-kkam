@@ -14,7 +14,6 @@ import com.mulkkam.ui.component.MulKkamTextField
 import com.mulkkam.ui.component.MulKkamTextFieldState
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
 
 @Composable
@@ -61,7 +60,7 @@ private fun getTextFieldState(targetAmountValidityUiState: MulKkamUiState<Unit>)
 @Preview(showBackground = true)
 @Composable
 private fun TargetAmountInputSectionPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         TargetAmountInputSection(
             targetAmount = "1800",
             onTargetAmountChanged = {},
@@ -73,7 +72,7 @@ private fun TargetAmountInputSectionPreview() {
 @Preview(showBackground = true, name = "목표량이 잘못 설정된 경우")
 @Composable
 private fun TargetAmountInputSectionPreview_Error() {
-    MulkkamTheme {
+    MulKkamTheme {
         TargetAmountInputSection(
             targetAmount = "1",
             onTargetAmountChanged = {},

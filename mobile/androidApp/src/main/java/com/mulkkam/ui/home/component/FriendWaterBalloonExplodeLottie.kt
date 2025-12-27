@@ -11,7 +11,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.mulkkam.R
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
 fun FriendWaterBalloonExplodeLottie(
@@ -44,7 +44,7 @@ fun FriendWaterBalloonExplodeLottie(
 @Preview(showBackground = true)
 @Composable
 private fun FriendWaterBalloonExplodeLottiePreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         FriendWaterBalloonExplodeLottie(
             playConfetti = true,
             onFinished = {},

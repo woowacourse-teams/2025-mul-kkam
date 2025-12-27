@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import com.mulkkam.domain.model.intake.IntakeType
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
@@ -125,7 +125,7 @@ private fun SettingCupsItem.toStableKey(): Any =
 @Preview(showBackground = true)
 @Composable
 private fun SettingCupsEditorPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         val previewItems =
             remember {
                 mutableStateListOf<SettingCupsItem>().apply {

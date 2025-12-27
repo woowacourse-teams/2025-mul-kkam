@@ -5,20 +5,18 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.login.LoginActivity
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class SettingAccountInfoActivity : ComponentActivity() {
-    private val viewModel: SettingAccountInfoViewModel by viewModels()
+    private val viewModel: SettingAccountInfoViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 SettingAccountInfoRoute(
                     viewModel = viewModel,
                     navigateToBack = ::finish,

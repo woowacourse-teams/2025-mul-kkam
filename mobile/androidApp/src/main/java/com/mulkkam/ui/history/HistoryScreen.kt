@@ -26,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.intake.WaterIntakeState
@@ -35,7 +34,6 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.history.component.DailyWaterIntakeChart
 import com.mulkkam.ui.history.component.IntakeHistoryItem
@@ -44,10 +42,11 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.util.LoadingShimmerEffect
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HistoryScreen(viewModel: HistoryViewModel = hiltViewModel()) {
+fun HistoryScreen(viewModel: HistoryViewModel = koinViewModel()) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
 
@@ -214,7 +213,7 @@ private suspend fun handleDeleteSuccess(
 @Preview(showBackground = true)
 @Composable
 private fun HistoryScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         HistoryScreen()
     }
 }

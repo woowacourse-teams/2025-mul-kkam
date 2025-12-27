@@ -16,10 +16,13 @@ import com.mulkkam.R
 import com.mulkkam.domain.checker.AchievementHeatmapChecker
 import com.mulkkam.domain.model.intake.AchievementLevel
 import com.mulkkam.ui.main.MainActivity
+import org.koin.core.context.GlobalContext
 import java.util.UUID
 import kotlin.math.sqrt
 
 class AchievementHeatmapWidget : AppWidgetProvider() {
+    private fun achievementHeatmapChecker(): AchievementHeatmapChecker = GlobalContext.get().get()
+
     override fun onReceive(
         context: Context,
         intent: Intent,
@@ -33,7 +36,9 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
                     AchievementHeatmapWidget::class.java,
                 ),
             )
-        ids.forEach { id -> updateWidget(context.applicationContext, appWidgetManager, id) }
+        ids.forEach { id ->
+            updateWidget(context.applicationContext, appWidgetManager, id)
+        }
     }
 
     override fun onUpdate(
@@ -51,7 +56,9 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
         appWidgetManager: AppWidgetManager,
         appWidgetId: Int,
     ) {
-        val requestId: UUID = context.widgetEntryPoint().achievementHeatmapChecker().fetchAchievementHeatmap()
+        val requestIdText = achievementHeatmapChecker().fetchAchievementHeatmap()
+        val requestId: UUID = UUID.fromString(requestIdText)
+
         observeWorker(context, appWidgetManager, appWidgetId, requestId)
     }
 

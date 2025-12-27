@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun HomeTopBar(
@@ -44,7 +43,7 @@ fun HomeTopBar(
 @Preview(showBackground = true)
 @Composable
 private fun HomeTopBarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         HomeTopBar(
             alarmUnreadCount = 12,
             onNotificationClick = {},

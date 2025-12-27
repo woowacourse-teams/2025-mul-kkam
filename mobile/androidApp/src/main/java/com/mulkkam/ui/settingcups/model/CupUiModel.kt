@@ -1,10 +1,10 @@
 package com.mulkkam.ui.settingcups.model
 
 import android.os.Parcelable
-import com.mulkkam.domain.model.cups.Cup
+import com.mulkkam.domain.model.Cup
+import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
-import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
 import kotlinx.parcelize.Parcelize
 

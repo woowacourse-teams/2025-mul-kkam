@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
@@ -30,14 +29,13 @@ import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.AchievementHeatmapWidget
 import com.mulkkam.ui.widget.IntakeWidget
 import com.mulkkam.ui.widget.ProgressWidget
-import dagger.hilt.android.AndroidEntryPoint
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
     override val needBottomPadding: Boolean
         get() = binding.bnvMain.isVisible.not()
 
-    private val viewModel: MainViewModel by viewModels()
+    private val viewModel: MainViewModel by viewModel()
 
     private var backPressedTime: Long = 0L
 

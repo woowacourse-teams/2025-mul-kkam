@@ -13,22 +13,31 @@ import androidx.lifecycle.Observer
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.mulkkam.R
+import com.mulkkam.domain.checker.IntakeChecker
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_CUP_ID
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_EMOJI_BYTES
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_PERFORM_SUCCESS
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TARGET_AMOUNT
 import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOTAL_AMOUNT
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
 import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.util.extensions.dpToPx
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_DRINK
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_REFRESH
-import java.time.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.todayIn
+import org.koin.core.context.GlobalContext
 import java.util.UUID
+import kotlin.time.Clock
 
 class IntakeWidget : AppWidgetProvider() {
+    private fun intakeChecker(): IntakeChecker = GlobalContext.get().get()
+
+    private fun logger(): Logger = GlobalContext.get().get()
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -41,7 +50,8 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
         appWidgetId: Int,
     ) {
-        val requestId = context.widgetEntryPoint().intakeChecker().checkWidgetInfo()
+        val requestIdText = intakeChecker().checkWidgetInfo()
+        val requestId: UUID = UUID.fromString(requestIdText)
 
         val workManager = WorkManager.getInstance(context.applicationContext)
         val live = workManager.getWorkInfoByIdLiveData(requestId)
@@ -92,8 +102,9 @@ class IntakeWidget : AppWidgetProvider() {
         context: Context,
     ) {
         val cupId = intent.getLongExtra(KEY_EXTRA_CUP_ID, 0L)
-        context.widgetEntryPoint().logger().info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
-        val requestId = context.widgetEntryPoint().intakeChecker().drink(cupId)
+        logger().info(LogEvent.WIDGET, "${IntakeWidget::class.simpleName} - Drink cupId: $cupId")
+        val requestIdText = intakeChecker().drink(cupId)
+        val requestId: UUID = UUID.fromString(requestIdText)
         observeDrinkWorker(context, requestId)
     }
 
@@ -145,12 +156,13 @@ class IntakeWidget : AppWidgetProvider() {
             )
         views.setImageViewBitmap(R.id.iv_donut_chart, donut)
 
+        val today = Clock.System.todayIn(TimeZone.currentSystemDefault())
         views.setTextViewText(
             R.id.tv_title_date,
             context.getString(
                 R.string.intake_widget_home_target,
-                LocalDate.now().monthValue,
-                LocalDate.now().dayOfMonth,
+                today.monthNumber,
+                today.dayOfMonth,
             ),
         )
 

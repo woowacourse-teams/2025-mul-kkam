@@ -15,7 +15,6 @@ import com.mulkkam.R
 import com.mulkkam.ui.component.RoundedSwitch
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 
 @Composable
 fun ReminderSwitchRow(
@@ -46,7 +45,7 @@ fun ReminderSwitchRow(
 @Preview(showBackground = true)
 @Composable
 private fun ReminderSwitchRowPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderSwitchRow(
             checked = true,
             onCheckedChange = {},

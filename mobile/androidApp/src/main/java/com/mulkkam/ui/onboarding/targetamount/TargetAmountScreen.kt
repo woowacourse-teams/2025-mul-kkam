@@ -20,12 +20,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -34,6 +32,7 @@ import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
 import com.mulkkam.ui.util.extensions.getStyledText
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun TargetAmountScreen(
@@ -41,7 +40,7 @@ fun TargetAmountScreen(
     navigateToNextStep: (targetAmount: Int) -> Unit,
     currentProgress: Int,
     hasBioInfo: Boolean,
-    viewModel: TargetAmountViewModel = hiltViewModel(),
+    viewModel: TargetAmountViewModel = koinViewModel(),
 ) {
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountOnboardingUiState by viewModel.targetAmountOnboardingUiState.collectAsStateWithLifecycle()
@@ -148,7 +147,7 @@ private fun handleNumericInput(
 @Preview(showBackground = true)
 @Composable
 private fun TargetAmountScreenPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         TargetAmountScreen(
             navigateToBack = {},
             navigateToNextStep = {},

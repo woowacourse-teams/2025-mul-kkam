@@ -5,20 +5,21 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
-import com.mulkkam.domain.model.members.OnboardingInfo
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.util.extensions.getSerializableCompat
-import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-@AndroidEntryPoint
 class OnboardingCupsActivity : ComponentActivity() {
-    private val viewModel: CupsViewModel by viewModels()
+    private val viewModel: CupsViewModel by viewModel()
 
     private val onboardingInfo: OnboardingInfo? by lazy {
-        intent.getSerializableCompat<OnboardingInfo>(KEY_ONBOARDING_INFO)
+        intent.getStringExtra(KEY_ONBOARDING_INFO)?.let {
+            Json.decodeFromString<OnboardingInfo>(it)
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,7 +28,7 @@ class OnboardingCupsActivity : ComponentActivity() {
         viewModel.updateOnboardingInfo(onboardingInfo = onboardingInfo ?: return)
 
         setContent {
-            MulkkamTheme {
+            MulKkamTheme {
                 CupsScreen(
                     navigateToBack = ::finish,
                     navigateToCoffeeEncyclopedia = { startActivity(CoffeeEncyclopediaActivity.newIntent(this)) },
@@ -54,7 +55,7 @@ class OnboardingCupsActivity : ComponentActivity() {
             onboardingInfo: OnboardingInfo,
         ): Intent =
             Intent(context, OnboardingCupsActivity::class.java).apply {
-                putExtra(KEY_ONBOARDING_INFO, onboardingInfo)
+                putExtra(KEY_ONBOARDING_INFO, Json.encodeToString(onboardingInfo))
             }
     }
 }

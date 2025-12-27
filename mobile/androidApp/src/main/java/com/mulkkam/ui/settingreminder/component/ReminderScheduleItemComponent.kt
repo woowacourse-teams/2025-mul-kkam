@@ -21,11 +21,11 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.White
-import java.time.Duration
-import java.time.LocalTime
-import java.time.temporal.ChronoUnit
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 private const val HOURS_PER_DAY: Int = 24
 private const val NO_HOUR_DIFF: Long = 0
@@ -35,7 +35,11 @@ private const val MINUTES_PER_HOUR: Int = 60
 fun ReminderScheduleItemComponent(
     reminder: ReminderSchedule,
     modifier: Modifier = Modifier,
-    currentTime: LocalTime = LocalTime.now(),
+    currentTime: LocalTime =
+        Clock.System
+            .now()
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .time,
 ) {
     Row(
         modifier =
@@ -73,35 +77,37 @@ private fun formatRemainingTime(
     currentTime: LocalTime,
     reminderTime: LocalTime,
 ): String {
+    val currentMinutes = currentTime.hour * MINUTES_PER_HOUR + currentTime.minute
+    val reminderMinutes = reminderTime.hour * MINUTES_PER_HOUR + reminderTime.minute
     val diffMinutes =
-        Duration
-            .between(currentTime.truncatedTo(ChronoUnit.MINUTES), reminderTime)
-            .toMinutes()
-            .let { if (it < 0) it + HOURS_PER_DAY * MINUTES_PER_HOUR else it }
+        (reminderMinutes - currentMinutes).let {
+            if (it < 0) it + HOURS_PER_DAY * MINUTES_PER_HOUR else it
+        }
 
-    val (hours, minutes) = diffMinutes / MINUTES_PER_HOUR to diffMinutes % MINUTES_PER_HOUR
+    val hours = diffMinutes / MINUTES_PER_HOUR
+    val minutes = diffMinutes % MINUTES_PER_HOUR
 
     return stringResource(
-        if (hours == NO_HOUR_DIFF) {
+        if (hours == NO_HOUR_DIFF.toInt()) {
             R.string.setting_reminder_minutes_left
         } else {
             R.string.setting_reminder_hours_left
         },
-        if (hours == NO_HOUR_DIFF) minutes else hours,
+        if (hours == NO_HOUR_DIFF.toInt()) minutes else hours,
     )
 }
 
 @Preview(showBackground = true, name = "1시간 이상 남은 경우")
 @Composable
 private fun ReminderScheduleItemComponentPreview_OverOneHour() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleItemComponent(
             reminder =
                 ReminderSchedule(
                     id = 1L,
-                    schedule = LocalTime.of(13, 45),
+                    schedule = LocalTime(13, 45),
                 ),
-            currentTime = LocalTime.of(10, 45),
+            currentTime = LocalTime(10, 45),
         )
     }
 }
@@ -109,14 +115,14 @@ private fun ReminderScheduleItemComponentPreview_OverOneHour() {
 @Preview(showBackground = true, name = "1시간 미만으로 남은 경우")
 @Composable
 private fun ReminderScheduleItemComponentPreview_LessThanOneHour() {
-    MulkkamTheme {
+    MulKkamTheme {
         ReminderScheduleItemComponent(
             reminder =
                 ReminderSchedule(
                     id = 1L,
-                    schedule = LocalTime.of(13, 45),
+                    schedule = LocalTime(13, 45),
                 ),
-            currentTime = LocalTime.of(13, 40),
+            currentTime = LocalTime(13, 40),
         )
     }
 }

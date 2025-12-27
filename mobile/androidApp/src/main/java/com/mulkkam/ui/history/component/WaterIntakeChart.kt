@@ -23,14 +23,14 @@ import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Primary300
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.designsystem.Secondary200
-import java.time.DayOfWeek
-import java.time.LocalDate
+import kotlinx.datetime.DayOfWeek
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.toJavaLocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 
@@ -83,7 +83,7 @@ fun WaterIntakeChart(
         Text(
             modifier = Modifier.padding(top = 4.dp),
             text =
-                intakeHistorySummary.date.dayOfWeek.getDisplayName(
+                intakeHistorySummary.date.toJavaLocalDate().dayOfWeek.getDisplayName(
                     TextStyle.SHORT,
                     Locale.getDefault(),
                 ),
@@ -94,7 +94,7 @@ fun WaterIntakeChart(
             text =
                 stringResource(
                     R.string.water_chart_date,
-                    intakeHistorySummary.date.monthValue,
+                    intakeHistorySummary.date.monthNumber,
                     intakeHistorySummary.date.dayOfMonth,
                 ),
             color = Gray300,
@@ -116,11 +116,11 @@ private fun getColorByDate(date: LocalDate): Color {
 @Preview(showBackground = true, name = "토요일 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_Saturday() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 11, 1),
+                    date = LocalDate(2025, 11, 1),
                     targetAmount = 100,
                     totalIntakeAmount = 50,
                     achievementRate = 50f,
@@ -133,11 +133,11 @@ private fun WaterIntakeChartPreview_Saturday() {
 @Preview(showBackground = true, name = "일요일 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_Sunday() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 11, 2),
+                    date = LocalDate(2025, 11, 2),
                     targetAmount = 100,
                     totalIntakeAmount = 50,
                     achievementRate = 50f,
@@ -150,11 +150,11 @@ private fun WaterIntakeChartPreview_Sunday() {
 @Preview(showBackground = true, name = "목표량을 전부 채운 음용량 차트")
 @Composable
 private fun WaterIntakeChartPreview_FullAchievementRate() {
-    MulkkamTheme {
+    MulKkamTheme {
         WaterIntakeChart(
             intakeHistorySummary =
                 IntakeHistorySummary(
-                    date = LocalDate.of(2025, 10, 30),
+                    date = LocalDate(2025, 10, 30),
                     targetAmount = 100,
                     totalIntakeAmount = 100,
                     achievementRate = 100f,

@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
-import com.mulkkam.ui.designsystem.MulkkamTheme
+import com.mulkkam.ui.designsystem.MulKkamTheme
 
 private const val MAX_SEGMENT_COUNT_DEFAULT: Int = 5
 private const val PROCESS_MIN_VALUE: Int = 0
@@ -65,7 +65,7 @@ fun SegmentedProgressBar(
 @Preview(showBackground = true)
 @Composable
 private fun SegmentedProgressBarPreview() {
-    MulkkamTheme {
+    MulKkamTheme {
         Box(
             modifier =
                 Modifier
