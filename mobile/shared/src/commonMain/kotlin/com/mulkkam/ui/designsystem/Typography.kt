@@ -1,6 +1,7 @@
 package com.mulkkam.ui.designsystem
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -13,22 +14,7 @@ import mulkkam.shared.generated.resources.pretendard_medium
 import mulkkam.shared.generated.resources.pretendard_regular
 import mulkkam.shared.generated.resources.pretendard_semi_bold
 import org.jetbrains.compose.resources.Font
-
-val PretendardBold: FontFamily
-    @Composable
-    get() = FontFamily(Font(Res.font.pretendard_bold))
-
-val PretendardSemiBold: FontFamily
-    @Composable
-    get() = FontFamily(Font(Res.font.pretendard_semi_bold))
-
-val PretendardMedium: FontFamily
-    @Composable
-    get() = FontFamily(Font(Res.font.pretendard_medium))
-
-val PretendardRegular: FontFamily
-    @Composable
-    get() = FontFamily(Font(Res.font.pretendard_regular))
+import org.jetbrains.compose.resources.FontResource
 
 data class Typography(
     val headline1: TextStyle,
@@ -46,10 +32,10 @@ data class Typography(
 
 @Composable
 fun Typography(density: Density): Typography {
-    val pretendardBold = PretendardBold
-    val pretendardSemiBold = PretendardSemiBold
-    val pretendardMedium = PretendardMedium
-    val pretendardRegular = PretendardRegular
+    val pretendardBold = rememberFontFamily(Res.font.pretendard_bold)
+    val pretendardSemiBold = rememberFontFamily(Res.font.pretendard_semi_bold)
+    val pretendardMedium = rememberFontFamily(Res.font.pretendard_medium)
+    val pretendardRegular = rememberFontFamily(Res.font.pretendard_regular)
 
     val textStyle =
         { fontFamily: FontFamily, fontWeight: FontWeight, fontSizeDp: Dp, lineHeightDp: Dp ->
@@ -74,4 +60,10 @@ fun Typography(density: Density): Typography {
         label1 = textStyle(pretendardMedium, FontWeight.Medium, 13.dp, 18.dp),
         label2 = textStyle(pretendardMedium, FontWeight.Normal, 10.dp, 10.dp),
     )
+}
+
+@Composable
+private fun rememberFontFamily(fontResource: FontResource): FontFamily {
+    val font = Font(fontResource)
+    return remember(fontResource) { FontFamily(font) }
 }
