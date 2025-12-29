@@ -30,7 +30,7 @@ fun SaveButton(
     text: String = stringResource(resource = Res.string.setting_save),
 ) {
     Button(
-        onClick = { onClick() },
+        onClick = onClick,
         enabled = enabled,
         colors =
             ButtonColors(

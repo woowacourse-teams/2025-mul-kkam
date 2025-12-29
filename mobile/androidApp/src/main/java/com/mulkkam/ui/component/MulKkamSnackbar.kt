@@ -1,5 +1,6 @@
 package com.mulkkam.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -84,7 +85,7 @@ fun MulKkamSnackbarHost(
 @Composable
 private fun MulKkamSnackbar(
     message: String,
-    iconResourceId: Int,
+    @DrawableRes iconResourceId: Int,
     modifier: Modifier = Modifier,
 ) {
     MulKkamSnackbarContainer(modifier = modifier) {
@@ -103,7 +104,7 @@ private fun MulKkamSnackbar(
 @Composable
 private fun MulKkamActionSnackbar(
     message: String,
-    iconResourceId: Int,
+    @DrawableRes iconResourceId: Int,
     actionLabel: String,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -152,7 +153,9 @@ private fun MulKkamSnackbarContainer(
 }
 
 @Composable
-private fun MulKkamSnackbarLeadingIcon(iconResourceId: Int) {
+private fun MulKkamSnackbarLeadingIcon(
+    @DrawableRes iconResourceId: Int,
+) {
     Image(
         painter = painterResource(iconResourceId),
         contentDescription = null,
@@ -186,7 +189,7 @@ private fun MulKkamSnackbarAction(
 
 private data class MulKkamSnackbarVisuals(
     override val message: String,
-    val iconResourceId: Int,
+    @param:DrawableRes val iconResourceId: Int,
     override val actionLabel: String?,
     override val duration: SnackbarDuration,
     override val withDismissAction: Boolean = false,
@@ -194,7 +197,7 @@ private data class MulKkamSnackbarVisuals(
 
 suspend fun SnackbarHostState.showMulKkamSnackbar(
     message: String,
-    iconResourceId: Int,
+    @DrawableRes iconResourceId: Int,
     duration: SnackbarDuration = SnackbarDuration.Short,
 ): SnackbarResult {
     currentSnackbarData?.dismiss()
@@ -210,7 +213,7 @@ suspend fun SnackbarHostState.showMulKkamSnackbar(
 
 suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     message: String,
-    iconResourceId: Int,
+    @DrawableRes iconResourceId: Int,
     actionLabel: String,
     duration: SnackbarDuration = SnackbarDuration.Short,
     onActionPerformed: () -> Unit = {},

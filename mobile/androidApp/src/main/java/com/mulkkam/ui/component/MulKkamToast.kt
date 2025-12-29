@@ -1,5 +1,6 @@
 package com.mulkkam.ui.component
 
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -40,19 +41,18 @@ private val DEFAULT_TOAST_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 
 
 data class MulKkamToastVisuals(
     val message: String,
-    val iconResourceId: Int,
+    @param:DrawableRes val iconResourceId: Int,
 )
 
 class MulKkamToastState {
     private val mutex: Mutex = Mutex()
-    private val currentToastFlow: MutableStateFlow<MulKkamToastVisuals?> =
-        MutableStateFlow(value = null)
+    private val currentToastFlow: MutableStateFlow<MulKkamToastVisuals?> = MutableStateFlow(value = null)
 
     val currentToast: StateFlow<MulKkamToastVisuals?> = currentToastFlow.asStateFlow()
 
     suspend fun showMulKkamToast(
         message: String,
-        iconResourceId: Int,
+        @DrawableRes iconResourceId: Int,
         durationMillis: Long = DEFAULT_TOAST_DURATION_MILLIS,
     ) {
         mutex.withLock {
@@ -115,7 +115,7 @@ fun MulKkamToastHost(
 @Composable
 private fun MulKkamToast(
     message: String,
-    iconResourceId: Int,
+    @DrawableRes iconResourceId: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
