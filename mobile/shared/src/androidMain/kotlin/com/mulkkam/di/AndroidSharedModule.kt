@@ -21,7 +21,7 @@ fun androidSharedModule(
             checkerModule,
             healthPlatformModule,
             workerModule,
-            workManagerModule2,
+            workManagerModule,
             commonViewModelModule,
         )
     }
