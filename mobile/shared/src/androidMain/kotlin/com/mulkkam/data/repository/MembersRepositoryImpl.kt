@@ -2,7 +2,6 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.local.preference.MembersPreference
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
 import com.mulkkam.data.remote.model.request.members.MembersPhysicalAtrributesRequest
@@ -30,7 +29,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersNicknameValidation(nickname)
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -38,7 +37,7 @@ class MembersRepositoryImpl(
         val result = membersService.patchMembersNickname(MemberNicknameRequest(nickname))
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -46,7 +45,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersNickname()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.memberNickname) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -54,7 +53,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembers()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -71,7 +70,7 @@ class MembersRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -79,7 +78,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersProgressInfo(date.toString())
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -92,7 +91,7 @@ class MembersRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -105,7 +104,7 @@ class MembersRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -113,7 +112,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersNotificationSettings()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -121,7 +120,7 @@ class MembersRepositoryImpl(
         val result = membersService.deleteMembers()
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -139,7 +138,7 @@ class MembersRepositoryImpl(
         val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -151,7 +150,7 @@ class MembersRepositoryImpl(
         val result = membersService.getMembersSearch(word, lastId, size)
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 }

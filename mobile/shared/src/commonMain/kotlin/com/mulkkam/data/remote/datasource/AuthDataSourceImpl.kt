@@ -6,18 +6,17 @@ import com.mulkkam.data.remote.model.request.auth.AuthReissueRequest
 import com.mulkkam.data.remote.model.request.auth.AuthRequest
 import com.mulkkam.data.remote.model.response.auth.AuthReissueResponse
 import com.mulkkam.data.remote.model.response.auth.AuthResponse
-import com.mulkkam.domain.model.result.MulKkamResult
 import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
-class AuthRemoteDataSourceImpl(
+class AuthDataSourceImpl(
     private val httpClient: HttpClient,
-) : AuthRemoteDataSource {
+) : AuthDataSource {
     override suspend fun postAuthKakao(
         oauthAccessToken: String,
         deviceUuid: String,
-    ): MulKkamResult<AuthResponse> =
+    ): Result<AuthResponse> =
         safeApiCall {
             httpClient.post("/auth/kakao") {
                 setBody(AuthRequest(oauthAccessToken, deviceUuid))
@@ -27,14 +26,14 @@ class AuthRemoteDataSourceImpl(
     override suspend fun postAuthTokenReissue(
         refreshToken: String,
         deviceUuid: String,
-    ): MulKkamResult<AuthReissueResponse> =
+    ): Result<AuthReissueResponse> =
         safeApiCall {
             httpClient.post("/auth/token/reissue") {
                 setBody(AuthReissueRequest(refreshToken, deviceUuid))
             }
         }
 
-    override suspend fun postAuthLogout(): MulKkamResult<Unit> =
+    override suspend fun postAuthLogout(): Result<Unit> =
         safeApiCallUnit {
             httpClient.post("/auth/logout")
         }

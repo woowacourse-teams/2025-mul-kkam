@@ -2,7 +2,6 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.datasource.ReminderDataSource
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.reminder.ReminderRequest
 import com.mulkkam.data.remote.model.request.reminder.toData
 import com.mulkkam.data.remote.model.response.reminder.toDomain
@@ -20,7 +19,7 @@ class ReminderRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -29,7 +28,7 @@ class ReminderRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = Unit) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -38,7 +37,7 @@ class ReminderRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = Unit) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -47,7 +46,7 @@ class ReminderRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult(data = Unit) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 }

@@ -2,18 +2,17 @@ package com.mulkkam.data.remote.datasource
 
 import com.mulkkam.data.remote.model.response.auth.AuthReissueResponse
 import com.mulkkam.data.remote.model.response.auth.AuthResponse
-import com.mulkkam.domain.model.result.MulKkamResult
 
-interface AuthRemoteDataSource {
+interface AuthDataSource {
     suspend fun postAuthKakao(
         oauthAccessToken: String,
         deviceUuid: String,
-    ): MulKkamResult<AuthResponse>
+    ): Result<AuthResponse>
 
     suspend fun postAuthTokenReissue(
         refreshToken: String,
         deviceUuid: String,
-    ): MulKkamResult<AuthReissueResponse>
+    ): Result<AuthReissueResponse>
 
-    suspend fun postAuthLogout(): MulKkamResult<Unit>
+    suspend fun postAuthLogout(): Result<Unit>
 }

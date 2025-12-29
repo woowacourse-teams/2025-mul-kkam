@@ -2,7 +2,6 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.datasource.IntakeDataSource
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
@@ -31,7 +30,7 @@ class IntakeRepositoryImpl(
             onSuccess = { intakeHistorySummary ->
                 MulKkamResult(data = IntakeHistorySummaries(intakeHistorySummary.map { it.toDomain() }))
             },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -42,7 +41,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.getAchievementRates(from.toString(), to.toString())
         return result.fold(
             onSuccess = { response -> MulKkamResult(data = response.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -61,7 +60,7 @@ class IntakeRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -78,7 +77,7 @@ class IntakeRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -86,7 +85,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.patchIntakeTarget(IntakeAmountRequest(amount))
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -94,7 +93,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.getIntakeTarget()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -102,7 +101,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.getIntakeAmountRecommended()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -117,7 +116,7 @@ class IntakeRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult(data = it.amount) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -125,7 +124,7 @@ class IntakeRepositoryImpl(
         val result = intakeService.deleteIntakeHistoryDetails(id)
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 }

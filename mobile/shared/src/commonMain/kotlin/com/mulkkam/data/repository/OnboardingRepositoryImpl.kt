@@ -2,7 +2,6 @@ package com.mulkkam.data.repository
 
 import com.mulkkam.data.remote.datasource.OnboardingDataSource
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.onboarding.toData
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.UserAuthState
@@ -17,7 +16,7 @@ class OnboardingRepositoryImpl(
 
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -25,7 +24,7 @@ class OnboardingRepositoryImpl(
         val result = onboardingService.getOnboardingCheck()
         return result.fold(
             onSuccess = { MulKkamResult(data = UserAuthState.from(it.finishedOnboarding)) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 }

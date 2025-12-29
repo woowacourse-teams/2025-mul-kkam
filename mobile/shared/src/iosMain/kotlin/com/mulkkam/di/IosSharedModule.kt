@@ -5,8 +5,8 @@ import com.mulkkam.data.local.datasource.DevicesLocalDataSourceImpl
 import com.mulkkam.data.local.datasource.TokenDataSource
 import com.mulkkam.data.local.datasource.TokenDataSourceImpl
 import com.mulkkam.data.remote.api.createHttpClient
-import com.mulkkam.data.remote.datasource.AuthRemoteDataSource
-import com.mulkkam.data.remote.datasource.AuthRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.AuthDataSource
+import com.mulkkam.data.remote.datasource.AuthDataSourceImpl
 import io.ktor.client.HttpClient
 import org.koin.core.module.Module
 import org.koin.dsl.module
@@ -28,7 +28,7 @@ fun iosSharedModule(baseUrl: String): Module =
         }
 
         // Remote DataSources
-        single<AuthRemoteDataSource> { AuthRemoteDataSourceImpl(get()) }
+        single<AuthDataSource> { AuthDataSourceImpl(get()) }
 
         // TODO: iOS용 Repository 구현 필요 (현재 Android에만 존재)
         // single<AuthRepository> { AuthRepositoryImpl(get()) }
