@@ -8,7 +8,7 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
@@ -48,8 +48,13 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:${{ github.sha }}
 
   deploy:
-    runs-on: [ self-hosted, linux, dev ]
+    runs-on: [ self-hosted, linux, x64, dev ]
     needs: build-and-push
+    env:
+      DEV_WAS_IP: ${{ secrets.DEV_WAS_IP }}
+      DEV_NGINX_IP: ${{ secrets.DEV_NGINX_IP }}
+      DEV_NGINX_PEM_KEY: ${{ secrets.DEV_NGINX_PEM_KEY }}
+
     steps:
       - name: Create/Update .env for container
         run: |
@@ -70,33 +75,44 @@ jobs:
           NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
           EOF
 
-      - name: Decide colors (by health + nginx)
+      - name: Setup SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${DEV_NGINX_PEM_KEY}" > ~/.ssh/nginx_key
+          chmod 600 ~/.ssh/nginx_key
+          
+          cat > ~/.ssh/config << EOF
+          Host nginx
+          HostName ${DEV_NGINX_IP}
+          User ubuntu
+          IdentityFile ~/.ssh/nginx_key
+          StrictHostKeyChecking no
+          EOF
+
+      - name: Decide colors (by health)
         id: color
         run: |
           HEALTH="/actuator/health"
           BLUE_UP=0; GREEN_UP=0
-          curl -fsS "http://127.0.0.1:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
-          curl -fsS "http://127.0.0.1:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
+          curl -fsS "http://${DEV_WAS_IP}:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
+          curl -fsS "http://${DEV_WAS_IP}:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
 
+          # 둘 다 살아있으면 green 배포, 하나만 살아있으면 그걸 현재 버전으로
           CURRENT=""
           if [ "$BLUE_UP" -eq 1 ] && [ "$GREEN_UP" -eq 0 ]; then
             CURRENT="blue"
           elif [ "$BLUE_UP" -eq 0 ] && [ "$GREEN_UP" -eq 1 ]; then
             CURRENT="green"
           else
-            # 둘 다 살아있거나 둘 다 죽었으면 nginx 스니펫으로 판단, 없으면 blue
-            if [ -f /etc/nginx/snippets/mulkkam_upstream.conf ]; then
-              grep -q '127.0.0.1:8081' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="blue" || true
-              grep -q '127.0.0.1:8082' /etc/nginx/snippets/mulkkam_upstream.conf && CURRENT="green" || true
-            fi
-            [ -z "$CURRENT" ] && CURRENT="blue"
+            # 둘 다 살아있으면 green 배포
+            CURRENT="blue"
           fi
 
           if [ "$CURRENT" = "blue" ]; then NEXT="green"; else NEXT="blue"; fi
           echo "current=$CURRENT" >> $GITHUB_OUTPUT
           echo "next=$NEXT" >> $GITHUB_OUTPUT
 
-      - name: Pull & start next color with new image (by SHA tag)
+      - name: Pull & start next color
         working-directory: /home/ubuntu/mulkkam
         run: |
           export IMAGE_TAG=${{ github.sha }}
@@ -108,7 +124,7 @@ jobs:
           if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
           echo "Waiting health on :$PORT ..."
           for i in {1..60}; do
-            if curl -fsS "http://127.0.0.1:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
+            if curl -fsS "http://${DEV_WAS_IP}:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
               echo "Healthy!"
               exit 0
             fi
@@ -117,17 +133,29 @@ jobs:
           echo "Health check failed on port ${PORT}"
           exit 1
 
-      - name: Switch Nginx upstream to next color
+      - name: Rollback on health check failure
+        if: failure()
+        working-directory: /home/ubuntu/mulkkam
         run: |
-          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
-          echo "set \$mulkkam_upstream http://127.0.0.1:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
-          sudo nginx -t
-          sudo systemctl reload nginx
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then CONTAINER=backend-blue; else CONTAINER=backend-green; fi
+          sudo docker rm -f "$CONTAINER" || true
+          echo "Rolled back to previous version"
 
       - name: Stop the other color
+        working-directory: /home/ubuntu/mulkkam
         run: |
           if [ "${{ steps.color.outputs.next }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
           sudo docker rm -f "$OLD" || true
 
-      - name: (Optional) Prune old dangling images
+      - name: Prune old dangling images
         run: sudo docker image prune -f || true
+
+      - name: Switch Nginx upstream
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
+          ssh -i ~/.ssh/nginx_key ubuntu@nginx << NGINX_EOF
+          sudo mkdir -p /etc/nginx/snippets/
+          echo "set \\\$mulkkam_upstream http://${DEV_WAS_IP}:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
+          sudo nginx -t
+          sudo systemctl reload nginx
+          NGINX_EOF
