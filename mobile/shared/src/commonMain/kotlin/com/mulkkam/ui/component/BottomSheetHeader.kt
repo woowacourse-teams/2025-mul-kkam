@@ -10,13 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_bio_info_weight_close
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun BottomSheetHeader(
@@ -35,7 +36,7 @@ fun BottomSheetHeader(
         )
 
         Icon(
-            painter = painterResource(R.drawable.ic_bio_info_weight_close),
+            painter = painterResource(Res.drawable.ic_bio_info_weight_close),
             contentDescription = null,
             tint = Gray400,
             modifier =
