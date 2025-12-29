@@ -6,6 +6,8 @@ on:
       - closed
     branches:
       - main
+    paths:
+      - "backend/**"
 
 jobs:
   build-and-push:
@@ -25,7 +27,7 @@ jobs:
         run: |
           PR_TITLE="${{ github.event.pull_request.title }}"
           echo "PR Title: $PR_TITLE"
-          
+
           if [[ "$PR_TITLE" =~ (v[0-9]+\.[0-9]+\.[0-9]+) ]]; then
             VERSION="${BASH_REMATCH[1]}"
             echo "version=$VERSION" >> "$GITHUB_OUTPUT"
