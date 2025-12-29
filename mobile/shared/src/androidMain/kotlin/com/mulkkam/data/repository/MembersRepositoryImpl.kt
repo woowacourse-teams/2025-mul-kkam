@@ -1,6 +1,7 @@
 package com.mulkkam.data.repository
 
 import com.mulkkam.data.local.datasource.MembersLocalDataSource
+import com.mulkkam.data.remote.datasource.MembersRemoteDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
@@ -9,7 +10,6 @@ import com.mulkkam.data.remote.model.request.members.MembersReminderRequest
 import com.mulkkam.data.remote.model.request.members.NightNotificationAgreedRequest
 import com.mulkkam.data.remote.model.response.members.toDomain
 import com.mulkkam.data.remote.model.response.notifications.toDomain
-import com.mulkkam.data.remote.service.MembersService
 import com.mulkkam.domain.model.Gender
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.members.MemberInfo
@@ -22,11 +22,11 @@ import com.mulkkam.domain.repository.MembersRepository
 import kotlinx.datetime.LocalDate
 
 class MembersRepositoryImpl(
-    private val membersService: MembersService,
+    private val membersRemoteDataSource: MembersRemoteDataSource,
     private val membersLocalDataSource: MembersLocalDataSource,
 ) : MembersRepository {
     override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
-        val result = membersService.getMembersNicknameValidation(nickname)
+        val result = membersRemoteDataSource.getMembersNicknameValidation(nickname)
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -34,7 +34,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun patchMembersNickname(nickname: String): MulKkamResult<Unit> {
-        val result = membersService.patchMembersNickname(MemberNicknameRequest(nickname))
+        val result = membersRemoteDataSource.patchMembersNickname(MemberNicknameRequest(nickname))
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -42,7 +42,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembersNickname(): MulKkamResult<String> {
-        val result = membersService.getMembersNickname()
+        val result = membersRemoteDataSource.getMembersNickname()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.memberNickname) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -50,7 +50,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembers(): MulKkamResult<MemberInfo> {
-        val result = membersService.getMembers()
+        val result = membersRemoteDataSource.getMembers()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -62,7 +62,7 @@ class MembersRepositoryImpl(
         weight: BioWeight,
     ): MulKkamResult<Unit> {
         val result =
-            membersService.postMembersPhysicalAttributes(
+            membersRemoteDataSource.postMembersPhysicalAttributes(
                 MembersPhysicalAtrributesRequest(
                     gender.name,
                     weight.value.toDouble(),
@@ -75,7 +75,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembersProgressInfo(date: LocalDate): MulKkamResult<TodayProgressInfo> {
-        val result = membersService.getMembersProgressInfo(date.toString())
+        val result = membersRemoteDataSource.getMembersProgressInfo(date.toString())
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -84,7 +84,7 @@ class MembersRepositoryImpl(
 
     override suspend fun patchMembersNotificationNight(isNightNotificationAgreed: Boolean): MulKkamResult<Unit> {
         val result =
-            membersService.patchMembersNotificationNight(
+            membersRemoteDataSource.patchMembersNotificationNight(
                 NightNotificationAgreedRequest(
                     isNightNotificationAgreed,
                 ),
@@ -97,7 +97,7 @@ class MembersRepositoryImpl(
 
     override suspend fun patchMembersNotificationMarketing(isMarketingNotificationAgreed: Boolean): MulKkamResult<Unit> {
         val result =
-            membersService.patchMembersNotificationMarketing(
+            membersRemoteDataSource.patchMembersNotificationMarketing(
                 MarketingNotificationAgreedRequest(
                     isMarketingNotificationAgreed,
                 ),
@@ -109,7 +109,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun getMembersNotificationSettings(): MulKkamResult<NotificationAgreedInfo> {
-        val result = membersService.getMembersNotificationSettings()
+        val result = membersRemoteDataSource.getMembersNotificationSettings()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -117,7 +117,7 @@ class MembersRepositoryImpl(
     }
 
     override suspend fun deleteMembers(): MulKkamResult<Unit> {
-        val result = membersService.deleteMembers()
+        val result = membersRemoteDataSource.deleteMembers()
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -135,7 +135,7 @@ class MembersRepositoryImpl(
         }.toMulKkamResult()
 
     override suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit> {
-        val result = membersService.patchMembersReminder(MembersReminderRequest(enabled))
+        val result = membersRemoteDataSource.patchMembersReminder(MembersReminderRequest(enabled))
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -147,7 +147,7 @@ class MembersRepositoryImpl(
         lastId: Long?,
         size: Int,
     ): MulKkamResult<MemberSearchResult> {
-        val result = membersService.getMembersSearch(word, lastId, size)
+        val result = membersRemoteDataSource.getMembersSearch(word, lastId, size)
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
             onFailure = { MulKkamResult(error = it.toDomain()) },

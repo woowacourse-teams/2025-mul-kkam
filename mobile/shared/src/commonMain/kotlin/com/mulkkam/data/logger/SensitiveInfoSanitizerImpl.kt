@@ -45,30 +45,30 @@ class SensitiveInfoSanitizerImpl(
     }
 
     companion object {
-        private const val DEFAULT_MASK = "***"
-        private const val SENSITIVE_KEYS_ALT = "token|access_token|refresh_token|deviceid"
+        private const val DEFAULT_MASK: String = "***"
+        private const val SENSITIVE_KEYS_ALT: String = "token|access_token|refresh_token|deviceid"
 
-        private val JSON_TOKEN_REGEX =
+        private val JSON_TOKEN_REGEX: Regex =
             Regex(
                 pattern = """(?i)"($SENSITIVE_KEYS_ALT)"\s*:\s*"([^"]+)"""",
             )
 
-        private val KEY_VALUE_REGEX =
+        private val KEY_VALUE_REGEX: Regex =
             Regex(
                 pattern = """(?i)\b($SENSITIVE_KEYS_ALT)\b\s*[=:]\s*([^\s&"]+)""",
             )
 
-        private val BEARER_REGEX =
+        private val BEARER_REGEX: Regex =
             Regex(
                 pattern = """(?i)\b(authorization)\b\s*:\s*bearer\s+([^\s"]+)""",
             )
 
-        private val JWT_LIKE_REGEX =
+        private val JWT_LIKE_REGEX: Regex =
             Regex(
                 pattern = """(?i)\beyJ[\w\-_.]+""",
             )
 
-        private val IPV4_REGEX =
+        private val IPV4_REGEX: Regex =
             Regex(
                 pattern = """\b(?:(?:25[0-5]|2[0-4]\d|1?\d{1,2})\.){3}(?:25[0-5]|2[0-4]\d|1?\d{1,2})\b""",
             )

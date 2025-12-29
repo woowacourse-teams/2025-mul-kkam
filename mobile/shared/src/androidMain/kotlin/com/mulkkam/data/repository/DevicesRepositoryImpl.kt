@@ -1,9 +1,9 @@
 package com.mulkkam.data.repository
 
 import com.mulkkam.data.local.datasource.DevicesLocalDataSource
+import com.mulkkam.data.remote.datasource.DevicesRemoteDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.request.device.DeviceRequest
-import com.mulkkam.data.remote.service.DevicesService
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.DevicesRepository
 import java.nio.charset.StandardCharsets
@@ -11,12 +11,12 @@ import java.security.MessageDigest
 import java.util.UUID
 
 class DevicesRepositoryImpl(
-    private val devicesService: DevicesService,
+    private val devicesRemoteDataSource: DevicesRemoteDataSource,
     private val devicesLocalDataSource: DevicesLocalDataSource,
 ) : DevicesRepository {
     override suspend fun postDevice(fcmToken: String): MulKkamResult<Unit> {
         val result =
-            devicesService.postDevice(
+            devicesRemoteDataSource.postDevice(
                 DeviceRequest(fcmToken),
             )
         return result.fold(
@@ -26,7 +26,7 @@ class DevicesRepositoryImpl(
     }
 
     override suspend fun deleteDevice(deviceId: String): MulKkamResult<Unit> {
-        val result = devicesService.deleteDevice(deviceId)
+        val result = devicesRemoteDataSource.deleteDevice(deviceId)
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },

@@ -1,24 +1,24 @@
 package com.mulkkam.data.repository
 
+import com.mulkkam.data.remote.datasource.AuthRemoteDataSource
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.request.auth.AuthRequest
 import com.mulkkam.data.remote.model.response.auth.toDomain
-import com.mulkkam.data.remote.service.AuthService
 import com.mulkkam.domain.model.auth.AuthInfo
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.AuthRepository
 
 class AuthRepositoryImpl(
-    private val authService: AuthService,
+    private val authRemoteDataSource: AuthRemoteDataSource,
 ) : AuthRepository {
     override suspend fun postAuthKakao(
         oauthAccessToken: String,
         deviceUuid: String,
     ): MulKkamResult<AuthInfo> {
         val result =
-            authService
+            authRemoteDataSource
                 .postAuthKakao(
-                    AuthRequest(oauthAccessToken, deviceUuid),
+                    oauthAccessToken = oauthAccessToken,
+                    deviceUuid = deviceUuid,
                 )
 
         return result.fold(
@@ -29,7 +29,7 @@ class AuthRepositoryImpl(
 
     override suspend fun postAuthLogout(): MulKkamResult<Unit> {
         val result =
-            authService.postAuthLogout()
+            authRemoteDataSource.postAuthLogout()
 
         return result.fold(
             onSuccess = { MulKkamResult() },

@@ -9,19 +9,19 @@ fun androidSharedModule(
 ): Module =
     module {
         includes(
-            preferenceModule2,
+            httpClientEngineModule,
+            preferenceModule,
             localDataSourceModule,
-            remoteDataSourceModule,
-            networkModule(baseUrl),
             loggingModule(isDebug),
+            remoteDataSourceModule,
+            commonDataSourceModule,
+            commonNetworkModule(baseUrl),
             repositoryModule2,
+            commonRepositoryModule,
             checkerModule2,
             healthConnectModule2,
-            serviceModule2,
             workerModule2,
             workManagerModule2,
             viewModelModule2,
-            commonRepositoryModule,
-            commonDataSourceModule,
         )
     }

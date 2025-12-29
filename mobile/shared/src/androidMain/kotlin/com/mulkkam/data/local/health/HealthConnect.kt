@@ -1,4 +1,4 @@
-package com.mulkkam.data.local.service
+package com.mulkkam.data.local.health
 
 import androidx.health.connect.client.HealthConnectClient
 import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
@@ -6,7 +6,7 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
 
-class HealthService(
+class HealthConnect(
     private val client: HealthConnectClient?,
 ) {
     suspend fun getCalories(
