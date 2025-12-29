@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.core.content.edit
 import java.util.UUID
 
-class DevicesLocalDataSourceImpl(
+class DevicesDataSourceImpl(
     context: Context,
 ) : DevicesLocalDataSource {
     private val sharedPreference =
@@ -49,7 +49,7 @@ class DevicesLocalDataSourceImpl(
         return newUuid
     }
 
-    companion object {
+    companion object Companion {
         private const val PREFERENCE_NAME: String = "DEVICES_PREFERENCE"
         private const val KEY_DEVICE_UUID: String = "DEVICE_UUID"
         private const val KEY_NOTIFICATION_GRANTED: String = "NOTIFICATION_GRANTED"

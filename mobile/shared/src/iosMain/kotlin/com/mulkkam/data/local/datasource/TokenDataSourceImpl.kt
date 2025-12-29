@@ -2,7 +2,7 @@ package com.mulkkam.data.local.datasource
 
 // TODO: iOS 네이티브 구현 필요
 // iOS에서는 UserDefaults 또는 Keychain을 사용하여 토큰을 저장해야 합니다.
-class TokenLocalDataSourceImpl : TokenLocalDataSource {
+class TokenDataSourceImpl : TokenDataSource {
     override var accessToken: String? = null
 
     override var refreshToken: String? = null

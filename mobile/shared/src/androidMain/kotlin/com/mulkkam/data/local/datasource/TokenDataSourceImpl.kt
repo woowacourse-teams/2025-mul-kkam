@@ -3,9 +3,9 @@ package com.mulkkam.data.local.datasource
 import android.content.Context
 import androidx.core.content.edit
 
-class TokenLocalDataSourceImpl(
+class TokenDataSourceImpl(
     context: Context,
-) : TokenLocalDataSource {
+) : TokenDataSource {
     private val sharedPreference =
         context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
 
@@ -51,7 +51,7 @@ class TokenLocalDataSourceImpl(
         sharedPreference.edit { remove(KEY_FCM_TOKEN) }
     }
 
-    companion object {
+    companion object Companion {
         private const val PREFERENCE_NAME: String = "TOKEN_PREFERENCE"
         private const val KEY_ACCESS_TOKEN: String = "ACCESS_TOKEN"
         private const val KEY_REFRESH_TOKEN: String = "REFRESH_TOKEN"

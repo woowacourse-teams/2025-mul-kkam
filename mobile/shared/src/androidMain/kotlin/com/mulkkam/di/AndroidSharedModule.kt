@@ -1,9 +1,9 @@
 package com.mulkkam.di
 
+import com.mulkkam.data.local.datasource.DevicesDataSourceImpl
 import com.mulkkam.data.local.datasource.DevicesLocalDataSource
-import com.mulkkam.data.local.datasource.DevicesLocalDataSourceImpl
-import com.mulkkam.data.local.datasource.TokenLocalDataSource
-import com.mulkkam.data.local.datasource.TokenLocalDataSourceImpl
+import com.mulkkam.data.local.datasource.TokenDataSource
+import com.mulkkam.data.local.datasource.TokenDataSourceImpl
 import com.mulkkam.data.logger.LoggerImpl
 import com.mulkkam.data.logger.LoggerInitializer
 import com.mulkkam.data.logger.SensitiveInfoSanitizerImpl
@@ -26,12 +26,12 @@ fun androidSharedModule(
 ): Module =
     module {
         // Local DataSources
-        single<TokenLocalDataSource> { TokenLocalDataSourceImpl(androidContext()) }
-        single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl(androidContext()) }
+        single<TokenDataSource> { TokenDataSourceImpl(androidContext()) }
+        single<DevicesLocalDataSource> { DevicesDataSourceImpl(androidContext()) }
 
         // HttpClient
         single<HttpClient> {
-            val tokenDataSource: TokenLocalDataSource = get()
+            val tokenDataSource: TokenDataSource = get()
             createHttpClient(
                 baseUrl = baseUrl,
                 getAccessToken = { tokenDataSource.accessToken },

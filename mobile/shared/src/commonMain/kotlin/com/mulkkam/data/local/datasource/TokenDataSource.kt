@@ -1,6 +1,6 @@
 package com.mulkkam.data.local.datasource
 
-interface TokenLocalDataSource {
+interface TokenDataSource {
     var accessToken: String?
 
     var refreshToken: String?
