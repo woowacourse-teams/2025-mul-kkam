@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.GrayAlert
@@ -33,15 +34,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 
 private const val DEFAULT_TOAST_DURATION_MILLIS: Long = 2000L
 private val DEFAULT_TOAST_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
 
 data class MulKkamToastVisuals(
     val message: String,
-    val iconResource: DrawableResource,
+    val iconResourceId: Int,
 )
 
 class MulKkamToastState {
@@ -53,14 +52,14 @@ class MulKkamToastState {
 
     suspend fun showMulKkamToast(
         message: String,
-        iconResource: DrawableResource,
+        iconResourceId: Int,
         durationMillis: Long = DEFAULT_TOAST_DURATION_MILLIS,
     ) {
         mutex.withLock {
             currentToastFlow.emit(
                 MulKkamToastVisuals(
                     message = message,
-                    iconResource = iconResource,
+                    iconResourceId = iconResourceId,
                 ),
             )
             delay(timeMillis = durationMillis)
@@ -103,7 +102,7 @@ fun MulKkamToastHost(
             val currentVisuals: MulKkamToastVisuals = toastVisuals ?: return@AnimatedVisibility
             MulKkamToast(
                 message = currentVisuals.message,
-                iconResource = currentVisuals.iconResource,
+                iconResourceId = currentVisuals.iconResourceId,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -116,7 +115,7 @@ fun MulKkamToastHost(
 @Composable
 private fun MulKkamToast(
     message: String,
-    iconResource: DrawableResource,
+    iconResourceId: Int,
     modifier: Modifier = Modifier,
 ) {
     Box(
@@ -131,7 +130,7 @@ private fun MulKkamToast(
             horizontalArrangement = Arrangement.spacedBy(space = 10.dp),
         ) {
             Image(
-                painter = painterResource(resource = iconResource),
+                painter = painterResource(id = iconResourceId),
                 contentDescription = null,
                 modifier = Modifier.size(32.dp),
             )

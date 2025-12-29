@@ -26,17 +26,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.GrayAlert
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.ic_info_circle
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private val DEFAULT_SNACKBAR_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
 
@@ -57,7 +55,7 @@ fun MulKkamSnackbarHost(
         val snackbarVisuals: SnackbarVisuals = snackbarData.visuals
         if (snackbarVisuals is MulKkamSnackbarVisuals) {
             val actionLabel: String? = snackbarVisuals.actionLabel
-            val iconResource: DrawableResource = snackbarVisuals.iconResource
+            val iconResourceId: Int = snackbarVisuals.iconResourceId
             val message: String = snackbarVisuals.message
 
             val contentModifier: Modifier = Modifier.fillMaxWidth()
@@ -65,13 +63,13 @@ fun MulKkamSnackbarHost(
             if (actionLabel.isNullOrBlank()) {
                 MulKkamSnackbar(
                     message = message,
-                    iconResource = iconResource,
+                    iconResourceId = iconResourceId,
                     modifier = contentModifier,
                 )
             } else {
                 MulKkamActionSnackbar(
                     message = message,
-                    iconResource = iconResource,
+                    iconResourceId = iconResourceId,
                     actionLabel = actionLabel,
                     onActionClick = { snackbarData.performAction() },
                     modifier = contentModifier,
@@ -86,11 +84,11 @@ fun MulKkamSnackbarHost(
 @Composable
 private fun MulKkamSnackbar(
     message: String,
-    iconResource: DrawableResource,
+    iconResourceId: Int,
     modifier: Modifier = Modifier,
 ) {
     MulKkamSnackbarContainer(modifier = modifier) {
-        MulKkamSnackbarLeadingIcon(iconResource = iconResource)
+        MulKkamSnackbarLeadingIcon(iconResourceId = iconResourceId)
         Text(
             text = message,
             style = MulKkamTheme.typography.body2,
@@ -105,14 +103,14 @@ private fun MulKkamSnackbar(
 @Composable
 private fun MulKkamActionSnackbar(
     message: String,
-    iconResource: DrawableResource,
+    iconResourceId: Int,
     actionLabel: String,
     onActionClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val actionClick: () -> Unit = rememberUpdatedState(newValue = onActionClick).value
     MulKkamSnackbarContainer(modifier = modifier) {
-        MulKkamSnackbarLeadingIcon(iconResource = iconResource)
+        MulKkamSnackbarLeadingIcon(iconResourceId = iconResourceId)
         Text(
             text = message,
             style = MulKkamTheme.typography.body2,
@@ -154,9 +152,9 @@ private fun MulKkamSnackbarContainer(
 }
 
 @Composable
-private fun MulKkamSnackbarLeadingIcon(iconResource: DrawableResource) {
+private fun MulKkamSnackbarLeadingIcon(iconResourceId: Int) {
     Image(
-        painter = painterResource(resource = iconResource),
+        painter = painterResource(iconResourceId),
         contentDescription = null,
         modifier = Modifier.size(32.dp),
     )
@@ -188,7 +186,7 @@ private fun MulKkamSnackbarAction(
 
 private data class MulKkamSnackbarVisuals(
     override val message: String,
-    val iconResource: DrawableResource,
+    val iconResourceId: Int,
     override val actionLabel: String?,
     override val duration: SnackbarDuration,
     override val withDismissAction: Boolean = false,
@@ -196,14 +194,14 @@ private data class MulKkamSnackbarVisuals(
 
 suspend fun SnackbarHostState.showMulKkamSnackbar(
     message: String,
-    iconResource: DrawableResource,
+    iconResourceId: Int,
     duration: SnackbarDuration = SnackbarDuration.Short,
 ): SnackbarResult {
     currentSnackbarData?.dismiss()
     val visuals =
         MulKkamSnackbarVisuals(
             message = message,
-            iconResource = iconResource,
+            iconResourceId = iconResourceId,
             actionLabel = null,
             duration = duration,
         )
@@ -212,7 +210,7 @@ suspend fun SnackbarHostState.showMulKkamSnackbar(
 
 suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     message: String,
-    iconResource: DrawableResource,
+    iconResourceId: Int,
     actionLabel: String,
     duration: SnackbarDuration = SnackbarDuration.Short,
     onActionPerformed: () -> Unit = {},
@@ -221,7 +219,7 @@ suspend fun SnackbarHostState.showMulKkamActionSnackbar(
     val visuals =
         MulKkamSnackbarVisuals(
             message = message,
-            iconResource = iconResource,
+            iconResourceId = iconResourceId,
             actionLabel = actionLabel,
             duration = duration,
         )
@@ -238,7 +236,7 @@ private fun MulKkamSnackbarPreview() {
     MulKkamTheme {
         MulKkamSnackbar(
             message = "돈먹환돈먹환돈먹환 안녕하세요",
-            iconResource = Res.drawable.ic_info_circle,
+            iconResourceId = R.drawable.ic_info_circle,
             modifier = Modifier.fillMaxWidth(),
         )
     }
@@ -250,7 +248,7 @@ private fun MulKkamActionSnackbarPreview() {
     MulKkamTheme {
         MulKkamActionSnackbar(
             message = "환노는 돈까스를 먹으러",
-            iconResource = Res.drawable.ic_info_circle,
+            iconResourceId = R.drawable.ic_info_circle,
             actionLabel = "바로감",
             onActionClick = {},
             modifier = Modifier.fillMaxWidth(),

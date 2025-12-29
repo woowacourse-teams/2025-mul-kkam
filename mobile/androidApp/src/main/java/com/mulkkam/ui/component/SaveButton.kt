@@ -10,15 +10,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
-import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.setting_save
-import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SaveButton(
@@ -27,7 +26,7 @@ fun SaveButton(
     enabled: Boolean = true,
     containerColor: Color = Primary200,
     disabledContainerColor: Color = Gray200,
-    text: String = stringResource(resource = Res.string.setting_save),
+    text: String = stringResource(id = R.string.setting_save),
 ) {
     Button(
         onClick = { onClick() },

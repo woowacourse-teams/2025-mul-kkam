@@ -15,16 +15,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
-import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.ic_search_friends_search
-import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MulKkamTextField(
@@ -165,7 +164,7 @@ private fun MulKkamTextFieldPreview_Prefix() {
             prefix = {
                 Icon(
                     modifier = it,
-                    painter = painterResource(Res.drawable.ic_search_friends_search),
+                    painter = painterResource(R.drawable.ic_search_friends_search),
                     contentDescription = null,
                     tint = Gray300,
                 )
@@ -186,7 +185,7 @@ private fun MulKkamTextFieldPreview_Suffix() {
             suffix = {
                 Icon(
                     modifier = it,
-                    painter = painterResource(Res.drawable.ic_search_friends_search),
+                    painter = painterResource(R.drawable.ic_search_friends_search),
                     contentDescription = null,
                     tint = Gray300,
                 )
