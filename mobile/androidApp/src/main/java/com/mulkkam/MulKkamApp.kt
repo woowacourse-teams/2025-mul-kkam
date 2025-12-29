@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.data.logger.LoggerInitializer
 import com.mulkkam.di.checkerModule
+import com.mulkkam.di.commonDataSourceModule
 import com.mulkkam.di.healthConnectModule
 import com.mulkkam.di.loggingModule
 import com.mulkkam.di.networkModule
@@ -38,6 +39,7 @@ class MulKkamApp : Application() {
             androidLogger()
             androidContext(this@MulKkamApp)
             workManagerFactory()
+            // TODO: 이후에 androidSharedModule 하나만 modules에 들어가도록 변경 필요
             modules(
                 listOf(
                     networkModule,
@@ -50,6 +52,7 @@ class MulKkamApp : Application() {
                     healthConnectModule,
                     workManagerModule,
                     workerModule,
+                    commonDataSourceModule,
                 ),
             )
         }
