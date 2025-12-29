@@ -12,7 +12,7 @@ on:
 jobs:
   build-and-push:
     if: github.event.pull_request.merged == true
-    runs-on: ubuntu-24.04
+    runs-on: self-hosted
     outputs:
       version: ${{ steps.ver.outputs.version }}
     steps:
@@ -71,7 +71,7 @@ jobs:
             ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ steps.ver.outputs.version }}
 
   deploy:
-    runs-on: [self-hosted, linux, prod]
+    runs-on: [ self-hosted, linux, x64, prod ]
     needs: build-and-push
     env:
       IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
