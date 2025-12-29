@@ -6,9 +6,6 @@ import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.request.device.DeviceRequest
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.DevicesRepository
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
-import java.util.UUID
 
 class DevicesRepositoryImpl(
     private val devicesRemoteDataSource: DevicesRemoteDataSource,
@@ -51,26 +48,9 @@ class DevicesRepositoryImpl(
 
     override suspend fun getDeviceUuid(): MulKkamResult<String> =
         runCatching {
-            devicesLocalDataSource.deviceUuid ?: generateSha256Hash().also {
-                devicesLocalDataSource.saveDeviceUuid(it)
-            }
+            devicesLocalDataSource.getOrCreateDeviceUuid()
         }.fold(
             onSuccess = { MulKkamResult(data = it) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
         )
-
-    private fun generateSha256Hash(): String {
-        val uuid = UUID.randomUUID().toString()
-        val hashBytes =
-            MessageDigest
-                .getInstance(HASH_ALGORITHM)
-                .digest(uuid.toByteArray(CHARSET))
-        return hashBytes.take(HASH_LENGTH).joinToString("") { "%02x".format(it) }
-    }
-
-    companion object {
-        private const val HASH_ALGORITHM = "SHA-256"
-        private val CHARSET = StandardCharsets.UTF_8
-        private const val HASH_LENGTH = 4
-    }
 }
