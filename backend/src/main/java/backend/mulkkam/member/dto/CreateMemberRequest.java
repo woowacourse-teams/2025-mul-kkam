@@ -4,6 +4,7 @@ import backend.mulkkam.cup.dto.request.CreateCupRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -41,7 +42,8 @@ public record CreateMemberRequest(
                 new TargetAmount(targetIntakeAmount),
                 isMarketingNotificationAgreed,
                 isMarketingNotificationAgreed,
-                memberNickname
+                memberNickname,
+                MemberRole.USER
         );
     }
 }
