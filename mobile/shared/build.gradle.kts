@@ -159,6 +159,11 @@ kotlin {
     }
 }
 
+compose.resources {
+    publicResClass = true
+    generateResClass = always
+}
+
 tasks
     .matching { task ->
         task.name.startsWith("ktlint") &&
