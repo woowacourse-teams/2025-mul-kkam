@@ -2,8 +2,11 @@ package com.mulkkam.domain.repository
 
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.intake.AchievementRate
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
 import com.mulkkam.domain.model.intake.IntakeHistorySummaries
+import com.mulkkam.domain.model.intake.IntakeType
 import com.mulkkam.domain.model.result.MulKkamResult
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -14,9 +17,20 @@ interface IntakeRepository {
         to: LocalDate,
     ): MulKkamResult<IntakeHistorySummaries>
 
-    suspend fun postIntakeHistory(
+    suspend fun getAchievementRates(
+        from: LocalDate,
+        to: LocalDate,
+    ): MulKkamResult<List<AchievementRate>>
+
+    suspend fun postIntakeHistoryInput(
         dateTime: LocalDateTime,
-        amount: Int,
+        intakeType: IntakeType,
+        amount: CupAmount,
+    ): MulKkamResult<IntakeHistoryResult>
+
+    suspend fun postIntakeHistoryCup(
+        dateTime: LocalDateTime,
+        cupId: Long,
     ): MulKkamResult<IntakeHistoryResult>
 
     suspend fun patchIntakeTarget(amount: Int): MulKkamResult<Unit>
@@ -29,8 +43,6 @@ interface IntakeRepository {
         gender: Gender?,
         weight: BioWeight?,
     ): MulKkamResult<Int>
-
-    suspend fun patchIntakeAmountTargetSuggested(amount: Int): MulKkamResult<Unit>
 
     suspend fun deleteIntakeHistoryDetails(id: Int): MulKkamResult<Unit>
 }

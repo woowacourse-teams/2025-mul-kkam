@@ -11,7 +11,7 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityLoginBinding
-import com.mulkkam.di.LoggingInjection.mulKkamLogger
+import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.MainActivity
@@ -20,16 +20,25 @@ import com.mulkkam.ui.model.UserAuthState
 import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
+import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding::inflate) {
     private val viewModel: LoginViewModel by viewModels()
+
+    @Inject
+    lateinit var logger: Logger
 
     private var backPressedTime: Long = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.checkAppVersion(getAppVersion())
         initClickListeners()
         initObservers()
         initDoubleBackToExit()
@@ -42,6 +51,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     }
 
     private fun loginWithKakao() {
+        logger.info(LogEvent.USER_AUTH, "Kakao Login Attempted")
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
             loginWithKakaoTalk()
         } else {
@@ -55,7 +65,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
                 error is ClientError && error.reason == ClientErrorCause.Cancelled -> Unit
 
                 error != null -> {
-                    mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
+                    logger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
                     loginWithKakaoAccount()
                 }
 
@@ -67,7 +77,7 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
     private fun loginWithKakaoAccount() {
         UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
             if (error != null) {
-                mulKkamLogger.error(LogEvent.ERROR, "Kakao Login Failed: ${error.message}")
+                logger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
             } else {
                 handleKakaoLoginResult(token)
             }
@@ -84,6 +94,17 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
         viewModel.authUiState.observe(this) { authUiState ->
             handleAuthUiState(authUiState)
         }
+
+        viewModel.isAppOutdated.observe(this) { isAppOutdated ->
+            if (isAppOutdated) showUpdateDialog()
+        }
+    }
+
+    private fun showUpdateDialog() {
+        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
+        AppUpdateDialogFragment
+            .newInstance()
+            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
 
     private fun handleAuthUiState(authUiState: MulKkamUiState<UserAuthState>) {
@@ -95,7 +116,12 @@ class LoginActivity : BindingActivity<ActivityLoginBinding>(ActivityLoginBinding
             is MulKkamUiState.Loading -> Unit
             is MulKkamUiState.Idle -> Unit
             is MulKkamUiState.Failure -> {
-                CustomSnackBar.make(binding.root, getString(R.string.network_check_error), R.drawable.ic_alert_circle).show()
+                CustomSnackBar
+                    .make(
+                        binding.root,
+                        getString(R.string.network_check_error),
+                        R.drawable.ic_alert_circle,
+                    ).show()
             }
         }
     }

@@ -1,12 +1,16 @@
 package com.mulkkam.domain.model.cups
 
+import com.mulkkam.domain.model.cups.Cups.Companion.REPRESENT_CUP_RANK
 import com.mulkkam.domain.model.intake.IntakeType
 
 data class Cup(
     val id: Long,
-    val nickname: String,
-    val amount: Int,
+    val name: CupName,
+    val amount: CupAmount,
     val rank: Int,
     val intakeType: IntakeType,
-    val emoji: String,
-)
+    val emoji: CupEmoji,
+) {
+    val isRepresentative: Boolean
+        get() = rank == REPRESENT_CUP_RANK
+}

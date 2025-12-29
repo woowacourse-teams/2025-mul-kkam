@@ -6,12 +6,12 @@ import com.mulkkam.domain.model.intake.IntakeHistory
 
 class HistoryAdapter : RecyclerView.Adapter<HistoryViewHolder>() {
     private val intakeHistories: MutableList<IntakeHistory> = mutableListOf()
-    lateinit var onItemLongClickListener: HistoryViewHolder.Handler
+    lateinit var onItemClickListener: HistoryViewHolder.Handler
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): HistoryViewHolder = HistoryViewHolder.from(parent, onItemLongClickListener)
+    ): HistoryViewHolder = HistoryViewHolder.from(parent, onItemClickListener)
 
     override fun onBindViewHolder(
         holder: HistoryViewHolder,

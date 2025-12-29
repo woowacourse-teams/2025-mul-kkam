@@ -4,24 +4,44 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.hilt.work.HiltWorkerFactory
+import androidx.lifecycle.ProcessLifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import androidx.work.Configuration
 import com.kakao.sdk.common.KakaoSdk
-import com.mulkkam.di.HealthConnectInjection
-import com.mulkkam.di.LoggingInjection
-import com.mulkkam.di.PreferenceInjection
-import com.mulkkam.di.WorkInjection
+import com.mulkkam.data.logger.LoggerInitializer
+import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.ui.service.NotificationService
-import timber.log.Timber
+import dagger.hilt.android.HiltAndroidApp
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class MulKkamApp : Application() {
+@HiltAndroidApp
+class MulKkamApp :
+    Application(),
+    Configuration.Provider {
+    @Inject
+    lateinit var loggerInitializer: LoggerInitializer
+
+    @Inject
+    lateinit var devicesRepository: DevicesRepository
+
+    @Inject
+    lateinit var workerFactory: HiltWorkerFactory
+
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-        HealthConnectInjection.init(this)
-        PreferenceInjection.init(this)
-        WorkInjection.init(this)
         KakaoSdk.init(this, BuildConfig.KEY_KAKAO)
         createNotificationChannel()
-        initLogger()
+
+        ProcessLifecycleOwner.get().lifecycleScope.launch {
+            runCatching {
+                devicesRepository.getDeviceUuid().getOrError()
+            }.onSuccess { userId ->
+                loggerInitializer.initialize(userId, BuildConfig.DEBUG)
+            }
+        }
     }
 
     private fun createNotificationChannel() {
@@ -37,11 +57,6 @@ class MulKkamApp : Application() {
         manager.createNotificationChannel(channel)
     }
 
-    private fun initLogger() {
-        if (BuildConfig.DEBUG) {
-            Timber.plant(LoggingInjection.debugTimberTree)
-        } else {
-            Timber.plant(LoggingInjection.releaseTimberTree)
-        }
-    }
+    override val workManagerConfiguration: Configuration
+        get() = Configuration.Builder().setWorkerFactory(workerFactory).build()
 }

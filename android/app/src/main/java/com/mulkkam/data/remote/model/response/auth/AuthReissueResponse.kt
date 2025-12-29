@@ -1,6 +1,6 @@
 package com.mulkkam.data.remote.model.response.auth
 
-import com.mulkkam.domain.model.auth.AuthTokenInfo
+import com.mulkkam.domain.model.auth.AuthInfo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -13,7 +13,7 @@ class AuthReissueResponse(
 )
 
 fun AuthReissueResponse.toDomain() =
-    AuthTokenInfo(
+    AuthInfo(
         accessToken = accessToken,
         refreshToken = refreshToken,
     )

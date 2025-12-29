@@ -23,7 +23,7 @@
             android:backgroundTint="@color/white"
             android:importantForAccessibility="no"
             android:padding="12dp"
-            android:src="@drawable/ic_setting_prev" />
+            android:src="@drawable/ic_common_prev" />
 
         <TextView
             android:id="@+id/tv_toolbar_title"

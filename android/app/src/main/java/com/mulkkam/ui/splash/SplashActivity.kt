@@ -14,8 +14,10 @@ import com.mulkkam.ui.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.ui.model.UserAuthState.UNONBOARDED
 import com.mulkkam.ui.onboarding.OnboardingActivity
 import com.mulkkam.ui.util.binding.BindingActivity
+import dagger.hilt.android.AndroidEntryPoint
 
 @SuppressLint("CustomSplashScreen")
+@AndroidEntryPoint
 class SplashActivity : BindingActivity<ActivitySplashBinding>(ActivitySplashBinding::inflate) {
     private val viewModel: SplashViewModel by viewModels()
     private var isSplashFinished: Boolean = false

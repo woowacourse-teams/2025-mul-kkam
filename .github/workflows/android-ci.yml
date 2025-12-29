@@ -2,7 +2,7 @@ name: Android CI
 
 on:
   pull_request:
-    branches: [ "develop" ]
+    branches: [ "develop", "develop-an" ]
     paths:
       - 'android/**'
 
@@ -40,15 +40,29 @@ jobs:
     
     - name: set up local.properties
       env:
-        BASE_URL: ${{secrets.BASE_URL}}
-      run:
-        echo base.url=\"$_BASE_URL\" >> ./local.properties
-
-    - name: set up google-services.json
-      env:
-        GOOGLE_SERVICES: ${{ secrets.GOOGLE_SERVICES }}
+        RELEASE_BASE_URL:  ${{ secrets.RELEASE_BASE_URL }}
+        DEBUG_BASE_URL:    ${{ secrets.DEBUG_BASE_URL }}
+        KEY_KAKAO:         ${{ secrets.KEY_KAKAO }}
       run: |
-        echo "$GOOGLE_SERVICES" | base64 --decode > app/google-services.json
+        echo "release.base.url=${RELEASE_BASE_URL}" >> ./local.properties
+        echo "debug.base.url=${DEBUG_BASE_URL}"     >> ./local.properties
+        echo "key.kakao=${KEY_KAKAO}"               >> ./local.properties
+
+    - name: set up google-services.json for debug
+      env:
+        GOOGLE_SERVICES_DEBUG: ${{ secrets.GOOGLE_SERVICES_DEBUG }}
+      run: |
+        set -euo pipefail
+        mkdir -p app/src/debug
+        printf '%s' "$GOOGLE_SERVICES_DEBUG" > app/src/debug/google-services.json
+
+    - name: set up google-services.json for release
+      env:
+        GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
+      run: |
+        set -euo pipefail
+        mkdir -p app/src/release
+        printf '%s' "$GOOGLE_SERVICES_RELEASE" > app/src/release/google-services.json
 
     - name: grant execute permission for gradlew
       run: chmod +x gradlew

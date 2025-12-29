@@ -1,83 +1,37 @@
 package com.mulkkam.ui.notification
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.View.GONE
-import android.view.View.VISIBLE
+import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.R
-import com.mulkkam.databinding.ActivityNotificationBinding
-import com.mulkkam.domain.model.notification.Notification
-import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.custom.toast.CustomToast
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.designsystem.MulkkamTheme
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.notification.adapter.NotificationAdapter
-import com.mulkkam.ui.util.binding.BindingActivity
-import com.mulkkam.ui.util.extensions.setSingleClickListener
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import dagger.hilt.android.AndroidEntryPoint
 
-class NotificationActivity :
-    BindingActivity<ActivityNotificationBinding>(
-        ActivityNotificationBinding::inflate,
-    ) {
-    private val adapter: NotificationAdapter by lazy {
-        NotificationAdapter { amount, onComplete ->
-            viewModel.applySuggestion(amount, onComplete)
-        }
-    }
+@AndroidEntryPoint
+class NotificationActivity : ComponentActivity() {
     private val viewModel: NotificationViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        binding.rvNotification.adapter = adapter
-
-        initObservers()
-        initClickListeners()
+        setContent {
+            MulkkamTheme {
+                NotificationScreen(
+                    navigateToBack = { finishWithResult() },
+                    viewModel = viewModel,
+                )
+            }
+        }
         initBackPress()
-    }
-
-    private fun initObservers() {
-        viewModel.notifications.observe(this) {
-            handleNotificationUiState(it)
-        }
-
-        viewModel.applySuggestionUiState.observe(this) {
-            if (it is MulKkamUiState.Success) {
-                CustomToast
-                    .makeText(this, getString(R.string.home_notification_apply_success))
-                    .apply {
-                        setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                    }.show()
-            }
-        }
-    }
-
-    private fun handleNotificationUiState(notificationUiState: MulKkamUiState<List<Notification>>) {
-        when (notificationUiState) {
-            is MulKkamUiState.Success<List<Notification>> -> {
-                adapter.changeItems(notificationUiState.data)
-                binding.includeNotificationShimmer.root.visibility = GONE
-            }
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Loading -> binding.includeNotificationShimmer.root.visibility = VISIBLE
-            is MulKkamUiState.Failure -> {
-                CustomSnackBar
-                    .make(
-                        binding.root,
-                        getString(R.string.load_info_error),
-                        R.drawable.ic_alert_circle,
-                    ).show()
-            }
-        }
-    }
-
-    private fun initClickListeners() {
-        binding.ivBack.setSingleClickListener {
-            finishWithResult()
-        }
+        initObservers()
+        clearNotifications()
     }
 
     private fun finishWithResult() {
@@ -99,6 +53,38 @@ class NotificationActivity :
                 }
             },
         )
+    }
+
+    private fun initObservers() {
+        viewModel.applySuggestionUiState.collectWithLifecycle(this) { applySuggestionUiState ->
+            handleApplySuggestionUiState(applySuggestionUiState)
+        }
+    }
+
+    private fun handleApplySuggestionUiState(applySuggestionUiState: MulKkamUiState<Unit>) {
+        when (applySuggestionUiState) {
+            is MulKkamUiState.Success -> {
+                CustomToast
+                    .makeText(
+                        this@NotificationActivity,
+                        getString(R.string.notification_apply_success),
+                    ).show()
+            }
+
+            is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+            is MulKkamUiState.Failure -> {
+                CustomToast
+                    .makeText(
+                        this@NotificationActivity,
+                        getString(R.string.notification_apply_failed),
+                    ).show()
+            }
+        }
+    }
+
+    private fun clearNotifications() {
+        val notificationManager = getSystemService(NOTIFICATION_SERVICE) as? NotificationManager
+        notificationManager?.cancelAll()
     }
 
     companion object {
