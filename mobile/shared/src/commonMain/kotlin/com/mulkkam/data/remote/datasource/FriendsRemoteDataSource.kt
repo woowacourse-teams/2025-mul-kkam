@@ -7,7 +7,7 @@ import com.mulkkam.data.remote.model.response.friends.FriendRequestReceivedCount
 import com.mulkkam.data.remote.model.response.friends.FriendsRequestResponse
 import com.mulkkam.data.remote.model.response.friends.FriendsResponse
 
-interface FriendsDataSource {
+interface FriendsRemoteDataSource {
     suspend fun getFriends(
         lastId: Long? = null,
         size: Int,

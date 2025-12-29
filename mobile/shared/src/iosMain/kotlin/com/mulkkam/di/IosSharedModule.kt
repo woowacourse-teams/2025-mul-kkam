@@ -3,7 +3,8 @@ package com.mulkkam.di
 import com.mulkkam.data.local.datasource.DevicesLocalDataSource
 import com.mulkkam.data.local.datasource.DevicesLocalDataSourceImpl
 import com.mulkkam.data.local.datasource.TokenDataSource
-import com.mulkkam.data.local.datasource.TokenDataSourceImpl
+import com.mulkkam.data.local.datasource.TokenLocalDataSourceImpl
+import com.mulkkam.data.local.datasource.TokenLocalDataSource
 import com.mulkkam.data.remote.api.createHttpClient
 import com.mulkkam.data.remote.datasource.AuthDataSource
 import com.mulkkam.data.remote.datasource.AuthDataSourceImpl
@@ -14,7 +15,7 @@ import org.koin.dsl.module
 fun iosSharedModule(baseUrl: String): Module =
     module {
         // Local DataSources
-        single<TokenDataSource> { TokenDataSourceImpl() }
+        single<TokenLocalDataSource> { TokenLocalDataSourceImpl() }
         single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl() }
 
         // HttpClient

@@ -9,7 +9,7 @@ import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
 import com.mulkkam.data.remote.model.response.intake.ReadAchievementRatesResponse
 
 // TODO: DataSource 구현 필요
-class IntakeDataSourceImpl : IntakeDataSource {
+class IntakeRemoteDataSourceImpl : IntakeRemoteDataSource {
     override suspend fun getIntakeHistory(
         from: String,
         to: String,

@@ -1,9 +1,14 @@
 package com.mulkkam.di
 
-import com.mulkkam.data.local.datasource.DevicesDataSourceImpl
 import com.mulkkam.data.local.datasource.DevicesLocalDataSource
-import com.mulkkam.data.local.datasource.TokenDataSource
-import com.mulkkam.data.local.datasource.TokenDataSourceImpl
+import com.mulkkam.data.local.datasource.DevicesLocalDataSourceImpl
+import com.mulkkam.data.local.datasource.MembersLocalDataSource
+import com.mulkkam.data.local.datasource.MembersLocalDataSourceImpl
+import com.mulkkam.data.local.datasource.TokenLocalDataSource
+import com.mulkkam.data.local.datasource.TokenLocalDataSourceImpl
+import com.mulkkam.data.local.preference.DevicesPreference
+import com.mulkkam.data.local.preference.MembersPreference
+import com.mulkkam.data.local.preference.TokenPreference
 import com.mulkkam.data.logger.LoggerImpl
 import com.mulkkam.data.logger.LoggerInitializer
 import com.mulkkam.data.logger.SensitiveInfoSanitizerImpl
@@ -25,16 +30,22 @@ fun androidSharedModule(
     isDebug: Boolean,
 ): Module =
     module {
+        // Preferences
+        single { TokenPreference(androidContext()) }
+        single { DevicesPreference(androidContext()) }
+        single { MembersPreference(androidContext()) }
+
         // Local DataSources
-        single<TokenDataSource> { TokenDataSourceImpl(androidContext()) }
-        single<DevicesLocalDataSource> { DevicesDataSourceImpl(androidContext()) }
+        single<TokenLocalDataSource> { TokenLocalDataSourceImpl(get()) }
+        single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl(get()) }
+        single<MembersLocalDataSource> { MembersLocalDataSourceImpl(get()) }
 
         // HttpClient
         single<HttpClient> {
-            val tokenDataSource: TokenDataSource = get()
+            val tokenLocalDataSource: TokenLocalDataSource = get()
             createHttpClient(
                 baseUrl = baseUrl,
-                getAccessToken = { tokenDataSource.accessToken },
+                getAccessToken = { tokenLocalDataSource.accessToken },
                 onUnauthorized = { null }, // TODO: 토큰 갱신 로직 구현
             )
         }

@@ -8,7 +8,7 @@ import com.mulkkam.data.remote.model.response.friends.FriendsRequestResponse
 import com.mulkkam.data.remote.model.response.friends.FriendsResponse
 
 // TODO: DataSource 구현 필요
-class FriendsDataSourceImpl : FriendsDataSource {
+class FriendsRemoteDataSourceImpl : FriendsRemoteDataSource {
     override suspend fun getFriends(
         lastId: Long?,
         size: Int,

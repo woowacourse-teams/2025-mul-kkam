@@ -7,7 +7,7 @@ import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
 import com.mulkkam.data.remote.model.response.cups.CupsResponse
 
 // TODO: DataSource 구현 필요
-class CupsDataSourceImpl : CupsDataSource {
+class CupsRemoteDataSourceImpl : CupsRemoteDataSource {
     override suspend fun getCups(): Result<CupsResponse> {
         TODO("Not yet implemented")
     }

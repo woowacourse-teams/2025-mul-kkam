@@ -5,7 +5,7 @@ import com.mulkkam.data.remote.model.response.notifications.NotificationUnreadCo
 import com.mulkkam.data.remote.model.response.notifications.NotificationsResponse
 
 // TODO: DataSource 구현 필요
-class NotificationDataSourceImpl : NotificationDataSource {
+class NotificationRemoteDataSourceImpl : NotificationRemoteDataSource {
     override suspend fun postActiveCaloriesBurned(activeCaloriesBurned: ActiveCaloriesBurnedRequest): Result<Unit> {
         TODO("Not yet implemented")
     }

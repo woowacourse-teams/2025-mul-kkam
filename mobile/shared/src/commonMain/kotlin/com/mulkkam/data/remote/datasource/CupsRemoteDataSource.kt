@@ -6,7 +6,7 @@ import com.mulkkam.data.remote.model.response.cups.CupEmojisResponse
 import com.mulkkam.data.remote.model.response.cups.CupsRankResponse
 import com.mulkkam.data.remote.model.response.cups.CupsResponse
 
-interface CupsDataSource {
+interface CupsRemoteDataSource {
     suspend fun getCups(): Result<CupsResponse>
 
     suspend fun getCupsDefault(): Result<CupsResponse>

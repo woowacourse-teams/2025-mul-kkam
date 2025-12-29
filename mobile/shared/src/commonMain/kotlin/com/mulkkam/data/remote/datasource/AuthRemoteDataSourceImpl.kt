@@ -10,9 +10,9 @@ import io.ktor.client.HttpClient
 import io.ktor.client.request.post
 import io.ktor.client.request.setBody
 
-class AuthDataSourceImpl(
+class AuthRemoteDataSourceImpl(
     private val httpClient: HttpClient,
-) : AuthDataSource {
+) : AuthRemoteDataSource {
     override suspend fun postAuthKakao(
         oauthAccessToken: String,
         deviceUuid: String,

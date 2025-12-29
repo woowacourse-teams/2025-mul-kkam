@@ -4,7 +4,7 @@ import com.mulkkam.data.remote.model.request.notification.ActiveCaloriesBurnedRe
 import com.mulkkam.data.remote.model.response.notifications.NotificationUnreadCountResponse
 import com.mulkkam.data.remote.model.response.notifications.NotificationsResponse
 
-interface NotificationDataSource {
+interface NotificationRemoteDataSource {
     suspend fun postActiveCaloriesBurned(activeCaloriesBurned: ActiveCaloriesBurnedRequest): Result<Unit>
 
     suspend fun getNotifications(

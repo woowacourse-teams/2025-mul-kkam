@@ -1,6 +1,6 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.local.preference.MembersPreference
+import com.mulkkam.data.local.datasource.MembersLocalDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.request.members.MarketingNotificationAgreedRequest
 import com.mulkkam.data.remote.model.request.members.MemberNicknameRequest
@@ -23,7 +23,7 @@ import kotlinx.datetime.LocalDate
 
 class MembersRepositoryImpl(
     private val membersService: MembersService,
-    private val membersPreference: MembersPreference,
+    private val membersLocalDataSource: MembersLocalDataSource,
 ) : MembersRepository {
     override suspend fun getMembersNicknameValidation(nickname: String): MulKkamResult<Unit> {
         val result = membersService.getMembersNicknameValidation(nickname)
@@ -126,12 +126,12 @@ class MembersRepositoryImpl(
 
     override suspend fun getIsFirstLaunch(): MulKkamResult<Boolean> =
         runCatching {
-            membersPreference.isFirstLaunch
+            membersLocalDataSource.isFirstLaunch
         }.toMulKkamResult()
 
     override suspend fun saveIsFirstLaunch(): MulKkamResult<Unit> =
         runCatching {
-            membersPreference.saveIsFirstLaunch()
+            membersLocalDataSource.saveIsFirstLaunch()
         }.toMulKkamResult()
 
     override suspend fun patchMembersReminder(enabled: Boolean): MulKkamResult<Unit> {

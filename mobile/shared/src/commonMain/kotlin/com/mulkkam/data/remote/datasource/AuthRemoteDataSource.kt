@@ -3,7 +3,7 @@ package com.mulkkam.data.remote.datasource
 import com.mulkkam.data.remote.model.response.auth.AuthReissueResponse
 import com.mulkkam.data.remote.model.response.auth.AuthResponse
 
-interface AuthDataSource {
+interface AuthRemoteDataSource {
     suspend fun postAuthKakao(
         oauthAccessToken: String,
         deviceUuid: String,

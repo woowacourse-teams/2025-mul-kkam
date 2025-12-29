@@ -4,7 +4,7 @@ import com.mulkkam.data.remote.model.request.reminder.ReminderRequest
 import com.mulkkam.data.remote.model.response.reminder.ReminderResponse
 
 // TODO: DataSource 구현 필요
-class ReminderDataSourceImpl : ReminderDataSource {
+class ReminderRemoteDataSourceImpl : ReminderRemoteDataSource {
     override suspend fun getReminder(): Result<ReminderResponse> {
         TODO("Not yet implemented")
     }

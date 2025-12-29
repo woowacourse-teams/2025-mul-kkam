@@ -3,7 +3,7 @@ package com.mulkkam.data.remote.datasource
 import com.mulkkam.data.remote.model.request.reminder.ReminderRequest
 import com.mulkkam.data.remote.model.response.reminder.ReminderResponse
 
-interface ReminderDataSource {
+interface ReminderRemoteDataSource {
     suspend fun getReminder(): Result<ReminderResponse>
 
     suspend fun postReminder(reminder: ReminderRequest): Result<Unit>

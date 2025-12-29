@@ -1,55 +1,55 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.local.preference.TokenPreference
+import com.mulkkam.data.local.datasource.TokenLocalDataSource
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.model.result.toMulKkamResult
 import com.mulkkam.domain.repository.TokenRepository
 
 class TokenRepositoryImpl(
-    private val tokenPreference: TokenPreference,
+    private val tokenLocalDataSource: TokenLocalDataSource,
 ) : TokenRepository {
     override suspend fun getAccessToken(): MulKkamResult<String?> =
         runCatching {
-            tokenPreference.accessToken
+            tokenLocalDataSource.accessToken
         }.toMulKkamResult()
 
     override suspend fun getRefreshToken(): MulKkamResult<String?> =
         runCatching {
-            tokenPreference.refreshToken
+            tokenLocalDataSource.refreshToken
         }.toMulKkamResult()
 
     override suspend fun getFcmToken(): MulKkamResult<String?> =
         runCatching {
-            tokenPreference.fcmToken
+            tokenLocalDataSource.fcmToken
         }.toMulKkamResult()
 
     override suspend fun saveAccessToken(token: String): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.saveAccessToken(token)
+            tokenLocalDataSource.saveAccessToken(token)
         }.toMulKkamResult()
 
     override suspend fun deleteAccessToken(): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.deleteAccessToken()
+            tokenLocalDataSource.deleteAccessToken()
         }.toMulKkamResult()
 
     override suspend fun saveRefreshToken(token: String): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.saveRefreshToken(token)
+            tokenLocalDataSource.saveRefreshToken(token)
         }.toMulKkamResult()
 
     override suspend fun deleteRefreshToken(): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.deleteRefreshToken()
+            tokenLocalDataSource.deleteRefreshToken()
         }.toMulKkamResult()
 
     override suspend fun saveFcmToken(token: String): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.saveFcmToken(token)
+            tokenLocalDataSource.saveFcmToken(token)
         }.toMulKkamResult()
 
     override suspend fun deleteFcmToken(): MulKkamResult<Unit> =
         runCatching {
-            tokenPreference.deleteFcmToken()
+            tokenLocalDataSource.deleteFcmToken()
         }.toMulKkamResult()
 }

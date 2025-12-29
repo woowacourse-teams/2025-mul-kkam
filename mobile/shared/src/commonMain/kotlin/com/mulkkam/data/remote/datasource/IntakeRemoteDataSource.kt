@@ -8,7 +8,7 @@ import com.mulkkam.data.remote.model.response.intake.IntakeHistorySummaryRespons
 import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
 import com.mulkkam.data.remote.model.response.intake.ReadAchievementRatesResponse
 
-interface IntakeDataSource {
+interface IntakeRemoteDataSource {
     suspend fun getIntakeHistory(
         from: String,
         to: String,

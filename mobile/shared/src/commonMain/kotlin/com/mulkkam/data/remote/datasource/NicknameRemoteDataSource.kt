@@ -1,5 +1,5 @@
 package com.mulkkam.data.remote.datasource
 
-interface NicknameDataSource {
+interface NicknameRemoteDataSource {
     suspend fun getNicknameValidation(nickname: String): Result<Unit>
 }

@@ -1,6 +1,6 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.local.preference.DevicesPreference
+import com.mulkkam.data.local.datasource.DevicesLocalDataSource
 import com.mulkkam.data.remote.model.error.toDomain
 import com.mulkkam.data.remote.model.request.device.DeviceRequest
 import com.mulkkam.data.remote.service.DevicesService
@@ -12,7 +12,7 @@ import java.util.UUID
 
 class DevicesRepositoryImpl(
     private val devicesService: DevicesService,
-    private val devicesPreference: DevicesPreference,
+    private val devicesLocalDataSource: DevicesLocalDataSource,
 ) : DevicesRepository {
     override suspend fun postDevice(fcmToken: String): MulKkamResult<Unit> {
         val result =
@@ -35,7 +35,7 @@ class DevicesRepositoryImpl(
 
     override suspend fun saveNotificationGranted(granted: Boolean): MulKkamResult<Unit> =
         runCatching {
-            devicesPreference.saveNotificationGranted(granted)
+            devicesLocalDataSource.saveNotificationGranted(granted)
         }.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -43,7 +43,7 @@ class DevicesRepositoryImpl(
 
     override suspend fun getNotificationGranted(): MulKkamResult<Boolean> =
         runCatching {
-            devicesPreference.isNotificationGranted
+            devicesLocalDataSource.isNotificationGranted
         }.fold(
             onSuccess = { MulKkamResult(data = it) },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -51,8 +51,8 @@ class DevicesRepositoryImpl(
 
     override suspend fun getDeviceUuid(): MulKkamResult<String> =
         runCatching {
-            devicesPreference.deviceUuid ?: generateSha256Hash().also {
-                devicesPreference.saveDeviceUuid(it)
+            devicesLocalDataSource.deviceUuid ?: generateSha256Hash().also {
+                devicesLocalDataSource.saveDeviceUuid(it)
             }
         }.fold(
             onSuccess = { MulKkamResult(data = it) },

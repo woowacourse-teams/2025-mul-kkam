@@ -1,7 +1,7 @@
 package com.mulkkam.di
 
-import com.mulkkam.data.remote.datasource.AuthDataSource
-import com.mulkkam.data.remote.datasource.AuthDataSourceImpl
+import com.mulkkam.data.remote.datasource.AuthRemoteDataSource
+import com.mulkkam.data.remote.datasource.AuthRemoteDataSourceImpl
 import com.mulkkam.data.repository.AuthRepositoryImpl
 import com.mulkkam.data.repository.TokenRepositoryImpl
 import com.mulkkam.domain.repository.AuthRepository
@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val sharedDataSourceModule: Module =
     module {
-        single<AuthDataSource> { AuthDataSourceImpl(get()) }
+        single<AuthRemoteDataSource> { AuthRemoteDataSourceImpl(get()) }
     }
 
 // TODO: AuthRepository와 TokenRepository가 DataSource를 받도록 변경 필요

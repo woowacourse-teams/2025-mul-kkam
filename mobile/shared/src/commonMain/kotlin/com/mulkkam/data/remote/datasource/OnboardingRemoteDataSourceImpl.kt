@@ -5,7 +5,7 @@ import com.mulkkam.data.remote.model.response.onboarding.OnboardingCheckResponse
 
 // TODO: DataSource 구현 필요
 // 앱 실행을 위한 임시 코드
-class OnboardingDataSourceImpl : OnboardingDataSource {
+class OnboardingRemoteDataSourceImpl : OnboardingRemoteDataSource {
     override suspend fun postOnboarding(member: OnboardingRequest): Result<Unit> =
         runCatching {
         }
