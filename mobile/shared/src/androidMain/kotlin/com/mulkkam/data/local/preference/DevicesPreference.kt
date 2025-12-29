@@ -15,6 +15,9 @@ class DevicesPreference(
     val deviceUuid: String?
         get() = sharedPreference.getString(KEY_DEVICE_UUID, null)
 
+    val isFirstLaunch: Boolean
+        get() = sharedPreference.getBoolean(KEY_IS_FIRST_LAUNCH, true)
+
     fun saveNotificationGranted(granted: Boolean) {
         sharedPreference.edit { putBoolean(KEY_NOTIFICATION_GRANTED, granted) }
     }
@@ -31,9 +34,14 @@ class DevicesPreference(
         sharedPreference.edit { remove(KEY_DEVICE_UUID) }
     }
 
+    fun saveIsFirstLaunch(isFirstLaunch: Boolean) {
+        sharedPreference.edit { putBoolean(KEY_IS_FIRST_LAUNCH, isFirstLaunch) }
+    }
+
     companion object {
         private const val PREFERENCE_NAME: String = "DEVICES_PREFERENCE"
         private const val KEY_NOTIFICATION_GRANTED: String = "NOTIFICATION_GRANTED"
         private const val KEY_DEVICE_UUID: String = "DEVICE_UUID"
+        private const val KEY_IS_FIRST_LAUNCH: String = "IS_FIRST_LAUNCH"
     }
 }

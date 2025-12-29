@@ -8,6 +8,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.onboarding.nickname.OnboardingNicknameActivity
+import com.mulkkam.ui.terms.TermsAgreementViewModel
 import com.mulkkam.ui.util.extensions.openTermsLink
 
 class OnboardingTermsActivity : ComponentActivity() {

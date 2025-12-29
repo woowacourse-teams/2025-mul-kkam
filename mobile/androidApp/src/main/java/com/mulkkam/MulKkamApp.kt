@@ -8,17 +8,7 @@ import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
 import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.data.logger.LoggerInitializer
-import com.mulkkam.di.checkerModule
-import com.mulkkam.di.commonDataSourceModule
-import com.mulkkam.di.healthConnectModule
-import com.mulkkam.di.loggingModule
-import com.mulkkam.di.networkModule
-import com.mulkkam.di.preferenceModule
-import com.mulkkam.di.repositoryModule
-import com.mulkkam.di.serviceModule
-import com.mulkkam.di.viewModelModule
-import com.mulkkam.di.workManagerModule
-import com.mulkkam.di.workerModule
+import com.mulkkam.di.androidSharedModule
 import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.ui.service.NotificationService
 import kotlinx.coroutines.launch
@@ -39,22 +29,7 @@ class MulKkamApp : Application() {
             androidLogger()
             androidContext(this@MulKkamApp)
             workManagerFactory()
-            // TODO: 이후에 androidSharedModule 하나만 modules에 들어가도록 변경 필요
-            modules(
-                listOf(
-                    networkModule,
-                    serviceModule,
-                    repositoryModule,
-                    checkerModule,
-                    viewModelModule,
-                    loggingModule,
-                    preferenceModule,
-                    healthConnectModule,
-                    workManagerModule,
-                    workerModule,
-                    commonDataSourceModule,
-                ),
-            )
+            modules(androidSharedModule(BuildConfig.BASE_URL, BuildConfig.DEBUG))
         }
 
         ProcessLifecycleOwner.get().lifecycleScope.launch {

@@ -1,31 +1,37 @@
 package com.mulkkam.di
 
-import com.mulkkam.data.remote.datasource.CupsDataSource
-import com.mulkkam.data.remote.datasource.CupsDataSourceImpl
-import com.mulkkam.data.remote.datasource.FriendsDataSource
-import com.mulkkam.data.remote.datasource.FriendsDataSourceImpl
-import com.mulkkam.data.remote.datasource.IntakeDataSource
-import com.mulkkam.data.remote.datasource.IntakeDataSourceImpl
-import com.mulkkam.data.remote.datasource.NicknameDataSource
-import com.mulkkam.data.remote.datasource.NicknameDataSourceImpl
-import com.mulkkam.data.remote.datasource.NotificationDataSource
-import com.mulkkam.data.remote.datasource.NotificationDataSourceImpl
-import com.mulkkam.data.remote.datasource.OnboardingDataSource
-import com.mulkkam.data.remote.datasource.OnboardingDataSourceImpl
-import com.mulkkam.data.remote.datasource.ReminderDataSource
-import com.mulkkam.data.remote.datasource.ReminderDataSourceImpl
-import com.mulkkam.data.remote.datasource.VersionDataSource
-import com.mulkkam.data.remote.datasource.VersionDataSourceImpl
+import com.mulkkam.data.remote.datasource.CupsRemoteDataSource
+import com.mulkkam.data.remote.datasource.CupsRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.DevicesRemoteDataSource
+import com.mulkkam.data.remote.datasource.DevicesRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.FriendsRemoteDataSource
+import com.mulkkam.data.remote.datasource.FriendsRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.IntakeRemoteDataSource
+import com.mulkkam.data.remote.datasource.IntakeRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.MembersRemoteDataSource
+import com.mulkkam.data.remote.datasource.MembersRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.NicknameRemoteDataSource
+import com.mulkkam.data.remote.datasource.NicknameRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.NotificationRemoteDataSource
+import com.mulkkam.data.remote.datasource.NotificationRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.OnboardingRemoteDataSource
+import com.mulkkam.data.remote.datasource.OnboardingRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.ReminderRemoteDataSource
+import com.mulkkam.data.remote.datasource.ReminderRemoteDataSourceImpl
+import com.mulkkam.data.remote.datasource.VersionRemoteDataSource
+import com.mulkkam.data.remote.datasource.VersionRemoteDataSourceImpl
 import org.koin.dsl.module
 
 val commonDataSourceModule =
     module {
-        single<CupsDataSource> { CupsDataSourceImpl() }
-        single<FriendsDataSource> { FriendsDataSourceImpl() }
-        single<IntakeDataSource> { IntakeDataSourceImpl() }
-        single<NicknameDataSource> { NicknameDataSourceImpl() }
-        single<NotificationDataSource> { NotificationDataSourceImpl() }
-        single<OnboardingDataSource> { OnboardingDataSourceImpl() }
-        single<ReminderDataSource> { ReminderDataSourceImpl() }
-        single<VersionDataSource> { VersionDataSourceImpl() }
+        single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl() }
+        single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl() }
+        single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl() }
+        single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl() }
+        single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl() }
+        single<NicknameRemoteDataSource> { NicknameRemoteDataSourceImpl() }
+        single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl() }
+        single<OnboardingRemoteDataSource> { OnboardingRemoteDataSourceImpl(get()) }
+        single<ReminderRemoteDataSource> { ReminderRemoteDataSourceImpl() }
+        single<VersionRemoteDataSource> { VersionRemoteDataSourceImpl() }
     }

@@ -1,58 +1,58 @@
 package com.mulkkam.data.local.datasource
 
-import android.content.Context
-import androidx.core.content.edit
+import com.mulkkam.data.local.preference.DevicesPreference
+import java.nio.charset.Charset
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 import java.util.UUID
 
 class DevicesLocalDataSourceImpl(
-    context: Context,
+    private val devicesPreference: DevicesPreference,
 ) : DevicesLocalDataSource {
-    private val sharedPreference =
-        context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
-
     override var deviceUuid: String?
-        get() = sharedPreference.getString(KEY_DEVICE_UUID, null)
+        get() = devicesPreference.deviceUuid
         set(value) {
-            sharedPreference.edit { putString(KEY_DEVICE_UUID, value) }
+            value?.let { devicesPreference.saveDeviceUuid(it) }
         }
 
     override var isNotificationGranted: Boolean
-        get() = sharedPreference.getBoolean(KEY_NOTIFICATION_GRANTED, false)
+        get() = devicesPreference.isNotificationGranted
         set(value) {
-            sharedPreference.edit { putBoolean(KEY_NOTIFICATION_GRANTED, value) }
+            devicesPreference.saveNotificationGranted(value)
         }
 
     override var isFirstLaunch: Boolean
-        get() = sharedPreference.getBoolean(KEY_IS_FIRST_LAUNCH, true)
+        get() = devicesPreference.isFirstLaunch
         set(value) {
-            sharedPreference.edit { putBoolean(KEY_IS_FIRST_LAUNCH, value) }
+            devicesPreference.saveIsFirstLaunch(value)
         }
 
+    override fun getOrCreateDeviceUuid(): String = deviceUuid ?: generateSha256Hash().also { saveDeviceUuid(it) }
+
     override fun saveDeviceUuid(uuid: String) {
-        sharedPreference.edit { putString(KEY_DEVICE_UUID, uuid) }
+        devicesPreference.saveDeviceUuid(uuid)
     }
 
     override fun saveNotificationGranted(granted: Boolean) {
-        sharedPreference.edit { putBoolean(KEY_NOTIFICATION_GRANTED, granted) }
+        devicesPreference.saveNotificationGranted(granted)
     }
 
     override fun saveIsFirstLaunch(isFirstLaunch: Boolean) {
-        sharedPreference.edit { putBoolean(KEY_IS_FIRST_LAUNCH, isFirstLaunch) }
+        devicesPreference.saveIsFirstLaunch(isFirstLaunch)
     }
 
-    fun getOrCreateDeviceUuid(): String {
-        val existingUuid = deviceUuid
-        if (existingUuid != null) return existingUuid
-
-        val newUuid = UUID.randomUUID().toString()
-        saveDeviceUuid(newUuid)
-        return newUuid
+    private fun generateSha256Hash(): String {
+        val uuid = UUID.randomUUID().toString()
+        val hashBytes =
+            MessageDigest
+                .getInstance(HASH_ALGORITHM)
+                .digest(uuid.toByteArray(CHARSET))
+        return hashBytes.take(HASH_LENGTH).joinToString("") { "%02x".format(it) }
     }
 
     companion object {
-        private const val PREFERENCE_NAME: String = "DEVICES_PREFERENCE"
-        private const val KEY_DEVICE_UUID: String = "DEVICE_UUID"
-        private const val KEY_NOTIFICATION_GRANTED: String = "NOTIFICATION_GRANTED"
-        private const val KEY_IS_FIRST_LAUNCH: String = "IS_FIRST_LAUNCH"
+        private const val HASH_ALGORITHM: String = "SHA-256"
+        private const val HASH_LENGTH: Int = 4
+        private val CHARSET: Charset = StandardCharsets.UTF_8
     }
 }

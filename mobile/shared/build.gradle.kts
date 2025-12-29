@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kotlin.multiplatform.library)
@@ -17,6 +19,10 @@ kotlin {
         namespace = "com.mulkkam"
         compileSdk = 36
         minSdk = 28
+
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_21)
+        }
 
         withHostTestBuilder {
         }
@@ -68,9 +74,11 @@ kotlin {
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.serialization.kotlinx.json)
                 implementation(libs.ktor.client.logging)
+                implementation(libs.ktor.client.auth)
 
                 // Koin (DI)
                 implementation(libs.koin.core)
+                implementation(libs.koin.compose.viewmodel)
 
                 // Kotlinx
                 implementation(libs.kotlinx.serialization.json)

@@ -44,11 +44,13 @@ class SettingCupsActivity : AppCompatActivity() {
     }
 
     private fun saveOrderResult(cups: List<CupUiModel>) {
+        /* TODO: 화면 마이그레이션 작업 중 참고
         val data =
             Intent().apply {
                 putParcelableArrayListExtra(EXTRA_KEY_LATEST_CUPS_ORDER, ArrayList(cups))
             }
-        setResult(RESULT_OK, data)
+         */
+        setResult(RESULT_OK)
     }
 
     private fun scheduleCupOrderUpdate(newCups: List<CupUiModel>) {

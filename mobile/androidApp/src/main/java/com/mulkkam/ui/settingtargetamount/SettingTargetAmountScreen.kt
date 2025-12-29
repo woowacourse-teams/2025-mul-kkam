@@ -72,7 +72,9 @@ fun SettingTargetAmountScreen(
                 )
             }
 
-            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading, MulKkamUiState.Idle -> {
+                Unit
+            }
         }
     }
 

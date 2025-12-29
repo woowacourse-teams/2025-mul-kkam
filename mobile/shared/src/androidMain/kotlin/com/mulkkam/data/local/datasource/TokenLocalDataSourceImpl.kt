@@ -1,60 +1,49 @@
 package com.mulkkam.data.local.datasource
 
-import android.content.Context
-import androidx.core.content.edit
+import com.mulkkam.data.local.preference.TokenPreference
 
 class TokenLocalDataSourceImpl(
-    context: Context,
+    private val tokenPreference: TokenPreference,
 ) : TokenLocalDataSource {
-    private val sharedPreference =
-        context.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
-
     override var accessToken: String?
-        get() = sharedPreference.getString(KEY_ACCESS_TOKEN, null)
+        get() = tokenPreference.accessToken
         set(value) {
-            sharedPreference.edit { putString(KEY_ACCESS_TOKEN, value) }
+            value?.let { tokenPreference.saveAccessToken(it) }
         }
 
     override var refreshToken: String?
-        get() = sharedPreference.getString(KEY_REFRESH_TOKEN, null)
+        get() = tokenPreference.refreshToken
         set(value) {
-            sharedPreference.edit { putString(KEY_REFRESH_TOKEN, value) }
+            value?.let { tokenPreference.saveRefreshToken(it) }
         }
 
     override var fcmToken: String?
-        get() = sharedPreference.getString(KEY_FCM_TOKEN, null)
+        get() = tokenPreference.fcmToken
         set(value) {
-            sharedPreference.edit { putString(KEY_FCM_TOKEN, value) }
+            value?.let { tokenPreference.saveFcmToken(it) }
         }
 
     override fun saveAccessToken(token: String) {
-        sharedPreference.edit { putString(KEY_ACCESS_TOKEN, token) }
+        tokenPreference.saveAccessToken(token)
     }
 
     override fun deleteAccessToken() {
-        sharedPreference.edit { remove(KEY_ACCESS_TOKEN) }
+        tokenPreference.deleteAccessToken()
     }
 
     override fun saveRefreshToken(token: String) {
-        sharedPreference.edit { putString(KEY_REFRESH_TOKEN, token) }
+        tokenPreference.saveRefreshToken(token)
     }
 
     override fun deleteRefreshToken() {
-        sharedPreference.edit { remove(KEY_REFRESH_TOKEN) }
+        tokenPreference.deleteRefreshToken()
     }
 
     override fun saveFcmToken(token: String) {
-        sharedPreference.edit { putString(KEY_FCM_TOKEN, token) }
+        tokenPreference.saveFcmToken(token)
     }
 
     override fun deleteFcmToken() {
-        sharedPreference.edit { remove(KEY_FCM_TOKEN) }
-    }
-
-    companion object {
-        private const val PREFERENCE_NAME: String = "TOKEN_PREFERENCE"
-        private const val KEY_ACCESS_TOKEN: String = "ACCESS_TOKEN"
-        private const val KEY_REFRESH_TOKEN: String = "REFRESH_TOKEN"
-        private const val KEY_FCM_TOKEN: String = "FCM_TOKEN"
+        tokenPreference.deleteFcmToken()
     }
 }

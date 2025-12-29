@@ -11,12 +11,12 @@ data class AuthResponse(
     @SerialName("refreshToken")
     val refreshToken: String,
     @SerialName("finishedOnboarding")
-    val onboardingCompleted: Boolean,
+    val finishedOnboarding: Boolean,
 )
 
 fun AuthResponse.toDomain() =
     AuthInfo(
         accessToken = accessToken,
         refreshToken = refreshToken,
-        onboardingCompleted = onboardingCompleted,
+        onboardingCompleted = finishedOnboarding,
     )

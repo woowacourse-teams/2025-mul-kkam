@@ -1,8 +1,7 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.remote.datasource.CupsDataSource
+import com.mulkkam.data.remote.datasource.CupsRemoteDataSource
 import com.mulkkam.data.remote.model.error.toDomain
-import com.mulkkam.data.remote.model.error.toResponseError
 import com.mulkkam.data.remote.model.request.cups.NewCupRequest
 import com.mulkkam.data.remote.model.request.cups.toData
 import com.mulkkam.data.remote.model.response.cups.toDomain
@@ -15,23 +14,23 @@ import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.repository.CupsRepository
 
 class CupsRepositoryImpl(
-    private val cupsService: CupsDataSource,
+    private val cupsRemoteDataSource: CupsRemoteDataSource,
 ) : CupsRepository {
     override suspend fun getCups(): MulKkamResult<Cups> {
-        val result = cupsService.getCups()
+        val result = cupsRemoteDataSource.getCups()
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
     override suspend fun getCupsDefault(): MulKkamResult<Cups> {
-        val result = cupsService.getCupsDefault()
+        val result = cupsRemoteDataSource.getCupsDefault()
 
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -42,7 +41,7 @@ class CupsRepositoryImpl(
         emojiId: Long,
     ): MulKkamResult<Unit> {
         val result =
-            cupsService.postCup(
+            cupsRemoteDataSource.postCup(
                 NewCupRequest(
                     cupNickname = name.value,
                     cupAmount = amount.value,
@@ -52,16 +51,16 @@ class CupsRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
     override suspend fun putCupsRank(cups: Cups): MulKkamResult<Cups> {
         val request = cups.toData()
-        val result = cupsService.putCupsRank(request)
+        val result = cupsRemoteDataSource.putCupsRank(request)
         return result.fold(
             onSuccess = { MulKkamResult(data = cups) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
@@ -73,7 +72,7 @@ class CupsRepositoryImpl(
         emojiId: Long,
     ): MulKkamResult<Unit> {
         val result =
-            cupsService.patchCup(
+            cupsRemoteDataSource.patchCup(
                 cupId = id,
                 newCupRequest =
                     NewCupRequest(
@@ -85,31 +84,31 @@ class CupsRepositoryImpl(
             )
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
     override suspend fun deleteCup(id: Long): MulKkamResult<Unit> {
-        val result = cupsService.deleteCup(id)
+        val result = cupsRemoteDataSource.deleteCup(id)
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
     override suspend fun getCupEmojis(): MulKkamResult<List<CupEmoji>> {
-        val result = cupsService.getCupEmojis()
+        val result = cupsRemoteDataSource.getCupEmojis()
         return result.fold(
             onSuccess = { MulKkamResult(data = it.toDomain()) },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 
     override suspend fun resetCups(): MulKkamResult<Unit> {
-        val result = cupsService.resetCups()
+        val result = cupsRemoteDataSource.resetCups()
         return result.fold(
             onSuccess = { MulKkamResult() },
-            onFailure = { MulKkamResult(error = it.toResponseError().toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
         )
     }
 }
