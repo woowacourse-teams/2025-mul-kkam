@@ -33,6 +33,8 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementCheckBox
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementItem
+import com.mulkkam.ui.terms.TermsAgreementViewModel
+import com.mulkkam.ui.terms.model.TermsType
 import com.mulkkam.ui.util.extensions.getStyledText
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
@@ -54,9 +56,9 @@ fun TermsAgreementScreen(
         derivedStateOf {
             OnboardingInfo().copy(
                 isMarketingNotificationAgreed =
-                    termsAgreements.find { it.labelId == R.string.terms_agree_marketing }?.isChecked == true,
+                    termsAgreements.find { it.type == TermsType.MARKETING }?.isChecked == true,
                 isNightNotificationAgreed =
-                    termsAgreements.find { it.labelId == R.string.terms_agree_night_notification }?.isChecked == true,
+                    termsAgreements.find { it.type == TermsType.NIGHT_NOTIFICATION }?.isChecked == true,
             )
         }
     }
@@ -113,19 +115,20 @@ fun TermsAgreementScreen(
             LazyColumn {
                 items(
                     items = termsAgreements,
-                    key = { item -> item.labelId },
+                    key = { item -> item.type },
                 ) { item ->
-                    val suffix =
+                    val suffix: String =
                         if (item.isRequired) {
                             stringResource(R.string.terms_required_suffix)
                         } else {
                             stringResource(R.string.terms_optional_suffix)
                         }
+                    val (labelRes: Int, uriRes: Int) = item.type.toResourceIds()
                     TermsAgreementItem(
-                        termsLabel = context.getString(item.labelId, suffix),
+                        termsLabel = context.getString(labelRes, suffix),
                         isChecked = item.isChecked,
                         onClickCheck = { viewModel.toggleCheckState(item) },
-                        onClickNext = { loadToPage(item.uri) },
+                        onClickNext = { loadToPage(uriRes) },
                     )
                 }
             }

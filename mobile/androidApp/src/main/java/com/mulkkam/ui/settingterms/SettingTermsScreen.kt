@@ -15,11 +15,12 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.settingterms.model.SettingTermsType
 
 @Composable
 fun SettingTermsScreen(
-    terms: List<TermsUiModel>,
-    onTermsClick: (TermsUiModel) -> Unit,
+    terms: List<SettingTermsType>,
+    onTermsClick: (SettingTermsType) -> Unit,
     onBackClick: () -> Unit,
 ) {
     Scaffold(
@@ -39,8 +40,9 @@ fun SettingTermsScreen(
                     .padding(paddingValues),
         ) {
             terms.forEach { termsAgreement ->
+                val labelRes: Int = termsAgreement.toLabelResource()
                 SettingNormalItem(
-                    label = stringResource(id = termsAgreement.labelId),
+                    label = stringResource(id = labelRes),
                     onClick = { onTermsClick(termsAgreement) },
                     modifier = Modifier.fillMaxWidth(),
                 )
@@ -52,12 +54,7 @@ fun SettingTermsScreen(
 @Preview(showBackground = true)
 @Composable
 private fun SettingTermsScreenPreview() {
-    val previewTerms =
-        listOf(
-            TermsUiModel(labelId = R.string.setting_terms_agree_service),
-            TermsUiModel(labelId = R.string.setting_terms_agree_privacy),
-            TermsUiModel(labelId = R.string.setting_terms_agree_health_connect),
-        )
+    val previewTerms: List<SettingTermsType> = SettingTermsType.entries
     MulKkamTheme {
         SettingTermsScreen(terms = previewTerms, onTermsClick = {}, onBackClick = {})
     }

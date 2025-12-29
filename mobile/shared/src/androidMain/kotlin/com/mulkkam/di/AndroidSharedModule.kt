@@ -16,12 +16,12 @@ fun androidSharedModule(
             remoteDataSourceModule,
             commonDataSourceModule,
             commonNetworkModule(baseUrl),
-            repositoryModule2,
+            repositoryModule,
             commonRepositoryModule,
-            checkerModule2,
-            healthConnectModule2,
-            workerModule2,
+            checkerModule,
+            healthConnectModule,
+            workerModule,
             workManagerModule2,
-            viewModelModule2,
+            commonViewModelModule,
         )
     }

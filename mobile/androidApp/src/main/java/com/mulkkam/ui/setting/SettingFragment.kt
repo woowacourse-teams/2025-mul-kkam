@@ -69,7 +69,8 @@ class SettingFragment :
             registerForActivityResult(
                 ActivityResultContracts.StartActivityForResult(),
             ) { result ->
-                if (result.resultCode == RESULT_OK) {
+                // TODO: 해당 화면 마이그레이션 작업시 참고
+                /*if (result.resultCode == RESULT_OK) {
                     val cups =
                         result.data?.getParcelableArrayListExtraCompat<CupUiModel>(
                             SettingCupsActivity.EXTRA_KEY_LATEST_CUPS_ORDER,
@@ -77,7 +78,7 @@ class SettingFragment :
                     if (!cups.isNullOrEmpty()) {
                         viewModel.saveCupOrder(cups)
                     }
-                }
+                }*/
             }
     }
 }

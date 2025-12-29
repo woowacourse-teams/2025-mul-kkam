@@ -1,17 +1,26 @@
 package com.mulkkam.data.remote.datasource
 
+import com.mulkkam.data.remote.api.safeApiCall
+import com.mulkkam.data.remote.api.safeApiCallUnit
 import com.mulkkam.data.remote.model.request.onboarding.OnboardingRequest
 import com.mulkkam.data.remote.model.response.onboarding.OnboardingCheckResponse
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-// TODO: DataSource 구현 필요
-// 앱 실행을 위한 임시 코드
-class OnboardingRemoteDataSourceImpl : OnboardingRemoteDataSource {
+class OnboardingRemoteDataSourceImpl(
+    private val httpClient: HttpClient,
+) : OnboardingRemoteDataSource {
     override suspend fun postOnboarding(member: OnboardingRequest): Result<Unit> =
-        runCatching {
+        safeApiCallUnit {
+            httpClient.post("/onboarding") {
+                setBody(member)
+            }
         }
 
     override suspend fun getOnboardingCheck(): Result<OnboardingCheckResponse> =
-        runCatching {
-            OnboardingCheckResponse(true)
+        safeApiCall {
+            httpClient.get("/onboarding/check")
         }
 }

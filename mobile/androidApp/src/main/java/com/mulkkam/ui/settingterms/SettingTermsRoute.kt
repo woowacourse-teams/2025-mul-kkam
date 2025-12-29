@@ -7,7 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.health.connect.client.HealthConnectClient
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.R
+import com.mulkkam.ui.settingterms.model.SettingTermsType
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 import com.mulkkam.ui.util.extensions.openTermsLink
@@ -19,13 +19,13 @@ fun SettingTermsRoute(
 ) {
     val context = LocalContext.current
     val healthConnectIntent = remember { Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS) }
-    val termsAgreements: List<TermsUiModel> by viewModel.terms.collectAsStateWithLifecycle()
+    val termsAgreements: List<SettingTermsType> by viewModel.terms.collectAsStateWithLifecycle()
 
     SettingTermsScreen(
         terms = termsAgreements,
         onTermsClick = { termsAgreement ->
-            when (termsAgreement.labelId) {
-                R.string.setting_terms_agree_health_connect -> {
+            when (termsAgreement) {
+                SettingTermsType.HEALTH_CONNECT -> {
                     if (context.isHealthConnectAvailable()) {
                         context.startActivity(healthConnectIntent)
                     } else {
@@ -34,7 +34,10 @@ fun SettingTermsRoute(
                 }
 
                 else -> {
-                    context.openTermsLink(termsAgreement.uri)
+                    val uriRes: Int? = termsAgreement.toUriResource()
+                    if (uriRes != null) {
+                        context.openTermsLink(uriRes)
+                    }
                 }
             }
         },
