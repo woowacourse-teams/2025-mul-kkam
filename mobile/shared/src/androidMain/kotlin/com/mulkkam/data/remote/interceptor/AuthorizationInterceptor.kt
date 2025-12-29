@@ -9,7 +9,6 @@ import java.net.HttpURLConnection
 
 class AuthorizationInterceptor(
     private val tokenPreference: TokenPreference,
-    private val tokenRefresher: Lazy<TokenRefresher>,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         // 1. 최초 요청
@@ -36,9 +35,6 @@ class AuthorizationInterceptor(
         // 기존 response 닫기
         response.close()
 
-        // 3. 토큰 재발급
-        val newAccessToken = tokenRefresher.value.refresh() ?: return response
-
         // 4. 새로운 토큰으로 재시도
         val newRequest =
             chain
@@ -46,7 +42,7 @@ class AuthorizationInterceptor(
                 .newBuilder()
                 .header(
                     HEADER_NAME_AUTHORIZATION,
-                    HEADER_VALUE_AUTHORIZATION.format(newAccessToken),
+                    HEADER_VALUE_AUTHORIZATION.format("newAccessToken"),
                 ).build()
 
         return chain.proceed(newRequest)

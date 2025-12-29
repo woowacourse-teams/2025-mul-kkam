@@ -22,7 +22,7 @@ import com.mulkkam.ui.notification.component.NotificationItemComponent
 import com.mulkkam.ui.notification.component.NotificationShimmerItem
 import com.mulkkam.ui.notification.component.NotificationTopAppBar
 import com.mulkkam.ui.util.LoadingShimmerEffect
-import com.mulkkam.ui.util.extensions.onLoadMore
+import com.mulkkam.ui.util.extensions.OnLoadMore
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -33,7 +33,7 @@ fun NotificationScreen(
 ) {
     val notifications by viewModel.notifications.collectAsStateWithLifecycle()
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
-    state.onLoadMore(action = { viewModel.loadMore() })
+    state.OnLoadMore(action = { viewModel.loadMore() })
 
     Scaffold(
         topBar = { NotificationTopAppBar(navigateToBack) },

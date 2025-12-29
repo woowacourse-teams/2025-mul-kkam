@@ -157,7 +157,7 @@ private fun MulKkamSnackbarLeadingIcon(
     @DrawableRes iconResourceId: Int,
 ) {
     Image(
-        painter = painterResource(id = iconResourceId),
+        painter = painterResource(iconResourceId),
         contentDescription = null,
         modifier = Modifier.size(32.dp),
     )

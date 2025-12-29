@@ -7,6 +7,8 @@ interface DevicesLocalDataSource {
 
     var isFirstLaunch: Boolean
 
+    fun getOrCreateDeviceUuid(): String
+
     fun saveDeviceUuid(uuid: String)
 
     fun saveNotificationGranted(granted: Boolean)

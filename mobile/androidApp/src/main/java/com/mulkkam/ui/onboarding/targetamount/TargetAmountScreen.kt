@@ -1,6 +1,7 @@
 package com.mulkkam.ui.onboarding.targetamount
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,10 +10,12 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,9 +43,14 @@ fun TargetAmountScreen(
     viewModel: TargetAmountViewModel = koinViewModel(),
 ) {
     var targetAmount by rememberSaveable { mutableStateOf("") }
-
     val targetAmountOnboardingUiState by viewModel.targetAmountOnboardingUiState.collectAsStateWithLifecycle()
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(targetAmountOnboardingUiState) {
+        val previous =
+            targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value ?: 0
+        targetAmount = previous.toString()
+    }
 
     Scaffold(
         topBar = {
@@ -74,29 +82,35 @@ fun TargetAmountScreen(
                 color = Black,
             )
 
-            TargetAmountInputSection(
-                modifier = Modifier.padding(top = 28.dp),
-                targetAmount = targetAmount,
-                targetAmountValidityUiState = targetAmountValidityUiState,
-                onTargetAmountChanged = { newValue ->
-                    handleNumericInput(
-                        newValue = newValue,
-                        onCleanedValue = { targetAmount = it },
-                        update = { viewModel.updateTargetAmount(it) },
-                    )
-                },
-            )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                TargetAmountInputSection(
+                    modifier =
+                        Modifier
+                            .padding(top = 28.dp)
+                            .align(Alignment.TopCenter),
+                    targetAmount = targetAmount,
+                    targetAmountValidityUiState = targetAmountValidityUiState,
+                    onTargetAmountChanged = { newValue ->
+                        handleNumericInput(
+                            newValue = newValue,
+                            onCleanedValue = { targetAmount = it },
+                            update = { viewModel.updateTargetAmount(it) },
+                        )
+                    },
+                )
 
-            RecommendedTargetAmount(
-                nickname =
-                    targetAmountOnboardingUiState.toSuccessDataOrNull()?.nickname
-                        ?: return@Column,
-                recommended =
-                    targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
-                        ?: return@Column,
-                modifier = Modifier.padding(top = 58.dp),
-                hasBioInfo = hasBioInfo,
-            )
+                targetAmountOnboardingUiState.toSuccessDataOrNull()?.let { data ->
+                    RecommendedTargetAmount(
+                        nickname = data.nickname,
+                        recommended = data.recommendedTargetAmount.value,
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopStart)
+                                .padding(top = 140.dp),
+                        hasBioInfo = hasBioInfo,
+                    )
+                }
+            }
 
             Spacer(modifier = Modifier.weight(1f))
 

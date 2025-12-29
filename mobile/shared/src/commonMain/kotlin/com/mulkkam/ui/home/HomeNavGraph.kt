@@ -3,11 +3,8 @@ package com.mulkkam.ui.home
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.home.encyclopedia.EncyclopediaRoute
-import com.mulkkam.ui.home.encyclopedia.EncyclopediaScreen
 import com.mulkkam.ui.home.home.HomeRoute
-import com.mulkkam.ui.home.home.HomeScreen
 import com.mulkkam.ui.home.notification.NotificationRoute
-import com.mulkkam.ui.home.notification.NotificationScreen
 import com.mulkkam.ui.navigation.HomeRoute
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry

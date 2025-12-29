@@ -17,10 +17,11 @@ import com.mulkkam.ui.model.MulKkamUiState
 @Composable
 fun TargetAmountValidationMessage(targetAmountValidityUiState: MulKkamUiState.Failure) {
     val context = LocalContext.current
+    val error = targetAmountValidityUiState.error
 
-    if (targetAmountValidityUiState.error is TargetAmountError) {
+    if (error is TargetAmountError) {
         Text(
-            text = targetAmountValidityUiState.error.toMessageRes(context),
+            text = error.toMessageRes(context),
             style = MulKkamTheme.typography.label1,
             color = Secondary200,
             modifier = Modifier.padding(top = 6.dp, start = 6.dp),

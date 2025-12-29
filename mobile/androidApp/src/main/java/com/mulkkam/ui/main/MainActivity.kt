@@ -24,6 +24,7 @@ import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.widget.AchievementHeatmapWidget
@@ -66,7 +67,10 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             val action =
                 NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
             when (action) {
-                NotificationAction.GO_HOME -> Unit
+                NotificationAction.GO_HOME -> {
+                    Unit
+                }
+
                 NotificationAction.GO_NOTIFICATION -> {
                     val intent = NotificationActivity.newIntent(this)
                     intent.flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -81,7 +85,9 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                     viewModel.receiveFriendWaterBalloon()
                 }
 
-                NotificationAction.UNKNOWN -> Unit
+                NotificationAction.UNKNOWN -> {
+                    Unit
+                }
             }
         }
     }
@@ -156,24 +162,24 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun initObservers() {
         with(viewModel) {
-            isHealthPermissionGranted.observe(this@MainActivity) { isGranted ->
-                if (isGranted) {
+            isHealthPermissionGranted.collectWithLifecycle(this@MainActivity) { isGranted ->
+                if (isGranted == true) {
                     viewModel.scheduleCalorieCheck()
                 }
             }
 
-            fcmToken.observe(this@MainActivity) {
+            fcmToken.collectWithLifecycle(this@MainActivity) {
                 val currentGranted = hasNotificationPermission()
                 viewModel.saveNotificationPermission(
                     isCurrentlyGranted = currentGranted,
                 )
             }
 
-            onFirstLaunch.observe(this@MainActivity) {
+            onFirstLaunch.collectWithLifecycle(this@MainActivity) {
                 showMainPermissionDialog()
             }
 
-            isAppOutdated.observe(this@MainActivity) { isAppOutdated ->
+            isAppOutdated.collectWithLifecycle(this@MainActivity) { isAppOutdated ->
                 if (isAppOutdated) showUpdateDialog()
             }
         }
@@ -197,12 +203,16 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun hasNotificationPermission(): Boolean =
         when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> true
-            else ->
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
+                true
+            }
+
+            else -> {
                 ContextCompat.checkSelfPermission(
                     this,
                     POST_NOTIFICATIONS,
                 ) == PackageManager.PERMISSION_GRANTED
+            }
         }
 
     override fun onStop() {

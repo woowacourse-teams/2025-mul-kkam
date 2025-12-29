@@ -30,11 +30,12 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
 fun SettingAccountInfoScreen(
-    items: List<SettingAccountUiModel>,
+    items: List<AccountInfoType>,
     onBackClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onDeleteAccountClick: () -> Unit,
@@ -64,9 +65,9 @@ fun SettingAccountInfoScreen(
                         SettingAccountInfoItem(
                             item = item,
                             onClick = {
-                                when (item.title) {
-                                    R.string.setting_account_info_logout -> onLogoutClick()
-                                    R.string.setting_account_info_delete_account -> onDeleteAccountClick()
+                                when (item) {
+                                    AccountInfoType.LOGOUT -> onLogoutClick()
+                                    AccountInfoType.DELETE_ACCOUNT -> onDeleteAccountClick()
                                 }
                             },
                         )
@@ -82,7 +83,7 @@ fun SettingAccountInfoScreen(
 
 @Composable
 private fun SettingAccountInfoItem(
-    item: SettingAccountUiModel,
+    item: AccountInfoType,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -100,8 +101,9 @@ private fun SettingAccountInfoItem(
                     .fillMaxWidth(),
             contentAlignment = Alignment.CenterStart,
         ) {
+            val titleRes: Int = item.toStringResource()
             Text(
-                text = stringResource(id = item.title),
+                text = stringResource(id = titleRes),
                 style = MulKkamTheme.typography.body2,
                 color = Gray400,
             )
@@ -124,11 +126,7 @@ private fun SettingAccountInfoItem(
 private fun SettingAccountInfoScreenPreview() {
     MulKkamTheme {
         SettingAccountInfoScreen(
-            items =
-                listOf(
-                    SettingAccountUiModel(title = R.string.setting_account_info_logout),
-                    SettingAccountUiModel(title = R.string.setting_account_info_delete_account),
-                ),
+            items = AccountInfoType.entries,
             onBackClick = {},
             onLogoutClick = {},
             onDeleteAccountClick = {},
@@ -142,7 +140,7 @@ private fun SettingAccountInfoScreenPreview() {
 private fun SettingAccountInfoItemPreview() {
     MulKkamTheme {
         SettingAccountInfoItem(
-            item = SettingAccountUiModel(title = R.string.setting_account_info_logout),
+            item = AccountInfoType.LOGOUT,
             onClick = {},
         )
     }

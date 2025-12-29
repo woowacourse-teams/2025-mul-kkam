@@ -39,7 +39,7 @@ import com.mulkkam.ui.friends.component.FriendsTopAppBar
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
-import com.mulkkam.ui.util.extensions.onLoadMore
+import com.mulkkam.ui.util.extensions.OnLoadMore
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
@@ -153,7 +153,7 @@ private fun FriendItems(
     onDeleteFriend: (Friend) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    listState.onLoadMore(isLoadMoreEnabled = hasMore, action = onLoadMore)
+    listState.OnLoadMore(isLoadMoreEnabled = hasMore, action = onLoadMore)
 
     LazyColumn(
         state = listState,

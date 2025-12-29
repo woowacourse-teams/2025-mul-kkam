@@ -72,7 +72,9 @@ fun SettingTargetAmountScreen(
                 )
             }
 
-            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
+            is MulKkamUiState.Loading, MulKkamUiState.Idle -> {
+                Unit
+            }
         }
     }
 
@@ -99,37 +101,39 @@ fun SettingTargetAmountScreen(
                     text = stringResource(R.string.setting_target_amount_edit_goal_label),
                     style = MulKkamTheme.typography.title2,
                     color = Gray400,
-                    modifier = Modifier.padding(bottom = 12.dp),
+                    modifier = Modifier.padding(top = 34.dp, start = 24.dp),
                 )
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    TargetAmountInputSection(
+                        modifier =
+                            Modifier
+                                .align(Alignment.TopCenter)
+                                .padding(horizontal = 24.dp)
+                                .padding(top = 12.dp),
+                        targetAmount = targetAmount,
+                        targetAmountValidityUiState = targetAmountValidityUiState,
+                        onTargetAmountChanged = { newValue ->
+                            handleNumericInput(
+                                newValue = newValue,
+                                onCleanedValue = { targetAmount = it },
+                                update = { viewModel.updateTargetAmount(it) },
+                            )
+                        },
+                    )
 
-                TargetAmountInputSection(
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 24.dp)
-                            .padding(top = 24.dp),
-                    targetAmount = targetAmount,
-                    targetAmountValidityUiState = targetAmountValidityUiState,
-                    onTargetAmountChanged = { newValue ->
-                        handleNumericInput(
-                            newValue = newValue,
-                            onCleanedValue = { targetAmount = it },
-                            update = { viewModel.updateTargetAmount(it) },
-                        )
-                    },
-                )
-
-                RecommendedTargetAmount(
-                    nickname =
-                        targetInfoUiState.toSuccessDataOrNull()?.nickname
-                            ?: return@Column,
-                    recommended =
-                        targetInfoUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
-                            ?: return@Column,
-                    modifier =
-                        Modifier
-                            .padding(horizontal = 24.dp)
-                            .padding(top = 58.dp),
-                )
+                    RecommendedTargetAmount(
+                        nickname =
+                            targetInfoUiState.toSuccessDataOrNull()?.nickname
+                                ?: return@Column,
+                        recommended =
+                            targetInfoUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
+                                ?: return@Column,
+                        modifier =
+                            Modifier
+                                .padding(horizontal = 24.dp)
+                                .padding(top = 140.dp),
+                    )
+                }
             }
 
             SaveButton(

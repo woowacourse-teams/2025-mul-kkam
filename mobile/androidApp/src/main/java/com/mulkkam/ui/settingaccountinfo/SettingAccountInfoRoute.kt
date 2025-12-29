@@ -14,6 +14,7 @@ import com.mulkkam.ui.component.MulKkamToastState
 import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.settingaccountinfo.component.AccountDeleteDialog
 import com.mulkkam.ui.settingaccountinfo.component.AccountLogoutDialog
+import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
 import com.mulkkam.ui.settingaccountinfo.model.SettingAccountInfoEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 
@@ -26,7 +27,7 @@ fun SettingAccountInfoRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val context = LocalContext.current
 
-    val accountItems: List<SettingAccountUiModel> by viewModel.accountInfo.collectAsStateWithLifecycle()
+    val accountItems: List<AccountInfoType> by viewModel.accountInfo.collectAsStateWithLifecycle()
 
     var isLogoutDialogShown: Boolean by rememberSaveable { mutableStateOf(false) }
     var isDeleteDialogShown: Boolean by rememberSaveable { mutableStateOf(false) }

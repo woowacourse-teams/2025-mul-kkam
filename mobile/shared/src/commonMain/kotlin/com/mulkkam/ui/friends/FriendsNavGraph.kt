@@ -3,11 +3,8 @@ package com.mulkkam.ui.friends
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.friends.friends.FriendsRoute
-import com.mulkkam.ui.friends.friends.FriendsScreen
 import com.mulkkam.ui.friends.pendingfriends.PendingFriendsRoute
-import com.mulkkam.ui.friends.pendingfriends.PendingFriendsScreen
 import com.mulkkam.ui.friends.searchmembers.SearchMembersRoute
-import com.mulkkam.ui.friends.searchmembers.SearchMembersScreen
 import com.mulkkam.ui.navigation.FriendsRoute
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry

@@ -17,7 +17,7 @@ import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.component.MulKkamAlertDialog
-import com.mulkkam.ui.util.extensions.onLoadMore
+import com.mulkkam.ui.util.extensions.OnLoadMore
 
 @Composable
 fun SentTab(
@@ -27,7 +27,7 @@ fun SentTab(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
 ) {
-    state.onLoadMore(action = onLoadMore)
+    state.OnLoadMore(action = onLoadMore)
     var showDialog by remember { mutableStateOf(false) }
     var requestToCancel: FriendsRequestInfo? by remember { mutableStateOf(null) }
 

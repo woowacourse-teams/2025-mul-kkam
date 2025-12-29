@@ -35,7 +35,7 @@ fun BottomSheetHeader(
         )
 
         Icon(
-            painter = painterResource(id = R.drawable.ic_bio_info_weight_close),
+            painter = painterResource(R.drawable.ic_bio_info_weight_close),
             contentDescription = null,
             tint = Gray400,
             modifier =

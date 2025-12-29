@@ -85,7 +85,7 @@ fun SettingCupsEditor(
                                     reorderState.updateDrag(
                                         items = items,
                                         dragDeltaY = dragAmount.y,
-                                        onAutoScroll = { scrolled -> reorderState.apply { dragOffset += scrolled } },
+                                        onAutoScroll = { scrolled -> reorderState.adjustDragOffset(scrolled) },
                                     )
                                 },
                                 onDragEnd = {

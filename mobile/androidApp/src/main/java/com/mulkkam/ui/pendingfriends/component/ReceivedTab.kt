@@ -14,7 +14,7 @@ import androidx.compose.ui.res.stringResource
 import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.ui.component.MulKkamAlertDialog
-import com.mulkkam.ui.util.extensions.onLoadMore
+import com.mulkkam.ui.util.extensions.OnLoadMore
 
 @Composable
 fun ReceivedTab(
@@ -25,7 +25,7 @@ fun ReceivedTab(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
 ) {
-    state.onLoadMore(action = onLoadMore)
+    state.OnLoadMore(action = onLoadMore)
     var showDialog by remember { mutableStateOf(false) }
     var requestToReject: FriendsRequestInfo? by remember { mutableStateOf(null) }
 

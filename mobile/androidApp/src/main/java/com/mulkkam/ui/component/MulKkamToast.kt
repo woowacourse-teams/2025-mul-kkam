@@ -79,7 +79,13 @@ fun MulKkamToastHost(
     state: MulKkamToastState,
     modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.BottomCenter,
-    contentPadding: PaddingValues = PaddingValues(start = 24.dp, top = 0.dp, end = 24.dp, bottom = 24.dp),
+    contentPadding: PaddingValues =
+        PaddingValues(
+            start = 24.dp,
+            top = 0.dp,
+            end = 24.dp,
+            bottom = 24.dp,
+        ),
 ) {
     val toastState: State<MulKkamToastVisuals?> = state.currentToast.collectAsState()
     val toastVisuals: MulKkamToastVisuals? = toastState.value
