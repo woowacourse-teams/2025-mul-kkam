@@ -1,6 +1,5 @@
 package com.mulkkam.ui.util.extensions
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -8,9 +7,8 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 
-@SuppressLint("ComposableNaming")
 @Composable
-fun LazyListState.onLoadMore(
+fun LazyListState.OnLoadMore(
     isLoadMoreEnabled: Boolean = true,
     preloadThreshold: Int = 10,
     action: () -> Unit,

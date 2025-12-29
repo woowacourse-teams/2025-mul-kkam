@@ -78,7 +78,7 @@ fun AccountDeleteDialog(
                         stringResource(
                             R.string.setting_account_info_delete_description,
                         ).getColoredText(
-                            colorResId = R.color.secondary_200,
+                            color = Secondary200,
                             highlightedText = arrayOf(stringResource(R.string.setting_account_info_delete_description_highlight)),
                         ),
                     color = Gray400,

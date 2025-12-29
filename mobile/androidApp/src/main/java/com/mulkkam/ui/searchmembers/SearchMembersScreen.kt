@@ -48,8 +48,8 @@ import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
+import com.mulkkam.ui.util.extensions.OnLoadMore
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import com.mulkkam.ui.util.extensions.onLoadMore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
@@ -73,7 +73,7 @@ fun SearchMembersScreen(
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
 
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
-    state.onLoadMore(action = { viewModel.loadMoreMembers() })
+    state.OnLoadMore(action = { viewModel.loadMoreMembers() })
 
     var receivedMemberSearchInfo: MemberSearchInfo? by remember { mutableStateOf(null) }
     var showDialog by remember { mutableStateOf(false) }
