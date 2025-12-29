@@ -19,7 +19,7 @@ fun androidSharedModule(
             repositoryModule,
             commonRepositoryModule,
             checkerModule,
-            healthConnectModule,
+            healthPlatformModule,
             workerModule,
             workManagerModule2,
             commonViewModelModule,

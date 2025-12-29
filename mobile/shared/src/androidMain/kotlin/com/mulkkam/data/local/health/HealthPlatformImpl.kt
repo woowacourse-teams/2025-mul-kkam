@@ -6,13 +6,15 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
 
-class HealthConnect(
+class HealthPlatformImpl(
     private val client: HealthConnectClient?,
-) {
-    suspend fun getCalories(
-        start: Instant,
-        end: Instant,
+) : HealthPlatform {
+    override suspend fun getCalories(
+        startEpochMillis: Long,
+        endEpochMillis: Long,
     ): Double {
+        val start = Instant.ofEpochMilli(startEpochMillis)
+        val end = Instant.ofEpochMilli(endEpochMillis)
         val result =
             client?.aggregate(
                 AggregateRequest(
@@ -24,7 +26,7 @@ class HealthConnect(
         return kcal
     }
 
-    suspend fun hasPermissions(permissions: Set<String>): Boolean {
+    override suspend fun hasPermissions(permissions: Set<String>): Boolean {
         val granted = client?.permissionController?.getGrantedPermissions() ?: emptySet()
         return granted.containsAll(permissions)
     }
