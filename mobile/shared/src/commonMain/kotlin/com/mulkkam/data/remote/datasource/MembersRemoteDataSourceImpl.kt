@@ -41,7 +41,9 @@ class MembersRemoteDataSourceImpl : MembersRemoteDataSource {
         TODO("Not yet implemented")
     }
 
-    override suspend fun patchMembersNotificationMarketing(marketingNotificationAgreedRequest: MarketingNotificationAgreedRequest): Result<Unit> {
+    override suspend fun patchMembersNotificationMarketing(
+        marketingNotificationAgreedRequest: MarketingNotificationAgreedRequest,
+    ): Result<Unit> {
         TODO("Not yet implemented")
     }
 

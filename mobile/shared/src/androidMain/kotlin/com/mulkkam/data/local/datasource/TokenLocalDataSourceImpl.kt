@@ -5,7 +5,6 @@ import com.mulkkam.data.local.preference.TokenPreference
 class TokenLocalDataSourceImpl(
     private val tokenPreference: TokenPreference,
 ) : TokenLocalDataSource {
-
     override var accessToken: String?
         get() = tokenPreference.accessToken
         set(value) {

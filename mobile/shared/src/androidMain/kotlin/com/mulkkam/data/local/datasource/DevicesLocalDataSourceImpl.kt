@@ -5,7 +5,6 @@ import com.mulkkam.data.local.preference.DevicesPreference
 class DevicesLocalDataSourceImpl(
     private val devicesPreference: DevicesPreference,
 ) : DevicesLocalDataSource {
-
     override var deviceUuid: String?
         get() = devicesPreference.deviceUuid
         set(value) {
