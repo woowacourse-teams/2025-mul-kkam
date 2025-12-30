@@ -18,7 +18,7 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 
-class MulKkamApp : Application() {
+class MulKkamApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -27,7 +27,7 @@ class MulKkamApp : Application() {
 
         startKoin {
             androidLogger()
-            androidContext(this@MulKkamApp)
+            androidContext(this@MulKkamApplication)
             workManagerFactory()
             modules(androidSharedModule(BuildConfig.BASE_URL, BuildConfig.DEBUG))
         }
