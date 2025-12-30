@@ -221,4 +221,7 @@ fabric.properties
 .kotlin/
 **/.kotlin/
 
+# iOS build configs
+*.xcconfig
+
 # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,kotlin
