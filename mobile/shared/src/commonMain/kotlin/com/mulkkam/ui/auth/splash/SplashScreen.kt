@@ -17,13 +17,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
-import com.mulkkam.ui.auth.splash.component.SplashLottie
+import androidx.compose.ui.graphics.ColorFilter
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import io.github.alexzhirkevich.compottie.LottieClipSpec
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
+import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.bg_splash
 import mulkkam.shared.generated.resources.img_splash
@@ -49,10 +51,10 @@ fun SplashScreen(
     var isLottieFinished by rememberSaveable { mutableStateOf(false) }
 
     val composition by rememberLottieComposition {
-        val animationBytes = Res.readBytes("files/lottie_splash.json")
-        LottieCompositionSpec.JsonString(animationBytes.decodeToString())
+        LottieCompositionSpec.JsonString(
+            Res.readBytes("files/lottie_splash.json").decodeToString(),
+        )
     }
-
     val progress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = true,
@@ -81,10 +83,15 @@ fun SplashScreen(
                     .padding(innerPadding),
             contentAlignment = Alignment.Center,
         ) {
-            SplashLottie(
-                modifier = Modifier.scale(1.5f),
-                composition = composition,
-                progress = progress,
+            Image(
+                painter =
+                    rememberLottiePainter(
+                        composition = composition,
+                        progress = { progress },
+                    ),
+                contentDescription = null,
+                modifier = Modifier.scale(3f).fillMaxWidth(),
+                colorFilter = ColorFilter.tint(Primary100),
             )
 
             Image(
