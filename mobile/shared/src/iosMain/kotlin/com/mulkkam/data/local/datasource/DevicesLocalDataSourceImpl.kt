@@ -26,7 +26,7 @@ class DevicesLocalDataSourceImpl : DevicesLocalDataSource {
         this.isFirstLaunch = isFirstLaunch
     }
 
-    fun getOrCreateDeviceUuid(): String {
+    override fun getOrCreateDeviceUuid(): String {
         val existingUuid = deviceUuid
         if (existingUuid != null) return existingUuid
 
