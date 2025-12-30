@@ -23,6 +23,7 @@ object AuthNavGraph {
                         padding = padding,
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToMain = navigator::navigateToHome,
+                        onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
                     )
                 }
             }

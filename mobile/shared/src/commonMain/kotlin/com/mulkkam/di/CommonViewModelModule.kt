@@ -1,5 +1,6 @@
 package com.mulkkam.di
 
+import com.mulkkam.ui.auth.splash.SplashViewModel
 import com.mulkkam.ui.friends.FriendsViewModel
 import com.mulkkam.ui.history.HistoryViewModel
 import com.mulkkam.ui.home.HomeViewModel
@@ -24,7 +25,6 @@ import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingreminder.SettingReminderViewModel
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
-import com.mulkkam.ui.splash.SplashViewModel
 import com.mulkkam.ui.terms.TermsAgreementViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel

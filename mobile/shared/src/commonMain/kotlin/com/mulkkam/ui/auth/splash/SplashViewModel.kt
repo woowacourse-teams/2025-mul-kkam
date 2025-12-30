@@ -1,4 +1,4 @@
-package com.mulkkam.ui.splash
+package com.mulkkam.ui.auth.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -21,7 +21,7 @@ class SplashViewModel(
     private val logger: Logger,
 ) : ViewModel() {
     private val _authUiState: MutableStateFlow<MulKkamUiState<UserAuthState>> =
-        MutableStateFlow<MulKkamUiState<UserAuthState>>(MulKkamUiState.Idle)
+        MutableStateFlow(MulKkamUiState.Idle)
     val authUiState: StateFlow<MulKkamUiState<UserAuthState>> get() = _authUiState.asStateFlow()
 
     init {

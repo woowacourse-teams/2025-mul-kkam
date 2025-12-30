@@ -1,42 +1,122 @@
 package com.mulkkam.ui.auth.splash
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.compose.ui.draw.scale
+import com.mulkkam.ui.auth.splash.component.SplashLottie
+import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.designsystem.White
+import io.github.alexzhirkevich.compottie.LottieClipSpec
+import io.github.alexzhirkevich.compottie.LottieCompositionSpec
+import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
+import io.github.alexzhirkevich.compottie.rememberLottieComposition
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.bg_splash
+import mulkkam.shared.generated.resources.img_splash
+import mulkkam.shared.generated.resources.img_splash_blink
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+
+private const val LOTTIE_START_PROGRESS: Float = 0.65f
+private const val LOTTIE_END_PROGRESS: Float = 1f
+private const val BLINK_PROGRESS: Float = 0.80f
 
 @Composable
 fun SplashScreen(
     padding: PaddingValues,
-    onNavigateToLogin: () -> Unit,
-    onNavigateToMain: () -> Unit,
+    onFinished: () -> Unit,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(text = "Splash Screen", fontSize = 24.sp)
-        Spacer(modifier = Modifier.height(32.dp))
-        Button(onClick = onNavigateToLogin) {
-            Text("Go to Login")
+    val imageModifier =
+        Modifier
+            .fillMaxWidth()
+            .aspectRatio(1f)
+            .scale(1.5f)
+
+    var isLottieFinished by rememberSaveable { mutableStateOf(false) }
+
+    val composition by rememberLottieComposition {
+        val animationBytes = Res.readBytes("files/lottie_splash.json")
+        LottieCompositionSpec.JsonString(animationBytes.decodeToString())
+    }
+
+    val progress by animateLottieCompositionAsState(
+        composition = composition,
+        isPlaying = true,
+        clipSpec =
+            LottieClipSpec.Progress(
+                min = LOTTIE_START_PROGRESS,
+                max = LOTTIE_END_PROGRESS,
+            ),
+    )
+
+    LaunchedEffect(progress) {
+        when {
+            progress >= BLINK_PROGRESS && !isLottieFinished -> isLottieFinished = true
+            progress >= LOTTIE_END_PROGRESS -> onFinished()
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onNavigateToMain) {
-            Text("Go to Home (Skip Login)")
+    }
+
+    Scaffold(
+        containerColor = White,
+        modifier = Modifier.padding(padding),
+    ) { innerPadding ->
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+            contentAlignment = Alignment.Center,
+        ) {
+            SplashLottie(
+                modifier = Modifier.scale(1.5f),
+                composition = composition,
+                progress = progress,
+            )
+
+            Image(
+                painter = painterResource(Res.drawable.bg_splash),
+                modifier = imageModifier,
+                contentDescription = null,
+            )
+
+            Image(
+                painter = painterResource(Res.drawable.img_splash),
+                contentDescription = null,
+                modifier = imageModifier,
+            )
+
+            if (isLottieFinished) {
+                Image(
+                    painter = painterResource(Res.drawable.img_splash_blink),
+                    contentDescription = null,
+                    modifier = imageModifier,
+                )
+            }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun SplashScreenPreview() {
+    MulKkamTheme {
+        SplashScreen(
+            padding = PaddingValues(),
+            onFinished = {},
+        )
     }
 }
