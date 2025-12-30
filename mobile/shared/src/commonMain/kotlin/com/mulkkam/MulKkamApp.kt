@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.navigation.MainNavHost
 import com.mulkkam.ui.navigation.rememberMainNavigator
 
@@ -14,6 +15,7 @@ fun MulKkamApp() {
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        containerColor = White,
     ) { innerPadding ->
         MainNavHost(
             navigator = navigator,
