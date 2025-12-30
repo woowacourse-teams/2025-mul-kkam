@@ -15,7 +15,7 @@ class DevicesUserDefaults {
         get() = userDefaults.boolForKey(KEY_IS_FIRST_LAUNCH)
 
     fun saveNotificationGranted(granted: Boolean) {
-        userDefaults.setObject(granted, KEY_NOTIFICATION_GRANTED)
+        userDefaults.setBool(granted, KEY_NOTIFICATION_GRANTED)
     }
 
     fun removeNotificationGranted() {

@@ -12,7 +12,7 @@ struct MulKkamApp: App {
         let isDebug = false
 #endif
         HelperKt.doInitKoin(baseUrl: baseUrl, isDebug: isDebug)
-    }   
+    }
     
     var body: some Scene {
         WindowGroup {
