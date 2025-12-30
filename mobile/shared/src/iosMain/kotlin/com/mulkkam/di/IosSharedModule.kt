@@ -21,5 +21,7 @@ fun iosSharedModule(
             remoteDataSourceModule,
             commonDataSourceModule,
             commonRepositoryModule,
+            commonViewModelModule,
+            userDefaultsModule,
         )
     }
