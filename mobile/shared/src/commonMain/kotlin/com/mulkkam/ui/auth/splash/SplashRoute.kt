@@ -22,14 +22,25 @@ fun SplashRoute(
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     val isSplashFinished = rememberSaveable { mutableStateOf(false) }
+    val hasNavigated = rememberSaveable { mutableStateOf(false) }
 
     viewModel.authUiState.collectWithLifecycle(lifecycleOwner) { authUiState ->
+        if (hasNavigated.value) return@collectWithLifecycle
         navigateToNextScreen(
             isSplashFinished = isSplashFinished.value,
             authUiState = authUiState,
-            onNavigateToLogin = onNavigateToLogin,
-            onNavigateToMain = onNavigateToMain,
-            onNavigateToOnboarding = onNavigateToOnboarding,
+            onNavigateToLogin = {
+                hasNavigated.value = true
+                onNavigateToLogin()
+            },
+            onNavigateToMain = {
+                hasNavigated.value = true
+                onNavigateToMain()
+            },
+            onNavigateToOnboarding = {
+                hasNavigated.value = true
+                onNavigateToOnboarding()
+            },
         )
     }
 
