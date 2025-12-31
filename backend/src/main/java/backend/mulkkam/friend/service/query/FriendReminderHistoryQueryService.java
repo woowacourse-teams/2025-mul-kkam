@@ -3,7 +3,6 @@ package backend.mulkkam.friend.service.query;
 import backend.mulkkam.friend.domain.FriendReminderHistory;
 import backend.mulkkam.friend.repository.FriendReminderHistoryRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,17 +15,8 @@ public class FriendReminderHistoryQueryService {
 
     private final FriendReminderHistoryRepository friendReminderHistoryRepository;
 
-    @Transactional
-    public FriendReminderHistory getOrCreateDefault(Long senderId, Long friendId, LocalDate date) {
+    public FriendReminderHistory get(Long senderId, Long friendId, LocalDate date) {
         return friendReminderHistoryRepository.findBySenderIdAndRecipientIdAndQuotaDate(senderId, friendId, date)
-                .orElseGet(() -> {
-                    try {
-                        return friendReminderHistoryRepository.save(new FriendReminderHistory(senderId, friendId, date));
-                    } catch (DataIntegrityViolationException e) {
-                        return friendReminderHistoryRepository
-                                .findBySenderIdAndRecipientIdAndQuotaDate(senderId, friendId, date)
-                                .orElseThrow();
-                    }
-                });
+                .orElseThrow();
     }
 }

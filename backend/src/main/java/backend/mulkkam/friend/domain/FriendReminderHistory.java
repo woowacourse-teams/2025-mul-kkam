@@ -24,7 +24,7 @@ import java.time.LocalDate;
 @Entity
 public class FriendReminderHistory extends BaseEntity {
 
-    private static final short INIT_REMAINING_VALUE = 10;
+    public static final short INIT_REMAINING_VALUE = 10;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

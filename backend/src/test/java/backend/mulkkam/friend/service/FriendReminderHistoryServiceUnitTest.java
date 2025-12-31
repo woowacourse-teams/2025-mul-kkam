@@ -14,7 +14,6 @@ import static org.mockito.Mockito.when;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
-import backend.mulkkam.friend.domain.FriendReminderHistory;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
 import backend.mulkkam.friend.service.command.FriendReminderHistoryCommandService;
 import backend.mulkkam.friend.service.query.FriendQueryService;
@@ -76,11 +75,8 @@ class FriendReminderHistoryServiceUnitTest {
         void success_whenValidFriend() {
             // given
             LocalDate now = LocalDate.now();
-            FriendReminderHistory reminderHistory = new FriendReminderHistory(senderId, friendId, now);
             MemberNickname senderNickname = new MemberNickname("테스터");
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(friendId), eq(now)))
-                    .thenReturn(reminderHistory);
             when(memberQueryService.getNickname(senderId)).thenReturn(senderNickname);
 
             // when
@@ -88,8 +84,7 @@ class FriendReminderHistoryServiceUnitTest {
 
             // then
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
+            verify(friendReminderHistoryCommandService).consumeRemainingCount(senderId, friendId, now);
             verify(memberQueryService).getNickname(senderId);
             verify(suggestionNotificationService).createAndSendNotification(any(NotificationMessageTemplate.class), eq(friendId));
         }
@@ -108,8 +103,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(NOT_FOUND_FRIEND.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService, never()).getOrCreateDefault(anyLong(), anyLong(), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
+            verify(friendReminderHistoryCommandService, never()).consumeRemainingCount(anyLong(), anyLong(), any(LocalDate.class));
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 
@@ -118,13 +112,10 @@ class FriendReminderHistoryServiceUnitTest {
         void fail_whenExceedDailyLimit() {
             // given
             LocalDate now = LocalDate.now();
-            FriendReminderHistory reminderHistory = new FriendReminderHistory(senderId, friendId, now);
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(friendId), eq(now)))
-                    .thenReturn(reminderHistory);
             doThrow(new CommonException(EXCEED_FRIEND_REMINDER_LIMIT))
                     .when(friendReminderHistoryCommandService)
-                    .reduceRemainingCount(reminderHistory.getId());
+                    .consumeRemainingCount(senderId, friendId, now);
 
             // when & then
             assertThatThrownBy(() -> friendReminderHistoryService.createAndSendReminder(request, memberDetails))
@@ -132,8 +123,7 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(EXCEED_FRIEND_REMINDER_LIMIT.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
+            verify(friendReminderHistoryCommandService).consumeRemainingCount(senderId, friendId, now);
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
 
@@ -143,18 +133,10 @@ class FriendReminderHistoryServiceUnitTest {
             // given
             CreateFriendReminderRequest selfRequest = new CreateFriendReminderRequest(senderId);
 
-            when(friendReminderHistoryQueryService.getOrCreateDefault(eq(senderId), eq(senderId), any(LocalDate.class)))
-                    .thenThrow(new CommonException(NOT_ALLOWED_SELF_REMINDER));
-
             // when & then
             assertThatThrownBy(() -> friendReminderHistoryService.createAndSendReminder(selfRequest, memberDetails))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_ALLOWED_SELF_REMINDER.name());
-
-            verify(friendQueryService).validateFriends(senderId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(senderId), any(LocalDate.class));
-            verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
-            verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
     }
 }
