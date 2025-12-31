@@ -1,9 +1,11 @@
 package com.mulkkam.ui.auth.splash.component
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -27,6 +29,8 @@ import mulkkam.shared.generated.resources.app_update_description
 import mulkkam.shared.generated.resources.app_update_title
 import mulkkam.shared.generated.resources.app_update_title_highlighted
 import mulkkam.shared.generated.resources.app_update_update
+import mulkkam.shared.generated.resources.img_app_update
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
@@ -56,11 +60,11 @@ fun AppUpdateDialog(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-//                Image(
-//                    painter = painterResource(resource = Res.drawable.img_app_update),
-//                    contentDescription = null,
-//                    modifier = Modifier.size(120.dp),
-//                )
+                Image(
+                    painter = painterResource(resource = Res.drawable.img_app_update),
+                    contentDescription = null,
+                    modifier = Modifier.size(120.dp),
+                )
 
                 ColoredText(
                     fullText = stringResource(resource = Res.string.app_update_title),
