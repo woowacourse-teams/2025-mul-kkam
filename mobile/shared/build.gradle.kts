@@ -142,6 +142,9 @@ kotlin {
 
                 // AndroidX Core
                 implementation(libs.androidx.core.ktx)
+
+                // Kakao Login
+                implementation(libs.kakao.v2.user)
             }
         }
 
