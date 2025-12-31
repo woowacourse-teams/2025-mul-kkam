@@ -121,7 +121,7 @@ public class OauthJwtTokenHandler {
                 .id(UUID.randomUUID().toString())
                 .add("memberId", memberId)
                 .add("deviceUuid", deviceUuid)
-                .add("memberRole", memberRole)
+                .add("memberRole", memberRole.name())
                 .build();
     }
 
