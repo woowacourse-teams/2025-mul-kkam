@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-@Component
 @RequiredArgsConstructor
+@Component
 public class AuthorizationInterceptor implements HandlerInterceptor {
 
     @Override
@@ -26,7 +26,7 @@ public class AuthorizationInterceptor implements HandlerInterceptor {
         if (requireAuth == null) {
             return true;
         }
-        AuthContext authContext = new AuthContext(request, response);
+        AuthContext authContext = new AuthContext(request);
         return requireAuth.level().authorize(authContext);
     }
 }
