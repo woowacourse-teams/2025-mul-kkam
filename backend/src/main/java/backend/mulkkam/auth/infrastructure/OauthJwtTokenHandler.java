@@ -2,6 +2,7 @@ package backend.mulkkam.auth.infrastructure;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.common.exception.InvalidTokenException;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.JwtParser;
@@ -66,6 +67,15 @@ public class OauthJwtTokenHandler {
         }
     }
 
+    public MemberRole getMemberRole(String token) throws InvalidTokenException {
+        try {
+            Claims claims = getClaims(token);
+            return MemberRole.valueOf(claims.get("memberRole", String.class));
+        } catch (RequiredTypeException | IllegalArgumentException e) {
+            throw new InvalidTokenException();
+        }
+    }
+
     private Claims getClaims(String token) throws InvalidTokenException {
         try {
             return parser.parseSignedClaims(token).getPayload();
@@ -101,14 +111,17 @@ public class OauthJwtTokenHandler {
             String deviceUuid
     ) {
         Long memberId = null;
+        MemberRole memberRole = MemberRole.NONE;
         if (account.finishedOnboarding()) {
             memberId = account.getMember().getId();
+            memberRole = account.getMember().getMemberRole();
         }
         return Jwts.claims()
                 .subject(account.getId().toString())
                 .id(UUID.randomUUID().toString())
                 .add("memberId", memberId)
                 .add("deviceUuid", deviceUuid)
+                .add("memberRole", memberRole)
                 .build();
     }
 

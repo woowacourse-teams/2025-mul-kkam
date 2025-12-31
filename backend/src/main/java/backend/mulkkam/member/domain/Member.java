@@ -61,7 +61,7 @@ public class Member extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private MemberRole memberRole = MemberRole.USER;
+    private MemberRole memberRole;
 
     public Member(
             MemberNickname memberNickname,
@@ -135,6 +135,10 @@ public class Member extends BaseEntity {
 
     public void modifyIsReminderEnabled(boolean isReminderEnabled) {
         this.isReminderEnabled = isReminderEnabled;
+    }
+
+    public boolean isAdmin() {
+        return this.memberRole == MemberRole.ADMIN;
     }
 
     @Override

@@ -30,7 +30,7 @@ public class MemberFixtureBuilder {
         this.isNightNotificationAgreed = false;
         this.activeNickname = "히로";
         this.isReminderEnabled = true;
-        this.memberRole = MemberRole.USER;
+        this.memberRole = MemberRole.MEMBER;
     }
 
     public static MemberFixtureBuilder builder() {

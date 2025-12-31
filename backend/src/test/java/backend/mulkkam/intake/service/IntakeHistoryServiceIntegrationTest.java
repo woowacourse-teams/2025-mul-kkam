@@ -35,6 +35,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
@@ -435,7 +436,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             DateRangeRequest dateRangeRequest = new DateRangeRequest(date, date);
             List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
-                    dateRangeRequest, new MemberDetails(member.getId()));
+                    dateRangeRequest, new MemberDetails(member.getId(), MemberRole.MEMBER));
             IntakeHistoryDetailResponse intakeHistoryDetailResponse = intakeHistorySummaryResponses.getFirst()
                     .intakeDetails().getFirst();
 
@@ -534,7 +535,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     dateRangeRequest, new MemberDetails(member));
 
             // then
-            List<Double> actualAchievementRates = readAchievementRateByDatesResponse.readAchievementRateByDateResponses().stream()
+            List<Double> actualAchievementRates = readAchievementRateByDatesResponse.readAchievementRateByDateResponses()
+                    .stream()
                     .map(ReadAchievementRateByDateResponse::achievementRate)
                     .toList();
 

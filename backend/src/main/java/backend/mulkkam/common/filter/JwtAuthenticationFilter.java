@@ -2,9 +2,14 @@ package backend.mulkkam.common.filter;
 
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.exception.ErrorResponse;
+import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.common.exception.InvalidTokenException;
+import backend.mulkkam.common.exception.errorCode.ErrorCode;
+import backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode;
+import backend.mulkkam.member.domain.vo.MemberRole;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,6 +24,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final ObjectMapper objectMapper;
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
             /* before signup */
@@ -55,19 +62,30 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             Long accountId = oauthJwtTokenHandler.getAccountId(token);
             Long memberId = oauthJwtTokenHandler.getMemberId(token);
             String deviceUuid = oauthJwtTokenHandler.getDeviceUuid(token);
+            MemberRole memberRole = oauthJwtTokenHandler.getMemberRole(token);
             request.setAttribute("account_id", accountId);
             request.setAttribute("member_id", memberId);
             request.setAttribute("device_uuid", deviceUuid);
+            request.setAttribute("member_role", memberRole);
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e) {
-            request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
-            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, HttpStatus.UNAUTHORIZED);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            sendJsonError(response, HttpStatus.UNAUTHORIZED, UnauthorizedErrorCode.UNAUTHORIZED);
         } catch (CommonException e) {
-            request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());
-            request.setAttribute(RequestDispatcher.ERROR_STATUS_CODE, e.getErrorCode().getStatus().value());
-            response.sendError(e.getErrorCode().getStatus().value());
+            sendJsonError(response, e.getErrorCode().getStatus(), e.getErrorCode());
         }
+    }
+
+    private void sendJsonError(
+            HttpServletResponse response,
+            HttpStatus status,
+            ErrorCode errorCode
+    ) throws IOException {
+        response.setStatus(status.value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        ErrorResponse<FailureBody> errorResponse = ErrorResponse.from(errorCode);
+        String json = objectMapper.writeValueAsString(errorResponse);
+        response.getWriter().write(json);
     }
 
     @Override

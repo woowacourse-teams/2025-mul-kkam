@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.dto.request.CreateReminderScheduleRequest;
@@ -57,7 +58,7 @@ class ReminderScheduleServiceUnitTest {
 
         private final Long memberId = 1L;
         private final Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
-        private final MemberDetails memberDetails = new MemberDetails(memberId);
+        private final MemberDetails memberDetails = new MemberDetails(memberId, MemberRole.MEMBER);
 
         @DisplayName("유효한 요청으로 리마인더 스케줄을 생성한다")
         @Test
@@ -120,7 +121,7 @@ class ReminderScheduleServiceUnitTest {
         private final Member member = MemberFixtureBuilder.builder()
                 .isReminderEnabled(true)
                 .buildWithId(memberId);
-        private final MemberDetails memberDetails = new MemberDetails(memberId);
+        private final MemberDetails memberDetails = new MemberDetails(memberId, MemberRole.MEMBER);
 
         @DisplayName("멤버의 모든 리마인더 스케줄을 시간순으로 반환한다")
         @Test
@@ -213,7 +214,7 @@ class ReminderScheduleServiceUnitTest {
         private final Long memberId = 1L;
         private final Long scheduleId = 10L;
         private final Member member = MemberFixtureBuilder.builder().buildWithId(memberId);
-        private final MemberDetails memberDetails = new MemberDetails(memberId);
+        private final MemberDetails memberDetails = new MemberDetails(memberId, MemberRole.MEMBER);
 
         @DisplayName("유효한 요청으로 스케줄 시간을 수정한다")
         @Test
@@ -284,7 +285,7 @@ class ReminderScheduleServiceUnitTest {
 
         private final Long memberId = 1L;
         private final Long scheduleId = 10L;
-        private final MemberDetails memberDetails = new MemberDetails(memberId);
+        private final MemberDetails memberDetails = new MemberDetails(memberId, MemberRole.MEMBER);
 
         @DisplayName("유효한 요청으로 스케줄을 삭제한다")
         @Test

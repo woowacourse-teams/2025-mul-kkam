@@ -2,6 +2,11 @@ package backend.mulkkam.member.domain.vo;
 
 public enum MemberRole {
 
-    USER,
-    ADMIN
+    NONE,
+    MEMBER,
+    ADMIN;
+
+    public boolean isAdmin() {
+        return this == ADMIN;
+    }
 }

@@ -1,5 +1,6 @@
 package backend.mulkkam.friend.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.request.CreateFriendReminderRequest;
@@ -36,6 +37,7 @@ public class FriendController {
     @Operation(summary = "친구 삭제", description = "친구 관계를 삭제합니다.")
     @ApiResponse(responseCode = "204", description = "친구 삭제 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @DeleteMapping
     public ResponseEntity<Void> deleteFriend(
             @Parameter(description = "삭제할 친구의 멤버 ID", required = true)
@@ -50,6 +52,7 @@ public class FriendController {
     @Operation(summary = "친구 목록 조회", description = "사용자의 친구 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "친구 목록 조회 성공", content = @Content(schema = @Schema(implementation = FriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping
     public FriendRelationResponse readFriendRelationsInStatusAccepted(
             @Parameter(description = "커서 lastId(최초 요청시 생략)")
@@ -71,6 +74,7 @@ public class FriendController {
             @ExampleObject(name = "친구 관계가 아닌 경우", value = "{\"code\":\"NOT_FOUND_FRIEND\"}"),
             @ExampleObject(name = "찾을 수 없는 회원인 경우", value = "{\"code\":\"NOT_FOUND_MEMBER\"}")
     }))
+    @RequireAuth
     @PostMapping("/reminder")
     public ResponseEntity<Void> createReminder(
             @Parameter(description = "물풍선 보내기 요청 body")

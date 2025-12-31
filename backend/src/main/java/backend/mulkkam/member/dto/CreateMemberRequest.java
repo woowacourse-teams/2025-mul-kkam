@@ -43,7 +43,7 @@ public record CreateMemberRequest(
                 isMarketingNotificationAgreed,
                 isMarketingNotificationAgreed,
                 memberNickname,
-                MemberRole.USER
+                MemberRole.MEMBER
         );
     }
 }
