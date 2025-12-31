@@ -6,14 +6,12 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode;
 import backend.mulkkam.member.domain.vo.MemberRole;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class AuthContext {
 
     private final HttpServletRequest request;
-    private final HttpServletResponse response;
 
     public boolean requireMember() {
         Long memberId = (Long) request.getAttribute("member_id");
