@@ -16,7 +16,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "50BBDDD92481A482B2B8FBF8"
-               BuildableName = "Mulkkam-Dev.app"
+               BuildableName = "Mulkkam.app"
                BlueprintName = "iosApp"
                ReferencedContainer = "container:iosApp.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50BBDDD92481A482B2B8FBF8"
-            BuildableName = "Mulkkam-Dev.app"
+            BuildableName = "Mulkkam.app"
             BlueprintName = "iosApp"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "50BBDDD92481A482B2B8FBF8"
-            BuildableName = "Mulkkam-Dev.app"
+            BuildableName = "Mulkkam.app"
             BlueprintName = "iosApp"
             ReferencedContainer = "container:iosApp.xcodeproj">
          </BuildableReference>
