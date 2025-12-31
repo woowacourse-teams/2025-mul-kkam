@@ -1,4 +1,4 @@
-package com.mulkkam.ui.login.component
+package com.mulkkam.ui.auth.login.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -13,15 +13,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.KakaoYellow
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_login_kakao
+import mulkkam.shared.generated.resources.login_kakao
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun KakaoLoginButton(
@@ -43,8 +45,8 @@ fun KakaoLoginButton(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
-                painter = painterResource(id = R.drawable.ic_login_kakao),
-                contentDescription = stringResource(R.string.login_kakao),
+                painter = painterResource(resource = Res.drawable.ic_login_kakao),
+                contentDescription = stringResource(resource = Res.string.login_kakao),
                 modifier =
                     Modifier
                         .padding(start = 30.dp)
@@ -52,7 +54,7 @@ fun KakaoLoginButton(
                         .align(Alignment.CenterStart),
             )
             Text(
-                text = stringResource(R.string.login_kakao),
+                text = stringResource(resource = Res.string.login_kakao),
                 modifier =
                     Modifier
                         .padding(start = 16.dp)
