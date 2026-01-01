@@ -33,6 +33,7 @@ object AuthNavGraph {
                     LoginRoute(
                         padding = padding,
                         onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
+                        onNavigateToMain = navigator::navigateToHome,
                     )
                 }
             }
