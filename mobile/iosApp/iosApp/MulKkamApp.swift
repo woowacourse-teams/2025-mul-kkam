@@ -5,13 +5,13 @@ import KakaoSDKCommon
 @main
 struct MulKkamApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
-    
+
     init() {
         let kakaoNativeAppKey = (Bundle.main.infoDictionary?["KEY_KAKAO"] as? String) ?? ""
         KakaoSDK.initSDK(appKey: kakaoNativeAppKey)
-        
+
         LoginPlatform.shared.provider = IosLoginProviderImpl()
-        
+
         let baseUrl = Bundle.main.object(forInfoDictionaryKey: "BASE_URL") as? String ?? "http://localhost:8080"
 #if DEBUG
         let isDebug = true
@@ -20,7 +20,7 @@ struct MulKkamApp: App {
 #endif
         HelperKt.doInitKoin(baseUrl: baseUrl, isDebug: isDebug)
     }
-    
+
     var body: some Scene {
         WindowGroup {
             ContentView()
