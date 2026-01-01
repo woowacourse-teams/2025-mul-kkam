@@ -18,20 +18,17 @@ import com.mulkkam.data.remote.datasource.OnboardingRemoteDataSource
 import com.mulkkam.data.remote.datasource.OnboardingRemoteDataSourceImpl
 import com.mulkkam.data.remote.datasource.ReminderRemoteDataSource
 import com.mulkkam.data.remote.datasource.ReminderRemoteDataSourceImpl
-import com.mulkkam.data.remote.datasource.VersionRemoteDataSource
-import com.mulkkam.data.remote.datasource.VersionRemoteDataSourceImpl
 import org.koin.dsl.module
 
 val commonDataSourceModule =
     module {
-        single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl() }
-        single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl() }
-        single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl() }
-        single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl() }
-        single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl() }
-        single<NicknameRemoteDataSource> { NicknameRemoteDataSourceImpl() }
-        single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl() }
+        single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl(get()) }
+        single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl(get()) }
+        single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl(get()) }
+        single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl(get()) }
+        single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl(get()) }
+        single<NicknameRemoteDataSource> { NicknameRemoteDataSourceImpl(get()) }
+        single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl(get()) }
         single<OnboardingRemoteDataSource> { OnboardingRemoteDataSourceImpl(get()) }
-        single<ReminderRemoteDataSource> { ReminderRemoteDataSourceImpl() }
-        single<VersionRemoteDataSource> { VersionRemoteDataSourceImpl() }
+        single<ReminderRemoteDataSource> { ReminderRemoteDataSourceImpl(get()) }
     }
