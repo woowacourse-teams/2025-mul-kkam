@@ -29,6 +29,7 @@ import com.mulkkam.ui.home.component.HomeCharacter
 import com.mulkkam.ui.home.component.HomeConfetti
 import com.mulkkam.ui.home.component.HomeProgressOverview
 import com.mulkkam.ui.home.component.HomeTopBar
+import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.home.model.rememberHomeUiStateHolder
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState

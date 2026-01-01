@@ -1,4 +1,4 @@
-package com.mulkkam.ui.friends
+package com.mulkkam.ui.friends.friends
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home
+package com.mulkkam.ui.home.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

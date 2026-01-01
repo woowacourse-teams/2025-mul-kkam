@@ -36,7 +36,7 @@ import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.home.ManualDrinkViewModel
+import com.mulkkam.ui.home.home.ManualDrinkViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 

@@ -12,6 +12,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
+import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable

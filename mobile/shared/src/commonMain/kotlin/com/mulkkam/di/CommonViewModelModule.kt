@@ -1,10 +1,10 @@
 package com.mulkkam.di
 
 import com.mulkkam.ui.auth.splash.SplashViewModel
-import com.mulkkam.ui.friends.FriendsViewModel
+import com.mulkkam.ui.friends.friends.FriendsViewModel
 import com.mulkkam.ui.history.HistoryViewModel
-import com.mulkkam.ui.home.HomeViewModel
-import com.mulkkam.ui.home.ManualDrinkViewModel
+import com.mulkkam.ui.home.home.HomeViewModel
+import com.mulkkam.ui.home.home.ManualDrinkViewModel
 import com.mulkkam.ui.login.LoginViewModel
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.notification.NotificationViewModel
@@ -15,7 +15,7 @@ import com.mulkkam.ui.onboarding.nickname.NicknameViewModel
 import com.mulkkam.ui.onboarding.targetamount.TargetAmountViewModel
 import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
 import com.mulkkam.ui.searchmembers.SearchMembersViewModel
-import com.mulkkam.ui.setting.SettingViewModel
+import com.mulkkam.ui.setting.setting.SettingViewModel
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoViewModel
 import com.mulkkam.ui.settingcups.SettingCupViewModel

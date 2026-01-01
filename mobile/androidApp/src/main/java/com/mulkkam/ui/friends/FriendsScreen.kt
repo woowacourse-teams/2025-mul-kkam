@@ -36,6 +36,7 @@ import com.mulkkam.ui.friends.component.FriendsEditModeButton
 import com.mulkkam.ui.friends.component.FriendsEmptyContent
 import com.mulkkam.ui.friends.component.FriendsErrorContent
 import com.mulkkam.ui.friends.component.FriendsTopAppBar
+import com.mulkkam.ui.friends.friends.FriendsViewModel
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
@@ -79,8 +80,13 @@ fun FriendsScreen(
                         .padding(top = innerPadding.calculateTopPadding()),
             ) {
                 when (friendsUiState) {
-                    is MulKkamUiState.Idle -> Unit
-                    is MulKkamUiState.Loading -> Unit
+                    is MulKkamUiState.Idle -> {
+                        Unit
+                    }
+
+                    is MulKkamUiState.Loading -> {
+                        Unit
+                    }
 
                     is MulKkamUiState.Failure -> {
                         FriendsErrorContent(

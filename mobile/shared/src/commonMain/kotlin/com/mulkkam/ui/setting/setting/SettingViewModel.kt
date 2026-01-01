@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting
+package com.mulkkam.ui.setting.setting
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

@@ -11,6 +11,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.friends.friends.FriendsViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.CoroutineScope
@@ -82,6 +83,8 @@ private fun handleThrowWaterBalloonResult(
             }
         }
 
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }

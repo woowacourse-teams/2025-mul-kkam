@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home
+package com.mulkkam.ui.home.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -6,13 +6,11 @@ import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.Cups
-import com.mulkkam.domain.model.cups.Cups.Companion.EMPTY_CUPS
 import com.mulkkam.domain.model.intake.IntakeHistoryResult
-import com.mulkkam.domain.model.intake.IntakeHistorySummary.Companion.ACHIEVEMENT_RATE_MAX
+import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.IntakeInfo
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.TodayProgressInfo
-import com.mulkkam.domain.model.members.TodayProgressInfo.Companion.EMPTY_TODAY_PROGRESS_INFO
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.domain.repository.IntakeRepository
@@ -41,11 +39,11 @@ class HomeViewModel(
     private val logger: Logger,
 ) : ViewModel() {
     private val _todayProgressInfoUiState: MutableStateFlow<MulKkamUiState<TodayProgressInfo>> =
-        MutableStateFlow(MulKkamUiState.Success<TodayProgressInfo>(EMPTY_TODAY_PROGRESS_INFO))
+        MutableStateFlow(MulKkamUiState.Success<TodayProgressInfo>(TodayProgressInfo.EMPTY_TODAY_PROGRESS_INFO))
     val todayProgressInfoUiState: StateFlow<MulKkamUiState<TodayProgressInfo>> get() = _todayProgressInfoUiState.asStateFlow()
 
     private val _cupsUiState: MutableStateFlow<MulKkamUiState<Cups>> =
-        MutableStateFlow(MulKkamUiState.Success<Cups>(EMPTY_CUPS))
+        MutableStateFlow(MulKkamUiState.Success<Cups>(Cups.EMPTY_CUPS))
     val cupsUiState: StateFlow<MulKkamUiState<Cups>> get() = _cupsUiState.asStateFlow()
 
     private val _alarmCountUiState: MutableStateFlow<MulKkamUiState<Long>> =
@@ -154,7 +152,9 @@ class HomeViewModel(
                 IntakeInfo(intakeHistory.intakeType, intakeHistory.intakeAmount),
             ),
         )
-        if (current.achievementRate < ACHIEVEMENT_RATE_MAX && intakeHistory.achievementRate >= ACHIEVEMENT_RATE_MAX) {
+        if (current.achievementRate < IntakeHistorySummary.ACHIEVEMENT_RATE_MAX &&
+            intakeHistory.achievementRate >= IntakeHistorySummary.ACHIEVEMENT_RATE_MAX
+        ) {
             viewModelScope.launch { _isGoalAchieved.emit(Unit) }
         }
     }
@@ -187,8 +187,11 @@ class HomeViewModel(
                 )
                 isPostingDrink = true
                 intakeRepository
-                    .postIntakeHistoryInput(Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()), intakeType, amount)
-                    .getOrError()
+                    .postIntakeHistoryInput(
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                        intakeType,
+                        amount,
+                    ).getOrError()
             }.onSuccess { intakeHistory ->
                 updateIntakeHistory(intakeHistory)
             }.onFailure {
