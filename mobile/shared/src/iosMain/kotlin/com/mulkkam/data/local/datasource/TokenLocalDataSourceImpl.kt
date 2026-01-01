@@ -1,40 +1,49 @@
 package com.mulkkam.data.local.datasource
 
-// TODO: iOS 네이티브 구현 필요
-class TokenLocalDataSourceImpl : TokenLocalDataSource {
-    override var accessToken: String? = null
+import com.mulkkam.data.local.userdefaults.TokenUserDefaults
 
-    override var refreshToken: String? = null
+class TokenLocalDataSourceImpl(
+    private val tokenUserDefaults: TokenUserDefaults,
+) : TokenLocalDataSource {
+    override var accessToken: String?
+        get() = tokenUserDefaults.accessToken
+        set(value) {
+            value?.let { tokenUserDefaults.saveAccessToken(it) }
+        }
 
-    override var fcmToken: String? = null
+    override var refreshToken: String?
+        get() = tokenUserDefaults.refreshToken
+        set(value) {
+            value?.let { tokenUserDefaults.saveRefreshToken(it) }
+        }
+
+    override var fcmToken: String?
+        get() = tokenUserDefaults.fcmToken
+        set(value) {
+            value?.let { tokenUserDefaults.saveFcmToken(it) }
+        }
 
     override fun saveAccessToken(token: String) {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        accessToken = token
+        tokenUserDefaults.saveAccessToken(token)
     }
 
     override fun deleteAccessToken() {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        accessToken = null
+        tokenUserDefaults.deleteAccessToken()
     }
 
     override fun saveRefreshToken(token: String) {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        refreshToken = token
+        tokenUserDefaults.saveRefreshToken(token)
     }
 
     override fun deleteRefreshToken() {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        refreshToken = null
+        tokenUserDefaults.deleteRefreshToken()
     }
 
     override fun saveFcmToken(token: String) {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        fcmToken = token
+        tokenUserDefaults.saveFcmToken(token)
     }
 
     override fun deleteFcmToken() {
-        // TODO: iOS UserDefaults 또는 Keychain 구현
-        fcmToken = null
+        tokenUserDefaults.deleteFcmToken()
     }
 }

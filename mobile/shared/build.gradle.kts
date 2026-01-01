@@ -16,6 +16,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         namespace = "com.mulkkam"
         compileSdk = 36
         minSdk = 28
@@ -89,6 +90,7 @@ kotlin {
                 implementation(libs.coil)
                 implementation(libs.coil.compose)
                 implementation(libs.coil.svg)
+                implementation(libs.compottie)
             }
         }
 
