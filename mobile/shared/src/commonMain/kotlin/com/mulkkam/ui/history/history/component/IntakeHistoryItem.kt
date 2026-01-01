@@ -1,4 +1,4 @@
-package com.mulkkam.ui.history.component
+package com.mulkkam.ui.history.history.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -11,24 +11,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
-import com.mulkkam.R
-import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeHistory
 import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.ImageShape
-import kotlinx.datetime.LocalTime
-import kotlinx.datetime.toJavaLocalTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
-
-private val timeFormatterWithMinutes = DateTimeFormatter.ofPattern("a h시 m분", Locale.KOREA)
-private val timeFormatterWithoutMinutes = DateTimeFormatter.ofPattern("a h시", Locale.KOREA)
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.history_intake_amount
+import mulkkam.shared.generated.resources.img_cup_placeholder
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun IntakeHistoryItem(
@@ -46,17 +38,12 @@ fun IntakeHistoryItem(
         NetworkImage(
             url = intakeHistory.cupEmojiUrl,
             modifier = Modifier.size(24.dp),
+            placeholderRes = Res.drawable.img_cup_placeholder,
             shape = ImageShape.Circle,
         )
 
-        val javaTime = intakeHistory.dateTime.toJavaLocalTime()
         Text(
-            text =
-                if (intakeHistory.dateTime.minute == 0) {
-                    javaTime.format(timeFormatterWithoutMinutes)
-                } else {
-                    javaTime.format(timeFormatterWithMinutes)
-                },
+            text = formatTime(intakeHistory.dateTime),
             style = MulKkamTheme.typography.body4,
             color = Black,
             modifier =
@@ -68,26 +55,35 @@ fun IntakeHistoryItem(
         Spacer(modifier = Modifier.weight(1f))
 
         Text(
-            text = stringResource(R.string.history_intake_amount, intakeHistory.intakeAmount),
+            text = stringResource(Res.string.history_intake_amount, intakeHistory.intakeAmount),
             style = MulKkamTheme.typography.title2,
-            color = Color(intakeHistory.intakeType.toColorHex().toColorInt()),
+            color =
+                Color(
+                    intakeHistory.intakeType
+                        .toColorHex()
+                        .toLongOrNull(16)
+                        ?.toInt() ?: 0xFF000000.toInt(),
+                ),
         )
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun IntakeHistoryItemPreview() {
-    MulKkamTheme {
-        IntakeHistoryItem(
-            intakeHistory =
-                IntakeHistory(
-                    id = 1,
-                    dateTime = LocalTime(12, 31),
-                    intakeAmount = 350,
-                    intakeType = IntakeType.WATER,
-                    cupEmojiUrl = "url",
-                ),
-        )
+private fun formatTime(time: kotlinx.datetime.LocalTime): String {
+    val hour = time.hour
+    val minute = time.minute
+    val period = if (hour < 12) "오전" else "오후"
+    val displayHour =
+        if (hour == 0) {
+            12
+        } else if (hour > 12) {
+            hour - 12
+        } else {
+            hour
+        }
+
+    return if (minute == 0) {
+        "$period ${displayHour}시"
+    } else {
+        "$period ${displayHour}시 ${minute}분"
     }
 }

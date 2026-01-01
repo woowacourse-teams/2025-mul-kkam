@@ -1,4 +1,4 @@
-package com.mulkkam.ui.history.component
+package com.mulkkam.ui.history.history.component
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateFloatAsState
@@ -19,11 +19,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray10
-import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
 fun GradientDonutChart(
@@ -95,13 +93,5 @@ fun GradientDonutChart(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun GradientDonutChartPreview() {
-    MulKkamTheme {
-        GradientDonutChart(progress = 10f, modifier = Modifier.size(200.dp))
     }
 }
