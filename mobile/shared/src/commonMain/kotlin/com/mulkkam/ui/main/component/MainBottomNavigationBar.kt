@@ -81,7 +81,7 @@ private fun BottomNavigationItem(
                     interactionSource = interactionSource,
                     indication = null,
                     onClick = onClick,
-                ).padding(vertical = 18.dp),
+                ).padding(vertical = 12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
