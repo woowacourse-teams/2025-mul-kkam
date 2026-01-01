@@ -22,7 +22,7 @@ object AuthNavGraph {
                     SplashRoute(
                         padding = padding,
                         onNavigateToLogin = navigator::navigateToLogin,
-                        onNavigateToMain = navigator::navigateToHome,
+                        onNavigateToMain = navigator::navigateToMain,
                         onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
                     )
                 }

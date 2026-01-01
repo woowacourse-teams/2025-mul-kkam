@@ -36,6 +36,11 @@ sealed interface OnboardingRoute {
     ) : OnboardingRoute
 }
 
+sealed interface MainRoute {
+    @Serializable
+    data object Main : MainRoute
+}
+
 sealed interface HomeRoute {
     @Serializable
     data object Home : HomeRoute

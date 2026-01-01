@@ -68,7 +68,7 @@ object OnboardingNavGraph {
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
-                        onNavigateToMain = navigator::navigateToHome,
+                        onNavigateToMain = navigator::navigateToMain,
                     )
                 }
             }

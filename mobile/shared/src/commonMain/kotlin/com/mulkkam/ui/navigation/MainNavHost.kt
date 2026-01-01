@@ -7,6 +7,7 @@ import com.mulkkam.ui.auth.AuthNavGraph
 import com.mulkkam.ui.friends.FriendsNavGraph
 import com.mulkkam.ui.history.HistoryNavGraph
 import com.mulkkam.ui.home.HomeNavGraph
+import com.mulkkam.ui.main.MainScreen
 import com.mulkkam.ui.onboarding.OnboardingNavGraph
 import com.mulkkam.ui.setting.SettingNavGraph
 
@@ -34,6 +35,12 @@ fun MainNavHost(
                         padding = padding,
                         navigator = navigator,
                     )
+                }
+
+                is MainRoute -> {
+                    entry(route) {
+                        MainScreen(navigator = navigator)
+                    }
                 }
 
                 is HomeRoute -> {

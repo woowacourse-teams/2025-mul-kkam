@@ -47,6 +47,9 @@ class MainNavigator internal constructor(
 
     fun navigateToOnboardingCups(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.Cups(onboardingInfo))
 
+    // Main (Bottom Navigation)
+    fun navigateToMain() = navigateAndClearBackStack(MainRoute.Main)
+
     // Home (Bottom Tab)
     fun navigateToHome() = navigateAndClearBackStack(HomeRoute.Home)
 
