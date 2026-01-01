@@ -1,4 +1,4 @@
-package com.mulkkam.ui.friends.component
+package com.mulkkam.ui.friends.friends.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -15,16 +15,22 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.friends_friend_request_button_description
+import mulkkam.shared.generated.resources.friends_friend_request_button_description_with_count
+import mulkkam.shared.generated.resources.friends_friend_request_count_overflow
+import mulkkam.shared.generated.resources.friends_search_button_description
+import mulkkam.shared.generated.resources.friends_title
+import mulkkam.shared.generated.resources.ic_friends_requests
+import mulkkam.shared.generated.resources.ic_friends_search
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 private const val MAX_DISPLAY_FRIEND_REQUEST_COUNT: Int = 99
 private const val MIN_DISPLAY_FRIEND_REQUEST_COUNT: Int = 0
@@ -46,7 +52,7 @@ fun FriendsTopAppBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.friends_title),
+            text = stringResource(Res.string.friends_title),
             style = MulKkamTheme.typography.headline1,
             color = Gray400,
         )
@@ -56,8 +62,8 @@ fun FriendsTopAppBar(
             modifier = Modifier.size(48.dp),
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_friends_search),
-                contentDescription = stringResource(R.string.friends_search_button_description),
+                painter = painterResource(Res.drawable.ic_friends_search),
+                contentDescription = stringResource(Res.string.friends_search_button_description),
                 modifier = Modifier.padding(12.dp),
             )
         }
@@ -75,7 +81,7 @@ private fun FriendRequestIconButton(
 ) {
     val displayCount: String =
         when {
-            count > MAX_DISPLAY_FRIEND_REQUEST_COUNT -> stringResource(R.string.friends_friend_request_count_overflow)
+            count > MAX_DISPLAY_FRIEND_REQUEST_COUNT -> stringResource(Res.string.friends_friend_request_count_overflow)
             else -> count.toString()
         }
 
@@ -85,17 +91,17 @@ private fun FriendRequestIconButton(
             modifier = Modifier.size(48.dp),
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_friends_requests),
+                painter = painterResource(Res.drawable.ic_friends_requests),
                 contentDescription =
                     when {
                         count > MIN_DISPLAY_FRIEND_REQUEST_COUNT -> {
                             stringResource(
-                                R.string.friends_friend_request_button_description_with_count,
+                                Res.string.friends_friend_request_button_description_with_count,
                                 displayCount,
                             )
                         }
 
-                        else -> stringResource(R.string.friends_friend_request_button_description)
+                        else -> stringResource(Res.string.friends_friend_request_button_description)
                     },
                 modifier = Modifier.padding(12.dp),
             )
@@ -122,17 +128,5 @@ private fun FriendRequestIconButton(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = false)
-@Composable
-private fun FriendsTopAppBarPreview() {
-    MulKkamTheme {
-        FriendsTopAppBar(
-            onSearchClick = {},
-            onFriendRequestsClick = {},
-            friendRequestCount = 5,
-        )
     }
 }

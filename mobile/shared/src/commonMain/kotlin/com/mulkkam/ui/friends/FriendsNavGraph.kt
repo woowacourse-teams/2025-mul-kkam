@@ -21,7 +21,6 @@ object FriendsNavGraph {
             is FriendsRoute.Friends -> {
                 entry(route) {
                     FriendsRoute(
-                        padding = padding,
                         onNavigateToPendingFriends = navigator::navigateToPendingFriends,
                         onNavigateToSearchMembers = navigator::navigateToSearchMembers,
                     )
