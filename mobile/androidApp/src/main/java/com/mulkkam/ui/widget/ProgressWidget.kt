@@ -13,7 +13,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.checker.ProgressChecker
 import com.mulkkam.domain.checker.ProgressChecker.Companion.KEY_PROGRESS_CHECKER_ACHIEVEMENT_RATE
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.splash.SplashActivity
 import com.mulkkam.ui.util.extensions.dpToPx
 import org.koin.core.context.GlobalContext
 import java.util.UUID
@@ -105,7 +105,7 @@ class ProgressWidget : AppWidgetProvider() {
         views.setTextViewText(R.id.tv_achievement_rate, progressText)
 
         views.setImageViewBitmap(R.id.iv_donut_chart, donutBitmap)
-        views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
+        views.setOnClickPendingIntent(R.id.main, SplashActivity.newPendingIntent(context))
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }

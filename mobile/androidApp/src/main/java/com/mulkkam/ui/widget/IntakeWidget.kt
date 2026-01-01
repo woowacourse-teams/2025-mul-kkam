@@ -23,7 +23,7 @@ import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOT
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.splash.SplashActivity
 import com.mulkkam.ui.util.extensions.dpToPx
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_DRINK
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_REFRESH
@@ -173,7 +173,7 @@ class IntakeWidget : AppWidgetProvider() {
 
         views.setOnClickPendingIntent(
             R.id.layout_intake_widget,
-            MainActivity.newPendingIntent(context),
+            SplashActivity.newPendingIntent(context),
         )
 
         views.setOnClickPendingIntent(

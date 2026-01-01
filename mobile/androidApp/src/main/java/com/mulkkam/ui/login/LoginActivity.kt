@@ -16,8 +16,8 @@ import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
+import com.mulkkam.ui.splash.SplashActivity
 import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getAppVersion
@@ -100,7 +100,7 @@ class LoginActivity : AppCompatActivity() {
         val intent =
             when (userAuthState) {
                 UNONBOARDED -> OnboardingTermsActivity.newIntent(this)
-                ACTIVE_USER -> MainActivity.newIntent(this)
+                ACTIVE_USER -> SplashActivity.newIntent(this)
             }
         startActivity(intent)
         finish()

@@ -8,7 +8,7 @@ import androidx.activity.compose.setContent
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.splash.SplashActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -35,11 +35,8 @@ class OnboardingCupsActivity : ComponentActivity() {
                     currentProgress = CURRENT_PROGRESS,
                     viewModel = viewModel,
                     onCompleteOnboarding = {
-                        startActivity(
-                            MainActivity.newIntent(this).apply {
-                                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            },
-                        )
+                        startActivity(SplashActivity.newIntent(this))
+                        finish()
                     },
                 )
             }
