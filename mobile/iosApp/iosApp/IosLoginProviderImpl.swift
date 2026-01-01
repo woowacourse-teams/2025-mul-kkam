@@ -16,8 +16,10 @@ class IosLoginProviderImpl: NSObject, IosLoginProvider {
             if let error = error {
                 print(error)
                 onFailure(error.localizedDescription)
+            } else if let accessToken = token?.accessToken, !accessToken.isEmpty {
+                onSuccess(accessToken)
             } else {
-                onSuccess(token?.accessToken ?? "")
+                onFailure("토큰을 가져올 수 없습니다")
             }
         }
     }
@@ -27,8 +29,10 @@ class IosLoginProviderImpl: NSObject, IosLoginProvider {
             if let error = error {
                 print(error)
                 onFailure(error.localizedDescription)
+            } else if let accessToken = token?.accessToken, !accessToken.isEmpty {
+                onSuccess(accessToken)
             } else {
-                onSuccess(token?.accessToken ?? "")
+                onFailure("토큰을 가져올 수 없습니다")
             }
         }
     }
