@@ -10,6 +10,6 @@ class VersionRemoteDataSourceImpl(
 ) : VersionRemoteDataSource {
     override suspend fun getMinimumVersion(): Result<MinimumVersionResponse> =
         safeApiCall {
-            httpClient.get("/versions")
+            httpClient.get("/versions/ios")
         }
 }
