@@ -20,8 +20,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_login_apple
-import mulkkam.shared.generated.resources.ic_login_kakao
-import mulkkam.shared.generated.resources.login_kakao
+import mulkkam.shared.generated.resources.login_apple
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -46,7 +45,7 @@ fun AppleLoginButton(
         Box(modifier = Modifier.fillMaxSize()) {
             Image(
                 painter = painterResource(resource = Res.drawable.ic_login_apple),
-                contentDescription = stringResource(resource = Res.string.login_kakao),
+                contentDescription = stringResource(resource = Res.string.login_apple),
                 modifier =
                     Modifier
                         .padding(start = 30.dp)
@@ -54,13 +53,13 @@ fun AppleLoginButton(
                         .align(Alignment.CenterStart),
             )
             Text(
-                text = stringResource(resource = Res.string.login_kakao),
+                text = stringResource(resource = Res.string.login_apple),
                 modifier =
                     Modifier
                         .padding(start = 16.dp)
                         .align(Alignment.Center),
                 style = MulKkamTheme.typography.title2,
-                color = Black,
+                color = White,
                 textAlign = TextAlign.Center,
             )
         }
