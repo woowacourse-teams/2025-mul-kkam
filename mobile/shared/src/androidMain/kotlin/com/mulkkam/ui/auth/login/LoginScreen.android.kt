@@ -2,7 +2,6 @@ package com.mulkkam.ui.auth.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -35,39 +34,32 @@ actual fun LoginScreen(
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
 ) {
-    Box {
-        Scaffold(
-            containerColor = White,
-            modifier = Modifier.padding(padding),
-            snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
-        ) { innerPadding ->
-            Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Image(
-                    painter = painterResource(resource = Res.drawable.img_home_character),
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 62.dp)
-                            .aspectRatio(1f),
-                    contentScale = ContentScale.Fit,
-                )
-                Spacer(modifier = Modifier.height(64.dp))
-                KakaoLoginButton(
-                    onClick = { onLoginClick(LoginType.KAKAO) },
-                    isEnabled = isLoginLoading.not(),
-                )
-            }
+    Scaffold(
+        containerColor = White,
+        modifier = Modifier.padding(padding),
+        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Image(
+                painter = painterResource(resource = Res.drawable.img_home_character),
+                contentDescription = null,
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 62.dp)
+                        .aspectRatio(1f),
+                contentScale = ContentScale.Fit,
+            )
+            Spacer(modifier = Modifier.height(64.dp))
+            KakaoLoginButton(
+                onClick = { onLoginClick(LoginType.KAKAO) },
+                isEnabled = isLoginLoading.not(),
+            )
         }
-
-        MulKkamSnackbarHost(
-            hostState = snackbarHostState,
-            modifier = Modifier.align(Alignment.BottomCenter),
-        )
     }
 }
 
