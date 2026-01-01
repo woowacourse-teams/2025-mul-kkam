@@ -80,6 +80,7 @@ kotlin {
                 // Koin (DI)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose)
 
                 // Kotlinx
                 implementation(libs.kotlinx.serialization.json)
