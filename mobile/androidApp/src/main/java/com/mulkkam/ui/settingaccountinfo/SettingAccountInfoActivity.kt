@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.login.LoginActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingAccountInfoActivity : ComponentActivity() {
@@ -26,13 +25,14 @@ class SettingAccountInfoActivity : ComponentActivity() {
         }
     }
 
+    // TODO: 추후 제거 필요
     private fun navigateToLogin() {
-        val intent =
-            Intent(this, LoginActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-        startActivity(intent)
-        finish()
+//        val intent =
+//            Intent(this, LoginActivity::class.java).apply {
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            }
+//        startActivity(intent)
+//        finish()
     }
 
     companion object {
