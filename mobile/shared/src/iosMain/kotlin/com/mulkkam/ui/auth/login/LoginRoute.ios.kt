@@ -32,7 +32,7 @@ actual fun LoginRoute(
     viewModel: LoginViewModel,
 ) {
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val logger = koinInject<Logger>()
+    val logger: Logger = koinInject()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     val isLoginLoading = authUiState is MulKkamUiState.Loading

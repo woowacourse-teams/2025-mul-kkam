@@ -25,7 +25,7 @@ import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.network_check_error
 import org.jetbrains.compose.resources.stringResource
-import org.koin.java.KoinJavaComponent.inject
+import org.koin.compose.koinInject
 
 @Composable
 actual fun LoginRoute(
@@ -36,7 +36,7 @@ actual fun LoginRoute(
 ) {
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val context = LocalContext.current
-    val logger: Logger by inject(Logger::class.java)
+    val logger: Logger = koinInject()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     val isLoginLoading = authUiState is MulKkamUiState.Loading
