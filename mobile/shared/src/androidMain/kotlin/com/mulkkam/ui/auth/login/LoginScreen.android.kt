@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.auth.login.component.KakaoLoginButton
+import com.mulkkam.ui.auth.login.model.LoginType
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -30,7 +31,7 @@ import org.jetbrains.compose.resources.painterResource
 @Composable
 actual fun LoginScreen(
     padding: PaddingValues,
-    onLoginClick: () -> Unit,
+    onLoginClick: (loginType: LoginType) -> Unit,
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -57,7 +58,7 @@ actual fun LoginScreen(
                 )
                 Spacer(modifier = Modifier.height(64.dp))
                 KakaoLoginButton(
-                    onClick = onLoginClick,
+                    onClick = { onLoginClick(LoginType.KAKAO) },
                     isEnabled = isLoginLoading.not(),
                 )
             }

@@ -17,6 +17,7 @@ import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.ui.auth.login.model.LoginType
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.login.LoginViewModel
 import com.mulkkam.ui.model.MulKkamUiState
@@ -64,9 +65,15 @@ actual fun LoginRoute(
 
     LoginScreen(
         padding = padding,
-        onLoginClick = {
-            loginWithKakao(context, logger) { token ->
-                viewModel.loginWithKakao(token)
+        onLoginClick = { loginType ->
+            when (loginType) {
+                LoginType.KAKAO -> {
+                    loginWithKakao(context, logger) { token ->
+                        viewModel.loginWithKakao(token)
+                    }
+                }
+
+                else -> Unit
             }
         },
         snackbarHostState = snackbarHostState,
