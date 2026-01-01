@@ -11,7 +11,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7AE1BD041551910F86744970 /* Mulkkam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Mulkkam.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AE1BD041551910F86744970 /* 물깜.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "물깜.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -64,7 +64,7 @@
 		A83A4D32DF10ACA3579085FD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7AE1BD041551910F86744970 /* Mulkkam.app */,
+				7AE1BD041551910F86744970 /* 물깜.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -94,7 +94,7 @@
 				2BCCC5892F066C6D00A0DBCE /* KakaoSDKUser */,
 			);
 			productName = iosApp;
-			productReference = 7AE1BD041551910F86744970 /* Mulkkam.app */;
+			productReference = 7AE1BD041551910F86744970 /* 물깜.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -273,6 +273,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_NAME = Mulkkam;
+				PRODUCT_NAME = "물깜";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -368,6 +369,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_NAME = MulKkam;
+				PRODUCT_NAME = "물깜";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
