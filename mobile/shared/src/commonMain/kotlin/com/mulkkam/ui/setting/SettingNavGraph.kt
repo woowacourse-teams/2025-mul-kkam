@@ -28,7 +28,6 @@ object SettingNavGraph {
             is SettingRoute.Setting -> {
                 entry(route) {
                     SettingRoute(
-                        padding = padding,
                         onNavigateToAccountInfo = navigator::navigateToAccountInfo,
                         onNavigateToBioInfo = navigator::navigateToSettingBioInfo,
                         onNavigateToCups = navigator::navigateToSettingCups,
