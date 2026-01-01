@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,17 +10,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_home_notification
+import mulkkam.shared.generated.resources.notification
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun NotificationCounter(
@@ -36,8 +37,8 @@ fun NotificationCounter(
         contentAlignment = Alignment.Center,
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_home_notification),
-            contentDescription = stringResource(R.string.notification),
+            painter = painterResource(Res.drawable.ic_home_notification),
+            contentDescription = stringResource(Res.string.notification),
             tint = Black,
             modifier = Modifier.size(24.dp),
         )
@@ -64,16 +65,5 @@ fun NotificationCounter(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun NotificationCounterPreview() {
-    MulKkamTheme {
-        NotificationCounter(
-            count = 12,
-            onClick = {},
-        )
     }
 }

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
@@ -49,23 +48,5 @@ fun DrinkMenuItem(
             }
         }
         icon()
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun DrinkMenuItemPreview() {
-    MulKkamTheme {
-        DrinkMenuItem(
-            label = "스타벅스 텀블러",
-            icon = {
-                DrinkCupOption(
-                    emojiUrl = "https://example.com/",
-                    label = "250 ml",
-                    onClick = {},
-                )
-            },
-            onClick = {},
-        )
     }
 }

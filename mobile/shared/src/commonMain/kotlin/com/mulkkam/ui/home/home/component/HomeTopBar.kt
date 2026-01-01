@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,12 +7,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.home_label
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun HomeTopBar(
@@ -28,7 +28,7 @@ fun HomeTopBar(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.home_label),
+            text = stringResource(Res.string.home_label),
             style = MulKkamTheme.typography.headline1,
             color = Black,
             modifier = Modifier.weight(1f),
@@ -36,17 +36,6 @@ fun HomeTopBar(
         NotificationCounter(
             count = alarmUnreadCount,
             onClick = onNotificationClick,
-        )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun HomeTopBarPreview() {
-    MulKkamTheme {
-        HomeTopBar(
-            alarmUnreadCount = 12,
-            onNotificationClick = {},
         )
     }
 }

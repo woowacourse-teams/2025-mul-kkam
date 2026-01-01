@@ -1,13 +1,10 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,10 +17,8 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 
 @Composable
@@ -81,20 +76,5 @@ fun LinearGradientProgress(
                 )
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun LinearGradientProgressPreview() {
-    MulKkamTheme {
-        LinearGradientProgress(
-            progress = 75f,
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(18.dp)
-                    .padding(horizontal = 36.dp),
-        )
     }
 }

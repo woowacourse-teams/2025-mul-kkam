@@ -21,9 +21,8 @@ object HomeNavGraph {
             is HomeRoute.Home -> {
                 entry(route) {
                     HomeRoute(
-                        padding = padding,
-                        onNavigateToEncyclopedia = navigator::navigateToEncyclopedia,
                         onNavigateToNotification = navigator::navigateToHomeNotification,
+                        onManualDrink = {}, // TODO: ManualDrink BottomSheet 연결
                     )
                 }
             }

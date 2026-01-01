@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -10,18 +10,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray200
-import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun RoundIconButton(
-    iconRes: Int,
+    iconRes: DrawableResource,
     contentDescription: String?,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
@@ -40,23 +38,11 @@ fun RoundIconButton(
     ) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
-                painter = painterResource(id = iconRes),
+                painter = painterResource(iconRes),
                 contentDescription = contentDescription,
                 tint = Color.Unspecified,
                 modifier = Modifier.size(size * 0.4f),
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun RoundIconButtonPreview() {
-    MulKkamTheme {
-        RoundIconButton(
-            iconRes = R.drawable.ic_home_drink,
-            contentDescription = null,
-            onClick = {},
-        )
     }
 }
