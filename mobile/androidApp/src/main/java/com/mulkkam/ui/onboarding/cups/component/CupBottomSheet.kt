@@ -37,8 +37,8 @@ import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.home.component.BottomSheetSectionTitle
-import com.mulkkam.ui.home.component.ValidationMessage
+import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
+import com.mulkkam.ui.home.home.component.ValidationMessage
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.settingcups.component.DeleteCupButton
