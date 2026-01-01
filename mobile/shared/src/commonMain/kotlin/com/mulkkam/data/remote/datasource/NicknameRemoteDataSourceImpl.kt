@@ -1,8 +1,18 @@
 package com.mulkkam.data.remote.datasource
 
-// TODO: DataSource 구현 필요
-class NicknameRemoteDataSourceImpl : NicknameRemoteDataSource {
-    override suspend fun getNicknameValidation(nickname: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+import com.mulkkam.data.remote.api.safeApiCallUnit
+import io.ktor.client.HttpClient
+import io.ktor.client.request.get
+
+class NicknameRemoteDataSourceImpl(
+    private val httpClient: HttpClient,
+) : NicknameRemoteDataSource {
+    override suspend fun getNicknameValidation(nickname: String): Result<Unit> =
+        safeApiCallUnit {
+            httpClient.get("/nickname/validation") {
+                url {
+                    parameters.append("nickname", nickname)
+                }
+            }
+        }
 }
