@@ -20,10 +20,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.component.MulKkamToastHost
 import com.mulkkam.ui.component.rememberMulKkamToastState
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
 import com.mulkkam.ui.settingcups.component.SettingCupBottomSheet
