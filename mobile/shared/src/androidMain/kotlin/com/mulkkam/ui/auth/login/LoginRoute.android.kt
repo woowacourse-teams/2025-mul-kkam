@@ -19,7 +19,6 @@ import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.login.LoginViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle

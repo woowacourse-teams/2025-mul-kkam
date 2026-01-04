@@ -1,7 +1,6 @@
 package com.mulkkam.ui.auth.login
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import com.mulkkam.ui.login.LoginViewModel
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
