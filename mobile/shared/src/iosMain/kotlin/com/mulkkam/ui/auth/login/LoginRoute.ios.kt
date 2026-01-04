@@ -13,7 +13,7 @@ import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.ui.auth.login.model.LoginType
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.login.LoginViewModel
@@ -62,9 +62,9 @@ actual fun LoginRoute(
     MulKkamTheme {
         LoginScreen(
             padding = padding,
-            onLoginClick = { loginType ->
-                when (loginType) {
-                    LoginType.KAKAO -> {
+            onLoginClick = { authPlatform ->
+                when (authPlatform) {
+                    AuthPlatform.KAKAO -> {
                         LoginPlatform.provider?.loginWithKakao(
                             onSuccess = { token -> viewModel.loginWithKakao(token = token) },
                             onFailure = { error ->
@@ -77,7 +77,7 @@ actual fun LoginRoute(
                     }
 
                     // TODO: Apple 로그인 기능 구현
-                    LoginType.APPLE -> Unit
+                    AuthPlatform.APPLE -> Unit
                 }
             },
             snackbarHostState = snackbarHostState,

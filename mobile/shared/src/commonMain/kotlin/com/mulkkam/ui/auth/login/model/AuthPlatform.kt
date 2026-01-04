@@ -1,6 +1,6 @@
 package com.mulkkam.ui.auth.login.model
 
-enum class LoginType {
+enum class AuthPlatform {
     KAKAO,
     APPLE,
 }

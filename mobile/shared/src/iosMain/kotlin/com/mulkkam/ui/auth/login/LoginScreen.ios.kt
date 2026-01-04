@@ -19,7 +19,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.auth.login.component.AppleLoginButton
 import com.mulkkam.ui.auth.login.component.KakaoLoginButton
-import com.mulkkam.ui.auth.login.model.LoginType
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -31,7 +31,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Composable
 actual fun LoginScreen(
     padding: PaddingValues,
-    onLoginClick: (loginType: LoginType) -> Unit,
+    onLoginClick: (authPlatform: AuthPlatform) -> Unit,
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -60,12 +60,12 @@ actual fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(64.dp))
             AppleLoginButton(
-                onClick = { onLoginClick(LoginType.APPLE) },
+                onClick = { onLoginClick(AuthPlatform.APPLE) },
                 isEnabled = isLoginLoading.not(),
             )
             Spacer(modifier = Modifier.height(18.dp))
             KakaoLoginButton(
-                onClick = { onLoginClick(LoginType.KAKAO) },
+                onClick = { onLoginClick(AuthPlatform.KAKAO) },
                 isEnabled = isLoginLoading.not(),
             )
         }
