@@ -2,8 +2,8 @@ package com.mulkkam.domain.login
 
 interface IosLoginProvider {
     fun loginWithKakao(
-        onSuccess: (String) -> Unit,
-        onFailure: (String) -> Unit,
+        onSuccess: (token: String) -> Unit,
+        onFailure: (errorMessage: String) -> Unit,
     )
 
 // TODO: Apple 로그인 구현
