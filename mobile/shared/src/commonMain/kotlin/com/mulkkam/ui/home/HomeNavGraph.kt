@@ -21,6 +21,7 @@ object HomeNavGraph {
             is HomeNavRoute.Home -> {
                 entry(route) {
                     HomeRoute(
+                        padding = padding,
                         navigateToNotification = navigator::navigateToHomeNotification,
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,

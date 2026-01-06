@@ -1,5 +1,6 @@
 package com.mulkkam.ui.home.home
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -42,6 +43,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeRoute(
+    padding: PaddingValues,
     navigateToNotification: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
@@ -97,6 +99,7 @@ fun HomeRoute(
     }
 
     HomeScreen(
+        padding = padding,
         navigateToNotification = navigateToNotification,
         onManualDrink = { isManualDrinkBottomSheetVisible = true },
         snackbarHostState = snackbarHostState,
@@ -126,9 +129,7 @@ private fun handleTodayProgressFailure(
     if (state !is MulKkamUiState.Failure) return
 
     when (state.error) {
-        is MulKkamError.AccountError,
-        is MulKkamError.Unknown,
-        -> {
+        is MulKkamError.AccountError -> {
             coroutineScope.launch {
                 snackbarHostState.showMulKkamSnackbar(
                     message = getString(Res.string.authorization_expired),

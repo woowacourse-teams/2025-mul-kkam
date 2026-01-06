@@ -3,6 +3,7 @@ package com.mulkkam.ui.home.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import com.mulkkam.ui.model.toSuccessDataOrNull
 
 @Composable
 fun HomeScreen(
+    padding: PaddingValues,
     navigateToNotification: () -> Unit,
     onManualDrink: () -> Unit,
     snackbarHostState: SnackbarHostState,
@@ -37,7 +39,7 @@ fun HomeScreen(
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val alarmCountUiState by viewModel.alarmCountUiState.collectAsStateWithLifecycle()
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().padding(padding)) {
         Scaffold(
             topBar = {
                 HomeTopBar(
