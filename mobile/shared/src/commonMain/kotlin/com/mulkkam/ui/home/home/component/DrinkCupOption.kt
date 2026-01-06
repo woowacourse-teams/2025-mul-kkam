@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -12,7 +12,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.component.NetworkImage
@@ -21,6 +20,9 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.ImageShape
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.img_cup_placeholder
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DrinkCupOption(
@@ -47,6 +49,7 @@ fun DrinkCupOption(
             NetworkImage(
                 url = emojiUrl,
                 modifier = Modifier.size(size * 0.42f),
+                placeholderRes = Res.drawable.img_cup_placeholder,
                 shape = ImageShape.Circle,
             )
             Spacer(Modifier.height(2.dp))
@@ -59,7 +62,7 @@ fun DrinkCupOption(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun DrinkCupOptionPreview() {
     MulKkamTheme {

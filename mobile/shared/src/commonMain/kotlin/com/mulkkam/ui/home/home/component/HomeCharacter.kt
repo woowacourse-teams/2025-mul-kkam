@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
@@ -10,13 +10,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.img_home_character
+import mulkkam.shared.generated.resources.img_home_drink_character
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeCharacter(
@@ -35,11 +37,12 @@ fun HomeCharacter(
             Image(
                 painter =
                     painterResource(
-                        if (isDrinking) {
-                            R.drawable.img_home_drink_character
-                        } else {
-                            R.drawable.img_home_character
-                        },
+                        resource =
+                            if (isDrinking) {
+                                Res.drawable.img_home_drink_character
+                            } else {
+                                Res.drawable.img_home_character
+                            },
                     ),
                 contentDescription = null,
                 modifier =
@@ -65,7 +68,7 @@ fun HomeCharacter(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun HomeCharacterPreview() {
     MulKkamTheme {

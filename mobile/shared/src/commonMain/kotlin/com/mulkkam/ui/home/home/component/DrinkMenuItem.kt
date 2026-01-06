@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -11,12 +11,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DrinkMenuItem(
@@ -52,7 +52,7 @@ fun DrinkMenuItem(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun DrinkMenuItemPreview() {
     MulKkamTheme {

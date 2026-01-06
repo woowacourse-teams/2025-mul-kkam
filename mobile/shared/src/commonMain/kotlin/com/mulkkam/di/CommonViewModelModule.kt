@@ -3,8 +3,8 @@ package com.mulkkam.di
 import com.mulkkam.ui.auth.splash.SplashViewModel
 import com.mulkkam.ui.friends.FriendsViewModel
 import com.mulkkam.ui.history.HistoryViewModel
-import com.mulkkam.ui.home.HomeViewModel
 import com.mulkkam.ui.home.ManualDrinkViewModel
+import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.login.LoginViewModel
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.notification.NotificationViewModel

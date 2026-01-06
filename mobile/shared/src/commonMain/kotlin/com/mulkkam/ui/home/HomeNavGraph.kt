@@ -5,30 +5,30 @@ import androidx.compose.runtime.Composable
 import com.mulkkam.ui.home.encyclopedia.EncyclopediaRoute
 import com.mulkkam.ui.home.home.HomeRoute
 import com.mulkkam.ui.home.notification.NotificationRoute
-import com.mulkkam.ui.navigation.HomeRoute
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
 import com.mulkkam.ui.navigation.entry
+import com.mulkkam.ui.navigation.HomeRoute as HomeNavRoute
 
 object HomeNavGraph {
     @Composable
     fun entryProvider(
-        route: HomeRoute,
+        route: HomeNavRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
-    ): NavEntry<HomeRoute> =
+    ): NavEntry<HomeNavRoute> =
         when (route) {
-            is HomeRoute.Home -> {
+            is HomeNavRoute.Home -> {
                 entry(route) {
                     HomeRoute(
-                        padding = padding,
-                        onNavigateToEncyclopedia = navigator::navigateToEncyclopedia,
-                        onNavigateToNotification = navigator::navigateToHomeNotification,
+                        navigateToNotification = navigator::navigateToHomeNotification,
+                        onNavigateToLogin = navigator::navigateToLogin,
+                        onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
                     )
                 }
             }
 
-            is HomeRoute.Encyclopedia -> {
+            is HomeNavRoute.Encyclopedia -> {
                 entry(route) {
                     EncyclopediaRoute(
                         padding = padding,
@@ -37,7 +37,7 @@ object HomeNavGraph {
                 }
             }
 
-            is HomeRoute.Notification -> {
+            is HomeNavRoute.Notification -> {
                 entry(route) {
                     NotificationRoute(
                         padding = padding,

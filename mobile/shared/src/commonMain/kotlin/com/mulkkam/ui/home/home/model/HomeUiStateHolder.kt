@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.model
+package com.mulkkam.ui.home.home.model
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable

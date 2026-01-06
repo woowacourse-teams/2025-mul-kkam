@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -20,11 +20,11 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun LinearGradientProgress(
@@ -84,7 +84,7 @@ fun LinearGradientProgress(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun LinearGradientProgressPreview() {
     MulKkamTheme {

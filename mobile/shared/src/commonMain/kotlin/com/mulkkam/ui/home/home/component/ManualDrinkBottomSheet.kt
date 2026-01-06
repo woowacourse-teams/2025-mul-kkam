@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -18,12 +18,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.result.MulKkamError
@@ -39,6 +36,16 @@ import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.ManualDrinkViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.home_manual_drink_invalid_range
+import mulkkam.shared.generated.resources.manual_drink_label
+import mulkkam.shared.generated.resources.manual_drink_perform
+import mulkkam.shared.generated.resources.setting_cup_amount
+import mulkkam.shared.generated.resources.setting_cup_intake_type
+import mulkkam.shared.generated.resources.setting_target_amount_hint_input_goal
+import mulkkam.shared.generated.resources.setting_target_amount_unit_ml
+import org.jetbrains.compose.resources.stringResource
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,7 +55,7 @@ fun ManualDrinkBottomSheet(
     onSave: (intakeType: IntakeType, amount: Int) -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: ManualDrinkViewModel = viewModel(),
+    viewModel: ManualDrinkViewModel = koinViewModel(),
 ) {
     var amountText by rememberSaveable { mutableStateOf("") }
     val intakeType: IntakeType by viewModel.intakeType.collectAsStateWithLifecycle()
@@ -79,12 +86,12 @@ fun ManualDrinkBottomSheet(
                     .padding(bottom = 24.dp),
         ) {
             BottomSheetHeader(
-                title = stringResource(R.string.manual_drink_label),
+                title = stringResource(resource = Res.string.manual_drink_label),
                 onDismiss = onDismiss,
             )
             Spacer(modifier = Modifier.height(18.dp))
             BottomSheetSectionTitle(
-                title = stringResource(R.string.setting_cup_intake_type),
+                title = stringResource(resource = Res.string.setting_cup_intake_type),
                 onClickInfo = onNavigateToCoffeeEncyclopedia,
             )
 
@@ -96,7 +103,7 @@ fun ManualDrinkBottomSheet(
             )
 
             Spacer(modifier = Modifier.height(8.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_amount))
+            BottomSheetSectionTitle(title = stringResource(resource = Res.string.setting_cup_amount))
             Spacer(modifier = Modifier.height(10.dp))
             MulKkamTextField(
                 value = amountText,
@@ -108,10 +115,10 @@ fun ManualDrinkBottomSheet(
                     }
                 },
                 maxLength = CupAmount.MAX_ML.toString().length,
-                placeHolder = stringResource(R.string.setting_target_amount_hint_input_goal),
+                placeHolder = stringResource(resource = Res.string.setting_target_amount_hint_input_goal),
                 suffix = { suffixModifier ->
                     Text(
-                        text = stringResource(R.string.setting_target_amount_unit_ml),
+                        text = stringResource(resource = Res.string.setting_target_amount_unit_ml),
                         style = MulKkamTheme.typography.title2,
                         color = Gray400,
                         modifier = suffixModifier,
@@ -127,7 +134,7 @@ fun ManualDrinkBottomSheet(
             SaveButton(
                 onClick = { onSave(intakeType, amountText.toInt()) },
                 enabled = isSaveAvailable,
-                text = stringResource(id = R.string.manual_drink_perform),
+                text = stringResource(resource = Res.string.manual_drink_perform),
                 modifier = Modifier.fillMaxWidth(),
             )
         }
@@ -147,7 +154,7 @@ private fun MulKkamUiState<Unit>.toManualDrinkAmountMessage(): String =
         is MulKkamUiState.Failure -> {
             if (error is MulKkamError.SettingCupsError.InvalidAmount) {
                 stringResource(
-                    R.string.home_manual_drink_invalid_range,
+                    resource = Res.string.home_manual_drink_invalid_range,
                     CupAmount.MIN_ML,
                     CupAmount.MAX_ML,
                 )

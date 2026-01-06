@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -12,11 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.Cup
 import com.mulkkam.domain.model.CupEmoji
 import com.mulkkam.domain.model.IntakeType
@@ -24,12 +21,18 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.home_drink_manual
+import mulkkam.shared.generated.resources.ic_manual_drink
+import mulkkam.shared.generated.resources.intake_unit_ml
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun DrinkMenu(
     visible: Boolean,
     cups: Cups?,
-    onSelectCup: (Long) -> Unit,
+    onSelectCup: (cupId: Long) -> Unit,
     onManual: () -> Unit,
 ) {
     val elevationOffset: Int = 12
@@ -47,10 +50,10 @@ fun DrinkMenu(
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             DrinkMenuItem(
-                label = stringResource(id = R.string.home_drink_manual),
+                label = stringResource(resource = Res.string.home_drink_manual),
                 icon = {
                     RoundIconButton(
-                        iconRes = R.drawable.ic_manual_drink,
+                        iconResource = Res.drawable.ic_manual_drink,
                         contentDescription = null,
                         onClick = onManual,
                         size = itemSize,
@@ -64,7 +67,7 @@ fun DrinkMenu(
                     icon = {
                         DrinkCupOption(
                             emojiUrl = cup.emoji.cupEmojiUrl,
-                            label = stringResource(R.string.intake_unit_ml, cup.amount.value),
+                            label = stringResource(resource = Res.string.intake_unit_ml, cup.amount.value),
                             onClick = { onSelectCup(cup.id) },
                             size = itemSize,
                         )
@@ -76,7 +79,7 @@ fun DrinkMenu(
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 private fun DrinkMenuPreview() {
     MulKkamTheme {

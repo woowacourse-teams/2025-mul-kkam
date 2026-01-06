@@ -1,4 +1,4 @@
-package com.mulkkam.ui.home.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -8,16 +8,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.component.ColoredText
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
-import java.util.Locale
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.home_daily_intake_summary
+import mulkkam.shared.generated.resources.home_water_streak_message
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun HomeProgressOverview(
@@ -33,7 +34,7 @@ fun HomeProgressOverview(
     ) {
         if (nickname != null && streak != null) {
             ColoredText(
-                fullText = stringResource(R.string.home_water_streak_message, nickname, streak),
+                fullText = stringResource(resource = Res.string.home_water_streak_message, nickname, streak),
                 highlightedTexts = listOf(nickname, streak.toString()),
                 highlightColor = Primary200,
                 style = MulKkamTheme.typography.title2,
@@ -58,7 +59,7 @@ fun HomeProgressOverview(
         if (totalAmount != null && targetAmount != null) {
             val summary =
                 stringResource(
-                    R.string.home_daily_intake_summary,
+                    resource = Res.string.home_daily_intake_summary,
                     totalAmount,
                     targetAmount,
                 )
@@ -71,7 +72,7 @@ fun HomeProgressOverview(
 
             ColoredText(
                 fullText = summary,
-                highlightedTexts = listOf(String.format(Locale.getDefault(), "%,dml", totalAmount)),
+                highlightedTexts = listOf(formatMilliliter(totalAmount)),
                 highlightColor = highlightColor,
                 style = MulKkamTheme.typography.title3,
                 color = Gray400,
@@ -84,7 +85,18 @@ fun HomeProgressOverview(
     }
 }
 
-@Preview(showBackground = true)
+private fun formatMilliliter(amount: Int): String {
+    val formatted =
+        amount
+            .toString()
+            .reversed()
+            .chunked(3)
+            .joinToString(",")
+            .reversed()
+    return "${formatted}ml"
+}
+
+@Preview
 @Composable
 private fun HomeProgressOverviewPreview() {
     MulKkamTheme {
