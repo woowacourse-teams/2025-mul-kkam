@@ -21,6 +21,7 @@ import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.util.extensions.toCommaSeparated
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.home_drink_manual
 import mulkkam.shared.generated.resources.ic_manual_drink
@@ -67,7 +68,7 @@ fun DrinkMenu(
                     icon = {
                         DrinkCupOption(
                             emojiUrl = cup.emoji.cupEmojiUrl,
-                            label = stringResource(resource = Res.string.intake_unit_ml, cup.amount.value),
+                            label = stringResource(resource = Res.string.intake_unit_ml, cup.amount.value.toCommaSeparated()),
                             onClick = { onSelectCup(cup.id) },
                             size = itemSize,
                         )

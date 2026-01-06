@@ -14,6 +14,7 @@ import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
+import com.mulkkam.ui.util.extensions.toCommaSeparated
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.home_daily_intake_summary
 import mulkkam.shared.generated.resources.home_water_streak_message
@@ -57,11 +58,13 @@ fun HomeProgressOverview(
         Spacer(Modifier.height(8.dp))
 
         if (totalAmount != null && targetAmount != null) {
+            val totalAmountFormatted = "${totalAmount.toCommaSeparated()}ml"
+            val targetAmountFormatted = "${targetAmount.toCommaSeparated()}ml"
             val summary =
                 stringResource(
                     resource = Res.string.home_daily_intake_summary,
-                    totalAmount,
-                    targetAmount,
+                    totalAmountFormatted,
+                    targetAmountFormatted,
                 )
             val highlightColor =
                 if (targetAmount > totalAmount) {
@@ -72,7 +75,7 @@ fun HomeProgressOverview(
 
             ColoredText(
                 fullText = summary,
-                highlightedTexts = listOf(formatMilliliter(totalAmount)),
+                highlightedTexts = listOf(totalAmountFormatted),
                 highlightColor = highlightColor,
                 style = MulKkamTheme.typography.title3,
                 color = Gray400,
@@ -83,17 +86,6 @@ fun HomeProgressOverview(
             )
         }
     }
-}
-
-private fun formatMilliliter(amount: Int): String {
-    val formatted =
-        amount
-            .toString()
-            .reversed()
-            .chunked(3)
-            .joinToString(",")
-            .reversed()
-    return "${formatted}ml"
 }
 
 @Preview
