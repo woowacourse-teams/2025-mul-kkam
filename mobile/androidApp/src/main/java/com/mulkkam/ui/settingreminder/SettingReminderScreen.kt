@@ -23,7 +23,7 @@ import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar

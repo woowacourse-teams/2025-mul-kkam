@@ -33,7 +33,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection

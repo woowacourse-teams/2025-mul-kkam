@@ -44,7 +44,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.dialog.MulKkamInfoDialog
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
