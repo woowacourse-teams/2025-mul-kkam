@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -25,6 +24,7 @@ import com.mulkkam.ui.home.home.model.HomeUiStateHolder
 import com.mulkkam.ui.home.home.model.rememberHomeUiStateHolder
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.util.extensions.toCommaSeparated
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -186,11 +186,12 @@ private fun showIntakeSuccessSnackbar(
     coroutineScope: CoroutineScope,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
 ) {
+    val formattedAmount = "${amount.toCommaSeparated()}ml"
     when (intakeType) {
         IntakeType.WATER -> {
             coroutineScope.launch {
                 snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.manual_drink_success, amount),
+                    message = getString(Res.string.manual_drink_success, formattedAmount),
                     iconResource = Res.drawable.ic_terms_all_check_on,
                 )
             }
@@ -199,7 +200,7 @@ private fun showIntakeSuccessSnackbar(
         IntakeType.COFFEE -> {
             coroutineScope.launch {
                 snackbarHostState.showMulKkamActionSnackbar(
-                    message = getString(Res.string.manual_drink_success_coffee, amount),
+                    message = getString(Res.string.manual_drink_success_coffee, formattedAmount),
                     iconResource = Res.drawable.ic_terms_all_check_on,
                     actionLabel = getString(Res.string.manual_drink_coffee_why),
                     onActionPerformed = onNavigateToCoffeeEncyclopedia,
