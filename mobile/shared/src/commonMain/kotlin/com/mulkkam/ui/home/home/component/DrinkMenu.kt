@@ -41,12 +41,12 @@ fun DrinkMenu(
     AnimatedVisibility(
         visible = visible,
         modifier = Modifier.offset(x = (elevationOffset).dp, y = (elevationOffset).dp),
-        enter = fadeIn() + expandVertically(expandFrom = Alignment.Companion.Bottom),
-        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Companion.Bottom),
+        enter = fadeIn() + expandVertically(expandFrom = Alignment.Bottom),
+        exit = fadeOut() + shrinkVertically(shrinkTowards = Alignment.Bottom),
     ) {
         Column(
             modifier = Modifier.padding(elevationOffset.dp),
-            horizontalAlignment = Alignment.Companion.End,
+            horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.spacedBy(14.dp),
         ) {
             DrinkMenuItem(

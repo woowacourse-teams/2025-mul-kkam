@@ -10,7 +10,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.rememberUpdatedState
+
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -55,9 +55,6 @@ fun HomeRoute(
     var isManualDrinkBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
     val manualDrinkBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    val currentNavigateToLogin = rememberUpdatedState(newValue = onNavigateToLogin)
-    val currentNavigateToCoffeeEncyclopedia = rememberUpdatedState(newValue = onNavigateToCoffeeEncyclopedia)
-
     val uiStateHolder: HomeUiStateHolder = rememberHomeUiStateHolder()
 
     val todayProgressInfoUiState by viewModel.todayProgressInfoUiState.collectAsStateWithLifecycle()
@@ -67,7 +64,7 @@ fun HomeRoute(
             state = todayProgressInfoUiState,
             snackbarHostState = snackbarHostState,
             coroutineScope = coroutineScope,
-            onNavigateToLogin = currentNavigateToLogin.value,
+            onNavigateToLogin = onNavigateToLogin,
         )
     }
 
@@ -80,7 +77,7 @@ fun HomeRoute(
                 state = state,
                 snackbarHostState = snackbarHostState,
                 coroutineScope = coroutineScope,
-                onNavigateToCoffeeEncyclopedia = currentNavigateToCoffeeEncyclopedia.value,
+                onNavigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
             )
         }
     }
