@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
@@ -43,6 +44,7 @@ public class IntakeHistoryController {
             @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping
     public ResponseEntity<List<IntakeHistorySummaryResponse>> readSummaryOfIntakeHistories(
             @Parameter(hidden = true)
@@ -72,6 +74,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
+    @RequireAuth
     @PostMapping("/cup") // TODO 2025. 8. 20. 17:09: url 다시 생각하기
     public ResponseEntity<CreateIntakeHistoryDetailResponse> createByCup(
             @Parameter(hidden = true)
@@ -94,6 +97,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "권한 없음", summary = "타인의 기록 접근", value = "{\"code\":\"NOT_PERMITTED_FOR_INTAKE_HISTORY\"}")
     }))
+    @RequireAuth
     @PostMapping("/input")
     public ResponseEntity<CreateIntakeHistoryDetailResponse> createByUserInput(
             @Parameter(hidden = true)
@@ -113,6 +117,7 @@ public class IntakeHistoryController {
             @ExampleObject(name = "잘못된 날짜 범위", summary = "from이 to보다 이후", value = "{\"code\":\"INVALID_DATE_RANGE\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/achievement-rates")
     public ResponseEntity<ReadAchievementRateByDatesResponse> readAchievementRatesByDateRange(
             @Parameter(hidden = true)
@@ -140,6 +145,7 @@ public class IntakeHistoryController {
     @ApiResponse(responseCode = "400", description = "금일 외 기록 삭제 불가", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "삭제 불가", summary = "오늘 기록만 삭제 가능", value = "{\"code\":\"INVALID_DATE_FOR_DELETE_INTAKE_HISTORY\"}")
     }))
+    @RequireAuth
     @DeleteMapping("/details/{id}") // TODO: POST 메서드와 endpoint 통일하기 ({id} 만 있어도 될듯?)
     public ResponseEntity<Void> deleteDetailHistory(
             @Parameter(hidden = true)

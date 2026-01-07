@@ -20,9 +20,11 @@ import backend.mulkkam.friend.service.command.FriendReminderHistoryCommandServic
 import backend.mulkkam.friend.service.query.FriendQueryService;
 import backend.mulkkam.friend.service.query.FriendReminderHistoryQueryService;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.service.MemberQueryService;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.service.SuggestionNotificationService;
+import java.time.LocalDate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -31,8 +33,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.time.LocalDate;
 
 @ExtendWith(MockitoExtension.class)
 class FriendReminderHistoryServiceUnitTest {
@@ -63,7 +63,7 @@ class FriendReminderHistoryServiceUnitTest {
     void setUp() {
         senderId = 1L;
         friendId = 2L;
-        memberDetails = new MemberDetails(senderId);
+        memberDetails = new MemberDetails(senderId, MemberRole.MEMBER);
         request = new CreateFriendReminderRequest(friendId);
     }
 
@@ -88,10 +88,12 @@ class FriendReminderHistoryServiceUnitTest {
 
             // then
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
+            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId),
+                    any(LocalDate.class));
             verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
             verify(memberQueryService).getNickname(senderId);
-            verify(suggestionNotificationService).createAndSendNotification(any(NotificationMessageTemplate.class), eq(friendId));
+            verify(suggestionNotificationService).createAndSendNotification(any(NotificationMessageTemplate.class),
+                    eq(friendId));
         }
 
         @DisplayName("친구 관계가 아닌 경우 예외가 발생한다")
@@ -108,7 +110,8 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(NOT_FOUND_FRIEND.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService, never()).getOrCreateDefault(anyLong(), anyLong(), any(LocalDate.class));
+            verify(friendReminderHistoryQueryService, never()).getOrCreateDefault(anyLong(), anyLong(),
+                    any(LocalDate.class));
             verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
@@ -132,7 +135,8 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(EXCEED_FRIEND_REMINDER_LIMIT.name());
 
             verify(friendQueryService).validateFriends(friendId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId), any(LocalDate.class));
+            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(friendId),
+                    any(LocalDate.class));
             verify(friendReminderHistoryCommandService).reduceRemainingCount(reminderHistory.getId());
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }
@@ -152,7 +156,8 @@ class FriendReminderHistoryServiceUnitTest {
                     .hasMessage(NOT_ALLOWED_SELF_REMINDER.name());
 
             verify(friendQueryService).validateFriends(senderId, senderId);
-            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(senderId), any(LocalDate.class));
+            verify(friendReminderHistoryQueryService).getOrCreateDefault(eq(senderId), eq(senderId),
+                    any(LocalDate.class));
             verify(friendReminderHistoryCommandService, never()).reduceRemainingCount(anyLong());
             verify(suggestionNotificationService, never()).createAndSendNotification(any(), anyLong());
         }

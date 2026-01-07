@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
@@ -38,6 +39,7 @@ public class IntakeAmountController {
     @ApiResponse(responseCode = "400", description = "잘못된 신체 정보", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 신체 정보", summary = "신체 정보 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
+    @RequireAuth
     @GetMapping("/recommended")
     public ResponseEntity<IntakeSuggestionAmountResponse> getRecommended(
             @Parameter(hidden = true)
@@ -53,6 +55,7 @@ public class IntakeAmountController {
     @ApiResponse(responseCode = "400", description = "잘못된 신체 정보", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 신체 정보", summary = "신체 정보 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
+    @RequireAuth
     @GetMapping("/target/recommended")
     public ResponseEntity<SuggestionIntakeAmountResponse> getRecommendedTargetAmount(
             @Parameter(description = "신체 정보 (체중, 활동량 등)")
@@ -70,6 +73,7 @@ public class IntakeAmountController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "404", description = "금일 음용 기록 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "금일 음용 기록 없음", summary = "IntakeHistory 미존재", value = "{\"code\":\"NOT_FOUND_INTAKE_HISTORY\"}")}))
+    @RequireAuth
     @PatchMapping("/target")
     public ResponseEntity<Void> modifyTarget(
             @Parameter(hidden = true)
@@ -83,6 +87,7 @@ public class IntakeAmountController {
     @Operation(summary = "목표 음용량 조회", description = "사용자가 설정한 목표 음용량을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = IntakeTargetAmountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/target")
     public ResponseEntity<IntakeTargetAmountResponse> getTarget(
             @Parameter(hidden = true)

@@ -1,5 +1,6 @@
 package backend.mulkkam.friend.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.friend.dto.request.CreateFriendRequestRequest;
@@ -48,6 +49,7 @@ public class FriendRequestController {
     @ApiResponse(responseCode = "409", description = "요청 내역이 이미 존재", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "서로 친구 신청을 보낸 이력 존재", value = "{\"code\":\"DUPLICATED_FRIEND_REQUEST\"}")
     }))
+    @RequireAuth
     @PostMapping
     public CreateFriendRequestResponse create(
             @Parameter(description = "친구 관계를 맺고싶은 멤버의 id", required = true)
@@ -69,6 +71,7 @@ public class FriendRequestController {
             @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}"),
             @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}")
     }))
+    @RequireAuth
     @DeleteMapping
     public ResponseEntity<Void> cancel(
             @Parameter(description = "취소하려는 요청 수신자의 멤버 id", required = true)
@@ -90,6 +93,7 @@ public class FriendRequestController {
             @ExampleObject(name = "존재하지 않는 친구 신청", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}"),
             @ExampleObject(name = "친구 신청 수신자가 보낸 요청이 아님", value = "{\"code\":\"NOT_FOUND_FRIEND_REQUEST\"}")
     }))
+    @RequireAuth
     @PatchMapping
     public void update(
             @RequestBody @Valid
@@ -102,6 +106,7 @@ public class FriendRequestController {
     @Operation(summary = "받은 친구 신청 목록", description = "내가 받은 친구 신청 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadReceivedFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/received")
     public ReadReceivedFriendRelationResponse getReceived(
             @Parameter(hidden = true)
@@ -117,6 +122,7 @@ public class FriendRequestController {
     @Operation(summary = "받은 친구 신청 목록 갯수 조회", description = "내가 받은 친구 신청 목록의 갯수를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetReceivedFriendRequestCountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/received-count")
     public GetReceivedFriendRequestCountResponse getReceivedCount(
             @Parameter(hidden = true)
@@ -128,6 +134,7 @@ public class FriendRequestController {
     @Operation(summary = "보낸 친구 신청 목록", description = "내가 보낸 친구 신청 목록을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ReadSentFriendRelationResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/sent")
     public ReadSentFriendRelationResponse getSent(
             @Parameter(hidden = true)

@@ -58,7 +58,7 @@ public class ApiPerformanceInterceptor implements HandlerInterceptor {
 
         String originalUri = extractOriginalUri(request);
         String logUri = normalizeRoutePath(request, originalUri);
-        Long accountId = (Long) request.getAttribute("accountId");
+        Long accountId = (Long) request.getAttribute("account_id");
 
         if (responseTime > RESPONSE_TIME_THRESHOLD) {
             API_PERF.warn("perf",

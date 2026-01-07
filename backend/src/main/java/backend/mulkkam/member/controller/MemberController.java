@@ -1,5 +1,6 @@
 package backend.mulkkam.member.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
@@ -43,6 +44,7 @@ public class MemberController {
     @Operation(summary = "회원 정보 조회", description = "현재 로그인한 회원의 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = MemberResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping
     public ResponseEntity<MemberResponse> get(
             @Parameter(hidden = true)
@@ -58,6 +60,7 @@ public class MemberController {
             @ExampleObject(name = "잘못된 신체 정보", summary = "형식/범위 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PostMapping("/physical-attributes")
     public ResponseEntity<Void> modifyPhysicalAttributes(
             @Parameter(hidden = true)
@@ -83,6 +86,7 @@ public class MemberController {
     @ApiResponse(responseCode = "409", description = "중복된 닉네임", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\"code\":\"DUPLICATE_MEMBER_NICKNAME\"}")
     }))
+    @RequireAuth
     @GetMapping("/nickname/validation")
     public ResponseEntity<Void> checkForDuplicates(
             @Parameter(hidden = true)
@@ -106,6 +110,7 @@ public class MemberController {
     @ApiResponse(responseCode = "409", description = "중복된 닉네임", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "중복 닉네임", summary = "이미 존재", value = "{\"code\":\"DUPLICATE_MEMBER_NICKNAME\"}")
     }))
+    @RequireAuth
     @PatchMapping("/nickname")
     public ResponseEntity<Void> modifyNickname(
             @Parameter(hidden = true)
@@ -120,6 +125,7 @@ public class MemberController {
     @Operation(summary = "닉네임 조회", description = "회원의 현재 닉네임을 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = MemberNicknameResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/nickname")
     public ResponseEntity<MemberNicknameResponse> getNickname(
             @Parameter(hidden = true)
@@ -132,6 +138,7 @@ public class MemberController {
     @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음용량 달성 진행 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ProgressInfoResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/progress-info")
     public ResponseEntity<ProgressInfoResponse> getProgressInfo(
             @Parameter(hidden = true)
@@ -145,6 +152,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 야간 알림 수신 정보 수정", description = "야간 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "야간 알림 반영 성공")
+    @RequireAuth
     @PatchMapping("/notifications/night")
     public ResponseEntity<Void> modifyIsNightNotificationAgreed(
             @Parameter(hidden = true)
@@ -158,6 +166,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 마케팅 알림 수신 정보 수정", description = "마케팅 알림 수신 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "마케팅 알림 반영 성공")
+    @RequireAuth
     @PatchMapping("/notifications/marketing")
     public ResponseEntity<Void> modifyIsMarketingNotificationAgreed(
             @Parameter(hidden = true)
@@ -171,6 +180,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 알림 수신 정보 조회", description = "야간/마케팅 알림 수신 여부를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "알림 수신 여부 조회 성공")
+    @RequireAuth
     @GetMapping("/notifications/settings")
     public ResponseEntity<NotificationSettingsResponse> getNotificationSettings(
             @Parameter(hidden = true)
@@ -183,6 +193,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 리마인더 스케쥴링 정보 수정", description = "리마인더 스케쥴링 정보를 수정합니다.")
     @ApiResponse(responseCode = "200", description = "반영 성공")
+    @RequireAuth
     @PatchMapping("/reminder")
     public ResponseEntity<Void> modifyIsReminderEnabled(
             @Parameter(hidden = true)
@@ -196,6 +207,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
     @ApiResponse(responseCode = "200", description = "탈퇴 성공")
+    @RequireAuth
     @DeleteMapping
     public ResponseEntity<Void> delete(
             @Parameter(hidden = true)
@@ -207,6 +219,7 @@ public class MemberController {
 
     @Operation(summary = "사용자 닉네임 검색", description = "사용자 닉네임을 검색합니다.")
     @ApiResponse(responseCode = "200", description = "검색 성공")
+    @RequireAuth
     @GetMapping("/search")
     public ResponseEntity<MemberSearchResponse> search(
             @Parameter(hidden = true)

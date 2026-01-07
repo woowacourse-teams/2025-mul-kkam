@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.request.CreateReminderScheduleRequest;
@@ -38,6 +39,7 @@ public class ReminderScheduleController {
             @ExampleObject(name = "잘못된 요청", summary = "필드 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PostMapping()
     public ResponseEntity<Void> create(
             @Parameter(hidden = true)
@@ -54,6 +56,7 @@ public class ReminderScheduleController {
             @ExampleObject(name = "잘못된 요청", summary = "필수 파라미터 누락/형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping()
     public ResponseEntity<ReadReminderSchedulesResponse> read(
             @Parameter(hidden = true)
@@ -64,6 +67,7 @@ public class ReminderScheduleController {
 
     @Operation(summary = "사용자 리마인더 스케쥴링 시간 수정", description = "사용자의 특정 리마인더 스케쥴의 시간을 수정합니다.")
     @ApiResponse(responseCode = "200", description = "수정 성공")
+    @RequireAuth
     @PatchMapping()
     public ResponseEntity<Void> modifyTime(
             @Parameter(hidden = true)
@@ -78,6 +82,7 @@ public class ReminderScheduleController {
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 id")
     @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
+    @RequireAuth
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @Parameter(hidden = true)

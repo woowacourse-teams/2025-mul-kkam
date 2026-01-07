@@ -9,6 +9,7 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
@@ -16,8 +17,8 @@ import backend.mulkkam.notification.domain.SuggestionNotification;
 import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
 import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +67,7 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
 
             // when
             suggestionNotificationService.applyTargetAmount(savedSuggestionNotification.getId(),
-                    new MemberDetails(savedMember.getId()));
+                    new MemberDetails(savedMember.getId(), MemberRole.MEMBER));
 
             // then
             SuggestionNotification actual = suggestionNotificationRepository.findById(
@@ -86,7 +87,7 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
             // when & then
             assertThatThrownBy(
                     () -> suggestionNotificationService.applyTargetAmount(Long.MAX_VALUE,
-                            new MemberDetails(savedMember.getId()))
+                            new MemberDetails(savedMember.getId(), MemberRole.MEMBER))
             ).isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
         }
