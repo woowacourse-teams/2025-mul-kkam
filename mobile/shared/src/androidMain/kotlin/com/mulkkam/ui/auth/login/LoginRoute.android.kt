@@ -1,17 +1,12 @@
 package com.mulkkam.ui.auth.login
 
-import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
@@ -31,10 +26,14 @@ actual fun LoginRoute(
     padding: PaddingValues,
     onNavigateToOnboarding: () -> Unit,
     onNavigateToMain: () -> Unit,
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
     viewModel: LoginViewModel,
 ) {
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val context = LocalContext.current
     val logger: Logger = koinInject()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
@@ -65,71 +64,25 @@ actual fun LoginRoute(
     LoginScreen(
         padding = padding,
         onLoginClick = { authPlatform ->
-            when (authPlatform) {
-                AuthPlatform.KAKAO -> {
-                    loginWithKakao(context, logger) { token ->
-                        viewModel.loginWithKakao(token)
-                    }
+            val onSuccess: (token: String) -> Unit =
+                when (authPlatform) {
+                    AuthPlatform.KAKAO -> viewModel::loginWithKakao
+                    else -> { _ -> }
                 }
-
-                else -> Unit
-            }
+            onLogin(
+                authPlatform,
+                { token -> onSuccess(token) },
+                { error ->
+                    logger.error(
+                        LogEvent.USER_AUTH,
+                        "${authPlatform.name} Login Failed: $error",
+                    )
+                },
+            )
         },
         snackbarHostState = snackbarHostState,
         isLoginLoading = isLoginLoading,
     )
-}
-
-private fun loginWithKakao(
-    context: Context,
-    logger: Logger,
-    handleLogin: (accessToken: String) -> Unit,
-) {
-    logger.info(LogEvent.USER_AUTH, "Kakao Login Attempted")
-    if (UserApiClient.instance.isKakaoTalkLoginAvailable(context)) {
-        loginWithKakaoTalk(context, logger, handleLogin)
-    } else {
-        loginWithKakaoAccount(context, logger, handleLogin)
-    }
-}
-
-private fun loginWithKakaoTalk(
-    context: Context,
-    logger: Logger,
-    handleLogin: (accessToken: String) -> Unit,
-) {
-    UserApiClient.instance.loginWithKakaoTalk(context) { token, error ->
-        when {
-            error is ClientError && error.reason == ClientErrorCause.Cancelled -> Unit
-
-            error != null -> {
-                logger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
-                loginWithKakaoAccount(context, logger, handleLogin)
-            }
-
-            else -> {
-                token?.let {
-                    handleLogin(it.accessToken)
-                }
-            }
-        }
-    }
-}
-
-private fun loginWithKakaoAccount(
-    context: Context,
-    logger: Logger,
-    handleLogin: (accessToken: String) -> Unit,
-) {
-    UserApiClient.instance.loginWithKakaoAccount(context) { token, error ->
-        if (error != null) {
-            logger.error(LogEvent.USER_AUTH, "Kakao Login Failed: ${error.message}")
-        } else {
-            token?.let {
-                handleLogin(it.accessToken)
-            }
-        }
-    }
 }
 
 private fun navigateToNextScreen(
