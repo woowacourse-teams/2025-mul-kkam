@@ -25,6 +25,6 @@ public class MemberResolver implements HandlerMethodArgumentResolver {
             WebDataBinderFactory binderFactory
     ) {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
-        return (MemberDetails) request.getAttribute("memberDetails");
+        return (MemberDetails) request.getAttribute("member_details");
     }
 }
