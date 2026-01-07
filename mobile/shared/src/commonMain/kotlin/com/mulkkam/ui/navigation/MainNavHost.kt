@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mulkkam.ui.auth.AuthNavGraph
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.friends.FriendsNavGraph
 import com.mulkkam.ui.history.HistoryNavGraph
 import com.mulkkam.ui.home.HomeNavGraph
@@ -14,6 +15,11 @@ import com.mulkkam.ui.setting.SettingNavGraph
 fun MainNavHost(
     navigator: MainNavigator,
     padding: PaddingValues,
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -25,6 +31,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        onLogin = onLogin,
                     )
                 }
 

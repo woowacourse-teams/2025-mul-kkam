@@ -5,12 +5,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.navigation.MainNavHost
 import com.mulkkam.ui.navigation.rememberMainNavigator
 
 @Composable
-fun MulKkamApp() {
+fun MulKkamApp(
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+) {
     val navigator = rememberMainNavigator()
 
     Scaffold(
@@ -21,6 +28,7 @@ fun MulKkamApp() {
             navigator = navigator,
             padding = innerPadding,
             modifier = Modifier.padding(innerPadding),
+            onLogin = onLogin,
         )
     }
 }
