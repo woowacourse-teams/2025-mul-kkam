@@ -120,7 +120,8 @@ class AuthorizationInterceptorTest {
             // then
             assertThat(result).isTrue();
 
-            OauthAccountDetails oauthAccountDetails = (OauthAccountDetails) request.getAttribute("oauthAccountDetails");
+            OauthAccountDetails oauthAccountDetails = (OauthAccountDetails) request.getAttribute(
+                    "oauth_account_details");
             assertThat(oauthAccountDetails).isNotNull();
             assertThat(oauthAccountDetails.id()).isEqualTo(1L);
             assertThat(oauthAccountDetails.deviceUuid()).isEqualTo("device_uuid");
@@ -173,7 +174,7 @@ class AuthorizationInterceptorTest {
             // then
             assertThat(result).isTrue();
 
-            MemberDetails memberDetails = (MemberDetails) request.getAttribute("memberDetails");
+            MemberDetails memberDetails = (MemberDetails) request.getAttribute("member_details");
             assertThat(memberDetails).isNotNull();
             assertThat(memberDetails.id()).isEqualTo(1L);
             assertThat(memberDetails.memberRole()).isEqualTo(MemberRole.MEMBER);
@@ -226,7 +227,7 @@ class AuthorizationInterceptorTest {
             // then
             assertThat(result).isTrue();
 
-            MemberDetails memberDetails = (MemberDetails) request.getAttribute("memberDetails");
+            MemberDetails memberDetails = (MemberDetails) request.getAttribute("member_details");
             assertThat(memberDetails).isNotNull();
             assertThat(memberDetails.id()).isEqualTo(1L);
             assertThat(memberDetails.memberRole()).isEqualTo(MemberRole.ADMIN);
