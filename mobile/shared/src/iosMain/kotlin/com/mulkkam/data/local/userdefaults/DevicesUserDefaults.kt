@@ -31,7 +31,7 @@ class DevicesUserDefaults {
     }
 
     fun saveIsFirstLaunch(isFirstLaunch: Boolean) {
-        userDefaults.setObject(isFirstLaunch, KEY_IS_FIRST_LAUNCH)
+        userDefaults.setBool(isFirstLaunch, KEY_IS_FIRST_LAUNCH)
     }
 
     companion object {
