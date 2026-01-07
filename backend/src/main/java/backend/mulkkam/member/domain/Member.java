@@ -137,6 +137,10 @@ public class Member extends BaseEntity {
         this.isReminderEnabled = isReminderEnabled;
     }
 
+    public void modifyMemberRole(MemberRole memberRole) {
+        this.memberRole = memberRole;
+    }
+
     public boolean isAdmin() {
         return this.memberRole == MemberRole.ADMIN;
     }
