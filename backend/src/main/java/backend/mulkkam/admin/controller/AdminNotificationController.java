@@ -1,6 +1,7 @@
 package backend.mulkkam.admin.controller;
 
-import backend.mulkkam.admin.dto.response.AdminNotificationListResponse;
+import backend.mulkkam.admin.dto.request.SendAdminBroadcastNotificationRequest;
+import backend.mulkkam.admin.dto.response.GetAdminNotificationListResponse;
 import backend.mulkkam.admin.service.AdminNotificationService;
 import backend.mulkkam.common.auth.annotation.AuthLevel;
 import backend.mulkkam.common.auth.annotation.RequireAuth;
@@ -9,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,11 +30,23 @@ public class AdminNotificationController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping
-    public Page<AdminNotificationListResponse> getNotifications(
+    public Page<GetAdminNotificationListResponse> getNotifications(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {
         return adminNotificationService.getNotifications(pageable);
+    }
+
+    @Operation(summary = "전체 회원 알림 전송", description = "모든 회원에게 알림을 전송합니다.")
+    @ApiResponse(responseCode = "200", description = "알림 전송 성공")
+    @RequireAuth(level = AuthLevel.ADMIN)
+    @PostMapping("/broadcast")
+    public ResponseEntity<Void> sendBroadcastNotification(
+            @Parameter(hidden = true) MemberDetails memberDetails,
+            @Valid @RequestBody SendAdminBroadcastNotificationRequest request
+    ) {
+        adminNotificationService.sendBroadcastNotification(request);
+        return ResponseEntity.ok().build();
     }
 
     @Operation(summary = "알림 삭제", description = "특정 알림을 삭제합니다.")

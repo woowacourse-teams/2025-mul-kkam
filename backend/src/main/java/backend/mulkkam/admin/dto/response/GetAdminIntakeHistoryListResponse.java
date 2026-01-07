@@ -4,7 +4,7 @@ import backend.mulkkam.intake.domain.IntakeHistory;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public record AdminIntakeHistoryListResponse(
+public record GetAdminIntakeHistoryListResponse(
         Long id,
         Long memberId,
         String memberNickname,
@@ -14,8 +14,8 @@ public record AdminIntakeHistoryListResponse(
         int detailCount,
         LocalDateTime createdAt
 ) {
-    public static AdminIntakeHistoryListResponse from(IntakeHistory history) {
-        return new AdminIntakeHistoryListResponse(
+    public static GetAdminIntakeHistoryListResponse from(IntakeHistory history) {
+        return new GetAdminIntakeHistoryListResponse(
                 history.getId(),
                 history.getMember().getId(),
                 history.getMember().getMemberNickname() != null ? history.getMember().getMemberNickname().value() : null,

@@ -1,6 +1,6 @@
 package backend.mulkkam.admin.controller;
 
-import backend.mulkkam.admin.dto.response.AdminDeviceListResponse;
+import backend.mulkkam.admin.dto.response.GetAdminDeviceListResponse;
 import backend.mulkkam.admin.service.AdminDeviceService;
 import backend.mulkkam.common.auth.annotation.AuthLevel;
 import backend.mulkkam.common.auth.annotation.RequireAuth;
@@ -28,7 +28,7 @@ public class AdminDeviceController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping
-    public Page<AdminDeviceListResponse> getDevices(
+    public Page<GetAdminDeviceListResponse> getDevices(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {

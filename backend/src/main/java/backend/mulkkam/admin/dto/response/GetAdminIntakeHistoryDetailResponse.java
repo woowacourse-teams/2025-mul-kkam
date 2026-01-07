@@ -5,24 +5,24 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public record AdminIntakeHistoryDetailResponse(
+public record GetAdminIntakeHistoryDetailResponse(
         Long id,
         Long memberId,
         String memberNickname,
         LocalDate historyDate,
         Integer targetAmount,
         Integer streak,
-        List<AdminIntakeHistoryDetailItemResponse> details,
+        List<GetAdminIntakeHistoryDetailItemResponse> details,
         LocalDateTime createdAt
 ) {
-    public static AdminIntakeHistoryDetailResponse from(IntakeHistory history) {
-        List<AdminIntakeHistoryDetailItemResponse> details = history.getIntakeHistoryDetails() != null
+    public static GetAdminIntakeHistoryDetailResponse from(IntakeHistory history) {
+        List<GetAdminIntakeHistoryDetailItemResponse> details = history.getIntakeHistoryDetails() != null
                 ? history.getIntakeHistoryDetails().stream()
-                        .map(AdminIntakeHistoryDetailItemResponse::from)
+                        .map(GetAdminIntakeHistoryDetailItemResponse::from)
                         .toList()
                 : List.of();
 
-        return new AdminIntakeHistoryDetailResponse(
+        return new GetAdminIntakeHistoryDetailResponse(
                 history.getId(),
                 history.getMember().getId(),
                 history.getMember().getMemberNickname() != null ? history.getMember().getMemberNickname().value() : null,

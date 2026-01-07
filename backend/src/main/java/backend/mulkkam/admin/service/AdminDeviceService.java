@@ -1,6 +1,6 @@
 package backend.mulkkam.admin.service;
 
-import backend.mulkkam.admin.dto.response.AdminDeviceListResponse;
+import backend.mulkkam.admin.dto.response.GetAdminDeviceListResponse;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class AdminDeviceService {
     private final DeviceRepository deviceRepository;
 
     @Transactional(readOnly = true)
-    public Page<AdminDeviceListResponse> getDevices(Pageable pageable) {
+    public Page<GetAdminDeviceListResponse> getDevices(Pageable pageable) {
         return deviceRepository.findAll(pageable)
-                .map(AdminDeviceListResponse::from);
+                .map(GetAdminDeviceListResponse::from);
     }
 
     @Transactional

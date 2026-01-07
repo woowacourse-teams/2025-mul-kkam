@@ -1,7 +1,8 @@
 package backend.mulkkam.admin.controller;
 
-import backend.mulkkam.admin.dto.response.AdminCupDetailResponse;
-import backend.mulkkam.admin.dto.response.AdminCupListResponse;
+import backend.mulkkam.admin.dto.request.UpdateAdminCupRequest;
+import backend.mulkkam.admin.dto.response.GetAdminCupDetailResponse;
+import backend.mulkkam.admin.dto.response.GetAdminCupListResponse;
 import backend.mulkkam.admin.service.AdminCupService;
 import backend.mulkkam.common.auth.annotation.AuthLevel;
 import backend.mulkkam.common.auth.annotation.RequireAuth;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,7 @@ public class AdminCupController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping
-    public Page<AdminCupListResponse> getCups(
+    public Page<GetAdminCupListResponse> getCups(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -40,11 +42,24 @@ public class AdminCupController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping("/{cupId}")
-    public AdminCupDetailResponse getCup(
+    public GetAdminCupDetailResponse getCup(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PathVariable Long cupId
     ) {
         return adminCupService.getCup(cupId);
+    }
+
+    @Operation(summary = "컵 수정", description = "특정 컵 정보를 수정합니다.")
+    @ApiResponse(responseCode = "204", description = "수정 성공")
+    @RequireAuth(level = AuthLevel.ADMIN)
+    @PutMapping("/{cupId}")
+    public ResponseEntity<Void> updateCup(
+            @Parameter(hidden = true) MemberDetails memberDetails,
+            @PathVariable Long cupId,
+            @Valid @RequestBody UpdateAdminCupRequest request
+    ) {
+        adminCupService.updateCup(cupId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "컵 삭제", description = "특정 컵을 삭제합니다.")

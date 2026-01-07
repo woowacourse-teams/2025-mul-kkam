@@ -3,7 +3,7 @@ package backend.mulkkam.admin.dto.response;
 import backend.mulkkam.device.domain.Device;
 import java.time.LocalDateTime;
 
-public record AdminDeviceListResponse(
+public record GetAdminDeviceListResponse(
         Long id,
         Long memberId,
         String memberNickname,
@@ -11,8 +11,8 @@ public record AdminDeviceListResponse(
         String token,
         LocalDateTime createdAt
 ) {
-    public static AdminDeviceListResponse from(Device device) {
-        return new AdminDeviceListResponse(
+    public static GetAdminDeviceListResponse from(Device device) {
+        return new GetAdminDeviceListResponse(
                 device.getId(),
                 device.getMember().getId(),
                 device.getMember().getMemberNickname() != null ? device.getMember().getMemberNickname().value() : null,

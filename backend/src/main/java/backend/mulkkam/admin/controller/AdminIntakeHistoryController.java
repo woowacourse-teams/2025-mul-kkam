@@ -1,7 +1,8 @@
 package backend.mulkkam.admin.controller;
 
-import backend.mulkkam.admin.dto.response.AdminIntakeHistoryDetailResponse;
-import backend.mulkkam.admin.dto.response.AdminIntakeHistoryListResponse;
+import backend.mulkkam.admin.dto.request.UpdateAdminIntakeHistoryRequest;
+import backend.mulkkam.admin.dto.response.GetAdminIntakeHistoryDetailResponse;
+import backend.mulkkam.admin.dto.response.GetAdminIntakeHistoryListResponse;
 import backend.mulkkam.admin.service.AdminIntakeHistoryService;
 import backend.mulkkam.common.auth.annotation.AuthLevel;
 import backend.mulkkam.common.auth.annotation.RequireAuth;
@@ -10,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +31,7 @@ public class AdminIntakeHistoryController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping
-    public Page<AdminIntakeHistoryListResponse> getIntakeHistories(
+    public Page<GetAdminIntakeHistoryListResponse> getIntakeHistories(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {
@@ -40,11 +42,24 @@ public class AdminIntakeHistoryController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping("/{intakeHistoryId}")
-    public AdminIntakeHistoryDetailResponse getIntakeHistory(
+    public GetAdminIntakeHistoryDetailResponse getIntakeHistory(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PathVariable Long intakeHistoryId
     ) {
         return adminIntakeHistoryService.getIntakeHistory(intakeHistoryId);
+    }
+
+    @Operation(summary = "섭취 기록 수정", description = "특정 섭취 기록의 목표량을 수정합니다.")
+    @ApiResponse(responseCode = "204", description = "수정 성공")
+    @RequireAuth(level = AuthLevel.ADMIN)
+    @PutMapping("/{intakeHistoryId}")
+    public ResponseEntity<Void> updateIntakeHistory(
+            @Parameter(hidden = true) MemberDetails memberDetails,
+            @PathVariable Long intakeHistoryId,
+            @Valid @RequestBody UpdateAdminIntakeHistoryRequest request
+    ) {
+        adminIntakeHistoryService.updateIntakeHistory(intakeHistoryId, request);
+        return ResponseEntity.noContent().build();
     }
 
     @Operation(summary = "섭취 기록 삭제", description = "특정 섭취 기록을 삭제합니다.")

@@ -1,6 +1,6 @@
 package backend.mulkkam.admin.controller;
 
-import backend.mulkkam.admin.dto.response.AdminFriendRelationListResponse;
+import backend.mulkkam.admin.dto.response.GetAdminFriendRelationListResponse;
 import backend.mulkkam.admin.service.AdminFriendRelationService;
 import backend.mulkkam.common.auth.annotation.AuthLevel;
 import backend.mulkkam.common.auth.annotation.RequireAuth;
@@ -28,7 +28,7 @@ public class AdminFriendRelationController {
     @ApiResponse(responseCode = "200", description = "조회 성공")
     @RequireAuth(level = AuthLevel.ADMIN)
     @GetMapping
-    public Page<AdminFriendRelationListResponse> getFriendRelations(
+    public Page<GetAdminFriendRelationListResponse> getFriendRelations(
             @Parameter(hidden = true) MemberDetails memberDetails,
             @PageableDefault(size = 10) Pageable pageable
     ) {

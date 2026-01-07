@@ -1,6 +1,6 @@
 package backend.mulkkam.admin.service;
 
-import backend.mulkkam.admin.dto.response.AdminFriendRelationListResponse;
+import backend.mulkkam.admin.dto.response.GetAdminFriendRelationListResponse;
 import backend.mulkkam.friend.domain.FriendRelation;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +16,9 @@ public class AdminFriendRelationService {
     private final FriendRelationRepository friendRelationRepository;
 
     @Transactional(readOnly = true)
-    public Page<AdminFriendRelationListResponse> getFriendRelations(Pageable pageable) {
+    public Page<GetAdminFriendRelationListResponse> getFriendRelations(Pageable pageable) {
         return friendRelationRepository.findAll(pageable)
-                .map(AdminFriendRelationListResponse::from);
+                .map(GetAdminFriendRelationListResponse::from);
     }
 
     @Transactional

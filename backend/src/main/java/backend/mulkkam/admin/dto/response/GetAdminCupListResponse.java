@@ -4,7 +4,7 @@ import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.IntakeType;
 import java.time.LocalDateTime;
 
-public record AdminCupListResponse(
+public record GetAdminCupListResponse(
         Long id,
         Long memberId,
         String memberNickname,
@@ -15,8 +15,8 @@ public record AdminCupListResponse(
         Long cupEmojiId,
         LocalDateTime createdAt
 ) {
-    public static AdminCupListResponse from(Cup cup) {
-        return new AdminCupListResponse(
+    public static GetAdminCupListResponse from(Cup cup) {
+        return new GetAdminCupListResponse(
                 cup.getId(),
                 cup.getMember().getId(),
                 cup.getMember().getMemberNickname() != null ? cup.getMember().getMemberNickname().value() : null,
