@@ -18,7 +18,7 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
-import com.mulkkam.ui.main.model.MainTab
+import com.mulkkam.ui.main.model.MainTab2
 import com.mulkkam.ui.notification.NotificationActivity
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
@@ -51,7 +51,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         viewModel.checkAppVersion(getAppVersion())
         initBottomNavListener()
         if (savedInstanceState == null) {
-            switchFragment(MainTab.HOME)
+            switchFragment(MainTab2.HOME)
         }
         initDoubleBackToExit()
         initObservers()
@@ -79,7 +79,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
                 NotificationAction.FRIEND_REMINDER -> {
                     if (binding.bnvMain.selectedItemId != R.id.item_home) {
-                        switchFragment(MainTab.HOME)
+                        switchFragment(MainTab2.HOME)
                         binding.bnvMain.selectedItemId = R.id.item_home
                     }
                     viewModel.receiveFriendWaterBalloon()
@@ -94,19 +94,19 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
 
     private fun initBottomNavListener() {
         binding.bnvMain.setOnItemSelectedListener { item ->
-            val menu = MainTab.from(item.itemId) ?: return@setOnItemSelectedListener false
+            val menu = MainTab2.from(item.itemId) ?: return@setOnItemSelectedListener false
             switchFragment(menu)
             true
         }
     }
 
-    private fun switchFragment(targetTab: MainTab) {
+    private fun switchFragment(targetTab: MainTab2) {
         val targetFragment = prepareFragment(targetTab)
 
         showOnlyFragment(targetFragment)
     }
 
-    private fun prepareFragment(targetTab: MainTab): Fragment {
+    private fun prepareFragment(targetTab: MainTab2): Fragment {
         val tag = targetTab.name
         return supportFragmentManager.findFragmentByTag(tag)
             ?: targetTab.create().also { fragment ->

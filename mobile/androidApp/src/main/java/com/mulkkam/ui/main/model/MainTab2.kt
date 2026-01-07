@@ -8,7 +8,7 @@ import com.mulkkam.ui.setting.SettingFragment
 
 // TODO: HomeFragment was migrated to commonMain as pure Compose. Replace with Compose-based navigation.
 
-enum class MainTab(
+enum class MainTab2(
     @IdRes val menuId: Int,
     val create: () -> Fragment,
 ) {
@@ -19,9 +19,9 @@ enum class MainTab(
     SETTING(0, { SettingFragment() }),
     ;
 
-    companion object {
+    companion object Companion {
         fun from(
             @IdRes id: Int,
-        ): MainTab? = entries.find { it.menuId == id }
+        ): MainTab2? = entries.find { it.menuId == id }
     }
 }
