@@ -13,5 +13,5 @@ val localDataSourceModule: Module =
     module {
         single<TokenLocalDataSource> { TokenLocalDataSourceImpl(get()) }
         single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl(get()) }
-        single<MembersLocalDataSource> { MembersLocalDataSourceImpl() }
+        single<MembersLocalDataSource> { MembersLocalDataSourceImpl(get()) }
     }
