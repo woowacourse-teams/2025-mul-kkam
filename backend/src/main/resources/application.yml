@@ -14,6 +14,23 @@ spring:
       hibernate.order_inserts: true
       hibernate.order_updates: true
 
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.amqp.RabbitAutoConfiguration
+
+# RabbitMQ 설정 (rabbitmq.enabled=true 일 때만 활성화)
+rabbitmq:
+  enabled: false  # 기본값: 비활성화
+  exchange:
+    notification: notification.exchange
+  queue:
+    notification:
+      main: notification.queue
+      retry: notification.queue.retry
+      dlq: notification.queue.dlq
+  routing-key:
+    notification: notification.routing-key
+
 management:
   metrics:
     enable:

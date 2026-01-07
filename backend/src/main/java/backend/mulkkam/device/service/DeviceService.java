@@ -43,6 +43,11 @@ public class DeviceService {
                 memberAndDeviceUuidDetails.deviceUuid());
     }
 
+    @Transactional
+    public void deleteByMemberIdAndToken(Long memberId, String token) {
+        deviceRepository.deleteByMemberIdAndToken(memberId, token);
+    }
+
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
