@@ -9,4 +9,4 @@ ALTER TABLE member
     MODIFY COLUMN member_role VARCHAR(20) NOT NULL;
 
 ALTER TABLE member
-    ALTER COLUMN member_role SET DEFAULT 'MEMBER';
+    ALTER COLUMN member_role SET DEFAULT 'NONE';
