@@ -17,17 +17,19 @@ import coil3.request.crossfade
 import coil3.size.Scale
 import coil3.svg.SvgDecoder
 import com.mulkkam.ui.util.ImageShape
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.img_placeholder
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 private val SVG_REGEX = Regex("(?i)\\.svg(\\?.*)?$")
 
 @Composable
-fun NetworkImage(
+fun CommonNetworkImage(
     url: String?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
-    placeholderRes: DrawableResource,
+    placeholderRes: DrawableResource = Res.drawable.img_placeholder,
     errorRes: DrawableResource? = null,
     shape: ImageShape = ImageShape.None,
     scale: Scale = Scale.FIT,
