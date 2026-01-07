@@ -1,5 +1,6 @@
 package com.mulkkam.data.remote.datasource
 
+import com.mulkkam.data.remote.api.safeApiCall
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
@@ -7,51 +8,83 @@ import com.mulkkam.data.remote.model.response.intake.IntakeHistoryResultResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeHistorySummaryResponse
 import com.mulkkam.data.remote.model.response.intake.IntakeTargetAmountResponse
 import com.mulkkam.data.remote.model.response.intake.ReadAchievementRatesResponse
+import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.patch
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-// TODO: DataSource 구현 필요
-class IntakeRemoteDataSourceImpl : IntakeRemoteDataSource {
+class IntakeRemoteDataSourceImpl(
+    private val httpClient: HttpClient,
+) : IntakeRemoteDataSource {
     override suspend fun getIntakeHistory(
         from: String,
         to: String,
-    ): Result<List<IntakeHistorySummaryResponse>> {
-        TODO("Not yet implemented")
-    }
+    ): Result<List<IntakeHistorySummaryResponse>> =
+        safeApiCall {
+            httpClient.get("/intake/history") {
+                parameter("from", from)
+                parameter("to", to)
+            }
+        }
 
     override suspend fun getAchievementRates(
         from: String,
         to: String,
-    ): Result<ReadAchievementRatesResponse> {
-        TODO("Not yet implemented")
-    }
+    ): Result<ReadAchievementRatesResponse> =
+        safeApiCall {
+            httpClient.get("/intake/history/achievement-rates") {
+                parameter("from", from)
+                parameter("to", to)
+            }
+        }
 
-    override suspend fun postIntakeHistoryInput(intakeHistory: IntakeHistoryInputRequest): Result<IntakeHistoryResultResponse> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun postIntakeHistoryInput(intakeHistory: IntakeHistoryInputRequest): Result<IntakeHistoryResultResponse> =
+        safeApiCall {
+            httpClient.post("/intake/history/input") {
+                setBody(intakeHistory)
+            }
+        }
 
-    override suspend fun postIntakeHistoryCup(intakeHistory: IntakeHistoryCupRequest): Result<IntakeHistoryResultResponse> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun postIntakeHistoryCup(intakeHistory: IntakeHistoryCupRequest): Result<IntakeHistoryResultResponse> =
+        safeApiCall {
+            httpClient.post("/intake/history/cup") {
+                setBody(intakeHistory)
+            }
+        }
 
-    override suspend fun patchIntakeTarget(intakeAmount: IntakeAmountRequest): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun patchIntakeTarget(intakeAmount: IntakeAmountRequest): Result<Unit> =
+        safeApiCall {
+            httpClient.patch("/intake/amount/target") {
+                setBody(intakeAmount)
+            }
+        }
 
-    override suspend fun getIntakeTarget(): Result<IntakeTargetAmountResponse> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getIntakeTarget(): Result<IntakeTargetAmountResponse> =
+        safeApiCall {
+            httpClient.get("/intake/amount/target")
+        }
 
-    override suspend fun getIntakeAmountRecommended(): Result<IntakeTargetAmountResponse> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun getIntakeAmountRecommended(): Result<IntakeTargetAmountResponse> =
+        safeApiCall {
+            httpClient.get("/intake/amount/recommended")
+        }
 
     override suspend fun getIntakeAmountTargetRecommended(
         gender: String?,
         weight: Double?,
-    ): Result<IntakeTargetAmountResponse> {
-        TODO("Not yet implemented")
-    }
+    ): Result<IntakeTargetAmountResponse> =
+        safeApiCall {
+            httpClient.get("/intake/amount/target/recommended") {
+                parameter("gender", gender)
+                parameter("weight", weight)
+            }
+        }
 
-    override suspend fun deleteIntakeHistoryDetails(id: Int): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deleteIntakeHistoryDetails(id: Int): Result<Unit> =
+        safeApiCall {
+            httpClient.delete("/intake/history/details/$id")
+        }
 }

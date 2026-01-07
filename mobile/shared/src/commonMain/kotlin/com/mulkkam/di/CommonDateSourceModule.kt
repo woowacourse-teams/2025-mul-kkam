@@ -27,7 +27,7 @@ val commonDataSourceModule =
         single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl() }
         single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl(get()) }
         single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl() }
-        single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl() }
+        single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl(get()) }
         single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl() }
         single<NicknameRemoteDataSource> { NicknameRemoteDataSourceImpl() }
         single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl() }
