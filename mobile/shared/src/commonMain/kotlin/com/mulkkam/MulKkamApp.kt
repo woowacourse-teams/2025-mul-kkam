@@ -7,6 +7,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.main.component.MainBottomNavigationBar
 import com.mulkkam.ui.main.model.MainTab
@@ -24,28 +25,30 @@ fun MulKkamApp() {
         derivedStateOf { currentTab != null }
     }
 
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = White,
-        bottomBar = {
-            if (showBottomNavigationBar) {
-                MainBottomNavigationBar(
-                    selectedTab = currentTab ?: MainTab.DEFAULT,
-                    onTabSelected = { tab ->
-                        when (tab) {
-                            MainTab.HOME -> navigator.navigateToHome()
-                            MainTab.HISTORY -> navigator.navigateToHistory()
-                            MainTab.FRIENDS -> navigator.navigateToFriends()
-                            MainTab.SETTING -> navigator.navigateToSetting()
-                        }
-                    },
-                )
-            }
-        },
-    ) { innerPadding ->
-        MainNavHost(
-            navigator = navigator,
-            padding = innerPadding,
-        )
+    MulKkamTheme {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            containerColor = White,
+            bottomBar = {
+                if (showBottomNavigationBar) {
+                    MainBottomNavigationBar(
+                        selectedTab = currentTab ?: MainTab.DEFAULT,
+                        onTabSelected = { tab ->
+                            when (tab) {
+                                MainTab.HOME -> navigator.navigateToHome()
+                                MainTab.HISTORY -> navigator.navigateToHistory()
+                                MainTab.FRIENDS -> navigator.navigateToFriends()
+                                MainTab.SETTING -> navigator.navigateToSetting()
+                            }
+                        },
+                    )
+                }
+            },
+        ) { innerPadding ->
+            MainNavHost(
+                navigator = navigator,
+                padding = innerPadding,
+            )
+        }
     }
 }

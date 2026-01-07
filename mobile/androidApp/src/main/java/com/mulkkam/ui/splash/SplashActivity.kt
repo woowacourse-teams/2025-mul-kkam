@@ -5,16 +5,13 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.MulKkamApp
-import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulKkamTheme {
-                MulKkamApp()
-            }
+            MulKkamApp()
         }
     }
 }
