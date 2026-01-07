@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.logger.Logger
-import com.mulkkam.domain.login.LoginPlatform
 import com.mulkkam.domain.model.UserAuthState
 import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
 import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
@@ -28,6 +27,11 @@ actual fun LoginRoute(
     padding: PaddingValues,
     onNavigateToOnboarding: () -> Unit,
     onNavigateToMain: () -> Unit,
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
     viewModel: LoginViewModel,
 ) {
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
@@ -62,22 +66,22 @@ actual fun LoginRoute(
         LoginScreen(
             padding = padding,
             onLoginClick = { authPlatform ->
-                when (authPlatform) {
-                    AuthPlatform.KAKAO -> {
-                        LoginPlatform.provider?.loginWithKakao(
-                            onSuccess = { token -> viewModel.loginWithKakao(token = token) },
-                            onFailure = { error ->
-                                logger.error(
-                                    LogEvent.USER_AUTH,
-                                    "Kakao Login Failed: $error",
-                                )
-                            },
-                        )
+                val onSuccess: (token: String) -> Unit =
+                    when (authPlatform) {
+                        AuthPlatform.KAKAO -> viewModel::loginWithKakao
+                        AuthPlatform.APPLE -> { _ -> /* TODO */ }
                     }
 
-                    // TODO: Apple 로그인 기능 구현
-                    AuthPlatform.APPLE -> Unit
-                }
+                onLogin(
+                    authPlatform,
+                    { token -> onSuccess(token) },
+                    { error ->
+                        logger.error(
+                            LogEvent.USER_AUTH,
+                            "${authPlatform.name} Login Failed: $error",
+                        )
+                    },
+                )
             },
             snackbarHostState = snackbarHostState,
             isLoginLoading = isLoginLoading,
