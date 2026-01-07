@@ -9,4 +9,5 @@ enum class SettingType {
     PUSH_NOTIFICATION,
     FEEDBACK,
     TERMS,
+    REMINDER,
 }

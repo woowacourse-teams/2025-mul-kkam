@@ -6,11 +6,19 @@ import android.os.Bundle
 import androidx.core.net.toUri
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingFeedbackBinding
+import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.getAppearanceSpannable
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class SettingFeedbackActivity : BindingActivity<ActivitySettingFeedbackBinding>(ActivitySettingFeedbackBinding::inflate) {
+    @Inject
+    lateinit var logger: Logger
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,6 +37,7 @@ class SettingFeedbackActivity : BindingActivity<ActivitySettingFeedbackBinding>(
 
     private fun initClickListeners() {
         binding.tvEmail.setSingleClickListener {
+            logger.info(LogEvent.USER_ACTION, "Opened feedback email link")
             val intent =
                 Intent(
                     Intent.ACTION_VIEW,

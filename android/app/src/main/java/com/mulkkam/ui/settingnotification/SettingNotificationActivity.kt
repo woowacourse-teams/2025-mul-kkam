@@ -16,10 +16,12 @@ import com.mulkkam.ui.settingnotification.adapter.SettingNotificationItem
 import com.mulkkam.ui.settingnotification.model.SettingNotificationType
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+@AndroidEntryPoint
 class SettingNotificationActivity : BindingActivity<ActivitySettingNotificationBinding>(ActivitySettingNotificationBinding::inflate) {
     private val viewModel: SettingNotificationViewModel by viewModels()
 

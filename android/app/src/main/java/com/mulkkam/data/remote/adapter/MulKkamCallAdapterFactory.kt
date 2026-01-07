@@ -5,7 +5,6 @@ import retrofit2.CallAdapter
 import retrofit2.Retrofit
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.Result
 
 /**
  * Retrofit에서 Call<Result<T>> 형태의 응답을 처리하기 위한 CallAdapter.Factory 구현체입니다.

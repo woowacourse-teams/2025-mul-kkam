@@ -9,6 +9,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.commit
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityOnboardingBinding
+import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
 import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.model.MulKkamUiState
@@ -16,9 +18,15 @@ import com.mulkkam.ui.onboarding.dialog.CompleteDialogFragment
 import com.mulkkam.ui.onboarding.terms.TermsAgreementFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOnboardingBinding::inflate) {
     private val viewModel: OnboardingViewModel by viewModels()
+
+    @Inject
+    lateinit var logger: Logger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +37,8 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
             add(R.id.fcv_onboarding, TermsAgreementFragment::class.java, null, OnboardingStep.TERMS.name)
             viewModel.updateOnboardingState(OnboardingStep.TERMS)
         }
+
+        logger.info(LogEvent.ONBOARDING, "Entered onboarding flow")
 
         initProgressBarView()
         initClickListeners()
@@ -48,6 +58,7 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
 
     private fun initClickListeners() {
         binding.tvSkip.setSingleClickListener {
+            logger.info(LogEvent.ONBOARDING, "Onboarding skip tapped")
             viewModel.clearBioInfo()
             viewModel.moveToNextStep()
         }
@@ -73,6 +84,10 @@ class OnboardingActivity : BindingActivity<ActivityOnboardingBinding>(ActivityOn
     }
 
     private fun navigateToStep(step: OnboardingStep) {
+        logger.info(
+            LogEvent.ONBOARDING,
+            "Navigating to onboarding step ${step.name}",
+        )
         binding.viewOnboardingProgress.setProgress(step.ordinal + OFFSET_STEP_ORDINAL)
         if (supportFragmentManager.findFragmentByTag(step.name) == null) {
             supportFragmentManager.commit {

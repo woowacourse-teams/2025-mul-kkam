@@ -16,7 +16,7 @@ fun String.getAppearanceSpannable(
     val spannable = SpannableString(this)
 
     highlightedText.forEach { target ->
-        var startIndex = this.indexOf(target)
+        val startIndex = this.indexOf(target)
         if (startIndex != -1) {
             spannable.setSpan(
                 TextAppearanceSpan(context, typographyResId),
@@ -39,7 +39,7 @@ fun String.getColoredSpannable(
     val spannable = SpannableString(this)
 
     highlightedText.forEach { target ->
-        var startIndex = this.indexOf(target)
+        val startIndex = this.indexOf(target)
         if (startIndex != -1) {
             spannable.setSpan(
                 ForegroundColorSpan(color),
@@ -74,3 +74,10 @@ fun SpannableString.getColoredSpannable(
 
     return this
 }
+
+fun String.sanitizeLeadingZeros(): String =
+    if (length > 1 && startsWith("0")) {
+        this.trimStart('0').ifEmpty { "0" }
+    } else {
+        this
+    }

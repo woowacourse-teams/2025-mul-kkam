@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class AuthRequest(
     @SerialName("oauthAccessToken")
     val oauthAccessToken: String,
+    @SerialName("deviceUuid")
+    val deviceUuid: String,
 )

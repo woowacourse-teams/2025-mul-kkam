@@ -8,14 +8,15 @@ import com.mulkkam.R
 import com.mulkkam.databinding.ActivitySettingAccountInfoBinding
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.login.LoginActivity
-import com.mulkkam.ui.main.MainActivity
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoAdapter
 import com.mulkkam.ui.settingaccountinfo.adapter.AccountInfoViewHolder
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountDeleteDialogFragment
 import com.mulkkam.ui.settingaccountinfo.dialog.AccountLogoutDialogFragment
 import com.mulkkam.ui.util.binding.BindingActivity
 import com.mulkkam.ui.util.extensions.setSingleClickListener
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBinding>(ActivitySettingAccountInfoBinding::inflate) {
     private val viewModel: SettingAccountInfoViewModel by viewModels()
 
@@ -58,18 +59,14 @@ class SettingAccountInfoActivity : BindingActivity<ActivitySettingAccountInfoBin
         viewModel.onDeleteAccount.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_delete_success))
-                .apply {
-                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                }.show()
+                .show()
             moveToLogin()
         }
 
         viewModel.onLogout.observe(this) {
             CustomToast
                 .makeText(this, getString(R.string.setting_account_info_logout_success))
-                .apply {
-                    setGravityY(MainActivity.TOAST_BOTTOM_NAV_OFFSET)
-                }.show()
+                .show()
             moveToLogin()
         }
     }

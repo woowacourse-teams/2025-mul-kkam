@@ -141,15 +141,6 @@ jobs:
           sudo docker rm -f "$CONTAINER" || true
           echo "Rolled back to previous version"
 
-      - name: Stop the other color
-        working-directory: /home/ubuntu/mulkkam
-        run: |
-          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
-          sudo docker rm -f "$OLD" || true
-
-      - name: Prune old dangling images
-        run: sudo docker image prune -f || true
-
       - name: Switch Nginx upstream
         run: |
           if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
@@ -159,3 +150,12 @@ jobs:
           sudo nginx -t
           sudo systemctl reload nginx
           NGINX_EOF
+
+      - name: Stop the other color
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
+          sudo docker rm -f "$OLD" || true
+
+      - name: Prune old dangling images
+        run: sudo docker image prune -f || true

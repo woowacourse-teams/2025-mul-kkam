@@ -2,10 +2,12 @@ package com.mulkkam.data.remote.model.error
 
 import com.mulkkam.data.remote.model.error.ResponseError.AccountError
 import com.mulkkam.data.remote.model.error.ResponseError.DatabaseError
+import com.mulkkam.data.remote.model.error.ResponseError.FriendsError
 import com.mulkkam.data.remote.model.error.ResponseError.HistoryError
 import com.mulkkam.data.remote.model.error.ResponseError.NetworkUnavailable
 import com.mulkkam.data.remote.model.error.ResponseError.NicknameError
 import com.mulkkam.data.remote.model.error.ResponseError.NotFoundError
+import com.mulkkam.data.remote.model.error.ResponseError.ReminderError
 import com.mulkkam.data.remote.model.error.ResponseError.SettingCupsError
 import com.mulkkam.data.remote.model.error.ResponseError.Unknown
 import com.mulkkam.domain.model.result.MulKkamError
@@ -67,6 +69,14 @@ sealed class ResponseError(
         data object Unauthorized : AccountError("Unauthorized") {
             private fun readResolve(): Any = Unauthorized
         }
+
+        data object RefreshTokenExpired : AccountError("REFRESH_TOKEN_IS_EXPIRED") {
+            private fun readResolve(): Any = RefreshTokenExpired
+        }
+
+        data object RefreshTokenAlreadyUsed : AccountError("REFRESH_TOKEN_ALREADY_USED") {
+            private fun readResolve(): Any = RefreshTokenAlreadyUsed
+        }
     }
 
     // 기록 관련 에러
@@ -82,11 +92,33 @@ sealed class ResponseError(
         }
     }
 
+    // 친구 관련 에러
+    sealed class FriendsError(
+        code: String,
+    ) : ResponseError(code) {
+        data object ReminderLimitExceeded : FriendsError("EXCEED_FRIEND_REMINDER_LIMIT") {
+            private fun readResolve(): Any = ReminderLimitExceeded
+        }
+    }
+
+    // 리마인더 관련 에러
+    sealed class ReminderError(
+        code: String,
+    ) : ResponseError(code) {
+        data object DuplicatedReminderSchedule : ReminderError("DUPLICATED_REMINDER_SCHEDULE") {
+            private fun readResolve(): Any = DuplicatedReminderSchedule
+        }
+    }
+
     sealed class NotFoundError(
         code: String,
     ) : ResponseError(code) {
         data object Member : NotFoundError("NOT_FOUND_MEMBER") {
             private fun readResolve(): Any = Member
+        }
+
+        data object Friend : NotFoundError("NOT_FOUND_FRIEND") {
+            private fun readResolve(): Any = Friend
         }
 
         data object Cup : NotFoundError("NOT_FOUND_CUP") {
@@ -128,12 +160,22 @@ sealed class ResponseError(
                 // Account
                 AccountError.NotExistUser.code -> AccountError.NotExistUser
                 AccountError.InvalidToken.code -> AccountError.InvalidToken
+                AccountError.Unauthorized.code -> AccountError.Unauthorized
+                AccountError.RefreshTokenExpired.code -> AccountError.RefreshTokenExpired
+                AccountError.RefreshTokenAlreadyUsed.code -> AccountError.RefreshTokenAlreadyUsed
 
                 // History
                 HistoryError.InvalidDateRange.code -> HistoryError.InvalidDateRange
 
+                // Friends
+                FriendsError.ReminderLimitExceeded.code -> FriendsError.ReminderLimitExceeded
+
+                // Reminder
+                ReminderError.DuplicatedReminderSchedule.code -> ReminderError.DuplicatedReminderSchedule
+
                 // NotFound
                 NotFoundError.Member.code -> NotFoundError.Member
+                NotFoundError.Friend.code -> NotFoundError.Friend
                 NotFoundError.Cup.code -> NotFoundError.Cup
                 NotFoundError.IntakeType.code -> NotFoundError.IntakeType
 
@@ -156,19 +198,29 @@ fun ResponseError.toDomain(): MulKkamError =
         // SettingCups
         SettingCupsError.InvalidCount -> MulKkamError.SettingCupsError.InvalidCount
         SettingCupsError.InvalidAmount -> MulKkamError.SettingCupsError.InvalidAmount
-        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNickname
+        SettingCupsError.InvalidNickname -> MulKkamError.SettingCupsError.InvalidNicknameLength
         SettingCupsError.InvalidRankValue -> MulKkamError.SettingCupsError.InvalidRankValue
 
         // Account
         AccountError.NotExistUser -> MulKkamError.AccountError.NotExistUser
         AccountError.InvalidToken -> MulKkamError.AccountError.InvalidToken
+        AccountError.Unauthorized -> MulKkamError.AccountError.Unauthorized
+        AccountError.RefreshTokenExpired -> MulKkamError.AccountError.RefreshTokenExpired
+        AccountError.RefreshTokenAlreadyUsed -> MulKkamError.AccountError.RefreshTokenAlreadyUsed
 
         // History
         HistoryError.InvalidDateRange -> MulKkamError.HistoryError.InvalidDateRange
         HistoryError.InvalidDateForDelete -> MulKkamError.HistoryError.InvalidDateForDelete
 
+        // Friends
+        FriendsError.ReminderLimitExceeded -> MulKkamError.FriendsError.ReminderLimitExceeded
+
+        // Reminder
+        ReminderError.DuplicatedReminderSchedule -> MulKkamError.ReminderError.DuplicatedReminderSchedule
+
         // NotFound
         NotFoundError.Member -> MulKkamError.NotFoundError.Member
+        NotFoundError.Friend -> MulKkamError.NotFoundError.Friend
         NotFoundError.Cup -> MulKkamError.NotFoundError.Cup
         NotFoundError.IntakeType -> MulKkamError.NotFoundError.IntakeType
 

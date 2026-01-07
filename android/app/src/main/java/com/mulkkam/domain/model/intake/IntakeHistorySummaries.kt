@@ -9,7 +9,8 @@ data class IntakeHistorySummaries(
 
     val lastDay: LocalDate get() = intakeHistorySummaries.last().date
 
-    val isCurrentYear: Boolean get() = firstDay.year == LocalDate.now().year && lastDay.year == LocalDate.now().year
+    fun isCurrentYear(currentDate: LocalDate = LocalDate.now()): Boolean =
+        firstDay.year == currentDate.year && lastDay.year == currentDate.year
 
     fun getByDateOrEmpty(targetDate: LocalDate): IntakeHistorySummary =
         intakeHistorySummaries.find { it.date == targetDate }

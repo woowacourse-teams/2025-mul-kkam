@@ -2,6 +2,7 @@ package com.mulkkam.ui.custom.progress
 
 import android.animation.ValueAnimator
 import android.content.Context
+import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
@@ -9,6 +10,8 @@ import android.graphics.SweepGradient
 import android.util.AttributeSet
 import android.view.View
 import androidx.annotation.ColorRes
+import com.mulkkam.R
+import com.mulkkam.ui.util.extensions.snapshot
 import kotlin.math.min
 
 class GradientDonutChartView(
@@ -24,6 +27,7 @@ class GradientDonutChartView(
     private val backgroundPaint =
         Paint(Paint.ANTI_ALIAS_FLAG).apply {
             style = Paint.Style.STROKE
+            paint.strokeCap = Paint.Cap.ROUND
             strokeWidth = strokePx
         }
 
@@ -62,11 +66,16 @@ class GradientDonutChartView(
     }
 
     fun setProgress(targetProgress: Float) {
+        progress = targetProgress
+    }
+
+    fun setProgressWithAnimation(targetProgress: Float) {
         val animator =
             ValueAnimator.ofFloat(progress, targetProgress).apply {
                 this.duration = ANIMATION_DURATION_MS
                 addUpdateListener {
-                    progress = it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
+                    progress =
+                        it.animatedValue.toString().toFloatOrNull() ?: return@addUpdateListener
                     invalidate()
                 }
             }
@@ -109,5 +118,33 @@ class GradientDonutChartView(
         private const val CHART_STROKE_DEFAULT_DP: Float = 0f
 
         private const val ANIMATION_DURATION_MS: Long = 600L
+
+        fun createBitmap(
+            context: Context,
+            width: Int = 300,
+            height: Int = 300,
+            stroke: Float = 10f,
+            progress: Float,
+            @ColorRes backgroundColor: Int = R.color.gray_10,
+            @ColorRes paintColor: Int = R.color.primary_50,
+        ): Bitmap {
+            val donutView =
+                GradientDonutChartView(context).apply {
+                    layoutParams = android.view.ViewGroup.LayoutParams(width, height)
+                    setStroke(stroke)
+                    setBackgroundPaintColor(backgroundColor)
+                    setPaintColor(paintColor)
+                    setProgress(progress)
+                    invalidate()
+                }
+
+            donutView.measure(
+                MeasureSpec.makeMeasureSpec(width, MeasureSpec.EXACTLY),
+                MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY),
+            )
+            donutView.layout(0, 0, donutView.measuredWidth, donutView.measuredHeight)
+
+            return donutView.snapshot()
+        }
     }
 }

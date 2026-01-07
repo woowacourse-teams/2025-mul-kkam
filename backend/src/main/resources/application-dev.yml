@@ -69,7 +69,7 @@ management:
   cloudwatch:
     metrics:
       export:
-        enabled: true
+        enabled: false
         step: 1m
         namespace: Mulkkam/Dev
 

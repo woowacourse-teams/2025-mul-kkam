@@ -3,6 +3,7 @@ package com.mulkkam.data.remote.model.response.members
 import com.mulkkam.domain.model.bio.BioWeight
 import com.mulkkam.domain.model.bio.Gender
 import com.mulkkam.domain.model.members.MemberInfo
+import com.mulkkam.domain.model.members.Nickname
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -22,7 +23,7 @@ data class MembersResponse(
 
 fun MembersResponse.toDomain(): MemberInfo =
     MemberInfo(
-        nickname = nickname,
+        nickname = Nickname(nickname),
         weight = weight?.toInt()?.let { BioWeight(it) },
         gender = gender?.let { Gender.from(it) },
         targetAmount = targetAmount,

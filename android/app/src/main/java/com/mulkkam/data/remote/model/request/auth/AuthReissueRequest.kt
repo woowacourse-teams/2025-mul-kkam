@@ -7,4 +7,6 @@ import kotlinx.serialization.Serializable
 data class AuthReissueRequest(
     @SerialName("refreshToken")
     val refreshToken: String,
+    @SerialName("deviceUuid")
+    val deviceUuid: String,
 )

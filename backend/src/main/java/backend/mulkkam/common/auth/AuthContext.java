@@ -19,7 +19,7 @@ public class AuthContext {
         if (memberId == null || role == MemberRole.NONE) {
             throw new CommonException(ForbiddenErrorCode.NOT_PERMITTED_FOR_ROLE);
         }
-        request.setAttribute("memberDetails", new MemberDetails(memberId, role));
+        request.setAttribute("member_details", new MemberDetails(memberId, role));
         return true;
     }
 
@@ -29,7 +29,7 @@ public class AuthContext {
         if (accountId == null || deviceUuid == null || deviceUuid.isBlank()) {
             throw new CommonException(ForbiddenErrorCode.NOT_PERMITTED_FOR_ROLE);
         }
-        request.setAttribute("oauthAccountDetails", new OauthAccountDetails(accountId, deviceUuid));
+        request.setAttribute("oauth_account_details", new OauthAccountDetails(accountId, deviceUuid));
         return true;
     }
 
@@ -43,7 +43,7 @@ public class AuthContext {
         if (!memberRole.isAdmin()) {
             throw new CommonException(ForbiddenErrorCode.NOT_PERMITTED_FOR_ROLE);
         }
-        request.setAttribute("memberDetails", new MemberDetails(memberId, memberRole));
+        request.setAttribute("member_details", new MemberDetails(memberId, memberRole));
         return true;
     }
 }

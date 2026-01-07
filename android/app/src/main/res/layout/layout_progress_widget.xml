@@ -1,0 +1,37 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:id="@+id/main"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_common_rectangle_12dp"
+    android:backgroundTint="@color/white_widget_bg"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_marginHorizontal="16dp">
+
+        <ImageView
+            android:id="@+id/iv_donut_chart"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageView
+            android:id="@+id/iv_character"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginHorizontal="18dp"
+            android:src="@drawable/img_widget_character" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tv_achievement_rate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="12dp"
+        android:textAppearance="@style/body1"
+        android:textColor="@color/gray_400" />
+</FrameLayout>

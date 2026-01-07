@@ -34,7 +34,7 @@ class MemberResolverTest {
             MemberDetails memberDetails = new MemberDetails(memberId, MemberRole.MEMBER);
 
             MockHttpServletRequest servletRequest = new MockHttpServletRequest();
-            servletRequest.setAttribute("memberDetails", memberDetails);
+            servletRequest.setAttribute("member_details", memberDetails);
             NativeWebRequest webRequest = new ServletWebRequest(servletRequest);
 
             // when
