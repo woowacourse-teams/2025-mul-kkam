@@ -20,7 +20,7 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 
 @Composable
-fun SaveButton(
+fun SaveButton2(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
@@ -52,9 +52,9 @@ fun SaveButton(
 
 @Preview(showBackground = true)
 @Composable
-private fun SaveButtonPreview() {
+private fun SaveButtonPreview2() {
     MulKkamTheme {
-        SaveButton(
+        SaveButton2(
             onClick = {},
         )
     }

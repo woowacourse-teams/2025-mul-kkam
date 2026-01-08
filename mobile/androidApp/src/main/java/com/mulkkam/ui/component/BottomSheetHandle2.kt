@@ -16,7 +16,7 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 
 @Composable
-fun BottomSheetHandle() {
+fun BottomSheetHandle2() {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -33,8 +33,8 @@ fun BottomSheetHandle() {
 
 @Preview(showBackground = true)
 @Composable
-private fun BottomSheetHandlePreview() {
+private fun BottomSheetHandlePreview2() {
     MulKkamTheme {
-        BottomSheetHandle()
+        BottomSheetHandle2()
     }
 }

@@ -9,7 +9,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 
 @Composable
-fun ColoredText(
+fun ColoredText2(
     fullText: String,
     highlightedTexts: List<String>,
     highlightColor: Color,

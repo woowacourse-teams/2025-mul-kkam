@@ -28,7 +28,7 @@ import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 
 @Composable
-fun RoundedSwitch(
+fun RoundedSwitch2(
     checked: Boolean,
     onCheckedChange: (checked: Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -64,10 +64,10 @@ fun RoundedSwitch(
 
 @Preview(showBackground = true)
 @Composable
-private fun CustomSwitchPreview() {
+private fun CustomSwitchPreview2() {
     var isChecked by remember { mutableStateOf(false) }
 
-    RoundedSwitch(
+    RoundedSwitch2(
         checked = isChecked,
         onCheckedChange = { isChecked = !isChecked },
     )

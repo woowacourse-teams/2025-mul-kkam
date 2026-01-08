@@ -30,7 +30,7 @@ import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
 
 @Composable
-fun CustomNumberPicker(
+fun CustomNumberPicker2(
     range: IntRange,
     value: Int,
     onValueChange: (Int) -> Unit,
@@ -61,7 +61,7 @@ fun CustomNumberPicker(
         LazyColumn(
             state = listState,
             horizontalAlignment = Alignment.CenterHorizontally,
-            flingBehavior = snapFlingBehavior(listState),
+            flingBehavior = snapFlingBehavior2(listState),
         ) {
             items(centerIndexOffset) {
                 Spacer(modifier = Modifier.height(itemHeight))
@@ -102,7 +102,7 @@ fun CustomNumberPicker(
 }
 
 @Composable
-fun snapFlingBehavior(listState: LazyListState): FlingBehavior =
+fun snapFlingBehavior2(listState: LazyListState): FlingBehavior =
     rememberSnapFlingBehavior(
         lazyListState = listState,
         snapPosition = SnapPosition.Center,
@@ -110,9 +110,9 @@ fun snapFlingBehavior(listState: LazyListState): FlingBehavior =
 
 @Preview(showBackground = true)
 @Composable
-private fun NumberPickerPreview() {
+private fun NumberPickerPreview2() {
     MulKkamTheme {
-        CustomNumberPicker(
+        CustomNumberPicker2(
             range = IntRange(1, 10),
             value = 6,
             onValueChange = {},

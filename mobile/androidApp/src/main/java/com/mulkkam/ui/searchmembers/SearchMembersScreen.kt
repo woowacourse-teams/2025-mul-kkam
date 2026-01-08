@@ -35,9 +35,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
-import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.MulKkamTextField
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamSnackbarHost2
+import com.mulkkam.ui.component.MulKkamTextField2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -106,7 +106,7 @@ fun SearchMembersScreen(
         topBar = { SearchMembersTopAppBar(navigateToBack) },
         containerColor = White,
         modifier = Modifier.systemBarsPadding(),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = { MulKkamSnackbarHost2(hostState = snackbarHostState) },
     ) { innerPadding ->
         if (showDialog) {
             val memberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
@@ -130,7 +130,7 @@ fun SearchMembersScreen(
         Column(
             modifier = Modifier.padding(innerPadding),
         ) {
-            MulKkamTextField(
+            MulKkamTextField2(
                 value = name,
                 onValueChanged = { viewModel.updateName(it) },
                 modifier =
@@ -138,9 +138,9 @@ fun SearchMembersScreen(
                         .fillMaxWidth()
                         .padding(24.dp)
                         .height(44.dp),
-                prefix = {
+                prefix = { prefixModifier ->
                     Icon(
-                        modifier = it,
+                        modifier = prefixModifier,
                         painter = painterResource(R.drawable.ic_search_friends_search),
                         contentDescription = null,
                         tint = Gray300,
@@ -199,7 +199,7 @@ private fun handleRequestFriendsAction(
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = getString(context, R.string.search_friends_request_success),
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )
@@ -208,7 +208,7 @@ private fun handleRequestFriendsAction(
 
         is MulKkamUiState.Failure -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = getString(context, R.string.search_friends_request_failed),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -229,7 +229,7 @@ private fun handleAcceptFriendsAction(
     when (state) {
         is MulKkamUiState.Success<String> -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message =
                         context.getString(
                             R.string.search_friends_accept_success,

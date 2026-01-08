@@ -26,13 +26,13 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 
 @Composable
-fun MulKkamTextField(
+fun MulKkamTextField2(
     value: String,
     onValueChanged: (String) -> Unit,
     modifier: Modifier = Modifier,
     maxLength: Int = Int.MAX_VALUE,
     placeHolder: String = "",
-    state: MulKkamTextFieldState = MulKkamTextFieldState.NORMAL,
+    state: MulKkamTextFieldState2 = MulKkamTextFieldState2.NORMAL,
     prefix: @Composable (Modifier) -> Unit = {},
     suffix: @Composable (Modifier) -> Unit = {},
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
@@ -45,7 +45,7 @@ fun MulKkamTextField(
                 .background(Color.White, shape = RoundedCornerShape(8.dp))
                 .border(
                     width = 1.dp,
-                    color = MulKkamTextFieldState.getBorderColor(state),
+                    color = MulKkamTextFieldState2.getBorderColor(state),
                     shape = RoundedCornerShape(8.dp),
                 ).padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
@@ -85,14 +85,14 @@ fun MulKkamTextField(
     }
 }
 
-enum class MulKkamTextFieldState {
+enum class MulKkamTextFieldState2 {
     VALID,
     NORMAL,
     ERROR,
     ;
 
     companion object {
-        fun getBorderColor(state: MulKkamTextFieldState): Color =
+        fun getBorderColor(state: MulKkamTextFieldState2): Color =
             when (state) {
                 VALID -> Primary200
                 NORMAL -> Gray400
@@ -103,9 +103,9 @@ enum class MulKkamTextFieldState {
 
 @Preview(showBackground = true, name = "텍스트 필드가 비어 있는 경우")
 @Composable
-private fun MulKkamTextFieldPreview() {
+private fun MulKkamTextFieldPreview2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
@@ -115,52 +115,52 @@ private fun MulKkamTextFieldPreview() {
 
 @Preview(showBackground = true, name = "텍스트 필드가 NORMAL 상태인 경우")
 @Composable
-private fun MulKkamTextFieldPreview_Normal() {
+private fun MulKkamTextFieldPreview_Normal2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "돈가스먹는환노",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
-            state = MulKkamTextFieldState.NORMAL,
+            state = MulKkamTextFieldState2.NORMAL,
         )
     }
 }
 
 @Preview(showBackground = true, name = "텍스트 필드가 ERROR 상태인 경우")
 @Composable
-private fun MulKkamTextFieldPreview_Error() {
+private fun MulKkamTextFieldPreview_Error2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "돈가스안먹는환노",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
-            state = MulKkamTextFieldState.ERROR,
+            state = MulKkamTextFieldState2.ERROR,
         )
     }
 }
 
 @Preview(showBackground = true, name = "텍스트 필드가 VALID 상태인 경우")
 @Composable
-private fun MulKkamTextFieldPreview_Valid() {
+private fun MulKkamTextFieldPreview_Valid2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "돈가스좋아하는환노",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
-            state = MulKkamTextFieldState.VALID,
+            state = MulKkamTextFieldState2.VALID,
         )
     }
 }
 
 @Preview(showBackground = true, name = "prefix가 붙은 경우")
 @Composable
-private fun MulKkamTextFieldPreview_Prefix() {
+private fun MulKkamTextFieldPreview_Prefix2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "돈가스먹는환노",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
-            state = MulKkamTextFieldState.NORMAL,
+            state = MulKkamTextFieldState2.NORMAL,
             prefix = {
                 Icon(
                     modifier = it,
@@ -175,13 +175,13 @@ private fun MulKkamTextFieldPreview_Prefix() {
 
 @Preview(showBackground = true, name = "suffix가 붙은 경우")
 @Composable
-private fun MulKkamTextFieldPreview_Suffix() {
+private fun MulKkamTextFieldPreview_Suffix2() {
     MulKkamTheme {
-        MulKkamTextField(
+        MulKkamTextField2(
             value = "돈가스먹는환노",
             onValueChanged = {},
             placeHolder = "값을 입력해 주세요",
-            state = MulKkamTextFieldState.NORMAL,
+            state = MulKkamTextFieldState2.NORMAL,
             suffix = {
                 Icon(
                     modifier = it,

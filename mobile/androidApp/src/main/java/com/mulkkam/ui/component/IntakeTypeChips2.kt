@@ -22,7 +22,7 @@ import com.mulkkam.ui.util.extensions.noRippleClickable
 import com.mulkkam.ui.util.extensions.toColorInt
 
 @Composable
-fun IntakeTypeChips(
+fun IntakeTypeChips2(
     selectedIntakeType: IntakeType,
     onSelect: (intakeType: IntakeType) -> Unit,
     modifier: Modifier = Modifier,
@@ -62,9 +62,9 @@ fun IntakeTypeChips(
 
 @Preview(showBackground = true)
 @Composable
-private fun IntakeTypeChipsPreview() {
+private fun IntakeTypeChipsPreview2() {
     MulKkamTheme {
-        IntakeTypeChips(
+        IntakeTypeChips2(
             selectedIntakeType = IntakeType.WATER,
             onSelect = {},
         )

@@ -10,7 +10,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.CoroutineScope
@@ -60,7 +60,7 @@ private fun handleThrowWaterBalloonResult(
                     friend.nickname,
                 )
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = message,
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )
@@ -75,7 +75,7 @@ private fun handleThrowWaterBalloonResult(
                     R.string.network_check_error to R.drawable.ic_alert_circle
                 }
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(messageResourceId),
                     iconResourceId = iconResourceId,
                 )

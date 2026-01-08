@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.UserAuthState
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.model.MulKkamUiState
 import kotlinx.coroutines.launch
 
@@ -45,7 +45,7 @@ fun LoginRoute(
         if (currentTimestamp - lastBackPressedTimestamp >= BACK_PRESS_THRESHOLD) {
             lastBackPressedTimestamp = currentTimestamp
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.main_main_back_press_exit_message),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -61,7 +61,7 @@ fun LoginRoute(
                 currentOnNavigateToNextScreen.value(state.data)
 
             is MulKkamUiState.Failure ->
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )

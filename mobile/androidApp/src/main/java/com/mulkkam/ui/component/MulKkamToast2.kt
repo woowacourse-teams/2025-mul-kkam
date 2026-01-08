@@ -36,28 +36,28 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
-private const val DEFAULT_TOAST_DURATION_MILLIS: Long = 2000L
-private val DEFAULT_TOAST_SHAPE: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
+private const val DEFAULT_TOAST_DURATION_MILLIS2: Long = 2000L
+private val DEFAULT_TOAST_SHAPE2: RoundedCornerShape = RoundedCornerShape(size = 4.dp)
 
-data class MulKkamToastVisuals(
+data class MulKkamToastVisuals2(
     val message: String,
     @param:DrawableRes val iconResourceId: Int,
 )
 
-class MulKkamToastState {
+class MulKkamToastState2 {
     private val mutex: Mutex = Mutex()
-    private val currentToastFlow: MutableStateFlow<MulKkamToastVisuals?> = MutableStateFlow(value = null)
+    private val currentToastFlow: MutableStateFlow<MulKkamToastVisuals2?> = MutableStateFlow(value = null)
 
-    val currentToast: StateFlow<MulKkamToastVisuals?> = currentToastFlow.asStateFlow()
+    val currentToast: StateFlow<MulKkamToastVisuals2?> = currentToastFlow.asStateFlow()
 
-    suspend fun showMulKkamToast(
+    suspend fun showMulKkamToast2(
         message: String,
         @DrawableRes iconResourceId: Int,
-        durationMillis: Long = DEFAULT_TOAST_DURATION_MILLIS,
+        durationMillis: Long = DEFAULT_TOAST_DURATION_MILLIS2,
     ) {
         mutex.withLock {
             currentToastFlow.emit(
-                MulKkamToastVisuals(
+                MulKkamToastVisuals2(
                     message = message,
                     iconResourceId = iconResourceId,
                 ),
@@ -69,14 +69,14 @@ class MulKkamToastState {
 }
 
 @Composable
-fun rememberMulKkamToastState(): MulKkamToastState {
-    val toastState: MulKkamToastState = remember { MulKkamToastState() }
+fun rememberMulKkamToastState2(): MulKkamToastState2 {
+    val toastState: MulKkamToastState2 = remember { MulKkamToastState2() }
     return toastState
 }
 
 @Composable
-fun MulKkamToastHost(
-    state: MulKkamToastState,
+fun MulKkamToastHost2(
+    state: MulKkamToastState2,
     modifier: Modifier = Modifier,
     alignment: Alignment = Alignment.BottomCenter,
     contentPadding: PaddingValues =
@@ -87,8 +87,8 @@ fun MulKkamToastHost(
             bottom = 24.dp,
         ),
 ) {
-    val toastState: State<MulKkamToastVisuals?> = state.currentToast.collectAsState()
-    val toastVisuals: MulKkamToastVisuals? = toastState.value
+    val toastState: State<MulKkamToastVisuals2?> = state.currentToast.collectAsState()
+    val toastVisuals: MulKkamToastVisuals2? = toastState.value
 
     Box(
         modifier = modifier.fillMaxWidth(),
@@ -99,8 +99,8 @@ fun MulKkamToastHost(
             enter = fadeIn() + slideInVertically { fullHeight: Int -> fullHeight / 4 },
             exit = fadeOut() + slideOutVertically { fullHeight: Int -> fullHeight / 4 },
         ) {
-            val currentVisuals: MulKkamToastVisuals = toastVisuals ?: return@AnimatedVisibility
-            MulKkamToast(
+            val currentVisuals: MulKkamToastVisuals2 = toastVisuals ?: return@AnimatedVisibility
+            MulKkamToast2(
                 message = currentVisuals.message,
                 iconResourceId = currentVisuals.iconResourceId,
                 modifier =
@@ -113,7 +113,7 @@ fun MulKkamToastHost(
 }
 
 @Composable
-private fun MulKkamToast(
+private fun MulKkamToast2(
     message: String,
     @DrawableRes iconResourceId: Int,
     modifier: Modifier = Modifier,
@@ -121,7 +121,7 @@ private fun MulKkamToast(
     Box(
         modifier =
             modifier
-                .background(color = GrayAlert, shape = DEFAULT_TOAST_SHAPE)
+                .background(color = GrayAlert, shape = DEFAULT_TOAST_SHAPE2)
                 .padding(horizontal = 16.dp, vertical = 10.dp),
     ) {
         Row(

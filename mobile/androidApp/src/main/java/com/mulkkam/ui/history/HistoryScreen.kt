@@ -30,8 +30,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamSnackbarHost2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.dialog.MulKkamAlertDialog
@@ -147,7 +147,7 @@ fun HistoryScreen(viewModel: HistoryViewModel = koinViewModel()) {
                             .clickable {
                                 if (waterIntakeState !is WaterIntakeState.Present) {
                                     coroutineScope.launch {
-                                        snackbarHostState.showMulKkamSnackbar(
+                                        snackbarHostState.showMulKkamSnackbar2(
                                             message = context.getString(R.string.history_delete_failure_past),
                                             iconResourceId = R.drawable.ic_alert_circle,
                                         )
@@ -175,7 +175,7 @@ fun HistoryScreen(viewModel: HistoryViewModel = koinViewModel()) {
             )
         }
 
-        MulKkamSnackbarHost(
+        MulKkamSnackbarHost2(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
@@ -188,12 +188,12 @@ private suspend fun handleDeleteFailure(
     snackbarHostState: SnackbarHostState,
 ) {
     if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
-        snackbarHostState.showMulKkamSnackbar(
+        snackbarHostState.showMulKkamSnackbar2(
             message = context.getString(R.string.network_check_error),
             iconResourceId = R.drawable.ic_alert_circle,
         )
     } else {
-        snackbarHostState.showMulKkamSnackbar(
+        snackbarHostState.showMulKkamSnackbar2(
             message = context.getString(R.string.history_delete_failure_past),
             iconResourceId = R.drawable.ic_alert_circle,
         )
@@ -204,7 +204,7 @@ private suspend fun handleDeleteSuccess(
     context: Context,
     snackbarHostState: SnackbarHostState,
 ) {
-    snackbarHostState.showMulKkamSnackbar(
+    snackbarHostState.showMulKkamSnackbar2(
         message = context.getString(R.string.history_delete_success),
         iconResourceId = R.drawable.ic_terms_all_check_on,
     )

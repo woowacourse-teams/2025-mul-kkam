@@ -22,7 +22,7 @@ import com.mulkkam.ui.util.extensions.dpToPx
 private val SVG_REGEX = Regex("(?i)\\.svg(\\?.*)?$")
 
 @Composable
-fun NetworkImage(
+fun NetworkImage2(
     url: String?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
@@ -63,8 +63,14 @@ fun NetworkImage(
 
 private fun ImageShape.toTransformations(context: Context): List<Transformation> =
     when (this) {
-        is ImageShape.None -> emptyList()
-        is ImageShape.Circle -> listOf(CircleCropTransformation())
+        is ImageShape.None -> {
+            emptyList()
+        }
+
+        is ImageShape.Circle -> {
+            listOf(CircleCropTransformation())
+        }
+
         is ImageShape.Rounded -> {
             val radius = radiusDp.dpToPx(context).toFloat()
             listOf(RoundedCornersTransformation(radius))

@@ -19,7 +19,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
 @Composable
-fun BottomSheetHeader(
+fun BottomSheetHeader2(
     title: String,
     onDismiss: () -> Unit,
 ) {
@@ -49,9 +49,9 @@ fun BottomSheetHeader(
 
 @Preview(showBackground = true)
 @Composable
-private fun BottomSheetHeaderPreview() {
+private fun BottomSheetHeaderPreview2() {
     MulKkamTheme {
-        BottomSheetHeader(
+        BottomSheetHeader2(
             title = "돈까스먹는환노",
             onDismiss = {},
         )
