@@ -4,8 +4,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -49,9 +50,9 @@ class WeatherServiceUnitTest {
         @DisplayName("오늘 날짜가 목표 날짜인 경우 예외를 던진다")
         void fail_cannot_forecast_for_today() {
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(CityDateTime.now(City.SEOUL)))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(CityDateTime.now(City.SEOUL)));
+            assertEquals(INVALID_FORECAST_TARGET_DATE, ex.getErrorCode());
         }
 
         @Test
@@ -62,9 +63,9 @@ class WeatherServiceUnitTest {
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDateTime))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(cityDateTime));
+            assertEquals(INVALID_FORECAST_TARGET_DATE, ex.getErrorCode());
         }
 
         @ParameterizedTest
@@ -138,9 +139,9 @@ class WeatherServiceUnitTest {
             when(weatherClient.getFourDayWeatherForecast(any())).thenReturn(response);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDateTime))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(cityDateTime));
+            assertEquals(INVALID_FORECAST_DATE, ex.getErrorCode());
         }
 
         @Test

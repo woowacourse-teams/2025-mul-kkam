@@ -2,8 +2,9 @@ package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -286,10 +287,9 @@ class NotificationServiceTest extends ServiceTest {
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
 
             // when & then
-            assertThatThrownBy(
-                    () -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_PAGE_SIZE_RANGE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> notificationService.readNotificationsAfter(request, new MemberDetails(savedMember)));
+            assertEquals(INVALID_PAGE_SIZE_RANGE, ex.getErrorCode());
         }
     }
 
@@ -416,9 +416,9 @@ class NotificationServiceTest extends ServiceTest {
             MemberDetails memberDetails = new MemberDetails(savedMember.getId(), MemberRole.MEMBER);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessageContaining(NotFoundErrorCode.NOT_FOUND_NOTIFICATION.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> notificationService.delete(memberDetails, 1L));
+            assertEquals(NotFoundErrorCode.NOT_FOUND_NOTIFICATION, ex.getErrorCode());
         }
 
         @DisplayName("삭제할 권한이 없는 경우 예외를 던진다")
@@ -444,9 +444,9 @@ class NotificationServiceTest extends ServiceTest {
             MemberDetails memberDetails = new MemberDetails(anotherMember.getId(), MemberRole.MEMBER);
 
             // when & then
-            assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessageContaining(ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> notificationService.delete(memberDetails, 1L));
+            assertEquals(ForbiddenErrorCode.NOT_PERMITTED_FOR_NOTIFICATION, ex.getErrorCode());
         }
     }
 }

@@ -4,8 +4,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAM
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
@@ -241,12 +242,12 @@ class MemberServiceTest extends ServiceTest {
             memberRepository.save(member2);
 
             // when & then
-            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                    newNickname,
-                    new MemberDetails(member1)
-            ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.validateDuplicateNickname(
+                            newNickname,
+                            new MemberDetails(member1)
+                    ));
+            assertEquals(DUPLICATE_MEMBER_NICKNAME, ex.getErrorCode());
         }
 
         @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
@@ -261,12 +262,12 @@ class MemberServiceTest extends ServiceTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                    nickname,
-                    new MemberDetails(member)
-            ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.validateDuplicateNickname(
+                            nickname,
+                            new MemberDetails(member)
+                    ));
+            assertEquals(SAME_AS_BEFORE_NICKNAME, ex.getErrorCode());
         }
     }
 

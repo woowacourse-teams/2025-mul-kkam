@@ -3,8 +3,9 @@ package backend.mulkkam.intake.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -91,11 +92,10 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
                     newTargetAmount);
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> intakeAmountService.modifyTarget(new MemberDetails(savedMember),
-                            intakeTargetAmountModifyRequest))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_TARGET_AMOUNT.name());
+                            intakeTargetAmountModifyRequest));
+            assertEquals(INVALID_TARGET_AMOUNT, ex.getErrorCode());
         }
 
         @DisplayName("스냅샷이 저장된다")

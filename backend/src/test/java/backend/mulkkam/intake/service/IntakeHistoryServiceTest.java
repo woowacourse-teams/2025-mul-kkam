@@ -5,9 +5,10 @@ import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_
 import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -621,13 +622,12 @@ class IntakeHistoryServiceTest extends ServiceTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> intakeHistoryService.deleteDetailHistory(
                             intakeHistory.getId(),
                             new MemberDetails(savedAnotherMember)
-                    ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
+                    ));
+            assertEquals(NOT_PERMITTED_FOR_INTAKE_HISTORY, ex.getErrorCode());
         }
 
         @DisplayName("정상적으로 삭제된다")
@@ -678,13 +678,12 @@ class IntakeHistoryServiceTest extends ServiceTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> intakeHistoryService.deleteDetailHistory(
                             intakeHistoryDetail.getId(),
                             new MemberDetails(member)
-                    ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
+                    ));
+            assertEquals(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY, ex.getErrorCode());
         }
     }
 

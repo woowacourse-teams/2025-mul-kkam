@@ -1,8 +1,9 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -80,16 +81,15 @@ class SuggestionNotificationServiceTest extends ServiceTest {
 
         @DisplayName("존재하지 않는 제안 알림 id로 요청하면 예외를 발생한다")
         @Test
-        void error_byNonExistingSuggestionNotificationId() {
+        void fail_byNonExistingSuggestionNotificationId() {
             // given
             Member savedMember = createAndSaveMember();
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> suggestionNotificationService.applyTargetAmount(Long.MAX_VALUE,
-                            new MemberDetails(savedMember.getId(), MemberRole.MEMBER))
-            ).isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
+                            new MemberDetails(savedMember.getId(), MemberRole.MEMBER)));
+            assertEquals(NOT_FOUND_SUGGESTION_NOTIFICATION, ex.getErrorCode());
         }
     }
 }
