@@ -7,13 +7,13 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.InvalidTokenException;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
+class OauthJwtTokenHandlerTest extends ServiceTest {
 
     @Autowired
     private OauthJwtTokenHandler oauthJwtTokenHandler;

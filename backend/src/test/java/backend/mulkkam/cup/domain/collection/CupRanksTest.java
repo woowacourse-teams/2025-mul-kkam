@@ -1,36 +1,49 @@
 package backend.mulkkam.cup.domain.collection;
 
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATED_CUP_RANKS;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.vo.CupRank;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
-import java.util.Map;
-
+@DisplayName("CupRanks 컬렉션 도메인")
 class CupRanksTest {
 
-    @DisplayName("인스턴스 생성 시에")
-    @Nested
-    class NewCupRanks {
+    @DisplayName("모든 컵의 우선순위가 고유하면 생성에 성공한다")
+    @Test
+    void cup_ranks_with_unique_priorities_is_created() {
+        // given
+        Map<Long, CupRank> ranks = Map.of(
+                1L, new CupRank(1),
+                2L, new CupRank(2),
+                3L, new CupRank(3)
+        );
 
-        @DisplayName("중복되는 우선순위가 있으면 생성이 불가능하다.")
-        @Test
-        void error_existsDuplicatedRanks() {
-            // given
-            Map<Long, CupRank> cupRank = Map.of(
-                    1L, new CupRank(1),
-                    2L, new CupRank(2),
-                    3L, new CupRank(2)
-            );
+        // when & then
+        assertThatCode(() -> new CupRanks(ranks))
+                .doesNotThrowAnyException();
+    }
 
-            // when & then
-            assertThatThrownBy(() -> new CupRanks(cupRank))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(DUPLICATED_CUP_RANKS.name());
-        }
+    @DisplayName("중복된 우선순위가 있으면 생성에 실패한다")
+    @Test
+    void cup_ranks_with_duplicate_priorities_is_invalid() {
+        // given
+        Map<Long, CupRank> ranks = Map.of(
+                1L, new CupRank(1),
+                2L, new CupRank(2),
+                3L, new CupRank(2)
+        );
+
+        // when
+        CommonException ex = assertThrows(CommonException.class,
+                () -> new CupRanks(ranks));
+
+        // then
+        assertThat(ex.getErrorCode()).isEqualTo(DUPLICATED_CUP_RANKS);
     }
 }

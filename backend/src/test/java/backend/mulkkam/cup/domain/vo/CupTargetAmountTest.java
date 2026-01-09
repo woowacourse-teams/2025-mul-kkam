@@ -1,39 +1,48 @@
 package backend.mulkkam.cup.domain.vo;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_AMOUNT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@DisplayName("CupAmount 도메인")
 class CupTargetAmountTest {
 
-    @DisplayName("생성자 검증 시에")
-    @Nested
-    class NewCupTargetAmount {
+    @DisplayName("용량이 1~2000ml 사이이면 생성에 성공한다")
+    @ParameterizedTest(name = "용량 = {0}ml")
+    @ValueSource(ints = {1, 500, 1_000, 1_500, 2_000})
+    void amount_within_valid_range_is_created(int value) {
+        // when & then
+        assertThatCode(() -> new CupAmount(value))
+                .doesNotThrowAnyException();
+    }
 
-        @DisplayName("1부터 20_000까지 설정할 수 있다")
-        @ParameterizedTest
-        @ValueSource(ints = {1, 500, 1_000, 1_500, 2_000})
-        void success_amountBetween1And10000(Integer input) {
-            // when & then
-            assertThatCode(() -> {
-                new CupAmount(input);
-            }).doesNotThrowAnyException();
-        }
+    @DisplayName("용량이 0 이하이면 생성에 실패한다")
+    @ParameterizedTest(name = "용량 = {0}ml")
+    @ValueSource(ints = {-1, 0})
+    void amount_less_than_min_is_invalid(int value) {
+        // when
+        CommonException ex = assertThrows(CommonException.class,
+                () -> new CupAmount(value));
 
-        @DisplayName("범위를 벗어난 음용량을 설정할 수 없다")
-        @ParameterizedTest
-        @ValueSource(ints = {-1, 0, 2_001, 2_500})
-        void error_nameLengthOutOfRange(Integer input) {
-            // when & then
-            assertThatThrownBy(() -> new CupAmount(input))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_CUP_AMOUNT.name());
-        }
+        // then
+        assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
+    }
+
+    @DisplayName("용량이 2000ml 초과이면 생성에 실패한다")
+    @ParameterizedTest(name = "용량 = {0}ml")
+    @ValueSource(ints = {2_001, 2_500, 3_000})
+    void amount_greater_than_max_is_invalid(int value) {
+        // when
+        CommonException ex = assertThrows(CommonException.class,
+                () -> new CupAmount(value));
+
+        // then
+        assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_AMOUNT);
     }
 }

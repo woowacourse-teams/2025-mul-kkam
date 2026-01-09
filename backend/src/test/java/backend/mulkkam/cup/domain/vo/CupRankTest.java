@@ -1,9 +1,8 @@
 package backend.mulkkam.cup.domain.vo;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_CUP_RANK_VALUE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
@@ -13,94 +12,100 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
+@DisplayName("CupRank 도메인")
 class CupRankTest {
 
-    @DisplayName("생성자 검증 시에")
+    @DisplayName("우선순위 생성")
     @Nested
-    class NewCupRank {
+    class Creation {
 
-        @DisplayName("컵의 우선순위는 1 이상 3 이하만 가능하다")
-        @ParameterizedTest
+        @DisplayName("우선순위가 1~3 사이이면 생성에 성공한다")
+        @ParameterizedTest(name = "우선순위 = {0}")
         @ValueSource(ints = {1, 2, 3})
-        void success_valueBetween2And10(Integer input) {
+        void rank_within_valid_range_is_created(int value) {
             // when & then
-            assertThatCode(() -> {
-                new CupRank(input);
-            }).doesNotThrowAnyException();
+            assertThatCode(() -> new CupRank(value))
+                    .doesNotThrowAnyException();
         }
 
-        @DisplayName("범위를 벗어난 갯수는 설정할 수 없다")
-        @ParameterizedTest
-        @ValueSource(ints = {0, 4, -1, 5})
-        void error_valueOutOfRange(Integer input) {
-            // when & then
+        @DisplayName("우선순위가 범위를 벗어나면 생성에 실패한다")
+        @ParameterizedTest(name = "우선순위 = {0}")
+        @ValueSource(ints = {0, -1, 4, 5})
+        void rank_outside_valid_range_is_invalid(int value) {
+            // when
             CommonException ex = assertThrows(CommonException.class,
-                    () -> new CupRank(input));
+                    () -> new CupRank(value));
+
+            // then
             assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_RANK_VALUE);
         }
     }
 
-    @DisplayName("우선순위를 높일 시에")
+    @DisplayName("우선순위 승격")
     @Nested
     class Promote {
 
-        @DisplayName("한 단계 높은 우선순위의 랭크를 반환한다.")
-        @ParameterizedTest
+        @DisplayName("2위 또는 3위 컵은 한 단계 승격할 수 있다")
+        @ParameterizedTest(name = "{0}위 → {0}-1위")
         @ValueSource(ints = {2, 3})
-        void success_valueBetween2And3(int from) {
+        void cup_can_be_promoted_to_higher_priority(int from) {
             // given
-            CupRank origin = new CupRank(from);
+            CupRank sut = new CupRank(from);
             CupRank expected = new CupRank(from - 1);
 
             // when
-            CupRank resultRank = origin.promote();
+            CupRank result = sut.promote();
 
             // then
-            assertThat(resultRank).isEqualTo(expected);
+            assertThat(result).isEqualTo(expected);
         }
 
-        @DisplayName("이미 가장 높은 우선순위일 경우 예외가 발생한다.")
+        @DisplayName("1위 컵은 더 이상 승격할 수 없다")
         @Test
-        void error_valueIsHighestPriority() {
+        void highest_priority_cup_cannot_be_promoted() {
             // given
-            CupRank originRank = new CupRank(1);
+            CupRank sut = new CupRank(1);
 
-            // when & then
-            assertThatThrownBy(originRank::promote)
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_CUP_RANK_VALUE.name());
+            // when
+            CommonException ex = assertThrows(CommonException.class,
+                    sut::promote);
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_RANK_VALUE);
         }
     }
 
-    @DisplayName("우선순위를 낮출 시에")
+    @DisplayName("우선순위 강등")
     @Nested
     class Demote {
 
-        @DisplayName("한 단계 낮은 우선순위의 랭크를 반환한다.")
-        @ParameterizedTest
+        @DisplayName("1위 또는 2위 컵은 한 단계 강등할 수 있다")
+        @ParameterizedTest(name = "{0}위 → {0}+1위")
         @ValueSource(ints = {1, 2})
-        void success_valueBetween2And3(int from) {
+        void cup_can_be_demoted_to_lower_priority(int from) {
             // given
-            CupRank origin = new CupRank(from);
+            CupRank sut = new CupRank(from);
             CupRank expected = new CupRank(from + 1);
 
             // when
-            CupRank resultRank = origin.demote();
+            CupRank result = sut.demote();
 
             // then
-            assertThat(resultRank).isEqualTo(expected);
+            assertThat(result).isEqualTo(expected);
         }
 
-        @DisplayName("이미 가장 낮은 우선순위일 경우 예외가 발생한다.")
+        @DisplayName("3위 컵은 더 이상 강등할 수 없다")
         @Test
-        void error_valueIsHighestPriority() {
+        void lowest_priority_cup_cannot_be_demoted() {
             // given
-            CupRank originRank = new CupRank(3);
+            CupRank sut = new CupRank(3);
 
-            // when & then
-            assertThatThrownBy(originRank::demote)
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_CUP_RANK_VALUE.name());
+            // when
+            CommonException ex = assertThrows(CommonException.class,
+                    sut::demote);
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_CUP_RANK_VALUE);
         }
     }
 }

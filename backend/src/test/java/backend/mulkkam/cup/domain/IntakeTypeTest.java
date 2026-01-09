@@ -2,7 +2,7 @@ package backend.mulkkam.cup.domain;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import java.util.stream.Stream;
@@ -14,64 +14,67 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
+@DisplayName("IntakeType 도메인")
 class IntakeTypeTest {
 
-    @DisplayName("이름을 통해 음용 타입을 찾는 경우")
+    @DisplayName("음용 타입 조회")
     @Nested
     class FindByName {
 
-        private static Stream<Arguments> testCasesForSuccess_ignoreCasesOfName() {
+        private static Stream<Arguments> validIntakeTypes() {
             return Stream.of(
                     Arguments.of("WATER", IntakeType.WATER),
                     Arguments.of("water", IntakeType.WATER),
+                    Arguments.of("Water", IntakeType.WATER),
                     Arguments.of("COFFEE", IntakeType.COFFEE),
                     Arguments.of("coffee", IntakeType.COFFEE)
             );
         }
 
-        @DisplayName("대소문자 구분 없이 적절한 타입을 찾는다")
-        @ParameterizedTest
-        @MethodSource("testCasesForSuccess_ignoreCasesOfName")
-        void success_ignoreCasesOfName(
-                String input,
-                IntakeType expected
-        ) {
+        @DisplayName("대소문자 구분 없이 음용 타입을 찾을 수 있다")
+        @ParameterizedTest(name = "\"{0}\" → {1}")
+        @MethodSource("validIntakeTypes")
+        void intake_type_is_found_case_insensitively(String input, IntakeType expected) {
             // when
-            IntakeType actual = IntakeType.findByName(input);
+            IntakeType result = IntakeType.findByName(input);
 
             // then
-            assertThat(actual).isEqualTo(expected);
+            assertThat(result).isEqualTo(expected);
         }
 
-        @DisplayName("존재하지 않는 값에 대해 예외를 던진다")
+        @DisplayName("존재하지 않는 타입명으로 조회하면 실패한다")
         @Test
-        void error_notExistedName() {
+        void non_existent_type_name_throws_exception() {
             // when
-            assertThatThrownBy(() -> IntakeType.findByName("not_existed_value"))
-                    .isInstanceOf(CommonException.class).hasMessage(NOT_FOUND_INTAKE_TYPE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> IntakeType.findByName("JUICE"));
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(NOT_FOUND_INTAKE_TYPE);
         }
     }
 
-    @DisplayName("타입에 따른 음용량을 계산할 때")
+    @DisplayName("수분량 계산")
     @Nested
     class CalculateHydration {
 
-        @DisplayName("입력한 섭취량에 맞추어 수분량이 계산된다")
-        @ParameterizedTest(name = "타입={0}, 음용량={1}ml → 예상 수분량={2}ml")
+        @DisplayName("음용 타입별 수분 환산 비율에 따라 수분량이 계산된다")
+        @ParameterizedTest(name = "{0} {1}ml → 수분량 {2}ml")
         @CsvSource({
-                "WATER, 250, 250",
-                "COFFEE, 300, 285",
-                "COFFEE, 150, 143"
+                "WATER, 250, 250",   // 100%
+                "WATER, 500, 500",   // 100%
+                "COFFEE, 300, 285",  // 95%
+                "COFFEE, 150, 143"   // 95%
         })
-        void success_calculatedDependingOnTheType(String typeName, int intakeAmount, int expectedHydration) {
+        void hydration_is_calculated_by_type_ratio(String typeName, int intakeAmount, int expectedHydration) {
             // given
-            IntakeType intakeType = IntakeType.findByName(typeName);
+            IntakeType sut = IntakeType.findByName(typeName);
 
             // when
-            int actualHydration = intakeType.calculateHydration(intakeAmount);
+            int result = sut.calculateHydration(intakeAmount);
 
             // then
-            assertThat(actualHydration).isEqualTo(expectedHydration);
+            assertThat(result).isEqualTo(expectedHydration);
         }
     }
 }
