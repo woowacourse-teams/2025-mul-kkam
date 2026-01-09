@@ -1,9 +1,11 @@
 package backend.mulkkam.admin.service;
 
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_NOTIFICATION;
+
 import backend.mulkkam.admin.dto.request.SendAdminBroadcastNotificationRequest;
 import backend.mulkkam.admin.dto.response.GetAdminNotificationListResponse;
+import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.member.repository.MemberRepository;
@@ -13,6 +15,7 @@ import backend.mulkkam.notification.dto.NotificationInsertDto;
 import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -20,8 +23,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 @Service
 public class AdminNotificationService {
@@ -33,8 +35,7 @@ public class AdminNotificationService {
     private final MemberRepository memberRepository;
     private final DeviceRepository deviceRepository;
     private final ApplicationEventPublisher publisher;
-
-    @Transactional(readOnly = true)
+    
     public Page<GetAdminNotificationListResponse> getNotifications(Pageable pageable) {
         return notificationRepository.findAll(pageable)
                 .map(GetAdminNotificationListResponse::from);
@@ -100,7 +101,7 @@ public class AdminNotificationService {
     @Transactional
     public void deleteNotification(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new IllegalArgumentException("Notification not found: " + notificationId));
+                .orElseThrow(() -> new CommonException(NOT_FOUND_NOTIFICATION));
         notificationRepository.delete(notification);
     }
 }
