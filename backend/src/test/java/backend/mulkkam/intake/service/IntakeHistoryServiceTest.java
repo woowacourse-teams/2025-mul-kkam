@@ -1,0 +1,699 @@
+package backend.mulkkam.intake.service;
+
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
+import static backend.mulkkam.cup.domain.IntakeType.WATER;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.within;
+import static org.assertj.core.api.SoftAssertions.assertSoftly;
+
+import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiType;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.domain.vo.CupEmojiUrl;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.TargetAmountSnapshot;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
+import backend.mulkkam.intake.dto.request.DateRangeRequest;
+import backend.mulkkam.intake.dto.response.IntakeHistoryDetailResponse;
+import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
+import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
+import backend.mulkkam.intake.repository.IntakeHistoryRepository;
+import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
+import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
+import backend.mulkkam.member.domain.vo.TargetAmount;
+import backend.mulkkam.member.repository.MemberRepository;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.service.ServiceTest;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.Optional;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+class IntakeHistoryServiceTest extends ServiceTest {
+
+    private static final String defaultEmojiUrl = "url";
+
+    @Autowired
+    private IntakeHistoryService intakeHistoryService;
+
+    @Autowired
+    private IntakeHistoryRepository intakeHistoryRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
+    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+
+    @Autowired
+    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
+    private CupRepository cupRepository;
+
+    private Member createAndSaveMember() {
+        return memberRepository.save(MemberFixtureBuilder.builder().build());
+    }
+
+    private Member createAndSaveMember(String nickname) {
+        return memberRepository.save(
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname(nickname)).build()
+        );
+    }
+
+    private CupEmoji createAndSaveCupEmoji() {
+        return cupEmojiRepository.save(new CupEmoji("http://example.com"));
+    }
+
+    private Cup createAndSaveCup(Member member, CupEmoji cupEmoji) {
+        return cupRepository.save(CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).build());
+    }
+
+    private void saveDefaultCupEmojisIfNeeded() {
+        // 이미 기본 이모지가 저장되어 있으면 스킵
+        long defaultEmojiCount = cupEmojiRepository.findAll().stream()
+                .filter(e -> defaultEmojiUrl.equals(e.getUrl().value()))
+                .count();
+        if (defaultEmojiCount == 0) {
+            saveDefaultCupEmojis();
+        }
+    }
+
+    @DisplayName("컵으로 음용량을 저장할 때에")
+    @Nested
+    class CreateByCup {
+
+        @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryNotExist() {
+            // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
+                    dateTime,
+                    cup.getId()
+            );
+            intakeHistoryService.createByCup(createIntakeHistoryDetailCRequest, new MemberDetails(member));
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(1);
+                softly.assertThat(intakeHistories.getFirst().getStreak()).isEqualTo(1);
+            });
+        }
+
+        @DisplayName("전날에 기록이 있다면 스트릭이 전 날 스트릭의 +1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryExist() {
+            // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+
+            IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(dateTime.toLocalDate().minusDays(1))
+                    .streak(45)
+                    .build();
+            intakeHistoryRepository.save(yesterDayIntakeHistory);
+
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest = new CreateIntakeHistoryDetailByCupRequest(
+                    dateTime,
+                    cup.getId()
+            );
+            intakeHistoryService.createByCup(createIntakeHistoryDetailByCupRequest, new MemberDetails(member));
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(2);
+                softly.assertThat(intakeHistories.get(1).getStreak()).isEqualTo(46);
+            });
+        }
+    }
+
+    @DisplayName("직접 입력으로 음용량을 저장할 때에")
+    @Nested
+    class CreateByInput {
+
+        @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryNotExist() {
+            // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
+                    dateTime, WATER, 1000);
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(member));
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(1);
+                softly.assertThat(intakeHistories.getFirst().getStreak()).isEqualTo(1);
+            });
+        }
+
+        @DisplayName("전날에 기록이 있다면 스트릭이 전 날 스트릭의 +1로 저장된다")
+        @Test
+        void success_IfYesterdayHistoryExist() {
+            // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
+
+            IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(dateTime.toLocalDate().minusDays(1))
+                    .streak(45)
+                    .build();
+            intakeHistoryRepository.save(yesterDayIntakeHistory);
+
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
+                    dateTime, WATER, 1000);
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(member));
+
+            // when
+            List<IntakeHistory> intakeHistories = intakeHistoryRepository.findAllByMember(member);
+
+            // then
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistories).hasSize(2);
+                softly.assertThat(intakeHistories.get(1).getStreak()).isEqualTo(46);
+            });
+        }
+    }
+
+    @DisplayName("날짜에 해당하는 음용량을 조회할 때에")
+    @Nested
+    class ReadSummaryOfIntakeHistories {
+
+        @DisplayName("날짜의 범위에 해당하는 기록만 조회된다")
+        @Test
+        void success_containsOnlyInDateRange() {
+            // given
+            Member member = createAndSaveMember();
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 23);
+
+            IntakeHistory firstHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .build();
+
+            IntakeHistory secondHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 21))
+                    .build();
+
+            IntakeHistory thirdHistoryInRange = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 22))
+
+                    .build();
+
+            IntakeHistory firstHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 24))
+                    .build();
+
+            IntakeHistory secondHistoryNotInRange = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 25))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistoryInRange,
+                    secondHistoryInRange,
+                    thirdHistoryInRange,
+                    firstHistoryNotInRange,
+                    secondHistoryNotInRange
+            ));
+
+            // when
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest,
+                    new MemberDetails(member)
+            );
+
+            // then
+            List<LocalDate> dates = result.stream()
+                    .map(IntakeHistorySummaryResponse::date)
+                    .toList();
+
+            assertThat(dates).allMatch(date -> !date.isBefore(startDate) && !date.isAfter(endDate));
+        }
+
+        @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
+        @Test
+        void success_containsOnlyHistoryOfMember() {
+            // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            Member savedAnotherMember = memberRepository.save(anotherMember);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+            IntakeHistory historyOfAnotherMember = IntakeHistoryFixtureBuilder
+                    .withMember(savedAnotherMember)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .build();
+
+            IntakeHistoryDetail detailOfAnotherMember = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(historyOfAnotherMember)
+                    .buildWithCup(cup);
+
+            IntakeHistory historyOfMember = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .build();
+
+            IntakeHistoryDetail detailOfMember = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(historyOfMember)
+                    .buildWithCup(cup);
+
+            intakeHistoryRepository.save(historyOfAnotherMember);
+            IntakeHistory savedHistoryOfMember = intakeHistoryRepository.save(historyOfMember);
+
+            intakeHistoryDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
+
+            // when
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
+                    new DateRangeRequest(
+                            startDate,
+                            endDate
+                    ),
+                    new MemberDetails(member)
+            );
+
+            // then
+            List<Long> intakeHistoryIds = result.stream()
+                    .flatMap(summary -> summary.intakeDetails().stream())
+                    .map(IntakeHistoryDetailResponse::id)
+                    .toList();
+
+            assertThat(intakeHistoryIds).containsOnly(savedHistoryOfMember.getId());
+        }
+
+        @DisplayName("하루의 달성률을 계산한다")
+        @Test
+        void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
+            // given
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            int targetAmountOfMember = 1_500;
+            Member member = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("칼로리"))
+                    .targetAmount(targetAmountOfMember)
+                    .build();
+            Member savedMember = memberRepository.save(member);
+
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(savedMember, cupEmoji)
+                    .build();
+            Cup savedCup = cupRepository.save(cup);
+
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 20);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(savedMember)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .targetIntakeAmount(new TargetAmount(targetAmountOfMember))
+                    .build();
+
+            IntakeHistoryDetail firstIntakeDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new IntakeAmount(500))
+                    .buildWithCup(savedCup);
+
+            IntakeHistoryDetail secondIntakeDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new IntakeAmount(500))
+                    .buildWithCup(savedCup);
+
+            IntakeHistoryDetail thirdIntakeDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .intakeAmount(new IntakeAmount(500))
+                    .buildWithCup(savedCup);
+
+            intakeHistoryRepository.save(intakeHistory);
+            intakeHistoryDetailRepository.saveAll(List.of(
+                    firstIntakeDetail, secondIntakeDetail, thirdIntakeDetail
+            ));
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            // when
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, new MemberDetails(savedMember)
+            );
+
+            // then
+            IntakeHistorySummaryResponse responseOfTheDay = result.getFirst();
+
+            assertThat(responseOfTheDay.achievementRate()).isCloseTo(
+                    100, within(0.01)
+            );
+        }
+
+        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @Test
+        void success_ifNotExistsIntakeHistoryFindSnapshot() {
+            // given
+            int targetAmountOfMember = 1_000;
+            Member member = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("칼로리"))
+                    .targetAmount(targetAmountOfMember)
+                    .build();
+            memberRepository.save(member);
+
+            TargetAmountSnapshot targetAmountSnapshot = TargetAmountSnapshotFixtureBuilder
+                    .withMember(member)
+                    .updatedAt(LocalDate.of(2025, 7, 10))
+                    .targetAmount(new TargetAmount(4_999))
+                    .build();
+            targetAmountSnapshotRepository.save(targetAmountSnapshot);
+
+            LocalDate startDate = LocalDate.of(2025, 7, 12);
+            LocalDate endDate = LocalDate.of(2025, 7, 12);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(startDate, endDate);
+            List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, new MemberDetails(member)
+            );
+
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistorySummaryResponses.size()).isEqualTo(1);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().targetAmount()).isEqualTo(4_999);
+                softly.assertThat(intakeHistorySummaryResponses.getFirst().achievementRate()).isEqualTo(0.0);
+            });
+        }
+
+        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @Test
+        void success_whenIntakeHistoryDetailByUserInput() {
+            // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            LocalDate date = LocalDate.of(2025, 7, 15);
+            LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(15, 0));
+            CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
+                    dateTime, WATER, 1000);
+
+            // when
+            intakeHistoryService.createByUserInput(createIntakeHistoryDetailByUserInputRequest,
+                    new MemberDetails(member)
+            );
+
+            // then
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(date, date);
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
+                    dateRangeRequest, new MemberDetails(member.getId(), MemberRole.MEMBER));
+            IntakeHistoryDetailResponse intakeHistoryDetailResponse = result.getFirst()
+                    .intakeDetails().getFirst();
+
+            CupEmoji expectEmoji = cupEmojiRepository.findAll()
+                    .stream()
+                    .filter(v -> v.getUrl().equals(new CupEmojiUrl(defaultEmojiUrl)))
+                    .findFirst()
+                    .orElseThrow(RuntimeException::new);
+
+            assertSoftly(softly -> {
+                softly.assertThat(intakeHistoryDetailResponse.intakeAmount()).isEqualTo(1000);
+                softly.assertThat(intakeHistoryDetailResponse.intakeType()).isEqualTo(WATER);
+                softly.assertThat(intakeHistoryDetailResponse.cupEmojiUrl()).isEqualTo(expectEmoji.getUrl().value());
+            });
+        }
+    }
+
+    @DisplayName("섭취 달성률을 조회할 때")
+    @Nested
+    class ReadAchieveRatesByDateRange {
+
+        @DisplayName("날짜의 범위에 해당하는 섭취 달성률들을 조회한다")
+        @Test
+        void success_byValidDateRange() {
+            // given
+            Member member = createAndSaveMember();
+            LocalDate startDate = LocalDate.of(2025, 10, 20);
+            LocalDate endDate = LocalDate.of(2025, 10, 22);
+
+            IntakeHistory firstHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 20))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            IntakeHistory secondHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 21))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            IntakeHistory thirdHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.of(2025, 10, 22))
+                    .targetIntakeAmount(new TargetAmount(1000))
+                    .build();
+
+            intakeHistoryRepository.saveAll(List.of(
+                    firstHistory,
+                    secondHistory,
+                    thirdHistory
+            ));
+
+            List<IntakeHistoryDetail> intakeHistoryDetailByFirstIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(firstHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+
+            List<IntakeHistoryDetail> intakeHistoryDetailBySecondIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(secondHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(secondHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+
+            List<IntakeHistoryDetail> intakeHistoryDetailByThirdIntakeHistory = List.of(
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput(),
+                    IntakeHistoryDetailFixtureBuilder
+                            .withIntakeHistory(thirdHistory)
+                            .intakeAmount(new IntakeAmount(500))
+                            .buildWithInput()
+            );
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByFirstIntakeHistory);
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailBySecondIntakeHistory);
+            intakeHistoryDetailRepository.saveAll(intakeHistoryDetailByThirdIntakeHistory);
+
+            DateRangeRequest dateRangeRequest = new DateRangeRequest(
+                    startDate,
+                    endDate
+            );
+
+            // when
+            ReadAchievementRateByDatesResponse result = intakeHistoryService.readAchievementRatesByDateRange(
+                    dateRangeRequest, new MemberDetails(member));
+
+            // then
+            List<Double> actualAchievementRates = result.readAchievementRateByDateResponses()
+                    .stream()
+                    .map(ReadAchievementRateByDateResponse::achievementRate)
+                    .toList();
+
+            Assertions.assertThat(actualAchievementRates)
+                    .containsExactly(50.0, 100.0, 100.0);
+        }
+
+    }
+
+    @DisplayName("음용 세부 기록을 삭제할 때에")
+    @Nested
+    class Delete {
+
+        @DisplayName("존재하지 않는 기록에 대한 요청인 경우에도 정상적으로 처리된다.")
+        @Test
+        void error_historyDetailIsNotExisted() {
+            // given
+            Member member = createAndSaveMember();
+
+            // when & then
+            assertThatCode(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(member)))
+                    .doesNotThrowAnyException();
+        }
+
+        @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")
+        @Test
+        void error_memberIsNotPermitted() {
+            // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            Member anotherMember = MemberFixtureBuilder
+                    .builder()
+                    .memberNickname(new MemberNickname("칼리"))
+                    .build();
+            Member savedAnotherMember = memberRepository.save(anotherMember);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .buildWithCup(cup);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+            // when & then
+            assertThatThrownBy(
+                    () -> intakeHistoryService.deleteDetailHistory(
+                            intakeHistory.getId(),
+                            new MemberDetails(savedAnotherMember)
+                    ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
+        }
+
+        @DisplayName("정상적으로 삭제된다")
+        @Test
+        void success_validData() {
+            // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now())
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .buildWithCup(cup);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+            // when
+            intakeHistoryService.deleteDetailHistory(intakeHistory.getId(), new MemberDetails(member));
+
+            // then
+            Optional<IntakeHistoryDetail> foundIntakeHistoryDetail = intakeHistoryDetailRepository.findById(
+                    intakeHistory.getId());
+            assertThat(foundIntakeHistoryDetail).isNotPresent();
+        }
+
+        @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
+        @Test
+        void error_requestToDeletePastDate() {
+            // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
+            IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
+                    .withMember(member)
+                    .date(LocalDate.now().minusDays(1))
+                    .build();
+            intakeHistoryRepository.save(intakeHistory);
+
+            IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
+                    .withIntakeHistory(intakeHistory)
+                    .buildWithCup(cup);
+            intakeHistoryDetailRepository.save(intakeHistoryDetail);
+
+            // when & then
+            assertThatThrownBy(
+                    () -> intakeHistoryService.deleteDetailHistory(
+                            intakeHistoryDetail.getId(),
+                            new MemberDetails(member)
+                    ))
+                    .isInstanceOf(CommonException.class)
+                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
+        }
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            DefaultCup.of(intakeType);
+            CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
+            cupEmoji.setEmojiType(intakeType, EmojiType.DEFAULT);
+            cupEmojiRepository.save(cupEmoji);
+        }
+    }
+}

@@ -16,16 +16,15 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.util.ArrayList;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class FriendServiceTest extends ServiceIntegrationTest {
+class FriendServiceTest extends ServiceTest {
 
     @Autowired
     private MemberRepository memberRepository;
@@ -39,22 +38,22 @@ class FriendServiceTest extends ServiceIntegrationTest {
     @Autowired
     private FriendService friendService;
 
-    private Member requester;
-    private Member addressee;
+    private Member[] createAndSaveFriendPair() {
+        Member requester = memberRepository.save(MemberFixtureBuilder.builder().build());
+        Member addressee = memberRepository.save(
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname("칼리2")).build()
+        );
 
-    @BeforeEach
-    void setUp() {
-        requester = MemberFixtureBuilder.builder().build();
-        memberRepository.save(requester);
+        oauthAccountRepository.save(new OauthAccount(requester, "testIdOfRequester", OauthProvider.KAKAO));
+        oauthAccountRepository.save(new OauthAccount(addressee, "testIdOfAddressee", OauthProvider.KAKAO));
 
-        addressee = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("칼리2")).build();
-        memberRepository.save(addressee);
+        return new Member[]{requester, addressee};
+    }
 
-        OauthAccount oauthAccountOfRequester = new OauthAccount(requester, "testIdOfRequester", OauthProvider.KAKAO);
-        oauthAccountRepository.save(oauthAccountOfRequester);
-
-        OauthAccount oauthAccountOfAddressee = new OauthAccount(addressee, "testIdOfAddressee", OauthProvider.KAKAO);
-        oauthAccountRepository.save(oauthAccountOfAddressee);
+    private Member createAndSaveMember(String nickname) {
+        return memberRepository.save(
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname(nickname)).build()
+        );
     }
 
     @DisplayName("친구를 삭제할 때")
@@ -65,6 +64,10 @@ class FriendServiceTest extends ServiceIntegrationTest {
         @Test
         void success_deleteByRequester() {
             // given
+            Member[] pair = createAndSaveFriendPair();
+            Member requester = pair[0];
+            Member addressee = pair[1];
+
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
@@ -80,6 +83,10 @@ class FriendServiceTest extends ServiceIntegrationTest {
         @Test
         void success_deleteByAddressee() {
             // given
+            Member[] pair = createAndSaveFriendPair();
+            Member requester = pair[0];
+            Member addressee = pair[1];
+
             FriendRelation friendRelation = new FriendRelation(requester.getId(), addressee.getId(),
                     FriendRelationStatus.ACCEPTED);
             friendRelationRepository.save(friendRelation);
@@ -100,6 +107,8 @@ class FriendServiceTest extends ServiceIntegrationTest {
         @Test
         void success_onlyRequesterOrAddressee() {
             // given
+            Member requester = createAndSaveMember("요청자");
+
             List<Long> idOfMemberInRelation = new ArrayList<>();
             for (int i = 0; i < 10; i++) {
                 Member member = MemberFixtureBuilder.builder().memberNickname(new MemberNickname("히로" + i)).build();
@@ -124,11 +133,11 @@ class FriendServiceTest extends ServiceIntegrationTest {
             }
 
             // when
-            FriendRelationResponse friendRelationResponse = friendService.read(null, 10,
+            FriendRelationResponse result = friendService.read(null, 10,
                     new MemberDetails(requester.getId(), MemberRole.MEMBER));
 
             // then
-            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
+            List<Long> memberIdsOfResult = result.informationOfMembers().stream()
                     .map(FriendRelationResponse.MemberInfo::memberId)
                     .toList();
 
@@ -141,6 +150,8 @@ class FriendServiceTest extends ServiceIntegrationTest {
         @Test
         void success_onlyStatusISAccepted() {
             // given
+            Member requester = createAndSaveMember("요청자2");
+
             List<Long> memberIdsOfAcceptedRelations = new ArrayList<>();
 
             for (int i = 0; i < 10; i++) {
@@ -165,11 +176,11 @@ class FriendServiceTest extends ServiceIntegrationTest {
             }
 
             // when
-            FriendRelationResponse friendRelationResponse = friendService.read(null, 10,
+            FriendRelationResponse result = friendService.read(null, 10,
                     new MemberDetails(requester.getId(), MemberRole.MEMBER));
 
             // then
-            List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
+            List<Long> memberIdsOfResult = result.informationOfMembers().stream()
                     .map(FriendRelationResponse.MemberInfo::memberId)
                     .toList();
 
