@@ -14,7 +14,6 @@ import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.atomic.AtomicLong;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -33,18 +32,15 @@ class IntakeAmountControllerTest extends ControllerTest {
     @Autowired
     private OauthAccountRepository oauthAccountRepository;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     private final AtomicLong oauthIdCounter = new AtomicLong(1);
 
-    record TestContext(Member member, OauthAccount oauthAccount, String token) {}
+    record AuthenticatedMember(Member member, OauthAccount oauthAccount, String token) {}
 
-    private TestContext createTestContext() {
-        return createTestContext(70.0, 1500);
+    private AuthenticatedMember createAuthenticatedMember() {
+        return createAuthenticatedMember(70.0, 1500);
     }
 
-    private TestContext createTestContext(Double weight, Integer targetAmount) {
+    private AuthenticatedMember createAuthenticatedMember(Double weight, Integer targetAmount) {
         Member member = memberRepository.save(MemberFixtureBuilder
                 .builder()
                 .memberNickname(new MemberNickname("테스터" + oauthIdCounter.get()))
@@ -59,7 +55,7 @@ class IntakeAmountControllerTest extends ControllerTest {
         String deviceUuid = "deviceUuid";
         String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
-        return new TestContext(member, oauthAccount, token);
+        return new AuthenticatedMember(member, oauthAccount, token);
     }
 
     @DisplayName("목표 음용량을 추천받을 때에")
@@ -70,13 +66,13 @@ class IntakeAmountControllerTest extends ControllerTest {
         @Test
         void success_recommends_weight_times_30() throws Exception {
             // given
-            TestContext ctx = createTestContext();
+            AuthenticatedMember auth = createAuthenticatedMember();
 
             // when
             String json = mockMvc.perform(get("/intake/amount/recommended")
                             .param("weight", "70")
                             .param("GENDER", "FEMALE")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ctx.token()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + auth.token()))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -93,13 +89,13 @@ class IntakeAmountControllerTest extends ControllerTest {
         @Test
         void success_recommends_default_when_weight_is_null() throws Exception {
             // given
-            TestContext ctx = createTestContext();
+            AuthenticatedMember auth = createAuthenticatedMember();
 
             // when
             String json = mockMvc.perform(get("/intake/amount/target/recommended")
                             .param("weight", (String) null)
                             .param("GENDER", "FEMALE")
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ctx.token()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + auth.token()))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 

@@ -8,15 +8,11 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
-import backend.mulkkam.cup.domain.Cup;
 import backend.mulkkam.cup.domain.CupEmoji;
 import backend.mulkkam.cup.domain.vo.CupAmount;
 import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
-import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.controller.ControllerTest;
@@ -44,15 +40,6 @@ class IntakeHistoryControllerTest extends ControllerTest {
     private OauthAccountRepository oauthAccountRepository;
 
     @Autowired
-    private IntakeHistoryRepository intakeHistoryRepository;
-
-    @Autowired
-    private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
-
-    @Autowired
-    private TargetAmountSnapshotRepository targetAmountSnapshotRepository;
-
-    @Autowired
     private CupRepository cupRepository;
 
     @Autowired
@@ -60,9 +47,9 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
     private final AtomicLong oauthIdCounter = new AtomicLong(1);
 
-    record TestContext(Member member, String token, Cup cup) {}
+    record AuthenticatedMember(Member member, OauthAccount oauthAccount, String token) {}
 
-    private TestContext createTestContext() {
+    private AuthenticatedMember createAuthenticatedMember() {
         Member member = memberRepository.save(MemberFixtureBuilder
                 .builder()
                 .weight(70.0)
@@ -77,12 +64,12 @@ class IntakeHistoryControllerTest extends ControllerTest {
 
         CupEmoji cupEmoji = cupEmojiRepository.save(new CupEmoji("http://example.com"));
 
-        Cup cup = cupRepository.save(CupFixtureBuilder
+        cupRepository.save(CupFixtureBuilder
                 .withMemberAndCupEmoji(member, cupEmoji)
                 .cupAmount(new CupAmount(1000))
                 .build());
 
-        return new TestContext(member, token, cup);
+        return new AuthenticatedMember(member, oauthAccount, token);
     }
 
     @DisplayName("음용 기록을 조회할 때에")
@@ -93,7 +80,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
         @Test
         void success_returns_empty_details_when_no_records() throws Exception {
             // given
-            TestContext ctx = createTestContext();
+            AuthenticatedMember auth = createAuthenticatedMember();
             LocalDate from = LocalDate.of(2025, 7, 15);
             LocalDate to = LocalDate.of(2025, 7, 16);
 
@@ -101,7 +88,7 @@ class IntakeHistoryControllerTest extends ControllerTest {
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", from.toString())
                             .param("to", to.toString())
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ctx.token()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + auth.token()))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 
@@ -121,13 +108,13 @@ class IntakeHistoryControllerTest extends ControllerTest {
         @Test
         void success_returns_member_target_amount_when_no_records_for_today() throws Exception {
             // given
-            TestContext ctx = createTestContext();
+            AuthenticatedMember auth = createAuthenticatedMember();
 
             // when
             String json = mockMvc.perform(get("/intake/history")
                             .param("from", LocalDate.now().toString())
                             .param("to", LocalDate.now().toString())
-                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + ctx.token()))
+                            .header(HttpHeaders.AUTHORIZATION, "Bearer " + auth.token()))
                     .andExpect(status().isOk())
                     .andReturn().getResponse().getContentAsString();
 

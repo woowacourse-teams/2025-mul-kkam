@@ -71,6 +71,9 @@ class CupControllerTest extends ControllerTest {
     }
 
     private CupEmoji saveDefaultCupEmojisAndGetFirst() {
+        if (!cupEmojiRepository.findAll().isEmpty()) {
+            return cupEmojiRepository.findAll().getFirst();
+        }
         for (IntakeType intakeType : IntakeType.values()) {
             DefaultCup.of(intakeType);
             CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
