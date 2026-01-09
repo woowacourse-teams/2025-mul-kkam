@@ -76,7 +76,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
             });
         }
 
-        @DisplayName("음용량이 음용인 경우 예외가 발생한다")
+        @DisplayName("음용량이 음수인 경우 예외가 발생한다")
         @Test
         void fail_target_cannot_be_negative() {
             // given
