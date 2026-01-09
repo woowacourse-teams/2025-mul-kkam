@@ -7,7 +7,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.main.component.MainBottomNavigationBar
 import com.mulkkam.ui.main.model.MainTab
@@ -15,7 +15,13 @@ import com.mulkkam.ui.navigation.MainNavHost
 import com.mulkkam.ui.navigation.rememberMainNavigator
 
 @Composable
-fun MulKkamApp() {
+fun MulKkamApp(
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+) {
     val navigator = rememberMainNavigator()
 
     val currentTab: MainTab? by remember {
@@ -25,30 +31,29 @@ fun MulKkamApp() {
         derivedStateOf { currentTab != null }
     }
 
-    MulKkamTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = White,
-            bottomBar = {
-                if (showBottomNavigationBar) {
-                    MainBottomNavigationBar(
-                        selectedTab = currentTab ?: MainTab.DEFAULT,
-                        onTabSelected = { tab ->
-                            when (tab) {
-                                MainTab.HOME -> navigator.navigateToHome()
-                                MainTab.HISTORY -> navigator.navigateToHistory()
-                                MainTab.FRIENDS -> navigator.navigateToFriends()
-                                MainTab.SETTING -> navigator.navigateToSetting()
-                            }
-                        },
-                    )
-                }
-            },
-        ) { innerPadding ->
-            MainNavHost(
-                navigator = navigator,
-                padding = innerPadding,
-            )
-        }
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = White,
+        bottomBar = {
+            if (showBottomNavigationBar) {
+                MainBottomNavigationBar(
+                    selectedTab = currentTab ?: MainTab.DEFAULT,
+                    onTabSelected = { tab ->
+                        when (tab) {
+                            MainTab.HOME -> navigator.navigateToHome()
+                            MainTab.HISTORY -> navigator.navigateToHistory()
+                            MainTab.FRIENDS -> navigator.navigateToFriends()
+                            MainTab.SETTING -> navigator.navigateToSetting()
+                        }
+                    },
+                )
+            }
+        },
+    ) { innerPadding ->
+        MainNavHost(
+            navigator = navigator,
+            padding = innerPadding,
+            onLogin = onLogin,
+        )
     }
 }

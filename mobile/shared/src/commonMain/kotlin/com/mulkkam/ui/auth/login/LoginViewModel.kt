@@ -1,4 +1,4 @@
-package com.mulkkam.ui.login
+package com.mulkkam.ui.auth.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

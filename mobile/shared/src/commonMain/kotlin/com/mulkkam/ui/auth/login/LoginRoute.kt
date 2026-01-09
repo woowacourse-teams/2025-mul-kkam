@@ -1,15 +1,18 @@
 package com.mulkkam.ui.auth.login
-
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.auth.login.model.AuthPlatform
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun LoginRoute(
+expect fun LoginRoute(
     padding: PaddingValues,
     onNavigateToOnboarding: () -> Unit,
-) {
-    LoginScreen(
-        padding = padding,
-        onNavigateToOnboarding = onNavigateToOnboarding,
-    )
-}
+    onNavigateToMain: () -> Unit,
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    viewModel: LoginViewModel = koinViewModel(),
+)
