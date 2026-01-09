@@ -48,7 +48,7 @@ class DeviceServiceTest extends ServiceTest {
 
         @DisplayName("Device Id 가 존재하는 경우 정상적으로 삭제된다")
         @Test
-        void success_whenDeviceIdIsExisted() {
+        void success_fcm_token_is_deleted() {
             // given
             MemberAndDeviceUuidDetails memberAndDeviceUuidDetails = createMemberAndDeviceUuid();
 

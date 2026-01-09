@@ -60,7 +60,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("존재하지 않는 요청에 대해 예외를 던진다")
         @Test
-        void error_byNonExistingFriendRequest() {
+        void fail_cannot_reject_non_existing_request() {
             // given
             Member requester = createAndSaveMember("요청자");
 
@@ -76,7 +76,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("요청을 받은 사용자가 아닌 경우 예외를 던진다")
         @Test
-        void error_hasNoPermissionForAcceptingRequest() {
+        void fail_cannot_reject_without_permission() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             Member invalidMember = createAndSaveMember("무관한사람");
@@ -98,7 +98,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 거절된다")
         @Test
-        void success_rejected() {
+        void success_friend_request_is_rejected() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
@@ -120,7 +120,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("요청자가 본인의 요청을 거절하려 하면 예외를 던진다")
         @Test
-        void error_requesterCannotProcessOwnRequest() {
+        void fail_requester_cannot_reject_own_request() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
@@ -140,7 +140,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("이미 처리된 요청을 다시 처리하려 하면 예외를 던진다")
         @Test
-        void error_cannotProcessAlreadyProcessedRequest() {
+        void fail_cannot_reject_already_processed_request() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
@@ -165,7 +165,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("존재하지 않는 요청에 대해 예외를 던진다")
         @Test
-        void error_byNonExistingFriendRequest() {
+        void fail_cannot_accept_non_existing_request() {
             // given
             Member requester = createAndSaveMember("요청자");
 
@@ -181,7 +181,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("요청을 받은 사용자가 아닌 경우 예외를 던진다")
         @Test
-        void error_hasNoPermissionForAcceptingRequest() {
+        void fail_cannot_accept_without_permission() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             Member invalidMember = createAndSaveMember("무관한사람");
@@ -203,7 +203,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 수락된다")
         @Test
-        void success_accepted() {
+        void success_friend_request_is_accepted() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
@@ -229,7 +229,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("요청자가 본인의 요청을 처리하려 하면 예외를 던진다")
         @Test
-        void error_requesterCannotProcessOwnRequest() {
+        void fail_requester_cannot_accept_own_request() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
@@ -277,7 +277,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("내가 요청자인 경우만 반환한다.")
         @Test
-        void success_onlyInRequester() {
+        void success_returns_only_sent_by_me() {
             // given
             Member requester = createAndSaveMember("요청자");
             List<Long> idsOfFriendRelation = new ArrayList<>();
@@ -321,7 +321,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("상태가 REQUESTED 인 경우만 반환한다")
         @Test
-        void success_onlyStatusIsRequested() {
+        void success_returns_only_requested_status() {
             // given
             Member requester = createAndSaveMember("요청자");
             List<Long> expected = new ArrayList<>();

@@ -17,7 +17,7 @@ class CommentOfAchievementRateTest {
 
         @DisplayName("100퍼센트인 경우에 해당하는 문구가 반환된다")
         @Test
-        void success_achievementRateIs100() {
+        void success_returns_full_comment_for_100_percent() {
             // given
             AchievementRate achievementRate = new AchievementRate(100.0);
 
@@ -31,7 +31,7 @@ class CommentOfAchievementRateTest {
         @DisplayName("70퍼센트 이상이고 100퍼센트 미만인 경우에 해당하는 문구가 반환된다")
         @ParameterizedTest
         @ValueSource(doubles = {70.0, 70.1, 85.5, 99.9})
-        void success_achievementRateIsBetween70And100(double rate) {
+        void success_returns_mostly_comment_for_70_to_100(double rate) {
             // given
             AchievementRate achievementRate = new AchievementRate(rate);
 
@@ -45,7 +45,7 @@ class CommentOfAchievementRateTest {
         @DisplayName("50퍼센트 이상이고 70퍼센트 미만인 경우에 해당하는 문구가 반환된다")
         @ParameterizedTest
         @ValueSource(doubles = {50, 50.5, 69.9})
-        void success_achievementRateIsBetween50And70(double rate) {
+        void success_returns_half_comment_for_50_to_70(double rate) {
             // given
             AchievementRate achievementRate = new AchievementRate(rate);
 
@@ -59,7 +59,7 @@ class CommentOfAchievementRateTest {
         @DisplayName("30퍼센트 이상이고 50퍼센트 미만인 경우에 해당하는 문구가 반환된다")
         @ParameterizedTest
         @ValueSource(doubles = {30, 40, 49})
-        void success_achievementRateIsBetween30And50(double rate) {
+        void success_returns_low_comment_for_30_to_50(double rate) {
             // given
             AchievementRate achievementRate = new AchievementRate(rate);
 
@@ -73,7 +73,7 @@ class CommentOfAchievementRateTest {
         @DisplayName("10퍼센트 이상이고 30퍼센트 미만인 경우에 해당하는 문구가 반환된다")
         @ParameterizedTest
         @ValueSource(doubles = {10.1, 29.9, 15.3})
-        void success_achievementRateIsBetween10And30(double rate) {
+        void success_returns_very_low_comment_for_10_to_30(double rate) {
             // given
             AchievementRate achievementRate = new AchievementRate(rate);
 
@@ -87,7 +87,7 @@ class CommentOfAchievementRateTest {
         @DisplayName("0퍼센트 이상이고 10퍼센트 미만인 경우에 해당하는 문구가 반환된다")
         @ParameterizedTest
         @ValueSource(doubles = {0.1, 9.9, 5.5})
-        void success_achievementRateIsBetween0And10(double rate) {
+        void success_returns_default_comment_for_0_to_10(double rate) {
             // given
             AchievementRate achievementRate = new AchievementRate(rate);
 

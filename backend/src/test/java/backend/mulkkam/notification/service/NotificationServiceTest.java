@@ -87,7 +87,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("요청 날짜로부터 7일 내의 최신순으로 데이터만이 불러와진다")
         @Test
-        void success_returnsNotificationsWithin7DaysSortedByLatest() {
+        void success_returns_notifications_within_7_days_sorted_by_latest() {
             // given
             Member savedMember = createAndSaveMember();
             notificationRepository.saveAll(List.of(
@@ -170,7 +170,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("조회된 데이터의 크기가 size와 동일할 경우 size만큼 불러와진다")
         @Test
-        void success_returnsAllWhenDataSizeEqualsRequestSize() {
+        void success_returns_exact_size_when_data_equals_request_size() {
             // given
             Member savedMember = createAndSaveMember();
             notificationRepository.saveAll(createUnReadNotifications(savedMember,
@@ -193,7 +193,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("요청 갯수보다 작아도 예외 없이 데이터가 불러와진다")
         @Test
-        void success_returnsLessDataWhenAvailableDataIsLessThanSize() {
+        void success_returns_less_when_available_is_less_than_size() {
             // given
             Member savedMember = createAndSaveMember();
             List<Notification> notifications = createUnReadNotifications(savedMember,
@@ -217,7 +217,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("lastId가 null이 들어오면 맨 마지막부터 불러와진다")
         @Test
-        void success_returnsFromLatestWhenLastIdIsNull() {
+        void success_returns_from_latest_when_last_id_is_null() {
             // given
             Member savedMember = createAndSaveMember();
             Notification latestNotification = NotificationFixtureBuilder
@@ -257,7 +257,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("다음 데이터가 없을 경우 nextCursor은 null이 반환된다")
         @Test
-        void success_nextCursorIsNullWhenNoMoreData() {
+        void success_next_cursor_is_null_when_no_more_data() {
             // given
             Member savedMember = createAndSaveMember();
             notificationRepository.saveAll(createUnReadNotifications(savedMember,
@@ -280,7 +280,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("size가 음수일 때 예외가 발생한다")
         @Test
-        void error_throwsExceptionWhenSizeIsNegative() {
+        void fail_size_cannot_be_negative() {
             // given
             Member savedMember = createAndSaveMember();
             ReadNotificationsRequest request = new ReadNotificationsRequest(6L, requestTime, -1);
@@ -324,7 +324,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("안 읽은 알림의 갯수를 반환한다")
         @Test
-        void success_validMember() {
+        void success_returns_unread_count() {
             // given
             Member savedMember = createAndSaveMember();
             setupNotificationsForCount(savedMember);
@@ -339,7 +339,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("요청 시각 기준 7일 이내의 읽지 않은 알림만 집계한다")
         @Test
-        void success_countsUnreadOnlyWithin7Days() {
+        void success_counts_unread_only_within_7_days() {
             // given
             Member savedMember = createAndSaveMember();
             setupNotificationsForCount(savedMember);
@@ -363,7 +363,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("존재하는 id 를 통해 삭제하는 경우 성공한다")
         @Test
-        void success_existingId() {
+        void success_notification_is_deleted() {
             // given
             Member savedMember = createAndSaveMember();
             Notification notification = NotificationFixtureBuilder.withMember(savedMember)
@@ -384,7 +384,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("타입이 suggestion 인 경우 SuggestionNotification 까지 삭제된다")
         @Test
-        void success_typeIsSuggestion() {
+        void success_suggestion_notification_is_deleted_together() {
             // given
             Member savedMember = createAndSaveMember();
             Notification notification = NotificationFixtureBuilder.withMember(savedMember)
@@ -410,7 +410,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("존재하지 않는 id 인 경우 예외를 던진다")
         @Test
-        void success_notExistingId() {
+        void fail_cannot_delete_non_existent_notification() {
             // given
             Member savedMember = createAndSaveMember();
             MemberDetails memberDetails = new MemberDetails(savedMember.getId(), MemberRole.MEMBER);
@@ -423,7 +423,7 @@ class NotificationServiceTest extends ServiceTest {
 
         @DisplayName("삭제할 권한이 없는 경우 예외를 던진다")
         @Test
-        void success_unauthorizedToDelete() {
+        void fail_cannot_delete_without_permission() {
             // given
             Member savedMember = createAndSaveMember();
             Notification notification = NotificationFixtureBuilder.withMember(savedMember)

@@ -179,7 +179,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
         @Test
-        void success_IfYesterdayHistoryNotExist() {
+        void success_streak_starts_at_one_without_yesterday_history() {
             // given
             saveDefaultCupEmojis();
             Member member = createAndSaveMember();
@@ -237,7 +237,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("날짜의 범위에 해당하는 기록만 조회된다")
         @Test
-        void success_containsOnlyInDateRange() {
+        void success_returns_only_histories_in_date_range() {
             // given
             Member member = createAndSaveMember();
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -297,7 +297,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
         @Test
-        void success_containsOnlyHistoryOfMember() {
+        void success_returns_only_own_member_histories() {
             // given
             Member member = createAndSaveMember();
             CupEmoji cupEmoji = createAndSaveCupEmoji();
@@ -355,7 +355,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("하루의 달성률을 계산한다")
         @Test
-        void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
+        void success_calculates_daily_achievement_rate() {
             // given
             CupEmoji cupEmoji = createAndSaveCupEmoji();
             int targetAmountOfMember = 1_500;
@@ -419,7 +419,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
         @Test
-        void success_ifNotExistsIntakeHistoryFindSnapshot() {
+        void success_finds_target_from_snapshot_when_no_history() {
             // given
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
@@ -450,9 +450,9 @@ class IntakeHistoryServiceTest extends ServiceTest {
             });
         }
 
-        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @DisplayName("직접 입력으로 생성된 기록은 기본 이모지를 사용한다")
         @Test
-        void success_whenIntakeHistoryDetailByUserInput() {
+        void success_creates_user_input_history_with_default_emoji() {
             // given
             saveDefaultCupEmojis();
             Member member = createAndSaveMember();
@@ -493,7 +493,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("날짜의 범위에 해당하는 섭취 달성률들을 조회한다")
         @Test
-        void success_byValidDateRange() {
+        void success_returns_achievement_rates_for_date_range() {
             // given
             Member member = createAndSaveMember();
             LocalDate startDate = LocalDate.of(2025, 10, 20);
@@ -586,7 +586,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("존재하지 않는 기록에 대한 요청인 경우에도 정상적으로 처리된다.")
         @Test
-        void error_historyDetailIsNotExisted() {
+        void success_does_not_throw_for_non_existent_history() {
             // given
             Member member = createAndSaveMember();
 
@@ -597,7 +597,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")
         @Test
-        void error_memberIsNotPermitted() {
+        void fail_cannot_delete_other_member_history() {
             // given
             Member member = createAndSaveMember();
             CupEmoji cupEmoji = createAndSaveCupEmoji();
@@ -632,7 +632,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 삭제된다")
         @Test
-        void success_validData() {
+        void success_history_is_deleted() {
             // given
             Member member = createAndSaveMember();
             CupEmoji cupEmoji = createAndSaveCupEmoji();
@@ -660,7 +660,7 @@ class IntakeHistoryServiceTest extends ServiceTest {
 
         @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
         @Test
-        void error_requestToDeletePastDate() {
+        void fail_cannot_delete_past_date_history() {
             // given
             Member member = createAndSaveMember();
             CupEmoji cupEmoji = createAndSaveCupEmoji();

@@ -48,7 +48,7 @@ class IntakeHistoryCrudServiceTest extends ServiceTest {
 
         @DisplayName("섭취 기록으로부터 달성률을 계산하여 반환한다")
         @Test
-        void success_byValidInput() {
+        void success_calculates_achievement_rate_from_history() {
             // given
             Member savedMember = createAndSaveMember();
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder

@@ -112,7 +112,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("존재하는 ID로 조회 시 멤버 정보를 반환한다")
         @Test
-        void success_whenExistingId() {
+        void success_returns_member_info() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -138,7 +138,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("올바른 데이터로 필드를 수정할 시 값이 반영된다")
         @Test
-        void success_validDataAllArgs() {
+        void success_physical_attributes_are_updated() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -178,7 +178,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("올바른 닉네임으로 필드를 수정할 시 값이 변경된다")
         @Test
-        void success_validNickname() {
+        void success_nickname_is_updated() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -204,7 +204,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
         @Test
-        void success_validDataArg() {
+        void success_nickname_validation_passes() {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
@@ -223,7 +223,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
         @Test
-        void error_duplicateNickname() {
+        void fail_nickname_cannot_be_duplicated() {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
@@ -251,7 +251,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
         @Test
-        void error_sameAsBeforeNickname() {
+        void fail_nickname_cannot_be_same_as_before() {
             // given
             String nickname = "체체";
             Member member = MemberFixtureBuilder
@@ -276,7 +276,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("멤버의 닉네임이 올바르게 조회된다")
         @Test
-        void success_validMemberId() {
+        void success_returns_member_nickname() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -299,7 +299,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 작동한다")
         @Test
-        void success_validData() {
+        void success_returns_progress_info() {
             // given
             String nickname = "체체";
             Member member = MemberFixtureBuilder
@@ -346,7 +346,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("오늘의 기록이 존재하지 않는 경우 멤버의 목표 음용량을 조회한다")
         @Test
-        void success_withoutIntakeHistory() {
+        void success_returns_member_target_when_no_history() {
             // given
             String nickname = "체체";
             int rawTargetAmount = 1_000;
@@ -383,7 +383,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 멤버가 삭제된다")
         @Test
-        void success_deleteMember() {
+        void success_member_is_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -407,7 +407,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 토큰이 삭제된다")
         @Test
-        void success_deleteRefreshToken() {
+        void success_refresh_token_is_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -434,7 +434,7 @@ class MemberServiceTest extends ServiceTest {
 
         @DisplayName("연관된 모든 엔티티가 제거된다")
         @Test
-        void success_deleteAllRelatedEntities() {
+        void success_all_related_entities_are_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();

@@ -53,7 +53,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("용량이 0보다 큰 경우 정상적으로 저장된다")
         @Test
-        void success_amountMoreThan0() {
+        void success_target_is_saved_when_amount_is_positive() {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
@@ -78,7 +78,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("음용량이 음용인 경우 예외가 발생한다")
         @Test
-        void error_amountIsLessThan0() {
+        void fail_target_cannot_be_negative() {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
@@ -100,7 +100,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("스냅샷이 저장된다")
         @Test
-        void success_whenAmountIsModified() {
+        void success_snapshot_is_saved_when_amount_modified() {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
@@ -124,7 +124,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("해당 수정이 추천에 의한 수정일 경우 금일 목표에만 반영된다")
         @Test
-        void success_recommendAmount() {
+        void success_suggestion_only_affects_today_target() {
             // given
             int memberTargetAmount = 1_500;
             Member member = MemberFixtureBuilder
@@ -161,7 +161,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("오늘의 기록이 있다면 금일 목표 음용량도 변경한다")
         @Test
-        void success_changeTodayTargetAmount() {
+        void success_today_target_is_also_updated() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -197,7 +197,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
-        void success_physicalAttributes() {
+        void success_calculates_from_physical_attributes() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .weight(60.0)
@@ -215,7 +215,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
         @Test
-        void success_physicalAttributesIsNotExisted() {
+        void success_uses_default_when_no_physical_attributes() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .weight(null)
@@ -237,7 +237,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
     class GetTarget {
         @Test
         @DisplayName("정상적으로 조회된다")
-        void success_withExistedMember() {
+        void success_returns_target_amount() {
             // given
             int expected = 1_000;
             Member member = MemberFixtureBuilder
@@ -260,7 +260,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("멤버의 신체 정보에 따라 추천 음용량이 계산된다")
         @Test
-        void success_physicalAttributes() {
+        void success_calculates_from_provided_physical_attributes() {
             // given
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(Gender.FEMALE, 60.0);
 
@@ -274,7 +274,7 @@ class IntakeTargetAmountServiceTest extends ServiceTest {
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
         @Test
-        void success_physicalAttributesIsNotExisted() {
+        void success_uses_default_when_physical_attributes_not_provided() {
             // given
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(null, null);
 

@@ -23,7 +23,7 @@ class WeatherServiceTest extends ServiceTest {
         @Disabled
         @DisplayName("정상적으로 실제 API 연결을 통해 평균 기온을 구한다")
         @Test
-        void success_withExactDate() {
+        void success_fetches_average_temperature_from_api() {
             // given
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, LocalDateTime.now().plusDays(1));
 

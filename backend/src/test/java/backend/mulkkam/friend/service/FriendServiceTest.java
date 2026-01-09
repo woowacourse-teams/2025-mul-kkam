@@ -62,7 +62,7 @@ class FriendServiceTest extends ServiceTest {
 
         @DisplayName("요청자가 삭제하는 경우 정상적으로 삭제된다.")
         @Test
-        void success_deleteByRequester() {
+        void success_friend_is_deleted_by_requester() {
             // given
             Member[] pair = createAndSaveFriendPair();
             Member requester = pair[0];
@@ -81,7 +81,7 @@ class FriendServiceTest extends ServiceTest {
 
         @DisplayName("수락자가 삭제하는 경우 정상적으로 삭제된다.")
         @Test
-        void success_deleteByAddressee() {
+        void success_friend_is_deleted_by_addressee() {
             // given
             Member[] pair = createAndSaveFriendPair();
             Member requester = pair[0];
@@ -105,7 +105,7 @@ class FriendServiceTest extends ServiceTest {
 
         @DisplayName("친구 관계의 수락자나 요청자가 조회 시도자인 경우만 반환한다")
         @Test
-        void success_onlyRequesterOrAddressee() {
+        void success_returns_only_my_relations() {
             // given
             Member requester = createAndSaveMember("요청자");
 
@@ -148,7 +148,7 @@ class FriendServiceTest extends ServiceTest {
 
         @DisplayName("상태가 ACCEPTED 인 경우에만 반환한다")
         @Test
-        void success_onlyStatusISAccepted() {
+        void success_returns_only_accepted_relations() {
             // given
             Member requester = createAndSaveMember("요청자2");
 

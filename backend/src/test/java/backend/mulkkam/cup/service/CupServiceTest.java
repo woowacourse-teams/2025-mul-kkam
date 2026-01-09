@@ -78,7 +78,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("정상적으로 저장한다")
         @Test
-        void success_validData() {
+        void success_cups_are_created_with_valid_requests() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -121,7 +121,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("랭크는 마지막 랭크로 정상적으로 저장한다")
         @Test
-        void success_validData() {
+        void success_cup_is_created_at_last_rank() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -152,7 +152,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("세 개의 컵이 삭제되었다가 추가되는 경우, 우선순위가 중복되지 않는다.")
         @Test
-        void success_createAfterDeleted() {
+        void success_cup_ranks_do_not_duplicate_after_delete_and_create() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -196,7 +196,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("용량이 음수면 예외가 발생한다")
         @Test
-        void error_amountLessThan0() {
+        void fail_cup_cannot_be_created_with_negative_amount() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -216,7 +216,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("용량이 0이면 예외가 발생한다")
         @Test
-        void error_amountIsEqualTo0() {
+        void fail_cup_cannot_be_created_with_zero_amount() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -236,7 +236,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("컵이 3개 저장되어 있을 때 예외가 발생한다")
         @Test
-        void error_memberAlreadyHasThreeCups() {
+        void fail_cup_cannot_be_created_when_limit_exceeded() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -273,7 +273,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("사용자의 컵을 랭크순으로 모두 가져온다")
         @Test
-        void success_withExistedMemberId() {
+        void success_cups_are_returned_sorted_by_rank() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -315,7 +315,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("컵 이름 및 용량이 수정된다")
         @Test
-        void success_withValidData() {
+        void success_cup_nickname_and_amount_are_updated() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -357,7 +357,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("그 멤버의 수정할 컵만 변경된다")
         @Test
-        void success_whenCertainCupChanges() {
+        void success_only_target_cup_is_updated() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -413,7 +413,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("멤버가 다를 경우 예외가 발생한다")
         @Test
-        void error_ifTheMembersAreDifferent() {
+        void fail_cup_cannot_be_updated_by_other_member() {
             // given
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
 
@@ -457,7 +457,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("우선순위가 더 낮은 컵들의 우선순위가 한 단계씩 승격된다.")
         @Test
-        void success_withLowerPriorityCups() {
+        void success_lower_priority_cups_are_promoted() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -491,7 +491,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("우선순위가 더 낮은 컵이 없는 경우, 그 어떤 컵의 우선순위도 승격되지 않는다.")
         @Test
-        void success_withoutLowerPriorityCups() {
+        void success_no_cups_are_promoted_when_deleting_last() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -530,7 +530,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("중복되지 않는 식별자 및 우선순위로 자신의 컵을 수정할 수 있다.")
         @Test
-        void success_ifModifyMyCups() {
+        void success_cup_ranks_are_updated() {
             // given
             Member savedMember = createAndSaveMember();
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
@@ -570,7 +570,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("요청에 존재하지 않는 컵 식별자가 포함된 경우 예외가 발생한다.")
         @Test
-        void error_containsNotExistCupId() {
+        void fail_ranks_cannot_be_updated_with_non_existent_cup() {
             // given
             Member savedMember = createAndSaveMember();
 
@@ -587,7 +587,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("중복되는 컵 id가 존재하는 경우 예외가 발생한다.")
         @Test
-        void error_existsDuplicatedCupIds() {
+        void fail_ranks_cannot_be_updated_with_duplicate_cup_ids() {
             // given
             Member savedMember = createAndSaveMember();
 
@@ -604,7 +604,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("중복되는 컵 우선순위가 존재하는 경우 예외가 발생한다.")
         @Test
-        void error_existsDuplicatedCupRanks() {
+        void fail_ranks_cannot_be_updated_with_duplicate_ranks() {
             // given
             Member savedMember = createAndSaveMember();
 
@@ -621,7 +621,7 @@ class CupServiceTest extends ServiceTest {
 
         @DisplayName("다른 멤버의 컵을 수정하려는 경우 예외가 발생한다.")
         @Test
-        void error_ifModifyOtherMemberCup() {
+        void fail_ranks_cannot_be_updated_for_other_member_cups() {
             // given
             CupEmoji savedCupEmoji = createAndSaveCupEmoji();
 
