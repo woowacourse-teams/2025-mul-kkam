@@ -1,8 +1,9 @@
-package com.mulkkam.ui.login
+package com.mulkkam.ui.auth.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,37 +16,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
+import com.mulkkam.ui.auth.login.component.KakaoLoginButton
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.login.component.KakaoLoginButton
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.img_home_character
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun LoginScreen(
-    onLoginClick: () -> Unit,
-    snackbarHostState: SnackbarHostState,
+actual fun LoginScreen(
+    padding: PaddingValues,
+    onLoginClick: (authPlatform: AuthPlatform) -> Unit,
     isLoginLoading: Boolean,
-    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
-        modifier = modifier,
         containerColor = White,
+        modifier = Modifier.padding(padding),
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+            modifier = Modifier.fillMaxSize().padding(innerPadding),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
             Image(
-                painter = painterResource(id = R.drawable.img_home_character),
+                painter = painterResource(resource = Res.drawable.img_home_character),
                 contentDescription = null,
                 modifier =
                     Modifier
@@ -56,7 +56,7 @@ fun LoginScreen(
             )
             Spacer(modifier = Modifier.height(64.dp))
             KakaoLoginButton(
-                onClick = onLoginClick,
+                onClick = { onLoginClick(AuthPlatform.KAKAO) },
                 isEnabled = isLoginLoading.not(),
             )
         }
@@ -68,6 +68,7 @@ fun LoginScreen(
 private fun LoginScreenPreview() {
     MulKkamTheme {
         LoginScreen(
+            padding = PaddingValues(),
             onLoginClick = {},
             snackbarHostState = SnackbarHostState(),
             isLoginLoading = false,

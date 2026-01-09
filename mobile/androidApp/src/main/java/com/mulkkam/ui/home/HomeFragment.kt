@@ -12,7 +12,6 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
-import com.mulkkam.ui.login.LoginActivity
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
@@ -75,12 +74,13 @@ class HomeFragment :
             }
     }
 
+    // TODO: 추후 제거 필요
     private fun navigateToLogin() {
-        val intent =
-            LoginActivity.newIntent(requireContext()).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            }
-        startActivity(intent)
+//        val intent =
+//            LoginActivity.newIntent(requireContext()).apply {
+//                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+//            }
+//            startActivity(intent)
     }
 
     override fun onReselected() {

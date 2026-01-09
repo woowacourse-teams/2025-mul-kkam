@@ -80,6 +80,7 @@ kotlin {
                 // Koin (DI)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose)
 
                 // Kotlinx
                 implementation(libs.kotlinx.serialization.json)
@@ -142,6 +143,9 @@ kotlin {
 
                 // AndroidX Core
                 implementation(libs.androidx.core.ktx)
+
+                // Kakao Login
+                implementation(libs.kakao.v2.user)
             }
         }
 

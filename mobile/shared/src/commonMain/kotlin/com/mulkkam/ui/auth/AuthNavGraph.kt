@@ -3,6 +3,7 @@ package com.mulkkam.ui.auth
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.auth.login.LoginRoute
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.auth.splash.SplashRoute
 import com.mulkkam.ui.navigation.AuthRoute
 import com.mulkkam.ui.navigation.MainNavigator
@@ -15,6 +16,11 @@ object AuthNavGraph {
         route: AuthRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
+        onLogin: (
+            authPlatform: AuthPlatform,
+            onSuccess: (token: String) -> Unit,
+            onError: (errorMessage: String) -> Unit,
+        ) -> Unit,
     ): NavEntry<AuthRoute> =
         when (route) {
             is AuthRoute.Splash -> {
@@ -33,6 +39,8 @@ object AuthNavGraph {
                     LoginRoute(
                         padding = padding,
                         onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
+                        onNavigateToMain = navigator::navigateToHome,
+                        onLogin = onLogin,
                     )
                 }
             }
