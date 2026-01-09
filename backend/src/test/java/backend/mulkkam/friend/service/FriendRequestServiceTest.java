@@ -249,7 +249,7 @@ class FriendRequestServiceTest extends ServiceTest {
 
         @DisplayName("이미 처리된 요청을 다시 처리하려 하면 예외를 던진다")
         @Test
-        void error_cannotProcessAlreadyProcessedRequest() {
+        void fail_cannot_process_already_processed_request() {
             // given
             FriendRequestPair pair = createFriendRequestPair();
             FriendRelation friendRelation = new FriendRelation(pair.requester().getId(), pair.addressee().getId(),
