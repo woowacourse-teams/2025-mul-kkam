@@ -14,6 +14,8 @@ import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mulkkam.shared.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
+private const val LOTTIE_END_PROGRESS: Float = 0.999f
+
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun HomeConfetti(
@@ -44,7 +46,7 @@ fun HomeConfetti(
         )
 
         LaunchedEffect(progress) {
-            if (progress == 1f) {
+            if (progress >= LOTTIE_END_PROGRESS) {
                 onFinished()
             }
         }
