@@ -18,12 +18,12 @@ import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamSnackbarHost2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingreminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.settingreminder.component.SettingReminderContainer
 import com.mulkkam.ui.settingreminder.component.SettingReminderTopAppBar
@@ -63,7 +63,7 @@ fun SettingReminderScreen(
     Scaffold(
         topBar = { SettingReminderTopAppBar(navigateToBack) },
         containerColor = White,
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = { MulKkamSnackbarHost2(hostState = snackbarHostState) },
     ) { innerPadding ->
         SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
@@ -110,14 +110,14 @@ private fun handleReminderUpdateAction(
     if (state !is MulKkamUiState.Failure) return
     if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
         coroutineScope.launch {
-            snackbarHostState.showMulKkamSnackbar(
+            snackbarHostState.showMulKkamSnackbar2(
                 message = getString(context, R.string.setting_reminder_duplicated_schedule),
                 iconResourceId = R.drawable.ic_info_circle,
             )
         }
     } else {
         coroutineScope.launch {
-            snackbarHostState.showMulKkamSnackbar(
+            snackbarHostState.showMulKkamSnackbar2(
                 message = getString(context, R.string.network_check_error),
                 iconResourceId = R.drawable.ic_info_circle,
             )

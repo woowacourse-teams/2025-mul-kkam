@@ -28,13 +28,13 @@ import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamSnackbarHost2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.pendingfriends.component.PendingFriendsTopAppBar
 import com.mulkkam.ui.pendingfriends.component.ReceivedTab
 import com.mulkkam.ui.pendingfriends.component.SentTab
@@ -97,7 +97,7 @@ fun PendingFriendsScreen(
             PendingFriendsTopAppBar(navigateToBack)
         },
         containerColor = White,
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+        snackbarHost = { MulKkamSnackbarHost2(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
             modifier =
@@ -173,7 +173,7 @@ private fun handleAcceptRequestAction(
         is MulKkamUiState.Success<String> -> {
             val nickname = state.toSuccessDataOrNull() ?: return
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.pending_friends_accept_success, nickname),
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )
@@ -183,7 +183,7 @@ private fun handleAcceptRequestAction(
 
         is MulKkamUiState.Failure -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = getString(context, R.string.pending_friends_accept_failed),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -203,7 +203,7 @@ private fun handleRejectRequestAction(
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.pending_friends_reject_success),
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )
@@ -224,7 +224,7 @@ private fun handleCancelRequestAction(
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.pending_friends_cancel_success),
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )

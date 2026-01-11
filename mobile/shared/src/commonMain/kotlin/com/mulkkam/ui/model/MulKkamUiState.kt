@@ -14,6 +14,6 @@ sealed class MulKkamUiState<out T> {
     data class Failure(
         val error: MulKkamError,
     ) : MulKkamUiState<Nothing>()
-
-    inline fun <reified T> MulKkamUiState<T>.toSuccessDataOrNull(): T? = (this as? Success<T>)?.data
 }
+
+inline fun <reified T> MulKkamUiState<T>.toSuccessDataOrNull(): T? = (this as? MulKkamUiState.Success<T>)?.data

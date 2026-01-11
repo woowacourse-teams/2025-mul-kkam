@@ -24,16 +24,16 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamToastHost
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.SaveButton
-import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.component.MulKkamToastHost2
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.SaveButton2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.settingtargetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.TargetAmountInputSection
@@ -53,12 +53,12 @@ fun SettingTargetAmountScreen(
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
     val saveTargetAmountUiState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
 
-    val toastState: MulKkamToastState = rememberMulKkamToastState()
+    val toastState: MulKkamToastState2 = rememberMulKkamToastState2()
 
     viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
             is MulKkamUiState.Success -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.setting_target_amount_complete_description),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -66,7 +66,7 @@ fun SettingTargetAmountScreen(
             }
 
             is MulKkamUiState.Failure -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -136,7 +136,7 @@ fun SettingTargetAmountScreen(
                 }
             }
 
-            SaveButton(
+            SaveButton2(
                 onClick = { viewModel.saveTargetAmount() },
                 modifier =
                     Modifier
@@ -148,7 +148,7 @@ fun SettingTargetAmountScreen(
                 disabledContainerColor = Primary200,
             )
 
-            MulKkamToastHost(
+            MulKkamToastHost2(
                 state = toastState,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )

@@ -24,10 +24,10 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
-import com.mulkkam.ui.component.MulKkamToastHost
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.SaveButton
-import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.component.MulKkamToastHost2
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.SaveButton2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
@@ -54,12 +54,12 @@ fun SettingBioInfoScreen(
     val weight by viewModel.weight.collectAsStateWithLifecycle()
     val bioInfoChangeUiState by viewModel.bioInfoChangeUiState.collectAsStateWithLifecycle()
 
-    val toastState: MulKkamToastState = rememberMulKkamToastState()
+    val toastState: MulKkamToastState2 = rememberMulKkamToastState2()
 
     LaunchedEffect(bioInfoChangeUiState) {
         when (bioInfoChangeUiState) {
             is MulKkamUiState.Success<Unit> -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.setting_bio_info_complete_description),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -67,7 +67,7 @@ fun SettingBioInfoScreen(
             }
 
             is MulKkamUiState.Failure -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -127,7 +127,7 @@ fun SettingBioInfoScreen(
                 )
             }
 
-            SaveButton(
+            SaveButton2(
                 onClick = { viewModel.saveBioInfo() },
                 modifier =
                     Modifier
@@ -138,7 +138,7 @@ fun SettingBioInfoScreen(
                 enabled = gender != null && weight != null && bioInfoChangeUiState !is MulKkamUiState.Loading,
             )
 
-            MulKkamToastHost(
+            MulKkamToastHost2(
                 state = toastState,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )

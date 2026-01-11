@@ -11,8 +11,8 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
 import com.mulkkam.ui.model.NicknameValidationUiState
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

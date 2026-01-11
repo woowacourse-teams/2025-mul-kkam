@@ -26,7 +26,7 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.settingtargetamount.component.RecommendedTargetAmount

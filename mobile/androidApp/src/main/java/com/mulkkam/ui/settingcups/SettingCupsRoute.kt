@@ -20,9 +20,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamToastHost
-import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamToastHost2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
@@ -47,7 +47,7 @@ fun SettingCupsRoute(
     var isResetDialogVisible: Boolean by rememberSaveable { mutableStateOf(false) }
     var isBottomSheetVisible: Boolean by rememberSaveable { mutableStateOf(false) }
     var selectedCup: CupUiModel? by rememberSaveable { mutableStateOf(null) }
-    val toastState = rememberMulKkamToastState()
+    val toastState = rememberMulKkamToastState2()
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val listItems = remember { mutableStateListOf<SettingCupsItem>() }
@@ -67,7 +67,7 @@ fun SettingCupsRoute(
 
     LaunchedEffect(cupsUiState) {
         if (cupsUiState is MulKkamUiState.Failure) {
-            snackbarHostState.showMulKkamSnackbar(
+            snackbarHostState.showMulKkamSnackbar2(
                 message = context.getString(R.string.load_info_error),
                 iconResourceId = R.drawable.ic_alert_circle,
             )
@@ -77,14 +77,14 @@ fun SettingCupsRoute(
     LaunchedEffect(cupsResetUiState) {
         when (cupsResetUiState) {
             is MulKkamUiState.Success -> {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.setting_cups_reset_success),
                     iconResourceId = R.drawable.ic_terms_all_check_on,
                 )
             }
 
             is MulKkamUiState.Failure -> {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -114,7 +114,7 @@ fun SettingCupsRoute(
             snackbarHostState = snackbarHostState,
         )
 
-        MulKkamToastHost(
+        MulKkamToastHost2(
             state = toastState,
             modifier = Modifier.align(Alignment.BottomCenter),
         )

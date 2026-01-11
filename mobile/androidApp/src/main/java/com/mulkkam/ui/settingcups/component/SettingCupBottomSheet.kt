@@ -29,17 +29,17 @@ import com.mulkkam.R
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.BottomSheetHandle
-import com.mulkkam.ui.component.BottomSheetHeader
-import com.mulkkam.ui.component.IntakeTypeChips
-import com.mulkkam.ui.component.MulKkamTextField
-import com.mulkkam.ui.component.MulKkamTextFieldState
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.SaveButton
+import com.mulkkam.ui.component.BottomSheetHandle2
+import com.mulkkam.ui.component.BottomSheetHeader2
+import com.mulkkam.ui.component.IntakeTypeChips2
+import com.mulkkam.ui.component.MulKkamTextField2
+import com.mulkkam.ui.component.MulKkamTextFieldState2
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.SaveButton2
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.home.component.BottomSheetSectionTitle
+import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingcups.SettingCupViewModel
 import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
@@ -58,7 +58,7 @@ fun SettingCupBottomSheet(
     onSaved: () -> Unit,
     onDeleted: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
-    toastState: MulKkamToastState,
+    toastState: MulKkamToastState2,
     viewModel: SettingCupViewModel,
     modifier: Modifier = Modifier,
 ) {
@@ -87,7 +87,7 @@ fun SettingCupBottomSheet(
 
     LaunchedEffect(viewModel) {
         viewModel.saveSuccess.collectLatest {
-            toastState.showMulKkamToast(
+            toastState.showMulKkamToast2(
                 message = context.getString(R.string.setting_cup_save_result),
                 iconResourceId = R.drawable.ic_terms_all_check_on,
             )
@@ -98,7 +98,7 @@ fun SettingCupBottomSheet(
 
     LaunchedEffect(viewModel) {
         viewModel.deleteSuccess.collectLatest {
-            toastState.showMulKkamToast(
+            toastState.showMulKkamToast2(
                 message = context.getString(R.string.setting_cup_delete_result),
                 iconResourceId = R.drawable.ic_terms_all_check_on,
             )
@@ -116,7 +116,7 @@ fun SettingCupBottomSheet(
                 topEnd = 12.dp,
             ),
         sheetState = sheetState,
-        dragHandle = { BottomSheetHandle() },
+        dragHandle = { BottomSheetHandle2() },
         containerColor = White,
     ) {
         Column(
@@ -125,7 +125,7 @@ fun SettingCupBottomSheet(
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 24.dp),
         ) {
-            BottomSheetHeader(
+            BottomSheetHeader2(
                 title =
                     when (editType) {
                         SettingWaterCupEditType.ADD -> stringResource(R.string.setting_cup_add_title)
@@ -145,7 +145,7 @@ fun SettingCupBottomSheet(
             Spacer(modifier = Modifier.height(18.dp))
             BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_nickname))
             Spacer(modifier = Modifier.height(10.dp))
-            MulKkamTextField(
+            MulKkamTextField2(
                 value = cupNameText,
                 onValueChanged = { newValue ->
                     cupNameText = newValue
@@ -165,7 +165,7 @@ fun SettingCupBottomSheet(
                 onClickInfo = onNavigateToCoffeeEncyclopedia,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            IntakeTypeChips(
+            IntakeTypeChips2(
                 selectedIntakeType = cup.intakeType,
                 onSelect = viewModel::updateIntakeType,
                 modifier = Modifier.fillMaxWidth(),
@@ -174,7 +174,7 @@ fun SettingCupBottomSheet(
             Spacer(modifier = Modifier.height(12.dp))
             BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_amount))
             Spacer(modifier = Modifier.height(10.dp))
-            MulKkamTextField(
+            MulKkamTextField2(
                 value = cupAmountText,
                 onValueChanged = { newValue ->
                     if (newValue.all(Char::isDigit)) {
@@ -199,7 +199,7 @@ fun SettingCupBottomSheet(
             ValidationMessage(message = amountValidity.toCupAmountMessage())
 
             Spacer(modifier = Modifier.height(22.dp))
-            SaveButton(
+            SaveButton2(
                 onClick = viewModel::saveCup,
                 enabled = isSaveAvailable,
                 text = stringResource(id = R.string.setting_cup_save),
@@ -216,11 +216,11 @@ fun SettingCupBottomSheet(
     }
 }
 
-private fun MulKkamUiState<Unit>.toTextFieldState(): MulKkamTextFieldState =
+private fun MulKkamUiState<Unit>.toTextFieldState(): MulKkamTextFieldState2 =
     when (this) {
-        is MulKkamUiState.Success -> MulKkamTextFieldState.VALID
-        is MulKkamUiState.Failure -> MulKkamTextFieldState.ERROR
-        else -> MulKkamTextFieldState.NORMAL
+        is MulKkamUiState.Success -> MulKkamTextFieldState2.VALID
+        is MulKkamUiState.Failure -> MulKkamTextFieldState2.ERROR
+        else -> MulKkamTextFieldState2.NORMAL
     }
 
 @Composable
