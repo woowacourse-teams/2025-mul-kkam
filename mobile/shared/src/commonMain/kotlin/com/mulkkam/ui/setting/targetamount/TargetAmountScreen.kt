@@ -1,6 +1,8 @@
 package com.mulkkam.ui.setting.targetamount
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +23,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.Key.Companion.R
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,6 +57,7 @@ fun TargetAmountScreen(
     viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val focusManager = LocalFocusManager.current
 
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
@@ -100,7 +104,13 @@ fun TargetAmountScreen(
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Box(
-            modifier = Modifier.fillMaxHeight().padding(innerPadding),
+            modifier =
+                Modifier.fillMaxHeight().padding(innerPadding).clickable(
+                    indication = null,
+                    interactionSource = remember { MutableInteractionSource() },
+                ) {
+                    focusManager.clearFocus()
+                },
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
                 Text(
