@@ -40,7 +40,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SettingScreen(
     padding: PaddingValues,
-    navigateToSettingType: (SettingType) -> Unit,
+    navigateToSettingType: (type: SettingType) -> Unit,
 ) {
     val settingItems =
         listOf(
