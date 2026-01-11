@@ -10,6 +10,6 @@ fun TargetAmountRoute(
 ) {
     TargetAmountScreen(
         padding = padding,
-        onNavigateToBack = onNavigateToBack,
+        navigateToBack = onNavigateToBack,
     )
 }
