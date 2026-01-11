@@ -24,7 +24,7 @@ class HistoryFragment :
             ComposeView(requireContext()).apply {
                 setContent {
                     MulKkamTheme {
-                        HistoryScreen(viewModel = viewModel)
+//                        HistoryScreen(viewModel = viewModel)
                     }
                 }
             }
