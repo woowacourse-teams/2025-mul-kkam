@@ -10,6 +10,6 @@ fun NicknameRoute(
 ) {
     NicknameScreen(
         padding = padding,
-        onNavigateToBack = onNavigateToBack,
+        navigateToBack = onNavigateToBack,
     )
 }
