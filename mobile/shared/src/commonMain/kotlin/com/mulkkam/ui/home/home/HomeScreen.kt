@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.home.home.component.DrinkButton
 import com.mulkkam.ui.home.home.component.FriendWaterBalloonExplodeLottie
 import com.mulkkam.ui.home.home.component.HomeCharacter
