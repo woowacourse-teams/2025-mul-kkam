@@ -14,7 +14,7 @@ import io.github.alexzhirkevich.compottie.rememberLottiePainter
 import mulkkam.shared.generated.resources.Res
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 
-private const val LOTTIE_END_PROGRESS: Float = 0.999f
+private const val LOTTIE_END_PROGRESS: Float = 1f
 
 @OptIn(ExperimentalResourceApi::class)
 @Composable
