@@ -1,6 +1,8 @@
 package com.mulkkam.ui.setting.nickname
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +54,7 @@ fun NicknameScreen(
     viewModel: SettingNicknameViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
+    val focusManager = LocalFocusManager.current
 
     var nickname: String by remember { mutableStateOf("") }
     val nicknameValidationUiState: NicknameValidationUiState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
@@ -96,7 +100,13 @@ fun NicknameScreen(
         Box(
             modifier =
                 Modifier
-                    .fillMaxSize(),
+                    .fillMaxSize()
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        focusManager.clearFocus()
+                    },
         ) {
             Column(
                 modifier =
