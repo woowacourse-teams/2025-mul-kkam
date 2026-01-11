@@ -25,7 +25,7 @@ import org.jetbrains.compose.resources.painterResource
 private val SVG_REGEX = Regex("(?i)\\.svg(\\?.*)?$")
 
 @Composable
-fun CommonNetworkImage(
+fun NetworkImage(
     url: String?,
     modifier: Modifier = Modifier,
     contentDescription: String? = null,
