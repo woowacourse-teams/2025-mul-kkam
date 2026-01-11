@@ -1,0 +1,42 @@
+name: Auto Assign Labels from PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, reopened]
+
+permissions:
+  pull-requests: write
+  contents: read
+
+jobs:
+  assign-labels:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Assign labels based on PR title
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const validLabels = ['AN', 'BE', 'chore', 'docs', 'feat', 'fix', 'refactor', 'style', 'test'];
+            
+            const title = context.payload.pull_request.title;
+            const prNumber = context.payload.pull_request.number;
+            
+            const bracketPattern = /\[([^\]]+)\]/g;
+            const matches = [...title.matchAll(bracketPattern)];
+            const extractedLabels = matches.map(match => match[1]);
+            
+            const labelsToAdd = extractedLabels.filter(label => validLabels.includes(label));
+            
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: labelsToAdd
+              });
+              core.info(`Labels added: ${labelsToAdd.join(', ')}`);
+            } else {
+              core.info('No matching labels found in PR title');
+            }
