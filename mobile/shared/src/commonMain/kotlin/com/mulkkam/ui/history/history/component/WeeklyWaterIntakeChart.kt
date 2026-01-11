@@ -31,6 +31,8 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.history_week_full_date
+import mulkkam.shared.generated.resources.history_week_month_date
 import mulkkam.shared.generated.resources.history_week_next
 import mulkkam.shared.generated.resources.history_week_prev
 import mulkkam.shared.generated.resources.history_week_range
@@ -42,8 +44,6 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
-private const val MONTH_DATE: String = "M월 d일"
-private const val FULL_DATE: String = "yyyy년 M월 d일"
 private const val WEEK_OFFSET_PREV: Long = -1L
 private const val WEEK_OFFSET_NEXT: Long = 1L
 
@@ -84,7 +84,11 @@ fun WeeklyWaterIntakeChart(
             )
 
             val pattern =
-                if (weeklyIntakeHistorySummaries.isCurrentYear(currentDate)) MONTH_DATE else FULL_DATE
+                if (weeklyIntakeHistorySummaries.isCurrentYear(currentDate)) {
+                    stringResource(Res.string.history_week_month_date)
+                } else {
+                    stringResource(Res.string.history_week_full_date)
+                }
 
             Text(
                 text =

@@ -67,6 +67,10 @@
     <string name="history_today_label">Today!</string>
     <string name="history_week_prev">이전 주</string>
     <string name="history_week_next">다음 주</string>
+    <string name="history_item_time_with_minutes">a h시 m분</string>
+    <string name="history_item_time_without_minutes">a h시</string>
+    <string name="history_week_month_date">M월 d일</string>
+    <string name="history_week_full_date">yyyy년 M월 d일</string>
 
     <string name="water_chart_date">%1$s/%2$s</string>
 

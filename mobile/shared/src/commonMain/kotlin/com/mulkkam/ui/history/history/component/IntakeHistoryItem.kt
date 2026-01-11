@@ -25,11 +25,10 @@ import com.mulkkam.ui.util.extensions.toCommaSeparated
 import kotlinx.datetime.LocalTime
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.history_intake_amount
+import mulkkam.shared.generated.resources.history_item_time_with_minutes
+import mulkkam.shared.generated.resources.history_item_time_without_minutes
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
-
-private const val TIME_WITH_MINUTES = "a h시 m분"
-private const val TIME_WITHOUT_MINUTES = "a h시"
 
 @Composable
 fun IntakeHistoryItem(
@@ -51,7 +50,11 @@ fun IntakeHistoryItem(
         )
 
         val pattern =
-            if (intakeHistory.dateTime.minute == 0) TIME_WITHOUT_MINUTES else TIME_WITH_MINUTES
+            if (intakeHistory.dateTime.minute == 0) {
+                stringResource(Res.string.history_item_time_without_minutes)
+            } else {
+                stringResource(Res.string.history_item_time_with_minutes)
+            }
 
         Text(
             text = intakeHistory.dateTime.format(pattern),
