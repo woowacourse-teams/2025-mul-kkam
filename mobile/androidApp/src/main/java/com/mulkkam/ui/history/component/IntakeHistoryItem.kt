@@ -18,7 +18,7 @@ import androidx.core.graphics.toColorInt
 import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeHistory
-import com.mulkkam.ui.component.NetworkImage
+import com.mulkkam.ui.component.NetworkImage2
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.ImageShape
@@ -43,7 +43,7 @@ fun IntakeHistoryItem(
                 .padding(horizontal = 24.dp)
                 .height(48.dp),
     ) {
-        NetworkImage(
+        NetworkImage2(
             url = intakeHistory.cupEmojiUrl,
             modifier = Modifier.size(24.dp),
             shape = ImageShape.Circle,

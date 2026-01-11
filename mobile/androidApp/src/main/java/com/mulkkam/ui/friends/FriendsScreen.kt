@@ -38,7 +38,7 @@ import com.mulkkam.ui.friends.component.FriendsErrorContent
 import com.mulkkam.ui.friends.component.FriendsTopAppBar
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.util.extensions.OnLoadMore
 import org.koin.androidx.compose.koinViewModel
 

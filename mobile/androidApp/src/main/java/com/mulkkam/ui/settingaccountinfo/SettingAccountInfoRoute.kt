@@ -10,8 +10,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
 import com.mulkkam.ui.settingaccountinfo.component.AccountDeleteDialog
 import com.mulkkam.ui.settingaccountinfo.component.AccountLogoutDialog
 import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
@@ -33,12 +33,12 @@ fun SettingAccountInfoRoute(
     var isDeleteDialogShown: Boolean by rememberSaveable { mutableStateOf(false) }
     var deleteAccountInput: String by rememberSaveable { mutableStateOf("") }
 
-    val toastState: MulKkamToastState = rememberMulKkamToastState()
+    val toastState: MulKkamToastState2 = rememberMulKkamToastState2()
 
     viewModel.settingAccountInfoEvent.collectWithLifecycle(lifecycleOwner) { accountInfoEvent ->
         when (accountInfoEvent) {
             SettingAccountInfoEvent.DeleteSuccess -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.setting_account_info_delete_success),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -46,7 +46,7 @@ fun SettingAccountInfoRoute(
             }
 
             SettingAccountInfoEvent.LogoutSuccess -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.setting_account_info_logout_success),
                     iconResourceId = R.drawable.ic_info_circle,
                 )

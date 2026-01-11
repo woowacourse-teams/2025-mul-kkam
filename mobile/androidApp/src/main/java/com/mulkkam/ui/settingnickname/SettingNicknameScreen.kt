@@ -27,12 +27,12 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.MulKkamSnackbarHost
-import com.mulkkam.ui.component.MulKkamToastHost
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.SaveButton
-import com.mulkkam.ui.component.rememberMulKkamToastState
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.MulKkamSnackbarHost2
+import com.mulkkam.ui.component.MulKkamToastHost2
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.SaveButton2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -56,7 +56,7 @@ fun SettingNicknameScreen(
     val nicknameValidationUiState: NicknameValidationUiState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
     val onNicknameValidationError: MulKkamError? by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
 
-    val toastState: MulKkamToastState = rememberMulKkamToastState()
+    val toastState: MulKkamToastState2 = rememberMulKkamToastState2()
     val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
     viewModel.originalNicknameUiState.collectWithLifecycle(lifecycleOwner) { state ->
@@ -68,7 +68,7 @@ fun SettingNicknameScreen(
     viewModel.nicknameChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
             is MulKkamUiState.Success<Unit> -> {
-                toastState.showMulKkamToast(
+                toastState.showMulKkamToast2(
                     message = context.getString(R.string.setting_nickname_change_complete),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -78,7 +78,7 @@ fun SettingNicknameScreen(
             is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
 
             is MulKkamUiState.Failure ->
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -124,7 +124,7 @@ fun SettingNicknameScreen(
                 )
             }
 
-            SaveButton(
+            SaveButton2(
                 onClick = { viewModel.saveNickname(nickname) },
                 modifier =
                     Modifier
@@ -134,11 +134,11 @@ fun SettingNicknameScreen(
                 enabled = nicknameValidationUiState == NicknameValidationUiState.VALID,
             )
 
-            MulKkamSnackbarHost(
+            MulKkamSnackbarHost2(
                 hostState = snackbarHostState,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )
-            MulKkamToastHost(
+            MulKkamToastHost2(
                 state = toastState,
                 modifier = Modifier.align(Alignment.BottomCenter),
             )

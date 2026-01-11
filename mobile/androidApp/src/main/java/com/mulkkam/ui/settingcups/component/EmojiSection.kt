@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.ui.component.NetworkImage
+import com.mulkkam.ui.component.NetworkImage2
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
@@ -69,7 +69,7 @@ private fun EmojiItem(
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        NetworkImage(
+        NetworkImage2(
             url = emojiUrl,
             shape = ImageShape.Circle,
             placeholderRes = R.drawable.img_cup_placeholder,

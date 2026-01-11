@@ -8,10 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
+import com.mulkkam.ui.home.home.HomeRoute
+import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.notification.NotificationActivity
@@ -34,6 +38,7 @@ class HomeFragment :
                 setContent {
                     MulKkamTheme {
                         HomeRoute(
+                            padding = PaddingValues(0.dp),
                             viewModel = viewModel,
                             parentViewModel = parentViewModel,
                             navigateToNotification = {

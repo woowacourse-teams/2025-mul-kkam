@@ -16,7 +16,7 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.component.SettingSwitchItem
 import com.mulkkam.ui.setting.component.SettingTopAppBar

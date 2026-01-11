@@ -39,7 +39,7 @@ import com.mulkkam.ui.history.component.DailyWaterIntakeChart
 import com.mulkkam.ui.history.component.IntakeHistoryItem
 import com.mulkkam.ui.history.component.WeeklyWaterIntakeChart
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.util.LoadingShimmerEffect
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel

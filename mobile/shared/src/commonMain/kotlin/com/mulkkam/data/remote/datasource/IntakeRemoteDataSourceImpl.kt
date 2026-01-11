@@ -1,6 +1,7 @@
 package com.mulkkam.data.remote.datasource
 
 import com.mulkkam.data.remote.api.safeApiCall
+import com.mulkkam.data.remote.api.safeApiCallUnit
 import com.mulkkam.data.remote.model.request.intake.IntakeAmountRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryCupRequest
 import com.mulkkam.data.remote.model.request.intake.IntakeHistoryInputRequest
@@ -56,7 +57,7 @@ class IntakeRemoteDataSourceImpl(
         }
 
     override suspend fun patchIntakeTarget(intakeAmount: IntakeAmountRequest): Result<Unit> =
-        safeApiCall {
+        safeApiCallUnit {
             httpClient.patch("/intake/amount/target") {
                 setBody(intakeAmount)
             }
@@ -78,13 +79,13 @@ class IntakeRemoteDataSourceImpl(
     ): Result<IntakeTargetAmountResponse> =
         safeApiCall {
             httpClient.get("/intake/amount/target/recommended") {
-                parameter("gender", gender)
-                parameter("weight", weight)
+                gender?.let { parameter("gender", it) }
+                weight?.let { parameter("weight", it) }
             }
         }
 
     override suspend fun deleteIntakeHistoryDetails(id: Int): Result<Unit> =
-        safeApiCall {
+        safeApiCallUnit {
             httpClient.delete("/intake/history/details/$id")
         }
 }

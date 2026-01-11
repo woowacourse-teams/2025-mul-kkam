@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.ui.component.NetworkImage
+import com.mulkkam.ui.component.NetworkImage2
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -102,7 +102,7 @@ private fun CupBody(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        NetworkImage(
+        NetworkImage2(
             url = emojiUrl,
             placeholderRes = R.drawable.img_cup_placeholder,
             modifier =

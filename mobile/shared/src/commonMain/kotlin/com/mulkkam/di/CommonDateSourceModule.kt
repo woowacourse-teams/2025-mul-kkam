@@ -24,13 +24,13 @@ import org.koin.dsl.module
 
 val commonDataSourceModule =
     module {
-        single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl() }
+        single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl(get()) }
         single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl(get()) }
         single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl() }
         single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl(get()) }
-        single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl() }
+        single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl(get()) }
         single<NicknameRemoteDataSource> { NicknameRemoteDataSourceImpl() }
-        single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl() }
+        single<NotificationRemoteDataSource> { NotificationRemoteDataSourceImpl(get()) }
         single<OnboardingRemoteDataSource> { OnboardingRemoteDataSourceImpl(get()) }
         single<ReminderRemoteDataSource> { ReminderRemoteDataSourceImpl() }
         single<VersionRemoteDataSource> { VersionRemoteDataSourceImpl(get()) }

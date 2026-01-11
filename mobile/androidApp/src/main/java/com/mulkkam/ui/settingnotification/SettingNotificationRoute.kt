@@ -11,7 +11,7 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
-import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.component.showMulKkamSnackbar2
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
@@ -32,7 +32,7 @@ fun SettingNotificationRoute(
     viewModel.notificationEvents.collectWithLifecycle(lifecycleOwner) { event ->
         when (event) {
             is SettingNotificationEvent.Error -> {
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
@@ -46,7 +46,7 @@ fun SettingNotificationRoute(
                     } else {
                         R.string.setting_notification_marketing_off
                     }
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(messageRes, time),
                     iconResourceId = R.drawable.ic_info_circle,
                 )
@@ -60,7 +60,7 @@ fun SettingNotificationRoute(
                     } else {
                         R.string.setting_notification_night_off
                     }
-                snackbarHostState.showMulKkamSnackbar(
+                snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(messageRes, time),
                     iconResourceId = R.drawable.ic_info_circle,
                 )

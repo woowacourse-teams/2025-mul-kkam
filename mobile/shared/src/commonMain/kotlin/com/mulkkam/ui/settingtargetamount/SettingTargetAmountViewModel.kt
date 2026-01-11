@@ -10,7 +10,7 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
