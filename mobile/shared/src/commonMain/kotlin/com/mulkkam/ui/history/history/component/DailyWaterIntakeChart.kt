@@ -1,6 +1,5 @@
-package com.mulkkam.ui.history.component
+package com.mulkkam.ui.history.history.component
 
-import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -14,12 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.ui.component.ColoredText
@@ -29,10 +23,21 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.util.extensions.format
+import com.mulkkam.ui.util.extensions.toCommaSeparated
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toJavaLocalDate
-import java.time.format.DateTimeFormatter
-import java.util.Locale
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.history_daily_chart_label
+import mulkkam.shared.generated.resources.history_daily_intake_summary
+import mulkkam.shared.generated.resources.history_daily_intake_summary_highlight
+import mulkkam.shared.generated.resources.history_date_with_day_pattern
+import mulkkam.shared.generated.resources.history_today_label
+import mulkkam.shared.generated.resources.img_crying_character
+import mulkkam.shared.generated.resources.img_history_character
+import mulkkam.shared.generated.resources.img_history_sleeping_character
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val INTAKE_AMOUNT_EMPTY: Int = 0
 
@@ -42,7 +47,6 @@ fun DailyWaterIntakeChart(
     waterIntakeState: WaterIntakeState,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
     val date = dailyIntakeHistory.date
 
     Column(
@@ -57,18 +61,18 @@ fun DailyWaterIntakeChart(
         ) {
             if (waterIntakeState is WaterIntakeState.Present) {
                 Text(
-                    text = stringResource(R.string.history_today_label),
+                    text = stringResource(Res.string.history_today_label),
                     color = Secondary200,
                     style = MulKkamTheme.typography.label2,
                 )
             }
         }
 
-        val formattedDate = date.toJavaLocalDate().format(getDateFormatter(context))
+        val formattedDate = date.format(stringResource(Res.string.history_date_with_day_pattern))
         ColoredText(
             fullText =
                 stringResource(
-                    R.string.history_daily_chart_label,
+                    Res.string.history_daily_chart_label,
                     formattedDate,
                 ),
             highlightedTexts = listOf(formattedDate),
@@ -103,7 +107,10 @@ fun DailyWaterIntakeChart(
         }
 
         val formattedIntake =
-            String.format(Locale.US, "%,dml", dailyIntakeHistory.totalIntakeAmount)
+            stringResource(
+                Res.string.history_daily_intake_summary_highlight,
+                dailyIntakeHistory.totalIntakeAmount.toCommaSeparated(),
+            )
         val summaryColor =
             if (dailyIntakeHistory.targetAmount > dailyIntakeHistory.totalIntakeAmount ||
                 dailyIntakeHistory.totalIntakeAmount == INTAKE_AMOUNT_EMPTY
@@ -115,9 +122,9 @@ fun DailyWaterIntakeChart(
         ColoredText(
             fullText =
                 stringResource(
-                    R.string.history_daily_intake_summary,
-                    dailyIntakeHistory.totalIntakeAmount,
-                    dailyIntakeHistory.targetAmount,
+                    Res.string.history_daily_intake_summary,
+                    dailyIntakeHistory.totalIntakeAmount.toCommaSeparated(),
+                    dailyIntakeHistory.targetAmount.toCommaSeparated(),
                 ),
             highlightedTexts = listOf(formattedIntake),
             highlightColor = summaryColor,
@@ -131,16 +138,13 @@ fun DailyWaterIntakeChart(
     }
 }
 
-private fun getDateFormatter(context: Context): DateTimeFormatter =
-    DateTimeFormatter.ofPattern(context.getString(R.string.history_date_with_day_pattern), Locale.getDefault())
-
 private fun getCharacterImage(waterIntakeState: WaterIntakeState) =
     when (waterIntakeState) {
-        is WaterIntakeState.Past.NoRecord -> R.drawable.img_crying_character
-        is WaterIntakeState.Past.Full -> R.drawable.img_history_character
-        is WaterIntakeState.Present.Full -> R.drawable.img_history_character
-        is WaterIntakeState.Future -> R.drawable.img_history_sleeping_character
-        else -> R.drawable.img_history_character
+        is WaterIntakeState.Past.NoRecord -> Res.drawable.img_crying_character
+        is WaterIntakeState.Past.Full -> Res.drawable.img_history_character
+        is WaterIntakeState.Present.Full -> Res.drawable.img_history_character
+        is WaterIntakeState.Future -> Res.drawable.img_history_sleeping_character
+        else -> Res.drawable.img_history_character
     }
 
 @Preview(showBackground = true, name = "오늘 목표량을 다 채운 경우")
