@@ -46,10 +46,6 @@ fun SettingScreen(navigateToSettingType: (SettingType) -> Unit) {
                 stringResource(R.string.setting_cups_toolbar_title),
                 SettingType.MY_CUP,
             ),
-            SettingItem.NormalItem(
-                stringResource(R.string.setting_target_amount_toolbar_title),
-                SettingType.GOAL,
-            ),
             SettingItem.DividerItem,
             SettingItem.TitleItem(stringResource(R.string.setting_section_notification)),
             SettingItem.NormalItem(

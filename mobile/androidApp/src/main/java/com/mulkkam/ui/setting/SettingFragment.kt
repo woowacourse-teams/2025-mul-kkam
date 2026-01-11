@@ -19,7 +19,6 @@ import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnickname.SettingNicknameActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
 import com.mulkkam.ui.settingreminder.SettingReminderActivity
-import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -53,7 +52,6 @@ class SettingFragment :
             SettingType.BODY_INFO -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
             SettingType.ACCOUNT_INFO -> startActivity(SettingAccountInfoActivity.newIntent(requireContext()))
             SettingType.MY_CUP -> activityResultLauncher.launch(SettingCupsActivity.newIntent(requireContext()))
-            SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
             SettingType.TERMS -> startActivity(SettingTermsActivity.newIntent(requireContext()))
