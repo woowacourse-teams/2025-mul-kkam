@@ -7,11 +7,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.main.Refreshable
-import com.mulkkam.ui.setting.model.SettingType
+import com.mulkkam.ui.setting.setting.SettingScreen
+import com.mulkkam.ui.setting.setting.model.SettingType
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
@@ -40,6 +43,7 @@ class SettingFragment :
             composeView.setContent {
                 MulKkamTheme {
                     SettingScreen(
+                        padding = PaddingValues(0.dp),
                         navigateToSettingType = { type -> handleSettingClick(type) },
                     )
                 }

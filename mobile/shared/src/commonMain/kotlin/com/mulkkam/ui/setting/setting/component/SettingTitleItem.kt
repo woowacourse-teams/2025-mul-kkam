@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting.component
+package com.mulkkam.ui.setting.setting.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -7,7 +7,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray50
@@ -32,13 +31,5 @@ fun SettingTitleItem(
             thickness = 1.dp,
             modifier = Modifier.fillMaxWidth(),
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun PreviewSettingTitleItem() {
-    MulKkamTheme {
-        SettingTitleItem(label = "계정 정보 설정")
     }
 }

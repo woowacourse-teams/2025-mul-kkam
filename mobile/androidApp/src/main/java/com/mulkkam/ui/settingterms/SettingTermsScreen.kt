@@ -13,8 +13,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.mulkkam.R
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.setting.component.SettingNormalItem
-import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.setting.setting.component.SettingNormalItem
+import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
 import com.mulkkam.ui.settingterms.model.SettingTermsType
 
 @Composable
