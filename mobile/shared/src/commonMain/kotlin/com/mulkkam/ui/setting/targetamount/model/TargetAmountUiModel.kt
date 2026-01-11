@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingtargetamount.model
+package com.mulkkam.ui.setting.targetamount.model
 
 import com.mulkkam.domain.model.intake.TargetAmount
 

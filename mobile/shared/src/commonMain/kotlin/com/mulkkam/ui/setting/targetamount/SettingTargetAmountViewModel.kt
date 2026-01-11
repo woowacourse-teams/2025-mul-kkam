@@ -1,17 +1,16 @@
-package com.mulkkam.ui.settingtargetamount
+package com.mulkkam.ui.setting.targetamount
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.intake.TargetAmount
-import com.mulkkam.domain.model.intake.TargetAmount.Companion.EMPTY_TARGET_AMOUNT
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingtargetamount.model.TargetAmountUiModel
+import com.mulkkam.ui.setting.targetamount.model.TargetAmountUiModel
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +22,7 @@ class SettingTargetAmountViewModel(
     private val membersRepository: MembersRepository,
     private val logger: Logger,
 ) : ViewModel() {
-    private var targetAmountInput: TargetAmount = EMPTY_TARGET_AMOUNT
+    private var targetAmountInput: TargetAmount = TargetAmount.Companion.EMPTY_TARGET_AMOUNT
 
     private val _targetInfoUiState: MutableStateFlow<MulKkamUiState<TargetAmountUiModel>> =
         MutableStateFlow(MulKkamUiState.Idle)

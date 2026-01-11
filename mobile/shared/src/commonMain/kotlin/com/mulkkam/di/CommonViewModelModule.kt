@@ -16,6 +16,7 @@ import com.mulkkam.ui.onboarding.targetamount.TargetAmountViewModel
 import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
 import com.mulkkam.ui.searchmembers.SearchMembersViewModel
 import com.mulkkam.ui.setting.SettingViewModel
+import com.mulkkam.ui.setting.targetamount.SettingTargetAmountViewModel
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
 import com.mulkkam.ui.settingbioinfo.SettingBioInfoViewModel
 import com.mulkkam.ui.settingcups.SettingCupViewModel
@@ -23,7 +24,6 @@ import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingnickname.SettingNicknameViewModel
 import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingreminder.SettingReminderViewModel
-import com.mulkkam.ui.settingtargetamount.SettingTargetAmountViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
 import com.mulkkam.ui.terms.TermsAgreementViewModel
 import org.koin.core.module.Module
