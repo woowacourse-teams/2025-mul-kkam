@@ -29,10 +29,6 @@ fun SettingScreen(navigateToSettingType: (SettingType) -> Unit) {
         listOf(
             SettingItem.TitleItem(stringResource(R.string.setting_section_account)),
             SettingItem.NormalItem(
-                stringResource(R.string.setting_nickname_edit_nickname_label),
-                SettingType.NICKNAME,
-            ),
-            SettingItem.NormalItem(
                 stringResource(R.string.setting_item_body_info),
                 SettingType.BODY_INFO,
             ),

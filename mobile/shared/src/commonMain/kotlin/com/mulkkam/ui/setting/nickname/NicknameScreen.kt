@@ -17,11 +17,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamSnackbarHost
@@ -38,7 +36,6 @@ import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_info_circle
-import mulkkam.shared.generated.resources.load_info_error
 import mulkkam.shared.generated.resources.network_check_error
 import mulkkam.shared.generated.resources.setting_nickname_change_complete
 import mulkkam.shared.generated.resources.setting_nickname_edit_nickname_label
