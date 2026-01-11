@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingnickname
+package com.mulkkam.ui.setting.nickname
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -81,7 +81,7 @@ class SettingNicknameViewModel(
             }
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationUiState.INVALID
-            _nicknameValidationError.value = error as? NicknameError ?: MulKkamError.Unknown
+            _nicknameValidationError.value = error as? MulKkamError.NicknameError ?: MulKkamError.Unknown
         }
     }
 
