@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -104,6 +105,7 @@ fun HistoryScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.background(White).padding(padding),
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
         containerColor = White,
@@ -120,6 +122,7 @@ fun HistoryScreen(
 
         LazyColumn(
             contentPadding = PaddingValues(bottom = 32.dp),
+            modifier = Modifier.padding(innerPadding),
         ) {
             item {
                 Text(
