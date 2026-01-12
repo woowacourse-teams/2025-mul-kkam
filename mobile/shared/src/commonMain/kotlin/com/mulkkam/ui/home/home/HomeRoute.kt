@@ -47,10 +47,10 @@ fun HomeRoute(
     navigateToNotification: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
+    snackbarHostState: SnackbarHostState,
     viewModel: HomeViewModel = koinViewModel(),
     parentViewModel: MainViewModel = koinViewModel(),
 ) {
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val coroutineScope = rememberCoroutineScope()
     var isManualDrinkBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
     val manualDrinkBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)

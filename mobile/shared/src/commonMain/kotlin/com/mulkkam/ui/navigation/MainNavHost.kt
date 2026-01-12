@@ -1,6 +1,7 @@
 package com.mulkkam.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.mulkkam.ui.auth.AuthNavGraph
@@ -20,6 +21,7 @@ fun MainNavHost(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
+    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
 ) {
     NavDisplay(
@@ -32,6 +34,7 @@ fun MainNavHost(
                         padding = padding,
                         navigator = navigator,
                         onLogin = onLogin,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -48,6 +51,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -56,6 +60,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -64,6 +69,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -72,6 +78,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 

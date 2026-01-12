@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -29,6 +30,7 @@ fun SettingScreen(
     onNavigateToReminder: () -> Unit,
     onNavigateToTargetAmount: () -> Unit,
     onNavigateToTerms: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     Column(
         modifier =

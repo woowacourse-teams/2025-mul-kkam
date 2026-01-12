@@ -1,6 +1,7 @@
 package com.mulkkam.ui.setting.setting
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 
 @Composable
@@ -15,6 +16,7 @@ fun SettingRoute(
     onNavigateToReminder: () -> Unit,
     onNavigateToTargetAmount: () -> Unit,
     onNavigateToTerms: () -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     SettingScreen(
         padding = padding,
@@ -27,5 +29,6 @@ fun SettingRoute(
         onNavigateToReminder = onNavigateToReminder,
         onNavigateToTargetAmount = onNavigateToTargetAmount,
         onNavigateToTerms = onNavigateToTerms,
+        snackbarHostState = snackbarHostState,
     )
 }

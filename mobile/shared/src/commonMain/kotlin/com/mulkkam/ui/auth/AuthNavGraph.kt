@@ -1,6 +1,7 @@
 package com.mulkkam.ui.auth
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.auth.login.LoginRoute
 import com.mulkkam.ui.auth.login.model.AuthPlatform
@@ -21,6 +22,7 @@ object AuthNavGraph {
             onSuccess: (token: String) -> Unit,
             onError: (errorMessage: String) -> Unit,
         ) -> Unit,
+        snackbarHostState: SnackbarHostState,
     ): NavEntry<AuthRoute> =
         when (route) {
             is AuthRoute.Splash -> {
@@ -41,6 +43,7 @@ object AuthNavGraph {
                         onNavigateToOnboarding = navigator::navigateToOnboardingTerms,
                         onNavigateToMain = navigator::navigateToHome,
                         onLogin = onLogin,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
