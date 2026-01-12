@@ -13,7 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.util.extensions.OnLoadMore
 
 @Composable

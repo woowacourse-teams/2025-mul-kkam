@@ -17,9 +17,9 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.setting.component.SettingNormalItem
-import com.mulkkam.ui.setting.component.SettingSwitchItem
-import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.setting.setting.component.SettingNormalItem
+import com.mulkkam.ui.setting.setting.component.SettingSwitchItem
+import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
 
 @Composable
 fun SettingNotificationScreen(

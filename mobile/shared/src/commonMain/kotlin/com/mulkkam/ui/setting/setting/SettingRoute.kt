@@ -3,6 +3,7 @@ package com.mulkkam.ui.setting.setting
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import com.mulkkam.ui.setting.setting.model.SettingType
 
 @Composable
 fun SettingRoute(
@@ -16,19 +17,21 @@ fun SettingRoute(
     onNavigateToReminder: () -> Unit,
     onNavigateToTargetAmount: () -> Unit,
     onNavigateToTerms: () -> Unit,
-    snackbarHostState: SnackbarHostState,
 ) {
     SettingScreen(
         padding = padding,
-        onNavigateToAccountInfo = onNavigateToAccountInfo,
-        onNavigateToBioInfo = onNavigateToBioInfo,
-        onNavigateToCups = onNavigateToCups,
-        onNavigateToFeedback = onNavigateToFeedback,
-        onNavigateToNickname = onNavigateToNickname,
-        onNavigateToNotification = onNavigateToNotification,
-        onNavigateToReminder = onNavigateToReminder,
-        onNavigateToTargetAmount = onNavigateToTargetAmount,
-        onNavigateToTerms = onNavigateToTerms,
-        snackbarHostState = snackbarHostState,
+        navigateToSettingType = { type ->
+            when (type) {
+                SettingType.NICKNAME -> onNavigateToNickname()
+                SettingType.BODY_INFO -> onNavigateToBioInfo()
+                SettingType.ACCOUNT_INFO -> onNavigateToAccountInfo()
+                SettingType.MY_CUP -> onNavigateToCups()
+                SettingType.GOAL -> onNavigateToTargetAmount()
+                SettingType.PUSH_NOTIFICATION -> onNavigateToNotification()
+                SettingType.FEEDBACK -> onNavigateToFeedback()
+                SettingType.TERMS -> onNavigateToTerms()
+                SettingType.REMINDER -> onNavigateToReminder()
+            }
+        },
     )
 }

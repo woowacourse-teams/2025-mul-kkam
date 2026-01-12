@@ -35,6 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
+import com.mulkkam.ui.component.MulKkamInfoDialog
 import com.mulkkam.ui.component.MulKkamSnackbarHost2
 import com.mulkkam.ui.component.MulKkamTextField2
 import com.mulkkam.ui.component.showMulKkamSnackbar2
@@ -42,7 +43,6 @@ import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.dialog.MulKkamInfoDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.notification.component.LoadMoreButton

@@ -21,7 +21,7 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary10
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
 import com.mulkkam.ui.util.extensions.getStyledText
 import com.mulkkam.ui.util.extensions.noRippleClickable
 

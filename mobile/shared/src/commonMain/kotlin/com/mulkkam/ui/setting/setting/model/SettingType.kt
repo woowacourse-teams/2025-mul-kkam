@@ -1,6 +1,7 @@
-package com.mulkkam.ui.setting.model
+package com.mulkkam.ui.setting.setting.model
 
 enum class SettingType {
+    NICKNAME,
     BODY_INFO,
     ACCOUNT_INFO,
     MY_CUP,

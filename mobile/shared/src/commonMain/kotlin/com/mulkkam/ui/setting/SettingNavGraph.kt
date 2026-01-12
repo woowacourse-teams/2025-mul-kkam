@@ -40,7 +40,6 @@ object SettingNavGraph {
                         onNavigateToReminder = navigator::navigateToReminder,
                         onNavigateToTargetAmount = navigator::navigateToSettingTargetAmount,
                         onNavigateToTerms = navigator::navigateToSettingTerms,
-                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
