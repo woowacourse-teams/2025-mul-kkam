@@ -99,7 +99,7 @@ fun HistoryScreen(
                 )
             }
 
-            else -> Unit
+            is MulKkamUiState.Loading, is MulKkamUiState.Idle -> Unit
         }
     }
 
