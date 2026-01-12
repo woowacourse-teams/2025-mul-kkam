@@ -1,4 +1,4 @@
-package com.mulkkam.ui.history
+package com.mulkkam.ui.history.history
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.history.component
+package com.mulkkam.ui.history.history.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,11 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.intake.IntakeHistorySummary
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
@@ -28,11 +24,16 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Primary300
 import com.mulkkam.ui.designsystem.Primary50
 import com.mulkkam.ui.designsystem.Secondary200
+import com.mulkkam.ui.util.extensions.format
 import kotlinx.datetime.DayOfWeek
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.toJavaLocalDate
-import java.time.format.TextStyle
-import java.util.Locale
+import kotlinx.datetime.number
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_history_check
+import mulkkam.shared.generated.resources.water_chart_date
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 const val ACHIEVEMENT_RATE_MAX: Float = 100f
 
@@ -65,7 +66,7 @@ fun WaterIntakeChart(
             when (intakeHistorySummary.achievementRate) {
                 ACHIEVEMENT_RATE_MAX -> {
                     Icon(
-                        painter = painterResource(R.drawable.ic_history_check),
+                        painter = painterResource(Res.drawable.ic_history_check),
                         contentDescription = null,
                         tint = Primary100,
                     )
@@ -82,20 +83,16 @@ fun WaterIntakeChart(
         }
         Text(
             modifier = Modifier.padding(top = 4.dp),
-            text =
-                intakeHistorySummary.date.toJavaLocalDate().dayOfWeek.getDisplayName(
-                    TextStyle.SHORT,
-                    Locale.getDefault(),
-                ),
+            text = intakeHistorySummary.date.format("EEE"),
             color = getColorByDate(intakeHistorySummary.date),
             style = MulKkamTheme.typography.title3,
         )
         Text(
             text =
                 stringResource(
-                    R.string.water_chart_date,
-                    intakeHistorySummary.date.monthNumber,
-                    intakeHistorySummary.date.dayOfMonth,
+                    Res.string.water_chart_date,
+                    intakeHistorySummary.date.month.number,
+                    intakeHistorySummary.date.day,
                 ),
             color = Gray300,
             style = MulKkamTheme.typography.label2,

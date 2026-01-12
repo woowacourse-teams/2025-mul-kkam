@@ -1,4 +1,4 @@
-package com.mulkkam.ui.dialog
+package com.mulkkam.ui.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,14 +19,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.Gray50
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -34,6 +30,13 @@ import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_alert_circle
+import mulkkam.shared.generated.resources.pending_friends_cancel_request_cancel
+import mulkkam.shared.generated.resources.pending_friends_cancel_request_confirm
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun MulKkamAlertDialog(
@@ -65,7 +68,7 @@ fun MulKkamAlertDialog(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_alert_circle),
+                    painter = painterResource(Res.drawable.ic_alert_circle),
                     contentDescription = null,
                     tint = Secondary200,
                     modifier = Modifier.size(48.dp),
@@ -98,7 +101,7 @@ fun MulKkamAlertDialog(
                             modifier =
                                 Modifier
                                     .padding(vertical = 10.dp, horizontal = 52.dp),
-                            text = stringResource(R.string.pending_friends_cancel_request_confirm),
+                            text = stringResource(Res.string.pending_friends_cancel_request_confirm),
                             color = White,
                             style = MulKkamTheme.typography.body4,
                         )
@@ -115,7 +118,7 @@ fun MulKkamAlertDialog(
                             modifier =
                                 Modifier
                                     .padding(vertical = 10.dp, horizontal = 52.dp),
-                            text = stringResource(R.string.pending_friends_cancel_request_cancel),
+                            text = stringResource(Res.string.pending_friends_cancel_request_cancel),
                             color = Gray400,
                             style = MulKkamTheme.typography.body4,
                         )
