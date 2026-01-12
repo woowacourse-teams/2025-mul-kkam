@@ -6,6 +6,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -25,7 +26,6 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray400
@@ -36,6 +36,8 @@ import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.setting.nickname.component.NicknameInputSection
 import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_info_circle
@@ -51,6 +53,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NicknameScreen(
     padding: PaddingValues,
     navigateToBack: () -> Boolean,
+    snackbarHostState: SnackbarHostState,
     viewModel: SettingNicknameViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -59,8 +62,6 @@ fun NicknameScreen(
     var nickname: String by remember { mutableStateOf("") }
     val nicknameValidationUiState: NicknameValidationUiState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
     val onNicknameValidationError: MulKkamError? by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
-
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
     viewModel.originalNicknameUiState.collectWithLifecycle(lifecycleOwner) { state ->
         if (state is MulKkamUiState.Success<Nickname>) {
@@ -71,11 +72,18 @@ fun NicknameScreen(
     viewModel.nicknameChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
             is MulKkamUiState.Success<Unit> -> {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.setting_nickname_change_complete),
-                    iconResource = Res.drawable.ic_info_circle,
-                )
-                navigateToBack()
+                coroutineScope {
+                    launch {
+                        snackbarHostState
+                            .showMulKkamSnackbar(
+                                message = getString(Res.string.setting_nickname_change_complete),
+                                iconResource = Res.drawable.ic_info_circle,
+                            )
+                    }
+                    launch {
+                        navigateToBack()
+                    }
+                }
             }
 
             is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
@@ -90,17 +98,18 @@ fun NicknameScreen(
     }
 
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = {
             SettingNicknameTopAppBar { navigateToBack() }
         },
         containerColor = White,
-        modifier = Modifier.background(White),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
+                    .padding(innerPadding)
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
@@ -108,12 +117,7 @@ fun NicknameScreen(
                         focusManager.clearFocus()
                     },
         ) {
-            Column(
-                modifier =
-                    Modifier
-                        .padding(innerPadding)
-                        .padding(24.dp),
-            ) {
+            Column(modifier = Modifier.padding(24.dp)) {
                 Text(
                     text = stringResource(Res.string.setting_nickname_edit_nickname_label),
                     style = MulKkamTheme.typography.title2,
@@ -152,6 +156,7 @@ private fun SettingNicknameScreenPreview() {
         NicknameScreen(
             padding = PaddingValues(),
             navigateToBack = { true },
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }
