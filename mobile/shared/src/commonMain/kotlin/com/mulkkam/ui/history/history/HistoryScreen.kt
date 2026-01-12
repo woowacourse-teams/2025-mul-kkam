@@ -106,7 +106,6 @@ fun HistoryScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.background(White).padding(padding),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
         containerColor = White,
     ) { innerPadding ->
         if (weeklyIntakeHistories == MulKkamUiState.Loading) {
