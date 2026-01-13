@@ -1,7 +1,6 @@
 package backend.mulkkam.admin.dto.response;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-
 import java.util.List;
 import java.util.Map;
 
@@ -25,11 +24,18 @@ public record ExecuteAdminSqlResponse(
         @Schema(description = "에러 메시지 (실패 시)")
         String errorMessage
 ) {
-    public static ExecuteAdminSqlResponse selectSuccess(List<Map<String, Object>> rows, long executionTimeMs) {
+    public static ExecuteAdminSqlResponse selectSuccess(
+            List<Map<String, Object>> rows,
+            long executionTimeMs
+    ) {
         return new ExecuteAdminSqlResponse("SELECT", rows, null, executionTimeMs, true, null);
     }
 
-    public static ExecuteAdminSqlResponse modifySuccess(String queryType, int affectedRows, long executionTimeMs) {
+    public static ExecuteAdminSqlResponse modifySuccess(
+            String queryType,
+            int affectedRows,
+            long executionTimeMs
+    ) {
         return new ExecuteAdminSqlResponse(queryType, null, affectedRows, executionTimeMs, true, null);
     }
 

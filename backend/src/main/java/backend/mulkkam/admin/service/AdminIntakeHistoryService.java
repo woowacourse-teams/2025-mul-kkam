@@ -34,7 +34,10 @@ public class AdminIntakeHistoryService {
     }
 
     @Transactional
-    public void updateIntakeHistory(Long intakeHistoryId, UpdateAdminIntakeHistoryRequest request) {
+    public void updateIntakeHistory(
+            Long intakeHistoryId,
+            UpdateAdminIntakeHistoryRequest request
+    ) {
         IntakeHistory intakeHistory = intakeHistoryRepository.findById(intakeHistoryId)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
         intakeHistory.modifyTargetAmount(new TargetAmount(request.targetAmount()));

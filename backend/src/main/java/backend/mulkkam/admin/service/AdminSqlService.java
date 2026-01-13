@@ -35,7 +35,10 @@ public class AdminSqlService {
     private static final Pattern UPDATE_PATTERN = Pattern.compile("^\\s*UPDATE\\s+", Pattern.CASE_INSENSITIVE);
     private static final Pattern DELETE_PATTERN = Pattern.compile("^\\s*DELETE\\s+", Pattern.CASE_INSENSITIVE);
 
-    public ExecuteAdminSqlResponse executeSql(ExecuteAdminSqlRequest request, Long adminMemberId) {
+    public ExecuteAdminSqlResponse executeSql(
+            ExecuteAdminSqlRequest request,
+            Long adminMemberId
+    ) {
         String sql = request.sql().trim();
 
         String normalizedSql = sql.replaceAll("--.*?\n", " ")
@@ -90,13 +93,20 @@ public class AdminSqlService {
         }
     }
 
-    private ExecuteAdminSqlResponse executeSelect(String sql, long startTime) {
+    private ExecuteAdminSqlResponse executeSelect(
+            String sql,
+            long startTime
+    ) {
         List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
         long executionTime = System.currentTimeMillis() - startTime;
         return ExecuteAdminSqlResponse.selectSuccess(rows, executionTime);
     }
 
-    private ExecuteAdminSqlResponse executeModify(String sql, String queryType, long startTime) {
+    private ExecuteAdminSqlResponse executeModify(
+            String sql,
+            String queryType,
+            long startTime
+    ) {
         int affectedRows = jdbcTemplate.update(sql);
         long executionTime = System.currentTimeMillis() - startTime;
         return ExecuteAdminSqlResponse.modifySuccess(queryType, affectedRows, executionTime);

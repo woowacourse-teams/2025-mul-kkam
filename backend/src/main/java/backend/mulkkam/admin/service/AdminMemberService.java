@@ -39,7 +39,10 @@ public class AdminMemberService {
     }
 
     @Transactional
-    public GetAdminMemberDetailResponse updateMember(Long memberId, UpdateAdminMemberRequest request) {
+    public GetAdminMemberDetailResponse updateMember(
+            Long memberId,
+            UpdateAdminMemberRequest request
+    ) {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new CommonException(NotFoundErrorCode.NOT_FOUND_MEMBER));
 

@@ -38,7 +38,10 @@ public class AdminCupService {
     }
 
     @Transactional
-    public void updateCup(Long cupId, UpdateAdminCupRequest request) {
+    public void updateCup(
+            Long cupId,
+            UpdateAdminCupRequest request
+    ) {
         Cup cup = cupRepository.findById(cupId).orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
         CupEmoji cupEmoji = cupEmojiRepository.findById(request.cupEmojiId())
                 .orElseThrow(() -> new CommonException(NOT_FOUND_CUP_EMOJI));
