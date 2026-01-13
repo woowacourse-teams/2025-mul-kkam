@@ -8,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-@DisplayName("AchievementRate 도메인")
 class AchievementRateTest {
 
     @DisplayName("달성률이 정확히 계산된다")

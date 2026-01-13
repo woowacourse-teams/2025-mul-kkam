@@ -12,10 +12,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("CupRank 도메인")
 class CupRankTest {
 
-    @DisplayName("우선순위 생성")
+    @DisplayName("우선순위 생성할 때")
     @Nested
     class Creation {
 
@@ -41,7 +40,7 @@ class CupRankTest {
         }
     }
 
-    @DisplayName("우선순위 승격")
+    @DisplayName("우선순위 승격할 때")
     @Nested
     class Promote {
 

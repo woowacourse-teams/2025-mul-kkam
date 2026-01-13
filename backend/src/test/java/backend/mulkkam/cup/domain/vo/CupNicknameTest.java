@@ -10,7 +10,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("CupNickname 도메인")
 class CupNicknameTest {
 
     @DisplayName("닉네임이 2~10글자이면 생성에 성공한다")

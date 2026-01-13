@@ -11,7 +11,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-@DisplayName("TargetAmount 도메인")
 class TargetAmountTest {
 
     @DisplayName("목표량이 200~5000ml 사이이면 생성에 성공한다")

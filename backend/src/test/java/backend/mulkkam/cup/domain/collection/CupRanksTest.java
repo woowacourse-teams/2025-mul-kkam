@@ -11,7 +11,6 @@ import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-@DisplayName("CupRanks 컬렉션 도메인")
 class CupRanksTest {
 
     @DisplayName("모든 컵의 우선순위가 고유하면 생성에 성공한다")

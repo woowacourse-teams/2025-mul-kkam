@@ -18,7 +18,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 
-@DisplayName("인증/인가")
 class AuthenticationTest extends ControllerTest {
 
     @Autowired
@@ -45,18 +44,18 @@ class AuthenticationTest extends ControllerTest {
         return oauthJwtTokenHandler.createAccessToken(oauthAccount, "deviceUuid");
     }
 
-    @DisplayName("인증이 필요한 엔드포인트")
+    @DisplayName("인증이 필요한 엔드포인트에")
     @Nested
     class RequireAuthentication {
 
-        @DisplayName("토큰이 없으면 401 응답")
+        @DisplayName("토큰이 없으면 401을 응답한다.")
         @Test
         void fail_returns_401_when_no_token() throws Exception {
             mockMvc.perform(get("/members"))
                     .andExpect(status().isUnauthorized());
         }
 
-        @DisplayName("유효하지 않은 토큰이면 401 응답")
+        @DisplayName("유효하지 않은 토큰이면 401을 응답한다.")
         @Test
         void fail_returns_401_when_invalid_token() throws Exception {
             mockMvc.perform(get("/members")
@@ -64,7 +63,7 @@ class AuthenticationTest extends ControllerTest {
                     .andExpect(status().isUnauthorized());
         }
 
-        @DisplayName("유효한 멤버 토큰이면 정상 처리")
+        @DisplayName("유효한 멤버 토큰이면 정상 처리한다.")
         @Test
         void success_request_is_processed_with_valid_token() throws Exception {
             String token = createMemberToken();
@@ -75,11 +74,11 @@ class AuthenticationTest extends ControllerTest {
         }
     }
 
-    @DisplayName("멤버 권한이 필요한 엔드포인트")
+    @DisplayName("멤버 권한이 필요한 엔드포인트면")
     @Nested
     class RequireMemberLevel {
 
-        @DisplayName("온보딩 미완료 계정(Account만 있음)으로 접근하면 403 응답")
+        @DisplayName("온보딩 미완료 계정(Account만 있음)으로 접근하면 403을 응답한다.")
         @Test
         void fail_returns_403_when_onboarding_incomplete() throws Exception {
             String token = createAccountOnlyToken();
@@ -90,11 +89,11 @@ class AuthenticationTest extends ControllerTest {
         }
     }
 
-    @DisplayName("인증이 필요 없는 엔드포인트")
+    @DisplayName("인증이 필요 없는 엔드포인트면")
     @Nested
     class NoAuthenticationRequired {
 
-        @DisplayName("인증 없이도 요청은 컨트롤러까지 도달")
+        @DisplayName("인증 없이도 요청은 컨트롤러까지 도달한다.")
         @Test
         void success_request_reaches_controller_without_auth() throws Exception {
             // 카카오 API 호출 실패로 500이 나오지만, 인증 필터는 통과한 것

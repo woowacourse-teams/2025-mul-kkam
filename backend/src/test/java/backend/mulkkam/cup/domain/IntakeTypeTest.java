@@ -14,10 +14,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 
-@DisplayName("IntakeType 도메인")
 class IntakeTypeTest {
 
-    @DisplayName("음용 타입 조회")
+    @DisplayName("음용 타입 조회할 때")
     @Nested
     class FindByName {
 
@@ -54,7 +53,7 @@ class IntakeTypeTest {
         }
     }
 
-    @DisplayName("수분량 계산")
+    @DisplayName("수분량 계산할 때")
     @Nested
     class CalculateHydration {
 
