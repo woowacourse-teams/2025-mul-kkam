@@ -37,7 +37,6 @@ import com.mulkkam.ui.setting.nickname.component.NicknameInputSection
 import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_info_circle
@@ -73,16 +72,12 @@ fun NicknameScreen(
         when (state) {
             is MulKkamUiState.Success<Unit> -> {
                 coroutineScope {
-                    launch {
-                        snackbarHostState
-                            .showMulKkamSnackbar(
-                                message = getString(Res.string.setting_nickname_change_complete),
-                                iconResource = Res.drawable.ic_info_circle,
-                            )
-                    }
-                    launch {
-                        navigateToBack()
-                    }
+                    snackbarHostState
+                        .showMulKkamSnackbar(
+                            message = getString(Res.string.setting_nickname_change_complete),
+                            iconResource = Res.drawable.ic_info_circle,
+                        )
+                    navigateToBack()
                 }
             }
 
