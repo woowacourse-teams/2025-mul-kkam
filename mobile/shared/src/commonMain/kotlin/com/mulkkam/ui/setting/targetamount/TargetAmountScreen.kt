@@ -55,16 +55,17 @@ fun TargetAmountScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val focusManager = LocalFocusManager.current
 
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
-    val saveTargetAmountUiState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
+    var saveTargetAmountUiState by remember { mutableStateOf<MulKkamUiState<Unit>>(MulKkamUiState.Idle) }
+    val currentSaveState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
 
-    viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        when (state) {
+    LaunchedEffect(currentSaveState) {
+        saveTargetAmountUiState = currentSaveState
+        when (currentSaveState) {
             is MulKkamUiState.Success -> {
                 snackbarHostState.showMulKkamSnackbar(
                     message = getString(resource = Res.string.setting_target_amount_complete_description),
