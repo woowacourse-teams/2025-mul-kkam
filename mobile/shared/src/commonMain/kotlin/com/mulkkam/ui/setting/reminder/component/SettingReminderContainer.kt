@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.component
+package com.mulkkam.ui.setting.reminder.component
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.expandVertically
@@ -20,12 +20,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
+import com.mulkkam.ui.setting.reminder.model.ReminderUpdateUiState
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_setting_add
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SettingReminderContainer(
@@ -84,7 +86,7 @@ fun SettingReminderContainer(
                                 },
                     ) {
                         Icon(
-                            painter = painterResource(com.mulkkam.R.drawable.ic_setting_add),
+                            painter = painterResource(resource = Res.drawable.ic_setting_add),
                             contentDescription = "",
                             modifier = Modifier.align(Alignment.Center),
                             tint = White,

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.component
+package com.mulkkam.ui.setting.reminder.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults.positionalThreshold
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
@@ -14,32 +15,36 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.toKotlinLocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_common_delete
+import mulkkam.shared.generated.resources.setting_reminder_delete_description
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun ReminderScheduleItem(
     reminder: ReminderSchedule,
     onRemove: () -> Unit,
     modifier: Modifier = Modifier,
     currentTime: LocalTime =
-        java.time.LocalTime
+        Clock.System
             .now()
-            .toKotlinLocalTime(),
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .time,
 ) {
     val dismissState =
         rememberSwipeToDismissBoxState(
-            confirmValueChange = { dismissValue ->
-                dismissValue == SwipeToDismissBoxValue.EndToStart
-            },
             positionalThreshold = { it * 0.7f },
         )
     val color =
@@ -67,9 +72,9 @@ fun ReminderScheduleItem(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_common_delete),
+                    painter = painterResource(resource = Res.drawable.ic_common_delete),
                     modifier = Modifier.size(24.dp),
-                    contentDescription = stringResource(R.string.setting_reminder_delete_description),
+                    contentDescription = stringResource(resource = Res.string.setting_reminder_delete_description),
                 )
             }
         },
