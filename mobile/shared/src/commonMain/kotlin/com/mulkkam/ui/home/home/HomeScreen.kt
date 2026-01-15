@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.home.component.DrinkButton
 import com.mulkkam.ui.home.home.component.FriendWaterBalloonExplodeLottie
@@ -52,9 +51,6 @@ fun HomeScreen(
                 onSelectCup = { cupId -> viewModel.addWaterIntakeByCup(cupId) },
                 onManual = onManualDrink,
             )
-        },
-        snackbarHost = {
-            MulKkamSnackbarHost(hostState = snackbarHostState)
         },
     ) { innerPadding ->
         val today = todayProgressUiState.toSuccessDataOrNull()

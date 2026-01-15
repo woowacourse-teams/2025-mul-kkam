@@ -60,6 +60,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun HistoryScreen(
     padding: PaddingValues,
+    snackbarHostState: SnackbarHostState,
     viewModel: HistoryViewModel = koinViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -72,8 +73,6 @@ fun HistoryScreen(
 
     var showDialog by remember { mutableStateOf(false) }
     var deletedHistory: Int? by remember { mutableStateOf(null) }
-
-    val snackbarHostState = remember { SnackbarHostState() }
 
     LaunchedEffect(deleteUiState) {
         when (deleteUiState) {
@@ -107,7 +106,6 @@ fun HistoryScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         modifier = Modifier.background(White).padding(padding),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
         containerColor = White,
     ) { innerPadding ->
         if (weeklyIntakeHistories == MulKkamUiState.Loading) {
@@ -223,6 +221,6 @@ fun HistoryScreen(
 @Composable
 private fun HistoryScreenPreview() {
     MulKkamTheme {
-        HistoryScreen(padding = PaddingValues())
+        HistoryScreen(padding = PaddingValues(), snackbarHostState = SnackbarHostState())
     }
 }

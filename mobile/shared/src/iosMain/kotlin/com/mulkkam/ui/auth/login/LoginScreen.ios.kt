@@ -38,7 +38,6 @@ actual fun LoginScreen(
     Scaffold(
         containerColor = White,
         modifier = Modifier.padding(padding),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
             modifier =
