@@ -16,7 +16,6 @@ import com.mulkkam.ui.main.Refreshable
 import com.mulkkam.ui.setting.setting.SettingScreen
 import com.mulkkam.ui.setting.setting.model.SettingType
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoActivity
-import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
@@ -53,7 +52,7 @@ class SettingFragment :
     private fun handleSettingClick(type: SettingType) {
         when (type) {
             SettingType.NICKNAME -> { /* SettingNicknameActivity migration completed */ }
-            SettingType.BODY_INFO -> startActivity(SettingBioInfoActivity.newIntent(requireContext()))
+            SettingType.BODY_INFO -> { /* SettingBioInfoActivity migration completed */ }
             SettingType.ACCOUNT_INFO -> startActivity(SettingAccountInfoActivity.newIntent(requireContext()))
             SettingType.MY_CUP -> activityResultLauncher.launch(SettingCupsActivity.newIntent(requireContext()))
             SettingType.GOAL -> startActivity(SettingTargetAmountActivity.newIntent(requireContext()))
