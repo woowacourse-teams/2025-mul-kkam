@@ -3,6 +3,7 @@ package com.mulkkam.ui.auth.splash
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
@@ -73,8 +75,9 @@ fun SplashScreen(
     }
 
     Scaffold(
-        containerColor = White,
         modifier = Modifier.padding(padding),
+        containerColor = White,
+        contentWindowInsets = WindowInsets(0.dp),
     ) { innerPadding ->
         Box(
             modifier =

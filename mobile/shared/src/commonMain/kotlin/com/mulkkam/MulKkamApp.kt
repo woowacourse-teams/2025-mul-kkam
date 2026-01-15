@@ -2,12 +2,14 @@ package com.mulkkam
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.mulkkam.ui.auth.login.model.AuthPlatform
+import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.main.component.MainBottomNavigationBar
@@ -24,6 +26,7 @@ fun MulKkamApp(
     ) -> Unit,
 ) {
     val navigator = rememberMainNavigator()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val currentTab: MainTab? by remember {
         derivedStateOf { MainTab.fromRoute(navigator.currentRoute) }
@@ -51,11 +54,13 @@ fun MulKkamApp(
                     )
                 }
             },
+            snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
         ) { innerPadding ->
             MainNavHost(
                 navigator = navigator,
                 padding = innerPadding,
                 onLogin = onLogin,
+                snackbarHostState = snackbarHostState,
             )
         }
     }

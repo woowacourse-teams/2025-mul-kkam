@@ -1,6 +1,7 @@
 package com.mulkkam.ui.home
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.home.encyclopedia.EncyclopediaRoute
 import com.mulkkam.ui.home.home.HomeRoute
@@ -16,6 +17,7 @@ object HomeNavGraph {
         route: HomeNavRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
+        snackbarHostState: SnackbarHostState,
     ): NavEntry<HomeNavRoute> =
         when (route) {
             is HomeNavRoute.Home -> {
@@ -25,6 +27,7 @@ object HomeNavGraph {
                         navigateToNotification = navigator::navigateToHomeNotification,
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -43,6 +46,7 @@ object HomeNavGraph {
                     NotificationRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }

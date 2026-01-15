@@ -26,11 +26,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.friend.FriendsResult
+import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.dialog.MulKkamAlertDialog
 import com.mulkkam.ui.friends.component.FriendItem
 import com.mulkkam.ui.friends.component.FriendsEditModeButton
 import com.mulkkam.ui.friends.component.FriendsEmptyContent

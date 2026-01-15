@@ -33,8 +33,8 @@ actual fun LoginRoute(
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
     viewModel: LoginViewModel,
+    snackbarHostState: SnackbarHostState,
 ) {
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
     val logger: Logger = koinInject()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()

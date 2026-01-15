@@ -22,12 +22,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.Key.Companion.R
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray400
@@ -54,6 +52,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun TargetAmountScreen(
     padding: PaddingValues,
     navigateToBack: () -> Boolean,
+    snackbarHostState: SnackbarHostState,
     viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -63,8 +62,6 @@ fun TargetAmountScreen(
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
     val saveTargetAmountUiState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
-
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
 
     viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
@@ -101,7 +98,6 @@ fun TargetAmountScreen(
                 .background(White)
                 .systemBarsPadding(),
         containerColor = White,
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Box(
             modifier =

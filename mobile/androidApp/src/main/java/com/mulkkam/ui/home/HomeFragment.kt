@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -50,6 +51,7 @@ class HomeFragment :
                                 val intent = CoffeeEncyclopediaActivity.newIntent(requireContext())
                                 startActivity(intent)
                             },
+                            snackbarHostState = SnackbarHostState(),
                         )
                     }
                 }
