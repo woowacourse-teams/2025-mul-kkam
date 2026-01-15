@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder
+package com.mulkkam.ui.setting.reminder
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,7 +9,7 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.ReminderRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.settingreminder.model.ReminderUpdateUiState
+import com.mulkkam.ui.setting.reminder.model.ReminderUpdateUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -38,8 +38,7 @@ class SettingReminderViewModel(
     val reminderUpdateUiState: StateFlow<ReminderUpdateUiState> =
         _reminderUpdateUiState.asStateFlow()
 
-    private val _onReminderUpdated: MutableSharedFlow<MulKkamUiState<Unit>> =
-        MutableSharedFlow<MulKkamUiState<Unit>>()
+    private val _onReminderUpdated: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
     val onReminderUpdated: SharedFlow<MulKkamUiState<Unit>> = _onReminderUpdated.asSharedFlow()
 
     init {
