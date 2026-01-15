@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingbioinfo
+package com.mulkkam.ui.setting.bioinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
