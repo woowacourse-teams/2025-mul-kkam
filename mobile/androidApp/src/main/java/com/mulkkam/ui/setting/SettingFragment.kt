@@ -20,7 +20,6 @@ import com.mulkkam.ui.settingbioinfo.SettingBioInfoActivity
 import com.mulkkam.ui.settingcups.SettingCupsActivity
 import com.mulkkam.ui.settingfeedback.SettingFeedbackActivity
 import com.mulkkam.ui.settingnotification.SettingNotificationActivity
-import com.mulkkam.ui.settingreminder.SettingReminderActivity
 import com.mulkkam.ui.settingtargetamount.SettingTargetAmountActivity
 import com.mulkkam.ui.settingterms.SettingTermsActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -60,7 +59,7 @@ class SettingFragment :
             SettingType.PUSH_NOTIFICATION -> startActivity(SettingNotificationActivity.newIntent(requireContext()))
             SettingType.FEEDBACK -> startActivity(SettingFeedbackActivity.newIntent(requireContext()))
             SettingType.TERMS -> startActivity(SettingTermsActivity.newIntent(requireContext()))
-            SettingType.REMINDER -> startActivity(SettingReminderActivity.newIntent(requireContext()))
+            SettingType.REMINDER -> { /* SettingReminderActivity migration completed */ }
         }
     }
 

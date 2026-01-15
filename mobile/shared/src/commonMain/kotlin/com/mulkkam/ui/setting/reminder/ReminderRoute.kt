@@ -12,7 +12,7 @@ fun ReminderRoute(
 ) {
     ReminderScreen(
         padding = padding,
-        onNavigateToBack = onNavigateToBack,
+        navigateToBack = onNavigateToBack,
         snackbarHostState = snackbarHostState,
     )
 }
