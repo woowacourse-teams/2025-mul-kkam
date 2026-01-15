@@ -6,7 +6,9 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -33,6 +35,7 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
+import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.setting.targetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.TargetAmountInputSection
@@ -97,12 +100,12 @@ fun TargetAmountScreen(
     }
 
     Scaffold(
-        topBar = { SettingTargetAmountTopAppBar { navigateToBack() } },
-        modifier =
-            Modifier
-                .background(White)
-                .systemBarsPadding(),
+        contentWindowInsets = WindowInsets(0.dp),
+        topBar = {
+            SettingTargetAmountTopAppBar { navigateToBack() }
+        },
         containerColor = White,
+        modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->
         Box(
             modifier =
