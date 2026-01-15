@@ -24,7 +24,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.showMulKkamSnackbar
@@ -37,7 +36,8 @@ import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.setting.targetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.setting.targetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.TargetAmountInputSection
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_info_circle
@@ -67,11 +67,15 @@ fun TargetAmountScreen(
         saveTargetAmountUiState = currentSaveState
         when (currentSaveState) {
             is MulKkamUiState.Success -> {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(resource = Res.string.setting_target_amount_complete_description),
-                    iconResource = Res.drawable.ic_info_circle,
-                )
-                navigateToBack()
+                coroutineScope {
+                    launch {
+                        snackbarHostState.showMulKkamSnackbar(
+                            message = getString(resource = Res.string.setting_target_amount_complete_description),
+                            iconResource = Res.drawable.ic_info_circle,
+                        )
+                    }
+                    navigateToBack()
+                }
             }
 
             is MulKkamUiState.Failure -> {
