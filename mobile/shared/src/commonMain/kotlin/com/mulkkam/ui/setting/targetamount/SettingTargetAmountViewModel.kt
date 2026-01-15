@@ -22,7 +22,7 @@ class SettingTargetAmountViewModel(
     private val membersRepository: MembersRepository,
     private val logger: Logger,
 ) : ViewModel() {
-    private var targetAmountInput: TargetAmount = TargetAmount.Companion.EMPTY_TARGET_AMOUNT
+    private var targetAmountInput: TargetAmount = TargetAmount.EMPTY_TARGET_AMOUNT
 
     private val _targetInfoUiState: MutableStateFlow<MulKkamUiState<TargetAmountUiModel>> =
         MutableStateFlow(MulKkamUiState.Idle)
