@@ -26,7 +26,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.MulKkamAlertDialog
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme

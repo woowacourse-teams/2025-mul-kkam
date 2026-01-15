@@ -16,8 +16,8 @@ import com.mulkkam.ui.onboarding.targetamount.TargetAmountViewModel
 import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
 import com.mulkkam.ui.searchmembers.SearchMembersViewModel
 import com.mulkkam.ui.setting.SettingViewModel
-import com.mulkkam.ui.setting.nickname.SettingNicknameViewModel
 import com.mulkkam.ui.setting.bioinfo.SettingBioInfoViewModel
+import com.mulkkam.ui.setting.nickname.SettingNicknameViewModel
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
 import com.mulkkam.ui.settingcups.SettingCupViewModel
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
