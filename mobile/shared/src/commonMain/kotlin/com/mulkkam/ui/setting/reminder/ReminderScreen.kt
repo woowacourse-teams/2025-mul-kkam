@@ -1,6 +1,9 @@
 package com.mulkkam.ui.setting.reminder
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
@@ -11,16 +14,20 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
+import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.setting.reminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.setting.reminder.component.SettingReminderContainer
 import com.mulkkam.ui.setting.reminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.setting.reminder.model.ReminderUpdateUiState
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -45,7 +52,6 @@ fun ReminderScreen(
     val isReminderEnabled by viewModel.isReminderEnabled.collectAsStateWithLifecycle()
     val reminders by viewModel.reminderSchedules.collectAsStateWithLifecycle()
     val reminderUpdateUiState by viewModel.reminderUpdateUiState.collectAsStateWithLifecycle()
-    val coroutineScope = rememberCoroutineScope()
 
     val showBottomSheet = reminderUpdateUiState !is ReminderUpdateUiState.Idle
 
@@ -53,26 +59,26 @@ fun ReminderScreen(
         viewModel.onReminderUpdated.collect { state ->
             if (state !is MulKkamUiState.Failure) return@collect
             if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
-                coroutineScope.launch {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
-                        iconResource = Res.drawable.ic_info_circle,
-                    )
-                }
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
+                    iconResource = Res.drawable.ic_info_circle,
+                )
             } else {
-                coroutineScope.launch {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(resource = Res.string.network_check_error),
-                        iconResource = Res.drawable.ic_info_circle,
-                    )
-                }
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(resource = Res.string.network_check_error),
+                    iconResource = Res.drawable.ic_info_circle,
+                )
             }
         }
     }
 
     Scaffold(
-        topBar = { SettingReminderTopAppBar { navigateToBack() } },
+        contentWindowInsets = WindowInsets(0.dp),
+        topBar = {
+            SettingReminderTopAppBar { navigateToBack() }
+        },
         containerColor = White,
+        modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->
         SettingReminderContainer(
             isReminderEnabled = isReminderEnabled.toSuccessDataOrNull() ?: return@Scaffold,
