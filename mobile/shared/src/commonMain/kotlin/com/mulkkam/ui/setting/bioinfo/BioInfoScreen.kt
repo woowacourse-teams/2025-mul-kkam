@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
 import com.mulkkam.ui.component.SaveButton
@@ -33,6 +33,7 @@ import com.mulkkam.ui.setting.bioinfo.component.HealthSection
 import com.mulkkam.ui.setting.bioinfo.component.SettingBioInfoTopAppBar
 import com.mulkkam.ui.setting.bioinfo.component.SettingWeightBottomSheet
 import com.mulkkam.ui.setting.bioinfo.component.WeightSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
@@ -52,6 +53,8 @@ fun BioInfoScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: SettingBioInfoViewModel = koinViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
     var isShowBottomSheet by rememberSaveable { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
 
@@ -59,8 +62,8 @@ fun BioInfoScreen(
     val weight by viewModel.weight.collectAsStateWithLifecycle()
     val bioInfoChangeUiState by viewModel.bioInfoChangeUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(bioInfoChangeUiState) {
-        when (bioInfoChangeUiState) {
+    viewModel.bioInfoChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        when (state) {
             is MulKkamUiState.Success<Unit> -> {
                 coroutineScope {
                     launch {
