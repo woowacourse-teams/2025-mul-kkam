@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.SaveButton
 import com.mulkkam.ui.component.showMulKkamSnackbar
@@ -37,6 +38,7 @@ import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.setting.targetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.setting.targetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.TargetAmountInputSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
@@ -56,17 +58,16 @@ fun TargetAmountScreen(
     snackbarHostState: SnackbarHostState,
     viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val focusManager = LocalFocusManager.current
 
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
     var saveTargetAmountUiState by remember { mutableStateOf<MulKkamUiState<Unit>>(MulKkamUiState.Idle) }
-    val currentSaveState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(currentSaveState) {
-        saveTargetAmountUiState = currentSaveState
-        when (currentSaveState) {
+    viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
+        when (state) {
             is MulKkamUiState.Success -> {
                 coroutineScope {
                     launch {
