@@ -64,7 +64,7 @@ fun TargetAmountScreen(
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
-    var saveTargetAmountUiState by remember { mutableStateOf<MulKkamUiState<Unit>>(MulKkamUiState.Idle) }
+    val saveTargetAmountUiState by viewModel.saveTargetAmountUiState.collectAsStateWithLifecycle()
 
     viewModel.saveTargetAmountUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
