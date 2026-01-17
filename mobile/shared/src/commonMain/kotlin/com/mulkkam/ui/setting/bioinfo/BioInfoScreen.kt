@@ -16,6 +16,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,7 +50,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun BioInfoScreen(
     padding: PaddingValues,
     navigateToBack: () -> Boolean,
-    navigateToHealth: () -> Unit,
+    navigateToHealth: suspend () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingBioInfoViewModel = koinViewModel(),
 ) {
@@ -61,6 +62,7 @@ fun BioInfoScreen(
     val gender by viewModel.gender.collectAsStateWithLifecycle()
     val weight by viewModel.weight.collectAsStateWithLifecycle()
     val bioInfoChangeUiState by viewModel.bioInfoChangeUiState.collectAsStateWithLifecycle()
+    val coroutineScope = rememberCoroutineScope()
 
     viewModel.bioInfoChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
@@ -133,7 +135,7 @@ fun BioInfoScreen(
                         Modifier
                             .fillMaxWidth()
                             .padding(top = 34.dp, start = 24.dp, end = 24.dp),
-                    onClick = { navigateToHealth() },
+                    onClick = { coroutineScope.launch { navigateToHealth() } },
                 )
             }
 

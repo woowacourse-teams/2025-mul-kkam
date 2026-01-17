@@ -6,6 +6,10 @@ import android.content.pm.PackageManager
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.di.PROVIDER_PACKAGE_NAME
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.health_connect_market
+import mulkkam.shared.generated.resources.health_connect_web
+import org.jetbrains.compose.resources.getString
 
 fun Context.isHealthConnectAvailable(): Boolean =
     when {
@@ -19,11 +23,13 @@ fun Context.isHealthConnectAvailable(): Boolean =
 /**
  * Health Connect 설치 또는 업데이트 화면(Play 스토어)을 연다.
  */
-fun Context.navigateToHealthConnectStore() {
+suspend fun Context.navigateToHealthConnectStore() {
     val marketUri =
-        "market://details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
+        getString(Res.string.health_connect_market, PROVIDER_PACKAGE_NAME)
+            .toUri()
     val webUri =
-        "https://play.google.com/store/apps/details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
+        getString(Res.string.health_connect_web, PROVIDER_PACKAGE_NAME)
+            .toUri()
 
     val marketIntent =
         Intent(Intent.ACTION_VIEW, marketUri).apply {

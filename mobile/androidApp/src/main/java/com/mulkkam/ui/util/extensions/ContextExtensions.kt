@@ -28,7 +28,7 @@ fun Context.isHealthConnectAvailable(): Boolean =
 /**
  * Health Connect 설치 또는 업데이트 화면(Play 스토어)을 연다.
  */
-fun Context.navigateToHealthConnectStore() {
+fun Context.navigateToHealthConnectStore2() {
     val marketUri =
         "market://details?id=$PROVIDER_PACKAGE_NAME&url=healthconnect%3A%2F%2Fonboarding".toUri()
     val webUri =

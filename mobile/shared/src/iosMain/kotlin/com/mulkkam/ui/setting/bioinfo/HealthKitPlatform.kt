@@ -6,5 +6,5 @@ import com.mulkkam.domain.model.bio.HealthPlatform
 class HealthKitPlatform : HealthPlatform {
     override fun isAvailable(): Boolean = false
 
-    override fun navigateToHealthConnect() {}
+    override suspend fun navigateToHealthConnect() {}
 }
