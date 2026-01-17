@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontVariation.width
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
@@ -34,7 +35,7 @@ fun GenderButton(
                 .clip(RoundedCornerShape(8.dp))
                 .background(
                     if (isSelected) Primary100 else White,
-                ).noRippleClickable(onClick = { onClick() })
+                ).noRippleClickable(onClick = onClick)
                 .border(
                     width = 1.dp,
                     color = if (isSelected) Primary100 else Gray200,
