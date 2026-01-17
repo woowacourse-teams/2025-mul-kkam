@@ -57,17 +57,26 @@ fun ReminderScreen(
 
     LaunchedEffect(snackbarHostState) {
         viewModel.onReminderUpdated.collect { state ->
-            if (state !is MulKkamUiState.Failure) return@collect
-            if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
-                    iconResource = Res.drawable.ic_info_circle,
-                )
-            } else {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(resource = Res.string.network_check_error),
-                    iconResource = Res.drawable.ic_info_circle,
-                )
+            when (state) {
+                is MulKkamUiState.Failure -> {
+                    when (state.error) {
+                        is MulKkamError.ReminderError.DuplicatedReminderSchedule -> {
+                            snackbarHostState.showMulKkamSnackbar(
+                                message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
+                                iconResource = Res.drawable.ic_info_circle,
+                            )
+                        }
+
+                        else -> {
+                            snackbarHostState.showMulKkamSnackbar(
+                                message = getString(resource = Res.string.network_check_error),
+                                iconResource = Res.drawable.ic_info_circle,
+                            )
+                        }
+                    }
+                }
+
+                else -> Unit
             }
         }
     }
