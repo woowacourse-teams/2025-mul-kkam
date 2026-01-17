@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -35,7 +34,6 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.setting.targetamount.component.SettingTargetAmountTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.TargetAmountInputSection
@@ -135,7 +133,7 @@ fun TargetAmountScreen(
                         onTargetAmountChanged = { newValue ->
                             handleNumericInput(
                                 newValue = newValue,
-                                onCleanedValue = { targetAmount = it },
+                                onValueChanged = { targetAmount = it },
                                 update = { viewModel.updateTargetAmount(it) },
                             )
                         },
@@ -173,7 +171,7 @@ fun TargetAmountScreen(
 
 private fun handleNumericInput(
     newValue: String,
-    onCleanedValue: (value: String) -> Unit,
+    onValueChanged: (value: String) -> Unit,
     update: (value: Int) -> Unit,
 ) {
     if (newValue.all { it.isDigit() }) {
@@ -184,7 +182,7 @@ private fun handleNumericInput(
                 else -> newValue.trimStart('0')
             }
 
-        onCleanedValue(cleaned)
+        onValueChanged(cleaned)
         if (cleaned.isNotEmpty()) {
             update(cleaned.toInt())
         }
