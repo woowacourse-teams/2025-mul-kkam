@@ -4,13 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
 import androidx.health.connect.client.HealthConnectClient
-import com.mulkkam.domain.model.bio.HealthManager
+import com.mulkkam.domain.model.bio.HealthPlatform
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
 
-class HealthConnectManager(
+class HealthConnectPlatform(
     private val context: Context,
-) : HealthManager {
+) : HealthPlatform {
     private val healthConnectIntent: Intent by lazy {
         Intent(HealthConnectClient.ACTION_HEALTH_CONNECT_SETTINGS).addFlags(FLAG_ACTIVITY_NEW_TASK)
     }

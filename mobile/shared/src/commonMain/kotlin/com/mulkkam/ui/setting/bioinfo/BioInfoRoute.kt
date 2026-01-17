@@ -7,7 +7,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import com.mulkkam.domain.model.bio.HealthManager
+import com.mulkkam.domain.model.bio.HealthPlatform
 import org.koin.compose.koinInject
 
 @Composable
@@ -16,7 +16,7 @@ fun BioInfoRoute(
     onNavigateToBack: () -> Boolean,
     snackbarHostState: SnackbarHostState,
 ) {
-    val healthManager: HealthManager = koinInject()
+    val healthManager: HealthPlatform = koinInject()
     BioInfoScreen(
         padding =
             PaddingValues(

@@ -1,6 +1,6 @@
 package com.mulkkam.data.local.health
 
-interface HealthPlatform {
+interface HealthApi {
     suspend fun getCalories(
         startEpochMillis: Long,
         endEpochMillis: Long,
