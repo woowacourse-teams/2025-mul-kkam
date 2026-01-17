@@ -173,8 +173,8 @@ fun TargetAmountScreen(
 
 private fun handleNumericInput(
     newValue: String,
-    onCleanedValue: (String) -> Unit,
-    update: (Int) -> Unit,
+    onCleanedValue: (value: String) -> Unit,
+    update: (value: Int) -> Unit,
 ) {
     if (newValue.all { it.isDigit() }) {
         val cleaned =

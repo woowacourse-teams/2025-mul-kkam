@@ -22,7 +22,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun TargetAmountInputSection(
     targetAmount: String,
     targetAmountValidityUiState: MulKkamUiState<Unit>,
-    onTargetAmountChanged: (String) -> Unit,
+    onTargetAmountChanged: (targetAmount: String) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column(
