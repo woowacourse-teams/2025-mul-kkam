@@ -45,7 +45,7 @@ fun RecommendedTargetAmount(
                 listOf(
                     nickname,
                     stringResource(
-                        Res.string.target_amount_recommended_water_goal_highlight,
+                        resource = Res.string.target_amount_recommended_water_goal_highlight,
                         recommended.toCommaSeparated(),
                     ),
                 ),
