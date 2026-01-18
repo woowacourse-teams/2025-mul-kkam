@@ -10,13 +10,14 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray10
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.notification_load_more_button
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoadMoreButton(onClick: () -> Unit) {
@@ -36,7 +37,7 @@ fun LoadMoreButton(onClick: () -> Unit) {
                 .padding(16.dp),
     ) {
         Text(
-            text = stringResource(R.string.notification_load_more_button),
+            text = stringResource(Res.string.notification_load_more_button),
             color = Black,
             style = MulKkamTheme.typography.body3,
         )

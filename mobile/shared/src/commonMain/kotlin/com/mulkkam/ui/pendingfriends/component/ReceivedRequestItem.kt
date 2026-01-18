@@ -10,10 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
@@ -24,10 +21,21 @@ import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
 import kotlinx.datetime.toLocalDateTime
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.pending_friends_days_ago
+import mulkkam.shared.generated.resources.pending_friends_hours_ago
+import mulkkam.shared.generated.resources.pending_friends_minutes_ago
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private const val HOURS_PER_DAY: Int = 24
+private const val MINUTES_PER_HOUR: Long = 60L
+private const val SECONDS_PER_MINUTE: Long = 60L
+private const val SECONDS_PER_HOUR: Long = SECONDS_PER_MINUTE * MINUTES_PER_HOUR
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun ReceivedRequestItem(
     receivedRequest: FriendsRequestInfo,
@@ -75,28 +83,30 @@ fun ReceivedRequestItem(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun formatRemainingTime(
     currentTime: LocalDateTime,
     requestTime: LocalDateTime,
 ): String {
-    val timeZone = TimeZone.currentSystemDefault()
+    val timeZone: TimeZone = TimeZone.currentSystemDefault()
     val currentInstant = currentTime.toInstant(timeZone)
     val requestInstant = requestTime.toInstant(timeZone)
-    val duration = currentInstant - requestInstant
-    val minutes = duration.inWholeMinutes
-    val hours = duration.inWholeHours
+    val durationSeconds: Long =
+        (currentInstant.epochSeconds - requestInstant.epochSeconds).coerceAtLeast(0L)
+    val minutes: Long = durationSeconds / SECONDS_PER_MINUTE
+    val hours: Long = durationSeconds / SECONDS_PER_HOUR
 
     return when {
         hours < 1 -> {
-            stringResource(R.string.pending_friends_minutes_ago, minutes)
+            stringResource(Res.string.pending_friends_minutes_ago, minutes)
         }
         hours < HOURS_PER_DAY -> {
-            stringResource(R.string.pending_friends_hours_ago, hours)
+            stringResource(Res.string.pending_friends_hours_ago, hours)
         }
         else -> {
-            val days = hours / HOURS_PER_DAY
-            stringResource(R.string.pending_friends_days_ago, days)
+            val days: Long = hours / HOURS_PER_DAY
+            stringResource(Res.string.pending_friends_days_ago, days)
         }
     }
 }

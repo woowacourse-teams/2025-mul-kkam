@@ -18,11 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendRequestStatus
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
@@ -34,6 +30,13 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_setting_add
+import mulkkam.shared.generated.resources.search_friends_already_friend
+import mulkkam.shared.generated.resources.search_friends_requested
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SearchMembersItem(
@@ -65,7 +68,7 @@ fun SearchMembersItem(
             when {
                 memberSearchInfo.isFriends() -> {
                     Text(
-                        text = stringResource(R.string.search_friends_already_friend),
+                        text = stringResource(Res.string.search_friends_already_friend),
                         color = Gray200,
                         style = MulKkamTheme.typography.label1,
                     )
@@ -73,7 +76,7 @@ fun SearchMembersItem(
 
                 memberSearchInfo.isRequestedByMe() -> {
                     Text(
-                        text = stringResource(R.string.search_friends_requested),
+                        text = stringResource(Res.string.search_friends_requested),
                         color = Primary100,
                         style = MulKkamTheme.typography.label1,
                     )
@@ -94,7 +97,7 @@ fun SearchMembersItem(
                                 Modifier
                                     .align(Alignment.Center)
                                     .fillMaxSize(),
-                            painter = painterResource(R.drawable.ic_setting_add),
+                            painter = painterResource(Res.drawable.ic_setting_add),
                             contentDescription = null,
                             tint = White,
                         )

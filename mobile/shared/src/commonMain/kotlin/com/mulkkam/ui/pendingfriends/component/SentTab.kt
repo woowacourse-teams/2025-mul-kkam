@@ -10,14 +10,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.mulkkam.R
 import com.mulkkam.domain.model.friends.FriendsRequestInfo
-import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.util.extensions.OnLoadMore
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.pending_friends_cancel_request_confirmed
+import mulkkam.shared.generated.resources.pending_friends_cancel_request_warning
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SentTab(
@@ -28,15 +29,15 @@ fun SentTab(
     state: LazyListState = rememberLazyListState(),
 ) {
     state.OnLoadMore(action = onLoadMore)
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog: Boolean by remember { mutableStateOf(false) }
     var requestToCancel: FriendsRequestInfo? by remember { mutableStateOf(null) }
 
     LazyColumn(modifier = modifier.fillMaxHeight(), state = state) {
         items(
             sentRequests.size,
             key = { sentRequests[it].memberId },
-        ) { index ->
-            val friendsRequest = sentRequests[index]
+        ) { index: Int ->
+            val friendsRequest: FriendsRequestInfo = sentRequests[index]
             SentRequestItem(
                 modifier = Modifier.animateItem(),
                 sentRequest = friendsRequest,
@@ -52,10 +53,10 @@ fun SentTab(
         MulKkamAlertDialog(
             title =
                 stringResource(
-                    R.string.pending_friends_cancel_request_confirmed,
+                    Res.string.pending_friends_cancel_request_confirmed,
                     requestToCancel?.nickname?.name ?: return,
                 ),
-            description = stringResource(R.string.pending_friends_cancel_request_warning),
+            description = stringResource(Res.string.pending_friends_cancel_request_warning),
             onConfirm = {
                 onCancel(requestToCancel ?: return@MulKkamAlertDialog)
                 showDialog = false
@@ -70,21 +71,7 @@ fun SentTab(
 private fun SentTabPreview() {
     MulKkamTheme {
         SentTab(
-            sentRequests =
-                listOf(
-                    FriendsRequestInfo(
-                        memberId = 1L,
-                        nickname = Nickname("돈가스먹는환노"),
-                    ),
-                    FriendsRequestInfo(
-                        memberId = 2L,
-                        nickname = Nickname("돈가스먹는공백"),
-                    ),
-                    FriendsRequestInfo(
-                        memberId = 3L,
-                        nickname = Nickname("돈가스안먹는이든"),
-                    ),
-                ),
+            sentRequests = emptyList(),
             onCancel = {},
             onLoadMore = {},
         )

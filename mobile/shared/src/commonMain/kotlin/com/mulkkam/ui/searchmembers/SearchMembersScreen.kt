@@ -1,12 +1,13 @@
 package com.mulkkam.ui.searchmembers
 
-import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -23,22 +24,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat.getString
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.R
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.MulKkamInfoDialog
-import com.mulkkam.ui.component.MulKkamSnackbarHost2
-import com.mulkkam.ui.component.MulKkamTextField2
-import com.mulkkam.ui.component.showMulKkamSnackbar2
+import com.mulkkam.ui.component.MulKkamSnackbarHost
+import com.mulkkam.ui.component.MulKkamTextField
+import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -53,74 +48,84 @@ import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.koinViewModel
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_alert_circle
+import mulkkam.shared.generated.resources.ic_search_friends_search
+import mulkkam.shared.generated.resources.ic_terms_all_check_on
+import mulkkam.shared.generated.resources.search_friends_accept_request_confirmed
+import mulkkam.shared.generated.resources.search_friends_accept_request_warning
+import mulkkam.shared.generated.resources.search_friends_accept_success
+import mulkkam.shared.generated.resources.search_friends_request_failed
+import mulkkam.shared.generated.resources.search_friends_request_success
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, FlowPreview::class)
 @Composable
 fun SearchMembersScreen(
-    navigateToBack: () -> Unit,
-    onFriendAccepted: () -> Unit,
+    padding: PaddingValues,
+    onNavigateToBack: () -> Boolean,
+    snackbarHostState: SnackbarHostState,
+    onFriendAccepted: () -> Unit = {},
     state: LazyListState = rememberLazyListState(),
     viewModel: SearchMembersViewModel = koinViewModel(),
 ) {
-    val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-    val snackbarHostState: SnackbarHostState = remember { SnackbarHostState() }
-    val coroutineScope = rememberCoroutineScope()
+    val coroutineScope: CoroutineScope = rememberCoroutineScope()
 
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
 
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
-    state.OnLoadMore(action = { viewModel.loadMoreMembers() })
+    state.OnLoadMore(action = viewModel::loadMoreMembers)
 
     var receivedMemberSearchInfo: MemberSearchInfo? by remember { mutableStateOf(null) }
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog: Boolean by remember { mutableStateOf(false) }
 
-    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { state ->
+    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { uiState ->
         handleRequestFriendsAction(
-            state = state,
+            state = uiState,
             snackbarHostState = snackbarHostState,
-            context = context,
             coroutineScope = coroutineScope,
         )
     }
 
-    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { state ->
+    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { uiState ->
         handleAcceptFriendsAction(
-            state = state,
+            state = uiState,
             snackbarHostState = snackbarHostState,
-            context = context,
             onFriendAccepted = onFriendAccepted,
             coroutineScope = coroutineScope,
         )
     }
 
-    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { state ->
-        receivedMemberSearchInfo = state.toSuccessDataOrNull()
+    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { uiState ->
+        receivedMemberSearchInfo = uiState.toSuccessDataOrNull()
         showDialog = true
     }
 
     Scaffold(
-        topBar = { SearchMembersTopAppBar(navigateToBack) },
+        contentWindowInsets = WindowInsets(0.dp),
+        topBar = { SearchMembersTopAppBar { onNavigateToBack() } },
         containerColor = White,
-        modifier = Modifier.systemBarsPadding(),
-        snackbarHost = { MulKkamSnackbarHost2(hostState = snackbarHostState) },
+        modifier = Modifier.background(White).padding(padding),
+        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         if (showDialog) {
-            val memberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
+            val memberSearchInfo: MemberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
             MulKkamInfoDialog(
                 title =
                     stringResource(
-                        R.string.search_friends_accept_request_confirmed,
+                        Res.string.search_friends_accept_request_confirmed,
                         memberSearchInfo.nickname.name,
                     ),
-                description = stringResource(R.string.search_friends_accept_request_warning),
+                description = stringResource(Res.string.search_friends_accept_request_warning),
                 onConfirm = {
-                    viewModel.acceptFriendRequest(
-                        memberSearchInfo,
-                    )
+                    viewModel.acceptFriendRequest(memberSearchInfo)
                     showDialog = false
                 },
                 onDismiss = { showDialog = false },
@@ -130,9 +135,9 @@ fun SearchMembersScreen(
         Column(
             modifier = Modifier.padding(innerPadding),
         ) {
-            MulKkamTextField2(
+            MulKkamTextField(
                 value = name,
-                onValueChanged = { viewModel.updateName(it) },
+                onValueChanged = viewModel::updateName,
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -141,7 +146,7 @@ fun SearchMembersScreen(
                 prefix = { prefixModifier ->
                     Icon(
                         modifier = prefixModifier,
-                        painter = painterResource(R.drawable.ic_search_friends_search),
+                        painter = painterResource(Res.drawable.ic_search_friends_search),
                         contentDescription = null,
                         tint = Gray300,
                     )
@@ -150,7 +155,7 @@ fun SearchMembersScreen(
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
             )
 
-            if (!isTyping && name.isNotEmpty() && memberSearchUiState.toSuccessDataOrNull()?.size == 0) {
+            if (!isTyping && name.isNotEmpty() && memberSearchUiState.toSuccessDataOrNull()?.isEmpty() == true) {
                 EmptySearchMembersScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
@@ -159,13 +164,13 @@ fun SearchMembersScreen(
             LazyColumn(
                 state = state,
             ) {
-                val searchMembers = memberSearchUiState.toSuccessDataOrNull() ?: return@LazyColumn
+                val searchMembers: List<MemberSearchInfo> =
+                    memberSearchUiState.toSuccessDataOrNull() ?: return@LazyColumn
 
                 items(
                     count = searchMembers.size,
                     key = { index -> searchMembers[index].nickname.name },
                 ) { index ->
-
                     SearchMembersItem(
                         memberSearchInfo = searchMembers[index],
                         onClick = { viewModel.requestFriends(searchMembers[index]) },
@@ -193,24 +198,23 @@ fun SearchMembersScreen(
 private fun handleRequestFriendsAction(
     state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
-    context: Context,
     coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<Unit> -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar2(
-                    message = getString(context, R.string.search_friends_request_success),
-                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(Res.string.search_friends_request_success),
+                    iconResource = Res.drawable.ic_terms_all_check_on,
                 )
             }
         }
 
         is MulKkamUiState.Failure -> {
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar2(
-                    message = getString(context, R.string.search_friends_request_failed),
-                    iconResourceId = R.drawable.ic_alert_circle,
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(Res.string.search_friends_request_failed),
+                    iconResource = Res.drawable.ic_alert_circle,
                 )
             }
         }
@@ -222,20 +226,16 @@ private fun handleRequestFriendsAction(
 private fun handleAcceptFriendsAction(
     state: MulKkamUiState<String>,
     snackbarHostState: SnackbarHostState,
-    context: Context,
     onFriendAccepted: () -> Unit,
     coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success<String> -> {
+            val nickname: String = state.toSuccessDataOrNull() ?: return
             coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar2(
-                    message =
-                        context.getString(
-                            R.string.search_friends_accept_success,
-                            state.toSuccessDataOrNull(),
-                        ),
-                    iconResourceId = R.drawable.ic_terms_all_check_on,
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(Res.string.search_friends_accept_success, nickname),
+                    iconResource = Res.drawable.ic_terms_all_check_on,
                 )
             }
             onFriendAccepted()
@@ -251,8 +251,9 @@ private fun handleAcceptFriendsAction(
 private fun SearchMembersScreenPreview() {
     MulKkamTheme {
         SearchMembersScreen(
-            navigateToBack = {},
-            onFriendAccepted = {},
+            padding = PaddingValues(),
+            onNavigateToBack = { true },
+            snackbarHostState = SnackbarHostState(),
         )
     }
 }
