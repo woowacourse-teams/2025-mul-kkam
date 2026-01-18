@@ -16,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -32,6 +31,7 @@ import mulkkam.shared.generated.resources.ic_friends_requests
 import mulkkam.shared.generated.resources.ic_friends_search
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 private const val MAX_DISPLAY_FRIEND_REQUEST_COUNT: Int = 99
 private const val MIN_DISPLAY_FRIEND_REQUEST_COUNT: Int = 0
@@ -82,9 +82,13 @@ private fun FriendRequestIconButton(
 ) {
     val displayCount: String =
         when {
-            count > MAX_DISPLAY_FRIEND_REQUEST_COUNT ->
+            count > MAX_DISPLAY_FRIEND_REQUEST_COUNT -> {
                 stringResource(Res.string.friends_friend_request_count_overflow)
-            else -> count.toString()
+            }
+
+            else -> {
+                count.toString()
+            }
         }
 
     Box {
@@ -103,7 +107,9 @@ private fun FriendRequestIconButton(
                             )
                         }
 
-                        else -> stringResource(Res.string.friends_friend_request_button_description)
+                        else -> {
+                            stringResource(Res.string.friends_friend_request_button_description)
+                        }
                     },
                 modifier = Modifier.padding(12.dp),
             )

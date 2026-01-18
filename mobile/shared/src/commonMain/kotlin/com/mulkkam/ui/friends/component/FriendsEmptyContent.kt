@@ -9,7 +9,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
@@ -18,6 +17,7 @@ import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.friends_empty_description
 import mulkkam.shared.generated.resources.friends_empty_title
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun FriendsEmptyContent(modifier: Modifier = Modifier) {
