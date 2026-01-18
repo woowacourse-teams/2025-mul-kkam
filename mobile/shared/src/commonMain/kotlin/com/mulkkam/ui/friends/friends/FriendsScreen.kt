@@ -160,8 +160,8 @@ private fun FriendItems(
     displayMode: FriendsDisplayMode,
     hasMore: Boolean,
     onLoadMore: () -> Unit,
-    onThrowWaterBalloon: (Friend) -> Unit,
-    onDeleteFriend: (Friend) -> Unit,
+    onThrowWaterBalloon: (friend: Friend) -> Unit,
+    onDeleteFriend: (friend: Friend) -> Unit,
 ) {
     val listState = rememberLazyListState()
     listState.OnLoadMore(isLoadMoreEnabled = hasMore, action = onLoadMore)
