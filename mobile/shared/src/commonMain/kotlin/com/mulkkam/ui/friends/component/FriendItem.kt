@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.ui.designsystem.Black
@@ -28,6 +27,7 @@ import mulkkam.shared.generated.resources.ic_friends_delete
 import mulkkam.shared.generated.resources.ic_friends_water_balloon
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun FriendItem(
