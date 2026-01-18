@@ -9,13 +9,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.friends_empty_description
+import mulkkam.shared.generated.resources.friends_empty_title
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FriendsEmptyContent(modifier: Modifier = Modifier) {
@@ -29,12 +31,12 @@ fun FriendsEmptyContent(modifier: Modifier = Modifier) {
             verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
-                text = stringResource(R.string.friends_empty_title),
+                text = stringResource(Res.string.friends_empty_title),
                 style = MulKkamTheme.typography.title2,
                 color = Gray400,
             )
             Text(
-                text = stringResource(R.string.friends_empty_description),
+                text = stringResource(Res.string.friends_empty_description),
                 style = MulKkamTheme.typography.body3,
                 color = Gray300,
             )

@@ -12,13 +12,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.friends_error_message
+import mulkkam.shared.generated.resources.friends_retry_button
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FriendsErrorContent(
@@ -35,7 +37,7 @@ fun FriendsErrorContent(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Text(
-                text = stringResource(R.string.friends_error_message),
+                text = stringResource(Res.string.friends_error_message),
                 style = MulKkamTheme.typography.body2,
                 color = Gray300,
             )
@@ -45,7 +47,7 @@ fun FriendsErrorContent(
                 colors = ButtonDefaults.buttonColors(containerColor = Gray300, contentColor = White),
             ) {
                 Text(
-                    text = stringResource(R.string.friends_retry_button),
+                    text = stringResource(Res.string.friends_retry_button),
                     style = MulKkamTheme.typography.body3,
                 )
             }

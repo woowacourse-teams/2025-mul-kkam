@@ -13,17 +13,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.friends_delete_friend_content_description
+import mulkkam.shared.generated.resources.friends_throw_water_balloon_content_description
+import mulkkam.shared.generated.resources.ic_friends_delete
+import mulkkam.shared.generated.resources.ic_friends_water_balloon
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FriendItem(
@@ -57,8 +61,8 @@ fun FriendItem(
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_friends_water_balloon),
-                        contentDescription = stringResource(R.string.friends_throw_water_balloon_content_description),
+                        painter = painterResource(Res.drawable.ic_friends_water_balloon),
+                        contentDescription = stringResource(Res.string.friends_throw_water_balloon_content_description),
                         tint = Color.Unspecified,
                     )
                 }
@@ -70,10 +74,10 @@ fun FriendItem(
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_friends_delete),
+                        painter = painterResource(Res.drawable.ic_friends_delete),
                         contentDescription =
                             stringResource(
-                                R.string.friends_delete_friend_content_description,
+                                Res.string.friends_delete_friend_content_description,
                                 friend.nickname,
                             ),
                         tint = Color.Unspecified,
