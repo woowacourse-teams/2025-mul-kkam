@@ -25,6 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -112,7 +113,15 @@ fun SearchMembersScreen(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = { SearchMembersTopAppBar { onNavigateToBack() } },
         containerColor = White,
-        modifier = Modifier.background(White).padding(padding),
+        modifier =
+            Modifier.background(White).padding(
+                PaddingValues(
+                    start = padding.calculateLeftPadding(LayoutDirection.Ltr),
+                    top = 0.dp,
+                    end = padding.calculateRightPadding(LayoutDirection.Ltr),
+                    bottom = padding.calculateBottomPadding(),
+                ),
+            ),
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         if (showDialog) {
@@ -219,7 +228,9 @@ private fun handleRequestFriendsAction(
             }
         }
 
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
 
@@ -241,8 +252,13 @@ private fun handleAcceptFriendsAction(
             onFriendAccepted()
         }
 
-        is MulKkamUiState.Failure -> Unit
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Failure -> {
+            Unit
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
 

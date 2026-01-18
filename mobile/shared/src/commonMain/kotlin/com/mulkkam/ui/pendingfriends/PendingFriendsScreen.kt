@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -103,7 +104,15 @@ fun PendingFriendsScreen(
             PendingFriendsTopAppBar { onNavigateToBack() }
         },
         containerColor = White,
-        modifier = Modifier.background(White).padding(padding),
+        modifier =
+            Modifier.background(White).padding(
+                PaddingValues(
+                    start = padding.calculateLeftPadding(LayoutDirection.Ltr),
+                    top = 0.dp,
+                    end = padding.calculateRightPadding(LayoutDirection.Ltr),
+                    bottom = padding.calculateBottomPadding(),
+                ),
+            ),
         snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
@@ -147,7 +156,7 @@ fun PendingFriendsScreen(
                 modifier = Modifier.fillMaxSize(),
             ) { page: Int ->
                 when (page) {
-                    0 ->
+                    0 -> {
                         ReceivedTab(
                             receivedRequests =
                                 receivedRequests.toSuccessDataOrNull()
@@ -156,13 +165,15 @@ fun PendingFriendsScreen(
                             onReject = viewModel::rejectFriend,
                             onLoadMore = viewModel::loadMoreReceivedFriendsRequest,
                         )
+                    }
 
-                    1 ->
+                    1 -> {
                         SentTab(
                             sentRequests = sentRequests.toSuccessDataOrNull() ?: emptyList(),
                             onCancel = viewModel::cancelRequest,
                             onLoadMore = viewModel::loadMoreSentFriendsRequest,
                         )
+                    }
                 }
             }
         }
@@ -196,7 +207,9 @@ private fun handleAcceptRequestAction(
             }
         }
 
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
 
@@ -215,8 +228,13 @@ private fun handleRejectRequestAction(
             }
         }
 
-        is MulKkamUiState.Failure -> Unit
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Failure -> {
+            Unit
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
 
@@ -235,8 +253,13 @@ private fun handleCancelRequestAction(
             }
         }
 
-        is MulKkamUiState.Failure -> Unit
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Failure -> {
+            Unit
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
 
