@@ -25,6 +25,7 @@ object OnboardingNavGraph {
                     TermsRoute(
                         padding = padding,
                         onNavigateToNickname = navigator::navigateToOnboardingNickname,
+                        onNavigateToBack = navigator::popBackStack,
                     )
                 }
             }

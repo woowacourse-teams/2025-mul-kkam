@@ -5,12 +5,8 @@ import androidx.compose.runtime.Composable
 import com.mulkkam.domain.model.OnboardingInfo
 
 @Composable
-fun TermsRoute(
+expect fun TermsRoute(
     padding: PaddingValues,
+    onNavigateToBack: () -> Boolean,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
-) {
-    TermsScreen(
-        padding = padding,
-        onNavigateToNickname = onNavigateToNickname,
-    )
-}
+)
