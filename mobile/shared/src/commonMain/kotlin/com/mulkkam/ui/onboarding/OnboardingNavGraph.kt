@@ -26,6 +26,7 @@ object OnboardingNavGraph {
                         padding = padding,
                         onNavigateToNickname = navigator::navigateToOnboardingNickname,
                         onNavigateToBack = navigator::popBackStack,
+                        currentProgress = route.currentProgress,
                     )
                 }
             }
@@ -37,6 +38,7 @@ object OnboardingNavGraph {
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToBioInfo = navigator::navigateToOnboardingBioInfo,
+                        currentProgress = route.currentProgress,
                     )
                 }
             }

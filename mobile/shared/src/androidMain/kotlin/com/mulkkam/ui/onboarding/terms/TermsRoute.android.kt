@@ -11,7 +11,8 @@ import com.mulkkam.ui.util.extensions.openTermsLink
 actual fun TermsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
-    onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
+    onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     val context = LocalContext.current
 
@@ -20,6 +21,6 @@ actual fun TermsRoute(
         navigateToBack = onNavigateToBack,
         loadToPage = { context.openTermsLink(it) },
         navigateToNextStep = onNavigateToNickname,
-        currentProgress = 1,
+        currentProgress = currentProgress,
     )
 }

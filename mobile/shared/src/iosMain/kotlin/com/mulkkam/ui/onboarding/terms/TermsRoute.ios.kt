@@ -11,14 +11,15 @@ import platform.UIKit.UIApplicationOpenURLOptionsKey
 actual fun TermsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
-    onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
+    onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     TermsScreen(
         padding = padding,
         navigateToBack = onNavigateToBack,
         loadToPage = { openUrl(it) },
         navigateToNextStep = onNavigateToNickname,
-        currentProgress = 1,
+        currentProgress = currentProgress,
     )
 }
 

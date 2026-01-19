@@ -8,5 +8,6 @@ import com.mulkkam.domain.model.OnboardingInfo
 expect fun TermsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
-    onNavigateToNickname: (onboardingInfo: OnboardingInfo?) -> Unit,
+    onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 )

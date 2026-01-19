@@ -37,9 +37,9 @@ class MainNavigator internal constructor(
     fun navigateToLogin() = navigate(AuthRoute.Login)
 
     // Onboarding
-    fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms)
+    fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms())
 
-    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo? = null) = navigate(OnboardingRoute.Nickname(onboardingInfo))
+    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.Nickname(onboardingInfo))
 
     fun navigateToOnboardingBioInfo(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.BioInfo(onboardingInfo))
 
