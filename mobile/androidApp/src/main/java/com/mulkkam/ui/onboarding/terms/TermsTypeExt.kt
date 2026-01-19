@@ -1,7 +1,7 @@
 package com.mulkkam.ui.onboarding.terms
 
 import com.mulkkam.R
-import com.mulkkam.ui.terms.model.TermsType
+import com.mulkkam.ui.onboarding.terms.model.TermsType
 
 // TODO: 이것도 어떻게든 옮겨야함
 fun TermsType.toResourceIds(): Pair<Int, Int> =

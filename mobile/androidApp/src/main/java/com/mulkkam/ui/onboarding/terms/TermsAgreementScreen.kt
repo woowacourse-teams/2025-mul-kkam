@@ -33,8 +33,7 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementCheckBox
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementItem
-import com.mulkkam.ui.terms.TermsAgreementViewModel
-import com.mulkkam.ui.terms.model.TermsType
+import com.mulkkam.ui.onboarding.terms.model.TermsType
 import com.mulkkam.ui.util.extensions.getStyledText
 import com.mulkkam.ui.util.extensions.noRippleClickable
 

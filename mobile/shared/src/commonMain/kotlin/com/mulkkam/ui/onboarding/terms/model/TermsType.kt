@@ -1,4 +1,4 @@
-package com.mulkkam.ui.terms.model
+package com.mulkkam.ui.onboarding.terms.model
 
 enum class TermsType {
     SERVICE,

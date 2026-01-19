@@ -1,9 +1,9 @@
-package com.mulkkam.ui.terms
+package com.mulkkam.ui.onboarding.terms
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.mulkkam.ui.terms.model.TermsAgreementUiModel
-import com.mulkkam.ui.terms.model.TermsType
+import com.mulkkam.ui.onboarding.terms.model.TermsAgreementUiModel
+import com.mulkkam.ui.onboarding.terms.model.TermsType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
