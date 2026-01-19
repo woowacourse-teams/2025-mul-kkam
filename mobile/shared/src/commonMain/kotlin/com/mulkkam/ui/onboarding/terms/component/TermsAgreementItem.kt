@@ -10,15 +10,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_terms_agreement_check
+import mulkkam.shared.generated.resources.ic_terms_agreement_next
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TermsAgreementItem(
@@ -44,7 +46,7 @@ fun TermsAgreementItem(
                     Modifier
                         .size(40.dp)
                         .padding(horizontal = 12.dp, vertical = 14.dp),
-                painter = painterResource(R.drawable.ic_terms_agreement_check),
+                painter = painterResource(resource = Res.drawable.ic_terms_agreement_check),
                 contentDescription = null,
                 tint = getCheckIconTint(isChecked),
             )
@@ -62,7 +64,7 @@ fun TermsAgreementItem(
                     .size(40.dp)
                     .noRippleClickable(onClick = onClickNext)
                     .padding(horizontal = 16.dp, vertical = 14.dp),
-            painter = painterResource(R.drawable.ic_terms_agreement_next),
+            painter = painterResource(resource = Res.drawable.ic_terms_agreement_next),
             contentDescription = null,
             tint = Gray100,
         )
