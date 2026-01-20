@@ -12,23 +12,18 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.setting.nickname.component.SettingNicknameTopAppBar
 import com.mulkkam.ui.setting.reminder.component.ReminderScheduleBottomSheet
 import com.mulkkam.ui.setting.reminder.component.SettingReminderContainer
 import com.mulkkam.ui.setting.reminder.component.SettingReminderTopAppBar
 import com.mulkkam.ui.setting.reminder.model.ReminderUpdateUiState
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mulkkam.shared.generated.resources.Res
@@ -57,26 +52,17 @@ fun ReminderScreen(
 
     LaunchedEffect(snackbarHostState) {
         viewModel.onReminderUpdated.collect { state ->
-            when (state) {
-                is MulKkamUiState.Failure -> {
-                    when (state.error) {
-                        is MulKkamError.ReminderError.DuplicatedReminderSchedule -> {
-                            snackbarHostState.showMulKkamSnackbar(
-                                message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
-                                iconResource = Res.drawable.ic_info_circle,
-                            )
-                        }
-
-                        else -> {
-                            snackbarHostState.showMulKkamSnackbar(
-                                message = getString(resource = Res.string.network_check_error),
-                                iconResource = Res.drawable.ic_info_circle,
-                            )
-                        }
-                    }
-                }
-
-                else -> Unit
+            if (state !is MulKkamUiState.Failure) return@collect
+            if (state.error is MulKkamError.ReminderError.DuplicatedReminderSchedule) {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(resource = Res.string.setting_reminder_duplicated_schedule),
+                    iconResource = Res.drawable.ic_info_circle,
+                )
+            } else {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(resource = Res.string.network_check_error),
+                    iconResource = Res.drawable.ic_info_circle,
+                )
             }
         }
     }
