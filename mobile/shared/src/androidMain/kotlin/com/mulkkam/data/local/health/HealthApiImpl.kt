@@ -6,9 +6,9 @@ import androidx.health.connect.client.request.AggregateRequest
 import androidx.health.connect.client.time.TimeRangeFilter
 import java.time.Instant
 
-class HealthPlatformImpl(
+class HealthApiImpl(
     private val client: HealthConnectClient?,
-) : HealthPlatform {
+) : HealthApi {
     override suspend fun getCalories(
         startEpochMillis: Long,
         endEpochMillis: Long,

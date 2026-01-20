@@ -1,7 +1,6 @@
 package com.mulkkam.ui.setting.setting
 
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.setting.setting.model.SettingType
 

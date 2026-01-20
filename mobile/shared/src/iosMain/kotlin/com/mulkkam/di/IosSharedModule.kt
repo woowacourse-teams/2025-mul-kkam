@@ -12,6 +12,7 @@ fun iosSharedModule(
             loggerModule,
             repositoryModule,
             checkerModule,
+            healthManagerModule,
             httpClientEngineModule,
             commonNetworkModule(baseUrl),
             localDataSourceModule,

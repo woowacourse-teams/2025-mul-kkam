@@ -80,9 +80,7 @@ fun NicknameScreen(
                                 iconResource = Res.drawable.ic_info_circle,
                             )
                     }
-                    launch {
-                        navigateToBack()
-                    }
+                    navigateToBack()
                 }
             }
 

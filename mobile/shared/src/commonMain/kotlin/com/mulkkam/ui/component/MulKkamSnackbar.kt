@@ -32,10 +32,6 @@ import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.GrayAlert
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_info_circle
 import org.jetbrains.compose.resources.DrawableResource
