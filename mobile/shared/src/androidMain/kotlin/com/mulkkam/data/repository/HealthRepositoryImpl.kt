@@ -1,13 +1,13 @@
 package com.mulkkam.data.repository
 
-import com.mulkkam.data.local.health.HealthPlatform
+import com.mulkkam.data.local.health.HealthApi
 import com.mulkkam.domain.model.bio.ExerciseCalorie
 import com.mulkkam.domain.model.result.MulKkamResult
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.HealthRepository
 
 class HealthRepositoryImpl(
-    private val healthPlatform: HealthPlatform,
+    private val healthPlatform: HealthApi,
 ) : HealthRepository {
     override suspend fun getActiveCaloriesBurned(
         startEpochMillis: Long,
