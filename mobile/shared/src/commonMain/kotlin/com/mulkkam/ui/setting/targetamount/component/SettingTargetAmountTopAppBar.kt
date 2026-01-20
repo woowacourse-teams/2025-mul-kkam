@@ -1,4 +1,4 @@
-package com.mulkkam.ui.setting.nickname.component
+package com.mulkkam.ui.setting.targetamount.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,19 +19,19 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_common_prev
-import mulkkam.shared.generated.resources.setting_nickname_toolbar_title
+import mulkkam.shared.generated.resources.setting_target_amount_toolbar_title
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingNicknameTopAppBar(onBackClick: () -> Unit) {
+fun SettingTargetAmountTopAppBar(onBackClick: () -> Unit) {
     Column {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(resource = Res.string.setting_nickname_toolbar_title),
+                    text = stringResource(resource = Res.string.setting_target_amount_toolbar_title),
                     style = MulKkamTheme.typography.title2,
                 )
             },
@@ -63,8 +63,8 @@ fun SettingNicknameTopAppBar(onBackClick: () -> Unit) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingNicknameTopAppBarPreview() {
+private fun SettingTargetAmountTopAppBarPreview() {
     MulKkamTheme {
-        SettingNicknameTopAppBar { }
+        SettingTargetAmountTopAppBar {}
     }
 }
