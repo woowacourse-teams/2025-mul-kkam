@@ -39,7 +39,6 @@ import mulkkam.shared.generated.resources.terms_agree_hint_highlight
 import mulkkam.shared.generated.resources.terms_optional_suffix
 import mulkkam.shared.generated.resources.terms_required_suffix
 import org.jetbrains.compose.resources.StringResource
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
