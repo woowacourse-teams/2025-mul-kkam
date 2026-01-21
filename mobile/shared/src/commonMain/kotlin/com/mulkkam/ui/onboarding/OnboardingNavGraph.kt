@@ -62,6 +62,7 @@ object OnboardingNavGraph {
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToCups = navigator::navigateToOnboardingCups,
+                        currentProgress = route.currentProgress,
                     )
                 }
             }

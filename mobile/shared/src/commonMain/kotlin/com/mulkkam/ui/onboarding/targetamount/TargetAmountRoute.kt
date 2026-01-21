@@ -10,11 +10,13 @@ fun TargetAmountRoute(
     onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Boolean,
     onNavigateToCups: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     TargetAmountScreen(
         padding = padding,
         onboardingInfo = onboardingInfo,
-        onNavigateToBack = onNavigateToBack,
-        onNavigateToCups = onNavigateToCups,
+        navigateToBack = onNavigateToBack,
+        navigateToNextStep = onNavigateToCups,
+        currentProgress = currentProgress,
     )
 }
