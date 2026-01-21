@@ -94,7 +94,7 @@ class CupViewModel(
 
             when (type) {
                 SettingWaterCupEditType.ADD -> {
-                    isNameValid && isAmountValid && isEmojiSelected
+                    isNameValid && isAmountValid && isEmojiSelected && isIntakeTypeChanged
                 }
 
                 SettingWaterCupEditType.EDIT -> {

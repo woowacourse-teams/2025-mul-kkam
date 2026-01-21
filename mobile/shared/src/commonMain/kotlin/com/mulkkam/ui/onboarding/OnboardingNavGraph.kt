@@ -1,6 +1,7 @@
 package com.mulkkam.ui.onboarding
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
@@ -18,6 +19,7 @@ object OnboardingNavGraph {
         route: OnboardingRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
+        snackbarHostState: SnackbarHostState,
     ): NavEntry<OnboardingRoute> =
         when (route) {
             is OnboardingRoute.Terms -> {
@@ -73,7 +75,10 @@ object OnboardingNavGraph {
                         padding = padding,
                         onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
+                        onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
                         onNavigateToMain = navigator::navigateToHome,
+                        currentProgress = route.currentProgress,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }

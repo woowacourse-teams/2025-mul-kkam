@@ -7,6 +7,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import io.github.alexzhirkevich.compottie.Compottie
 import io.github.alexzhirkevich.compottie.LottieCompositionSpec
 import io.github.alexzhirkevich.compottie.animateLottieCompositionAsState
 import io.github.alexzhirkevich.compottie.rememberLottieComposition
@@ -18,12 +19,13 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 fun OnboardingCompleteLottie(modifier: Modifier = Modifier) {
     val composition by rememberLottieComposition {
         LottieCompositionSpec.JsonString(
-            Res.readBytes("files/lottie_confettie.json").decodeToString(),
+            Res.readBytes("files/lottie_confetti.json").decodeToString(),
         )
     }
     val progress by animateLottieCompositionAsState(
         composition = composition,
         isPlaying = true,
+        iterations = Compottie.IterateForever,
     )
 
     Image(
