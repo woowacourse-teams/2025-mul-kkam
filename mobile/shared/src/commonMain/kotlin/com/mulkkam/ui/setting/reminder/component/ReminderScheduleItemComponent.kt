@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.component
+package com.mulkkam.ui.setting.reminder.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,11 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
@@ -25,12 +21,21 @@ import com.mulkkam.ui.designsystem.White
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_common_next
+import mulkkam.shared.generated.resources.setting_reminder_hours_left
+import mulkkam.shared.generated.resources.setting_reminder_minutes_left
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private const val HOURS_PER_DAY: Int = 24
 private const val NO_HOUR_DIFF: Long = 0
 private const val MINUTES_PER_HOUR: Int = 60
 
+@OptIn(ExperimentalTime::class)
 @Composable
 fun ReminderScheduleItemComponent(
     reminder: ReminderSchedule,
@@ -65,7 +70,7 @@ fun ReminderScheduleItemComponent(
             )
         }
         Icon(
-            painter = painterResource(R.drawable.ic_common_next),
+            painter = painterResource(resource = Res.drawable.ic_common_next),
             contentDescription = null,
             tint = Gray400,
         )
@@ -89,9 +94,9 @@ private fun formatRemainingTime(
 
     return stringResource(
         if (hours == NO_HOUR_DIFF.toInt()) {
-            R.string.setting_reminder_minutes_left
+            Res.string.setting_reminder_minutes_left
         } else {
-            R.string.setting_reminder_hours_left
+            Res.string.setting_reminder_hours_left
         },
         if (hours == NO_HOUR_DIFF.toInt()) minutes else hours,
     )

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.model
+package com.mulkkam.ui.setting.reminder.model
 
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 

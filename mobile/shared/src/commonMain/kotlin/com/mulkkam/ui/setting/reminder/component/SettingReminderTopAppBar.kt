@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.component
+package com.mulkkam.ui.setting.reminder.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,15 +12,18 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_common_prev
+import mulkkam.shared.generated.resources.setting_reminder_toolbar_back_btn_description
+import mulkkam.shared.generated.resources.setting_reminder_toolbar_title
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -29,7 +32,7 @@ fun SettingReminderTopAppBar(onBackClick: () -> Unit) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.setting_reminder_toolbar_title),
+                    text = stringResource(resource = Res.string.setting_reminder_toolbar_title),
                     style = MulKkamTheme.typography.title2,
                 )
             },
@@ -39,8 +42,8 @@ fun SettingReminderTopAppBar(onBackClick: () -> Unit) {
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_common_prev),
-                        contentDescription = stringResource(R.string.setting_reminder_toolbar_back_btn_description),
+                        painter = painterResource(resource = Res.drawable.ic_common_prev),
+                        contentDescription = stringResource(resource = Res.string.setting_reminder_toolbar_back_btn_description),
                     )
                 }
             },

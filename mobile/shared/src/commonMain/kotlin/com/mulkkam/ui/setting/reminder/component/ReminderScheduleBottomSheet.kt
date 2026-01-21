@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingreminder.component
+package com.mulkkam.ui.setting.reminder.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -25,20 +25,27 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.White
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.toKotlinLocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_bio_info_weight_close
+import mulkkam.shared.generated.resources.setting_reminder_bottom_sheet_close_btn_description
+import mulkkam.shared.generated.resources.setting_reminder_bottom_sheet_complete
+import mulkkam.shared.generated.resources.setting_reminder_bottom_sheet_title
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalTime::class, ExperimentalMaterial3Api::class)
 @Composable
 fun ReminderScheduleBottomSheet(
     sheetState: SheetState,
@@ -46,9 +53,10 @@ fun ReminderScheduleBottomSheet(
     onSelected: (LocalTime) -> Unit,
     modifier: Modifier = Modifier,
     currentTime: LocalTime =
-        java.time.LocalTime
+        Clock.System
             .now()
-            .toKotlinLocalTime(),
+            .toLocalDateTime(TimeZone.currentSystemDefault())
+            .time,
 ) {
     var hour by rememberSaveable { mutableIntStateOf(currentTime.hour) }
     var minute by rememberSaveable { mutableIntStateOf(currentTime.minute) }
@@ -65,14 +73,14 @@ fun ReminderScheduleBottomSheet(
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
-                    text = stringResource(R.string.setting_reminder_bottom_sheet_title),
+                    text = stringResource(resource = Res.string.setting_reminder_bottom_sheet_title),
                     color = Gray400,
                     style = MulKkamTheme.typography.title1,
                 )
                 Icon(
                     painter =
-                        painterResource(R.drawable.ic_bio_info_weight_close),
-                    contentDescription = stringResource(R.string.setting_reminder_bottom_sheet_close_btn_description),
+                        painterResource(resource = Res.drawable.ic_bio_info_weight_close),
+                    contentDescription = stringResource(resource = Res.string.setting_reminder_bottom_sheet_close_btn_description),
                     tint = Gray400,
                     modifier = Modifier.clickable { onDismiss() },
                 )
@@ -86,7 +94,7 @@ fun ReminderScheduleBottomSheet(
             )
 
             Text(
-                text = stringResource(R.string.setting_reminder_bottom_sheet_complete),
+                text = stringResource(resource = Res.string.setting_reminder_bottom_sheet_complete),
                 modifier =
                     Modifier
                         .height(48.dp)
