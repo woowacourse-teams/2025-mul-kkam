@@ -18,7 +18,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -27,12 +26,13 @@ import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.cups.model.rememberCupsReorderState
+import com.mulkkam.ui.setting.cups.component.SettingCupsAdd
+import com.mulkkam.ui.setting.cups.component.SettingCupsCup
 import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.component.SettingCupsAdd
-import com.mulkkam.ui.settingcups.component.SettingCupsCup
 import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
 
 val SETTING_CUPS_CUP_HEIGHT: Dp = 64.dp
@@ -75,12 +75,21 @@ fun CupsEditor(
                         Modifier
                             .fillMaxWidth()
                             .zIndex(if (isDragging) 1f else 0f)
-                            .offset { IntOffset(x = 0, y = if (isDragging) reorderState.dragOffset.roundToInt() else 0) }
+                            .offset {
+                                IntOffset(
+                                    x = 0,
+                                    y = if (isDragging) reorderState.dragOffset.roundToInt() else 0,
+                                )
+                            }
                     val dragHandleModifier =
                         Modifier.pointerInput(itemKey) {
                             detectDragGestures(
                                 onDragStart = {
-                                    reorderState.beginDrag(items, fallbackIndex = index, key = itemKey)
+                                    reorderState.beginDrag(
+                                        items,
+                                        fallbackIndex = index,
+                                        key = itemKey,
+                                    )
                                 },
                                 onDrag = { change, dragAmount ->
                                     change.consume()

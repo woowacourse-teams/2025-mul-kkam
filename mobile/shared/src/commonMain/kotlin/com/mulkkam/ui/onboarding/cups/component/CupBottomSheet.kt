@@ -20,11 +20,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.R
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.result.MulKkamError
@@ -41,13 +39,26 @@ import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
 import com.mulkkam.ui.home.home.component.ValidationMessage
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.cups.CupViewModel
-import com.mulkkam.ui.settingcups.component.DeleteCupButton
-import com.mulkkam.ui.settingcups.component.EmojiSection
+import com.mulkkam.ui.setting.cups.component.DeleteCupButton
+import com.mulkkam.ui.setting.cups.component.EmojiSection
 import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.setting_cup_add_title
+import mulkkam.shared.generated.resources.setting_cup_amount
+import mulkkam.shared.generated.resources.setting_cup_edit_title
+import mulkkam.shared.generated.resources.setting_cup_emoji
+import mulkkam.shared.generated.resources.setting_cup_intake_type
+import mulkkam.shared.generated.resources.setting_cup_invalid_range
+import mulkkam.shared.generated.resources.setting_cup_name_invalid_characters
+import mulkkam.shared.generated.resources.setting_cup_name_invalid_range
+import mulkkam.shared.generated.resources.setting_cup_nickname
+import mulkkam.shared.generated.resources.setting_cup_save
+import mulkkam.shared.generated.resources.setting_target_amount_unit_ml
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -112,14 +123,14 @@ fun CupBottomSheet(
             BottomSheetHeader(
                 title =
                     when (editType) {
-                        SettingWaterCupEditType.ADD -> stringResource(R.string.setting_cup_add_title)
-                        SettingWaterCupEditType.EDIT -> stringResource(R.string.setting_cup_edit_title)
+                        SettingWaterCupEditType.ADD -> stringResource(resource = Res.string.setting_cup_add_title)
+                        SettingWaterCupEditType.EDIT -> stringResource(resource = Res.string.setting_cup_edit_title)
                     },
                 onDismiss = onDismiss,
             )
 
             Spacer(modifier = Modifier.height(18.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_emoji))
+            BottomSheetSectionTitle(title = stringResource(resource = Res.string.setting_cup_emoji))
             Spacer(modifier = Modifier.height(12.dp))
             EmojiSection(
                 cupEmojisUiState = cupEmojisUiState,
@@ -127,7 +138,7 @@ fun CupBottomSheet(
             )
 
             Spacer(modifier = Modifier.height(18.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_nickname))
+            BottomSheetSectionTitle(title = stringResource(resource = Res.string.setting_cup_nickname))
             Spacer(modifier = Modifier.height(10.dp))
             MulKkamTextField(
                 value = cupNameText,
@@ -145,7 +156,7 @@ fun CupBottomSheet(
 
             Spacer(modifier = Modifier.height(18.dp))
             BottomSheetSectionTitle(
-                title = stringResource(R.string.setting_cup_intake_type),
+                title = stringResource(resource = Res.string.setting_cup_intake_type),
                 onClickInfo = onNavigateToCoffeeEncyclopedia,
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -156,7 +167,7 @@ fun CupBottomSheet(
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_amount))
+            BottomSheetSectionTitle(title = stringResource(resource = Res.string.setting_cup_amount))
             Spacer(modifier = Modifier.height(10.dp))
             MulKkamTextField(
                 value = cupAmountText,
@@ -170,7 +181,7 @@ fun CupBottomSheet(
                 maxLength = CupAmount.MAX_ML.toString().length,
                 suffix = { suffixModifier ->
                     Text(
-                        text = stringResource(R.string.setting_target_amount_unit_ml),
+                        text = stringResource(resource = Res.string.setting_target_amount_unit_ml),
                         style = MulKkamTheme.typography.title2,
                         color = Gray400,
                         modifier = suffixModifier,
@@ -191,7 +202,7 @@ fun CupBottomSheet(
                     }
                 },
                 enabled = isSaveAvailable,
-                text = stringResource(id = R.string.setting_cup_save),
+                text = stringResource(resource = Res.string.setting_cup_save),
             )
 
             if (editType == SettingWaterCupEditType.EDIT && !cup.isRepresentative) {
@@ -221,14 +232,14 @@ private fun MulKkamUiState<Unit>.toCupNameMessage(): String =
             when (error) {
                 is MulKkamError.SettingCupsError.InvalidNicknameLength -> {
                     stringResource(
-                        R.string.setting_cup_name_invalid_range,
+                        resource = Res.string.setting_cup_name_invalid_range,
                         CupName.CUP_NAME_LENGTH_MIN,
                         CupName.CUP_NAME_LENGTH_MAX,
                     )
                 }
 
                 is MulKkamError.SettingCupsError.InvalidNicknameCharacters -> {
-                    stringResource(R.string.setting_cup_name_invalid_characters)
+                    stringResource(resource = Res.string.setting_cup_name_invalid_characters)
                 }
 
                 else -> {
@@ -248,7 +259,7 @@ private fun MulKkamUiState<Unit>.toCupAmountMessage(): String =
         is MulKkamUiState.Failure -> {
             if (error is MulKkamError.SettingCupsError.InvalidAmount) {
                 stringResource(
-                    R.string.setting_cup_invalid_range,
+                    resource = Res.string.setting_cup_invalid_range,
                     CupAmount.MIN_ML,
                     CupAmount.MAX_ML,
                 )
