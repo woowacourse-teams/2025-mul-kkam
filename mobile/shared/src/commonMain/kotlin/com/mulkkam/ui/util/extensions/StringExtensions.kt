@@ -7,7 +7,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 
-@Composable
 fun String.getStyledText(
     style: TextStyle,
     vararg highlightedText: String,

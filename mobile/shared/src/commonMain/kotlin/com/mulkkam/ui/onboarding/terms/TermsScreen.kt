@@ -90,8 +90,8 @@ fun TermsScreen(
             Text(
                 text =
                     stringResource(resource = Res.string.terms_agree_hint).getStyledText(
-                        highlightedText = arrayOf(stringResource(resource = Res.string.terms_agree_hint_highlight)),
                         style = MulKkamTheme.typography.title1,
+                        stringResource(resource = Res.string.terms_agree_hint_highlight),
                     ),
                 style = MulKkamTheme.typography.body1,
                 modifier = Modifier.padding(start = 8.dp),

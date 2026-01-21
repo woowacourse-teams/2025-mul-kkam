@@ -170,8 +170,8 @@ fun CupsScreen(
                             resource = Res.string.cups_input_hint,
                             onboardingInfo.nickname?.name ?: "",
                         ).getStyledText(
-                            highlightedText = arrayOf(stringResource(resource = Res.string.cups_input_hint_highlight)),
                             style = MulKkamTheme.typography.title1,
+                            stringResource(resource = Res.string.cups_input_hint_highlight),
                         ),
                     style = MulKkamTheme.typography.body1,
                     color = Black,

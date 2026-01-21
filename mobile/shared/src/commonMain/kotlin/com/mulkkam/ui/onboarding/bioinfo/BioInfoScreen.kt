@@ -88,7 +88,7 @@ fun BioInfoScreen(
                 text =
                     stringResource(resource = Res.string.bio_info_input_hint).getStyledText(
                         style = MulKkamTheme.typography.title1,
-                        highlightedText = arrayOf(stringResource(resource = Res.string.bio_info_input_hint_highlight)),
+                        stringResource(resource = Res.string.bio_info_input_hint_highlight),
                     ),
                 style = MulKkamTheme.typography.body2,
                 color = Gray400,

@@ -98,8 +98,8 @@ fun TargetAmountScreen(
             Text(
                 text =
                     stringResource(resource = Res.string.target_amount_input_hint).getStyledText(
-                        highlightedText = arrayOf(stringResource(resource = Res.string.target_amount_input_hint_highlight)),
                         style = MulKkamTheme.typography.title1,
+                        stringResource(resource = Res.string.target_amount_input_hint_highlight),
                     ),
                 style = MulKkamTheme.typography.body2,
                 color = Black,
