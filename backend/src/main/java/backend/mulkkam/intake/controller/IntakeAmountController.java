@@ -55,7 +55,6 @@ public class IntakeAmountController {
     @ApiResponse(responseCode = "400", description = "잘못된 신체 정보", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "잘못된 신체 정보", summary = "신체 정보 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
-    @RequireAuth
     @GetMapping("/target/recommended")
     public ResponseEntity<SuggestionIntakeAmountResponse> getRecommendedTargetAmount(
             @Parameter(description = "신체 정보 (체중, 활동량 등)")
