@@ -74,10 +74,10 @@ fun CupsScreen(
 
     var isBottomSheetVisible: Boolean by rememberSaveable { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
-    var selectedCup: CupUiModel? by rememberSaveable { mutableStateOf(null) }
+    var selectedCup: CupUiModel? by remember { mutableStateOf(null) }
 
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
-    val listItems = rememberSaveable { mutableStateListOf<SettingCupsItem>() }
+    val listItems = remember { mutableStateListOf<SettingCupsItem>() }
 
     LaunchedEffect(Unit) {
         viewModel.updateOnboardingInfo(onboardingInfo = onboardingInfo)
