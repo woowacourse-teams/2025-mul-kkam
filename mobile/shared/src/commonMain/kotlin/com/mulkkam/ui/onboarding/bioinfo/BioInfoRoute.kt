@@ -10,11 +10,14 @@ fun BioInfoRoute(
     onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Boolean,
     onNavigateToTargetAmount: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     BioInfoScreen(
         padding = padding,
         onboardingInfo = onboardingInfo,
-        onNavigateToBack = onNavigateToBack,
-        onNavigateToTargetAmount = onNavigateToTargetAmount,
+        navigateToBack = onNavigateToBack,
+        navigateToNextStep = onNavigateToTargetAmount,
+        skipBioInfo = onNavigateToTargetAmount,
+        currentProgress = currentProgress,
     )
 }
