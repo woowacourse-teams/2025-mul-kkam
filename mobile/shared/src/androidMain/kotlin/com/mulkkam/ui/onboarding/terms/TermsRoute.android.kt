@@ -4,7 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import com.mulkkam.domain.model.OnboardingInfo
-import com.mulkkam.ui.util.extensions.openTermsLink
+import com.mulkkam.ui.util.extensions.openLink
 
 @Composable
 actual fun TermsRoute(
@@ -18,7 +18,7 @@ actual fun TermsRoute(
     TermsScreen(
         padding = padding,
         navigateToBack = onNavigateToBack,
-        loadToPage = { context.openTermsLink(it) },
+        loadToPage = { context.openLink(it) },
         navigateToNextStep = onNavigateToNickname,
         currentProgress = currentProgress,
     )

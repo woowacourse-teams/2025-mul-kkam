@@ -50,11 +50,14 @@ suspend fun Context.navigateToHealthConnectStore() {
 private fun Context.canHandleIntent(intent: Intent): Boolean =
     packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null
 
-fun Context.openTermsLink(uri: String) {
+fun Context.openLink(uri: String) {
     val intent =
         Intent(
             Intent.ACTION_VIEW,
             uri.toUri(),
-        )
-    startActivity(intent)
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    if (canHandleIntent(intent)) {
+        startActivity(intent)
+    }
 }
