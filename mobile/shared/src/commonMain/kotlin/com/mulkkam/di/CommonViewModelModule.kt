@@ -17,14 +17,14 @@ import com.mulkkam.ui.onboarding.terms.TermsAgreementViewModel
 import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
 import com.mulkkam.ui.searchmembers.SearchMembersViewModel
 import com.mulkkam.ui.setting.SettingViewModel
+import com.mulkkam.ui.setting.bioinfo.SettingBioInfoViewModel
 import com.mulkkam.ui.setting.nickname.SettingNicknameViewModel
+import com.mulkkam.ui.setting.targetamount.SettingTargetAmountViewModel
+import com.mulkkam.ui.setting.reminder.SettingReminderViewModel
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
-import com.mulkkam.ui.settingbioinfo.SettingBioInfoViewModel
 import com.mulkkam.ui.settingcups.SettingCupViewModel
 import com.mulkkam.ui.settingcups.SettingCupsViewModel
 import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
-import com.mulkkam.ui.settingreminder.SettingReminderViewModel
-import com.mulkkam.ui.settingtargetamount.SettingTargetAmountViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
