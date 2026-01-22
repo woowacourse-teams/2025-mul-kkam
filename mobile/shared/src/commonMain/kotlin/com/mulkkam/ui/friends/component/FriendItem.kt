@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +19,7 @@ import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.friends.model.FriendsDisplayMode
+import com.mulkkam.ui.util.extensions.noRippleClickable
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.friends_delete_friend_content_description
 import mulkkam.shared.generated.resources.friends_throw_water_balloon_content_description
@@ -56,33 +56,25 @@ fun FriendItem(
         )
         when (displayMode) {
             FriendsDisplayMode.VIEWING -> {
-                IconButton(
-                    onClick = onThrowWaterBalloon,
-                    modifier = Modifier.size(48.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_friends_water_balloon),
-                        contentDescription = stringResource(Res.string.friends_throw_water_balloon_content_description),
-                        tint = Color.Unspecified,
-                    )
-                }
+                Icon(
+                    painter = painterResource(Res.drawable.ic_friends_water_balloon),
+                    contentDescription = stringResource(Res.string.friends_throw_water_balloon_content_description),
+                    modifier = Modifier.size(48.dp).noRippleClickable(onThrowWaterBalloon),
+                    tint = Color.Unspecified,
+                )
             }
 
             FriendsDisplayMode.EDITING -> {
-                IconButton(
-                    onClick = onDeleteFriend,
-                    modifier = Modifier.size(48.dp),
-                ) {
-                    Icon(
-                        painter = painterResource(Res.drawable.ic_friends_delete),
-                        contentDescription =
-                            stringResource(
-                                Res.string.friends_delete_friend_content_description,
-                                friend.nickname,
-                            ),
-                        tint = Color.Unspecified,
-                    )
-                }
+                Icon(
+                    painter = painterResource(Res.drawable.ic_friends_delete),
+                    contentDescription =
+                        stringResource(
+                            Res.string.friends_delete_friend_content_description,
+                            friend.nickname,
+                        ),
+                    modifier = Modifier.size(48.dp).noRippleClickable(onDeleteFriend),
+                    tint = Color.Unspecified,
+                )
             }
         }
     }
