@@ -1,18 +1,19 @@
-package com.mulkkam.ui.settingcups
+package com.mulkkam.ui.setting.cups
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -21,29 +22,31 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.component.SETTING_CUPS_CUP_HEIGHT
-import com.mulkkam.ui.settingcups.component.SettingCupsEditor
-import com.mulkkam.ui.settingcups.component.SettingCupsTopAppBar
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.component.SETTING_CUPS_CUP_HEIGHT
+import com.mulkkam.ui.setting.cups.component.SettingCupsEditor
+import com.mulkkam.ui.setting.cups.component.SettingCupsTopAppBar
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupsUiModel
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.setting_cups_cup_title
+import mulkkam.shared.generated.resources.setting_cups_reset_default
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SettingCupsScreen(
+    padding: PaddingValues,
     cupsUiState: MulKkamUiState<CupsUiModel>,
     items: SnapshotStateList<SettingCupsItem>,
     onResetClick: () -> Unit,
@@ -51,18 +54,18 @@ fun SettingCupsScreen(
     onAddCup: () -> Unit,
     onReorderCups: (List<CupUiModel>) -> Unit,
     onBackClick: () -> Unit,
-    snackbarHostState: SnackbarHostState,
 ) {
     Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
         topBar = { SettingCupsTopAppBar(onBackClick = onBackClick) },
         containerColor = White,
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+        modifier = Modifier.fillMaxSize().padding(padding),
     ) { paddingValues ->
         Column(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues)
+                    .padding(top = paddingValues.calculateTopPadding())
                     .background(White),
         ) {
             SettingCupsHeader(
@@ -109,13 +112,13 @@ private fun SettingCupsHeader(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(
-            text = stringResource(R.string.setting_cups_cup_title),
+            text = stringResource(Res.string.setting_cups_cup_title),
             style = MulKkamTheme.typography.title2,
             color = Gray400,
         )
         Spacer(modifier = Modifier.weight(1f))
         Text(
-            text = stringResource(R.string.setting_cups_reset_default),
+            text = stringResource(Res.string.setting_cups_reset_default),
             style = MulKkamTheme.typography.label2,
             color = Gray300,
             modifier =
@@ -158,13 +161,13 @@ private fun SettingCupsScreenPreview() {
             }
         SettingCupsScreen(
             cupsUiState = MulKkamUiState.Success(CupsUiModel(previewCupItems(), isAddable = true)),
+            padding = PaddingValues(),
             items = previewItems,
             onResetClick = {},
             onEditCup = {},
             onAddCup = {},
             onReorderCups = {},
             onBackClick = {},
-            snackbarHostState = SnackbarHostState(),
         )
     }
 }

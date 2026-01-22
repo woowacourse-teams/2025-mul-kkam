@@ -9,11 +9,11 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
-import com.mulkkam.ui.settingcups.model.toUi
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.model.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -121,12 +121,15 @@ class CupViewModel(
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
                 when (editType.value) {
-                    SettingWaterCupEditType.ADD ->
+                    SettingWaterCupEditType.ADD -> {
                         selectEmoji(
                             it.firstOrNull()?.id ?: return@onSuccess,
                         )
+                    }
 
-                    SettingWaterCupEditType.EDIT -> selectEmoji(cup.value.emoji.id)
+                    SettingWaterCupEditType.EDIT -> {
+                        selectEmoji(cup.value.emoji.id)
+                    }
                 }
             }
         }

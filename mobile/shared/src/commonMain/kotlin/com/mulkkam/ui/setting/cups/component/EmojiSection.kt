@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.setting.cups.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -15,15 +15,16 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color.Companion.Transparent
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
-import com.mulkkam.ui.component.NetworkImage2
+import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.img_cup_placeholder
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -69,10 +70,10 @@ private fun EmojiItem(
                 .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        NetworkImage2(
+        NetworkImage(
             url = emojiUrl,
             shape = ImageShape.Circle,
-            placeholderRes = R.drawable.img_cup_placeholder,
+            placeholderRes = Res.drawable.img_cup_placeholder,
             modifier =
                 Modifier
                     .size(36.dp)

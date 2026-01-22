@@ -1,10 +1,9 @@
-package com.mulkkam.ui.settingcups.model
+package com.mulkkam.ui.setting.cups.model
 
 import com.mulkkam.domain.model.Cup
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL
 
 data class CupUiModel(
     val id: Long,
@@ -23,7 +22,7 @@ data class CupUiModel(
                 amount = 0,
                 rank = 0,
                 intakeType = IntakeType.UNKNOWN,
-                emoji = EMPTY_CUP_EMOJI_UI_MODEL,
+                emoji = CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL,
                 isRepresentative = false,
             )
     }

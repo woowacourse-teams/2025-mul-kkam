@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.adapter
+package com.mulkkam.ui.setting.cups.adapter
 
 enum class SettingCupsViewType {
     CUP,

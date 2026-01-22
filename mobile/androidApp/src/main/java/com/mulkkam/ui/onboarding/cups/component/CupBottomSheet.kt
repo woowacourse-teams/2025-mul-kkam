@@ -41,12 +41,12 @@ import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
 import com.mulkkam.ui.home.home.component.ValidationMessage
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.cups.CupViewModel
-import com.mulkkam.ui.settingcups.component.DeleteCupButton
-import com.mulkkam.ui.settingcups.component.EmojiSection
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.component.DeleteCupButton
+import com.mulkkam.ui.setting.cups.component.EmojiSection
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
+import com.mulkkam.ui.setting.cups.model.SettingWaterCupEditType
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)

@@ -27,11 +27,11 @@ import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.cups.model.rememberCupsReorderState
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.component.SettingCupsAdd
-import com.mulkkam.ui.settingcups.component.SettingCupsCup
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.component.SettingCupsAdd
+import com.mulkkam.ui.setting.cups.component.SettingCupsCup
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

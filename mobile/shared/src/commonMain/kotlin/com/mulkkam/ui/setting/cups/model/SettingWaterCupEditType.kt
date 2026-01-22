@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.model
+package com.mulkkam.ui.setting.cups.model
 
 enum class SettingWaterCupEditType {
     ADD,

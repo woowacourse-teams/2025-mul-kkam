@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.model.CupUiModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
@@ -154,21 +154,25 @@ private fun calculateTargetIndex(
     val draggedInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.key == currentKey } ?: return null
     val draggedMiddle = draggedInfo.offset + dragOffset + draggedInfo.size / 2f
     return when {
-        dragOffset > 0f ->
+        dragOffset > 0f -> {
             layoutInfo.visibleItemsInfo
                 .asSequence()
                 .filter { it.offset > draggedInfo.offset }
                 .firstOrNull { draggedMiddle > it.offset + it.size / 2f && items.getOrNull(it.index) is SettingCupsItem.CupItem }
                 ?.index
+        }
 
-        dragOffset < 0f ->
+        dragOffset < 0f -> {
             layoutInfo.visibleItemsInfo
                 .asSequence()
                 .filter { it.offset < draggedInfo.offset }
                 .lastOrNull { draggedMiddle < it.offset + it.size / 2f && items.getOrNull(it.index) is SettingCupsItem.CupItem }
                 ?.index
+        }
 
-        else -> null
+        else -> {
+            null
+        }
     }
 }
 
@@ -188,19 +192,23 @@ private fun autoScrollIfNeeded(
     val draggedTop = draggedInfo.offset + dragOffset
     val draggedBottom = draggedTop + draggedInfo.size
     return when {
-        draggedTop < viewportStart + threshold ->
+        draggedTop < viewportStart + threshold -> {
             coroutineScope.launch {
                 val consumed = lazyListState.scrollBy(-scrollAmount)
                 if (consumed != 0f) onAutoScroll(consumed)
             }
+        }
 
-        draggedBottom > viewportEnd - threshold ->
+        draggedBottom > viewportEnd - threshold -> {
             coroutineScope.launch {
                 val consumed = lazyListState.scrollBy(scrollAmount)
                 if (consumed != 0f) onAutoScroll(consumed)
             }
+        }
 
-        else -> null
+        else -> {
+            null
+        }
     }
 }
 

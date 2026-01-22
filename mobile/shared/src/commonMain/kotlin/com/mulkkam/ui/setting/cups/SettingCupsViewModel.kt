@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups
+package com.mulkkam.ui.setting.cups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,10 +9,10 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
-import com.mulkkam.ui.settingcups.model.toDomain
-import com.mulkkam.ui.settingcups.model.toUi
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupsUiModel
+import com.mulkkam.ui.setting.cups.model.toDomain
+import com.mulkkam.ui.setting.cups.model.toUi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.setting.cups.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -26,10 +26,10 @@ import androidx.compose.ui.zIndex
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.rememberSettingCupsReorderState
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.rememberSettingCupsReorderState
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 

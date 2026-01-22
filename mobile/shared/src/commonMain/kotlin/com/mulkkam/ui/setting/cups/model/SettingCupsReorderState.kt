@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.model
+package com.mulkkam.ui.setting.cups.model
 
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -12,7 +12,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin

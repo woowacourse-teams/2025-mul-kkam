@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups
+package com.mulkkam.ui.setting.cups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,11 +11,11 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
-import com.mulkkam.ui.settingcups.model.toDomain
-import com.mulkkam.ui.settingcups.model.toUi
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.model.toDomain
+import com.mulkkam.ui.setting.cups.model.toUi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -32,7 +32,7 @@ class SettingCupViewModel(
     private val logger: Logger,
 ) : ViewModel() {
     private val _cup: MutableStateFlow<CupUiModel> =
-        MutableStateFlow(CupUiModel.EMPTY_CUP_UI_MODEL)
+        MutableStateFlow(CupUiModel.Companion.EMPTY_CUP_UI_MODEL)
     val cup: StateFlow<CupUiModel> get() = _cup.asStateFlow()
 
     private val _editType: MutableStateFlow<SettingWaterCupEditType> =
@@ -54,7 +54,7 @@ class SettingCupViewModel(
     private val _actionInProgress: MutableStateFlow<Boolean> = MutableStateFlow(false)
     val actionInProgress: StateFlow<Boolean> = _actionInProgress.asStateFlow()
 
-    private var originalCup: CupUiModel = CupUiModel.EMPTY_CUP_UI_MODEL
+    private var originalCup: CupUiModel = CupUiModel.Companion.EMPTY_CUP_UI_MODEL
 
     private val hasChanges: StateFlow<Boolean> =
         combine(_cup, _cupEmojisUiState) { cupValue, emojiState ->
@@ -141,7 +141,7 @@ class SettingCupViewModel(
     }
 
     fun initCup(cup: CupUiModel?) {
-        val initialCup = cup ?: CupUiModel.EMPTY_CUP_UI_MODEL
+        val initialCup = cup ?: CupUiModel.Companion.EMPTY_CUP_UI_MODEL
         originalCup = initialCup
         _cup.value = initialCup
         _editType.value = if (cup == null) SettingWaterCupEditType.ADD else SettingWaterCupEditType.EDIT

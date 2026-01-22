@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.model
+package com.mulkkam.ui.setting.cups.model
 
 import com.mulkkam.domain.model.CupEmoji
 
