@@ -113,10 +113,12 @@ fun SettingCupsRoute(
         items = listItems,
         onResetClick = { isResetDialogVisible = true },
         onEditCup = { cup ->
+            snackbarHostState.currentSnackbarData?.dismiss()
             selectedCup = cup
             isBottomSheetVisible = true
         },
         onAddCup = {
+            snackbarHostState.currentSnackbarData?.dismiss()
             selectedCup = null
             addSheetKey += 1
             isBottomSheetVisible = true
