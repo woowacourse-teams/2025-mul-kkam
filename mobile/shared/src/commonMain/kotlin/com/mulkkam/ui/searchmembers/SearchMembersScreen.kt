@@ -75,7 +75,7 @@ fun SearchMembersScreen(
     viewModel: SearchMembersViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val coroutineScope = rememberCoroutineScope()
 
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
