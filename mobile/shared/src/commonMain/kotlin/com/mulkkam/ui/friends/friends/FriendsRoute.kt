@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
@@ -31,7 +32,6 @@ fun FriendsRoute(
     onNavigateToPendingFriends: () -> Unit,
     onNavigateToSearchMembers: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    showSnackbarHost: Boolean = false,
     viewModel: FriendsViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -49,8 +49,6 @@ fun FriendsRoute(
         padding = padding,
         onNavigateToPendingFriends = onNavigateToPendingFriends,
         onNavigateToSearchMembers = onNavigateToSearchMembers,
-        snackbarHostState = snackbarHostState,
-        showSnackbarHost = showSnackbarHost,
         viewModel = viewModel,
     )
 }
@@ -92,6 +90,8 @@ private fun handleThrowWaterBalloonResult(
             }
         }
 
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
+            Unit
+        }
     }
 }
