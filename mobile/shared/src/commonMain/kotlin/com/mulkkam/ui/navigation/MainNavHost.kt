@@ -3,7 +3,6 @@ package com.mulkkam.ui.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.mulkkam.ui.auth.AuthNavGraph
 import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.friends.FriendsNavGraph
@@ -22,7 +21,6 @@ fun MainNavHost(
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
 ) {
     NavDisplay(
         backStack = navigator.backStack,

@@ -72,8 +72,8 @@ class FriendsRepositoryImpl(
         )
     }
 
-    override suspend fun deleteFriendsRequest(memberId: Long): MulKkamResult<Unit> {
-        val result = friendsRemoteDataSource.deleteFriendsRequest(memberId)
+    override suspend fun deleteFriendsRequest(requestId: Long): MulKkamResult<Unit> {
+        val result = friendsRemoteDataSource.deleteFriendsRequest(requestId)
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
@@ -89,10 +89,10 @@ class FriendsRepositoryImpl(
     }
 
     override suspend fun patchFriendRequest(
-        memberId: Long,
+        requestId: Long,
         status: FriendRequestStatus,
     ): MulKkamResult<Unit> {
-        val result = friendsRemoteDataSource.patchFriendRequests(PatchFriendRequest(memberId, status.name))
+        val result = friendsRemoteDataSource.patchFriendRequests(PatchFriendRequest(requestId, status.name))
         return result.fold(
             onSuccess = { MulKkamResult() },
             onFailure = { MulKkamResult(error = it.toDomain()) },
