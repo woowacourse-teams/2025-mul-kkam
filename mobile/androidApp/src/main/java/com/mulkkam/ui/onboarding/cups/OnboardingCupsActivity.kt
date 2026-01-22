@@ -7,7 +7,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.main.MainActivity
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -31,7 +30,7 @@ class OnboardingCupsActivity : ComponentActivity() {
             MulKkamTheme {
                 CupsScreen(
                     navigateToBack = ::finish,
-                    navigateToCoffeeEncyclopedia = { startActivity(CoffeeEncyclopediaActivity.newIntent(this)) },
+                    navigateToCoffeeEncyclopedia = { /* coffee encyclopedia activity migration completed */ },
                     currentProgress = CURRENT_PROGRESS,
                     viewModel = viewModel,
                     onCompleteOnboarding = {

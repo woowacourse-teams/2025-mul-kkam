@@ -11,6 +11,15 @@ import mulkkam.shared.generated.resources.health_connect_market
 import mulkkam.shared.generated.resources.health_connect_web
 import org.jetbrains.compose.resources.getString
 
+fun Context.openLink(uri: String) {
+    val intent =
+        Intent(
+            Intent.ACTION_VIEW,
+            uri.toUri(),
+        )
+    startActivity(intent)
+}
+
 fun Context.isHealthConnectAvailable(): Boolean =
     when {
         runCatching { HealthConnectClient.getOrCreate(this) }.getOrNull() == null -> false

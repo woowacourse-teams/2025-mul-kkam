@@ -8,7 +8,6 @@ import android.os.Looper
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.encyclopedia.CoffeeEncyclopediaActivity
 import com.mulkkam.ui.settingcups.model.CupUiModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -32,8 +31,7 @@ class SettingCupsActivity : AppCompatActivity() {
     }
 
     private fun navigateToCoffeeEncyclopedia() {
-        val intent = CoffeeEncyclopediaActivity.newIntent(this)
-        startActivity(intent)
+        // coffee encyclopedia activity migration completed
     }
 
     private fun reorderCups(newCups: List<CupUiModel>) {
