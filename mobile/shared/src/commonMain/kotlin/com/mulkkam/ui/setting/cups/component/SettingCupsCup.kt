@@ -18,7 +18,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.component.NetworkImage
@@ -40,6 +39,7 @@ import mulkkam.shared.generated.resources.setting_cup_representative
 import mulkkam.shared.generated.resources.setting_cups_increment
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SettingCupsCup(
