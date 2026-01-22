@@ -32,7 +32,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.MulKkamInfoDialog
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.MulKkamTextField
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray100
@@ -122,7 +121,6 @@ fun SearchMembersScreen(
                     bottom = padding.calculateBottomPadding(),
                 ),
             ),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         if (showDialog) {
             val memberSearchInfo: MemberSearchInfo = receivedMemberSearchInfo ?: return@Scaffold
