@@ -111,7 +111,7 @@
     <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
     <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
     <string name="setting_cup_invalid_range">컵의 용량은 %,dml 이상, %,dml 이하로 설정해 주세요</string>
-    <string name="setting_cup_name_invalid_range">컵 이름은 %1$d자 이상, %1$d자 이하만 가능합니다</string>
+    <string name="setting_cup_name_invalid_range">컵 이름은 %1$d자 이상, %2$d자 이하만 가능합니다</string>
     <string name="setting_cup_name_invalid_characters">컵 이름은 특수 문자나 공백은 사용할 수 없습니다</string>
     <string name="setting_cup_representative">대표</string>
 
@@ -259,7 +259,7 @@
 
     <string name="progress_widget_achievement_rate">%1$d%%</string>
 
-    <string name="intake_widget_home_target">%1$d월 %1$d일의 목표</string>
+    <string name="intake_widget_home_target">%1$d월 %2$d일의 목표</string>
 
     <string name="app_update_update">업데이트</string>
     <string name="app_update_description">지금 바로 확인하러 가볼까요?</string>
