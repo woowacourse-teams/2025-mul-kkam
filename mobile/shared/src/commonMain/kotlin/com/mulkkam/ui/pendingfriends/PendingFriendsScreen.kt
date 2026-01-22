@@ -9,15 +9,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.PagerState
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +24,6 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -63,13 +59,13 @@ fun PendingFriendsScreen(
     viewModel: PendingFriendsViewModel = koinViewModel(),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
-    val tabTitles: List<String> =
+    val tabTitles =
         listOf(
             stringResource(Res.string.pending_friends_received_request),
             stringResource(Res.string.pending_friends_sent_request),
         )
-    val pagerState: PagerState = rememberPagerState(pageCount = { tabTitles.size })
-    val coroutineScope: CoroutineScope = rememberCoroutineScope()
+    val pagerState = rememberPagerState(pageCount = { tabTitles.size })
+    val coroutineScope = rememberCoroutineScope()
 
     val receivedRequests by viewModel.receivedRequests.collectAsStateWithLifecycle()
     val sentRequests by viewModel.sentRequests.collectAsStateWithLifecycle()
