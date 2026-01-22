@@ -1,6 +1,8 @@
 package com.mulkkam.ui.searchmembers
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -18,7 +20,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -62,6 +67,7 @@ fun SearchMembersScreen(
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
+    val focusManager: FocusManager = LocalFocusManager.current
 
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.OnLoadMore(action = viewModel::loadMoreMembers)
@@ -97,7 +103,16 @@ fun SearchMembersScreen(
         }
 
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        focusManager.clearFocus()
+                    },
         ) {
             MulKkamTextField(
                 value = name,
