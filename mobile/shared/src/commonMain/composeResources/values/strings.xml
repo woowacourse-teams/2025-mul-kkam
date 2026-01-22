@@ -18,7 +18,7 @@
     <string name="notification_delete_failed">알림 삭제에 실패했어요</string>
     <string name="notification_empty">아직 받은 알림이 없어요</string>
     <string name="notification_just_now">방금 전</string>
-    <string name="notification_minutes_ago">%d분 전</string>
+    <string name="notification_minutes_ago">%1$d분 전</string>
     <string name="notification_hours_ago">%1$d시간 전</string>
     <string name="notification_one_day_ago">하루 전</string>
     <string name="notification_item_icon_description">알림 아이콘</string>
@@ -93,7 +93,7 @@
     <string name="setting_cups_toolbar_title">나의 컵 설정</string>
     <string name="setting_cups_toolbar_back_btn_description">나의 컵 설정 화면 뒤로가기 버튼</string>
     <string name="setting_cups_label_water">물</string>
-    <string name="setting_cups_increment">+ %dml</string>
+    <string name="setting_cups_increment">+ %1$dml</string>
     <string name="setting_cups_cup_title">나만의 컵 목록</string>
     <string name="setting_cups_reset_default">기본값으로 재설정</string>
     <string name="setting_cups_intake_type_water">물</string>
@@ -111,7 +111,7 @@
     <string name="setting_cup_save_result">나의 컵이 저장되었습니다!</string>
     <string name="setting_cup_delete_result">나의 컵이 삭제되었습니다</string>
     <string name="setting_cup_invalid_range">컵의 용량은 %,dml 이상, %,dml 이하로 설정해 주세요</string>
-    <string name="setting_cup_name_invalid_range">컵 이름은 %d자 이상, %d자 이하만 가능합니다</string>
+    <string name="setting_cup_name_invalid_range">컵 이름은 %1$d자 이상, %2$d자 이하만 가능합니다</string>
     <string name="setting_cup_name_invalid_characters">컵 이름은 특수 문자나 공백은 사용할 수 없습니다</string>
     <string name="setting_cup_representative">대표</string>
 
@@ -181,17 +181,17 @@
     <string name="onboarding_next_step">다음</string>
     <string name="onboarding_complete">완료</string>
     <string name="onboarding_skip">건너뛰기</string>
-    <string name="onboarding_complete_greeting">%s님 반갑습니다!</string>
+    <string name="onboarding_complete_greeting">%1$s님 반갑습니다!</string>
     <string name="onboarding_complete_description">회원가입이 성공적으로 완료되었어요</string>
 
     <string name="terms_agree_hint">이용약관에 동의해 주세요</string>
     <string name="terms_agree_hint_highlight">이용약관</string>
     <string name="terms_agree_all">물깜 약관 전체동의</string>
-    <string name="terms_agree_service">서비스 이용 약관 동의 %s</string>
-    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %s</string>
-    <string name="terms_agree_health_connect">헬스 커넥트 정보 연동 %s</string>
-    <string name="terms_agree_night_notification">야간 알림 수신 동의 %s</string>
-    <string name="terms_agree_marketing">마케팅 정보 수신 동의 %s</string>
+    <string name="terms_agree_service">서비스 이용 약관 동의 %1$s</string>
+    <string name="terms_agree_privacy">개인정보 수집 및 이용 동의 %1$s</string>
+    <string name="terms_agree_health_connect">헬스 커넥트 정보 연동 %1$s</string>
+    <string name="terms_agree_night_notification">야간 알림 수신 동의 %1$s</string>
+    <string name="terms_agree_marketing">마케팅 정보 수신 동의 %1$s</string>
     <string name="terms_required_suffix">(필수)</string>
     <string name="terms_optional_suffix">(선택)</string>
 
@@ -223,7 +223,7 @@
     <string name="target_amount_recommended_description">입력해 주신 성별ㆍ몸무게 정보를 바탕으로 계산했어요.</string>
     <string name="target_amount_recommended_description_default">입력해 주신 성별ㆍ몸무게 정보가 비어 있어\n표준 남성 기준으로 계산해 보았어요.</string>
 
-    <string name="cups_input_hint">%s님이 자주 마시는\n나만의 컵을 설정할 수 있어요</string>
+    <string name="cups_input_hint">%1$s님이 자주 마시는\n나만의 컵을 설정할 수 있어요</string>
     <string name="cups_input_hint_highlight">나만의 컵</string>
     <string name="cups_input_hint_description">나중에 다시 변경할 수 있어요</string>
 
@@ -247,19 +247,19 @@
     <string name="load_info_error">정보를 불러오는 데 실패했어요</string>
     <string name="authorization_expired">인증이 만료되었습니다. 로그인을 다시 시도해 주세요</string>
 
-    <string name="setting_notification_marketing_on">마케팅 수신 동의가 완료되었습니다 (%s)</string>
-    <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%s)</string>
-    <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%s)</string>
-    <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%s)</string>
+    <string name="setting_notification_marketing_on">마케팅 수신 동의가 완료되었습니다 (%1$s)</string>
+    <string name="setting_notification_marketing_off">마케팅 수신 거부가 완료되었습니다 (%1$s)</string>
+    <string name="setting_notification_night_on">야간 알림 수신 동의가 완료되었습니다 (%1$s)</string>
+    <string name="setting_notification_night_off">야간 알림 수신 거부가 완료되었습니다 (%1$s)</string>
 
     <string name="main_permission_title">시작하기 전에</string>
     <string name="main_permission_description">더 나은 서비스 이용을 위해 필요한\n권한을 알려드립니다.</string>
     <string name="main_permission_notification"><b>물 마시기, 목표량 추천</b> 등\n알림을 받을 수 있습니다.</string>
     <string name="main_permission_health"><b>활동량</b>에 따라 오늘의 <b>권장 수분 섭취량</b>을\n추천받을 수 있습니다.</string>
 
-    <string name="progress_widget_achievement_rate">%d%%</string>
+    <string name="progress_widget_achievement_rate">%1$d%%</string>
 
-    <string name="intake_widget_home_target">%d월 %d일의 목표</string>
+    <string name="intake_widget_home_target">%1$d월 %2$d일의 목표</string>
 
     <string name="app_update_update">업데이트</string>
     <string name="app_update_description">지금 바로 확인하러 가볼까요?</string>
@@ -286,7 +286,7 @@
     <string name="search_friends_empty">닉네임을 찾을 수 없어요</string>
     <string name="search_friends_request_success">친구 신청을 완료했어요!</string>
     <string name="search_friends_request_failed">친구 신청에 실패했어요</string>
-    <string name="search_friends_accept_request_confirmed">%s\n친구 신청을 수락하시겠습니까?</string>
+    <string name="search_friends_accept_request_confirmed">%1$s\n친구 신청을 수락하시겠습니까?</string>
     <string name="search_friends_accept_request_warning">친구에게 물풍선을 던져 보세요</string>
     <string name="search_friends_accept_success">%1$s님과 친구가 되었어요</string>
     <string name="search_friends_already_friend">이미 친구</string>
@@ -295,17 +295,17 @@
     <string name="pending_friends_top_app_bar_title">신청 목록</string>
     <string name="pending_friends_received_request">받은 신청</string>
     <string name="pending_friends_sent_request">보낸 신청</string>
-    <string name="pending_friends_minutes_ago">%d분 전</string>
+    <string name="pending_friends_minutes_ago">%1$d분 전</string>
     <string name="pending_friends_hours_ago">%1$d시간 전</string>
-    <string name="pending_friends_days_ago">%d일 전</string>
+    <string name="pending_friends_days_ago">%1$d일 전</string>
     <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>
     <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>
-    <string name="pending_friends_reject_request_confirmed">%s\n친구 신청을 거절하시겠습니까?</string>
+    <string name="pending_friends_reject_request_confirmed">%1$s\n친구 신청을 거절하시겠습니까?</string>
     <string name="pending_friends_reject_request_warning">거절된 신청은 복구되지 않습니다</string>
-    <string name="pending_friends_accept_success">%s 님과 친구가 되었습니다</string>
+    <string name="pending_friends_accept_success">%1$s 님과 친구가 되었습니다</string>
     <string name="pending_friends_accept_failed">친구 승인에 실패했습니다</string>
     <string name="pending_friends_reject_success">친구 신청을 거절했습니다</string>
-    <string name="pending_friends_cancel_request_confirmed">%s\n친구 신청을 취소하시겠습니까?</string>
+    <string name="pending_friends_cancel_request_confirmed">%1$s\n친구 신청을 취소하시겠습니까?</string>
     <string name="pending_friends_cancel_request_warning">취소된 신청은 복구되지 않습니다</string>
     <string name="pending_friends_cancel_request_confirm">확인</string>
     <string name="pending_friends_cancel_request_cancel">취소</string>

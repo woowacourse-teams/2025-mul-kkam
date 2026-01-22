@@ -10,8 +10,11 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.model.MulKkamUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -45,9 +48,8 @@ class HistoryViewModel(
         MutableStateFlow(WaterIntakeState.Present.NotFull)
     val waterIntakeState: StateFlow<WaterIntakeState> get() = _waterIntakeState.asStateFlow()
 
-    private val _deleteUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val deleteUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteUiState
+    private val _onDeleteHistory: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val onDeleteHistory: SharedFlow<MulKkamUiState<Unit>> get() = _onDeleteHistory.asSharedFlow()
 
     init {
         loadIntakeHistories()
@@ -80,7 +82,8 @@ class HistoryViewModel(
     }
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
-        val daysFromMonday = (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
+        val daysFromMonday =
+            (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
         val monday = targetDate.minus(daysFromMonday, DateTimeUnit.DAY)
 
         return List(WEEK_LENGTH) { monday.plus(it, DateTimeUnit.DAY) }
@@ -117,23 +120,20 @@ class HistoryViewModel(
     }
 
     fun deleteIntakeHistory(historyId: Int) {
-        if (deleteUiState.value is MulKkamUiState.Loading) return
-
         viewModelScope.launch {
             runCatching {
                 logger.info(
                     LogEvent.USER_ACTION,
                     "Confirmed delete for intake history id=$historyId",
                 )
-                _deleteUiState.value = MulKkamUiState.Loading
                 intakeRepository
                     .deleteIntakeHistoryDetails(historyId)
                     .getOrError()
             }.onSuccess {
-                _deleteUiState.value = MulKkamUiState.Success(Unit)
+                _onDeleteHistory.emit(MulKkamUiState.Success(Unit))
                 updateIntakeHistoriesAfterDeletion(historyId)
             }.onFailure {
-                _deleteUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _onDeleteHistory.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
