@@ -12,8 +12,11 @@ import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.setting.targetamount.model.TargetAmountUiModel
 import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -28,13 +31,12 @@ class SettingTargetAmountViewModel(
         MutableStateFlow(MulKkamUiState.Idle)
     val targetInfoUiState: StateFlow<MulKkamUiState<TargetAmountUiModel>> get() = _targetInfoUiState.asStateFlow()
 
-    private val _saveTargetAmountUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val saveTargetAmountUiState: StateFlow<MulKkamUiState<Unit>> get() = _saveTargetAmountUiState.asStateFlow()
-
     private val _targetAmountValidityUiState: MutableStateFlow<MulKkamUiState<Unit>> =
         MutableStateFlow(MulKkamUiState.Idle)
     val targetAmountValidityUiState: StateFlow<MulKkamUiState<Unit>> get() = _targetAmountValidityUiState.asStateFlow()
+
+    private val _onSaveTargetAmount: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val onSaveTargetAmount: SharedFlow<MulKkamUiState<Unit>> get() = _onSaveTargetAmount.asSharedFlow()
 
     init {
         loadInitialTargetInfo()
@@ -81,15 +83,14 @@ class SettingTargetAmountViewModel(
 
     fun saveTargetAmount() {
         val amount = targetAmountInput.value
-        if (_saveTargetAmountUiState.value is MulKkamUiState.Loading) return
 
         viewModelScope.launch {
             runCatching {
                 logger.info(LogEvent.USER_ACTION, "Saving target amount: $amount")
-                _saveTargetAmountUiState.value = MulKkamUiState.Loading
+                _onSaveTargetAmount.emit(MulKkamUiState.Loading)
                 intakeRepository.patchIntakeTarget(amount).getOrError()
             }.onSuccess {
-                _saveTargetAmountUiState.value = MulKkamUiState.Success(Unit)
+                _onSaveTargetAmount.emit(MulKkamUiState.Success(Unit))
 
                 targetInfoUiState.value.toSuccessDataOrNull()?.let { current ->
                     _targetInfoUiState.value =
@@ -98,7 +99,7 @@ class SettingTargetAmountViewModel(
                         )
                 }
             }.onFailure {
-                _saveTargetAmountUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _onSaveTargetAmount.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
