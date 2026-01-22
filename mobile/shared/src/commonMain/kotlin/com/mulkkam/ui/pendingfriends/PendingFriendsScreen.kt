@@ -114,7 +114,6 @@ fun PendingFriendsScreen(
                     bottom = padding.calculateBottomPadding(),
                 ),
             ),
-        snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
     ) { innerPadding ->
         Column(
             modifier =
