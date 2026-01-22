@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.domain.model.reminder.ReminderSchedule
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
+import kotlinx.coroutines.delay
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -55,6 +56,7 @@ fun ReminderScheduleItem(
 
     LaunchedEffect(dismissState.currentValue) {
         if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            delay(300)
             onRemove()
         }
     }
