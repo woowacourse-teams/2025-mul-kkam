@@ -13,8 +13,11 @@ import com.mulkkam.domain.repository.NicknameRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -40,10 +43,9 @@ class SettingNicknameViewModel(
     val nicknameValidationError: StateFlow<MulKkamError?>
         get() = _nicknameValidationError.asStateFlow()
 
-    private val _nicknameChangeUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val nicknameChangeUiState: StateFlow<MulKkamUiState<Unit>>
-        get() = _nicknameChangeUiState.asStateFlow()
+    private val _onNicknameChanged: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val onNicknameChanged: SharedFlow<MulKkamUiState<Unit>>
+        get() = _onNicknameChanged.asSharedFlow()
 
     init {
         loadOriginalNickname()
@@ -81,7 +83,8 @@ class SettingNicknameViewModel(
             }
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationUiState.INVALID
-            _nicknameValidationError.value = error as? MulKkamError.NicknameError ?: MulKkamError.Unknown
+            _nicknameValidationError.value =
+                error as? MulKkamError.NicknameError ?: MulKkamError.Unknown
         }
     }
 
@@ -103,16 +106,15 @@ class SettingNicknameViewModel(
     }
 
     fun saveNickname(nickname: String) {
-        if (nicknameChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 logger.debug(LogEvent.USER_ACTION, "Saving nickname change $nickname")
-                _nicknameChangeUiState.value = MulKkamUiState.Loading
+                _onNicknameChanged.emit(MulKkamUiState.Loading)
                 membersRepository.patchMembersNickname(nickname).getOrError()
             }.onSuccess {
-                _nicknameChangeUiState.value = MulKkamUiState.Success(Unit)
+                _onNicknameChanged.emit(MulKkamUiState.Success(Unit))
             }.onFailure {
-                _nicknameChangeUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _onNicknameChanged.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }

@@ -61,32 +61,10 @@ fun BioInfoScreen(
 
     val gender by viewModel.gender.collectAsStateWithLifecycle()
     val weight by viewModel.weight.collectAsStateWithLifecycle()
-    val bioInfoChangeUiState by viewModel.bioInfoChangeUiState.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
-    viewModel.bioInfoChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        when (state) {
-            is MulKkamUiState.Success<Unit> -> {
-                coroutineScope {
-                    launch {
-                        snackbarHostState.showMulKkamSnackbar(
-                            message = getString(resource = Res.string.setting_bio_info_complete_description),
-                            iconResource = Res.drawable.ic_info_circle,
-                        )
-                    }
-                    navigateToBack()
-                }
-            }
-
-            is MulKkamUiState.Failure -> {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(resource = Res.string.network_check_error),
-                    iconResource = Res.drawable.ic_alert_circle,
-                )
-            }
-
-            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
-        }
+    viewModel.onBioInfoChanged.collectWithLifecycle(lifecycleOwner) { state ->
+        handleBioInfoChangedAction(state, navigateToBack, snackbarHostState)
     }
 
     Scaffold(
@@ -147,8 +125,37 @@ fun BioInfoScreen(
                         .padding(horizontal = 24.dp)
                         .padding(bottom = 24.dp)
                         .align(Alignment.BottomCenter),
-                enabled = gender != null && weight != null && bioInfoChangeUiState !is MulKkamUiState.Loading,
+                enabled = gender != null && weight != null,
             )
         }
+    }
+}
+
+private suspend fun handleBioInfoChangedAction(
+    state: MulKkamUiState<Unit>,
+    navigateToBack: () -> Boolean,
+    snackbarHostState: SnackbarHostState,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            coroutineScope {
+                launch {
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(resource = Res.string.setting_bio_info_complete_description),
+                        iconResource = Res.drawable.ic_info_circle,
+                    )
+                }
+                navigateToBack()
+            }
+        }
+
+        is MulKkamUiState.Failure -> {
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(resource = Res.string.network_check_error),
+                iconResource = Res.drawable.ic_alert_circle,
+            )
+        }
+
+        is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
     }
 }

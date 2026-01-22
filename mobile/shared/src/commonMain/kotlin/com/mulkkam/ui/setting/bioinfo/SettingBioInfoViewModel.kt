@@ -9,8 +9,11 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -26,10 +29,9 @@ class SettingBioInfoViewModel(
     val weight: StateFlow<BioWeight?>
         get() = _weight.asStateFlow()
 
-    private val _bioInfoChangeUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val bioInfoChangeUiState: StateFlow<MulKkamUiState<Unit>>
-        get() = _bioInfoChangeUiState
+    private val _onBioInfoChanged: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val onBioInfoChanged: SharedFlow<MulKkamUiState<Unit>>
+        get() = _onBioInfoChanged.asSharedFlow()
 
     init {
         loadMemberInfo()
@@ -63,23 +65,22 @@ class SettingBioInfoViewModel(
     }
 
     fun saveBioInfo() {
-        if (bioInfoChangeUiState.value is MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 logger.info(
                     LogEvent.USER_ACTION,
                     "Submitting bio info gender: ${gender.value}, weight: ${weight.value}",
                 )
-                _bioInfoChangeUiState.value = MulKkamUiState.Loading
+                _onBioInfoChanged.emit(MulKkamUiState.Loading)
                 membersRepository
                     .postMembersPhysicalAttributes(
                         gender = gender.value ?: return@launch,
                         weight = weight.value ?: return@launch,
                     ).getOrError()
             }.onSuccess {
-                _bioInfoChangeUiState.value = MulKkamUiState.Success(Unit)
+                _onBioInfoChanged.emit(MulKkamUiState.Success(Unit))
             }.onFailure {
-                _bioInfoChangeUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _onBioInfoChanged.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
