@@ -22,7 +22,7 @@ data class CupUiModel(
                 amount = 0,
                 rank = 0,
                 intakeType = IntakeType.UNKNOWN,
-                emoji = CupEmojiUiModel.Companion.EMPTY_CUP_EMOJI_UI_MODEL,
+                emoji = CupEmojiUiModel.EMPTY_CUP_EMOJI_UI_MODEL,
                 isRepresentative = false,
             )
     }

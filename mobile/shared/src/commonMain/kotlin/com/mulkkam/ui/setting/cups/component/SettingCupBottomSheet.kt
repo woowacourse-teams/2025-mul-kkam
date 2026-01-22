@@ -85,7 +85,7 @@ fun SettingCupBottomSheet(
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
     val focusManager: FocusManager = LocalFocusManager.current
 
-    val cup: CupUiModel by viewModel.cup.collectAsStateWithLifecycle(initialValue = CupUiModel.Companion.EMPTY_CUP_UI_MODEL)
+    val cup: CupUiModel by viewModel.cup.collectAsStateWithLifecycle(initialValue = CupUiModel.EMPTY_CUP_UI_MODEL)
     val editType: SettingWaterCupEditType by viewModel.editType.collectAsStateWithLifecycle(initialValue = SettingWaterCupEditType.ADD)
     val cupNameValidity: MulKkamUiState<Unit> by viewModel.cupNameValidity.collectAsStateWithLifecycle(initialValue = MulKkamUiState.Idle)
     val amountValidity: MulKkamUiState<Unit> by viewModel.amountValidity.collectAsStateWithLifecycle(initialValue = MulKkamUiState.Idle)
