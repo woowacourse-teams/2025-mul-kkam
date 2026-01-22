@@ -1,6 +1,5 @@
 package com.mulkkam.ui.friends.friends
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,11 +11,9 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -26,7 +23,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.friend.FriendsResult
 import com.mulkkam.ui.component.MulKkamAlertDialog
-import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
@@ -52,9 +48,7 @@ fun FriendsScreen(
     padding: PaddingValues,
     onNavigateToSearchMembers: () -> Unit,
     onNavigateToPendingFriends: () -> Unit,
-    snackbarHostState: SnackbarHostState,
     modifier: Modifier = Modifier,
-    showSnackbarHost: Boolean = false,
     viewModel: FriendsViewModel = koinViewModel(),
 ) {
     val friendsUiState by viewModel.friendsUiState.collectAsStateWithLifecycle()
@@ -67,75 +61,71 @@ fun FriendsScreen(
 
     var friendToDelete: Friend? by rememberSaveable { mutableStateOf(null) }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        Scaffold(
-            contentWindowInsets = WindowInsets(0.dp),
-            containerColor = White,
-            modifier = Modifier.padding(padding),
-            topBar = {
-                FriendsTopAppBar(
-                    onSearchClick = onNavigateToSearchMembers,
-                    onFriendRequestsClick = onNavigateToPendingFriends,
-                    friendRequestCount = friendRequestCount,
-                    modifier = Modifier.padding(top = 20.dp),
-                )
-            },
-        ) { innerPadding ->
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(top = innerPadding.calculateTopPadding()),
-            ) {
-                when (friendsUiState) {
-                    is MulKkamUiState.Idle -> Unit
-                    is MulKkamUiState.Loading -> Unit
+    Scaffold(
+        contentWindowInsets = WindowInsets(0.dp),
+        containerColor = White,
+        modifier = modifier.fillMaxSize().padding(padding),
+        topBar = {
+            FriendsTopAppBar(
+                onSearchClick = onNavigateToSearchMembers,
+                onFriendRequestsClick = onNavigateToPendingFriends,
+                friendRequestCount = friendRequestCount,
+                modifier = Modifier.padding(top = 20.dp),
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(top = innerPadding.calculateTopPadding()),
+        ) {
+            when (friendsUiState) {
+                is MulKkamUiState.Idle -> {
+                    Unit
+                }
 
-                    is MulKkamUiState.Failure -> {
-                        FriendsErrorContent(
-                            onRetry = { viewModel.loadFriends() },
+                is MulKkamUiState.Loading -> {
+                    Unit
+                }
+
+                is MulKkamUiState.Failure -> {
+                    FriendsErrorContent(
+                        onRetry = { viewModel.loadFriends() },
+                    )
+                }
+
+                is MulKkamUiState.Success -> {
+                    val friendsResult: FriendsResult = friendsUiState.toSuccessDataOrNull() ?: return@Column
+                    if (friendsResult.friends.isEmpty()) {
+                        FriendsEmptyContent()
+                    } else {
+                        FriendsEditModeButton(
+                            displayMode = displayMode,
+                            onClick = viewModel::toggleDisplayMode,
+                            modifier =
+                                Modifier
+                                    .padding(vertical = 12.dp, horizontal = 16.dp)
+                                    .align(Alignment.End),
+                        )
+                        HorizontalDivider(color = Gray100, thickness = 1.dp)
+                        FriendItems(
+                            friends = friendsResult.friends,
+                            displayMode = displayMode,
+                            hasMore = hasMoreFriends,
+                            onLoadMore = viewModel::loadMore,
+                            onThrowWaterBalloon = { friend ->
+                                viewModel.throwWaterBalloon(friend)
+                            },
+                            onDeleteFriend = { friendToDelete = it },
                         )
                     }
-
-                    is MulKkamUiState.Success -> {
-                        val friendsResult: FriendsResult = friendsUiState.toSuccessDataOrNull() ?: return@Column
-                        if (friendsResult.friends.isEmpty()) {
-                            FriendsEmptyContent()
-                        } else {
-                            FriendsEditModeButton(
-                                displayMode = displayMode,
-                                onClick = viewModel::toggleDisplayMode,
-                                modifier =
-                                    Modifier
-                                        .padding(vertical = 12.dp, horizontal = 16.dp)
-                                        .align(Alignment.End),
-                            )
-                            HorizontalDivider(color = Gray100, thickness = 1.dp)
-                            FriendItems(
-                                friends = friendsResult.friends,
-                                displayMode = displayMode,
-                                hasMore = hasMoreFriends,
-                                onLoadMore = viewModel::loadMore,
-                                onThrowWaterBalloon = { friend ->
-                                    viewModel.throwWaterBalloon(friend)
-                                },
-                                onDeleteFriend = { friendToDelete = it },
-                            )
-                        }
-                    }
-                }
-
-                if (loadMoreUiState == MulKkamUiState.Loading) {
-                    CircularProgressIndicator()
                 }
             }
-        }
 
-        if (showSnackbarHost) {
-            MulKkamSnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.BottomCenter),
-            )
+            if (loadMoreUiState == MulKkamUiState.Loading) {
+                CircularProgressIndicator()
+            }
         }
     }
 
@@ -189,13 +179,10 @@ private fun FriendItems(
 @Composable
 private fun FriendsScreenPreview() {
     MulKkamTheme {
-        val snackbarHostState = remember { SnackbarHostState() }
         FriendsScreen(
             padding = PaddingValues(),
             onNavigateToSearchMembers = {},
             onNavigateToPendingFriends = {},
-            snackbarHostState = snackbarHostState,
-            showSnackbarHost = true,
         )
     }
 }
