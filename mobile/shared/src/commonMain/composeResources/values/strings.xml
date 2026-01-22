@@ -19,7 +19,7 @@
     <string name="notification_empty">아직 받은 알림이 없어요</string>
     <string name="notification_just_now">방금 전</string>
     <string name="notification_minutes_ago">%d분 전</string>
-    <string name="notification_hours_ago">%d시간 전</string>
+    <string name="notification_hours_ago">%1$d시간 전</string>
     <string name="notification_one_day_ago">하루 전</string>
     <string name="notification_item_icon_description">알림 아이콘</string>
     <string name="notification_app_bar_navigation_icon_description">뒤로가기</string>
@@ -288,7 +288,7 @@
     <string name="search_friends_request_failed">친구 신청에 실패했어요</string>
     <string name="search_friends_accept_request_confirmed">%s\n친구 신청을 수락하시겠습니까?</string>
     <string name="search_friends_accept_request_warning">친구에게 물풍선을 던져 보세요</string>
-    <string name="search_friends_accept_success">%s님과 친구가 되었어요</string>
+    <string name="search_friends_accept_success">%1$s님과 친구가 되었어요</string>
     <string name="search_friends_already_friend">이미 친구</string>
     <string name="search_friends_requested">신청 완료!</string>
 
@@ -296,7 +296,7 @@
     <string name="pending_friends_received_request">받은 신청</string>
     <string name="pending_friends_sent_request">보낸 신청</string>
     <string name="pending_friends_minutes_ago">%d분 전</string>
-    <string name="pending_friends_hours_ago">%d시간 전</string>
+    <string name="pending_friends_hours_ago">%1$d시간 전</string>
     <string name="pending_friends_days_ago">%d일 전</string>
     <string name="pending_friends_accept_button_description">친구 신청 수락 버튼</string>
     <string name="pending_friends_reject_button_description">친구 신청 거절 버튼</string>

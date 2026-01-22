@@ -1,5 +1,7 @@
 package com.mulkkam.ui.home.home.component
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,9 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -61,6 +66,7 @@ fun ManualDrinkBottomSheet(
     val intakeType: IntakeType by viewModel.intakeType.collectAsStateWithLifecycle()
     val amountValidity: MulKkamUiState<Unit> by viewModel.amountValidity.collectAsStateWithLifecycle()
     val isSaveAvailable: Boolean by viewModel.isSaveAvailable.collectAsStateWithLifecycle()
+    val focusManager: FocusManager = LocalFocusManager.current
 
     LaunchedEffect(Unit) {
         amountText = ""
@@ -83,7 +89,13 @@ fun ManualDrinkBottomSheet(
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 24.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        focusManager.clearFocus()
+                    },
         ) {
             BottomSheetHeader(
                 title = stringResource(resource = Res.string.manual_drink_label),
