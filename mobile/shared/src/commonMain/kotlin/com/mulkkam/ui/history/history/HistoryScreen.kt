@@ -74,7 +74,7 @@ fun HistoryScreen(
     var showDialog by remember { mutableStateOf(false) }
     var deletedHistory: Int? by remember { mutableStateOf(null) }
 
-    viewModel.onDeleteHistory.collectWithLifecycle(lifecycleOwner) { state ->
+    viewModel.deleteHistoryUiState.collectWithLifecycle(lifecycleOwner) { state ->
         handleDeleteAction(state, snackbarHostState)
     }
 
