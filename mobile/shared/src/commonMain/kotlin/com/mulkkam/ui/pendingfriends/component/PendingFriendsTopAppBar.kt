@@ -45,7 +45,7 @@ fun PendingFriendsTopAppBar(onBackClick: () -> Unit) {
                 }
             },
             colors =
-                TopAppBarDefaults.centerAlignedTopAppBarColors(
+                TopAppBarDefaults.topAppBarColors(
                     containerColor = White,
                     titleContentColor = Gray400,
                     navigationIconContentColor = Gray400,
