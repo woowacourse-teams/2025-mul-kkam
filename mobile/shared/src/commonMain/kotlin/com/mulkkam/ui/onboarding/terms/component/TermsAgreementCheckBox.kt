@@ -25,7 +25,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun TermsAgreementCheckBox(
-    onCheckedChange: (checked: Boolean) -> Unit,
+    onCheckedChange: () -> Unit,
     modifier: Modifier = Modifier,
     checked: Boolean = false,
 ) {
@@ -34,7 +34,7 @@ fun TermsAgreementCheckBox(
             modifier
                 .size(40.dp)
                 .noRippleClickable(onClick = {
-                    onCheckedChange(!checked)
+                    onCheckedChange()
                 })
                 .padding(8.dp),
     ) {

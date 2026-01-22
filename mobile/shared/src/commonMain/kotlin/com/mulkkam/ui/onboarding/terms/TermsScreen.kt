@@ -101,11 +101,11 @@ fun TermsScreen(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.noRippleClickable(onClick = { viewModel.checkAllAgreement() }),
+                modifier = Modifier.noRippleClickable(onClick = viewModel::checkAllAgreement),
             ) {
                 TermsAgreementCheckBox(
                     checked = isAllChecked,
-                    onCheckedChange = { viewModel.checkAllAgreement() },
+                    onCheckedChange = viewModel::checkAllAgreement,
                 )
 
                 Text(
