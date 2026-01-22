@@ -22,7 +22,6 @@ fun MainNavHost(
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
     snackbarHostState: SnackbarHostState,
-    modifier: Modifier = Modifier,
 ) {
     NavDisplay(
         backStack = navigator.backStack,

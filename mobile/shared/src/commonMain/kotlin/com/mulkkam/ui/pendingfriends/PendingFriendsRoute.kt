@@ -3,11 +3,12 @@ package com.mulkkam.ui.pendingfriends
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import kotlinx.coroutines.flow.collectLatest
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_info_circle
 import mulkkam.shared.generated.resources.ic_terms_all_check_on
@@ -26,32 +27,27 @@ fun PendingFriendsRoute(
     onFriendAccepted: () -> Unit = {},
     viewModel: PendingFriendsViewModel = koinViewModel(),
 ) {
-    LaunchedEffect(viewModel) {
-        viewModel.onAcceptRequest.collectLatest { state: MulKkamUiState<String> ->
-            handleAcceptRequestAction(
-                state = state,
-                snackbarHostState = snackbarHostState,
-                onFriendAccepted = onFriendAccepted,
-            )
-        }
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    viewModel.onAcceptRequest.collectWithLifecycle(lifecycleOwner) { state: MulKkamUiState<String> ->
+        handleAcceptRequestAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            onFriendAccepted = onFriendAccepted,
+        )
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.onRejectRequest.collectLatest { state: MulKkamUiState<Unit> ->
-            handleRejectRequestAction(
-                state = state,
-                snackbarHostState = snackbarHostState,
-            )
-        }
+    viewModel.onRejectRequest.collectWithLifecycle(lifecycleOwner) { state: MulKkamUiState<Unit> ->
+        handleRejectRequestAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+        )
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.onCancelRequest.collectLatest { state: MulKkamUiState<Unit> ->
-            handleCancelRequestAction(
-                state = state,
-                snackbarHostState = snackbarHostState,
-            )
-        }
+    viewModel.onCancelRequest.collectWithLifecycle(lifecycleOwner) { state: MulKkamUiState<Unit> ->
+        handleCancelRequestAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+        )
     }
 
     PendingFriendsScreen(

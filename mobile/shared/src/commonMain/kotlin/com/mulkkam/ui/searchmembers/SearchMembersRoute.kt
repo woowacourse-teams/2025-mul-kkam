@@ -3,16 +3,17 @@ package com.mulkkam.ui.searchmembers
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import kotlinx.coroutines.flow.collectLatest
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_terms_all_check_on
@@ -30,36 +31,32 @@ fun SearchMembersRoute(
     onFriendAccepted: () -> Unit = {},
     viewModel: SearchMembersViewModel = koinViewModel(),
 ) {
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+
     var receivedMemberSearchInfo: MemberSearchInfo? by remember {
         mutableStateOf(null)
     }
     var showDialog by remember { mutableStateOf(false) }
 
-    LaunchedEffect(viewModel) {
-        viewModel.onRequestFriends.collectLatest { state ->
-            handleRequestFriendsAction(
-                state = state,
-                snackbarHostState = snackbarHostState,
-            )
-        }
+    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { state ->
+        handleRequestFriendsAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+        )
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.onAcceptFriends.collectLatest { state ->
-            handleAcceptFriendsAction(
-                state = state,
-                snackbarHostState = snackbarHostState,
-                onFriendAccepted = onFriendAccepted,
-            )
-        }
+    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { state ->
+        handleAcceptFriendsAction(
+            state = state,
+            snackbarHostState = snackbarHostState,
+            onFriendAccepted = onFriendAccepted,
+        )
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.receivedMemberSearchInfo.collectLatest { state ->
-            receivedMemberSearchInfo = state.toSuccessDataOrNull()
-            if (receivedMemberSearchInfo != null) {
-                showDialog = true
-            }
+    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { state ->
+        receivedMemberSearchInfo = state.toSuccessDataOrNull()
+        if (receivedMemberSearchInfo != null) {
+            showDialog = true
         }
     }
 

@@ -3,13 +3,14 @@ package com.mulkkam.ui.friends.friends
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.friends.FriendsViewModel
 import com.mulkkam.ui.model.MulKkamUiState
-import kotlinx.coroutines.flow.collectLatest
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.friends_throw_water_balloon_success
 import mulkkam.shared.generated.resources.friends_water_balloon_limit_exceeded
@@ -28,13 +29,13 @@ fun FriendsRoute(
     snackbarHostState: SnackbarHostState,
     viewModel: FriendsViewModel = koinViewModel(),
 ) {
-    LaunchedEffect(viewModel) {
-        viewModel.throwWaterBalloonResult.collectLatest { state ->
-            handleThrowWaterBalloonResult(
-                state = state,
-                snackbarHostState = snackbarHostState,
-            )
-        }
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+
+    viewModel.throwWaterBalloonResult.collectWithLifecycle(lifecycleOwner) { state ->
+        handleThrowWaterBalloonResult(
+            state = state,
+            snackbarHostState = snackbarHostState,
+        )
     }
 
     FriendsScreen(
