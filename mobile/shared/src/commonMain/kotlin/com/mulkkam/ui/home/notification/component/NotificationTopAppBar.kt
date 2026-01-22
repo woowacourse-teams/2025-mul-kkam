@@ -1,4 +1,4 @@
-package com.mulkkam.ui.notification.component
+package com.mulkkam.ui.home.notification.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,14 +12,17 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_common_prev
+import mulkkam.shared.generated.resources.notification
+import mulkkam.shared.generated.resources.notification_app_bar_navigation_icon_description
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,7 +31,7 @@ fun NotificationTopAppBar(onBackClick: () -> Unit) {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = stringResource(R.string.notification),
+                    text = stringResource(resource = Res.string.notification),
                     style = MulKkamTheme.typography.title2,
                 )
             },
@@ -38,13 +41,13 @@ fun NotificationTopAppBar(onBackClick: () -> Unit) {
                     modifier = Modifier.size(48.dp),
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_common_prev),
-                        contentDescription = stringResource(R.string.notification_app_bar_navigation_icon_description),
+                        painter = painterResource(resource = Res.drawable.ic_common_prev),
+                        contentDescription = stringResource(resource = Res.string.notification_app_bar_navigation_icon_description),
                     )
                 }
             },
             colors =
-                TopAppBarDefaults.centerAlignedTopAppBarColors(
+                TopAppBarDefaults.topAppBarColors(
                     containerColor = White,
                     titleContentColor = Gray400,
                     navigationIconContentColor = Gray400,

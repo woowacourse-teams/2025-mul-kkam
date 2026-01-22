@@ -1,4 +1,4 @@
-package com.mulkkam.ui.notification
+package com.mulkkam.ui.home.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,8 +9,11 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.NotificationRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.TimeZone
@@ -26,15 +29,9 @@ class NotificationViewModel(
         MutableStateFlow(MulKkamUiState.Idle)
     val notifications: StateFlow<MulKkamUiState<List<Notification>>> = _notifications.asStateFlow()
 
-    private val _applySuggestionUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(
-            MulKkamUiState.Idle,
-        )
-    val applySuggestionUiState: StateFlow<MulKkamUiState<Unit>> =
-        _applySuggestionUiState.asStateFlow()
-
-    private val _isApplySuggestion: MutableStateFlow<Boolean> = MutableStateFlow(false)
-    val isApplySuggestion: StateFlow<Boolean> = _isApplySuggestion.asStateFlow()
+    private val _onApplySuggestion: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val onApplySuggestion: SharedFlow<MulKkamUiState<Unit>> =
+        _onApplySuggestion.asSharedFlow()
 
     private val _loadUiState: MutableStateFlow<MulKkamUiState<Unit>> =
         MutableStateFlow(MulKkamUiState.Idle)
@@ -54,7 +51,7 @@ class NotificationViewModel(
                 _notifications.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                        Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault()),
                         NOTIFICATION_SIZE,
                     ).getOrError()
             }.onSuccess { notificationsResult ->
@@ -68,17 +65,15 @@ class NotificationViewModel(
     }
 
     fun applySuggestion(id: Long) {
-        if (applySuggestionUiState.value == MulKkamUiState.Loading) return
         viewModelScope.launch {
             runCatching {
                 logger.info(LogEvent.PUSH_NOTIFICATION, "Applying suggestion notification id=$id")
-                _applySuggestionUiState.value = MulKkamUiState.Loading
+                _onApplySuggestion.emit(MulKkamUiState.Loading)
                 notificationRepository.postSuggestionNotificationsApproval(id).getOrError()
             }.onSuccess {
-                _applySuggestionUiState.value = MulKkamUiState.Success(Unit)
-                _isApplySuggestion.value = true
+                _onApplySuggestion.emit(MulKkamUiState.Success(Unit))
             }.onFailure {
-                _applySuggestionUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _onApplySuggestion.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }
@@ -107,7 +102,7 @@ class NotificationViewModel(
                 _loadUiState.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
+                        time = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault()),
                         size = NOTIFICATION_SIZE,
                         lastId = nextCursor,
                     ).getOrError()

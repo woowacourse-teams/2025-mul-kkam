@@ -7,7 +7,6 @@ import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.domain.model.bio.HealthPlatform
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import com.mulkkam.ui.util.extensions.navigateToHealthConnectStore
-import kotlinx.coroutines.coroutineScope
 
 class HealthConnectPlatform(
     private val context: Context,

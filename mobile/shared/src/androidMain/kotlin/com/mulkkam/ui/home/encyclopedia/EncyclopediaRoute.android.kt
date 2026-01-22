@@ -6,12 +6,8 @@ import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
 import com.mulkkam.ui.util.extensions.openLink
-import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.coffee_encyclopedia_source
 
 @Composable
 actual fun EncyclopediaRoute(

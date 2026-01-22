@@ -1,4 +1,4 @@
-package com.mulkkam.ui.notification.component
+package com.mulkkam.ui.home.notification.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -14,18 +14,22 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.domain.model.notification.NotificationType
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Secondary200
+import kotlinx.coroutines.delay
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_common_delete
+import mulkkam.shared.generated.resources.notification_delete_description
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 @Composable
 fun NotificationItemComponent(
@@ -36,9 +40,6 @@ fun NotificationItemComponent(
 ) {
     val dismissState =
         rememberSwipeToDismissBoxState(
-            confirmValueChange = { dismissValue ->
-                dismissValue == SwipeToDismissBoxValue.EndToStart
-            },
             positionalThreshold = { it * 0.7f },
         )
     val color =
@@ -49,6 +50,7 @@ fun NotificationItemComponent(
 
     LaunchedEffect(dismissState.currentValue) {
         if (dismissState.currentValue == SwipeToDismissBoxValue.EndToStart) {
+            delay(300)
             onRemove()
         }
     }
@@ -66,9 +68,9 @@ fun NotificationItemComponent(
                 contentAlignment = Alignment.CenterEnd,
             ) {
                 Image(
-                    painter = painterResource(R.drawable.ic_common_delete),
+                    painter = painterResource(resource = Res.drawable.ic_common_delete),
                     modifier = Modifier.size(24.dp),
-                    contentDescription = stringResource(R.string.notification_delete_description),
+                    contentDescription = stringResource(resource = Res.string.notification_delete_description),
                 )
             }
         },
@@ -78,6 +80,7 @@ fun NotificationItemComponent(
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview(showBackground = true, name = "공지 알림 프리뷰")
 @Composable
 private fun NoticeNotificationItemComponentPreview() {
@@ -99,6 +102,7 @@ private fun NoticeNotificationItemComponentPreview() {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview(showBackground = true, name = "제안 알림 프리뷰")
 @Composable
 private fun SuggestionNotificationItemComponentPreview() {
@@ -120,6 +124,7 @@ private fun SuggestionNotificationItemComponentPreview() {
     }
 }
 
+@OptIn(ExperimentalTime::class)
 @Preview(showBackground = true, name = "읽지 않은 알림 프리뷰")
 @Composable
 private fun UnreadNotificationItemComponentPreview() {
