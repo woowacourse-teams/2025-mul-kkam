@@ -5,7 +5,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.LocalLifecycleOwner
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
@@ -21,8 +20,6 @@ import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_info_circle
 import mulkkam.shared.generated.resources.ic_terms_all_check_on
 import mulkkam.shared.generated.resources.network_check_error
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.getString
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -70,17 +67,13 @@ private fun handleThrowWaterBalloonResult(
         }
 
         is MulKkamUiState.Failure -> {
-            val messageResource: StringResource =
+            val (messageResource, iconResource) =
                 if (state.error is MulKkamError.FriendsError.ReminderLimitExceeded) {
-                    Res.string.friends_water_balloon_limit_exceeded
+                    Res.string.friends_water_balloon_limit_exceeded to
+                        Res.drawable.ic_info_circle
                 } else {
-                    Res.string.network_check_error
-                }
-            val iconResource: DrawableResource =
-                if (state.error is MulKkamError.FriendsError.ReminderLimitExceeded) {
-                    Res.drawable.ic_info_circle
-                } else {
-                    Res.drawable.ic_alert_circle
+                    Res.string.network_check_error to
+                        Res.drawable.ic_alert_circle
                 }
             coroutineScope.launch {
                 snackbarHostState.showMulKkamSnackbar(
