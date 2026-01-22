@@ -39,7 +39,7 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun ReminderScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingReminderViewModel = koinViewModel(),
 ) {
@@ -69,9 +69,7 @@ fun ReminderScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            SettingReminderTopAppBar { navigateToBack() }
-        },
+        topBar = { SettingReminderTopAppBar(navigateToBack) },
         containerColor = White,
         modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->

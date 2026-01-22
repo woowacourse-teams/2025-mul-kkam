@@ -8,7 +8,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 fun TargetAmountRoute(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToCups: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
 ) {

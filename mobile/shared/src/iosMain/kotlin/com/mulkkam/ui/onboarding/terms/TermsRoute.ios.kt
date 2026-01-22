@@ -10,7 +10,7 @@ import platform.UIKit.UIApplicationOpenURLOptionsKey
 @Composable
 actual fun TermsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
 ) {

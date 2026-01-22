@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun TermsScreen(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 ) {
     Column(
         modifier =

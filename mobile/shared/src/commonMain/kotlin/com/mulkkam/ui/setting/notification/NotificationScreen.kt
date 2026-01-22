@@ -19,7 +19,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun NotificationScreen(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     Column(

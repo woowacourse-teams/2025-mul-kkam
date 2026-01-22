@@ -1,7 +1,6 @@
 package com.mulkkam.ui.onboarding.cups
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
@@ -62,7 +61,7 @@ import kotlin.time.ExperimentalTime
 fun CupsScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToCoffeeEncyclopedia: () -> Unit,
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
@@ -110,108 +109,106 @@ fun CupsScreen(
         }
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            topBar = {
-                OnboardingTopAppBar(
-                    onBackClick = { navigateToBack() },
-                    currentProgress = currentProgress,
-                )
-            },
-            containerColor = White,
+    Scaffold(
+        topBar = {
+            OnboardingTopAppBar(
+                onBackClick = navigateToBack,
+                currentProgress = currentProgress,
+            )
+        },
+        containerColor = White,
+        modifier =
+            Modifier
+                .background(White)
+                .padding(padding),
+    ) { innerPadding ->
+        if (showDialog) {
+            OnboardingCompleteDialog(
+                nickname = onboardingInfo.nickname?.name ?: "",
+                onConfirm = { onCompleteOnboarding() },
+            )
+        }
+
+        if (isBottomSheetVisible) {
+            CupBottomSheet(
+                sheetState = modalBottomSheetState,
+                initialCup = selectedCup,
+                onDismiss = { isBottomSheetVisible = false },
+                onAdd = { cup ->
+                    viewModel.addCup(cup)
+                    isBottomSheetVisible = false
+                },
+                onUpdate = { cup ->
+                    viewModel.updateCup(cup)
+                    isBottomSheetVisible = false
+                },
+                onDelete = { rank ->
+                    viewModel.deleteCup(rank)
+                    isBottomSheetVisible = false
+                },
+                onNavigateToCoffeeEncyclopedia = navigateToCoffeeEncyclopedia,
+                viewModel =
+                    koinViewModel(
+                        key =
+                            selectedCup?.id?.toString()
+                                ?: (SettingWaterCupEditType.ADD.name + Clock.System.now()),
+                    ),
+            )
+        }
+
+        Column(
             modifier =
                 Modifier
-                    .background(White)
-                    .padding(padding),
-        ) { innerPadding ->
-            if (showDialog) {
-                OnboardingCompleteDialog(
-                    nickname = onboardingInfo.nickname?.name ?: "",
-                    onConfirm = { onCompleteOnboarding() },
-                )
-            }
+                    .padding(innerPadding)
+                    .fillMaxSize(),
+        ) {
+            Text(
+                text =
+                    stringResource(
+                        resource = Res.string.cups_input_hint,
+                        onboardingInfo.nickname?.name ?: "",
+                    ).getStyledText(
+                        style = MulKkamTheme.typography.title1,
+                        stringResource(resource = Res.string.cups_input_hint_highlight),
+                    ),
+                style = MulKkamTheme.typography.body1,
+                color = Black,
+                modifier = Modifier.padding(top = 24.dp, start = 24.dp),
+            )
 
-            if (isBottomSheetVisible) {
-                CupBottomSheet(
-                    sheetState = modalBottomSheetState,
-                    initialCup = selectedCup,
-                    onDismiss = { isBottomSheetVisible = false },
-                    onAdd = { cup ->
-                        viewModel.addCup(cup)
-                        isBottomSheetVisible = false
-                    },
-                    onUpdate = { cup ->
-                        viewModel.updateCup(cup)
-                        isBottomSheetVisible = false
-                    },
-                    onDelete = { rank ->
-                        viewModel.deleteCup(rank)
-                        isBottomSheetVisible = false
-                    },
-                    onNavigateToCoffeeEncyclopedia = navigateToCoffeeEncyclopedia,
-                    viewModel =
-                        koinViewModel(
-                            key =
-                                selectedCup?.id?.toString()
-                                    ?: (SettingWaterCupEditType.ADD.name + Clock.System.now()),
-                        ),
-                )
-            }
+            Text(
+                text = stringResource(resource = Res.string.cups_input_hint_description),
+                style = MulKkamTheme.typography.label2,
+                color = Gray300,
+                modifier = Modifier.padding(top = 8.dp, start = 24.dp),
+            )
 
-            Column(
+            Spacer(modifier = Modifier.height(10.dp))
+
+            CupsEditor(
+                items = listItems,
+                onEditCup = { cup ->
+                    selectedCup = cup
+                    isBottomSheetVisible = true
+                },
+                onAddCup = {
+                    selectedCup = null
+                    isBottomSheetVisible = true
+                },
+                onReorderCups = { viewModel.updateCupOrder(it) },
+                modifier = Modifier,
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            NextButton(
+                onClick = { viewModel.completeOnboarding() },
                 modifier =
                     Modifier
-                        .padding(innerPadding)
-                        .fillMaxSize(),
-            ) {
-                Text(
-                    text =
-                        stringResource(
-                            resource = Res.string.cups_input_hint,
-                            onboardingInfo.nickname?.name ?: "",
-                        ).getStyledText(
-                            style = MulKkamTheme.typography.title1,
-                            stringResource(resource = Res.string.cups_input_hint_highlight),
-                        ),
-                    style = MulKkamTheme.typography.body1,
-                    color = Black,
-                    modifier = Modifier.padding(top = 24.dp, start = 24.dp),
-                )
-
-                Text(
-                    text = stringResource(resource = Res.string.cups_input_hint_description),
-                    style = MulKkamTheme.typography.label2,
-                    color = Gray300,
-                    modifier = Modifier.padding(top = 8.dp, start = 24.dp),
-                )
-
-                Spacer(modifier = Modifier.height(10.dp))
-
-                CupsEditor(
-                    items = listItems,
-                    onEditCup = { cup ->
-                        selectedCup = cup
-                        isBottomSheetVisible = true
-                    },
-                    onAddCup = {
-                        selectedCup = null
-                        isBottomSheetVisible = true
-                    },
-                    onReorderCups = { viewModel.updateCupOrder(it) },
-                    modifier = Modifier,
-                )
-
-                Spacer(modifier = Modifier.weight(1f))
-
-                NextButton(
-                    onClick = { viewModel.completeOnboarding() },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
-                    buttonText = stringResource(resource = Res.string.onboarding_complete),
-                )
-            }
+                        .fillMaxWidth()
+                        .padding(start = 24.dp, end = 24.dp, bottom = 24.dp),
+                buttonText = stringResource(resource = Res.string.onboarding_complete),
+            )
         }
     }
 }

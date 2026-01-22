@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun ReminderRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     ReminderScreen(

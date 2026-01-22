@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun EncyclopediaRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 ) {
     EncyclopediaScreen(
         padding = padding,

@@ -44,7 +44,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun TargetAmountScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
     viewModel: TargetAmountViewModel = koinViewModel(),
@@ -72,7 +72,7 @@ fun TargetAmountScreen(
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = { navigateToBack() },
+                onBackClick = navigateToBack,
                 currentProgress = currentProgress,
             )
         },

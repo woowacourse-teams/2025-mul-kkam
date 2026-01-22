@@ -9,7 +9,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 fun CupsRoute(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     onNavigateToMain: () -> Unit,
     currentProgress: Int,

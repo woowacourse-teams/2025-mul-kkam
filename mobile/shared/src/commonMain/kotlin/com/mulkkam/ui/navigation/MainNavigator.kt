@@ -14,13 +14,13 @@ class MainNavigator internal constructor(
     val currentRoute: Any?
         get() = backStack.lastOrNull()
 
-    fun popBackStack(): Boolean =
+    fun popBackStack() {
         if (backStack.size > 1) {
             backStack.removeAt(backStack.lastIndex)
-            true
         } else {
-            false
+            // TODO: 스낵바 호출
         }
+    }
 
     fun navigate(route: Any) {
         backStack.add(route)

@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun SearchMembersRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     SearchMembersScreen(

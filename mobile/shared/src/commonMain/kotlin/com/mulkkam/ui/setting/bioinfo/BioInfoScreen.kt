@@ -49,7 +49,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun BioInfoScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToHealth: suspend () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingBioInfoViewModel = koinViewModel(),
@@ -91,9 +91,7 @@ fun BioInfoScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            SettingBioInfoTopAppBar { navigateToBack() }
-        },
+        topBar = { SettingBioInfoTopAppBar(navigateToBack) },
         containerColor = White,
         modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->

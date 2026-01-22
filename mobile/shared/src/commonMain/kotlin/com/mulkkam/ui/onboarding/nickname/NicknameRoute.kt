@@ -8,7 +8,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 fun NicknameRoute(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
 ) {

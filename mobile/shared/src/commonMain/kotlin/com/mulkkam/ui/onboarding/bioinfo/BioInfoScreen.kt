@@ -41,7 +41,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun BioInfoScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     skipBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
@@ -56,7 +56,7 @@ fun BioInfoScreen(
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = { navigateToBack() },
+                onBackClick = navigateToBack,
                 onSkip = { skipBioInfo(onboardingInfo) },
                 currentProgress = currentProgress,
                 canSkip = true,

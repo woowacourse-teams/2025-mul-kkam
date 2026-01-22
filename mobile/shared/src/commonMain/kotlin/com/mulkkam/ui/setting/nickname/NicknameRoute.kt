@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun NicknameRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     NicknameScreen(

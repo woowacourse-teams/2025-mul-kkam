@@ -45,7 +45,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TermsScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     loadToPage: (uri: String) -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
@@ -69,7 +69,7 @@ fun TermsScreen(
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = { navigateToBack() },
+                onBackClick = navigateToBack,
                 currentProgress = currentProgress,
             )
         },

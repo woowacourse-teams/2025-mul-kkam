@@ -7,7 +7,7 @@ import com.mulkkam.domain.model.OnboardingInfo
 @Composable
 expect fun TermsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
 )

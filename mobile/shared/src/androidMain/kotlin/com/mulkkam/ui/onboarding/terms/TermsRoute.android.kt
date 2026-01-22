@@ -9,7 +9,7 @@ import com.mulkkam.ui.util.extensions.openLink
 @Composable
 actual fun TermsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
 ) {

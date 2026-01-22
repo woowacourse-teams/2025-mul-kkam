@@ -41,7 +41,7 @@ import org.koin.compose.viewmodel.koinViewModel
 fun NicknameScreen(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
     viewModel: NicknameViewModel = koinViewModel(),
@@ -55,7 +55,7 @@ fun NicknameScreen(
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = { navigateToBack() },
+                onBackClick = navigateToBack,
                 currentProgress = currentProgress,
             )
         },
