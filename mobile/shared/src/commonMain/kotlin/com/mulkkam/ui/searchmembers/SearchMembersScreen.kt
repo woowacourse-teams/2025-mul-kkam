@@ -16,24 +16,17 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.members.MemberSearchInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.component.MulKkamInfoDialog
 import com.mulkkam.ui.component.MulKkamTextField
-import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -44,20 +37,11 @@ import com.mulkkam.ui.notification.component.LoadMoreButton
 import com.mulkkam.ui.searchmembers.component.SearchMembersItem
 import com.mulkkam.ui.searchmembers.component.SearchMembersTopAppBar
 import com.mulkkam.ui.util.extensions.OnLoadMore
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.ic_search_friends_search
-import mulkkam.shared.generated.resources.ic_terms_all_check_on
 import mulkkam.shared.generated.resources.search_friends_accept_request_confirmed
 import mulkkam.shared.generated.resources.search_friends_accept_request_warning
-import mulkkam.shared.generated.resources.search_friends_accept_success
-import mulkkam.shared.generated.resources.search_friends_request_failed
-import mulkkam.shared.generated.resources.search_friends_request_success
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -68,45 +52,19 @@ import org.koin.compose.viewmodel.koinViewModel
 fun SearchMembersScreen(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
-    snackbarHostState: SnackbarHostState,
-    onFriendAccepted: () -> Unit = {},
+    receivedMemberSearchInfo: MemberSearchInfo?,
+    showDialog: Boolean,
+    onDismissDialog: () -> Unit,
+    onConfirmDialog: (MemberSearchInfo) -> Unit,
     state: LazyListState = rememberLazyListState(),
     viewModel: SearchMembersViewModel = koinViewModel(),
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
-
     val memberSearchUiState by viewModel.memberSearchUiState.collectAsStateWithLifecycle()
     val name by viewModel.name.collectAsStateWithLifecycle()
     val isTyping by viewModel.isTyping.collectAsStateWithLifecycle()
 
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.OnLoadMore(action = viewModel::loadMoreMembers)
-
-    var receivedMemberSearchInfo: MemberSearchInfo? by remember { mutableStateOf(null) }
-    var showDialog: Boolean by remember { mutableStateOf(false) }
-
-    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { uiState ->
-        handleRequestFriendsAction(
-            state = uiState,
-            snackbarHostState = snackbarHostState,
-            coroutineScope = coroutineScope,
-        )
-    }
-
-    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { uiState ->
-        handleAcceptFriendsAction(
-            state = uiState,
-            snackbarHostState = snackbarHostState,
-            onFriendAccepted = onFriendAccepted,
-            coroutineScope = coroutineScope,
-        )
-    }
-
-    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { uiState ->
-        receivedMemberSearchInfo = uiState.toSuccessDataOrNull()
-        showDialog = true
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -132,10 +90,9 @@ fun SearchMembersScreen(
                     ),
                 description = stringResource(Res.string.search_friends_accept_request_warning),
                 onConfirm = {
-                    viewModel.acceptFriendRequest(memberSearchInfo)
-                    showDialog = false
+                    onConfirmDialog(memberSearchInfo)
                 },
-                onDismiss = { showDialog = false },
+                onDismiss = onDismissDialog,
             )
         }
 
@@ -202,64 +159,6 @@ fun SearchMembersScreen(
     }
 }
 
-private fun handleRequestFriendsAction(
-    state: MulKkamUiState<Unit>,
-    snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope,
-) {
-    when (state) {
-        is MulKkamUiState.Success<Unit> -> {
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.search_friends_request_success),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-        }
-
-        is MulKkamUiState.Failure -> {
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.search_friends_request_failed),
-                    iconResource = Res.drawable.ic_alert_circle,
-                )
-            }
-        }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
-            Unit
-        }
-    }
-}
-
-private fun handleAcceptFriendsAction(
-    state: MulKkamUiState<String>,
-    snackbarHostState: SnackbarHostState,
-    onFriendAccepted: () -> Unit,
-    coroutineScope: CoroutineScope,
-) {
-    when (state) {
-        is MulKkamUiState.Success<String> -> {
-            val nickname: String = state.toSuccessDataOrNull() ?: return
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.search_friends_accept_success, nickname),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-            onFriendAccepted()
-        }
-
-        is MulKkamUiState.Failure -> {
-            Unit
-        }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
-            Unit
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun SearchMembersScreenPreview() {
@@ -267,7 +166,10 @@ private fun SearchMembersScreenPreview() {
         SearchMembersScreen(
             padding = PaddingValues(),
             onNavigateToBack = { true },
-            snackbarHostState = SnackbarHostState(),
+            receivedMemberSearchInfo = null,
+            showDialog = false,
+            onDismissDialog = {},
+            onConfirmDialog = {},
         )
     }
 }

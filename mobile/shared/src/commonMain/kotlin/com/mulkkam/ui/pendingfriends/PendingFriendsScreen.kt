@@ -12,7 +12,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SecondaryTabRow
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.Text
@@ -22,30 +21,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.pendingfriends.component.PendingFriendsTopAppBar
 import com.mulkkam.ui.pendingfriends.component.ReceivedTab
 import com.mulkkam.ui.pendingfriends.component.SentTab
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
-import mulkkam.shared.generated.resources.ic_info_circle
-import mulkkam.shared.generated.resources.ic_terms_all_check_on
-import mulkkam.shared.generated.resources.pending_friends_accept_failed
-import mulkkam.shared.generated.resources.pending_friends_accept_success
-import mulkkam.shared.generated.resources.pending_friends_cancel_success
 import mulkkam.shared.generated.resources.pending_friends_received_request
-import mulkkam.shared.generated.resources.pending_friends_reject_success
 import mulkkam.shared.generated.resources.pending_friends_sent_request
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
@@ -54,11 +41,8 @@ import org.koin.compose.viewmodel.koinViewModel
 fun PendingFriendsScreen(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
-    snackbarHostState: SnackbarHostState,
-    onFriendAccepted: () -> Unit = {},
     viewModel: PendingFriendsViewModel = koinViewModel(),
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
     val tabTitles =
         listOf(
             stringResource(Res.string.pending_friends_received_request),
@@ -69,31 +53,6 @@ fun PendingFriendsScreen(
 
     val receivedRequests by viewModel.receivedRequests.collectAsStateWithLifecycle()
     val sentRequests by viewModel.sentRequests.collectAsStateWithLifecycle()
-
-    viewModel.onAcceptRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleAcceptRequestAction(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            onFriendAccepted = onFriendAccepted,
-            coroutineScope = coroutineScope,
-        )
-    }
-
-    viewModel.onRejectRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleRejectRequestAction(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            coroutineScope = coroutineScope,
-        )
-    }
-
-    viewModel.onCancelRequest.collectWithLifecycle(lifecycleOwner) { state ->
-        handleCancelRequestAction(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            coroutineScope = coroutineScope,
-        )
-    }
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
@@ -176,89 +135,6 @@ fun PendingFriendsScreen(
     }
 }
 
-private fun handleAcceptRequestAction(
-    state: MulKkamUiState<String>,
-    snackbarHostState: SnackbarHostState,
-    onFriendAccepted: () -> Unit,
-    coroutineScope: CoroutineScope,
-) {
-    when (state) {
-        is MulKkamUiState.Success<String> -> {
-            val nickname: String = state.toSuccessDataOrNull() ?: return
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.pending_friends_accept_success, nickname),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-            onFriendAccepted()
-        }
-
-        is MulKkamUiState.Failure -> {
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.pending_friends_accept_failed),
-                    iconResource = Res.drawable.ic_info_circle,
-                )
-            }
-        }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
-            Unit
-        }
-    }
-}
-
-private fun handleRejectRequestAction(
-    state: MulKkamUiState<Unit>,
-    snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope,
-) {
-    when (state) {
-        is MulKkamUiState.Success<Unit> -> {
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.pending_friends_reject_success),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-        }
-
-        is MulKkamUiState.Failure -> {
-            Unit
-        }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
-            Unit
-        }
-    }
-}
-
-private fun handleCancelRequestAction(
-    state: MulKkamUiState<Unit>,
-    snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope,
-) {
-    when (state) {
-        is MulKkamUiState.Success<Unit> -> {
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.pending_friends_cancel_success),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-        }
-
-        is MulKkamUiState.Failure -> {
-            Unit
-        }
-
-        is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
-            Unit
-        }
-    }
-}
-
 @Preview(showBackground = true)
 @Composable
 private fun PendingFriendsScreenPreview() {
@@ -266,7 +142,6 @@ private fun PendingFriendsScreenPreview() {
         PendingFriendsScreen(
             padding = PaddingValues(),
             onNavigateToBack = { true },
-            snackbarHostState = SnackbarHostState(),
         )
     }
 }

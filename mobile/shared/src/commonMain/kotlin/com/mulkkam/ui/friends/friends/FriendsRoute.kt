@@ -3,16 +3,13 @@ package com.mulkkam.ui.friends.friends
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.compose.runtime.LaunchedEffect
 import com.mulkkam.domain.model.friend.Friend
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.friends.FriendsViewModel
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.friends_throw_water_balloon_success
 import mulkkam.shared.generated.resources.friends_water_balloon_limit_exceeded
@@ -31,15 +28,13 @@ fun FriendsRoute(
     snackbarHostState: SnackbarHostState,
     viewModel: FriendsViewModel = koinViewModel(),
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
-    val coroutineScope = rememberCoroutineScope()
-
-    viewModel.throwWaterBalloonResult.collectWithLifecycle(lifecycleOwner) { state ->
-        handleThrowWaterBalloonResult(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            coroutineScope = coroutineScope,
-        )
+    LaunchedEffect(viewModel) {
+        viewModel.throwWaterBalloonResult.collectLatest { state ->
+            handleThrowWaterBalloonResult(
+                state = state,
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 
     FriendsScreen(
@@ -50,20 +45,17 @@ fun FriendsRoute(
     )
 }
 
-private fun handleThrowWaterBalloonResult(
+private suspend fun handleThrowWaterBalloonResult(
     state: MulKkamUiState<Friend>,
     snackbarHostState: SnackbarHostState,
-    coroutineScope: CoroutineScope,
 ) {
     when (state) {
         is MulKkamUiState.Success -> {
             val friend: Friend = state.data
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.friends_throw_water_balloon_success, friend.nickname),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(Res.string.friends_throw_water_balloon_success, friend.nickname),
+                iconResource = Res.drawable.ic_terms_all_check_on,
+            )
         }
 
         is MulKkamUiState.Failure -> {
@@ -75,12 +67,10 @@ private fun handleThrowWaterBalloonResult(
                     Res.string.network_check_error to
                         Res.drawable.ic_alert_circle
                 }
-            coroutineScope.launch {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(messageResource),
-                    iconResource = iconResource,
-                )
-            }
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(messageResource),
+                iconResource = iconResource,
+            )
         }
 
         is MulKkamUiState.Idle, MulKkamUiState.Loading -> {
