@@ -21,7 +21,7 @@ data class CupUiModel(
                 name = "",
                 amount = 0,
                 rank = 0,
-                intakeType = IntakeType.UNKNOWN,
+                intakeType = IntakeType.WATER,
                 emoji = CupEmojiUiModel.EMPTY_CUP_EMOJI_UI_MODEL,
                 isRepresentative = false,
             )

@@ -96,7 +96,7 @@ class SettingCupViewModel(
             val isEmojiSelected = selectedEmoji != null
             val isEmojiChanged = selectedEmoji?.id != originalCup.emoji.id
 
-            val isIntakeTypeChanged = cupValue.intakeType != originalCup.intakeType
+            val isIntakeTypeChanged = cupValue.intakeType != originalCup.intakeType && cupValue.intakeType != IntakeType.UNKNOWN
 
             when (type) {
                 SettingWaterCupEditType.ADD -> {
