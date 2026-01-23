@@ -3,6 +3,7 @@ package com.mulkkam.ui.friends.friends
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.mulkkam.domain.model.friend.Friend
@@ -31,11 +32,13 @@ fun FriendsRoute(
 ) {
     val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
 
-    viewModel.throwWaterBalloonResult.collectWithLifecycle(lifecycleOwner) { state ->
-        handleThrowWaterBalloonResult(
-            state = state,
-            snackbarHostState = snackbarHostState,
-        )
+    LaunchedEffect(Unit) {
+        viewModel.throwWaterBalloonResult.collectWithLifecycle(lifecycleOwner) { state ->
+            handleThrowWaterBalloonResult(
+                state = state,
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 
     FriendsScreen(

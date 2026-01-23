@@ -8,6 +8,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -84,19 +85,23 @@ fun SettingCupsRoute(
         }
     }
 
-    viewModel.cupsUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        handleCupsUiState(
-            state = state,
-            listItems = listItems,
-            snackbarHostState = snackbarHostState,
-        )
+    LaunchedEffect(Unit) {
+        viewModel.cupsUiState.collectWithLifecycle(lifecycleOwner) { state ->
+            handleCupsUiState(
+                state = state,
+                listItems = listItems,
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 
-    viewModel.cupsResetUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        handleCupsResetUiState(
-            state = state,
-            snackbarHostState = snackbarHostState,
-        )
+    LaunchedEffect(Unit) {
+        viewModel.cupsResetUiState.collectWithLifecycle(lifecycleOwner) { state ->
+            handleCupsResetUiState(
+                state = state,
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 
     val contentPadding =
