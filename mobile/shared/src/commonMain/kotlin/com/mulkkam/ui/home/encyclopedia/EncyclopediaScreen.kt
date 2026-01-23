@@ -54,7 +54,7 @@ fun EncyclopediaScreen(
             )
 
             Text(
-                modifier = Modifier.padding(top = 15.dp),
+                modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(resource = Res.string.coffee_encyclopedia_subtitle1),
                 color = Black,
                 style = MulKkamTheme.typography.body4,
@@ -70,7 +70,7 @@ fun EncyclopediaScreen(
             Text(
                 modifier =
                     Modifier
-                        .padding(top = 15.dp),
+                        .padding(top = 16.dp),
                 text = stringResource(resource = Res.string.coffee_encyclopedia_source_title),
                 style = MulKkamTheme.typography.body5,
                 color = Black,
@@ -89,7 +89,7 @@ fun EncyclopediaScreen(
             )
 
             Text(
-                modifier = Modifier.padding(top = 15.dp),
+                modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(resource = Res.string.coffee_encyclopedia_subtitle2),
                 color = Black,
                 style = MulKkamTheme.typography.body4,
@@ -103,7 +103,7 @@ fun EncyclopediaScreen(
             )
 
             Text(
-                modifier = Modifier.padding(top = 15.dp),
+                modifier = Modifier.padding(top = 16.dp),
                 text = stringResource(resource = Res.string.coffee_encyclopedia_subtitle3),
                 color = Black,
                 style = MulKkamTheme.typography.body4,
