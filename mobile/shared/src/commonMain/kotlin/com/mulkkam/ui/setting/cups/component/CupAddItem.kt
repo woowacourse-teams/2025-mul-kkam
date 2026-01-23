@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SettingCupsAdd(
+fun CupAddItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -48,9 +48,9 @@ fun SettingCupsAdd(
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsAddPreview() {
+private fun CupAddItemPreview() {
     MulKkamTheme {
-        SettingCupsAdd(
+        CupAddItem(
             onClick = {},
             modifier =
                 Modifier

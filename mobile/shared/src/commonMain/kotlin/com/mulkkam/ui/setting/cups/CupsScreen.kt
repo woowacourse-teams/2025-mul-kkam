@@ -31,9 +31,9 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.component.CupsEditor
+import com.mulkkam.ui.setting.cups.component.CupsTopAppBar
 import com.mulkkam.ui.setting.cups.component.SETTING_CUPS_CUP_HEIGHT
-import com.mulkkam.ui.setting.cups.component.SettingCupsEditor
-import com.mulkkam.ui.setting.cups.component.SettingCupsTopAppBar
 import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
 import com.mulkkam.ui.setting.cups.model.CupUiModel
 import com.mulkkam.ui.setting.cups.model.CupsUiModel
@@ -45,7 +45,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SettingCupsScreen(
+fun CupsScreen(
     padding: PaddingValues,
     cupsUiState: MulKkamUiState<CupsUiModel>,
     items: SnapshotStateList<SettingCupsItem>,
@@ -57,7 +57,7 @@ fun SettingCupsScreen(
 ) {
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = { SettingCupsTopAppBar(onBackClick = onBackClick) },
+        topBar = { CupsTopAppBar(onBackClick = onBackClick) },
         containerColor = White,
         modifier = Modifier.fillMaxSize().padding(padding),
     ) { paddingValues ->
@@ -68,7 +68,7 @@ fun SettingCupsScreen(
                     .padding(top = paddingValues.calculateTopPadding())
                     .background(White),
         ) {
-            SettingCupsHeader(
+            CupsHeader(
                 modifier =
                     Modifier
                         .fillMaxWidth()
@@ -82,7 +82,7 @@ fun SettingCupsScreen(
                         .fillMaxWidth()
                         .weight(1f),
             ) {
-                SettingCupsEditor(
+                CupsEditor(
                     items = items,
                     onEditCup = onEditCup,
                     onAddCup = onAddCup,
@@ -90,7 +90,7 @@ fun SettingCupsScreen(
                     modifier = Modifier.fillMaxSize(),
                 )
                 if (cupsUiState is MulKkamUiState.Loading) {
-                    SettingCupsLoading(
+                    CupsLoading(
                         modifier =
                             Modifier
                                 .align(Alignment.TopCenter)
@@ -103,7 +103,7 @@ fun SettingCupsScreen(
 }
 
 @Composable
-private fun SettingCupsHeader(
+private fun CupsHeader(
     modifier: Modifier = Modifier,
     onResetClick: () -> Unit,
 ) {
@@ -130,7 +130,7 @@ private fun SettingCupsHeader(
 }
 
 @Composable
-fun SettingCupsLoading(modifier: Modifier = Modifier) {
+fun CupsLoading(modifier: Modifier = Modifier) {
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(12.dp),
@@ -150,7 +150,7 @@ fun SettingCupsLoading(modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsScreenPreview() {
+private fun CupsScreenPreview() {
     MulKkamTheme {
         val previewItems =
             remember {
@@ -159,7 +159,7 @@ private fun SettingCupsScreenPreview() {
                     add(SettingCupsItem.AddItem)
                 }
             }
-        SettingCupsScreen(
+        CupsScreen(
             cupsUiState = MulKkamUiState.Success(CupsUiModel(previewCupItems(), isAddable = true)),
             padding = PaddingValues(),
             items = previewItems,
@@ -174,9 +174,9 @@ private fun SettingCupsScreenPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsLoadingPreview() {
+private fun CupsLoadingPreview() {
     MulKkamTheme {
-        SettingCupsLoading(
+        CupsLoading(
             modifier =
                 Modifier
                     .fillMaxWidth()

@@ -1,6 +1,6 @@
 package com.mulkkam.ui.setting.cups.model
 
-enum class SettingWaterCupEditType {
+enum class WaterCupEditType {
     ADD,
     EDIT,
 }

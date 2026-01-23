@@ -46,7 +46,7 @@ import com.mulkkam.ui.onboarding.cups.component.CupsEditor
 import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
 import com.mulkkam.ui.setting.cups.model.CupUiModel
 import com.mulkkam.ui.setting.cups.model.CupsUiModel
-import com.mulkkam.ui.setting.cups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 import org.koin.androidx.compose.koinViewModel
@@ -152,7 +152,7 @@ fun CupsScreen(
                         koinViewModel(
                             key =
                                 selectedCup?.id?.toString()
-                                    ?: (SettingWaterCupEditType.ADD.name + System.currentTimeMillis()),
+                                    ?: (WaterCupEditType.ADD.name + System.currentTimeMillis()),
                         ),
                 )
             }

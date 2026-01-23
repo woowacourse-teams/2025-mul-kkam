@@ -18,7 +18,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
-class SettingCupsReorderState(
+class CupsReorderState(
     private val lazyListState: LazyListState,
     private val coroutineScope: CoroutineScope,
     private val autoScrollThresholdPx: Float,
@@ -125,19 +125,19 @@ class SettingCupsReorderState(
 }
 
 @Composable
-fun rememberSettingCupsReorderState(
+fun rememberCupsReorderState(
     lazyListState: LazyListState,
     coroutineScope: CoroutineScope,
     cupHeight: Dp,
     autoScrollThreshold: Dp,
     autoScrollStep: Dp,
-): SettingCupsReorderState {
+): CupsReorderState {
     val density = LocalDensity.current
     val thresholdPx = with(density) { autoScrollThreshold.toPx() }
     val stepPx = with(density) { autoScrollStep.toPx() }
     val defaultItemHeightPx = with(density) { cupHeight.toPx() }
     return remember(lazyListState, coroutineScope, thresholdPx, stepPx, defaultItemHeightPx) {
-        SettingCupsReorderState(
+        CupsReorderState(
             lazyListState = lazyListState,
             coroutineScope = coroutineScope,
             autoScrollThresholdPx = thresholdPx,

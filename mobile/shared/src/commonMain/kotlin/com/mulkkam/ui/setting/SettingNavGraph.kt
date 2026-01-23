@@ -9,7 +9,7 @@ import com.mulkkam.ui.navigation.SettingRoute
 import com.mulkkam.ui.navigation.entry
 import com.mulkkam.ui.setting.accountinfo.AccountInfoRoute
 import com.mulkkam.ui.setting.bioinfo.BioInfoRoute
-import com.mulkkam.ui.setting.cups.SettingCupsRoute
+import com.mulkkam.ui.setting.cups.CupsRoute
 import com.mulkkam.ui.setting.feedback.FeedbackRoute
 import com.mulkkam.ui.setting.nickname.NicknameRoute
 import com.mulkkam.ui.setting.notification.NotificationRoute
@@ -66,7 +66,7 @@ object SettingNavGraph {
 
             is SettingRoute.Cups -> {
                 entry(route) {
-                    SettingCupsRoute(
+                    CupsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,

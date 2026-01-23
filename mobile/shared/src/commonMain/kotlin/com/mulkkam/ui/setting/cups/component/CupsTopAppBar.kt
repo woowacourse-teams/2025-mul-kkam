@@ -27,7 +27,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingCupsTopAppBar(onBackClick: () -> Unit) {
+fun CupsTopAppBar(onBackClick: () -> Unit) {
     Column {
         CenterAlignedTopAppBar(
             title = {
@@ -66,6 +66,6 @@ fun SettingCupsTopAppBar(onBackClick: () -> Unit) {
 @Composable
 private fun SettingCupsTopAppBarPreview() {
     MulKkamTheme {
-        SettingCupsTopAppBar(onBackClick = {})
+        CupsTopAppBar(onBackClick = {})
     }
 }

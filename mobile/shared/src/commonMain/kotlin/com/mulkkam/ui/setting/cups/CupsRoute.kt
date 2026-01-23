@@ -25,7 +25,7 @@ import com.mulkkam.ui.component.MulKkamAlertDialog
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
-import com.mulkkam.ui.setting.cups.component.SettingCupBottomSheet
+import com.mulkkam.ui.setting.cups.component.CupEditBottomSheet
 import com.mulkkam.ui.setting.cups.model.CupUiModel
 import com.mulkkam.ui.setting.cups.model.CupsUiModel
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
@@ -48,7 +48,7 @@ private const val REORDER_RANK_DELAY_MILLIS: Long = 2000L
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingCupsRoute(
+fun CupsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Boolean,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
@@ -112,7 +112,7 @@ fun SettingCupsRoute(
             bottom = padding.calculateBottomPadding(),
         )
 
-    SettingCupsScreen(
+    CupsScreen(
         padding = contentPadding,
         cupsUiState = cupsUiState,
         items = listItems,
@@ -145,7 +145,7 @@ fun SettingCupsRoute(
     }
 
     if (isBottomSheetVisible) {
-        SettingCupBottomSheet(
+        CupEditBottomSheet(
             sheetState = modalBottomSheetState,
             initialCup = selectedCup,
             onDismiss = { isBottomSheetVisible = false },

@@ -42,7 +42,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SettingCupsCup(
+fun CupItem(
     item: SettingCupsItem.CupItem,
     onEdit: () -> Unit,
     dragHandleModifier: Modifier = Modifier,
@@ -73,9 +73,9 @@ fun SettingCupsCup(
 
         Spacer(modifier = Modifier.width(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            SettingCupAmount(item.value.amount, intakeTypeColor)
+            CupAmount(item.value.amount, intakeTypeColor)
             Spacer(modifier = Modifier.width(6.dp))
-            SettingCupEditButton()
+            CupEditButton()
         }
     }
 }
@@ -165,7 +165,7 @@ private fun IntakeType.toColorOrDefault(): Color {
 }
 
 @Composable
-private fun SettingCupAmount(
+private fun CupAmount(
     amount: Int,
     textColor: Color,
 ) {
@@ -177,7 +177,7 @@ private fun SettingCupAmount(
 }
 
 @Composable
-private fun SettingCupEditButton() {
+private fun CupEditButton() {
     Image(
         painter = painterResource(Res.drawable.btn_setting_cups_edit),
         contentDescription = null,
@@ -190,9 +190,9 @@ private fun SettingCupEditButton() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsCupPreview() {
+private fun CupItemPreview() {
     MulKkamTheme {
-        SettingCupsCup(
+        CupItem(
             item =
                 SettingCupsItem.CupItem(
                     CupUiModel(
