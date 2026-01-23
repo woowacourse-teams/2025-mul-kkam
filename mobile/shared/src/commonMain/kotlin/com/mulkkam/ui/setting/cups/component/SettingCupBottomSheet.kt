@@ -141,7 +141,6 @@ fun SettingCupBottomSheet(
                 Modifier
                     .padding(horizontal = 24.dp)
                     .padding(bottom = 24.dp)
-                    .padding(bottom = 24.dp)
                     .clickable(
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() },
