@@ -65,8 +65,10 @@ fun TargetAmountScreen(
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
     val targetInfoUiState by viewModel.targetInfoUiState.collectAsStateWithLifecycle()
 
-    viewModel.onSaveTargetAmount.collectWithLifecycle(lifecycleOwner) { state ->
-        handleTargetAmountSavedAction(state, navigateToBack, snackbarHostState)
+    LaunchedEffect(Unit) {
+        viewModel.onSaveTargetAmount.collectWithLifecycle(lifecycleOwner) { state ->
+            handleTargetAmountSavedAction(state, navigateToBack, snackbarHostState)
+        }
     }
 
     LaunchedEffect(targetInfoUiState) {

@@ -11,6 +11,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -48,8 +49,10 @@ fun NotificationScreen(
     val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
     state.OnLoadMore(action = { viewModel.loadMore() })
 
-    viewModel.onApplySuggestion.collectWithLifecycle(lifecycleOwner) { state ->
-        handleApplySuggestion(state, snackbarHostState)
+    LaunchedEffect(Unit) {
+        viewModel.onApplySuggestion.collectWithLifecycle(lifecycleOwner) { state ->
+            handleApplySuggestion(state, snackbarHostState)
+        }
     }
 
     Scaffold(

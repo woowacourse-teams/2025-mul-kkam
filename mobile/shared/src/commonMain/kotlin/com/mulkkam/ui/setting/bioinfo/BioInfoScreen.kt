@@ -14,6 +14,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
@@ -63,8 +64,10 @@ fun BioInfoScreen(
     val weight by viewModel.weight.collectAsStateWithLifecycle()
     val coroutineScope = rememberCoroutineScope()
 
-    viewModel.onBioInfoChanged.collectWithLifecycle(lifecycleOwner) { state ->
-        handleBioInfoChangedAction(state, navigateToBack, snackbarHostState)
+    LaunchedEffect(Unit) {
+        viewModel.onBioInfoChanged.collectWithLifecycle(lifecycleOwner) { state ->
+            handleBioInfoChangedAction(state, navigateToBack, snackbarHostState)
+        }
     }
 
     Scaffold(

@@ -96,16 +96,18 @@ fun CupsScreen(
         }
     }
 
-    viewModel.saveOnboardingUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        when (state) {
-            is MulKkamUiState.Success<Unit> -> showDialog = true
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Failure ->
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(resource = Res.string.network_check_error),
-                    iconResource = Res.drawable.ic_alert_circle,
-                )
+    LaunchedEffect(Unit) {
+        viewModel.saveOnboardingUiState.collectWithLifecycle(lifecycleOwner) { state ->
+            when (state) {
+                is MulKkamUiState.Success<Unit> -> showDialog = true
+                is MulKkamUiState.Loading -> Unit
+                is MulKkamUiState.Idle -> Unit
+                is MulKkamUiState.Failure ->
+                    snackbarHostState.showMulKkamSnackbar(
+                        message = getString(resource = Res.string.network_check_error),
+                        iconResource = Res.drawable.ic_alert_circle,
+                    )
+            }
         }
     }
 
