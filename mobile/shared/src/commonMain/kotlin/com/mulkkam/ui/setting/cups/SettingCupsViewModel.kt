@@ -24,18 +24,13 @@ class SettingCupsViewModel(
     private val cupsRepository: CupsRepository,
     private val logger: Logger,
 ) : ViewModel() {
-    private val _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
+    private val _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> = MutableStateFlow(MulKkamUiState.Idle)
+    val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>>
+        get() = _cupsUiState.asStateFlow()
 
-    private val _cupsReorderUiState: MutableSharedFlow<MulKkamUiState<Unit>> =
-        MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
-    val cupsReorderUiState: SharedFlow<MulKkamUiState<Unit>>
-        get() = _cupsReorderUiState
-
-    private val _cupsResetUiState: MutableSharedFlow<MulKkamUiState<Unit>> =
-        MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
-    val cupsResetUiState: SharedFlow<MulKkamUiState<Unit>> get() = _cupsResetUiState
+    private val _cupsResetUiState: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val cupsResetUiState: SharedFlow<MulKkamUiState<Unit>>
+        get() = _cupsResetUiState
 
     private var previousCupsUiModel: CupsUiModel? = null
     private var isReorderingInProgress: Boolean = false
@@ -78,18 +73,15 @@ class SettingCupsViewModel(
             logger.info(LogEvent.USER_ACTION, "Saving cup reorder from settings")
             isReorderingInProgress = true
             try {
-                _cupsReorderUiState.emit(MulKkamUiState.Loading)
                 runCatching {
                     cupsRepository.putCupsRank(reorderedCups).getOrError()
                 }.onSuccess { cups ->
                     val updatedUiModel: CupsUiModel = cups.toUi()
                     previousCupsUiModel = updatedUiModel
                     _cupsUiState.value = MulKkamUiState.Success(updatedUiModel)
-                    _cupsReorderUiState.emit(MulKkamUiState.Success(Unit))
                 }.onFailure {
                     val fallbackUiModel: CupsUiModel = previousCupsUiModel ?: currentCups
                     _cupsUiState.value = MulKkamUiState.Success(fallbackUiModel)
-                    _cupsReorderUiState.emit(MulKkamUiState.Failure(it.toMulKkamError()))
                 }
             } finally {
                 isReorderingInProgress = false
