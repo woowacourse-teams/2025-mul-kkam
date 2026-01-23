@@ -8,13 +8,16 @@ import com.mulkkam.domain.model.OnboardingInfo
 fun BioInfoRoute(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToTargetAmount: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     BioInfoScreen(
         padding = padding,
         onboardingInfo = onboardingInfo,
-        onNavigateToBack = onNavigateToBack,
-        onNavigateToTargetAmount = onNavigateToTargetAmount,
+        navigateToBack = onNavigateToBack,
+        navigateToNextStep = onNavigateToTargetAmount,
+        skipBioInfo = onNavigateToTargetAmount,
+        currentProgress = currentProgress,
     )
 }

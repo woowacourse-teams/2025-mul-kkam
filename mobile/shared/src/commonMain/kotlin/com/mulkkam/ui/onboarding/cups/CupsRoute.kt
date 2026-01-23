@@ -1,6 +1,7 @@
 package com.mulkkam.ui.onboarding.cups
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.domain.model.OnboardingInfo
 
@@ -8,13 +9,19 @@ import com.mulkkam.domain.model.OnboardingInfo
 fun CupsRoute(
     padding: PaddingValues,
     onboardingInfo: OnboardingInfo,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
+    onNavigateToCoffeeEncyclopedia: () -> Unit,
     onNavigateToMain: () -> Unit,
+    currentProgress: Int,
+    snackbarHostState: SnackbarHostState,
 ) {
     CupsScreen(
         padding = padding,
         onboardingInfo = onboardingInfo,
-        onNavigateToBack = onNavigateToBack,
-        onNavigateToMain = onNavigateToMain,
+        navigateToBack = onNavigateToBack,
+        navigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
+        currentProgress = currentProgress,
+        onCompleteOnboarding = onNavigateToMain,
+        snackbarHostState = snackbarHostState,
     )
 }

@@ -50,7 +50,7 @@ class TargetAmountViewModel(
             }.onSuccess { targetAmountOnboardingUiModel ->
                 _targetAmountOnboardingUiState.value =
                     MulKkamUiState.Success(targetAmountOnboardingUiModel)
-                targetAmountInput = targetAmountOnboardingUiModel.recommendedTargetAmount
+                updateTargetAmount(targetAmountOnboardingUiModel.recommendedTargetAmount.value)
             }.onFailure {
                 _targetAmountOnboardingUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

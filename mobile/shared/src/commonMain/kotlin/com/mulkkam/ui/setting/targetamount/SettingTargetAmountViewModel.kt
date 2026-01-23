@@ -64,7 +64,7 @@ class SettingTargetAmountViewModel(
                 )
             }.onSuccess { targetAmountUiModel ->
                 _targetInfoUiState.value = MulKkamUiState.Success(targetAmountUiModel)
-                targetAmountInput = targetAmountUiModel.previousTargetAmount
+                updateTargetAmount(targetAmountUiModel.previousTargetAmount.value)
             }.onFailure {
                 _targetInfoUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
             }

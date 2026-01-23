@@ -13,26 +13,32 @@ sealed interface AuthRoute {
 
 sealed interface OnboardingRoute {
     @Serializable
-    data object Terms : OnboardingRoute
+    data class Terms(
+        val currentProgress: Int = 1,
+    ) : OnboardingRoute
 
     @Serializable
     data class Nickname(
-        val onboardingInfo: OnboardingInfo? = null,
+        val onboardingInfo: OnboardingInfo,
+        val currentProgress: Int = 2,
     ) : OnboardingRoute
 
     @Serializable
     data class BioInfo(
         val onboardingInfo: OnboardingInfo,
+        val currentProgress: Int = 3,
     ) : OnboardingRoute
 
     @Serializable
     data class TargetAmount(
         val onboardingInfo: OnboardingInfo,
+        val currentProgress: Int = 4,
     ) : OnboardingRoute
 
     @Serializable
     data class Cups(
         val onboardingInfo: OnboardingInfo,
+        val currentProgress: Int = 5,
     ) : OnboardingRoute
 }
 

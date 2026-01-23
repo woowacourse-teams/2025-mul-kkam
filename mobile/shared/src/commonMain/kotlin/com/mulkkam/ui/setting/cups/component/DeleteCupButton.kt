@@ -18,7 +18,7 @@ fun DeleteCupButton(
     modifier: Modifier = Modifier,
 ) {
     Text(
-        text = stringResource(Res.string.setting_cup_delete),
+        text = stringResource(resource = Res.string.setting_cup_delete),
         style = MulKkamTheme.typography.label1,
         color = Secondary200,
         modifier =

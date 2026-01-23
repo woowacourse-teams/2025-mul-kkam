@@ -13,6 +13,7 @@ import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
 import com.mulkkam.ui.onboarding.nickname.NicknameViewModel
 import com.mulkkam.ui.onboarding.targetamount.TargetAmountViewModel
+import com.mulkkam.ui.onboarding.terms.TermsAgreementViewModel
 import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
 import com.mulkkam.ui.searchmembers.SearchMembersViewModel
 import com.mulkkam.ui.setting.SettingViewModel
@@ -25,7 +26,6 @@ import com.mulkkam.ui.setting.targetamount.SettingTargetAmountViewModel
 import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
 import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
-import com.mulkkam.ui.terms.TermsAgreementViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module

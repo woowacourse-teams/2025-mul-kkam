@@ -7,7 +7,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 
-@Composable
 fun String.getStyledText(
     style: TextStyle,
     vararg highlightedText: String,
@@ -57,3 +56,5 @@ fun String.sanitizeLeadingZeros(): String =
     }
 
 expect fun String.toColorInt(): Int
+
+expect fun String.openLink()

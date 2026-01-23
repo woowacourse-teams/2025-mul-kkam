@@ -7,14 +7,16 @@ import com.mulkkam.domain.model.OnboardingInfo
 @Composable
 fun NicknameRoute(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo?,
-    onNavigateToBack: () -> Boolean,
+    onboardingInfo: OnboardingInfo,
+    onNavigateToBack: () -> Unit,
     onNavigateToBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
+    currentProgress: Int,
 ) {
     NicknameScreen(
         padding = padding,
         onboardingInfo = onboardingInfo,
-        onNavigateToBack = onNavigateToBack,
-        onNavigateToBioInfo = onNavigateToBioInfo,
+        navigateToBack = onNavigateToBack,
+        navigateToNextStep = onNavigateToBioInfo,
+        currentProgress = currentProgress,
     )
 }
