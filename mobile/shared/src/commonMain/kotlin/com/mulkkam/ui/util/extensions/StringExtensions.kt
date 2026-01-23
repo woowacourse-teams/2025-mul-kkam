@@ -56,3 +56,5 @@ fun String.sanitizeLeadingZeros(): String =
     }
 
 expect fun String.toColorInt(): Int
+
+expect fun String.openLink()

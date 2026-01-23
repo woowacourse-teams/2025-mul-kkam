@@ -2,12 +2,22 @@ package com.mulkkam.ui.onboarding.terms
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
+import coil3.toUri
 import com.mulkkam.domain.model.OnboardingInfo
+import com.mulkkam.ui.util.extensions.openLink
 
 @Composable
-expect fun TermsRoute(
+fun TermsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Unit,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
-)
+) {
+    TermsScreen(
+        padding = padding,
+        navigateToBack = onNavigateToBack,
+        loadToPage = { it.openLink() },
+        navigateToNextStep = onNavigateToNickname,
+        currentProgress = currentProgress,
+    )
+}
