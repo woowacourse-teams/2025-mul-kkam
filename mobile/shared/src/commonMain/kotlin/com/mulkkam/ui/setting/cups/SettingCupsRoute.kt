@@ -18,7 +18,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.MulKkamAlertDialog
@@ -55,18 +54,19 @@ fun SettingCupsRoute(
     snackbarHostState: SnackbarHostState,
     viewModel: SettingCupsViewModel = koinViewModel(),
 ) {
-    val cupsUiState: MulKkamUiState<CupsUiModel> by viewModel.cupsUiState.collectAsStateWithLifecycle()
-    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
-    val listItems: SnapshotStateList<SettingCupsItem> = remember { mutableStateListOf() }
+    val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
 
-    var isResetDialogVisible: Boolean by rememberSaveable { mutableStateOf(false) }
-    var isBottomSheetVisible: Boolean by rememberSaveable { mutableStateOf(false) }
-    var selectedCup: CupUiModel? by remember { mutableStateOf(null) }
-    var addSheetKey: Int by rememberSaveable { mutableStateOf(0) }
+    val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
+    val listItems = remember { mutableStateListOf<SettingCupsItem>() }
+
+    var isResetDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var isBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
+    var selectedCup by remember { mutableStateOf<CupUiModel?>(null) }
+    var addSheetKey by rememberSaveable { mutableStateOf(0) }
     val modalBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
-    var reorderJob: Job? by remember { mutableStateOf(null) }
+    var reorderJob by remember { mutableStateOf<Job?>(null) }
     val onReorderCups: (List<CupUiModel>) -> Unit = { newOrder ->
         viewModel.applyOptimisticCupOrder(newOrder)
         reorderJob?.cancel()
