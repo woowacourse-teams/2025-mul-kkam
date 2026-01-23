@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.model
+package com.mulkkam.ui.setting.cups.model
 
 import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.lazy.LazyListItemInfo
@@ -12,13 +12,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 
-class SettingCupsReorderState(
+class CupsReorderState(
     private val lazyListState: LazyListState,
     private val coroutineScope: CoroutineScope,
     private val autoScrollThresholdPx: Float,
@@ -125,19 +125,19 @@ class SettingCupsReorderState(
 }
 
 @Composable
-fun rememberSettingCupsReorderState(
+fun rememberCupsReorderState(
     lazyListState: LazyListState,
     coroutineScope: CoroutineScope,
     cupHeight: Dp,
     autoScrollThreshold: Dp,
     autoScrollStep: Dp,
-): SettingCupsReorderState {
+): CupsReorderState {
     val density = LocalDensity.current
     val thresholdPx = with(density) { autoScrollThreshold.toPx() }
     val stepPx = with(density) { autoScrollStep.toPx() }
     val defaultItemHeightPx = with(density) { cupHeight.toPx() }
     return remember(lazyListState, coroutineScope, thresholdPx, stepPx, defaultItemHeightPx) {
-        SettingCupsReorderState(
+        CupsReorderState(
             lazyListState = lazyListState,
             coroutineScope = coroutineScope,
             autoScrollThresholdPx = thresholdPx,

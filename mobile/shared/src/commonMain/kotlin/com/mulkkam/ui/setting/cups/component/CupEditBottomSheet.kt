@@ -1,7 +1,8 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.setting.cups.component
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -11,61 +12,81 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SheetState
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.focus.FocusManager
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.R
 import com.mulkkam.domain.model.cups.CupAmount
 import com.mulkkam.domain.model.cups.CupName
 import com.mulkkam.domain.model.result.MulKkamError
-import com.mulkkam.ui.component.BottomSheetHandle2
-import com.mulkkam.ui.component.BottomSheetHeader2
-import com.mulkkam.ui.component.IntakeTypeChips2
-import com.mulkkam.ui.component.MulKkamTextField2
-import com.mulkkam.ui.component.MulKkamTextFieldState2
-import com.mulkkam.ui.component.MulKkamToastState2
-import com.mulkkam.ui.component.SaveButton2
+import com.mulkkam.ui.component.BottomSheetHandle
+import com.mulkkam.ui.component.BottomSheetHeader
+import com.mulkkam.ui.component.IntakeTypeChips
+import com.mulkkam.ui.component.MulKkamTextField
+import com.mulkkam.ui.component.MulKkamTextFieldState
+import com.mulkkam.ui.component.SaveButton
+import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.settingcups.SettingCupViewModel
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.SettingCupViewModel
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
-import kotlinx.coroutines.flow.collectLatest
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_terms_all_check_on
+import mulkkam.shared.generated.resources.setting_cup_add_title
+import mulkkam.shared.generated.resources.setting_cup_amount
+import mulkkam.shared.generated.resources.setting_cup_delete_result
+import mulkkam.shared.generated.resources.setting_cup_edit_title
+import mulkkam.shared.generated.resources.setting_cup_emoji
+import mulkkam.shared.generated.resources.setting_cup_intake_type
+import mulkkam.shared.generated.resources.setting_cup_invalid_range
+import mulkkam.shared.generated.resources.setting_cup_name_invalid_characters
+import mulkkam.shared.generated.resources.setting_cup_name_invalid_range
+import mulkkam.shared.generated.resources.setting_cup_nickname
+import mulkkam.shared.generated.resources.setting_cup_save
+import mulkkam.shared.generated.resources.setting_cup_save_result
+import mulkkam.shared.generated.resources.setting_target_amount_unit_ml
+import org.jetbrains.compose.resources.getString
+import org.jetbrains.compose.resources.stringResource
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingCupBottomSheet(
+fun CupEditBottomSheet(
     sheetState: SheetState,
     initialCup: CupUiModel?,
     onDismiss: () -> Unit,
     onSaved: () -> Unit,
     onDeleted: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
-    toastState: MulKkamToastState2,
+    snackbarHostState: SnackbarHostState,
     viewModel: SettingCupViewModel,
     modifier: Modifier = Modifier,
 ) {
-    val context = LocalContext.current
+    val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+    val focusManager: FocusManager = LocalFocusManager.current
 
-    val cup: CupUiModel by viewModel.cup.collectAsStateWithLifecycle(initialValue = EMPTY_CUP_UI_MODEL)
-    val editType: SettingWaterCupEditType by viewModel.editType.collectAsStateWithLifecycle(initialValue = SettingWaterCupEditType.ADD)
+    val cup: CupUiModel by viewModel.cup.collectAsStateWithLifecycle(initialValue = CupUiModel.EMPTY_CUP_UI_MODEL)
+    val editType: WaterCupEditType by viewModel.editType.collectAsStateWithLifecycle(initialValue = WaterCupEditType.ADD)
     val cupNameValidity: MulKkamUiState<Unit> by viewModel.cupNameValidity.collectAsStateWithLifecycle(initialValue = MulKkamUiState.Idle)
     val amountValidity: MulKkamUiState<Unit> by viewModel.amountValidity.collectAsStateWithLifecycle(initialValue = MulKkamUiState.Idle)
     val cupEmojisUiState: MulKkamUiState<CupEmojisUiModel> by viewModel.cupEmojisUiState.collectAsStateWithLifecycle(
@@ -85,26 +106,22 @@ fun SettingCupBottomSheet(
         cupAmountText = if (cup.amount == 0) "" else cup.amount.toString()
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.saveSuccess.collectLatest {
-            toastState.showMulKkamToast2(
-                message = context.getString(R.string.setting_cup_save_result),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
-            onSaved()
-            onDismiss()
-        }
+    viewModel.saveSuccess.collectWithLifecycle(lifecycleOwner) {
+        snackbarHostState.showMulKkamSnackbar(
+            message = getString(Res.string.setting_cup_save_result),
+            iconResource = Res.drawable.ic_terms_all_check_on,
+        )
+        onSaved()
+        onDismiss()
     }
 
-    LaunchedEffect(viewModel) {
-        viewModel.deleteSuccess.collectLatest {
-            toastState.showMulKkamToast2(
-                message = context.getString(R.string.setting_cup_delete_result),
-                iconResourceId = R.drawable.ic_terms_all_check_on,
-            )
-            onDeleted()
-            onDismiss()
-        }
+    viewModel.deleteSuccess.collectWithLifecycle(lifecycleOwner) {
+        snackbarHostState.showMulKkamSnackbar(
+            message = getString(Res.string.setting_cup_delete_result),
+            iconResource = Res.drawable.ic_terms_all_check_on,
+        )
+        onDeleted()
+        onDismiss()
     }
 
     ModalBottomSheet(
@@ -116,26 +133,32 @@ fun SettingCupBottomSheet(
                 topEnd = 12.dp,
             ),
         sheetState = sheetState,
-        dragHandle = { BottomSheetHandle2() },
+        dragHandle = { BottomSheetHandle() },
         containerColor = White,
     ) {
         Column(
             modifier =
                 Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 24.dp)
+                    .clickable(
+                        indication = null,
+                        interactionSource = remember { MutableInteractionSource() },
+                    ) {
+                        focusManager.clearFocus()
+                    },
         ) {
-            BottomSheetHeader2(
+            BottomSheetHeader(
                 title =
                     when (editType) {
-                        SettingWaterCupEditType.ADD -> stringResource(R.string.setting_cup_add_title)
-                        SettingWaterCupEditType.EDIT -> stringResource(R.string.setting_cup_edit_title)
+                        WaterCupEditType.ADD -> stringResource(Res.string.setting_cup_add_title)
+                        WaterCupEditType.EDIT -> stringResource(Res.string.setting_cup_edit_title)
                     },
                 onDismiss = onDismiss,
             )
 
             Spacer(modifier = Modifier.height(18.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_emoji))
+            BottomSheetSectionTitle(title = stringResource(Res.string.setting_cup_emoji))
             Spacer(modifier = Modifier.height(12.dp))
             EmojiSection(
                 cupEmojisUiState = cupEmojisUiState,
@@ -143,9 +166,9 @@ fun SettingCupBottomSheet(
             )
 
             Spacer(modifier = Modifier.height(18.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_nickname))
+            BottomSheetSectionTitle(title = stringResource(Res.string.setting_cup_nickname))
             Spacer(modifier = Modifier.height(10.dp))
-            MulKkamTextField2(
+            MulKkamTextField(
                 value = cupNameText,
                 onValueChanged = { newValue ->
                     cupNameText = newValue
@@ -161,20 +184,20 @@ fun SettingCupBottomSheet(
 
             Spacer(modifier = Modifier.height(18.dp))
             BottomSheetSectionTitle(
-                title = stringResource(R.string.setting_cup_intake_type),
+                title = stringResource(Res.string.setting_cup_intake_type),
                 onClickInfo = onNavigateToCoffeeEncyclopedia,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            IntakeTypeChips2(
+            IntakeTypeChips(
                 selectedIntakeType = cup.intakeType,
                 onSelect = viewModel::updateIntakeType,
                 modifier = Modifier.fillMaxWidth(),
             )
 
             Spacer(modifier = Modifier.height(12.dp))
-            BottomSheetSectionTitle(title = stringResource(R.string.setting_cup_amount))
+            BottomSheetSectionTitle(title = stringResource(Res.string.setting_cup_amount))
             Spacer(modifier = Modifier.height(10.dp))
-            MulKkamTextField2(
+            MulKkamTextField(
                 value = cupAmountText,
                 onValueChanged = { newValue ->
                     if (newValue.all(Char::isDigit)) {
@@ -186,7 +209,7 @@ fun SettingCupBottomSheet(
                 maxLength = CupAmount.MAX_ML.toString().length,
                 suffix = { suffixModifier ->
                     Text(
-                        text = stringResource(R.string.setting_target_amount_unit_ml),
+                        text = stringResource(Res.string.setting_target_amount_unit_ml),
                         style = MulKkamTheme.typography.title2,
                         color = Gray400,
                         modifier = suffixModifier,
@@ -199,13 +222,13 @@ fun SettingCupBottomSheet(
             ValidationMessage(message = amountValidity.toCupAmountMessage())
 
             Spacer(modifier = Modifier.height(22.dp))
-            SaveButton2(
+            SaveButton(
                 onClick = viewModel::saveCup,
                 enabled = isSaveAvailable,
-                text = stringResource(id = R.string.setting_cup_save),
+                text = stringResource(Res.string.setting_cup_save),
             )
 
-            if (editType == SettingWaterCupEditType.EDIT && !cup.isRepresentative) {
+            if (editType == WaterCupEditType.EDIT && !cup.isRepresentative) {
                 Spacer(modifier = Modifier.height(10.dp))
                 DeleteCupButton(
                     onClick = viewModel::deleteCup,
@@ -216,11 +239,11 @@ fun SettingCupBottomSheet(
     }
 }
 
-private fun MulKkamUiState<Unit>.toTextFieldState(): MulKkamTextFieldState2 =
+private fun MulKkamUiState<Unit>.toTextFieldState(): MulKkamTextFieldState =
     when (this) {
-        is MulKkamUiState.Success -> MulKkamTextFieldState2.VALID
-        is MulKkamUiState.Failure -> MulKkamTextFieldState2.ERROR
-        else -> MulKkamTextFieldState2.NORMAL
+        is MulKkamUiState.Success -> MulKkamTextFieldState.VALID
+        is MulKkamUiState.Failure -> MulKkamTextFieldState.ERROR
+        else -> MulKkamTextFieldState.NORMAL
     }
 
 @Composable
@@ -230,14 +253,14 @@ private fun MulKkamUiState<Unit>.toCupNameMessage(): String =
             when (error) {
                 is MulKkamError.SettingCupsError.InvalidNicknameLength -> {
                     stringResource(
-                        R.string.setting_cup_name_invalid_range,
+                        Res.string.setting_cup_name_invalid_range,
                         CupName.CUP_NAME_LENGTH_MIN,
                         CupName.CUP_NAME_LENGTH_MAX,
                     )
                 }
 
                 is MulKkamError.SettingCupsError.InvalidNicknameCharacters -> {
-                    stringResource(R.string.setting_cup_name_invalid_characters)
+                    stringResource(Res.string.setting_cup_name_invalid_characters)
                 }
 
                 else -> {
@@ -256,7 +279,7 @@ private fun MulKkamUiState<Unit>.toCupAmountMessage(): String =
     when (this) {
         is MulKkamUiState.Failure -> {
             if (error is MulKkamError.SettingCupsError.InvalidAmount) {
-                stringResource(R.string.setting_cup_invalid_range, CupAmount.MIN_ML, CupAmount.MAX_ML)
+                stringResource(Res.string.setting_cup_invalid_range, CupAmount.MIN_ML, CupAmount.MAX_ML)
             } else {
                 ""
             }

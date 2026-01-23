@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups
+package com.mulkkam.ui.setting.cups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -11,11 +11,11 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
-import com.mulkkam.ui.settingcups.model.toDomain
-import com.mulkkam.ui.settingcups.model.toUi
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
+import com.mulkkam.ui.setting.cups.model.toDomain
+import com.mulkkam.ui.setting.cups.model.toUi
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -35,9 +35,9 @@ class SettingCupViewModel(
         MutableStateFlow(CupUiModel.EMPTY_CUP_UI_MODEL)
     val cup: StateFlow<CupUiModel> get() = _cup.asStateFlow()
 
-    private val _editType: MutableStateFlow<SettingWaterCupEditType> =
-        MutableStateFlow(SettingWaterCupEditType.ADD)
-    val editType: StateFlow<SettingWaterCupEditType> get() = _editType.asStateFlow()
+    private val _editType: MutableStateFlow<WaterCupEditType> =
+        MutableStateFlow(WaterCupEditType.ADD)
+    val editType: StateFlow<WaterCupEditType> get() = _editType.asStateFlow()
 
     private val _cupNameValidity: MutableStateFlow<MulKkamUiState<Unit>> =
         MutableStateFlow(MulKkamUiState.Idle)
@@ -85,7 +85,7 @@ class SettingCupViewModel(
             val amountState = values[2] as? MulKkamUiState<Unit> ?: return@combine false
             val emojiState = values[3] as? MulKkamUiState<CupEmojisUiModel> ?: return@combine false
             val changed = values[4] as? Boolean ?: return@combine false
-            val type = values[5] as? SettingWaterCupEditType ?: return@combine false
+            val type = values[5] as? WaterCupEditType ?: return@combine false
 
             if (!changed) return@combine false
 
@@ -96,14 +96,14 @@ class SettingCupViewModel(
             val isEmojiSelected = selectedEmoji != null
             val isEmojiChanged = selectedEmoji?.id != originalCup.emoji.id
 
-            val isIntakeTypeChanged = cupValue.intakeType != originalCup.intakeType
+            val isIntakeTypeChanged = cupValue.intakeType != originalCup.intakeType && cupValue.intakeType != IntakeType.UNKNOWN
 
             when (type) {
-                SettingWaterCupEditType.ADD -> {
+                WaterCupEditType.ADD -> {
                     isNameValid && isAmountValid && isEmojiSelected
                 }
 
-                SettingWaterCupEditType.EDIT -> {
+                WaterCupEditType.EDIT -> {
                     isNameValid || isAmountValid || isEmojiChanged || isIntakeTypeChanged
                 }
             }
@@ -133,8 +133,8 @@ class SettingCupViewModel(
             }.onSuccess {
                 _cupEmojisUiState.value = MulKkamUiState.Success(it.toUi())
                 when (editType.value) {
-                    SettingWaterCupEditType.ADD -> selectEmoji(it.firstOrNull()?.id ?: return@onSuccess)
-                    SettingWaterCupEditType.EDIT -> selectEmoji(cup.value.emoji.id)
+                    WaterCupEditType.ADD -> selectEmoji(it.firstOrNull()?.id ?: return@onSuccess)
+                    WaterCupEditType.EDIT -> selectEmoji(cup.value.emoji.id)
                 }
             }
         }
@@ -144,7 +144,7 @@ class SettingCupViewModel(
         val initialCup = cup ?: CupUiModel.EMPTY_CUP_UI_MODEL
         originalCup = initialCup
         _cup.value = initialCup
-        _editType.value = if (cup == null) SettingWaterCupEditType.ADD else SettingWaterCupEditType.EDIT
+        _editType.value = if (cup == null) WaterCupEditType.ADD else WaterCupEditType.EDIT
         _cupNameValidity.value = MulKkamUiState.Idle
         _amountValidity.value = MulKkamUiState.Idle
     }
@@ -185,8 +185,8 @@ class SettingCupViewModel(
         logger.info(LogEvent.USER_ACTION, "Settings cup -> editType=${editType.value}, cup=${cup.value}")
 
         when (_editType.value) {
-            SettingWaterCupEditType.ADD -> addCup()
-            SettingWaterCupEditType.EDIT -> editCup()
+            WaterCupEditType.ADD -> addCup()
+            WaterCupEditType.EDIT -> editCup()
         }
     }
 

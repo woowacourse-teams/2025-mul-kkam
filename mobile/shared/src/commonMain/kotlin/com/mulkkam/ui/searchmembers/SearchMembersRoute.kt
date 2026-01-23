@@ -3,6 +3,7 @@ package com.mulkkam.ui.searchmembers
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -38,25 +39,31 @@ fun SearchMembersRoute(
     }
     var showDialog by remember { mutableStateOf(false) }
 
-    viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { state ->
-        handleRequestFriendsAction(
-            state = state,
-            snackbarHostState = snackbarHostState,
-        )
+    LaunchedEffect(Unit) {
+        viewModel.onRequestFriends.collectWithLifecycle(lifecycleOwner) { state ->
+            handleRequestFriendsAction(
+                state = state,
+                snackbarHostState = snackbarHostState,
+            )
+        }
     }
 
-    viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { state ->
-        handleAcceptFriendsAction(
-            state = state,
-            snackbarHostState = snackbarHostState,
-            onFriendAccepted = onFriendAccepted,
-        )
+    LaunchedEffect(Unit) {
+        viewModel.onAcceptFriends.collectWithLifecycle(lifecycleOwner) { state ->
+            handleAcceptFriendsAction(
+                state = state,
+                snackbarHostState = snackbarHostState,
+                onFriendAccepted = onFriendAccepted,
+            )
+        }
     }
 
-    viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { state ->
-        receivedMemberSearchInfo = state.toSuccessDataOrNull()
-        if (receivedMemberSearchInfo != null) {
-            showDialog = true
+    LaunchedEffect(Unit) {
+        viewModel.receivedMemberSearchInfo.collectWithLifecycle(lifecycleOwner) { state ->
+            receivedMemberSearchInfo = state.toSuccessDataOrNull()
+            if (receivedMemberSearchInfo != null) {
+                showDialog = true
+            }
         }
     }
 

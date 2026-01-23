@@ -41,12 +41,12 @@ import com.mulkkam.ui.home.home.component.BottomSheetSectionTitle
 import com.mulkkam.ui.home.home.component.ValidationMessage
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.onboarding.cups.CupViewModel
-import com.mulkkam.ui.settingcups.component.DeleteCupButton
-import com.mulkkam.ui.settingcups.component.EmojiSection
-import com.mulkkam.ui.settingcups.model.CupEmojisUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.component.DeleteCupButton
+import com.mulkkam.ui.setting.cups.component.EmojiSection
+import com.mulkkam.ui.setting.cups.model.CupEmojisUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel.Companion.EMPTY_CUP_UI_MODEL
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
 import com.mulkkam.ui.util.extensions.sanitizeLeadingZeros
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
@@ -63,8 +63,8 @@ fun CupBottomSheet(
     modifier: Modifier = Modifier,
 ) {
     val cup: CupUiModel by viewModel.cup.collectAsStateWithLifecycle(initialValue = EMPTY_CUP_UI_MODEL)
-    val editType: SettingWaterCupEditType by viewModel.editType.collectAsStateWithLifecycle(
-        initialValue = SettingWaterCupEditType.ADD,
+    val editType: WaterCupEditType by viewModel.editType.collectAsStateWithLifecycle(
+        initialValue = WaterCupEditType.ADD,
     )
     val cupNameValidity: MulKkamUiState<Unit> by viewModel.cupNameValidity.collectAsStateWithLifecycle(
         initialValue = MulKkamUiState.Idle,
@@ -112,8 +112,8 @@ fun CupBottomSheet(
             BottomSheetHeader(
                 title =
                     when (editType) {
-                        SettingWaterCupEditType.ADD -> stringResource(R.string.setting_cup_add_title)
-                        SettingWaterCupEditType.EDIT -> stringResource(R.string.setting_cup_edit_title)
+                        WaterCupEditType.ADD -> stringResource(R.string.setting_cup_add_title)
+                        WaterCupEditType.EDIT -> stringResource(R.string.setting_cup_edit_title)
                     },
                 onDismiss = onDismiss,
             )
@@ -186,15 +186,15 @@ fun CupBottomSheet(
             SaveButton(
                 onClick = {
                     when (editType) {
-                        SettingWaterCupEditType.ADD -> onAdd(cup)
-                        SettingWaterCupEditType.EDIT -> onUpdate(cup)
+                        WaterCupEditType.ADD -> onAdd(cup)
+                        WaterCupEditType.EDIT -> onUpdate(cup)
                     }
                 },
                 enabled = isSaveAvailable,
                 text = stringResource(id = R.string.setting_cup_save),
             )
 
-            if (editType == SettingWaterCupEditType.EDIT && !cup.isRepresentative) {
+            if (editType == WaterCupEditType.EDIT && !cup.isRepresentative) {
                 Spacer(modifier = Modifier.height(10.dp))
                 DeleteCupButton(
                     onClick = {

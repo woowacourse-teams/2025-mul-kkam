@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.setting.cups.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text

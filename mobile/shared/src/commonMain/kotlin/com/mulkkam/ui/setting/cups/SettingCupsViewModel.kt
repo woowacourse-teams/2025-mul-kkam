@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingcups
+package com.mulkkam.ui.setting.cups
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,11 +9,13 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
-import com.mulkkam.ui.settingcups.model.toDomain
-import com.mulkkam.ui.settingcups.model.toUi
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupsUiModel
+import com.mulkkam.ui.setting.cups.model.toDomain
+import com.mulkkam.ui.setting.cups.model.toUi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -22,20 +24,16 @@ class SettingCupsViewModel(
     private val cupsRepository: CupsRepository,
     private val logger: Logger,
 ) : ViewModel() {
-    private val _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>> get() = _cupsUiState.asStateFlow()
+    private val _cupsUiState: MutableStateFlow<MulKkamUiState<CupsUiModel>> = MutableStateFlow(MulKkamUiState.Idle)
+    val cupsUiState: StateFlow<MulKkamUiState<CupsUiModel>>
+        get() = _cupsUiState.asStateFlow()
 
-    private val _cupsReorderUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val cupsReorderUiState: StateFlow<MulKkamUiState<Unit>>
-        get() = _cupsReorderUiState.asStateFlow()
-
-    private val _cupsResetUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val cupsResetUiState: StateFlow<MulKkamUiState<Unit>> get() = _cupsResetUiState.asStateFlow()
+    private val _cupsResetUiState: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
+    val cupsResetUiState: SharedFlow<MulKkamUiState<Unit>>
+        get() = _cupsResetUiState
 
     private var previousCupsUiModel: CupsUiModel? = null
+    private var isReorderingInProgress: Boolean = false
 
     init {
         loadCups()
@@ -59,8 +57,7 @@ class SettingCupsViewModel(
 
     fun updateCupOrder(newOrder: List<CupUiModel>) {
         val currentCups: CupsUiModel = cupsUiState.value.toSuccessDataOrNull() ?: return
-        val isReordering: Boolean = cupsReorderUiState.value is MulKkamUiState.Loading
-        if (isReordering) return
+        if (isReorderingInProgress) return
 
         val reorderedCups: Cups = Cups(newOrder.map { it.toDomain() }).reorderRanks()
         val reorderedUiModel: CupsUiModel = reorderedCups.toUi()
@@ -74,18 +71,20 @@ class SettingCupsViewModel(
 
         viewModelScope.launch {
             logger.info(LogEvent.USER_ACTION, "Saving cup reorder from settings")
-            _cupsReorderUiState.value = MulKkamUiState.Loading
-            runCatching {
-                cupsRepository.putCupsRank(reorderedCups).getOrError()
-            }.onSuccess { cups ->
-                val updatedUiModel: CupsUiModel = cups.toUi()
-                previousCupsUiModel = updatedUiModel
-                _cupsUiState.value = MulKkamUiState.Success(updatedUiModel)
-                _cupsReorderUiState.value = MulKkamUiState.Success(Unit)
-            }.onFailure {
-                val fallbackUiModel: CupsUiModel = previousCupsUiModel ?: currentCups
-                _cupsUiState.value = MulKkamUiState.Success(fallbackUiModel)
-                _cupsReorderUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            isReorderingInProgress = true
+            try {
+                runCatching {
+                    cupsRepository.putCupsRank(reorderedCups).getOrError()
+                }.onSuccess { cups ->
+                    val updatedUiModel: CupsUiModel = cups.toUi()
+                    previousCupsUiModel = updatedUiModel
+                    _cupsUiState.value = MulKkamUiState.Success(updatedUiModel)
+                }.onFailure {
+                    val fallbackUiModel: CupsUiModel = previousCupsUiModel ?: currentCups
+                    _cupsUiState.value = MulKkamUiState.Success(fallbackUiModel)
+                }
+            } finally {
+                isReorderingInProgress = false
             }
         }
     }
@@ -93,14 +92,14 @@ class SettingCupsViewModel(
     fun resetCups() {
         viewModelScope.launch {
             logger.info(LogEvent.USER_ACTION, "Resetting cups to default")
-            _cupsResetUiState.value = MulKkamUiState.Loading
+            _cupsResetUiState.emit(MulKkamUiState.Loading)
             runCatching {
                 cupsRepository.resetCups().getOrError()
             }.onSuccess {
-                _cupsResetUiState.value = MulKkamUiState.Success(Unit)
+                _cupsResetUiState.emit(MulKkamUiState.Success(Unit))
                 loadCups()
             }.onFailure {
-                _cupsResetUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _cupsResetUiState.emit(MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }

@@ -43,10 +43,10 @@ import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.cups.component.CupBottomSheet
 import com.mulkkam.ui.onboarding.cups.component.CupsEditor
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupsUiModel
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 import org.koin.androidx.compose.koinViewModel
@@ -88,14 +88,24 @@ fun CupsScreen(
 
     viewModel.saveOnboardingUiState.collectWithLifecycle(lifecycleOwner) { state ->
         when (state) {
-            is MulKkamUiState.Success<Unit> -> showDialog = true
-            is MulKkamUiState.Loading -> Unit
-            is MulKkamUiState.Idle -> Unit
-            is MulKkamUiState.Failure ->
+            is MulKkamUiState.Success<Unit> -> {
+                showDialog = true
+            }
+
+            is MulKkamUiState.Loading -> {
+                Unit
+            }
+
+            is MulKkamUiState.Idle -> {
+                Unit
+            }
+
+            is MulKkamUiState.Failure -> {
                 snackbarHostState.showMulKkamSnackbar2(
                     message = context.getString(R.string.network_check_error),
                     iconResourceId = R.drawable.ic_alert_circle,
                 )
+            }
         }
     }
 
@@ -142,7 +152,7 @@ fun CupsScreen(
                         koinViewModel(
                             key =
                                 selectedCup?.id?.toString()
-                                    ?: (SettingWaterCupEditType.ADD.name + System.currentTimeMillis()),
+                                    ?: (WaterCupEditType.ADD.name + System.currentTimeMillis()),
                         ),
                 )
             }

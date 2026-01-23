@@ -135,10 +135,6 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settingcups.SettingCupsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.settingtargetamount.SettingTargetAmountActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

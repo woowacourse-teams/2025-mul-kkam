@@ -1,6 +1,5 @@
-package com.mulkkam.ui.settingcups.component
+package com.mulkkam.ui.setting.cups.component
 
-import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,30 +17,35 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColorInt
-import com.mulkkam.R
 import com.mulkkam.domain.model.IntakeType
-import com.mulkkam.ui.component.NetworkImage2
+import com.mulkkam.ui.component.NetworkImage
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
 import com.mulkkam.ui.util.ImageShape
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import com.mulkkam.ui.util.extensions.toColorInt
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.btn_setting_cup_move
+import mulkkam.shared.generated.resources.btn_setting_cups_edit
+import mulkkam.shared.generated.resources.img_cup_placeholder
+import mulkkam.shared.generated.resources.setting_cup_representative
+import mulkkam.shared.generated.resources.setting_cups_increment
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun SettingCupsCup(
+fun CupItem(
     item: SettingCupsItem.CupItem,
     onEdit: () -> Unit,
-    @SuppressLint("ModifierParameter") dragHandleModifier: Modifier = Modifier,
+    dragHandleModifier: Modifier = Modifier,
     modifier: Modifier = Modifier,
 ) {
     val intakeTypeColor = item.value.intakeType.toColorOrDefault()
@@ -69,9 +73,9 @@ fun SettingCupsCup(
 
         Spacer(modifier = Modifier.width(12.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            SettingCupAmount(item.value.amount, intakeTypeColor)
+            CupAmount(item.value.amount, intakeTypeColor)
             Spacer(modifier = Modifier.width(6.dp))
-            SettingCupEditButton()
+            CupEditButton()
         }
     }
 }
@@ -79,7 +83,7 @@ fun SettingCupsCup(
 @Composable
 private fun OrderDragHandle(modifier: Modifier = Modifier) {
     Image(
-        painter = painterResource(R.drawable.btn_setting_cup_move),
+        painter = painterResource(Res.drawable.btn_setting_cup_move),
         contentDescription = null,
         modifier =
             Modifier
@@ -102,9 +106,9 @@ private fun CupBody(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        NetworkImage2(
+        NetworkImage(
             url = emojiUrl,
-            placeholderRes = R.drawable.img_cup_placeholder,
+            placeholderRes = Res.drawable.img_cup_placeholder,
             modifier =
                 Modifier
                     .size(32.dp)
@@ -119,7 +123,7 @@ private fun CupBody(
             Row(verticalAlignment = Alignment.CenterVertically) {
                 if (isRepresentative) {
                     Text(
-                        text = stringResource(R.string.setting_cup_representative),
+                        text = stringResource(Res.string.setting_cup_representative),
                         style = MulKkamTheme.typography.label2,
                         color = White,
                         modifier =
@@ -161,21 +165,21 @@ private fun IntakeType.toColorOrDefault(): Color {
 }
 
 @Composable
-private fun SettingCupAmount(
+private fun CupAmount(
     amount: Int,
     textColor: Color,
 ) {
     Text(
-        text = stringResource(R.string.setting_cups_increment, amount),
+        text = stringResource(Res.string.setting_cups_increment, amount),
         style = MulKkamTheme.typography.body4,
         color = textColor,
     )
 }
 
 @Composable
-private fun SettingCupEditButton() {
+private fun CupEditButton() {
     Image(
-        painter = painterResource(R.drawable.btn_setting_cups_edit),
+        painter = painterResource(Res.drawable.btn_setting_cups_edit),
         contentDescription = null,
         modifier =
             Modifier
@@ -186,9 +190,9 @@ private fun SettingCupEditButton() {
 
 @Preview(showBackground = true)
 @Composable
-private fun SettingCupsCupPreview() {
+private fun CupItemPreview() {
     MulKkamTheme {
-        SettingCupsCup(
+        CupItem(
             item =
                 SettingCupsItem.CupItem(
                     CupUiModel(

@@ -1,8 +1,6 @@
-package com.mulkkam.ui.settingcups.adapter
+package com.mulkkam.ui.setting.cups.adapter
 
-import com.mulkkam.ui.settingcups.adapter.SettingCupsViewType.ADD
-import com.mulkkam.ui.settingcups.adapter.SettingCupsViewType.CUP
-import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
 
 // TODO: 이거 리사이클러뷰 쓰던때 있던건데 왜 아직도 있음?
 sealed class SettingCupsItem(
@@ -12,12 +10,12 @@ sealed class SettingCupsItem(
 
     data class CupItem(
         val value: CupUiModel,
-    ) : SettingCupsItem(CUP) {
+    ) : SettingCupsItem(SettingCupsViewType.CUP) {
         override val rank: Int
             get() = value.rank
     }
 
-    data object AddItem : SettingCupsItem(ADD) {
+    data object AddItem : SettingCupsItem(SettingCupsViewType.ADD) {
         private const val LOAD_MORE_ITEM_ID: Int = -1
         override val rank: Int = LOAD_MORE_ITEM_ID
     }
