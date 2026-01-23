@@ -2,7 +2,6 @@ package com.mulkkam.ui.onboarding.terms
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import coil3.toUri
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.util.extensions.openLink
 
