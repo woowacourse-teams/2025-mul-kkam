@@ -31,7 +31,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun EncyclopediaScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     navigateToInformationSource: (uri: String) -> Unit,
 ) {
     val coffeeSource = stringResource(Res.string.coffee_encyclopedia_source)

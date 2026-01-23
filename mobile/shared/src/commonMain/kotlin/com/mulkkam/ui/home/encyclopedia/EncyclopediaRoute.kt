@@ -6,5 +6,5 @@ import androidx.compose.runtime.Composable
 @Composable
 expect fun EncyclopediaRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 )

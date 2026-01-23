@@ -56,7 +56,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SearchMembersScreen(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     receivedMemberSearchInfo: MemberSearchInfo?,
     showDialog: Boolean,
     onDismissDialog: () -> Unit,
@@ -74,7 +74,7 @@ fun SearchMembersScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = { SearchMembersTopAppBar { onNavigateToBack() } },
+        topBar = { SearchMembersTopAppBar(onNavigateToBack) },
         containerColor = White,
         modifier =
             Modifier.background(White).padding(

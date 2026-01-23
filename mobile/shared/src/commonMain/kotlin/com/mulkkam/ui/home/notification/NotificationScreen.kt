@@ -37,7 +37,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun NotificationScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     state: LazyListState = rememberLazyListState(),
     viewModel: NotificationViewModel = koinViewModel(),

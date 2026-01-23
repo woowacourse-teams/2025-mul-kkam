@@ -52,7 +52,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun NicknameScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingNicknameViewModel = koinViewModel(),
 ) {
@@ -75,9 +75,7 @@ fun NicknameScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            SettingNicknameTopAppBar { navigateToBack() }
-        },
+        topBar = { SettingNicknameTopAppBar(navigateToBack) },
         containerColor = White,
         modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->
@@ -127,7 +125,7 @@ fun NicknameScreen(
 
 private suspend fun handleNicknameChangedAction(
     state: MulKkamUiState<Unit>,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     when (state) {

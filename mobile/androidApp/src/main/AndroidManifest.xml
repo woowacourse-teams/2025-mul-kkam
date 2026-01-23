@@ -76,38 +76,7 @@
         </service>
 
         <activity
-            android:name=".ui.settingbioinfo.SettingBioInfoActivity"
-            android:exported="true"
-            android:screenOrientation="portrait">
-            <intent-filter>
-                <action android:name="androidx.health.ACTION_SHOW_PERMISSIONS_RATIONALE" />
-                <action android:name="android.intent.action.VIEW_PERMISSION_USAGE" />
-
-                <category android:name="android.intent.category.HEALTH_PERMISSIONS" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.terms.OnboardingTermsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.nickname.OnboardingNicknameActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.bioinfo.OnboardingBioInfoActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.targetamount.OnboardingTargetAmountActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.onboarding.cups.OnboardingCupsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
@@ -116,26 +85,6 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.settingterms.SettingTermsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.login.LoginActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingnickname.SettingNicknameActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingcups.SettingCupsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingtargetamount.SettingTargetAmountActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingreminder.SettingReminderActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

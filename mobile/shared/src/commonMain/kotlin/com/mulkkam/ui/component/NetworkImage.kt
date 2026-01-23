@@ -24,6 +24,7 @@ import org.jetbrains.compose.resources.painterResource
 
 private val SVG_REGEX = Regex("(?i)\\.svg(\\?.*)?$")
 
+// TODO: iOS 이미지 나오지 않는 오류 해결
 @Composable
 fun NetworkImage(
     url: String?,
@@ -64,14 +65,24 @@ fun NetworkImage(
 
 private fun ImageShape.toShape(): Shape =
     when (this) {
-        is ImageShape.None -> RectangleShape
-        is ImageShape.Circle -> CircleShape
-        is ImageShape.Rounded -> RoundedCornerShape(radiusDp.dp)
-        is ImageShape.RoundedCorners ->
+        is ImageShape.None -> {
+            RectangleShape
+        }
+
+        is ImageShape.Circle -> {
+            CircleShape
+        }
+
+        is ImageShape.Rounded -> {
+            RoundedCornerShape(radiusDp.dp)
+        }
+
+        is ImageShape.RoundedCorners -> {
             RoundedCornerShape(
                 topStart = topLeftDp.dp,
                 topEnd = topRightDp.dp,
                 bottomEnd = bottomRightDp.dp,
                 bottomStart = bottomLeftDp.dp,
             )
+        }
     }

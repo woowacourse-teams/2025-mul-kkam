@@ -12,7 +12,7 @@ import com.mulkkam.ui.util.extensions.openLink
 @Composable
 actual fun EncyclopediaRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 ) {
     val context = LocalContext.current
 

@@ -41,6 +41,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 

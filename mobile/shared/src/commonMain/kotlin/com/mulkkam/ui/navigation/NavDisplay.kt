@@ -20,14 +20,12 @@ private const val ANIMATION_DURATION_MILLIS: Int = 300
 @Composable
 fun NavDisplay(
     backStack: SnapshotStateList<Any>,
-    transitionSpec: ContentTransform = defaultTransitionSpec(),
     entryProvider: @Composable (route: Any) -> NavEntry<*>,
 ) {
     val currentRoute = backStack.lastOrNull()
 
     AnimatedContent(
         targetState = currentRoute,
-        transitionSpec = { transitionSpec },
         label = "NavDisplayAnimation",
     ) { route ->
         route?.let {

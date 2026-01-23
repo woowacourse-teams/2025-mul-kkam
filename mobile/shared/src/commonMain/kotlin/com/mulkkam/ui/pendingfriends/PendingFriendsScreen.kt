@@ -40,7 +40,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun PendingFriendsScreen(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     viewModel: PendingFriendsViewModel = koinViewModel(),
 ) {
     val tabTitles =
@@ -57,7 +57,7 @@ fun PendingFriendsScreen(
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
         topBar = {
-            PendingFriendsTopAppBar { onNavigateToBack() }
+            PendingFriendsTopAppBar(onNavigateToBack)
         },
         containerColor = White,
         modifier =

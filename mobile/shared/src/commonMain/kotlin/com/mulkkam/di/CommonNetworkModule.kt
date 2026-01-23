@@ -16,6 +16,7 @@ import io.ktor.client.plugins.defaultRequest
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.http.ContentType
+import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
@@ -78,6 +79,11 @@ fun createHttpClient(
         }
 
         install(Auth) {
+            reAuthorizeOnResponse { response ->
+                response.status == HttpStatusCode.Unauthorized ||
+                    response.status == HttpStatusCode.Forbidden
+            }
+
             bearer {
                 loadTokens {
                     tokenLocalDataSource.accessToken?.let { BearerTokens(it, "") }
