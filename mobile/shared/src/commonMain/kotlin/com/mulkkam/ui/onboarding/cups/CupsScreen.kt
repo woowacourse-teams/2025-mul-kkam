@@ -37,10 +37,10 @@ import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.cups.component.CupBottomSheet
 import com.mulkkam.ui.onboarding.cups.component.CupsEditor
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.CupsUiModel
-import com.mulkkam.ui.settingcups.model.SettingWaterCupEditType
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.CupsUiModel
+import com.mulkkam.ui.setting.cups.model.WaterCupEditType
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 import mulkkam.shared.generated.resources.Res
@@ -151,7 +151,7 @@ fun CupsScreen(
                     koinViewModel(
                         key =
                             selectedCup?.id?.toString()
-                                ?: (SettingWaterCupEditType.ADD.name + Clock.System.now()),
+                                ?: (WaterCupEditType.ADD.name + Clock.System.now()),
                     ),
             )
         }

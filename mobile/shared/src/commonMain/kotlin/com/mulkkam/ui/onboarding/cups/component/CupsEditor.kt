@@ -26,11 +26,11 @@ import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.onboarding.cups.model.rememberCupsReorderState
-import com.mulkkam.ui.setting.cups.component.SettingCupsAdd
-import com.mulkkam.ui.setting.cups.component.SettingCupsCup
-import com.mulkkam.ui.settingcups.adapter.SettingCupsItem
-import com.mulkkam.ui.settingcups.model.CupEmojiUiModel
-import com.mulkkam.ui.settingcups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.adapter.SettingCupsItem
+import com.mulkkam.ui.setting.cups.component.CupAddItem
+import com.mulkkam.ui.setting.cups.component.CupItem
+import com.mulkkam.ui.setting.cups.model.CupEmojiUiModel
+import com.mulkkam.ui.setting.cups.model.CupUiModel
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.math.roundToInt
@@ -107,7 +107,7 @@ fun CupsEditor(
                                 },
                             )
                         }
-                    SettingCupsCup(
+                    CupItem(
                         item = item,
                         onEdit = { onEditCup(item.value) },
                         dragHandleModifier = dragHandleModifier,
@@ -117,7 +117,7 @@ fun CupsEditor(
 
                 is SettingCupsItem.AddItem -> {
                     Spacer(modifier = Modifier.size(18.dp))
-                    SettingCupsAdd(
+                    CupAddItem(
                         onClick = onAddCup,
                         modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp),
                     )

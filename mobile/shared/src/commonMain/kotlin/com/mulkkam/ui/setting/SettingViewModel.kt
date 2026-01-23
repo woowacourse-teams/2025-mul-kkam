@@ -6,8 +6,8 @@ import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.cups.Cups
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.CupsRepository
-import com.mulkkam.ui.settingcups.model.CupUiModel
-import com.mulkkam.ui.settingcups.model.toDomain
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.toDomain
 import kotlinx.coroutines.launch
 
 class SettingViewModel(

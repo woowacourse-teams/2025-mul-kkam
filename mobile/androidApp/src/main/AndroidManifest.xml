@@ -96,10 +96,6 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".ui.settingcups.SettingCupsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
@@ -136,14 +132,6 @@
         </activity>
         <activity
             android:name=".ui.settingnotification.SettingNotificationActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.pendingfriends.PendingFriendsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.searchmembers.SearchMembersActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
     </application>

@@ -69,30 +69,8 @@ fun NicknameScreen(
         }
     }
 
-    viewModel.nicknameChangeUiState.collectWithLifecycle(lifecycleOwner) { state ->
-        when (state) {
-            is MulKkamUiState.Success<Unit> -> {
-                coroutineScope {
-                    launch {
-                        snackbarHostState
-                            .showMulKkamSnackbar(
-                                message = getString(Res.string.setting_nickname_change_complete),
-                                iconResource = Res.drawable.ic_info_circle,
-                            )
-                    }
-                    navigateToBack()
-                }
-            }
-
-            is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
-
-            is MulKkamUiState.Failure -> {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.network_check_error),
-                    iconResource = Res.drawable.ic_alert_circle,
-                )
-            }
-        }
+    viewModel.onNicknameChanged.collectWithLifecycle(lifecycleOwner) { state ->
+        handleNicknameChangedAction(state, navigateToBack, snackbarHostState)
     }
 
     Scaffold(
@@ -140,6 +118,36 @@ fun NicknameScreen(
                         .align(Alignment.BottomCenter)
                         .padding(24.dp),
                 enabled = nicknameValidationUiState == NicknameValidationUiState.VALID,
+            )
+        }
+    }
+}
+
+private suspend fun handleNicknameChangedAction(
+    state: MulKkamUiState<Unit>,
+    navigateToBack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+) {
+    when (state) {
+        is MulKkamUiState.Success<Unit> -> {
+            coroutineScope {
+                launch {
+                    snackbarHostState
+                        .showMulKkamSnackbar(
+                            message = getString(Res.string.setting_nickname_change_complete),
+                            iconResource = Res.drawable.ic_info_circle,
+                        )
+                }
+                navigateToBack()
+            }
+        }
+
+        is MulKkamUiState.Loading, MulKkamUiState.Idle -> Unit
+
+        is MulKkamUiState.Failure -> {
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(Res.string.network_check_error),
+                iconResource = Res.drawable.ic_alert_circle,
             )
         }
     }

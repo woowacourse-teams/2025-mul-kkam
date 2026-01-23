@@ -69,6 +69,7 @@ object SettingNavGraph {
                     CupsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
                         snackbarHostState = snackbarHostState,
                     )
                 }

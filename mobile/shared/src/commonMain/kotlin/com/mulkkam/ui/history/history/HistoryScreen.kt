@@ -14,7 +14,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -22,6 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.intake.WaterIntakeState
 import com.mulkkam.domain.model.result.MulKkamError
@@ -37,6 +37,7 @@ import com.mulkkam.ui.history.history.component.WeeklyWaterIntakeChart
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.util.LoadingShimmerEffect
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.history_delete_dialog_label
@@ -63,43 +64,18 @@ fun HistoryScreen(
     viewModel: HistoryViewModel = koinViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
+    val lifecycleOwner = LocalLifecycleOwner.current
 
     val weeklyIntakeHistories by viewModel.weeklyIntakeHistoriesUiState.collectAsStateWithLifecycle()
     val dailyIntakeHistory by viewModel.dailyIntakeHistories.collectAsStateWithLifecycle()
     val waterIntakeState by viewModel.waterIntakeState.collectAsStateWithLifecycle()
     val isNotCurrentWeek by viewModel.isNotCurrentWeek.collectAsStateWithLifecycle()
-    val deleteUiState by viewModel.deleteUiState.collectAsStateWithLifecycle()
 
     var showDialog by remember { mutableStateOf(false) }
     var deletedHistory: Int? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(deleteUiState) {
-        when (deleteUiState) {
-            is MulKkamUiState.Failure -> {
-                val state = deleteUiState as MulKkamUiState.Failure
-
-                if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(Res.string.network_check_error),
-                        iconResource = Res.drawable.ic_alert_circle,
-                    )
-                } else {
-                    snackbarHostState.showMulKkamSnackbar(
-                        message = getString(Res.string.history_delete_failure_past),
-                        iconResource = Res.drawable.ic_alert_circle,
-                    )
-                }
-            }
-
-            is MulKkamUiState.Success -> {
-                snackbarHostState.showMulKkamSnackbar(
-                    message = getString(Res.string.history_delete_success),
-                    iconResource = Res.drawable.ic_terms_all_check_on,
-                )
-            }
-
-            is MulKkamUiState.Loading, is MulKkamUiState.Idle -> Unit
-        }
+    viewModel.onDeleteHistory.collectWithLifecycle(lifecycleOwner) { state ->
+        handleDeleteAction(state, snackbarHostState)
     }
 
     Scaffold(
@@ -213,6 +189,36 @@ fun HistoryScreen(
                 onDismiss = { showDialog = false },
             )
         }
+    }
+}
+
+private suspend fun handleDeleteAction(
+    state: MulKkamUiState<Unit>,
+    snackbarHostState: SnackbarHostState,
+) {
+    when (state) {
+        is MulKkamUiState.Failure -> {
+            if (state.error !is MulKkamError.HistoryError.InvalidDateForDelete) {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(Res.string.network_check_error),
+                    iconResource = Res.drawable.ic_alert_circle,
+                )
+            } else {
+                snackbarHostState.showMulKkamSnackbar(
+                    message = getString(Res.string.history_delete_failure_past),
+                    iconResource = Res.drawable.ic_alert_circle,
+                )
+            }
+        }
+
+        is MulKkamUiState.Success -> {
+            snackbarHostState.showMulKkamSnackbar(
+                message = getString(Res.string.history_delete_success),
+                iconResource = Res.drawable.ic_terms_all_check_on,
+            )
+        }
+
+        is MulKkamUiState.Loading, is MulKkamUiState.Idle -> Unit
     }
 }
 
