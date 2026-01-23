@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">물깜</string>
 
+    <string name="top_app_bar_navigation_icon_description">뒤로가기</string>
+
     <string name="main_home">홈</string>
     <string name="main_history">기록</string>
     <string name="main_setting">설정</string>
@@ -22,7 +24,6 @@
     <string name="notification_hours_ago">%1$d시간 전</string>
     <string name="notification_one_day_ago">하루 전</string>
     <string name="notification_item_icon_description">알림 아이콘</string>
-    <string name="notification_app_bar_navigation_icon_description">뒤로가기</string>
     <string name="notification_empty_description">텅 빈 알림 화면 이미지</string>
     <string name="notification_delete_description">알림 삭제 아이콘</string>
     <string name="notification_load_more_button">더 로드하기</string>

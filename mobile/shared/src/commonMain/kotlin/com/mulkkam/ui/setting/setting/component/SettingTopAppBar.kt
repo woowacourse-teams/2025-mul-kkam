@@ -19,7 +19,7 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_common_prev
-import mulkkam.shared.generated.resources.notification_app_bar_navigation_icon_description
+import mulkkam.shared.generated.resources.top_app_bar_navigation_icon_description
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -44,7 +44,7 @@ fun SettingTopAppBar(
                 ) {
                     Icon(
                         painter = painterResource(Res.drawable.ic_common_prev),
-                        contentDescription = stringResource(Res.string.notification_app_bar_navigation_icon_description),
+                        contentDescription = stringResource(Res.string.top_app_bar_navigation_icon_description),
                     )
                 }
             },

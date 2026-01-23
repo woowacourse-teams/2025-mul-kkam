@@ -20,7 +20,7 @@ import com.mulkkam.ui.designsystem.White
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.coffee_encyclopedia_app_bar_title
 import mulkkam.shared.generated.resources.ic_common_prev
-import mulkkam.shared.generated.resources.notification_app_bar_navigation_icon_description
+import mulkkam.shared.generated.resources.top_app_bar_navigation_icon_description
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
@@ -43,7 +43,7 @@ fun CoffeeEncyclopediaTopAppBar(onBackClick: () -> Unit) {
                 ) {
                     Icon(
                         painter = painterResource(resource = Res.drawable.ic_common_prev),
-                        contentDescription = stringResource(resource = Res.string.notification_app_bar_navigation_icon_description),
+                        contentDescription = stringResource(resource = Res.string.top_app_bar_navigation_icon_description),
                     )
                 }
             },

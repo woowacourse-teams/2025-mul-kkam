@@ -16,7 +16,7 @@ import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_common_next
-import mulkkam.shared.generated.resources.notification_app_bar_navigation_icon_description
+import mulkkam.shared.generated.resources.top_app_bar_navigation_icon_description
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -42,7 +42,7 @@ fun SettingNormalItem(
         )
         Icon(
             painter = painterResource(Res.drawable.ic_common_next),
-            contentDescription = stringResource(Res.string.notification_app_bar_navigation_icon_description),
+            contentDescription = stringResource(Res.string.top_app_bar_navigation_icon_description),
             tint = Gray400,
         )
     }
