@@ -50,7 +50,7 @@ private const val REORDER_RANK_DELAY_MILLIS: Long = 2000L
 @Composable
 fun CupsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingCupsViewModel = koinViewModel(),

@@ -27,7 +27,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun SearchMembersRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     onFriendAccepted: () -> Unit = {},
     viewModel: SearchMembersViewModel = koinViewModel(),

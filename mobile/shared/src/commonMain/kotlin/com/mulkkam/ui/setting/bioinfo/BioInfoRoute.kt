@@ -13,7 +13,7 @@ import org.koin.compose.koinInject
 @Composable
 fun BioInfoRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     val healthManager: HealthPlatform = koinInject()

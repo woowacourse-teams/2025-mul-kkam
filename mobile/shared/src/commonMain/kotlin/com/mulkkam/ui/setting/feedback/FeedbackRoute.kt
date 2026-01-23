@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun FeedbackRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 ) {
     FeedbackScreen(
         padding = padding,

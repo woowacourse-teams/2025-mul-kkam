@@ -54,7 +54,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun TargetAmountScreen(
     padding: PaddingValues,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: SettingTargetAmountViewModel = koinViewModel(),
 ) {
@@ -76,9 +76,7 @@ fun TargetAmountScreen(
 
     Scaffold(
         contentWindowInsets = WindowInsets(0.dp),
-        topBar = {
-            SettingTargetAmountTopAppBar { navigateToBack() }
-        },
+        topBar = { SettingTargetAmountTopAppBar(navigateToBack) },
         containerColor = White,
         modifier = Modifier.fillMaxSize().background(White).padding(padding),
     ) { innerPadding ->
@@ -168,7 +166,7 @@ private fun handleNumericInput(
 
 private suspend fun handleTargetAmountSavedAction(
     state: MulKkamUiState<Unit>,
-    navigateToBack: () -> Boolean,
+    navigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     when (state) {

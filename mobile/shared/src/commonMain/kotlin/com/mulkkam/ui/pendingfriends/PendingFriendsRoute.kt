@@ -23,7 +23,7 @@ import org.koin.compose.viewmodel.koinViewModel
 @Composable
 fun PendingFriendsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
     snackbarHostState: SnackbarHostState,
     onFriendAccepted: () -> Unit = {},
     viewModel: PendingFriendsViewModel = koinViewModel(),

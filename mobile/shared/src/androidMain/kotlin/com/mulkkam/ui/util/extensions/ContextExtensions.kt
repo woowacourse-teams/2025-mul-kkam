@@ -10,6 +10,7 @@ import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.health_connect_market
 import mulkkam.shared.generated.resources.health_connect_web
 import org.jetbrains.compose.resources.getString
+import org.koin.core.context.GlobalContext
 
 fun Context.isHealthConnectAvailable(): Boolean =
     when {
@@ -47,5 +48,17 @@ suspend fun Context.navigateToHealthConnectStore() {
     }
 }
 
-private fun Context.canHandleIntent(intent: Intent): Boolean =
-    packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null
+fun Context.canHandleIntent(intent: Intent): Boolean = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null
+
+fun opendLink(uri: String) {
+    val context: Context = GlobalContext.get().get()
+    val intent =
+        Intent(
+            Intent.ACTION_VIEW,
+            uri.toUri(),
+        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    if (context.canHandleIntent(intent)) {
+        context.startActivity(intent)
+    }
+}
