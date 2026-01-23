@@ -51,7 +51,7 @@ class NotificationViewModel(
                 _notifications.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault()),
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                         NOTIFICATION_SIZE,
                     ).getOrError()
             }.onSuccess { notificationsResult ->
@@ -102,7 +102,7 @@ class NotificationViewModel(
                 _loadUiState.value = MulKkamUiState.Loading
                 notificationRepository
                     .getNotifications(
-                        time = Clock.System.now().toLocalDateTime(TimeZone.Companion.currentSystemDefault()),
+                        time = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
                         size = NOTIFICATION_SIZE,
                         lastId = nextCursor,
                     ).getOrError()
