@@ -66,53 +66,68 @@ fun NotificationScreen(
             )
         }
 
-        if (notifications == MulKkamUiState.Loading) {
-            Column(
-                modifier = Modifier.padding(innerPadding),
-            ) {
-                repeat(7) {
-                    LoadingShimmerEffect {
-                        NotificationShimmerItem(it)
+        when (notifications) {
+            is MulKkamUiState.Loading -> {
+                Column(
+                    modifier = Modifier.padding(innerPadding),
+                ) {
+                    repeat(7) {
+                        LoadingShimmerEffect {
+                            NotificationShimmerItem(it)
+                        }
                     }
                 }
             }
-        }
 
-        Column(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-        ) {
-            LazyColumn(
-                state = state,
-            ) {
-                val notification = notifications.toSuccessDataOrNull() ?: return@LazyColumn
+            is MulKkamUiState.Success<*> -> {
+                Column(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                ) {
+                    LazyColumn(
+                        state = state,
+                    ) {
+                        val notification = notifications.toSuccessDataOrNull() ?: return@LazyColumn
 
-                items(
-                    notification.size,
-                    key = { notification[it].id },
-                ) { index ->
-                    NotificationItemComponent(
-                        notification = notification[index],
-                        onApplySuggestion = {
-                            viewModel.applySuggestion(
-                                notification[index].id,
+                        items(
+                            notification.size,
+                            key = { notification[it].id },
+                        ) { index ->
+                            NotificationItemComponent(
+                                notification = notification[index],
+                                onApplySuggestion = {
+                                    viewModel.applySuggestion(
+                                        notification[index].id,
+                                    )
+                                },
+                                onRemove = {
+                                    viewModel.deleteNotification(notification[index].id)
+                                },
+                                modifier = Modifier.animateItem(),
                             )
-                        },
-                        onRemove = {
-                            viewModel.deleteNotification(notification[index].id)
-                        },
-                        modifier = Modifier.animateItem(),
-                    )
-                }
+                        }
 
-                if (loadMoreState is MulKkamUiState.Failure) {
-                    item {
-                        LoadMoreButton { viewModel.loadMore() }
+                        if (loadMoreState is MulKkamUiState.Failure) {
+                            item {
+                                LoadMoreButton { viewModel.loadMore() }
+                            }
+                        }
                     }
                 }
             }
+
+            is MulKkamUiState.Failure -> {
+                EmptyNotificationScreen(
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .padding(innerPadding),
+                )
+            }
+
+            is MulKkamUiState.Idle -> Unit
         }
     }
 }
