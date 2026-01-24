@@ -1,6 +1,7 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.infrastructure.fcm.domain.FcmErrorHandlingStrategy;
 import backend.mulkkam.common.infrastructure.fcm.domain.NotificationOutbox;
 import backend.mulkkam.common.infrastructure.fcm.domain.NotificationOutboxStatus;
 import backend.mulkkam.common.infrastructure.fcm.domain.NotificationOutboxTargetType;
@@ -151,13 +152,11 @@ public class FcmQueueService {
         String errorMessage = resolveErrorMessage(e);
         if (e instanceof CommonException commonException
                 && commonException.getErrorCode() instanceof FirebaseErrorCode firebaseErrorCode) {
-            if (shouldRemoveToken(firebaseErrorCode)) {
+            FcmErrorHandlingStrategy strategy = FcmErrorHandlingStrategy.from(firebaseErrorCode);
+            if (strategy.shouldRemoveToken()) {
                 removeTokenIfNeeded(outbox);
-                outbox.markFailedNow(now, errorCode, errorMessage);
-                log.warn("[FCM QUEUE DROPPED TOKEN] id={}, errorCode={}", outbox.getId(), errorCode);
-                return;
             }
-            if (shouldFailFast(firebaseErrorCode)) {
+            if (!strategy.isRetryable() || strategy.shouldFailFast()) {
                 outbox.markFailedNow(now, errorCode, errorMessage);
                 log.warn("[FCM QUEUE FAILED FAST] id={}, errorCode={}", outbox.getId(), errorCode);
                 return;
@@ -169,16 +168,6 @@ public class FcmQueueService {
                 outbox.getId(),
                 outbox.getStatus(),
                 errorCode);
-    }
-
-    private boolean shouldRemoveToken(FirebaseErrorCode firebaseErrorCode) {
-        return firebaseErrorCode == FirebaseErrorCode.INVALID_ARGUMENT
-                || firebaseErrorCode == FirebaseErrorCode.UNREGISTERED;
-    }
-
-    private boolean shouldFailFast(FirebaseErrorCode firebaseErrorCode) {
-        return firebaseErrorCode == FirebaseErrorCode.SENDER_ID_MISMATCH
-                || firebaseErrorCode == FirebaseErrorCode.THIRD_PARTY_AUTH_ERROR;
     }
 
     private void removeTokenIfNeeded(NotificationOutbox outbox) {
