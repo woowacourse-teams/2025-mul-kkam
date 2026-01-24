@@ -1,7 +1,7 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_PAGE_SIZE_RANGE;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -10,6 +10,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,7 @@ import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -47,6 +49,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.ArgumentCaptor;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Pageable;
@@ -338,11 +341,11 @@ class NotificationServiceUnitTest {
 
             verify(deviceRepository).findAllTokenByMemberIdIn(memberIds);
 
-            verify(publisher).publishEvent(
-                    argThat((SendMessageByFcmTokensRequest event) ->
-                            event.allTokens().containsAll(tokens)
-                    )
-            );
+            ArgumentCaptor<SendMessageByFcmTokenRequest> captor = ArgumentCaptor.forClass(SendMessageByFcmTokenRequest.class);
+            verify(publisher, times(2)).publishEvent(captor.capture());
+            assertThat(captor.getAllValues())
+                    .extracting(SendMessageByFcmTokenRequest::token)
+                    .containsExactlyInAnyOrder(token1, token2);
         }
 
         @DisplayName("스케줄이 비어있으면 알림을 저장하지 않고 FCM 이벤트도 발행하지 않는다")
@@ -401,4 +404,3 @@ class NotificationServiceUnitTest {
         }
     }
 }
-

@@ -10,6 +10,7 @@ import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
@@ -303,7 +304,14 @@ public class NotificationService {
             NotificationMessageTemplate template
     ) {
         List<String> tokens = readDeviceTokens(memberIds);
-        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+        tokens.stream()
+                .map(token -> new SendMessageByFcmTokenRequest(
+                        template.title(),
+                        template.body(),
+                        token,
+                        template.action()
+                ))
+                .forEach(publisher::publishEvent);
     }
 
     private List<String> readDeviceTokens(List<Long> memberIds) {
