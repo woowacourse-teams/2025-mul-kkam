@@ -24,3 +24,10 @@ management:
         include:
           - health
           - metrics
+
+fcm:
+  queue:
+    poll-interval-ms: 5000
+    batch-size: 100
+    max-attempts: 4
+    base-backoff-seconds: 1
