@@ -37,7 +37,7 @@ class FcmQueueOutboxProcessorUnitTest {
 
     @DisplayName("전송 성공 시 아웃박스 상태가 성공으로 갱신된다")
     @Test
-    void processNext_marksSuccess() {
+    void success_processNextMarksSuccess() {
         // given
         FcmQueueOutboxProcessor processor = new FcmQueueOutboxProcessor(
                 notificationOutboxRepository,
@@ -68,7 +68,7 @@ class FcmQueueOutboxProcessorUnitTest {
 
     @DisplayName("전송 실패 시 재시도 대기 상태로 갱신된다")
     @Test
-    void processNext_marksPendingWithBackoff() {
+    void error_processNextMarksPendingWithBackoff() {
         // given
         FcmQueueOutboxProcessor processor = new FcmQueueOutboxProcessor(
                 notificationOutboxRepository,
@@ -105,7 +105,7 @@ class FcmQueueOutboxProcessorUnitTest {
 
     @DisplayName("최대 시도 횟수에 도달하면 실패 상태로 갱신된다")
     @Test
-    void processNext_marksFailedWhenMaxAttemptsReached() {
+    void error_processNextMarksFailedWhenMaxAttemptsReached() {
         // given
         FcmQueueOutboxProcessor processor = new FcmQueueOutboxProcessor(
                 notificationOutboxRepository,
@@ -137,7 +137,7 @@ class FcmQueueOutboxProcessorUnitTest {
 
     @DisplayName("UNREGISTERED 에러는 토큰 삭제 후 실패 처리된다")
     @Test
-    void processNext_removesTokenOnUnregistered() {
+    void error_processNextRemovesTokenOnUnregistered() {
         // given
         FcmQueueOutboxProcessor processor = new FcmQueueOutboxProcessor(
                 notificationOutboxRepository,
@@ -169,7 +169,7 @@ class FcmQueueOutboxProcessorUnitTest {
 
     @DisplayName("INTERNAL 에러는 재시도 대상으로 처리된다")
     @Test
-    void processNext_retriesOnInternalError() {
+    void error_processNextRetriesOnInternalError() {
         // given
         FcmQueueOutboxProcessor processor = new FcmQueueOutboxProcessor(
                 notificationOutboxRepository,

@@ -32,7 +32,7 @@ class FcmQueueServiceUnitTest {
 
     @DisplayName("토큰 리스트 요청은 토큰당 1건의 아웃박스로 저장된다")
     @Test
-    void enqueueTokens_savesOutboxPerToken() {
+    void success_enqueueTokensSavesOutboxPerToken() {
         // given
         FcmQueueService service = new FcmQueueService(notificationOutboxRepository, fcmQueueOutboxProcessor, 100, 4);
         SendMessageByFcmTokensRequest request = new SendMessageByFcmTokensRequest(
@@ -61,7 +61,7 @@ class FcmQueueServiceUnitTest {
 
     @DisplayName("배치 크기만큼 처리하도록 아웃박스 프로세서를 호출한다")
     @Test
-    void processPendingQueue_invokesProcessorUpToBatchSize() {
+    void success_processPendingQueueInvokesProcessorUpToBatchSize() {
         // given
         FcmQueueService service = new FcmQueueService(notificationOutboxRepository, fcmQueueOutboxProcessor, 2, 4);
         when(fcmQueueOutboxProcessor.processNext(any(LocalDateTime.class)))
