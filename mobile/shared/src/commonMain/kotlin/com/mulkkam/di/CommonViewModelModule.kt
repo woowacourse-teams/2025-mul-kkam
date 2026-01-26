@@ -6,8 +6,8 @@ import com.mulkkam.ui.friends.FriendsViewModel
 import com.mulkkam.ui.history.HistoryViewModel
 import com.mulkkam.ui.home.ManualDrinkViewModel
 import com.mulkkam.ui.home.home.HomeViewModel
+import com.mulkkam.ui.home.notification.NotificationViewModel
 import com.mulkkam.ui.main.MainViewModel
-import com.mulkkam.ui.notification.NotificationViewModel
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.onboarding.cups.CupsViewModel

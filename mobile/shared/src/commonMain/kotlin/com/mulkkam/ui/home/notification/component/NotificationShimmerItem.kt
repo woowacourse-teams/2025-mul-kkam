@@ -1,4 +1,4 @@
-package com.mulkkam.ui.notification.component
+package com.mulkkam.ui.home.notification.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

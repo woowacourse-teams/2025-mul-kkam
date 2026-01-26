@@ -10,11 +10,8 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.datetime.DateTimeUnit
@@ -48,8 +45,8 @@ class HistoryViewModel(
         MutableStateFlow(WaterIntakeState.Present.NotFull)
     val waterIntakeState: StateFlow<WaterIntakeState> get() = _waterIntakeState.asStateFlow()
 
-    private val _onDeleteHistory: MutableSharedFlow<MulKkamUiState<Unit>> = MutableSharedFlow()
-    val onDeleteHistory: SharedFlow<MulKkamUiState<Unit>> get() = _onDeleteHistory.asSharedFlow()
+    private val _deleteHistoryUiState: MutableStateFlow<MulKkamUiState<Unit>> = MutableStateFlow(MulKkamUiState.Idle)
+    val deleteHistoryUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteHistoryUiState.asStateFlow()
 
     init {
         loadIntakeHistories()
@@ -130,10 +127,10 @@ class HistoryViewModel(
                     .deleteIntakeHistoryDetails(historyId)
                     .getOrError()
             }.onSuccess {
-                _onDeleteHistory.emit(MulKkamUiState.Success(Unit))
+                _deleteHistoryUiState.value = MulKkamUiState.Success(Unit)
                 updateIntakeHistoriesAfterDeletion(historyId)
             }.onFailure {
-                _onDeleteHistory.emit(MulKkamUiState.Failure(it.toMulKkamError()))
+                _deleteHistoryUiState.value = (MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }

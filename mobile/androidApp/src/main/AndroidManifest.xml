@@ -76,14 +76,6 @@
         </service>
 
         <activity
-            android:name=".ui.encyclopedia.CoffeeEncyclopediaActivity"
-            android:exported="true"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.notification.NotificationActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -54,18 +54,17 @@ fun SettingReminderContainer(
             LazyColumn(
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                val reminder = reminders
                 items(
-                    reminder.size,
-                    key = { reminder[it].id },
+                    reminders.size,
+                    key = { reminders[it].id },
                 ) { index ->
                     ReminderScheduleItem(
-                        reminder = reminder[index],
-                        onRemove = { removeReminder(reminder[index].id) },
+                        reminder = reminders[index],
+                        onRemove = { removeReminder(reminders[index].id) },
                         modifier =
                             Modifier
                                 .clickable {
-                                    updateBottomSheetMode(ReminderUpdateUiState.Update(reminder[index]))
+                                    updateBottomSheetMode(ReminderUpdateUiState.Update(reminders[index]))
                                 }.animateItem(),
                     )
                 }

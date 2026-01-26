@@ -1,29 +1,32 @@
-package com.mulkkam.ui.notification.component
+package com.mulkkam.ui.home.notification.component
 
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mulkkam.R
 import com.mulkkam.domain.model.notification.Notification
 import com.mulkkam.ui.designsystem.Gray200
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
+import com.mulkkam.ui.util.extensions.format
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toInstant
-import kotlinx.datetime.toJavaLocalDateTime
-import java.time.format.DateTimeFormatter
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.notification_hours_ago
+import mulkkam.shared.generated.resources.notification_just_now
+import mulkkam.shared.generated.resources.notification_minutes_ago
+import mulkkam.shared.generated.resources.notification_one_day_ago
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Clock
+import kotlin.time.ExperimentalTime
 
 private const val ONE_MINUTE: Long = 1L
 private const val ONE_HOUR: Long = 1L
 private const val ONE_DAY: Long = 1L
 private const val TWO_DAYS: Long = 2L
-private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd")
 
 @Composable
 fun NotificationContent(notification: Notification) {
@@ -40,6 +43,7 @@ fun NotificationContent(notification: Notification) {
     )
 }
 
+@OptIn(ExperimentalTime::class)
 @Composable
 private fun LocalDateTime.toRelativeTimeString(): String {
     val timeZone = TimeZone.currentSystemDefault()
@@ -50,24 +54,26 @@ private fun LocalDateTime.toRelativeTimeString(): String {
     return when {
         duration.inWholeMinutes < ONE_MINUTE ->
             stringResource(
-                R.string.notification_just_now,
+                resource = Res.string.notification_just_now,
             )
 
         duration.inWholeHours < ONE_HOUR ->
             stringResource(
-                R.string.notification_minutes_ago,
-            ).format(duration.inWholeMinutes)
+                resource = Res.string.notification_minutes_ago,
+                duration.inWholeMinutes,
+            )
 
         duration.inWholeDays < ONE_DAY ->
             stringResource(
-                R.string.notification_hours_ago,
-            ).format(duration.inWholeHours)
+                resource = Res.string.notification_hours_ago,
+                duration.inWholeHours,
+            )
 
         duration.inWholeDays < TWO_DAYS ->
             stringResource(
-                R.string.notification_one_day_ago,
+                resource = Res.string.notification_one_day_ago,
             )
 
-        else -> this.toJavaLocalDateTime().format(dateTimeFormatter)
+        else -> this.format("yyyy.MM.dd")
     }
 }

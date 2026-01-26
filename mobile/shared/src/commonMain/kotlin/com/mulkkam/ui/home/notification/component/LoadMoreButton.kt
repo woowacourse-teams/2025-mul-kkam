@@ -1,4 +1,4 @@
-package com.mulkkam.ui.notification.component
+package com.mulkkam.ui.home.notification.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.PaddingValues
