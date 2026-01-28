@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo.component
+package com.mulkkam.ui.setting.accountinfo.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,14 +15,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import com.mulkkam.R
 import com.mulkkam.ui.component.MulKkamTextField
 import com.mulkkam.ui.component.MulKkamTextFieldState
 import com.mulkkam.ui.designsystem.Gray100
@@ -33,6 +29,16 @@ import com.mulkkam.ui.designsystem.Primary200
 import com.mulkkam.ui.designsystem.Secondary200
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.getColoredText
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_alert_circle
+import mulkkam.shared.generated.resources.setting_account_info_cancel
+import mulkkam.shared.generated.resources.setting_account_info_confirm
+import mulkkam.shared.generated.resources.setting_account_info_delete_description
+import mulkkam.shared.generated.resources.setting_account_info_delete_description_highlight
+import mulkkam.shared.generated.resources.setting_account_info_delete_label
+import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AccountDeleteDialog(
@@ -61,14 +67,14 @@ fun AccountDeleteDialog(
                 verticalArrangement = Arrangement.Center,
             ) {
                 Icon(
-                    painter = painterResource(R.drawable.ic_alert_circle),
+                    painter = painterResource(Res.drawable.ic_alert_circle),
                     contentDescription = null,
                     modifier = Modifier.size(48.dp),
                     tint = Secondary200,
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Text(
-                    text = stringResource(R.string.setting_account_info_delete_label),
+                    text = stringResource(Res.string.setting_account_info_delete_label),
                     style = MulKkamTheme.typography.title1,
                     color = Gray400,
                 )
@@ -76,10 +82,15 @@ fun AccountDeleteDialog(
                 Text(
                     text =
                         stringResource(
-                            R.string.setting_account_info_delete_description,
+                            Res.string.setting_account_info_delete_description,
                         ).getColoredText(
                             color = Secondary200,
-                            highlightedText = arrayOf(stringResource(R.string.setting_account_info_delete_description_highlight)),
+                            highlightedText =
+                                arrayOf(
+                                    stringResource(
+                                        Res.string.setting_account_info_delete_description_highlight,
+                                    ),
+                                ),
                         ),
                     color = Gray400,
                     textAlign = TextAlign.Center,
@@ -104,7 +115,7 @@ fun AccountDeleteDialog(
                     horizontalArrangement = Arrangement.spacedBy(10.dp),
                 ) {
                     SettingAccountInfoDialogButton(
-                        text = stringResource(R.string.setting_account_info_confirm),
+                        text = stringResource(Res.string.setting_account_info_confirm),
                         containerColor = Primary100,
                         textColor = White,
                         onClick = onConfirm,
@@ -112,7 +123,7 @@ fun AccountDeleteDialog(
                         enabled = value == deleteComment,
                     )
                     SettingAccountInfoDialogButton(
-                        text = stringResource(R.string.setting_account_info_cancel),
+                        text = stringResource(Res.string.setting_account_info_cancel),
                         containerColor = Gray100,
                         textColor = Gray400,
                         onClick = onDismiss,
