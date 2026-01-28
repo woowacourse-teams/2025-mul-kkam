@@ -3,7 +3,6 @@ package com.mulkkam.ui.setting.terms
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -40,12 +39,15 @@ fun TermsScreen(
             )
         },
         containerColor = White,
-        modifier = Modifier.fillMaxSize().background(White).padding(PaddingValues(
-            start = padding.calculateStartPadding(LocalLayoutDirection.current),
-            top = 0.dp,
-            end = padding.calculateEndPadding(LocalLayoutDirection.current),
-            bottom = padding.calculateBottomPadding(),
-        )),
+        modifier =
+            Modifier.fillMaxSize().background(White).padding(
+                PaddingValues(
+                    start = padding.calculateStartPadding(LocalLayoutDirection.current),
+                    top = 0.dp,
+                    end = padding.calculateEndPadding(LocalLayoutDirection.current),
+                    bottom = padding.calculateBottomPadding(),
+                ),
+            ),
     ) { innerPadding ->
         Column(
             modifier =
