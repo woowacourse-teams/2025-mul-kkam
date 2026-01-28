@@ -91,6 +91,7 @@ kotlin {
                 implementation(libs.coil)
                 implementation(libs.coil.compose)
                 implementation(libs.coil.svg)
+                implementation(libs.coil.network.ktor3)
                 implementation(libs.compottie)
             }
         }
@@ -139,7 +140,7 @@ kotlin {
                 // Coil for image loading
                 implementation(libs.coil)
                 implementation(libs.coil.svg)
-                implementation(libs.coil.network)
+                implementation(libs.coil.network.okhttp)
 
                 // AndroidX Core
                 implementation(libs.androidx.core.ktx)
