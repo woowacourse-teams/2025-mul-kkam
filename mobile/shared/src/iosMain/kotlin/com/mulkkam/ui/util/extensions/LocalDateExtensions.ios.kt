@@ -1,6 +1,7 @@
 package com.mulkkam.ui.util.extensions
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atDate
@@ -47,6 +48,22 @@ actual fun LocalTime.format(pattern: String): String {
         this
             .atDate(today)
             .toInstant(TimeZone.currentSystemDefault())
+
+    val nsDate = instant.toNSDate()
+
+    return formatter.stringFromDate(nsDate)
+}
+
+@OptIn(ExperimentalTime::class)
+actual fun LocalDateTime.format(pattern: String): String {
+    val formatter =
+        NSDateFormatter().apply {
+            dateFormat = pattern
+            locale = NSLocale.currentLocale
+        }
+
+    val instant =
+        this.toInstant(TimeZone.currentSystemDefault())
 
     val nsDate = instant.toNSDate()
 

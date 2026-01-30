@@ -1,39 +1,110 @@
 package com.mulkkam.ui.home.notification
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.home.notification.component.NotificationTopAppBar
+import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.model.toSuccessDataOrNull
+import com.mulkkam.ui.util.extensions.OnLoadMore
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import mulkkam.shared.generated.resources.Res
+import mulkkam.shared.generated.resources.ic_alert_circle
+import mulkkam.shared.generated.resources.ic_terms_all_check_on
+import mulkkam.shared.generated.resources.notification_apply_failed
+import mulkkam.shared.generated.resources.notification_apply_success
+import org.jetbrains.compose.resources.getString
+import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun NotificationScreen(
     padding: PaddingValues,
-    onNavigateToBack: () -> Unit,
+    navigateToBack: () -> Unit,
+    snackbarHostState: SnackbarHostState,
+    state: LazyListState = rememberLazyListState(),
+    viewModel: NotificationViewModel = koinViewModel(),
+) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    val notifications by viewModel.notifications.collectAsStateWithLifecycle()
+    val loadMoreState by viewModel.loadUiState.collectAsStateWithLifecycle()
+    state.OnLoadMore(action = { viewModel.loadMore() })
+
+    LaunchedEffect(Unit) {
+        viewModel.onApplySuggestion.collectWithLifecycle(lifecycleOwner) { state ->
+            handleApplySuggestion(state, snackbarHostState)
+        }
+    }
+
+    Scaffold(
+        topBar = { NotificationTopAppBar { navigateToBack() } },
+        containerColor = White,
+        modifier = Modifier.background(White).padding(padding),
+    ) { innerPadding ->
+        val modifier = Modifier.fillMaxSize().padding(innerPadding)
+        when (notifications) {
+            is MulKkamUiState.Loading -> {
+                NotificationLoadingScreen(modifier)
+            }
+
+            is MulKkamUiState.Success -> {
+                if (notifications.toSuccessDataOrNull()?.isEmpty() == true) {
+                    EmptyNotificationScreen(modifier)
+                } else {
+                    NotificationListScreen(
+                        modifier = modifier,
+                        notifications = notifications.toSuccessDataOrNull() ?: emptyList(),
+                        loadMoreState = loadMoreState,
+                        listState = state,
+                        onApplySuggestion = viewModel::applySuggestion,
+                        onRemoveNotification = viewModel::deleteNotification,
+                        onLoadMore = viewModel::loadMore,
+                    )
+                }
+            }
+
+            is MulKkamUiState.Failure -> {
+                EmptyNotificationScreen(modifier)
+            }
+
+            is MulKkamUiState.Idle -> Unit
+        }
+    }
+}
+
+private suspend fun handleApplySuggestion(
+    state: MulKkamUiState<Unit>,
     snackbarHostState: SnackbarHostState,
 ) {
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(padding),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-    ) {
-        Text(text = "Notification", fontSize = 24.sp)
-        Spacer(modifier = Modifier.height(32.dp))
-        OutlinedButton(onClick = { onNavigateToBack() }) {
-            Text("Back")
+    when (state) {
+        is MulKkamUiState.Success -> {
+            snackbarHostState
+                .showMulKkamSnackbar(
+                    message = getString(resource = Res.string.notification_apply_success),
+                    iconResource = Res.drawable.ic_terms_all_check_on,
+                )
+        }
+
+        is MulKkamUiState.Idle, MulKkamUiState.Loading -> Unit
+        is MulKkamUiState.Failure -> {
+            snackbarHostState
+                .showMulKkamSnackbar(
+                    message = getString(resource = Res.string.notification_apply_failed),
+                    iconResource = Res.drawable.ic_alert_circle,
+                )
         }
     }
 }
