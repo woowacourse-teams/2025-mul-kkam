@@ -5,7 +5,6 @@ import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.runtime.toMutableStateList
-import com.mulkkam.domain.model.OnboardingInfo
 
 @Stable
 class MainNavigator internal constructor(

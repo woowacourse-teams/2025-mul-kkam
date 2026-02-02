@@ -1,6 +1,5 @@
 package com.mulkkam.ui.onboarding.targetamount
 
-import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mulkkam.domain.model.Gender
