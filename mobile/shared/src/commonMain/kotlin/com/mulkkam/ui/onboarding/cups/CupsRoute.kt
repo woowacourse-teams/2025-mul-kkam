@@ -9,7 +9,6 @@ import org.koin.core.scope.Scope
 @Composable
 fun CupsRoute(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
     onNavigateToMain: () -> Unit,
@@ -19,7 +18,6 @@ fun CupsRoute(
 ) {
     CupsScreen(
         padding = padding,
-        onboardingInfo = onboardingInfo,
         navigateToBack = onNavigateToBack,
         navigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
         currentProgress = currentProgress,

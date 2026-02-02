@@ -32,6 +32,7 @@ import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
@@ -61,15 +62,16 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun CupsScreen(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     navigateToBack: () -> Unit,
     navigateToCoffeeEncyclopedia: () -> Unit,
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
     snackbarHostState: SnackbarHostState,
     onboardingScope: Scope,
-    viewModel: CupsViewModel = koinViewModel(scope = onboardingScope),
+    viewModel: CupsViewModel = koinViewModel(),
 ) {
+    val onboardingViewModel: OnboardingViewModel = koinViewModel(scope = onboardingScope)
+
     val lifecycleOwner = LocalLifecycleOwner.current
     var showDialog by remember { mutableStateOf(false) }
 
@@ -79,6 +81,8 @@ fun CupsScreen(
 
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val listItems = remember { mutableStateListOf<SettingCupsItem>() }
+
+    val onboardingInfo by onboardingViewModel.onboardingInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.updateOnboardingInfo(onboardingInfo = onboardingInfo)

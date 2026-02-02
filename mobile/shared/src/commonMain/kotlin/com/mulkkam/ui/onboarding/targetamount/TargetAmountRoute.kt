@@ -8,15 +8,13 @@ import org.koin.core.scope.Scope
 @Composable
 fun TargetAmountRoute(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Unit,
-    onNavigateToCups: (onboardingInfo: OnboardingInfo) -> Unit,
+    onNavigateToCups: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
 ) {
     TargetAmountScreen(
         padding = padding,
-        onboardingInfo = onboardingInfo,
         navigateToBack = onNavigateToBack,
         navigateToNextStep = onNavigateToCups,
         currentProgress = currentProgress,

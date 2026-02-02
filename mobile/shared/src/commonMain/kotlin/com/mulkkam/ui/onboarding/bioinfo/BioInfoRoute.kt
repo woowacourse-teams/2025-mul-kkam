@@ -8,15 +8,13 @@ import org.koin.core.scope.Scope
 @Composable
 fun BioInfoRoute(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Unit,
-    onNavigateToTargetAmount: (onboardingInfo: OnboardingInfo) -> Unit,
+    onNavigateToTargetAmount: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
 ) {
     BioInfoScreen(
         padding = padding,
-        onboardingInfo = onboardingInfo,
         navigateToBack = onNavigateToBack,
         navigateToNextStep = onNavigateToTargetAmount,
         skipBioInfo = onNavigateToTargetAmount,

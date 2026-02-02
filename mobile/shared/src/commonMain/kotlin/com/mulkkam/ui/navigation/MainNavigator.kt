@@ -39,13 +39,13 @@ class MainNavigator internal constructor(
     // Onboarding
     fun navigateToOnboardingTerms() = navigateAndClearBackStack(OnboardingRoute.Terms())
 
-    fun navigateToOnboardingNickname(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.Nickname(onboardingInfo))
+    fun navigateToOnboardingNickname() = navigate(OnboardingRoute.Nickname())
 
-    fun navigateToOnboardingBioInfo(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.BioInfo(onboardingInfo))
+    fun navigateToOnboardingBioInfo() = navigate(OnboardingRoute.BioInfo())
 
-    fun navigateToOnboardingTargetAmount(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.TargetAmount(onboardingInfo))
+    fun navigateToOnboardingTargetAmount() = navigate(OnboardingRoute.TargetAmount())
 
-    fun navigateToOnboardingCups(onboardingInfo: OnboardingInfo) = navigate(OnboardingRoute.Cups(onboardingInfo))
+    fun navigateToOnboardingCups() = navigate(OnboardingRoute.Cups())
 
     // Home (Bottom Tab)
     fun navigateToHome() = navigateAndClearBackStack(HomeRoute.Home)

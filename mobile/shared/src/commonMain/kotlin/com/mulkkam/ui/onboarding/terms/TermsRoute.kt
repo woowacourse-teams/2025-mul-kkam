@@ -10,7 +10,7 @@ import org.koin.core.scope.Scope
 fun TermsRoute(
     padding: PaddingValues,
     onNavigateToBack: () -> Unit,
-    onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
+    onNavigateToNickname: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
 ) {

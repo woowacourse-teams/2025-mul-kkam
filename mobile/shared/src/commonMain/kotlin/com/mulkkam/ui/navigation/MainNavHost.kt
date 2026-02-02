@@ -30,15 +30,17 @@ fun MainNavHost(
 ) {
     val koin = getKoin()
 
+    val isOnboardingActive = navigator.backStack.any { it is OnboardingRoute }
+
     val onboardingScope =
-        remember {
+        remember(isOnboardingActive) {
             koin.getOrCreateScope(
-                scopeId = "OnboardingScopeId",
+                scopeId = if (isOnboardingActive) "OnboardingActiveScope" else "OnboardingInactiveScope",
                 qualifier = named(ONBOARDING_SCOPE),
             )
         }
 
-    DisposableEffect(Unit) {
+    DisposableEffect(onboardingScope) {
         onDispose {
             onboardingScope.close()
         }

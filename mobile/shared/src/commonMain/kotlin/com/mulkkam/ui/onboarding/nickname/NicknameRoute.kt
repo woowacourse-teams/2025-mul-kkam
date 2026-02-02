@@ -8,15 +8,13 @@ import org.koin.core.scope.Scope
 @Composable
 fun NicknameRoute(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     onNavigateToBack: () -> Unit,
-    onNavigateToBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
+    onNavigateToBioInfo: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
 ) {
     NicknameScreen(
         padding = padding,
-        onboardingInfo = onboardingInfo,
         navigateToBack = onNavigateToBack,
         navigateToNextStep = onNavigateToBioInfo,
         currentProgress = currentProgress,

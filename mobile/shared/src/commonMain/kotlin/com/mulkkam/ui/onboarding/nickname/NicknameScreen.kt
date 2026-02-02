@@ -23,12 +23,12 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.members.Nickname
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.NicknameValidationUiState
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.setting.nickname.component.NicknameInputSection
@@ -44,30 +44,36 @@ import org.koin.core.scope.Scope
 @Composable
 fun NicknameScreen(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     navigateToBack: () -> Unit,
-    navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
+    navigateToNextStep: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
-    viewModel: NicknameViewModel = koinViewModel(scope = onboardingScope),
+    viewModel: NicknameViewModel = koinViewModel(),
 ) {
-    val lifecycleOwner = LocalLifecycleOwner.current
+    val onboardingViewModel: OnboardingViewModel = koinViewModel(scope = onboardingScope)
+
     val focusManager = LocalFocusManager.current
     var nickname by rememberSaveable { mutableStateOf("") }
 
     val nicknameValidationState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
     val onNicknameValidationError by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
+    val onboardingInfo by onboardingViewModel.onboardingInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.nickname.collectWithLifecycle(lifecycleOwner) {
-            nickname = it
-        }
+        nickname = onboardingInfo.nickname?.name ?: ""
+        viewModel.initNicknameValidation(onboardingViewModel.nicknameValidationState.value)
     }
 
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = navigateToBack,
+                onBackClick = {
+                    onboardingViewModel.updateNickname(
+                        nickname = null,
+                        nicknameValidationUiState = NicknameValidationUiState.NONE,
+                    )
+                    navigateToBack()
+                },
                 currentProgress = currentProgress,
             )
         },
@@ -116,7 +122,13 @@ fun NicknameScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep(onboardingInfo.copy(nickname = Nickname(nickname))) },
+                onClick = {
+                    onboardingViewModel.updateNickname(
+                        nickname = nickname,
+                        nicknameValidationUiState = nicknameValidationState,
+                    )
+                    navigateToNextStep()
+                },
                 enabled = nicknameValidationState == NicknameValidationUiState.VALID,
             )
         }

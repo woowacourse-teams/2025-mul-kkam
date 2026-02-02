@@ -13,17 +13,16 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.onboarding.terms.component.TermsAgreementCheckBox
@@ -47,24 +46,28 @@ fun TermsScreen(
     padding: PaddingValues,
     navigateToBack: () -> Unit,
     loadToPage: (uri: String) -> Unit,
-    navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
+    navigateToNextStep: () -> Unit,
     currentProgress: Int,
     onboardingScope: Scope,
-    viewModel: TermsAgreementViewModel = koinViewModel(scope = onboardingScope),
+    viewModel: TermsAgreementViewModel = koinViewModel(),
 ) {
+    val onboardingViewModel: OnboardingViewModel = koinViewModel(scope = onboardingScope)
+
     val termsAgreements by viewModel.termsAgreements.collectAsStateWithLifecycle()
     val isAllChecked by viewModel.isAllChecked.collectAsStateWithLifecycle()
     val canNext by viewModel.canNext.collectAsStateWithLifecycle()
 
-    val onboardingInfo by remember(termsAgreements) {
-        derivedStateOf {
-            OnboardingInfo().copy(
-                isMarketingNotificationAgreed =
-                    termsAgreements.find { it.type == TermsType.MARKETING }?.isChecked == true,
-                isNightNotificationAgreed =
-                    termsAgreements.find { it.type == TermsType.NIGHT_NOTIFICATION }?.isChecked == true,
-            )
-        }
+    val onboardingInfo by onboardingViewModel.onboardingInfo.collectAsStateWithLifecycle()
+    val isTermsOfServiceAgreed by onboardingViewModel.isTermsOfServiceAgreed.collectAsStateWithLifecycle()
+    val isPrivacyPolicyAgreed by onboardingViewModel.isPrivacyPolicyAgreed.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.initAgreements(
+            isServiceAgreed = isTermsOfServiceAgreed,
+            isPrivacyPolicyAgreed = isPrivacyPolicyAgreed,
+            isMarketingNotificationAgreed = onboardingInfo.isMarketingNotificationAgreed,
+            isNightNotificationAgreed = onboardingInfo.isNightNotificationAgreed,
+        )
     }
 
     Scaffold(
@@ -143,7 +146,15 @@ fun TermsScreen(
             Spacer(modifier = Modifier.weight(1f))
 
             NextButton(
-                onClick = { navigateToNextStep(onboardingInfo) },
+                onClick = {
+                    onboardingViewModel.updateTermsAgreement(
+                        isServiceAgreed = termsAgreements.find { it.type == TermsType.SERVICE }?.isChecked == true,
+                        isPrivacyPolicyAgreed = termsAgreements.find { it.type == TermsType.PRIVACY }?.isChecked == true,
+                        isMarketingNotificationAgreed = termsAgreements.find { it.type == TermsType.MARKETING }?.isChecked == true,
+                        isNightNotificationAgreed = termsAgreements.find { it.type == TermsType.NIGHT_NOTIFICATION }?.isChecked == true,
+                    )
+                    navigateToNextStep()
+                },
                 enabled = canNext,
             )
         }

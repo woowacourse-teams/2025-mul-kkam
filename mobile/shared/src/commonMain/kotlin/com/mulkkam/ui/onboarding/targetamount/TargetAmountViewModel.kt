@@ -18,9 +18,7 @@ import kotlinx.coroutines.launch
 class TargetAmountViewModel(
     private val intakeRepository: IntakeRepository,
 ) : ViewModel() {
-    private val _targetAmountInput: MutableStateFlow<TargetAmount?> = MutableStateFlow(null)
-    val targetAmountInput: StateFlow<TargetAmount?> get() = _targetAmountInput.asStateFlow()
-
+    private var targetAmountInput: TargetAmount? = null
     private val _targetAmountOnboardingUiState: MutableStateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>> =
         MutableStateFlow(MulKkamUiState.Idle)
     val targetAmountOnboardingUiState: StateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>>
@@ -36,7 +34,7 @@ class TargetAmountViewModel(
         gender: Gender?,
         weight: BioWeight?,
     ) {
-        if (_targetAmountOnboardingUiState.value is MulKkamUiState.Loading || targetAmountInput.value != null) return
+        if (_targetAmountOnboardingUiState.value is MulKkamUiState.Loading) return
 
         viewModelScope.launch {
             _targetAmountOnboardingUiState.value = MulKkamUiState.Loading
@@ -61,7 +59,7 @@ class TargetAmountViewModel(
 
     fun updateTargetAmount(newTargetAmount: Int?) {
         if (newTargetAmount == null) {
-            _targetAmountInput.value = null
+            targetAmountInput = null
             _targetAmountValidityUiState.value = MulKkamUiState.Idle
             return
         }
@@ -69,7 +67,7 @@ class TargetAmountViewModel(
         runCatching {
             TargetAmount(newTargetAmount)
         }.onSuccess { targetAmount ->
-            _targetAmountInput.value = targetAmount
+            targetAmountInput = targetAmount
             _targetAmountValidityUiState.value = MulKkamUiState.Success(Unit)
         }.onFailure {
             _targetAmountValidityUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
