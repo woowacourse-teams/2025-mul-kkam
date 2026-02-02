@@ -8,6 +8,7 @@ import com.mulkkam.ui.home.ManualDrinkViewModel
 import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.home.notification.NotificationViewModel
 import com.mulkkam.ui.main.MainViewModel
+import com.mulkkam.ui.navigation.ONBOARDING_SCOPE
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
@@ -28,6 +29,7 @@ import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val commonViewModelModule: Module =
@@ -41,21 +43,24 @@ val commonViewModelModule: Module =
         viewModel { ManualDrinkViewModel() }
         viewModel { SplashViewModel(get(), get(), get()) }
         viewModel { MainViewModel(get(), get(), get(), get(), get(), get(), get()) }
-        viewModel { NicknameViewModel(get()) }
-        viewModel { BioInfoViewModel() }
         viewModel { PendingFriendsViewModel(get()) }
         viewModel { SettingReminderViewModel(get(), get(), get()) }
         viewModel { HistoryViewModel(get(), get()) }
-        viewModel { CupsViewModel(get(), get(), get()) }
         viewModel { SettingBioInfoViewModel(get(), get()) }
-        viewModel { TargetAmountViewModel(get()) }
         viewModel { FriendsViewModel(get()) }
         viewModel { SettingAccountInfoViewModel(get(), get(), get(), get()) }
         viewModel { SettingTargetAmountViewModel(get(), get(), get()) }
         viewModel { SettingCupsViewModel(get(), get()) }
         viewModel { SettingNotificationViewModel(get(), get()) }
         viewModel { SettingCupViewModel(get(), get()) }
-        viewModel { CupViewModel(get()) }
-        viewModel { TermsAgreementViewModel() }
         viewModel { SettingTermsViewModel() }
+        viewModel { CupViewModel(get()) }
+
+        scope(named(ONBOARDING_SCOPE)) {
+            scoped { TermsAgreementViewModel() }
+            scoped { NicknameViewModel(get()) }
+            scoped { BioInfoViewModel() }
+            scoped { TargetAmountViewModel(get()) }
+            scoped { CupsViewModel(get(), get(), get()) }
+        }
     }

@@ -3,6 +3,8 @@ package com.mulkkam.ui.navigation
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import com.mulkkam.ui.auth.AuthNavGraph
 import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.friends.FriendsNavGraph
@@ -10,6 +12,10 @@ import com.mulkkam.ui.history.HistoryNavGraph
 import com.mulkkam.ui.home.HomeNavGraph
 import com.mulkkam.ui.onboarding.OnboardingNavGraph
 import com.mulkkam.ui.setting.SettingNavGraph
+import org.koin.compose.getKoin
+import org.koin.core.qualifier.named
+
+const val ONBOARDING_SCOPE: String = "ONBOARDING_SCOPE"
 
 @Composable
 fun MainNavHost(
@@ -22,6 +28,22 @@ fun MainNavHost(
     ) -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
+    val koin = getKoin()
+
+    val onboardingScope =
+        remember {
+            koin.getOrCreateScope(
+                scopeId = "OnboardingScopeId",
+                qualifier = named(ONBOARDING_SCOPE),
+            )
+        }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            onboardingScope.close()
+        }
+    }
+
     NavDisplay(
         backStack = navigator.backStack,
         entryProvider = { route ->
@@ -42,6 +64,7 @@ fun MainNavHost(
                         padding = padding,
                         navigator = navigator,
                         snackbarHostState = snackbarHostState,
+                        onboardingScope = onboardingScope,
                     )
                 }
 

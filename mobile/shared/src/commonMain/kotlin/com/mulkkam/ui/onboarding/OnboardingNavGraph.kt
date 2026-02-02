@@ -12,6 +12,7 @@ import com.mulkkam.ui.onboarding.cups.CupsRoute
 import com.mulkkam.ui.onboarding.nickname.NicknameRoute
 import com.mulkkam.ui.onboarding.targetamount.TargetAmountRoute
 import com.mulkkam.ui.onboarding.terms.TermsRoute
+import org.koin.core.scope.Scope
 
 object OnboardingNavGraph {
     @Composable
@@ -20,6 +21,7 @@ object OnboardingNavGraph {
         padding: PaddingValues,
         navigator: MainNavigator,
         snackbarHostState: SnackbarHostState,
+        onboardingScope: Scope,
     ): NavEntry<OnboardingRoute> =
         when (route) {
             is OnboardingRoute.Terms -> {
@@ -29,6 +31,7 @@ object OnboardingNavGraph {
                         onNavigateToNickname = navigator::navigateToOnboardingNickname,
                         onNavigateToBack = navigator::popBackStack,
                         currentProgress = route.currentProgress,
+                        onboardingScope = onboardingScope,
                     )
                 }
             }
@@ -41,6 +44,7 @@ object OnboardingNavGraph {
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToBioInfo = navigator::navigateToOnboardingBioInfo,
                         currentProgress = route.currentProgress,
+                        onboardingScope = onboardingScope,
                     )
                 }
             }
@@ -53,6 +57,7 @@ object OnboardingNavGraph {
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToTargetAmount = navigator::navigateToOnboardingTargetAmount,
                         currentProgress = route.currentProgress,
+                        onboardingScope = onboardingScope,
                     )
                 }
             }
@@ -65,6 +70,7 @@ object OnboardingNavGraph {
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToCups = navigator::navigateToOnboardingCups,
                         currentProgress = route.currentProgress,
+                        onboardingScope = onboardingScope,
                     )
                 }
             }
@@ -79,6 +85,7 @@ object OnboardingNavGraph {
                         onNavigateToMain = navigator::navigateToHome,
                         currentProgress = route.currentProgress,
                         snackbarHostState = snackbarHostState,
+                        onboardingScope = onboardingScope,
                     )
                 }
             }
