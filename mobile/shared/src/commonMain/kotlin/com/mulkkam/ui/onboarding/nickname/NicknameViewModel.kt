@@ -15,6 +15,9 @@ import kotlinx.coroutines.launch
 class NicknameViewModel(
     private val nicknameRepository: NicknameRepository,
 ) : ViewModel() {
+    private val _nickname: MutableStateFlow<String> = MutableStateFlow("")
+    val nickname: StateFlow<String> get() = _nickname.asStateFlow()
+
     private val _nicknameValidationState: MutableStateFlow<NicknameValidationUiState> =
         MutableStateFlow(NicknameValidationUiState.NONE)
     val nicknameValidationState: StateFlow<NicknameValidationUiState>
@@ -29,6 +32,7 @@ class NicknameViewModel(
         runCatching {
             Nickname(nickname)
         }.onSuccess {
+            _nickname.value = nickname
             _nicknameValidationState.value = NicknameValidationUiState.PENDING_SERVER_VALIDATION
         }.onFailure { error ->
             _nicknameValidationState.value = NicknameValidationUiState.INVALID

@@ -35,6 +35,7 @@ import mulkkam.shared.generated.resources.bio_info_input_hint
 import mulkkam.shared.generated.resources.bio_info_input_hint_highlight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +46,8 @@ fun BioInfoScreen(
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     skipBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
-    viewModel: BioInfoViewModel = koinViewModel(),
+    onboardingScope: Scope,
+    viewModel: BioInfoViewModel = koinViewModel(scope = onboardingScope),
 ) {
     var isShowBottomSheet by rememberSaveable { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
@@ -57,7 +59,10 @@ fun BioInfoScreen(
         topBar = {
             OnboardingTopAppBar(
                 onBackClick = navigateToBack,
-                onSkip = { skipBioInfo(onboardingInfo) },
+                onSkip = {
+                    viewModel.clearBioInfo()
+                    skipBioInfo(onboardingInfo)
+                },
                 currentProgress = currentProgress,
                 canSkip = true,
             )

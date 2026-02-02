@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -20,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.members.Nickname
@@ -30,12 +32,14 @@ import com.mulkkam.ui.model.NicknameValidationUiState
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.setting.nickname.component.NicknameInputSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.nickname_input_hint
 import mulkkam.shared.generated.resources.nickname_input_hint_highlight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 
 @Composable
 fun NicknameScreen(
@@ -44,13 +48,21 @@ fun NicknameScreen(
     navigateToBack: () -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
-    viewModel: NicknameViewModel = koinViewModel(),
+    onboardingScope: Scope,
+    viewModel: NicknameViewModel = koinViewModel(scope = onboardingScope),
 ) {
-    var nickname by rememberSaveable { mutableStateOf("") }
+    val lifecycleOwner = LocalLifecycleOwner.current
     val focusManager = LocalFocusManager.current
+    var nickname by rememberSaveable { mutableStateOf("") }
 
     val nicknameValidationState by viewModel.nicknameValidationState.collectAsStateWithLifecycle()
     val onNicknameValidationError by viewModel.nicknameValidationError.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.nickname.collectWithLifecycle(lifecycleOwner) {
+            nickname = it
+        }
+    }
 
     Scaffold(
         topBar = {

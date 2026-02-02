@@ -53,6 +53,7 @@ import mulkkam.shared.generated.resources.onboarding_complete
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -66,7 +67,8 @@ fun CupsScreen(
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
     snackbarHostState: SnackbarHostState,
-    viewModel: CupsViewModel = koinViewModel(),
+    onboardingScope: Scope,
+    viewModel: CupsViewModel = koinViewModel(scope = onboardingScope),
 ) {
     val lifecycleOwner = LocalLifecycleOwner.current
     var showDialog by remember { mutableStateOf(false) }

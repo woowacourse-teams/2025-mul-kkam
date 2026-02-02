@@ -39,8 +39,8 @@ import mulkkam.shared.generated.resources.terms_optional_suffix
 import mulkkam.shared.generated.resources.terms_required_suffix
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 
 @Composable
 fun TermsScreen(
@@ -49,7 +49,8 @@ fun TermsScreen(
     loadToPage: (uri: String) -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
-    viewModel: TermsAgreementViewModel = koinViewModel(),
+    onboardingScope: Scope,
+    viewModel: TermsAgreementViewModel = koinViewModel(scope = onboardingScope),
 ) {
     val termsAgreements by viewModel.termsAgreements.collectAsStateWithLifecycle()
     val isAllChecked by viewModel.isAllChecked.collectAsStateWithLifecycle()
@@ -146,19 +147,5 @@ fun TermsScreen(
                 enabled = canNext,
             )
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun TermsScreenPreview() {
-    MulKkamTheme {
-        TermsScreen(
-            padding = PaddingValues(),
-            navigateToBack = { true },
-            loadToPage = { },
-            navigateToNextStep = {},
-            currentProgress = 1,
-        )
     }
 }

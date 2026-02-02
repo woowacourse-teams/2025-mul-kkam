@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.designsystem.Black
@@ -33,12 +34,14 @@ import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.setting.targetamount.component.RecommendedTargetAmount
 import com.mulkkam.ui.setting.targetamount.component.TargetAmountInputSection
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.getStyledText
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.target_amount_input_hint
 import mulkkam.shared.generated.resources.target_amount_input_hint_highlight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 
 @Composable
 fun TargetAmountScreen(
@@ -47,13 +50,21 @@ fun TargetAmountScreen(
     navigateToBack: () -> Unit,
     navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
-    viewModel: TargetAmountViewModel = koinViewModel(),
+    onboardingScope: Scope,
+    viewModel: TargetAmountViewModel = koinViewModel(scope = onboardingScope),
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val focusManager = LocalFocusManager.current
 
     var targetAmount by rememberSaveable { mutableStateOf("") }
     val targetAmountOnboardingUiState by viewModel.targetAmountOnboardingUiState.collectAsStateWithLifecycle()
     val targetAmountValidityUiState by viewModel.targetAmountValidityUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.targetAmountInput.collectWithLifecycle(lifecycleOwner) {
+            targetAmount = it?.value?.toString() ?: ""
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.loadRecommendedTargetAmount(
@@ -64,9 +75,13 @@ fun TargetAmountScreen(
     }
 
     LaunchedEffect(targetAmountOnboardingUiState) {
-        val previous =
-            targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value ?: 0
-        targetAmount = previous.toString()
+        if (targetAmount.isEmpty()) {
+            val recommended =
+                targetAmountOnboardingUiState.toSuccessDataOrNull()?.recommendedTargetAmount?.value
+                    ?: 0
+            targetAmount = recommended.toString()
+            viewModel.updateTargetAmount(recommended)
+        }
     }
 
     Scaffold(

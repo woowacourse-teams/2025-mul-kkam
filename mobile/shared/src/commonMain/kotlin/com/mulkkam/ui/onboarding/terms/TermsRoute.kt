@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.util.extensions.openLink
+import org.koin.core.scope.Scope
 
 @Composable
 fun TermsRoute(
@@ -11,6 +12,7 @@ fun TermsRoute(
     onNavigateToBack: () -> Unit,
     onNavigateToNickname: (onboardingInfo: OnboardingInfo) -> Unit,
     currentProgress: Int,
+    onboardingScope: Scope,
 ) {
     TermsScreen(
         padding = padding,
@@ -18,5 +20,6 @@ fun TermsRoute(
         loadToPage = { it.openLink() },
         navigateToNextStep = onNavigateToNickname,
         currentProgress = currentProgress,
+        onboardingScope = onboardingScope,
     )
 }

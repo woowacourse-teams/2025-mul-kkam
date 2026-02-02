@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.domain.model.OnboardingInfo
+import org.koin.core.scope.Scope
 
 @Composable
 fun CupsRoute(
@@ -14,6 +15,7 @@ fun CupsRoute(
     onNavigateToMain: () -> Unit,
     currentProgress: Int,
     snackbarHostState: SnackbarHostState,
+    onboardingScope: Scope,
 ) {
     CupsScreen(
         padding = padding,
@@ -23,5 +25,6 @@ fun CupsRoute(
         currentProgress = currentProgress,
         onCompleteOnboarding = onNavigateToMain,
         snackbarHostState = snackbarHostState,
+        onboardingScope = onboardingScope,
     )
 }
