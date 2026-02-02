@@ -9,6 +9,7 @@ import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.home.notification.NotificationViewModel
 import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.navigation.ONBOARDING_SCOPE
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
@@ -54,13 +55,14 @@ val commonViewModelModule: Module =
         viewModel { SettingNotificationViewModel(get(), get()) }
         viewModel { SettingCupViewModel(get(), get()) }
         viewModel { SettingTermsViewModel() }
+        viewModel { TermsAgreementViewModel() }
+        viewModel { NicknameViewModel(get()) }
+        viewModel { BioInfoViewModel() }
+        viewModel { TargetAmountViewModel(get()) }
+        viewModel { CupsViewModel(get(), get(), get()) }
         viewModel { CupViewModel(get()) }
 
         scope(named(ONBOARDING_SCOPE)) {
-            scoped { TermsAgreementViewModel() }
-            scoped { NicknameViewModel(get()) }
-            scoped { BioInfoViewModel() }
-            scoped { TargetAmountViewModel(get()) }
-            scoped { CupsViewModel(get(), get(), get()) }
+            scoped { OnboardingViewModel() }
         }
     }

@@ -40,7 +40,6 @@ object OnboardingNavGraph {
                 entry(route) {
                     NicknameRoute(
                         padding = padding,
-                        onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToBioInfo = navigator::navigateToOnboardingBioInfo,
                         currentProgress = route.currentProgress,
@@ -53,7 +52,6 @@ object OnboardingNavGraph {
                 entry(route) {
                     BioInfoRoute(
                         padding = padding,
-                        onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToTargetAmount = navigator::navigateToOnboardingTargetAmount,
                         currentProgress = route.currentProgress,
@@ -66,7 +64,6 @@ object OnboardingNavGraph {
                 entry(route) {
                     TargetAmountRoute(
                         padding = padding,
-                        onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToCups = navigator::navigateToOnboardingCups,
                         currentProgress = route.currentProgress,
@@ -79,7 +76,6 @@ object OnboardingNavGraph {
                 entry(route) {
                     CupsRoute(
                         padding = padding,
-                        onboardingInfo = route.onboardingInfo,
                         onNavigateToBack = navigator::popBackStack,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
                         onNavigateToMain = navigator::navigateToHome,

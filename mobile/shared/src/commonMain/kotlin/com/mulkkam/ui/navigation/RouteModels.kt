@@ -1,6 +1,5 @@
 package com.mulkkam.ui.navigation
 
-import com.mulkkam.domain.model.OnboardingInfo
 import kotlinx.serialization.Serializable
 
 sealed interface AuthRoute {
@@ -19,25 +18,21 @@ sealed interface OnboardingRoute {
 
     @Serializable
     data class Nickname(
-        val onboardingInfo: OnboardingInfo,
         val currentProgress: Int = 2,
     ) : OnboardingRoute
 
     @Serializable
     data class BioInfo(
-        val onboardingInfo: OnboardingInfo,
         val currentProgress: Int = 3,
     ) : OnboardingRoute
 
     @Serializable
     data class TargetAmount(
-        val onboardingInfo: OnboardingInfo,
         val currentProgress: Int = 4,
     ) : OnboardingRoute
 
     @Serializable
     data class Cups(
-        val onboardingInfo: OnboardingInfo,
         val currentProgress: Int = 5,
     ) : OnboardingRoute
 }
