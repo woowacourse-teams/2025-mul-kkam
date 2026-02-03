@@ -147,11 +147,13 @@ fun TermsScreen(
 
             NextButton(
                 onClick = {
+                    val agreementsByType = termsAgreements.associateBy { it.type }
+
                     onboardingViewModel.updateTermsAgreement(
-                        isServiceAgreed = termsAgreements.find { it.type == TermsType.SERVICE }?.isChecked == true,
-                        isPrivacyPolicyAgreed = termsAgreements.find { it.type == TermsType.PRIVACY }?.isChecked == true,
-                        isMarketingNotificationAgreed = termsAgreements.find { it.type == TermsType.MARKETING }?.isChecked == true,
-                        isNightNotificationAgreed = termsAgreements.find { it.type == TermsType.NIGHT_NOTIFICATION }?.isChecked == true,
+                        isServiceAgreed = agreementsByType[TermsType.SERVICE]?.isChecked == true,
+                        isPrivacyPolicyAgreed = agreementsByType[TermsType.PRIVACY]?.isChecked == true,
+                        isMarketingNotificationAgreed = agreementsByType[TermsType.MARKETING]?.isChecked == true,
+                        isNightNotificationAgreed = agreementsByType[TermsType.NIGHT_NOTIFICATION]?.isChecked == true,
                     )
                     navigateToNextStep()
                 },
