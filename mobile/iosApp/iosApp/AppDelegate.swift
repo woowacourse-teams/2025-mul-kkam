@@ -52,15 +52,7 @@ final class PushNotificationManager {
         permissionUpdatedHandler = onPermissionUpdated
         errorHandler = onError
 
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] isGranted, error in
-            DispatchQueue.main.async {
-                if let error = error {
-                    self?.errorHandler?(error.localizedDescription)
-                }
-                self?.permissionUpdatedHandler?(isGranted)
-                UIApplication.shared.registerForRemoteNotifications()
-            }
-        }
+        updateAuthorizationStatus()
 
         if let latestToken = latestToken {
             tokenUpdatedHandler?(latestToken)
@@ -77,8 +69,33 @@ final class PushNotificationManager {
         }
     }
 
+    func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { [weak self] isGranted, error in
+            DispatchQueue.main.async {
+                if let error = error {
+                    self?.errorHandler?(error.localizedDescription)
+                }
+                self?.permissionUpdatedHandler?(isGranted)
+                if isGranted {
+                    UIApplication.shared.registerForRemoteNotifications()
+                }
+            }
+        }
+    }
+
     func updateToken(_ token: String) {
         latestToken = token
         tokenUpdatedHandler?(token)
+    }
+
+    private func updateAuthorizationStatus() {
+        UNUserNotificationCenter.current().getNotificationSettings { [weak self] settings in
+            let isGranted = settings.authorizationStatus == .authorized
+                || settings.authorizationStatus == .provisional
+                || settings.authorizationStatus == .ephemeral
+            DispatchQueue.main.async {
+                self?.permissionUpdatedHandler?(isGranted)
+            }
+        }
     }
 }

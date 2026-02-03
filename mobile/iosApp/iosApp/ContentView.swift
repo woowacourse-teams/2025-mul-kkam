@@ -16,13 +16,20 @@ struct ComposeView: UIViewControllerRepresentable {
             },
             onRegisterPushNotification: { onTokenUpdated, onPermissionUpdated, onError in
                 PushNotificationManager.shared.registerForPushNotifications(
-                    onTokenUpdated: onTokenUpdated,
-                    onPermissionUpdated: onPermissionUpdated,
-                    onError: onError,
+                    onTokenUpdated: { token in
+                        _ = onTokenUpdated(token)
+                    },
+                    onPermissionUpdated: { isGranted in
+                        _ = onPermissionUpdated(KotlinBoolean(bool: isGranted))
+                    },
+                    onError: { errorMessage in
+                        _ = onError(errorMessage)
+                    },
                 )
             },
             onRequestMainPermissions: {
-                // TODO: iOS Health and notification permission requests need implementation.
+                // TODO: iOS 건강 권한 요청은 추후 구현.
+                PushNotificationManager.shared.requestNotificationPermission()
             },
         )
     }
