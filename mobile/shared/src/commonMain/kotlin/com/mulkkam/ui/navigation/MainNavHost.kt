@@ -34,15 +34,19 @@ fun MainNavHost(
 
     val onboardingScope =
         remember(isOnboardingActive) {
-            koin.getOrCreateScope(
-                scopeId = if (isOnboardingActive) "OnboardingActiveScope" else "OnboardingInactiveScope",
-                qualifier = named(ONBOARDING_SCOPE),
-            )
+            if (isOnboardingActive) {
+                koin.getOrCreateScope(
+                    scopeId = "OnboardingScopeId",
+                    qualifier = named(ONBOARDING_SCOPE),
+                )
+            } else {
+                null
+            }
         }
 
     DisposableEffect(onboardingScope) {
         onDispose {
-            onboardingScope.close()
+            onboardingScope?.close()
         }
     }
 
@@ -61,13 +65,18 @@ fun MainNavHost(
                 }
 
                 is OnboardingRoute -> {
-                    OnboardingNavGraph.entryProvider(
-                        route = route,
-                        padding = padding,
-                        navigator = navigator,
-                        snackbarHostState = snackbarHostState,
-                        onboardingScope = onboardingScope,
-                    )
+                    if (onboardingScope != null) {
+                        OnboardingNavGraph.entryProvider(
+                            route = route,
+                            padding = padding,
+                            navigator = navigator,
+                            snackbarHostState = snackbarHostState,
+                            onboardingScope = onboardingScope,
+                        )
+                    } else {
+                        // 온보딩 종료 애니메이션 중에 NPE가 발생하는 것을 방지하기 위해 빈 화면을 반환합니다.
+                        entry(route) {}
+                    }
                 }
 
                 is HomeRoute -> {
