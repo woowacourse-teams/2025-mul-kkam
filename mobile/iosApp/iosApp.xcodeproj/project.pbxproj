@@ -18,6 +18,7 @@
 		E3D5E55D42ECD1114ED03BCC /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"GoogleService-Info-Debug.plist",
 				Info.plist,
 			);
 			target = 50BBDDD92481A482B2B8FBF8 /* iosApp */;
@@ -80,6 +81,7 @@
 				94529E2488FB1D096912AE8A /* Compile Kotlin Framework */,
 				6BAD65B79828F2EBD5DCBB2E /* Sources */,
 				28506EFBBC596FAF60814A52 /* Frameworks */,
+				86AD5DC62F3235FA009E8A6A /* Run Script */,
 				85B33D5393A5E8F3F56EFB51 /* Resources */,
 			);
 			buildRules = (
@@ -159,6 +161,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		86AD5DC62F3235FA009E8A6A /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  PLIST_SRC=\"${PROJECT_DIR}/iosApp/GoogleService-Info-Debug.plist\"\nelse\n  PLIST_SRC=\"${PROJECT_DIR}/iosApp/GoogleService-Info-Release.plist\"\nfi\n\nPLIST_DST=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\n\necho \"Using Firebase plist: ${PLIST_SRC}\"\ncp -f \"${PLIST_SRC}\" \"${PLIST_DST}\"\n";
 		};
 		94529E2488FB1D096912AE8A /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
