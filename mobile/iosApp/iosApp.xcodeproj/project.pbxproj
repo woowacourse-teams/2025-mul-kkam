@@ -15,7 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7AE1BD041551910F86744970 /* 물깜.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "물깜.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AE1BD041551910F86744970 /* MulKkam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MulKkam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -73,7 +73,7 @@
 		A83A4D32DF10ACA3579085FD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7AE1BD041551910F86744970 /* 물깜.app */,
+				7AE1BD041551910F86744970 /* MulKkam.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,7 +108,7 @@
 				86601F022F324A8B002CF37F /* FirebaseMessaging */,
 			);
 			productName = iosApp;
-			productReference = 7AE1BD041551910F86744970 /* 물깜.app */;
+			productReference = 7AE1BD041551910F86744970 /* MulKkam.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -298,6 +298,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\"";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "물깜 Debug";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -307,7 +308,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_NAME = "물깜";
+				PRODUCT_NAME = MulKkam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -394,6 +395,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\"";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "물깜";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -403,7 +405,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_NAME = "물깜";
+				PRODUCT_NAME = MulKkam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
