@@ -1,14 +1,10 @@
 package com.mulkkam.ui.main
 
-import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
@@ -17,7 +13,6 @@ import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
-import com.mulkkam.ui.main.dialog.MainPermissionDialogFragment
 import com.mulkkam.ui.main.model.MainTab2
 import com.mulkkam.ui.service.NotificationAction
 import com.mulkkam.ui.service.NotificationService
@@ -165,17 +160,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
                 }
             }
 
-            fcmToken.collectWithLifecycle(this@MainActivity) {
-                val currentGranted = hasNotificationPermission()
-                viewModel.saveNotificationPermission(
-                    isCurrentlyGranted = currentGranted,
-                )
-            }
-
-            onFirstLaunch.collectWithLifecycle(this@MainActivity) {
-                showMainPermissionDialog()
-            }
-
             isAppOutdated.collectWithLifecycle(this@MainActivity) { isAppOutdated ->
                 if (isAppOutdated) showUpdateDialog()
             }
@@ -188,27 +172,6 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
             .newInstance()
             .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
     }
-
-    private fun showMainPermissionDialog() {
-        if (supportFragmentManager.findFragmentByTag(MainPermissionDialogFragment.TAG) != null) return
-        MainPermissionDialogFragment
-            .newInstance()
-            .show(supportFragmentManager, MainPermissionDialogFragment.TAG)
-    }
-
-    private fun hasNotificationPermission(): Boolean =
-        when {
-            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
-                true
-            }
-
-            else -> {
-                ContextCompat.checkSelfPermission(
-                    this,
-                    POST_NOTIFICATIONS,
-                ) == PackageManager.PERMISSION_GRANTED
-            }
-        }
 
     override fun onStop() {
         super.onStop()

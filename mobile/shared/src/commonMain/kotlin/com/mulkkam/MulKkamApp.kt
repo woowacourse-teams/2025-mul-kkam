@@ -24,6 +24,12 @@ fun MulKkamApp(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
+    onRegisterPushNotification: (
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    onRequestMainPermissions: () -> Unit,
 ) {
     val navigator = rememberMainNavigator()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -60,6 +66,8 @@ fun MulKkamApp(
                 navigator = navigator,
                 padding = innerPadding,
                 onLogin = onLogin,
+                onRegisterPushNotification = onRegisterPushNotification,
+                onRequestMainPermissions = onRequestMainPermissions,
                 snackbarHostState = snackbarHostState,
             )
         }

@@ -37,10 +37,10 @@ val commonViewModelModule: Module =
         viewModel { SettingNicknameViewModel(get(), get(), get()) }
         viewModel { SearchMembersViewModel(get(), get()) }
         viewModel { SettingViewModel(get(), get()) }
-        viewModel { HomeViewModel(get(), get(), get(), get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
         viewModel { ManualDrinkViewModel() }
         viewModel { SplashViewModel(get(), get(), get()) }
-        viewModel { MainViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { MainViewModel(get(), get(), get(), get()) }
         viewModel { NicknameViewModel(get()) }
         viewModel { BioInfoViewModel() }
         viewModel { PendingFriendsViewModel(get()) }

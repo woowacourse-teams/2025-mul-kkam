@@ -1,21 +1,53 @@
 package com.mulkkam.ui.splash
 
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.health.connect.client.PermissionController
+import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.MulKkamApp
+import com.mulkkam.R
 import com.mulkkam.ui.auth.login.model.AuthPlatform
+import com.mulkkam.ui.custom.toast.CustomToast
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_ACTIVE_CALORIES_BURNED
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND
+import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
+import com.mulkkam.ui.main.MainViewModel
+import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : ComponentActivity() {
+class SplashActivity : FragmentActivity() {
+    private val mainViewModel: MainViewModel by viewModel()
+
+    private val requestHealthConnectLauncher =
+        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
+            handleHealthPermissionResult(results.contains(PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            requestNotificationPermission()
+        }
+
+    private val requestNotificationLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            handleNotificationPermissionResult(granted)
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulKkamApp(onLogin = ::login)
+            MulKkamApp(
+                onLogin = ::login,
+                onRegisterPushNotification = ::registerPushNotification,
+                onRequestMainPermissions = ::requestMainPermissions,
+            )
         }
     }
 
@@ -82,5 +114,90 @@ class SplashActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    private fun registerPushNotification(
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        val isGranted = isNotificationPermissionGranted()
+        onPermissionUpdated(isGranted)
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                onError(task.exception?.message ?: "Failed to fetch notification token.")
+                return@addOnCompleteListener
+            }
+
+            val token: String = task.result ?: return@addOnCompleteListener
+            onTokenUpdated(token)
+        }
+    }
+
+    private fun isNotificationPermissionGranted(): Boolean =
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
+                true
+            }
+
+            else -> {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+
+    private fun requestMainPermissions() {
+        if (isHealthConnectAvailable()) {
+            requestHealthConnectLauncher.launch(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+        } else {
+            CustomToast
+                .makeText(this, getString(R.string.health_connect_install_alert), R.drawable.ic_info_circle)
+                .apply {
+                    setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
+            requestNotificationPermission()
+        }
+    }
+
+    private fun handleHealthPermissionResult(isGranted: Boolean) {
+        val messageResId =
+            if (isGranted) {
+                mainViewModel.scheduleCalorieCheck()
+                R.string.main_health_permission_granted
+            } else {
+                R.string.main_health_permission_denied
+            }
+
+        CustomToast
+            .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
+            .apply {
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
+    }
+
+    private fun handleNotificationPermissionResult(isGranted: Boolean) {
+        val messageResId =
+            if (isGranted) {
+                R.string.main_alarm_permission_granted
+            } else {
+                R.string.main_alarm_permission_denied
+            }
+
+        CustomToast
+            .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
+            .apply {
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || isNotificationPermissionGranted()) {
+            return
+        }
+
+        requestNotificationLauncher.launch(POST_NOTIFICATIONS)
     }
 }

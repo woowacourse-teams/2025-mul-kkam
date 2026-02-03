@@ -20,6 +20,12 @@ fun MainNavHost(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
+    onRegisterPushNotification: (
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    onRequestMainPermissions: () -> Unit,
     snackbarHostState: SnackbarHostState,
 ) {
     NavDisplay(
@@ -50,6 +56,8 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        onRegisterPushNotification = onRegisterPushNotification,
+                        onRequestMainPermissions = onRequestMainPermissions,
                         snackbarHostState = snackbarHostState,
                     )
                 }

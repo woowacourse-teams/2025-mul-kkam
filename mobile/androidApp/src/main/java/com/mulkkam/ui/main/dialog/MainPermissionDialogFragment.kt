@@ -64,8 +64,6 @@ class MainPermissionDialogFragment :
                 R.string.main_alarm_permission_denied
             }
 
-        parentViewModel.saveNotificationPermission(isCurrentlyGranted = granted)
-
         CustomToast
             .makeText(requireActivity(), getString(messageResId), R.drawable.ic_info_circle)
             .apply {

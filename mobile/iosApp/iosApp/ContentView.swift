@@ -13,7 +13,17 @@ struct ComposeView: UIViewControllerRepresentable {
                     onSuccess: onSuccess,
                     onError: onError,
                 )
-            }
+            },
+            onRegisterPushNotification: { onTokenUpdated, onPermissionUpdated, onError in
+                PushNotificationManager.shared.registerForPushNotifications(
+                    onTokenUpdated: onTokenUpdated,
+                    onPermissionUpdated: onPermissionUpdated,
+                    onError: onError,
+                )
+            },
+            onRequestMainPermissions: {
+                // TODO: iOS Health and notification permission requests need implementation.
+            },
         )
     }
     
