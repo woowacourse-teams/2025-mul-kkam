@@ -68,7 +68,7 @@ actual fun LoginRoute(
                 val onSuccess: (token: String) -> Unit =
                     when (authPlatform) {
                         AuthPlatform.KAKAO -> viewModel::loginWithKakao
-                        AuthPlatform.APPLE -> { _ -> /* TODO */ }
+                        AuthPlatform.APPLE -> viewModel::loginWithApple
                     }
 
                 onLogin(
