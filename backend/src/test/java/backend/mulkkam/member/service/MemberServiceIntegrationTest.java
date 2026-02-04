@@ -11,6 +11,7 @@ import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
@@ -468,7 +469,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-            Device device = new Device("token", "id", member);
+            Device device = new Device("token", "id", member, DevicePlatform.ANDROID);
             deviceRepository.save(device);
 
             Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(), member);
