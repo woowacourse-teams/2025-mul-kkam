@@ -14,10 +14,10 @@ public class AppleIdTokenParser {
             SignedJWT signedJWT = SignedJWT.parse(idToken);
             JWTClaimsSet payload = signedJWT.getJWTClaimsSet();
 
-            String sub = payload.getSubject();
+            String appleUserId = payload.getSubject();
             String email = payload.getStringClaim("email");
 
-            return new AppleUserInfo(sub, email);
+            return new AppleUserInfo(appleUserId, email);
         } catch (ParseException e) {
             throw new RuntimeException("Failed to parse Apple id_token", e);
         }

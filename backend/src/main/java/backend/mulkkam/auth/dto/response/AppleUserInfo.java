@@ -1,7 +1,7 @@
 package backend.mulkkam.auth.dto.response;
 
 public record AppleUserInfo(
-    String sub,
+    String appleUserId,
     String email
 ) {
 

@@ -51,7 +51,7 @@ public class AppleAuthService {
 
         // 3. id_token 파싱하여 사용자 정보 추출
         AppleUserInfo userInfo = idTokenParser.parse(tokenResponse.idToken());
-        String oauthId = userInfo.sub();
+        String oauthId = userInfo.appleUserId();
 
         // 4. OauthAccount 조회 또는 생성
         OauthAccount oauthAccount = oauthAccountRepository
