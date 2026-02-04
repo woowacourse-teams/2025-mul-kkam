@@ -30,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
             /* before signup */
             HttpEndpoint.exact("/auth/kakao", HttpMethod.POST),
+            HttpEndpoint.exact("/auth/apple", HttpMethod.POST),
             HttpEndpoint.exact("/auth/token/reissue", HttpMethod.POST),
             HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
             HttpEndpoint.exact("/cups/default", HttpMethod.GET),
