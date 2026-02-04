@@ -6,11 +6,12 @@ import static backend.mulkkam.common.exception.errorCode.UnauthorizedErrorCode.I
 
 import org.springframework.beans.factory.annotation.Value;
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
-import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.util.ChunkReader;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -32,7 +33,9 @@ import backend.mulkkam.notification.repository.NotificationBatchRepository;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import java.time.LocalDateTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -268,16 +271,19 @@ public class NotificationService {
             CreateTokenNotificationRequest createTokenNotificationRequest,
             List<Device> devicesByMember
     ) {
-        List<String> tokens = extractTokensFromDevices(devicesByMember);
-        SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
-                tokens);
-        publisher.publishEvent(sendMessageByFcmTokensRequest);
+        Map<DevicePlatform, List<String>> tokensByPlatform = collectTokensByPlatform(devicesByMember);
+        tokensByPlatform.forEach((platform, tokens) -> {
+            SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest = createTokenNotificationRequest.toSendMessageByFcmTokensRequest(
+                    tokens, platform);
+            publisher.publishEvent(sendMessageByFcmTokensRequest);
+        });
     }
 
-    private List<String> extractTokensFromDevices(List<Device> devices) {
+    private Map<DevicePlatform, List<String>> collectTokensByPlatform(List<Device> devices) {
         return devices.stream()
-                .map(Device::getToken)
-                .toList();
+                .collect(Collectors.groupingBy(device -> resolvePlatform(device.getPlatform()),
+                        () -> new EnumMap<>(DevicePlatform.class),
+                        Collectors.mapping(Device::getToken, Collectors.toList())));
     }
 
     private void saveAndSendNotifications(
@@ -302,12 +308,28 @@ public class NotificationService {
             List<Long> memberIds,
             NotificationMessageTemplate template
     ) {
-        List<String> tokens = readDeviceTokens(memberIds);
-        publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens));
+        Map<DevicePlatform, List<String>> tokensByPlatform = readDeviceTokensByPlatform(memberIds);
+        tokensByPlatform.forEach((platform, tokens) ->
+                publisher.publishEvent(template.toSendMessageByFcmTokensRequest(tokens, platform))
+        );
     }
 
-    private List<String> readDeviceTokens(List<Long> memberIds) {
-        return deviceRepository.findAllTokenByMemberIdIn(memberIds);
+    private Map<DevicePlatform, List<String>> readDeviceTokensByPlatform(List<Long> memberIds) {
+        Map<DevicePlatform, List<String>> tokensByPlatform = new EnumMap<>(DevicePlatform.class);
+        for (DevicePlatform platform : DevicePlatform.values()) {
+            List<String> tokens = deviceRepository.findAllTokenByMemberIdInAndPlatform(memberIds, platform);
+            if (!tokens.isEmpty()) {
+                tokensByPlatform.put(platform, tokens);
+            }
+        }
+        return tokensByPlatform;
+    }
+
+    private DevicePlatform resolvePlatform(DevicePlatform platform) {
+        if (platform == null) {
+            return DevicePlatform.ANDROID;
+        }
+        return platform;
     }
 
     private boolean isLastChunk(List<Long> memberIds) {

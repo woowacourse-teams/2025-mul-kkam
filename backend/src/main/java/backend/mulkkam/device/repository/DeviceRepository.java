@@ -1,5 +1,6 @@
 package backend.mulkkam.device.repository;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.member.domain.Member;
 import java.util.List;
@@ -21,9 +22,13 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
     void deleteByMemberIdAndDeviceUuid(Long memberId, String deviceUuid);
 
     @Query("""
-    SELECT d.token
-    FROM Device d 
-    WHERE d.member.id IN :memberIds
-    """)
-    List<String> findAllTokenByMemberIdIn(@Param("memberIds") List<Long> memberIds);
+            SELECT d.token
+            FROM Device d
+            WHERE d.member.id IN :memberIds
+              AND d.platform = :platform
+            """)
+    List<String> findAllTokenByMemberIdInAndPlatform(
+            @Param("memberIds") List<Long> memberIds,
+            @Param("platform") DevicePlatform platform
+    );
 }
