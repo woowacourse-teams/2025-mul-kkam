@@ -8,6 +8,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import coil3.compose.setSingletonImageLoaderFactory
 import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
@@ -16,6 +17,7 @@ import com.mulkkam.ui.main.component.MainBottomNavigationBar
 import com.mulkkam.ui.main.model.MainTab
 import com.mulkkam.ui.navigation.MainNavHost
 import com.mulkkam.ui.navigation.rememberMainNavigator
+import com.mulkkam.ui.util.ImageLoader
 
 @Composable
 fun MulKkamApp(
@@ -63,5 +65,9 @@ fun MulKkamApp(
                 snackbarHostState = snackbarHostState,
             )
         }
+    }
+
+    setSingletonImageLoaderFactory { context ->
+        ImageLoader(context)
     }
 }
