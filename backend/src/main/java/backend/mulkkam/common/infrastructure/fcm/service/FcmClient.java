@@ -1,15 +1,18 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
+import com.google.firebase.messaging.Aps;
+import com.google.firebase.messaging.ApsAlert;
+import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ import org.springframework.stereotype.Component;
 public class FcmClient {
 
     private static final String ACTION = "action";
+    private static final String DEFAULT_SOUND = "default";
+    private static final int CLEAR_BADGE = 0;
 
     private final FirebaseMessaging firebaseMessaging;
 
@@ -34,14 +39,15 @@ public class FcmClient {
 //        }
 
         try {
-            String messageId = firebaseMessaging.send(Message.builder()
-                    .setNotification(Notification.builder()
-                            .build())
+            Message message = messageBuilder(
+                    sendMessageByFcmTokenRequest.title(),
+                    sendMessageByFcmTokenRequest.body(),
+                    sendMessageByFcmTokenRequest.action().name(),
+                    sendMessageByFcmTokenRequest.platform()
+            )
                     .setToken(sendMessageByFcmTokenRequest.token())
-                    .putData("title", sendMessageByFcmTokenRequest.title())
-                    .putData("body", sendMessageByFcmTokenRequest.body())
-                    .putData(ACTION, sendMessageByFcmTokenRequest.action().name())
-                    .build());
+                    .build();
+            String messageId = firebaseMessaging.send(message);
 
             log.info("[FCM SUCCESS] token={}, messageId={}, action={}",
                     sendMessageByFcmTokenRequest.token(),
@@ -68,14 +74,15 @@ public class FcmClient {
 //        }
 
         try {
-            firebaseMessaging.send(Message.builder()
-                    .setNotification(Notification.builder()
-                            .build())
+            Message message = messageBuilder(
+                    sendFcmTokenMessageRequest.title(),
+                    sendFcmTokenMessageRequest.body(),
+                    sendFcmTokenMessageRequest.action().name(),
+                    sendFcmTokenMessageRequest.platform()
+            )
                     .setTopic(sendFcmTokenMessageRequest.topic())
-                    .putData("title", sendFcmTokenMessageRequest.title())
-                    .putData("body", sendFcmTokenMessageRequest.body())
-                    .putData(ACTION, sendFcmTokenMessageRequest.action().name())
-                    .build());
+                    .build();
+            firebaseMessaging.send(message);
         } catch (FirebaseMessagingException e) {
             throw new AlarmException(e);
         }
@@ -83,12 +90,15 @@ public class FcmClient {
 
     public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
         try {
-            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
+            MulticastMessage multicastMessage = multicastMessageBuilder(
+                    sendMessageByFcmTokensRequest.title(),
+                    sendMessageByFcmTokensRequest.body(),
+                    sendMessageByFcmTokensRequest.action().name(),
+                    sendMessageByFcmTokensRequest.platform()
+            )
                     .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
-                    .putData("title", sendMessageByFcmTokensRequest.title())
-                    .putData("body", sendMessageByFcmTokensRequest.body())
-                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
-                    .build());
+                    .build();
+            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(multicastMessage);
             log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
                     batchResponse.getSuccessCount(),
                     batchResponse.getFailureCount(),
@@ -103,5 +113,48 @@ public class FcmClient {
                     sendMessageByFcmTokensRequest.action());
             throw new AlarmException(e);
         }
+    }
+
+    private Message.Builder messageBuilder(String title, String body, String action, DevicePlatform platform) {
+        Message.Builder builder = Message.builder()
+                .putData("title", title)
+                .putData("body", body)
+                .putData(ACTION, action);
+        if (resolvePlatform(platform) == DevicePlatform.IOS) {
+            builder.setApnsConfig(buildApnsConfig(title, body));
+        }
+        return builder;
+    }
+
+    private MulticastMessage.Builder multicastMessageBuilder(String title, String body, String action,
+                                                            DevicePlatform platform) {
+        MulticastMessage.Builder builder = MulticastMessage.builder()
+                .putData("title", title)
+                .putData("body", body)
+                .putData(ACTION, action);
+        if (resolvePlatform(platform) == DevicePlatform.IOS) {
+            builder.setApnsConfig(buildApnsConfig(title, body));
+        }
+        return builder;
+    }
+
+    private ApnsConfig buildApnsConfig(String title, String body) {
+        return ApnsConfig.builder()
+                .setAps(Aps.builder()
+                        .setAlert(ApsAlert.builder()
+                                .setTitle(title)
+                                .setBody(body)
+                                .build())
+                        .setSound(DEFAULT_SOUND)
+                        .setBadge(CLEAR_BADGE)
+                        .build())
+                .build();
+    }
+
+    private DevicePlatform resolvePlatform(DevicePlatform platform) {
+        if (platform == null) {
+            return DevicePlatform.ANDROID;
+        }
+        return platform;
     }
 }
