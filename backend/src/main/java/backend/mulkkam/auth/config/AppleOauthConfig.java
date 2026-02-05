@@ -23,6 +23,6 @@ public class AppleOauthConfig {
     @Value("${oauth.apple.auth-url}")
     private String authUrl;
 
-    @Value("${oauth.apple.private-key-path}")
-    private String privateKeyPath;
+    @Value("${oauth.apple.private-key}")
+    private String privateKey;
 }
