@@ -46,6 +46,15 @@ open-weather:
   api:
     key: ${OPEN_WEATHER_API_KEY}
 
+oauth:
+  apple:
+    team-id: ${DEV_APPLE_TEAM_ID}
+    client-id: ${DEV_APPLE_CLIENT_ID}
+    key-id: ${DEV_APPLE_KEY_ID}
+    redirect-uri: ${DEV_APPLE_REDIRECT_URI}
+    auth-url: "https://appleid.apple.com/auth/token"
+    private-key: ${DEV_APPLE_PRIVATE_KEY}
+
 app:
   logging:
     mask-auth: true

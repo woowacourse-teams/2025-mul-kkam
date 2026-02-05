@@ -5,16 +5,15 @@ import io.jsonwebtoken.Jwts;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
-import java.nio.file.Files;
 import java.security.PrivateKey;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Base64;
 import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -45,12 +44,9 @@ public class AppleClientSecretGenerator {
 
     private PrivateKey getPrivateKey() {
         try {
-            ClassPathResource resource = new ClassPathResource(
-                appleOauthConfig.getPrivateKeyPath().replace("classpath:", "")
-            );
-            String privateKeyContent = new String(Files.readAllBytes(resource.getFile().toPath()));
+            String pemContent = new String(Base64.getDecoder().decode(appleOauthConfig.getPrivateKey()));
 
-            Reader pemReader = new StringReader(privateKeyContent);
+            Reader pemReader = new StringReader(pemContent);
             PEMParser pemParser = new PEMParser(pemReader);
             JcaPEMKeyConverter converter = new JcaPEMKeyConverter();
             PrivateKeyInfo privateKeyInfo = (PrivateKeyInfo) pemParser.readObject();

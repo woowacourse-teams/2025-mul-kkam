@@ -100,6 +100,11 @@ jobs:
           PROD_FCM_PROJECT_ID=${{ secrets.PROD_FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
           NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
+          PROD_APPLE_TEAM_ID=${{ secrets.PROD_APPLE_TEAM_ID }}
+          PROD_APPLE_CLIENT_ID=${{ secrets.PROD_APPLE_CLIENT_ID }}
+          PROD_APPLE_KEY_ID=${{ secrets.PROD_APPLE_KEY_ID }}
+          PROD_APPLE_REDIRECT_URI=${{ secrets.PROD_APPLE_REDIRECT_URI }}
+          PROD_APPLE_PRIVATE_KEY=${{ secrets.PROD_APPLE_PRIVATE_KEY }}
           SPRING_PROFILES_ACTIVE=prod
           EOF
           echo "Injected IMAGE_TAG=${IMAGE_TAG}"

@@ -47,5 +47,4 @@ oauth:
     key-id: "TEST_KEY_ID"
     redirect-uri: "https://test.example.com/callback"
     auth-url: "https://appleid.apple.com/auth/token"
-    private-key-path: "classpath:Apple_Auth_Key.p8"
-
+    private-key: "classpath:Apple_Auth_Key.p8"
