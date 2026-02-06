@@ -8,7 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 
 @SpringBootTest(webEnvironment = WebEnvironment.NONE)
-public class ServiceIntegrationTest {
+public class ServiceTest {
 
     @Autowired
     private DatabaseCleaner databaseCleaner;

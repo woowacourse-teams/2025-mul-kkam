@@ -5,9 +5,10 @@ import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_
 import static backend.mulkkam.cup.domain.IntakeType.WATER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -43,20 +44,19 @@ import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.TargetAmountSnapshotFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
+class IntakeHistoryServiceTest extends ServiceTest {
 
     private static final String defaultEmojiUrl = "url";
 
@@ -81,21 +81,32 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private CupRepository cupRepository;
 
-    private final Member member = MemberFixtureBuilder.builder().build();
-    private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
-    private Cup cup;
+    private Member createAndSaveMember() {
+        return memberRepository.save(MemberFixtureBuilder.builder().build());
+    }
 
-    @BeforeEach
-    void setUp() {
-        memberRepository.save(member);
-        cupEmojiRepository.save(cupEmoji);
+    private Member createAndSaveMember(String nickname) {
+        return memberRepository.save(
+                MemberFixtureBuilder.builder().memberNickname(new MemberNickname(nickname)).build()
+        );
+    }
 
-        saveDefaultCupEmojis();
+    private CupEmoji createAndSaveCupEmoji() {
+        return cupEmojiRepository.save(new CupEmoji("http://example.com"));
+    }
 
-        Cup cup = CupFixtureBuilder
-                .withMemberAndCupEmoji(member, cupEmoji)
-                .build();
-        this.cup = cupRepository.save(cup);
+    private Cup createAndSaveCup(Member member, CupEmoji cupEmoji) {
+        return cupRepository.save(CupFixtureBuilder.withMemberAndCupEmoji(member, cupEmoji).build());
+    }
+
+    private void saveDefaultCupEmojisIfNeeded() {
+        // 이미 기본 이모지가 저장되어 있으면 스킵
+        long defaultEmojiCount = cupEmojiRepository.findAll().stream()
+                .filter(e -> defaultEmojiUrl.equals(e.getUrl().value()))
+                .count();
+        if (defaultEmojiCount == 0) {
+            saveDefaultCupEmojis();
+        }
     }
 
     @DisplayName("컵으로 음용량을 저장할 때에")
@@ -106,6 +117,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_IfYesterdayHistoryNotExist() {
             // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailCRequest = new CreateIntakeHistoryDetailByCupRequest(
                     dateTime,
@@ -127,6 +143,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_IfYesterdayHistoryExist() {
             // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
 
             IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
@@ -159,8 +180,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("전날에 기록이 없다면 스트릭이 1로 저장된다")
         @Test
-        void success_IfYesterdayHistoryNotExist() {
+        void success_streak_starts_at_one_without_yesterday_history() {
             // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
+
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
                     dateTime, WATER, 1000);
@@ -181,6 +205,8 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_IfYesterdayHistoryExist() {
             // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
             LocalDateTime dateTime = LocalDateTime.of(2025, 7, 15, 15, 0);
 
             IntakeHistory yesterDayIntakeHistory = IntakeHistoryFixtureBuilder
@@ -212,8 +238,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("날짜의 범위에 해당하는 기록만 조회된다")
         @Test
-        void success_containsOnlyInDateRange() {
+        void success_returns_only_histories_in_date_range() {
             // given
+            Member member = createAndSaveMember();
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 23);
 
@@ -256,13 +283,13 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
                     startDate,
                     endDate
             );
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest,
                     new MemberDetails(member)
             );
 
             // then
-            List<LocalDate> dates = actual.stream()
+            List<LocalDate> dates = result.stream()
                     .map(IntakeHistorySummaryResponse::date)
                     .toList();
 
@@ -271,8 +298,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("해당 멤버의 기록이 아닌 경우 조회되지 않는다")
         @Test
-        void success_containsOnlyHistoryOfMember() {
+        void success_returns_only_own_member_histories() {
             // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             Member anotherMember = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("칼리"))
@@ -306,7 +337,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.saveAll(List.of(detailOfAnotherMember, detailOfMember));
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
                     new DateRangeRequest(
                             startDate,
                             endDate
@@ -315,7 +346,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // then
-            List<Long> intakeHistoryIds = actual.stream()
+            List<Long> intakeHistoryIds = result.stream()
                     .flatMap(summary -> summary.intakeDetails().stream())
                     .map(IntakeHistoryDetailResponse::id)
                     .toList();
@@ -325,8 +356,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("하루의 달성률을 계산한다")
         @Test
-        void success_calculateAchievementRateWithTargetAmountOfTheMostRecentHistoryOfTheDay() {
+        void success_calculates_daily_achievement_rate() {
             // given
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
             int targetAmountOfMember = 1_500;
             Member member = MemberFixtureBuilder.builder()
                     .memberNickname(new MemberNickname("칼로리"))
@@ -374,12 +406,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            List<IntakeHistorySummaryResponse> actual = intakeHistoryService.readSummaryOfIntakeHistories(
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest, new MemberDetails(savedMember)
             );
 
             // then
-            IntakeHistorySummaryResponse responseOfTheDay = actual.getFirst();
+            IntakeHistorySummaryResponse responseOfTheDay = result.getFirst();
 
             assertThat(responseOfTheDay.achievementRate()).isCloseTo(
                     100, within(0.01)
@@ -388,7 +420,7 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
         @Test
-        void success_ifNotExistsIntakeHistoryFindSnapshot() {
+        void success_finds_target_from_snapshot_when_no_history() {
             // given
             int targetAmountOfMember = 1_000;
             Member member = MemberFixtureBuilder.builder()
@@ -419,10 +451,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("기록이 없는 날인 경우 스냅샷을 통해 목표 음용량을 찾는다")
+        @DisplayName("직접 입력으로 생성된 기록은 기본 이모지를 사용한다")
         @Test
-        void success_whenIntakeHistoryDetailByUserInput() {
+        void success_creates_user_input_history_with_default_emoji() {
             // given
+            saveDefaultCupEmojis();
+            Member member = createAndSaveMember();
             LocalDate date = LocalDate.of(2025, 7, 15);
             LocalDateTime dateTime = LocalDateTime.of(date, LocalTime.of(15, 0));
             CreateIntakeHistoryDetailByUserInputRequest createIntakeHistoryDetailByUserInputRequest = new CreateIntakeHistoryDetailByUserInputRequest(
@@ -435,9 +469,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
             // then
             DateRangeRequest dateRangeRequest = new DateRangeRequest(date, date);
-            List<IntakeHistorySummaryResponse> intakeHistorySummaryResponses = intakeHistoryService.readSummaryOfIntakeHistories(
+            List<IntakeHistorySummaryResponse> result = intakeHistoryService.readSummaryOfIntakeHistories(
                     dateRangeRequest, new MemberDetails(member.getId(), MemberRole.MEMBER));
-            IntakeHistoryDetailResponse intakeHistoryDetailResponse = intakeHistorySummaryResponses.getFirst()
+            IntakeHistoryDetailResponse intakeHistoryDetailResponse = result.getFirst()
                     .intakeDetails().getFirst();
 
             CupEmoji expectEmoji = cupEmojiRepository.findAll()
@@ -460,8 +494,9 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("날짜의 범위에 해당하는 섭취 달성률들을 조회한다")
         @Test
-        void success_byValidDateRange() {
+        void success_returns_achievement_rates_for_date_range() {
             // given
+            Member member = createAndSaveMember();
             LocalDate startDate = LocalDate.of(2025, 10, 20);
             LocalDate endDate = LocalDate.of(2025, 10, 22);
 
@@ -531,11 +566,11 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             );
 
             // when
-            ReadAchievementRateByDatesResponse readAchievementRateByDatesResponse = intakeHistoryService.readAchievementRatesByDateRange(
+            ReadAchievementRateByDatesResponse result = intakeHistoryService.readAchievementRatesByDateRange(
                     dateRangeRequest, new MemberDetails(member));
 
             // then
-            List<Double> actualAchievementRates = readAchievementRateByDatesResponse.readAchievementRateByDateResponses()
+            List<Double> actualAchievementRates = result.readAchievementRateByDateResponses()
                     .stream()
                     .map(ReadAchievementRateByDateResponse::achievementRate)
                     .toList();
@@ -552,7 +587,10 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("존재하지 않는 기록에 대한 요청인 경우에도 정상적으로 처리된다.")
         @Test
-        void error_historyDetailIsNotExisted() {
+        void success_does_not_throw_for_non_existent_history() {
+            // given
+            Member member = createAndSaveMember();
+
             // when & then
             assertThatCode(() -> intakeHistoryService.deleteDetailHistory(1L, new MemberDetails(member)))
                     .doesNotThrowAnyException();
@@ -560,8 +598,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("자신의 소유가 아닌 회원이 삭제를 요청한 경우 예외가 발생한다")
         @Test
-        void error_memberIsNotPermitted() {
+        void fail_cannot_delete_other_member_history() {
             // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             Member anotherMember = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname("칼리"))
@@ -580,19 +622,22 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> intakeHistoryService.deleteDetailHistory(
                             intakeHistory.getId(),
                             new MemberDetails(savedAnotherMember)
-                    ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_PERMITTED_FOR_INTAKE_HISTORY.name());
+                    ));
+            assertEquals(NOT_PERMITTED_FOR_INTAKE_HISTORY, ex.getErrorCode());
         }
 
         @DisplayName("정상적으로 삭제된다")
         @Test
-        void success_validData() {
+        void success_history_is_deleted() {
             // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .date(LocalDate.now())
@@ -615,8 +660,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("이전 날짜의 기록에 대해 삭제 요청을 하는 경우 예외가 발생한다")
         @Test
-        void error_requestToDeletePastDate() {
+        void fail_cannot_delete_past_date_history() {
             // given
+            Member member = createAndSaveMember();
+            CupEmoji cupEmoji = createAndSaveCupEmoji();
+            Cup cup = createAndSaveCup(member, cupEmoji);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .date(LocalDate.now().minusDays(1))
@@ -629,13 +678,12 @@ class IntakeHistoryServiceIntegrationTest extends ServiceIntegrationTest {
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> intakeHistoryService.deleteDetailHistory(
                             intakeHistoryDetail.getId(),
                             new MemberDetails(member)
-                    ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY.name());
+                    ));
+            assertEquals(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY, ex.getErrorCode());
         }
     }
 

@@ -1,8 +1,9 @@
 package backend.mulkkam.notification.service;
 
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_SUGGESTION_NOTIFICATION;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
@@ -18,15 +19,14 @@ import backend.mulkkam.notification.repository.SuggestionNotificationRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.NotificationFixtureBuilder;
 import backend.mulkkam.support.fixture.notification.SuggestionNotificationFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTest {
+class SuggestionNotificationServiceTest extends ServiceTest {
 
     @Autowired
     private SuggestionNotificationService suggestionNotificationService;
@@ -40,14 +40,11 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
     @Autowired
     private IntakeHistoryRepository intakeHistoryRepository;
 
-    private Member savedMember;
-
-    @BeforeEach
-    void setUp() {
+    private Member createAndSaveMember() {
         Member member = MemberFixtureBuilder.builder()
                 .weight(60.0)
                 .build();
-        savedMember = memberRepository.save(member);
+        return memberRepository.save(member);
     }
 
     @DisplayName("제안 알림에서 적용 요청할 때")
@@ -58,6 +55,7 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
         @Test
         void success_validInput() {
             // given
+            Member savedMember = createAndSaveMember();
             Notification notification = NotificationFixtureBuilder.withMember(savedMember)
                     .build();
             SuggestionNotification savedSuggestionNotification = suggestionNotificationRepository.save(
@@ -83,13 +81,15 @@ class SuggestionNotificationIntegrationServiceTest extends ServiceIntegrationTes
 
         @DisplayName("존재하지 않는 제안 알림 id로 요청하면 예외를 발생한다")
         @Test
-        void error_byNonExistingSuggestionNotificationId() {
+        void fail_byNonExistingSuggestionNotificationId() {
+            // given
+            Member savedMember = createAndSaveMember();
+
             // when & then
-            assertThatThrownBy(
+            CommonException ex = assertThrows(CommonException.class,
                     () -> suggestionNotificationService.applyTargetAmount(Long.MAX_VALUE,
-                            new MemberDetails(savedMember.getId(), MemberRole.MEMBER))
-            ).isInstanceOf(CommonException.class)
-                    .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
+                            new MemberDetails(savedMember.getId(), MemberRole.MEMBER)));
+            assertEquals(NOT_FOUND_SUGGESTION_NOTIFICATION, ex.getErrorCode());
         }
     }
 }

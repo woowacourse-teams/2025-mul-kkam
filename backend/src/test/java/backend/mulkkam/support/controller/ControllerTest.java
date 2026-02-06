@@ -1,6 +1,5 @@
 package backend.mulkkam.support.controller;
 
-
 import backend.mulkkam.support.DatabaseCleaner;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ControllerTest {
+public abstract class ControllerTest {
 
     @Autowired
     protected MockMvc mockMvc;

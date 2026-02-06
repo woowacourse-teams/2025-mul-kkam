@@ -1,8 +1,9 @@
 package backend.mulkkam.member.domain.vo;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_WEIGHT;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import org.junit.jupiter.api.DisplayName;
@@ -30,10 +31,12 @@ class PhysicalAttributesTest {
         @ParameterizedTest
         @ValueSource(doubles = {-1.0, 0.0, 9.0, 251.0, 1_000.0})
         void error_invalidValue(double input) {
-            // when & then
-            assertThatThrownBy(() -> new PhysicalAttributes(null, input))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_MEMBER_WEIGHT.name());
+            // when
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> new PhysicalAttributes(null, input));
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_MEMBER_WEIGHT);
         }
     }
 }

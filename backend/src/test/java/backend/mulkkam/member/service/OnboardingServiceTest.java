@@ -2,8 +2,9 @@ package backend.mulkkam.member.service;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
@@ -20,9 +21,8 @@ import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.cup.dto.CreateCupRequestFixtureBuilder;
 import backend.mulkkam.support.fixture.member.dto.CreateMemberRequestFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -30,7 +30,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
+class OnboardingServiceTest extends ServiceTest {
 
     @Autowired
     private CupEmojiRepository cupEmojiRepository;
@@ -44,44 +44,39 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
     @Autowired
     private MemberRepository memberRepository;
 
-    private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
+    private List<CreateCupRequest> createDefaultCupRequests() {
+        CupEmoji cupEmoji = new CupEmoji("http://example.com");
+        CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
+
+        return List.of(
+                CreateCupRequestFixtureBuilder
+                        .withCupEmojiId(savedCupEmoji.getId())
+                        .cupRank(1)
+                        .build(),
+                CreateCupRequestFixtureBuilder
+                        .withCupEmojiId(savedCupEmoji.getId())
+                        .cupRank(2)
+                        .build(),
+                CreateCupRequestFixtureBuilder
+                        .withCupEmojiId(savedCupEmoji.getId())
+                        .cupRank(3)
+                        .build()
+        );
+    }
 
     @DisplayName("온보딩 시에")
     @Nested
     class Create {
 
-        private List<CreateCupRequest> createCupRequests;
-        private CreateMemberRequest createMemberRequest;
-
-        @BeforeEach
-        void setUP() {
-            CupEmoji savedCupEmoji = cupEmojiRepository.save(cupEmoji);
-
-            createCupRequests = List.of(
-                    CreateCupRequestFixtureBuilder
-                            .withCupEmojiId(savedCupEmoji.getId())
-                            .cupRank(1)
-                            .build()
-                    ,
-                    CreateCupRequestFixtureBuilder
-                            .withCupEmojiId(savedCupEmoji.getId())
-                            .cupRank(2)
-                            .build()
-                    ,
-                    CreateCupRequestFixtureBuilder
-                            .withCupEmojiId(savedCupEmoji.getId())
-                            .cupRank(3)
-                            .build()
-            );
-            createMemberRequest = CreateMemberRequestFixtureBuilder
-                    .withCreateCupRequests(createCupRequests)
-                    .build();
-        }
-
         @DisplayName("정상적으로 회원이 저장된다")
         @Test
         void success_validData() {
             // given
+            List<CreateCupRequest> createCupRequests = createDefaultCupRequests();
+            CreateMemberRequest createMemberRequest = CreateMemberRequestFixtureBuilder
+                    .withCreateCupRequests(createCupRequests)
+                    .build();
+
             OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
             cupEmojiRepository.saveAll(
@@ -115,6 +110,7 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
         @ValueSource(strings = {"1", " ", "", "1234567891011"})
         void error_invalidNickname(String invalidNickname) {
             // given
+            List<CreateCupRequest> createCupRequests = createDefaultCupRequests();
             CreateMemberRequest createMemberRequest = CreateMemberRequestFixtureBuilder
                     .withCreateCupRequests(createCupRequests)
                     .memberNickname(invalidNickname)
@@ -124,12 +120,13 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
             String deviceUuid = "deviceUuid";
 
-            // when & then
-            assertThatThrownBy(
+            // when
+            CommonException ex = assertThrows(CommonException.class,
                     () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId(), deviceUuid),
-                            createMemberRequest))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_MEMBER_NICKNAME.name());
+                            createMemberRequest));
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_MEMBER_NICKNAME);
         }
 
         @DisplayName("유효하지 않은 목표 음용량을 사용할 경우 예외를 반환한다")
@@ -137,6 +134,7 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
         @ValueSource(ints = {0, -1, -3})
         void error_invalidTargetAmount(int invalidIntakeAmount) {
             // given
+            List<CreateCupRequest> createCupRequests = createDefaultCupRequests();
             CreateMemberRequest createMemberRequest = CreateMemberRequestFixtureBuilder
                     .withCreateCupRequests(createCupRequests)
                     .targetAmount(invalidIntakeAmount)
@@ -146,12 +144,13 @@ class OnboardingServiceIntegrationTest extends ServiceIntegrationTest {
             oauthAccountRepository.save(oauthAccount);
             String deviceUuid = "deviceUuid";
 
-            // when & then
-            assertThatThrownBy(
+            // when
+            CommonException ex = assertThrows(CommonException.class,
                     () -> onboardingService.create(new OauthAccountDetails(oauthAccount.getId(), deviceUuid),
-                            createMemberRequest))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_TARGET_AMOUNT.name());
+                            createMemberRequest));
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(INVALID_TARGET_AMOUNT);
         }
     }
 }

@@ -3,7 +3,7 @@ package backend.mulkkam.intake.service;
 import backend.mulkkam.averageTemperature.domain.City;
 import backend.mulkkam.averageTemperature.domain.CityDateTime;
 import backend.mulkkam.notification.service.WeatherService;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +11,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
+class WeatherServiceTest extends ServiceTest {
 
     @Autowired
     WeatherService weatherService;
@@ -23,7 +23,7 @@ class WeatherServiceIntegrationTest extends ServiceIntegrationTest {
         @Disabled
         @DisplayName("정상적으로 실제 API 연결을 통해 평균 기온을 구한다")
         @Test
-        void success_withExactDate() {
+        void success_fetches_average_temperature_from_api() {
             // given
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, LocalDateTime.now().plusDays(1));
 

@@ -4,8 +4,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAM
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatCode;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
@@ -51,7 +52,7 @@ import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
 import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -61,7 +62,7 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class MemberServiceIntegrationTest extends ServiceIntegrationTest {
+class MemberServiceTest extends ServiceTest {
 
     private static final String defaultEmojiUrl = "url";
 
@@ -112,7 +113,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("존재하는 ID로 조회 시 멤버 정보를 반환한다")
         @Test
-        void success_whenExistingId() {
+        void success_returns_member_info() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -138,7 +139,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("올바른 데이터로 필드를 수정할 시 값이 반영된다")
         @Test
-        void success_validDataAllArgs() {
+        void success_physical_attributes_are_updated() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -178,7 +179,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("올바른 닉네임으로 필드를 수정할 시 값이 변경된다")
         @Test
-        void success_validNickname() {
+        void success_nickname_is_updated() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -204,7 +205,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("중복되지 않거나, 기존의 닉네임과 같지 않다면 정상적으로 작동한다")
         @Test
-        void success_validDataArg() {
+        void success_nickname_validation_passes() {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
@@ -223,7 +224,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("이미 존재하는 닉네임이면 예외가 발생한다")
         @Test
-        void error_duplicateNickname() {
+        void fail_nickname_cannot_be_duplicated() {
             // given
             String oldNickname = "체체";
             String newNickname = "체체1";
@@ -241,17 +242,17 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member2);
 
             // when & then
-            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                    newNickname,
-                    new MemberDetails(member1)
-            ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(DUPLICATE_MEMBER_NICKNAME.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.validateDuplicateNickname(
+                            newNickname,
+                            new MemberDetails(member1)
+                    ));
+            assertEquals(DUPLICATE_MEMBER_NICKNAME, ex.getErrorCode());
         }
 
         @DisplayName("이전과 같은 닉네임이면 예외가 발생한다")
         @Test
-        void error_sameAsBeforeNickname() {
+        void fail_nickname_cannot_be_same_as_before() {
             // given
             String nickname = "체체";
             Member member = MemberFixtureBuilder
@@ -261,12 +262,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             memberRepository.save(member);
 
             // when & then
-            assertThatThrownBy(() -> memberService.validateDuplicateNickname(
-                    nickname,
-                    new MemberDetails(member)
-            ))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(SAME_AS_BEFORE_NICKNAME.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> memberService.validateDuplicateNickname(
+                            nickname,
+                            new MemberDetails(member)
+                    ));
+            assertEquals(SAME_AS_BEFORE_NICKNAME, ex.getErrorCode());
         }
     }
 
@@ -276,7 +277,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("멤버의 닉네임이 올바르게 조회된다")
         @Test
-        void success_validMemberId() {
+        void success_returns_member_nickname() {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
@@ -286,10 +287,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             String expected = member.getMemberNickname().value();
 
             // when
-            MemberNicknameResponse memberNicknameResponse = memberService.getNickname(new MemberDetails(member));
+            MemberNicknameResponse result = memberService.getNickname(new MemberDetails(member));
 
             // then
-            assertThat(memberNicknameResponse.memberNickname()).isEqualTo(expected);
+            assertThat(result.memberNickname()).isEqualTo(expected);
         }
     }
 
@@ -299,7 +300,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("정상적으로 작동한다")
         @Test
-        void success_validData() {
+        void success_returns_progress_info() {
             // given
             String nickname = "체체";
             Member member = MemberFixtureBuilder
@@ -329,24 +330,24 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
-            ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
+            ProgressInfoResponse result = memberService.getProgressInfo(
                     new MemberDetails(member),
                     LocalDate.of(2025, 7, 15)
             );
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(progressInfoResponse.memberNickname()).isEqualTo(nickname);
-                softly.assertThat(progressInfoResponse.streak()).isEqualTo(42);
-                softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(50.0);
-                softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(1000);
-                softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(500);
+                softly.assertThat(result.memberNickname()).isEqualTo(nickname);
+                softly.assertThat(result.streak()).isEqualTo(42);
+                softly.assertThat(result.achievementRate()).isEqualTo(50.0);
+                softly.assertThat(result.targetAmount()).isEqualTo(1000);
+                softly.assertThat(result.totalAmount()).isEqualTo(500);
             });
         }
 
         @DisplayName("오늘의 기록이 존재하지 않는 경우 멤버의 목표 음용량을 조회한다")
         @Test
-        void success_withoutIntakeHistory() {
+        void success_returns_member_target_when_no_history() {
             // given
             String nickname = "체체";
             int rawTargetAmount = 1_000;
@@ -361,18 +362,18 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             LocalDate date = LocalDate.of(2025, 3, 25);
 
             // when
-            ProgressInfoResponse progressInfoResponse = memberService.getProgressInfo(
+            ProgressInfoResponse result = memberService.getProgressInfo(
                     new MemberDetails(member),
                     date.plusDays(1)
             );
 
             // then
             assertSoftly(softly -> {
-                softly.assertThat(progressInfoResponse.memberNickname()).isEqualTo(nickname);
-                softly.assertThat(progressInfoResponse.streak()).isEqualTo(1);
-                softly.assertThat(progressInfoResponse.achievementRate()).isEqualTo(0);
-                softly.assertThat(progressInfoResponse.targetAmount()).isEqualTo(rawTargetAmount);
-                softly.assertThat(progressInfoResponse.totalAmount()).isEqualTo(0);
+                softly.assertThat(result.memberNickname()).isEqualTo(nickname);
+                softly.assertThat(result.streak()).isEqualTo(1);
+                softly.assertThat(result.achievementRate()).isEqualTo(0);
+                softly.assertThat(result.targetAmount()).isEqualTo(rawTargetAmount);
+                softly.assertThat(result.totalAmount()).isEqualTo(0);
             });
         }
     }
@@ -383,7 +384,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("정상적으로 멤버가 삭제된다")
         @Test
-        void success_deleteMember() {
+        void success_member_is_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -407,7 +408,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("정상적으로 토큰이 삭제된다")
         @Test
-        void success_deleteRefreshToken() {
+        void success_refresh_token_is_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();
@@ -434,7 +435,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
         @DisplayName("연관된 모든 엔티티가 제거된다")
         @Test
-        void success_deleteAllRelatedEntities() {
+        void success_all_related_entities_are_deleted() {
             // given
             Member member = MemberFixtureBuilder.builder()
                     .build();

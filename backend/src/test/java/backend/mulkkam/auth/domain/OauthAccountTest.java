@@ -1,7 +1,8 @@
 package backend.mulkkam.auth.domain;
 
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.member.domain.Member;
@@ -29,10 +30,12 @@ class OauthAccountTest {
                     OauthProvider.KAKAO
             );
 
-            // when & then
-            assertThatThrownBy(() -> oauthAccount.modifyMember(member))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT.name());
+            // when
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> oauthAccount.modifyMember(member));
+
+            // then
+            assertThat(ex.getErrorCode()).isEqualTo(MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT);
         }
     }
 }

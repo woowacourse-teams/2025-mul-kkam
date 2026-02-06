@@ -14,7 +14,7 @@ import backend.mulkkam.auth.infrastructure.OauthJwtTokenHandler;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.member.dto.response.KakaoUserInfo;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -22,7 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
+public class KakaoAuthServiceTest extends ServiceTest {
 
     @MockitoBean
     KakaoRestClient kakaoRestClient;
@@ -43,7 +43,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
     @Nested
     class SignIn {
 
-        @DisplayName("회원가입 한 적이 없는 사용자라면 OauthAccount 를 새롭게 저장한다")
+        @DisplayName("회원가입 한 적이 없는 사용자라면 OauthAccount를 새롭게 저장한다")
         @Test
         void success_withNewOauthAccount() {
             // given
@@ -171,7 +171,7 @@ public class KakaoAuthServiceIntegrationTest extends ServiceIntegrationTest {
             });
         }
 
-        @DisplayName("중복되는 oauth_id 와 provider 로 등록을 요청하는 경우 추가로 저장하지 않는다")
+        @DisplayName("중복되는 oauth_id와 provider로 등록을 요청하는 경우 추가로 저장하지 않는다")
         @Test
         void success_withDuplicatedOauthIdAndProvider() {
             // given

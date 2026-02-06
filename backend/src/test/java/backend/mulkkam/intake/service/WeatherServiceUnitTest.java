@@ -4,8 +4,9 @@ import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INV
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_FORECAST_TARGET_DATE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.within;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
@@ -47,30 +48,30 @@ class WeatherServiceUnitTest {
 
         @Test
         @DisplayName("오늘 날짜가 목표 날짜인 경우 예외를 던진다")
-        void error_withTargetDateAsToday() {
+        void fail_cannot_forecast_for_today() {
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(CityDateTime.now(City.SEOUL)))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(CityDateTime.now(City.SEOUL)));
+            assertEquals(INVALID_FORECAST_TARGET_DATE, ex.getErrorCode());
         }
 
         @Test
         @DisplayName("오늘 날짜보다 목표 날짜가 5일보다 뒤인 경우 예외를 던진다")
-        void error_withTargetDateAsAfterThan5Days() {
+        void fail_cannot_forecast_beyond_5_days() {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(5).plusDays(1);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDateTime))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_TARGET_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(cityDateTime));
+            assertEquals(INVALID_FORECAST_TARGET_DATE, ex.getErrorCode());
         }
 
         @ParameterizedTest
         @ValueSource(ints = {1, 2, 3, 4, 5})
         @DisplayName("목표 날짜가 오늘보다 이후이고 오늘보다 5일 뒤인 경우 예외가 발생하지 않는다")
-        void success_withValidTargetDate(int plusDays) {
+        void success_forecasts_for_valid_date_range(int plusDays) {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(plusDays);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
@@ -93,7 +94,7 @@ class WeatherServiceUnitTest {
 
         @Test
         @DisplayName("예보 응답의 UTC 시간이 KST 로 변환 시 targetDate 와 일치하면 평균을 계산한다") // TODO 2025. 9. 17. 21:38: KST 노
-        void success_whenUtcForecastMatchesTargetDateInKST() {
+        void success_calculates_average_when_utc_matches_kst_target() {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(1);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
@@ -118,7 +119,7 @@ class WeatherServiceUnitTest {
 
         @Test
         @DisplayName("예보 응답의 시간이 targetDate 와 일치하지 않으면 예외가 발생한다")
-        void error_whenUtcForecastDoesNotMatchTargetDateInKST() {
+        void fail_throws_when_forecast_date_mismatches_target() {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(1);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);
@@ -138,14 +139,14 @@ class WeatherServiceUnitTest {
             when(weatherClient.getFourDayWeatherForecast(any())).thenReturn(response);
 
             // when & then
-            assertThatThrownBy(() -> weatherService.getAverageTemperatureForCityDate(cityDateTime))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_FORECAST_DATE.name());
+            CommonException ex = assertThrows(CommonException.class,
+                    () -> weatherService.getAverageTemperatureForCityDate(cityDateTime));
+            assertEquals(INVALID_FORECAST_DATE, ex.getErrorCode());
         }
 
         @Test
         @DisplayName("평균 기온이 정상적으로 계산된다")
-        void success_whenTargetDateInRangeReturnsValidAverageOfTemperature() {
+        void success_calculates_valid_average_temperature() {
             // given
             LocalDateTime targetDateTime = LocalDateTime.now().plusDays(1);
             CityDateTime cityDateTime = new CityDateTime(City.SEOUL, targetDateTime);

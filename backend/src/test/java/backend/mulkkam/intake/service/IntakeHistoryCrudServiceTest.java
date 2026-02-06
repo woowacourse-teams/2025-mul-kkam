@@ -14,15 +14,14 @@ import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
-import backend.mulkkam.support.service.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceTest;
 import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-class IntakeHistoryCrudIntegrationServiceTest extends ServiceIntegrationTest {
+class IntakeHistoryCrudServiceTest extends ServiceTest {
 
     @Autowired
     private IntakeHistoryCrudService intakeHistoryCrudService;
@@ -36,14 +35,11 @@ class IntakeHistoryCrudIntegrationServiceTest extends ServiceIntegrationTest {
     @Autowired
     private IntakeHistoryDetailRepository intakeHistoryDetailRepository;
 
-    private Member savedMember;
-
-    @BeforeEach
-    void setUp() {
+    private Member createAndSaveMember() {
         Member member = MemberFixtureBuilder.builder()
                 .targetAmount(1_000)
                 .build();
-        savedMember = memberRepository.save(member);
+        return memberRepository.save(member);
     }
 
     @DisplayName("섭취 기록에 따른 섭취 달성률 조회할 때")
@@ -52,8 +48,9 @@ class IntakeHistoryCrudIntegrationServiceTest extends ServiceIntegrationTest {
 
         @DisplayName("섭취 기록으로부터 달성률을 계산하여 반환한다")
         @Test
-        void success_byValidInput() {
+        void success_calculates_achievement_rate_from_history() {
             // given
+            Member savedMember = createAndSaveMember();
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(savedMember)
                     .build();
