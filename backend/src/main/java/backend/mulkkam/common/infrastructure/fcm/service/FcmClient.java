@@ -1,15 +1,18 @@
 package backend.mulkkam.common.infrastructure.fcm.service;
 
-import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
+import com.google.api.core.ApiFuture;
+import com.google.api.core.ApiFutureCallback;
+import com.google.api.core.ApiFutures;
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
+import com.google.common.util.concurrent.MoreExecutors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -33,28 +36,30 @@ public class FcmClient {
 //            log.warn("[MOCK FCM] sleep interrupted");
 //        }
 
-        try {
-            String messageId = firebaseMessaging.send(Message.builder()
-                    .setNotification(Notification.builder()
-                            .build())
-                    .setToken(sendMessageByFcmTokenRequest.token())
-                    .putData("title", sendMessageByFcmTokenRequest.title())
-                    .putData("body", sendMessageByFcmTokenRequest.body())
-                    .putData(ACTION, sendMessageByFcmTokenRequest.action().name())
-                    .build());
+        ApiFuture<String> future = firebaseMessaging.sendAsync(Message.builder()
+                .setNotification(Notification.builder()
+                        .build())
+                .setToken(sendMessageByFcmTokenRequest.token())
+                .putData("title", sendMessageByFcmTokenRequest.title())
+                .putData("body", sendMessageByFcmTokenRequest.body())
+                .putData(ACTION, sendMessageByFcmTokenRequest.action().name())
+                .build());
 
-            log.info("[FCM SUCCESS] token={}, messageId={}, action={}",
-                    sendMessageByFcmTokenRequest.token(),
-                    messageId,
-                    sendMessageByFcmTokenRequest.action());
-        } catch (FirebaseMessagingException e) {
-            log.error("[FCM FAILED] token={}, errorCode={}, errorMessage={}, action={}",
-                    sendMessageByFcmTokenRequest.token(),
-                    e.getMessagingErrorCode(),
-                    e.getMessage(),
-                    sendMessageByFcmTokenRequest.action());
-            throw new AlarmException(e);
-        }
+        ApiFutures.addCallback(future, new ApiFutureCallback<>() {
+            @Override
+            public void onSuccess(String messageId) {
+                log.info("[FCM SUCCESS] token={}, messageId={}, action={}",
+                        sendMessageByFcmTokenRequest.token(),
+                        messageId,
+                        sendMessageByFcmTokenRequest.action());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                logFailure("token", sendMessageByFcmTokenRequest.token(), t,
+                        sendMessageByFcmTokenRequest.action().name());
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     public void sendMessageByTopic(SendMessageByFcmTopicRequest sendFcmTokenMessageRequest) {
@@ -67,41 +72,75 @@ public class FcmClient {
 //            log.warn("[MOCK FCM] sleep interrupted");
 //        }
 
-        try {
-            firebaseMessaging.send(Message.builder()
-                    .setNotification(Notification.builder()
-                            .build())
-                    .setTopic(sendFcmTokenMessageRequest.topic())
-                    .putData("title", sendFcmTokenMessageRequest.title())
-                    .putData("body", sendFcmTokenMessageRequest.body())
-                    .putData(ACTION, sendFcmTokenMessageRequest.action().name())
-                    .build());
-        } catch (FirebaseMessagingException e) {
-            throw new AlarmException(e);
-        }
+        ApiFuture<String> future = firebaseMessaging.sendAsync(Message.builder()
+                .setNotification(Notification.builder()
+                        .build())
+                .setTopic(sendFcmTokenMessageRequest.topic())
+                .putData("title", sendFcmTokenMessageRequest.title())
+                .putData("body", sendFcmTokenMessageRequest.body())
+                .putData(ACTION, sendFcmTokenMessageRequest.action().name())
+                .build());
+
+        ApiFutures.addCallback(future, new ApiFutureCallback<>() {
+            @Override
+            public void onSuccess(String messageId) {
+                log.info("[FCM SUCCESS] topic={}, messageId={}, action={}",
+                        sendFcmTokenMessageRequest.topic(),
+                        messageId,
+                        sendFcmTokenMessageRequest.action());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                logFailure("topic", sendFcmTokenMessageRequest.topic(), t,
+                        sendFcmTokenMessageRequest.action().name());
+            }
+        }, MoreExecutors.directExecutor());
     }
 
     public void sendMulticast(SendMessageByFcmTokensRequest sendMessageByFcmTokensRequest) {
-        try {
-            BatchResponse batchResponse = firebaseMessaging.sendEachForMulticast(MulticastMessage.builder()
-                    .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
-                    .putData("title", sendMessageByFcmTokensRequest.title())
-                    .putData("body", sendMessageByFcmTokensRequest.body())
-                    .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
-                    .build());
-            log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
-                    batchResponse.getSuccessCount(),
-                    batchResponse.getFailureCount(),
-                    sendMessageByFcmTokensRequest.allTokens().size(),
-                    sendMessageByFcmTokensRequest.action());
+        ApiFuture<BatchResponse> future = firebaseMessaging.sendEachForMulticastAsync(MulticastMessage.builder()
+                .addAllTokens(sendMessageByFcmTokensRequest.allTokens())
+                .putData("title", sendMessageByFcmTokensRequest.title())
+                .putData("body", sendMessageByFcmTokensRequest.body())
+                .putData(ACTION, sendMessageByFcmTokensRequest.action().name())
+                .build());
 
-        } catch (FirebaseMessagingException e) {
-            log.error("[FCM MULTICAST FAILED] tokenCount={}, errorCode={}, errorMessage={}, action={}",
-                    sendMessageByFcmTokensRequest.allTokens().size(),
-                    e.getMessagingErrorCode(),
-                    e.getMessage(),
-                    sendMessageByFcmTokensRequest.action());
-            throw new AlarmException(e);
+        ApiFutures.addCallback(future, new ApiFutureCallback<>() {
+            @Override
+            public void onSuccess(BatchResponse batchResponse) {
+                log.info("[FCM MULTICAST] successCount={}, failureCount={}, totalCount={}, action={}",
+                        batchResponse.getSuccessCount(),
+                        batchResponse.getFailureCount(),
+                        sendMessageByFcmTokensRequest.allTokens().size(),
+                        sendMessageByFcmTokensRequest.action());
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                logFailure("tokenCount",
+                        String.valueOf(sendMessageByFcmTokensRequest.allTokens().size()),
+                        t,
+                        sendMessageByFcmTokensRequest.action().name());
+            }
+        }, MoreExecutors.directExecutor());
+    }
+
+    private void logFailure(String targetType, String targetValue, Throwable t, String action) {
+        if (t instanceof FirebaseMessagingException firebaseMessagingException) {
+            log.error("[FCM FAILED] {}={}, errorCode={}, errorMessage={}, action={}",
+                    targetType,
+                    targetValue,
+                    firebaseMessagingException.getMessagingErrorCode(),
+                    firebaseMessagingException.getMessage(),
+                    action);
+            return;
         }
+
+        log.error("[FCM FAILED] {}={}, errorMessage={}, action={}",
+                targetType,
+                targetValue,
+                t.getMessage(),
+                action);
     }
 }
