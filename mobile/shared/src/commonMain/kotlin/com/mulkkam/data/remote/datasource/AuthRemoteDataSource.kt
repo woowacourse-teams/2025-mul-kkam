@@ -9,6 +9,11 @@ interface AuthRemoteDataSource {
         deviceUuid: String,
     ): Result<AuthResponse>
 
+    suspend fun postAuthApple(
+        authorizationCode: String,
+        deviceUuid: String,
+    ): Result<AuthResponse>
+
     suspend fun postAuthTokenReissue(
         refreshToken: String,
         deviceUuid: String,
