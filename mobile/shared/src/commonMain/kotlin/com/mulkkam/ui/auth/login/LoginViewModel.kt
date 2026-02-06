@@ -81,6 +81,26 @@ class LoginViewModel(
         }
     }
 
+    fun loginWithApple(authorizationCode: String) {
+        viewModelScope.launch {
+            runCatching {
+                _authUiState.value = MulKkamUiState.Loading
+                val deviceUuid = devicesRepository.getDeviceUuid().getOrError()
+                authRepository.postAuthApple(authorizationCode, deviceUuid).getOrError()
+            }.onSuccess { authTokenInfo ->
+                val accessToken = authTokenInfo.accessToken
+                val refreshToken = authTokenInfo.refreshToken
+
+                tokenRepository.saveAccessToken(accessToken)
+                tokenRepository.saveRefreshToken(refreshToken)
+
+                updateAuthStateWithOnboarding(authTokenInfo.onboardingCompleted)
+            }.onFailure {
+                _authUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+            }
+        }
+    }
+
     private fun updateAuthStateWithOnboarding(onboardingCompleted: Boolean) {
         val userAuthState =
             when (onboardingCompleted) {

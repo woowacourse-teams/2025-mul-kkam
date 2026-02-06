@@ -9,5 +9,10 @@ interface AuthRepository {
         deviceUuid: String,
     ): MulKkamResult<AuthInfo>
 
+    suspend fun postAuthApple(
+        authorizationCode: String,
+        deviceUuid: String,
+    ): MulKkamResult<AuthInfo>
+
     suspend fun postAuthLogout(): MulKkamResult<Unit>
 }
