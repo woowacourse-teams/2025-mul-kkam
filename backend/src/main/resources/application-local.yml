@@ -31,3 +31,6 @@ spring:
 app:
   logging:
     mask-auth: false
+
+notification:
+  secret-key: dummy-local-test

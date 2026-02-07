@@ -20,6 +20,12 @@ jobs:
           distribution: "temurin"
           java-version: "21"
 
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: false
+          gradle-home-cache-cleanup: true
+
       - name: Grant execute permission to gradlew
         run: chmod +x gradlew
         working-directory: ./backend
@@ -73,6 +79,11 @@ jobs:
           DEV_DATASOURCE_MIGRATION_USERNAME=${{ secrets.DEV_DATASOURCE_MIGRATION_USERNAME }}
           DEV_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.DEV_DATASOURCE_MIGRATION_PASSWORD }}
           NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
+          DEV_APPLE_TEAM_ID=${{ secrets.DEV_APPLE_TEAM_ID }}
+          DEV_APPLE_CLIENT_ID=${{ secrets.DEV_APPLE_CLIENT_ID }}
+          DEV_APPLE_KEY_ID=${{ secrets.DEV_APPLE_KEY_ID }}
+          DEV_APPLE_REDIRECT_URI=${{ secrets.DEV_APPLE_REDIRECT_URI }}
+          DEV_APPLE_PRIVATE_KEY=${{ secrets.DEV_APPLE_PRIVATE_KEY }}
           EOF
 
       # =========================
