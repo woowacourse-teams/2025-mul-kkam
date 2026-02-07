@@ -6,6 +6,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 import backend.mulkkam.averageTemperature.domain.AverageTemperature;
 import backend.mulkkam.averageTemperature.domain.City;
 import backend.mulkkam.averageTemperature.domain.CityDateTime;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.exception.CommonException;
@@ -37,7 +38,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Transactional(readOnly = true)
@@ -93,11 +97,11 @@ public class SuggestionNotificationService {
             return;
         }
 
-        List<String> tokens = devices.stream()
-                .map(Device::getToken)
-                .toList();
-        SendMessageByFcmTokensRequest eventRequest = new SendMessageByFcmTokensRequest(template, tokens);
-        publisher.publishEvent(eventRequest);
+        Map<DevicePlatform, List<String>> tokensByPlatform = collectTokensByPlatform(devices);
+        tokensByPlatform.forEach((platform, tokens) -> {
+            SendMessageByFcmTokensRequest eventRequest = new SendMessageByFcmTokensRequest(template, tokens, platform);
+            publisher.publishEvent(eventRequest);
+        });
     }
 
     @Transactional
@@ -164,7 +168,8 @@ public class SuggestionNotificationService {
     ) {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenSuggestionNotificationRequest.toSendMessageByFcmTokenRequest(
-                    device.getToken());
+                    device.getToken(),
+                    device.getPlatform());
             publisher.publishEvent(sendMessageByFcmTokenRequest);
         }
     }
@@ -197,5 +202,12 @@ public class SuggestionNotificationService {
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private Map<DevicePlatform, List<String>> collectTokensByPlatform(List<Device> devices) {
+        return devices.stream()
+                .collect(Collectors.groupingBy(Device::getPlatform,
+                        () -> new EnumMap<>(DevicePlatform.class),
+                        Collectors.mapping(Device::getToken, Collectors.toList())));
     }
 }

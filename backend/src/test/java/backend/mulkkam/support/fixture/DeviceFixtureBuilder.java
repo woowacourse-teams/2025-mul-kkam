@@ -1,5 +1,6 @@
 package backend.mulkkam.support.fixture;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.member.domain.Member;
 
@@ -8,6 +9,7 @@ public class DeviceFixtureBuilder {
     private final Member member;
     private String token = "token";
     private String deviceUuid = "deviceUuid";
+    private DevicePlatform platform = DevicePlatform.ANDROID;
 
     private DeviceFixtureBuilder(Member member) {
         this.member = member;
@@ -27,11 +29,17 @@ public class DeviceFixtureBuilder {
         return this;
     }
 
+    public DeviceFixtureBuilder platform(DevicePlatform platform) {
+        this.platform = platform;
+        return this;
+    }
+
     public Device build() {
         return new Device(
                 token,
                 deviceUuid,
-                member
+                member,
+                platform
         );
     }
 
@@ -40,6 +48,7 @@ public class DeviceFixtureBuilder {
                 id,
                 token,
                 deviceUuid,
+                platform,
                 member
         );
     }

@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.dto.request;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.member.domain.Member;
@@ -39,6 +40,20 @@ public record CreateTokenSuggestionNotificationRequest(
                 title,
                 body,
                 token,
+                DevicePlatform.ANDROID,
+                Action.GO_NOTIFICATION
+        );
+    }
+
+    public SendMessageByFcmTokenRequest toSendMessageByFcmTokenRequest(
+            String token,
+            DevicePlatform platform
+    ) {
+        return new SendMessageByFcmTokenRequest(
+                title,
+                body,
+                token,
+                platform,
                 Action.GO_NOTIFICATION
         );
     }

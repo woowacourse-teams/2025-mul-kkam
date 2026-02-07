@@ -10,6 +10,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.exception.AlarmException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
@@ -52,7 +53,7 @@ class FcmClientUnitTest {
             when(firebaseMessaging.send(any(Message.class))).thenReturn("msgId");
 
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = new SendMessageByFcmTokenRequest("title",
-                    "body", "token-123", Action.GO_NOTIFICATION);
+                    "body", "token-123", DevicePlatform.ANDROID, Action.GO_NOTIFICATION);
 
             // when & then
             Assertions.assertThatCode(
@@ -86,7 +87,7 @@ class FcmClientUnitTest {
             when(firebaseMessaging.send(any(Message.class))).thenThrow(firebaseMessagingException);
 
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = new SendMessageByFcmTokenRequest("title",
-                    "body", "token-123", Action.GO_NOTIFICATION);
+                    "body", "token-123", DevicePlatform.ANDROID, Action.GO_NOTIFICATION);
 
             // when & then
             assertThatThrownBy(
@@ -109,7 +110,7 @@ class FcmClientUnitTest {
             when(firebaseMessaging.send(any(Message.class))).thenReturn("msgId");
 
             SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = new SendMessageByFcmTopicRequest("title",
-                    "body", "exampleTopic", Action.GO_NOTIFICATION);
+                    "body", "exampleTopic", DevicePlatform.ANDROID, Action.GO_NOTIFICATION);
 
             // when & then
             Assertions.assertThatCode(
@@ -143,7 +144,7 @@ class FcmClientUnitTest {
             when(firebaseMessaging.send(any(Message.class))).thenThrow(firebaseMessagingException);
 
             SendMessageByFcmTopicRequest sendMessageByFcmTopicRequest = new SendMessageByFcmTopicRequest("title",
-                    "body", "exampleTopic", Action.GO_NOTIFICATION);
+                    "body", "exampleTopic", DevicePlatform.ANDROID, Action.GO_NOTIFICATION);
 
             // when & then
             assertThatThrownBy(

@@ -10,10 +10,12 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import backend.mulkkam.averageTemperature.dto.CreateTokenNotificationRequest;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
@@ -38,6 +40,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import org.mockito.ArgumentCaptor;
 import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -238,6 +241,7 @@ class NotificationServiceUnitTest {
             // given
             Device device = mock(Device.class);
             when(device.getToken()).thenReturn("token-1");
+            when(device.getPlatform()).thenReturn(DevicePlatform.ANDROID);
 
             when(deviceRepository.findAllByMember(member))
                     .thenReturn(List.of(device));
@@ -272,8 +276,57 @@ class NotificationServiceUnitTest {
                             evt.title().equals("title")
                                     && evt.body().equals("body")
                                     && evt.allTokens().equals(List.of("token-1"))
+                                    && evt.platform() == DevicePlatform.ANDROID
                                     && evt.action() == Action.GO_HOME)
             );
+        }
+
+        @DisplayName("플랫폼이 다른 디바이스가 있으면 플랫폼별로 이벤트가 발행된다")
+        @Test
+        void success_publishEventByPlatform() {
+            // given
+            Device androidDevice = mock(Device.class);
+            when(androidDevice.getToken()).thenReturn("token-android");
+            when(androidDevice.getPlatform()).thenReturn(DevicePlatform.ANDROID);
+
+            Device iosDevice = mock(Device.class);
+            when(iosDevice.getToken()).thenReturn("token-ios");
+            when(iosDevice.getPlatform()).thenReturn(DevicePlatform.IOS);
+
+            when(deviceRepository.findAllByMember(member))
+                    .thenReturn(List.of(androidDevice, iosDevice));
+            when(notificationRepository.save(any(Notification.class)))
+                    .thenAnswer(invocation -> invocation.getArgument(0));
+
+            CreateTokenNotificationRequest createTokenNotificationRequest = new CreateTokenNotificationRequest(
+                    "title",
+                    "body",
+                    member,
+                    Action.GO_HOME,
+                    NotificationType.NOTICE,
+                    LocalDateTime.of(2025, 1, 2, 3, 4)
+            );
+
+            // when
+            notificationService.createAndSendTokenNotification(createTokenNotificationRequest);
+
+            // then
+            ArgumentCaptor<SendMessageByFcmTokensRequest> captor = ArgumentCaptor.forClass(
+                    SendMessageByFcmTokensRequest.class);
+            verify(publisher, times(2)).publishEvent(captor.capture());
+
+            List<SendMessageByFcmTokensRequest> events = captor.getAllValues();
+            assertSoftly(softly -> {
+                softly.assertThat(events).hasSize(2);
+                softly.assertThat(events).anyMatch(event ->
+                        event.platform() == DevicePlatform.ANDROID
+                                && event.allTokens().equals(List.of("token-android"))
+                );
+                softly.assertThat(events).anyMatch(event ->
+                        event.platform() == DevicePlatform.IOS
+                                && event.allTokens().equals(List.of("token-ios"))
+                );
+            });
         }
     }
 
@@ -321,8 +374,10 @@ class NotificationServiceUnitTest {
                     any(Pageable.class)
             )).thenReturn(memberIds);
 
-            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+            when(deviceRepository.findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.ANDROID))
                     .thenReturn(tokens);
+            when(deviceRepository.findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.IOS))
+                    .thenReturn(List.of());
 
             // when
             notificationService.processReminderNotifications(now);
@@ -336,11 +391,13 @@ class NotificationServiceUnitTest {
                     eq(1000)
             );
 
-            verify(deviceRepository).findAllTokenByMemberIdIn(memberIds);
+            verify(deviceRepository).findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.ANDROID);
+            verify(deviceRepository).findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.IOS);
 
             verify(publisher).publishEvent(
                     argThat((SendMessageByFcmTokensRequest event) ->
                             event.allTokens().containsAll(tokens)
+                                    && event.platform() == DevicePlatform.ANDROID
                     )
             );
         }
@@ -381,7 +438,9 @@ class NotificationServiceUnitTest {
                     any(Pageable.class)
             )).thenReturn(memberIds);
 
-            when(deviceRepository.findAllTokenByMemberIdIn(memberIds))
+            when(deviceRepository.findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.ANDROID))
+                    .thenReturn(List.of());
+            when(deviceRepository.findAllTokenByMemberIdInAndPlatform(memberIds, DevicePlatform.IOS))
                     .thenReturn(List.of());
 
             // when
@@ -401,4 +460,3 @@ class NotificationServiceUnitTest {
         }
     }
 }
-
