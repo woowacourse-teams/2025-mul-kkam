@@ -13,10 +13,6 @@ public record SendMessageByFcmTokensRequest(
         Action action
 ) {
 
-    public SendMessageByFcmTokensRequest(NotificationMessageTemplate template, List<String> tokens) {
-        this(template.title(), template.body(), tokens, DevicePlatform.ANDROID, template.action());
-    }
-
     public SendMessageByFcmTokensRequest(
             NotificationMessageTemplate template,
             List<String> tokens,
