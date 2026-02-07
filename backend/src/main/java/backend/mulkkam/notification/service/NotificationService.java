@@ -281,7 +281,7 @@ public class NotificationService {
 
     private Map<DevicePlatform, List<String>> collectTokensByPlatform(List<Device> devices) {
         return devices.stream()
-                .collect(Collectors.groupingBy(device -> resolvePlatform(device.getPlatform()),
+                .collect(Collectors.groupingBy(Device::getPlatform,
                         () -> new EnumMap<>(DevicePlatform.class),
                         Collectors.mapping(Device::getToken, Collectors.toList())));
     }
@@ -323,13 +323,6 @@ public class NotificationService {
             }
         }
         return tokensByPlatform;
-    }
-
-    private DevicePlatform resolvePlatform(DevicePlatform platform) {
-        if (platform == null) {
-            return DevicePlatform.ANDROID;
-        }
-        return platform;
     }
 
     private boolean isLastChunk(List<Long> memberIds) {

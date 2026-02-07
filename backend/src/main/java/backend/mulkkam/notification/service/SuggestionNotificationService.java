@@ -169,7 +169,7 @@ public class SuggestionNotificationService {
         for (Device device : devicesByMember) {
             SendMessageByFcmTokenRequest sendMessageByFcmTokenRequest = createTokenSuggestionNotificationRequest.toSendMessageByFcmTokenRequest(
                     device.getToken(),
-                    resolvePlatform(device.getPlatform()));
+                    device.getPlatform());
             publisher.publishEvent(sendMessageByFcmTokenRequest);
         }
     }
@@ -206,15 +206,8 @@ public class SuggestionNotificationService {
 
     private Map<DevicePlatform, List<String>> collectTokensByPlatform(List<Device> devices) {
         return devices.stream()
-                .collect(Collectors.groupingBy(device -> resolvePlatform(device.getPlatform()),
+                .collect(Collectors.groupingBy(Device::getPlatform,
                         () -> new EnumMap<>(DevicePlatform.class),
                         Collectors.mapping(Device::getToken, Collectors.toList())));
-    }
-
-    private DevicePlatform resolvePlatform(DevicePlatform platform) {
-        if (platform == null) {
-            return DevicePlatform.ANDROID;
-        }
-        return platform;
     }
 }

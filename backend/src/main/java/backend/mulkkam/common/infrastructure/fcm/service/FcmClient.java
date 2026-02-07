@@ -120,7 +120,7 @@ public class FcmClient {
                 .putData("title", title)
                 .putData("body", body)
                 .putData(ACTION, action);
-        if (resolvePlatform(platform) == DevicePlatform.IOS) {
+        if (platform == DevicePlatform.IOS) {
             builder.setApnsConfig(buildApnsConfig(title, body));
         }
         return builder;
@@ -132,7 +132,7 @@ public class FcmClient {
                 .putData("title", title)
                 .putData("body", body)
                 .putData(ACTION, action);
-        if (resolvePlatform(platform) == DevicePlatform.IOS) {
+        if (platform == DevicePlatform.IOS) {
             builder.setApnsConfig(buildApnsConfig(title, body));
         }
         return builder;
@@ -151,10 +151,4 @@ public class FcmClient {
                 .build();
     }
 
-    private DevicePlatform resolvePlatform(DevicePlatform platform) {
-        if (platform == null) {
-            return DevicePlatform.ANDROID;
-        }
-        return platform;
-    }
 }

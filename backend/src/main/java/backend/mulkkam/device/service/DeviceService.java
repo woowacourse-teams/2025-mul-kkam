@@ -27,18 +27,16 @@ public class DeviceService {
             RegisterDeviceRequest registerDeviceRequest,
             MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
     ) {
-        DevicePlatform resolvedPlatform = resolvePlatform(registerDeviceRequest.platform());
+        DevicePlatform platform = registerDeviceRequest.platform();
         deviceRepository.findByDeviceUuidAndMemberId(memberAndDeviceUuidDetails.deviceUuid(),
                         memberAndDeviceUuidDetails.id())
                 .ifPresentOrElse((device) -> {
                     device.modifyToken(registerDeviceRequest.token());
-                    if (registerDeviceRequest.platform() != null) {
-                        device.modifyPlatform(resolvedPlatform);
-                    }
+                    device.modifyPlatform(platform);
                 }, () -> {
                     Member member = getMember(memberAndDeviceUuidDetails.id());
                     Device device = registerDeviceRequest.toDevice(member, memberAndDeviceUuidDetails.deviceUuid(),
-                            resolvedPlatform);
+                            platform);
                     deviceRepository.save(device);
                 });
     }
@@ -54,10 +52,4 @@ public class DeviceService {
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
 
-    private DevicePlatform resolvePlatform(DevicePlatform platform) {
-        if (platform == null) {
-            return DevicePlatform.ANDROID;
-        }
-        return platform;
-    }
 }
