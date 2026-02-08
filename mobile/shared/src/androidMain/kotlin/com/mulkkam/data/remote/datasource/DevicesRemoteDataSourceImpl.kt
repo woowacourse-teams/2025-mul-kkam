@@ -11,10 +11,10 @@ import io.ktor.client.request.setBody
 class DevicesRemoteDataSourceImpl(
     private val httpClient: HttpClient,
 ) : DevicesRemoteDataSource {
-    override suspend fun postDevice(deviceRequest: DeviceRequest): Result<Unit> =
+    override suspend fun postDevice(fcmToken: String): Result<Unit> =
         safeApiCallUnit {
             httpClient.post("/devices") {
-                setBody(deviceRequest)
+                setBody(DeviceRequest(fcmToken, "ANDROID"))
             }
         }
 
