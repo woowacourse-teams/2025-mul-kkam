@@ -110,14 +110,15 @@ class HomeViewModel(
                 tokenRepository.saveFcmToken(token).getOrError()
             }.onSuccess {
                 _firebaseMessagingToken.value = token
-                latestNotificationPermission?.let { syncNotificationPermission(isCurrentlyGranted = it) }
+                latestNotificationPermission?.let { isCurrentlyGranted ->
+                    syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
+                }
             }
         }
     }
 
     fun updateNotificationPermission(isCurrentlyGranted: Boolean) {
-        val previousPermission: Boolean? = latestNotificationPermission
-        if (previousPermission == isCurrentlyGranted) return
+        if (latestNotificationPermission == isCurrentlyGranted) return
 
         latestNotificationPermission = isCurrentlyGranted
         if (firebaseMessagingToken.value == null) return
@@ -133,52 +134,48 @@ class HomeViewModel(
 
     private fun syncNotificationPermission(isCurrentlyGranted: Boolean) {
         viewModelScope.launch {
-            val previouslyGranted =
+            val previousNotificationPermission =
                 runCatching {
                     devicesRepository.getNotificationGranted().getOrError()
                 }.getOrNull() ?: return@launch
-            val deviceId =
-                runCatching {
-                    devicesRepository.getDeviceUuid().getOrError()
-                }.getOrNull() ?: return@launch
+            if (previousNotificationPermission == isCurrentlyGranted) return@launch
 
-            if (previouslyGranted != isCurrentlyGranted) {
-                logger.info(
-                    LogEvent.PUSH_NOTIFICATION,
-                    "Notification permission changed: isGranted=$isCurrentlyGranted",
-                )
-            }
+            logger.info(
+                LogEvent.PUSH_NOTIFICATION,
+                "Notification permission changed: isGranted=$isCurrentlyGranted",
+            )
 
-            if (isCurrentlyGranted) {
-                handlePermissionGranted(isCurrentlyGranted)
-            } else if (previouslyGranted != isCurrentlyGranted) {
-                handlePermissionNotGranted(deviceId, isCurrentlyGranted)
+            val isServerSynchronized: Boolean =
+                if (isCurrentlyGranted) {
+                    registerDevice()
+                } else {
+                    unregisterDevice()
+                }
+            if (!isServerSynchronized) return@launch
+
+            runCatching {
+                devicesRepository.saveNotificationGranted(isCurrentlyGranted).getOrError()
             }
         }
     }
 
-    private fun handlePermissionGranted(isGranted: Boolean) {
-        viewModelScope.launch {
-            val token: String = firebaseMessagingToken.value ?: return@launch
-            runCatching {
-                devicesRepository.postDevice(fcmToken = token).getOrError()
-            }.onSuccess {
-                devicesRepository.saveNotificationGranted(isGranted)
-            }
-        }
+    private suspend fun registerDevice(): Boolean {
+        val token = firebaseMessagingToken.value ?: return false
+
+        return runCatching {
+            devicesRepository.postDevice(fcmToken = token).getOrError()
+        }.isSuccess
     }
 
-    private fun handlePermissionNotGranted(
-        deviceId: String,
-        isGranted: Boolean,
-    ) {
-        viewModelScope.launch {
+    private suspend fun unregisterDevice(): Boolean {
+        val deviceId =
             runCatching {
-                devicesRepository.deleteDevice(deviceId)
-            }.onSuccess {
-                devicesRepository.saveNotificationGranted(isGranted)
-            }
-        }
+                devicesRepository.getDeviceUuid().getOrError()
+            }.getOrNull() ?: return false
+
+        return runCatching {
+            devicesRepository.deleteDevice(deviceId).getOrError()
+        }.isSuccess
     }
 
     @OptIn(ExperimentalTime::class)

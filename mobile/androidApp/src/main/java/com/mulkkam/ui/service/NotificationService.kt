@@ -8,7 +8,6 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.mulkkam.R
-import com.mulkkam.data.local.preference.DevicesPreference
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.TokenRepository
@@ -21,7 +20,6 @@ import java.util.UUID
 
 class NotificationService : FirebaseMessagingService() {
     private val tokenRepository: TokenRepository by inject()
-    private val devicesPreference: DevicesPreference by inject()
     private val logger: Logger by inject()
 
     override fun onNewToken(token: String) {
@@ -36,7 +34,6 @@ class NotificationService : FirebaseMessagingService() {
                     LogEvent.PUSH_NOTIFICATION,
                     "FCM Token Save Failed: ${it::class.java.simpleName}: ${it.message}\n${it.stackTraceToString()}",
                 )
-                devicesPreference.saveNotificationGranted(!devicesPreference.isNotificationGranted)
             }
         }
         subscribeToTopic()

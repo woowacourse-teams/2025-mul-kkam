@@ -1,5 +1,4 @@
 import FirebaseCore
-import FirebaseMessaging
 import UIKit
 import UserNotifications
 
@@ -11,9 +10,6 @@ final class PushNotificationManager {
     private var errorHandler: ((String) -> Void)?
     private var latestToken: String?
     private var hasRegisteredDidBecomeActiveObserver = false
-
-    private init() {
-    }
 
     func registerForPushNotifications(
         onTokenUpdated: @escaping (String) -> Void,
@@ -30,8 +26,6 @@ final class PushNotificationManager {
         if let latestToken = latestToken {
             tokenUpdatedHandler?(latestToken)
         }
-
-        fetchFirebaseMessagingToken()
     }
 
     func requestNotificationPermission() {
@@ -43,13 +37,15 @@ final class PushNotificationManager {
                 self?.permissionUpdatedHandler?(isGranted)
                 if isGranted {
                     UIApplication.shared.registerForRemoteNotifications()
-                    self?.fetchFirebaseMessagingToken()
                 }
             }
         }
     }
 
     func updateToken(_ token: String) {
+        if latestToken == token {
+            return
+        }
         latestToken = token
         tokenUpdatedHandler?(token)
     }
@@ -61,19 +57,6 @@ final class PushNotificationManager {
                 || settings.authorizationStatus == .ephemeral
             DispatchQueue.main.async {
                 self?.permissionUpdatedHandler?(isGranted)
-            }
-        }
-    }
-
-    private func fetchFirebaseMessagingToken() {
-        Messaging.messaging().token { [weak self] token, error in
-            if let error = error {
-                self?.errorHandler?(error.localizedDescription)
-                return
-            }
-
-            if let token = token {
-                self?.updateToken(token)
             }
         }
     }

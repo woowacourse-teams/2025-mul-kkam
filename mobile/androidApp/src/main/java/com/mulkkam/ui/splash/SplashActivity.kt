@@ -127,8 +127,12 @@ class SplashActivity : FragmentActivity() {
         onPushTokenUpdated = onTokenUpdated
         onPushPermissionUpdated = onPermissionUpdated
         onPushRegistrationError = onError
+
+        val isPermissionGranted: Boolean = isNotificationPermissionGranted()
         notifyPushPermissionState()
-        requestFirebaseMessagingToken()
+        if (isPermissionGranted) {
+            requestFirebaseMessagingToken()
+        }
     }
 
     private fun isNotificationPermissionGranted(): Boolean =
@@ -197,7 +201,6 @@ class SplashActivity : FragmentActivity() {
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || isNotificationPermissionGranted()) {
             notifyPushPermissionState()
-            requestFirebaseMessagingToken()
             return
         }
 
