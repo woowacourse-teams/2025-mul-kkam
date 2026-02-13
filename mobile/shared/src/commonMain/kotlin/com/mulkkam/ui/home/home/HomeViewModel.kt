@@ -102,6 +102,9 @@ class HomeViewModel(
     }
 
     fun updateFirebaseMessagingToken(token: String) {
+        val previousToken = firebaseMessagingToken.value
+        if (previousToken == token) return
+
         viewModelScope.launch {
             runCatching {
                 tokenRepository.saveFcmToken(token).getOrError()
@@ -113,6 +116,9 @@ class HomeViewModel(
     }
 
     fun updateNotificationPermission(isCurrentlyGranted: Boolean) {
+        val previousPermission: Boolean? = latestNotificationPermission
+        if (previousPermission == isCurrentlyGranted) return
+
         latestNotificationPermission = isCurrentlyGranted
         if (firebaseMessagingToken.value == null) return
         syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
@@ -155,9 +161,7 @@ class HomeViewModel(
         viewModelScope.launch {
             val token: String = firebaseMessagingToken.value ?: return@launch
             runCatching {
-                devicesRepository
-                    .postDevice(fcmToken = token)
-                    .getOrError()
+                devicesRepository.postDevice(fcmToken = token).getOrError()
             }.onSuccess {
                 devicesRepository.saveNotificationGranted(isGranted)
             }

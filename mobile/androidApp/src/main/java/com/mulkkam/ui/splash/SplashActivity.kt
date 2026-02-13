@@ -28,6 +28,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FragmentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
+    private var onPushTokenUpdated: ((String) -> Unit)? = null
+    private var onPushPermissionUpdated: ((Boolean) -> Unit)? = null
+    private var onPushRegistrationError: ((String) -> Unit)? = null
 
     private val requestHealthConnectLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
@@ -121,18 +124,11 @@ class SplashActivity : FragmentActivity() {
         onPermissionUpdated: (isGranted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) {
-        val isGranted = isNotificationPermissionGranted()
-        onPermissionUpdated(isGranted)
-
-        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                onError(task.exception?.message ?: "Failed to fetch notification token.")
-                return@addOnCompleteListener
-            }
-
-            val token: String = task.result ?: return@addOnCompleteListener
-            onTokenUpdated(token)
-        }
+        onPushTokenUpdated = onTokenUpdated
+        onPushPermissionUpdated = onPermissionUpdated
+        onPushRegistrationError = onError
+        notifyPushPermissionState()
+        requestFirebaseMessagingToken()
     }
 
     private fun isNotificationPermissionGranted(): Boolean =
@@ -179,6 +175,11 @@ class SplashActivity : FragmentActivity() {
     }
 
     private fun handleNotificationPermissionResult(isGranted: Boolean) {
+        onPushPermissionUpdated?.invoke(isGranted)
+        if (isGranted) {
+            requestFirebaseMessagingToken()
+        }
+
         val messageResId =
             if (isGranted) {
                 R.string.main_alarm_permission_granted
@@ -195,9 +196,27 @@ class SplashActivity : FragmentActivity() {
 
     private fun requestNotificationPermission() {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || isNotificationPermissionGranted()) {
+            notifyPushPermissionState()
+            requestFirebaseMessagingToken()
             return
         }
 
         requestNotificationLauncher.launch(POST_NOTIFICATIONS)
+    }
+
+    private fun requestFirebaseMessagingToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                onPushRegistrationError?.invoke(task.exception?.message ?: "Failed to fetch notification token.")
+                return@addOnCompleteListener
+            }
+
+            val token = task.result ?: return@addOnCompleteListener
+            onPushTokenUpdated?.invoke(token)
+        }
+    }
+
+    private fun notifyPushPermissionState() {
+        onPushPermissionUpdated?.invoke(isNotificationPermissionGranted())
     }
 }

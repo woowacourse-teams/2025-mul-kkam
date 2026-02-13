@@ -11,7 +11,6 @@ import com.mulkkam.R
 import com.mulkkam.data.local.preference.DevicesPreference
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
-import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
@@ -22,7 +21,6 @@ import java.util.UUID
 
 class NotificationService : FirebaseMessagingService() {
     private val tokenRepository: TokenRepository by inject()
-    private val devicesRepository: DevicesRepository by inject()
     private val devicesPreference: DevicesPreference by inject()
     private val logger: Logger by inject()
 
@@ -31,7 +29,6 @@ class NotificationService : FirebaseMessagingService() {
         CoroutineScope(Dispatchers.IO).launch {
             runCatching {
                 tokenRepository.saveFcmToken(token)
-                devicesRepository.postDevice(token)
             }.onSuccess {
                 logger.info(LogEvent.PUSH_NOTIFICATION, "FCM Token Saved")
             }.onFailure {

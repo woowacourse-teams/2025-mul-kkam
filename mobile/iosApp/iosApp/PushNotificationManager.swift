@@ -10,6 +10,7 @@ final class PushNotificationManager {
     private var permissionUpdatedHandler: ((Bool) -> Void)?
     private var errorHandler: ((String) -> Void)?
     private var latestToken: String?
+    private var hasRegisteredDidBecomeActiveObserver = false
 
     private init() {
     }
@@ -24,20 +25,13 @@ final class PushNotificationManager {
         errorHandler = onError
 
         updateAuthorizationStatus()
+        registerDidBecomeActiveObserverIfNeeded()
 
         if let latestToken = latestToken {
             tokenUpdatedHandler?(latestToken)
         }
 
-        Messaging.messaging().token { [weak self] token, error in
-            if let error = error {
-                self?.errorHandler?(error.localizedDescription)
-                return
-            }
-            if let token = token {
-                self?.updateToken(token)
-            }
-        }
+        fetchFirebaseMessagingToken()
     }
 
     func requestNotificationPermission() {
@@ -49,6 +43,7 @@ final class PushNotificationManager {
                 self?.permissionUpdatedHandler?(isGranted)
                 if isGranted {
                     UIApplication.shared.registerForRemoteNotifications()
+                    self?.fetchFirebaseMessagingToken()
                 }
             }
         }
@@ -67,6 +62,33 @@ final class PushNotificationManager {
             DispatchQueue.main.async {
                 self?.permissionUpdatedHandler?(isGranted)
             }
+        }
+    }
+
+    private func fetchFirebaseMessagingToken() {
+        Messaging.messaging().token { [weak self] token, error in
+            if let error = error {
+                self?.errorHandler?(error.localizedDescription)
+                return
+            }
+
+            if let token = token {
+                self?.updateToken(token)
+            }
+        }
+    }
+
+    private func registerDidBecomeActiveObserverIfNeeded() {
+        if hasRegisteredDidBecomeActiveObserver {
+            return
+        }
+        hasRegisteredDidBecomeActiveObserver = true
+        NotificationCenter.default.addObserver(
+            forName: UIApplication.didBecomeActiveNotification,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.updateAuthorizationStatus()
         }
     }
 }
