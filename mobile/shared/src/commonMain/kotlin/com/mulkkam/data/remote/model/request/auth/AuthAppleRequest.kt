@@ -1,6 +1,5 @@
 package com.mulkkam.data.remote.model.request.auth
 
-
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -9,5 +8,5 @@ data class AuthAppleRequest(
     @SerialName("authorizationCode")
     val authorizationCode: String,
     @SerialName("deviceUuid")
-    val deviceUuid: String
+    val deviceUuid: String,
 )

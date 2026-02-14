@@ -3,7 +3,6 @@ package com.mulkkam.ui.util.extensions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import androidx.annotation.StringRes
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient

@@ -11,7 +11,6 @@ import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.health_connect_market
 import mulkkam.shared.generated.resources.health_connect_web
 import org.jetbrains.compose.resources.getString
-import org.koin.core.context.GlobalContext
 
 private const val MIN_VERSION_NAME: String = "0.0.0"
 
