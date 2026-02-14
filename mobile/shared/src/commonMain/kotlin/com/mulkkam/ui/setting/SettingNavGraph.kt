@@ -1,6 +1,7 @@
 package com.mulkkam.ui.setting
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import com.mulkkam.ui.navigation.MainNavigator
 import com.mulkkam.ui.navigation.NavEntry
@@ -23,6 +24,7 @@ object SettingNavGraph {
         route: SettingRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
+        snackbarHostState: SnackbarHostState,
     ): NavEntry<SettingRoute> =
         when (route) {
             is SettingRoute.Setting -> {
@@ -47,6 +49,7 @@ object SettingNavGraph {
                     AccountInfoRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -56,6 +59,7 @@ object SettingNavGraph {
                     BioInfoRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -65,6 +69,8 @@ object SettingNavGraph {
                     CupsRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -83,6 +89,7 @@ object SettingNavGraph {
                     NicknameRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -92,6 +99,7 @@ object SettingNavGraph {
                     NotificationRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -101,6 +109,7 @@ object SettingNavGraph {
                     ReminderRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }
@@ -110,6 +119,7 @@ object SettingNavGraph {
                     TargetAmountRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
             }

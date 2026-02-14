@@ -40,6 +40,7 @@ assertj-core = "3.27.3"
 timber = "5.0.1"
 firebase-crashlytics = "3.0.5"
 coil = "3.3.0"
+compottie = "2.0.2"
 activity-compose = "1.10.1"
 compose-bom = "2025.08.01"
 kotlin-stdlib = "2.2.0"
@@ -89,6 +90,7 @@ ktor-client-auth = { module = "io.ktor:ktor-client-auth", version.ref = "ktor" }
 
 # Koin Core (KMP DI)
 koin-core = { module = "io.insert-koin:koin-core", version.ref = "koin-core" }
+koin-compose = { module = "io.insert-koin:koin-compose", version.ref = "koin-core" }
 
 # kotlinx-datetime (KMP 날짜/시간)
 kotlinx-datetime = { module = "org.jetbrains.kotlinx:kotlinx-datetime", version.ref = "kotlinx-datetime" }
@@ -111,7 +113,9 @@ lottie-compose = { module = "com.airbnb.android:lottie-compose", version.ref = "
 coil = { module = "io.coil-kt.coil3:coil", version.ref = "coil" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
 coil-svg = { module = "io.coil-kt.coil3:coil-svg", version.ref = "coil" }
-coil-network = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+compottie = { module = "io.github.alexzhirkevich:compottie", version.ref = "compottie" }
 
 # 로그인
 kakao-v2-user = { module = "com.kakao.sdk:v2-user", version.ref = "kakao-v2-user" }

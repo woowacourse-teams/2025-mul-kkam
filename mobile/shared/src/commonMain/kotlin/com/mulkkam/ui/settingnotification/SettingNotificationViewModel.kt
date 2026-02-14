@@ -6,7 +6,7 @@ import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow

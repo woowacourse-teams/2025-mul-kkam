@@ -58,7 +58,7 @@ fun Typography(density: Density): Typography {
         body4 = textStyle(pretendardMedium, FontWeight.Medium, 13.dp, 18.dp),
         body5 = textStyle(pretendardRegular, FontWeight.Normal, 12.dp, 17.dp),
         label1 = textStyle(pretendardMedium, FontWeight.Medium, 13.dp, 18.dp),
-        label2 = textStyle(pretendardMedium, FontWeight.Normal, 10.dp, 10.dp),
+        label2 = textStyle(pretendardMedium, FontWeight.Medium, 11.dp, 11.dp),
     )
 }
 

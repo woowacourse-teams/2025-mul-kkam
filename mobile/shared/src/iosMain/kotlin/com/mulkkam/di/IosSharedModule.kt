@@ -1,7 +1,5 @@
 package com.mulkkam.di
 
-import com.mulkkam.data.logger.FakeLogger
-import com.mulkkam.domain.logger.Logger
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -10,16 +8,18 @@ fun iosSharedModule(
     isDebug: Boolean,
 ): Module =
     module {
-        single<Logger> {
-            FakeLogger()
-        }
-
         includes(
+            loggerModule,
+            repositoryModule,
+            checkerModule,
+            healthManagerModule,
             httpClientEngineModule,
             commonNetworkModule(baseUrl),
             localDataSourceModule,
             remoteDataSourceModule,
             commonDataSourceModule,
             commonRepositoryModule,
+            commonViewModelModule,
+            userDefaultsModule,
         )
     }

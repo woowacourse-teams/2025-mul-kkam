@@ -1,9 +1,10 @@
 package com.mulkkam.ui.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.mulkkam.ui.auth.AuthNavGraph
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.friends.FriendsNavGraph
 import com.mulkkam.ui.history.HistoryNavGraph
 import com.mulkkam.ui.home.HomeNavGraph
@@ -14,7 +15,12 @@ import com.mulkkam.ui.setting.SettingNavGraph
 fun MainNavHost(
     navigator: MainNavigator,
     padding: PaddingValues,
-    modifier: Modifier = Modifier,
+    onLogin: (
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    snackbarHostState: SnackbarHostState,
 ) {
     NavDisplay(
         backStack = navigator.backStack,
@@ -25,6 +31,8 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        onLogin = onLogin,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -33,6 +41,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -41,6 +50,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -49,6 +59,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -57,6 +68,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 
@@ -65,6 +77,7 @@ fun MainNavHost(
                         route = route,
                         padding = padding,
                         navigator = navigator,
+                        snackbarHostState = snackbarHostState,
                     )
                 }
 

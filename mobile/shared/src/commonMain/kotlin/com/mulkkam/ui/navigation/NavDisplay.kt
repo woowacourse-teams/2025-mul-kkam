@@ -9,25 +9,39 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 
 private const val ANIMATION_DURATION_MILLIS: Int = 300
 
 @Composable
 fun NavDisplay(
     backStack: SnapshotStateList<Any>,
-    transitionSpec: ContentTransform = defaultTransitionSpec(),
     entryProvider: @Composable (route: Any) -> NavEntry<*>,
 ) {
     val currentRoute = backStack.lastOrNull()
 
     AnimatedContent(
         targetState = currentRoute,
-        transitionSpec = { transitionSpec },
         label = "NavDisplayAnimation",
     ) { route ->
         route?.let {
-            entryProvider(it).content()
+            val routeOwner = remember(it) { RouteViewModelStoreOwner() }
+
+            CompositionLocalProvider(LocalViewModelStoreOwner provides routeOwner) {
+                entryProvider(it).content()
+            }
+
+            DisposableEffect(it) {
+                onDispose {
+                    if (!backStack.contains(it)) {
+                        routeOwner.clear()
+                    }
+                }
+            }
         }
     }
 }

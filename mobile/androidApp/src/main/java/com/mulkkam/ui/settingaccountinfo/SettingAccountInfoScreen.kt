@@ -22,14 +22,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.R
-import com.mulkkam.ui.component.MulKkamToastHost
-import com.mulkkam.ui.component.MulKkamToastState
-import com.mulkkam.ui.component.rememberMulKkamToastState
+import com.mulkkam.ui.component.MulKkamToastHost2
+import com.mulkkam.ui.component.MulKkamToastState2
+import com.mulkkam.ui.component.rememberMulKkamToastState2
 import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
-import com.mulkkam.ui.setting.component.SettingTopAppBar
+import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
 import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
 import com.mulkkam.ui.util.extensions.noRippleClickable
 
@@ -39,7 +39,7 @@ fun SettingAccountInfoScreen(
     onBackClick: () -> Unit,
     onLogoutClick: () -> Unit,
     onDeleteAccountClick: () -> Unit,
-    toastState: MulKkamToastState,
+    toastState: MulKkamToastState2,
 ) {
     Scaffold(
         topBar = {
@@ -76,7 +76,7 @@ fun SettingAccountInfoScreen(
                 }
             }
 
-            MulKkamToastHost(state = toastState, modifier = Modifier.fillMaxSize())
+            MulKkamToastHost2(state = toastState, modifier = Modifier.fillMaxSize())
         }
     }
 }
@@ -130,7 +130,7 @@ private fun SettingAccountInfoScreenPreview() {
             onBackClick = {},
             onLogoutClick = {},
             onDeleteAccountClick = {},
-            toastState = rememberMulKkamToastState(),
+            toastState = rememberMulKkamToastState2(),
         )
     }
 }

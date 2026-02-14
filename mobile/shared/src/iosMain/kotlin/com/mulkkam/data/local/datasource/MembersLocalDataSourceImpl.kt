@@ -1,11 +1,14 @@
 package com.mulkkam.data.local.datasource
 
-// TODO: iOS 네이티브 구현 필요
-class MembersLocalDataSourceImpl : MembersLocalDataSource {
+import com.mulkkam.data.local.userdefaults.MembersUserDefaults
+
+class MembersLocalDataSourceImpl(
+    private val membersUserDefaults: MembersUserDefaults,
+) : MembersLocalDataSource {
     override val isFirstLaunch: Boolean
-        get() = TODO("Not yet implemented")
+        get() = membersUserDefaults.isFirstLaunch
 
     override fun saveIsFirstLaunch() {
-        TODO("Not yet implemented")
+        membersUserDefaults.saveIsFirstLaunch()
     }
 }

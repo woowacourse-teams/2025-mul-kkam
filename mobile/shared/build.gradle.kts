@@ -16,6 +16,7 @@ kotlin {
     // which platforms this KMP module supports.
     // See: https://kotlinlang.org/docs/multiplatform-discover-project.html#targets
     androidLibrary {
+        experimentalProperties["android.experimental.kmp.enableAndroidResources"] = true
         namespace = "com.mulkkam"
         compileSdk = 36
         minSdk = 28
@@ -79,6 +80,7 @@ kotlin {
                 // Koin (DI)
                 implementation(libs.koin.core)
                 implementation(libs.koin.compose.viewmodel)
+                implementation(libs.koin.compose)
 
                 // Kotlinx
                 implementation(libs.kotlinx.serialization.json)
@@ -89,6 +91,8 @@ kotlin {
                 implementation(libs.coil)
                 implementation(libs.coil.compose)
                 implementation(libs.coil.svg)
+                implementation(libs.coil.network.ktor3)
+                implementation(libs.compottie)
             }
         }
 
@@ -136,10 +140,13 @@ kotlin {
                 // Coil for image loading
                 implementation(libs.coil)
                 implementation(libs.coil.svg)
-                implementation(libs.coil.network)
+                implementation(libs.coil.network.okhttp)
 
                 // AndroidX Core
                 implementation(libs.androidx.core.ktx)
+
+                // Kakao Login
+                implementation(libs.kakao.v2.user)
             }
         }
 

@@ -1,14 +1,27 @@
 package com.mulkkam.data.remote.datasource
 
+import com.mulkkam.data.remote.api.safeApiCallUnit
 import com.mulkkam.data.remote.model.request.device.DeviceRequest
+import io.ktor.client.HttpClient
+import io.ktor.client.request.delete
+import io.ktor.client.request.header
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
 
-// TODO: DataSource 구현 필요
-class DevicesRemoteDataSourceImpl : DevicesRemoteDataSource {
-    override suspend fun postDevice(deviceRequest: DeviceRequest): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+class DevicesRemoteDataSourceImpl(
+    private val httpClient: HttpClient,
+) : DevicesRemoteDataSource {
+    override suspend fun postDevice(deviceRequest: DeviceRequest): Result<Unit> =
+        safeApiCallUnit {
+            httpClient.post("/devices") {
+                setBody(deviceRequest)
+            }
+        }
 
-    override suspend fun deleteDevice(deviceId: String): Result<Unit> {
-        TODO("Not yet implemented")
-    }
+    override suspend fun deleteDevice(deviceId: String): Result<Unit> =
+        safeApiCallUnit {
+            httpClient.delete("/devices/fcm-token") {
+                header("X-Device-Id", deviceId)
+            }
+        }
 }

@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 @Composable
 fun TermsRoute(
     padding: PaddingValues,
-    onNavigateToBack: () -> Boolean,
+    onNavigateToBack: () -> Unit,
 ) {
     TermsScreen(
         padding = padding,

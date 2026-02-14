@@ -4,58 +4,83 @@ import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import com.mulkkam.domain.model.UserAuthState
-import com.mulkkam.domain.model.UserAuthState.ACTIVE_USER
-import com.mulkkam.domain.model.UserAuthState.UNONBOARDED
-import com.mulkkam.ui.designsystem.MulKkamTheme
-import com.mulkkam.ui.login.LoginActivity
-import com.mulkkam.ui.main.MainActivity
-import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.onboarding.terms.OnboardingTermsActivity
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
-import org.koin.androidx.viewmodel.ext.android.viewModel
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import com.mulkkam.MulKkamApp
+import com.mulkkam.ui.auth.login.model.AuthPlatform
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : ComponentActivity() {
-    private val viewModel: SplashViewModel by viewModel()
-    private var isSplashFinished: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulKkamTheme {
-                SplashScreen {
-                    isSplashFinished = true
-                    navigateToNextScreen(viewModel.authUiState.value)
-                }
+            MulKkamApp(onLogin = ::login)
+        }
+    }
+
+    fun login(
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        when (authPlatform) {
+            AuthPlatform.KAKAO -> {
+                loginWithKakao(onSuccess, onError)
+            }
+
+            else -> {
+                Unit
             }
         }
-        initObservers()
     }
 
-    private fun initObservers() {
-        viewModel.authUiState.collectWithLifecycle(this) { authUiState ->
-            navigateToNextScreen(authUiState)
+    private fun loginWithKakao(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
+            loginWithKakaoTalk(onSuccess, onError)
+        } else {
+            loginWithKakaoAccount(onSuccess, onError)
         }
     }
 
-    private fun navigateToNextScreen(authUiState: MulKkamUiState<UserAuthState>) {
-        if (isSplashFinished.not()) return
+    private fun loginWithKakaoTalk(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
+            when {
+                error is ClientError && error.reason == ClientErrorCause.Cancelled -> {
+                    Unit
+                }
 
-        val intent =
-            when (authUiState) {
-                is MulKkamUiState.Success<UserAuthState> -> {
-                    when (authUiState.data) {
-                        UNONBOARDED -> OnboardingTermsActivity.newIntent(this)
-                        ACTIVE_USER -> MainActivity.newIntent(this)
+                error != null -> {
+                    loginWithKakaoAccount(onSuccess, onError)
+                }
+
+                else -> {
+                    token?.let {
+                        onSuccess(it.accessToken)
                     }
                 }
-
-                is MulKkamUiState.Loading -> return
-                is MulKkamUiState.Idle -> return
-                is MulKkamUiState.Failure -> LoginActivity.newIntent(this)
             }
-        startActivity(intent)
-        finish()
+        }
+    }
+
+    private fun loginWithKakaoAccount(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
+            if (error != null) {
+                onError(error.message ?: "Login Error")
+            } else {
+                token?.let {
+                    onSuccess(it.accessToken)
+                }
+            }
+        }
     }
 }

@@ -1,37 +1,53 @@
 package com.mulkkam.data.local.datasource
 
+import com.mulkkam.data.local.userdefaults.DevicesUserDefaults
 import platform.Foundation.NSUUID
 
-// TODO: iOS 네이티브 구현 필요
-// iOS에서는 UserDefaults를 사용하여 디바이스 정보를 저장해야 합니다.
-class DevicesLocalDataSourceImpl : DevicesLocalDataSource {
-    override var deviceUuid: String? = null
+class DevicesLocalDataSourceImpl(
+    private val devicesUserDefaults: DevicesUserDefaults,
+) : DevicesLocalDataSource {
+    override var deviceUuid: String?
+        get() = devicesUserDefaults.deviceUuid
+        set(value) {
+            value?.let { devicesUserDefaults.saveDeviceUuid(it) }
+        }
 
-    override var isNotificationGranted: Boolean = false
+    override var isNotificationGranted: Boolean
+        get() = devicesUserDefaults.isNotificationGranted
+        set(value) {
+            devicesUserDefaults.saveNotificationGranted(value)
+        }
 
-    override var isFirstLaunch: Boolean = true
+    override var isFirstLaunch: Boolean
+        get() = devicesUserDefaults.isFirstLaunch
+        set(value) {
+            devicesUserDefaults.saveIsFirstLaunch(value)
+        }
 
     override fun saveDeviceUuid(uuid: String) {
-        // TODO: iOS UserDefaults 구현
-        deviceUuid = uuid
+        devicesUserDefaults.saveDeviceUuid(uuid)
     }
 
     override fun saveNotificationGranted(granted: Boolean) {
-        // TODO: iOS UserDefaults 구현
-        isNotificationGranted = granted
+        devicesUserDefaults.saveNotificationGranted(granted)
     }
 
     override fun saveIsFirstLaunch(isFirstLaunch: Boolean) {
-        // TODO: iOS UserDefaults 구현
-        this.isFirstLaunch = isFirstLaunch
+        devicesUserDefaults.saveIsFirstLaunch(isFirstLaunch)
     }
 
-    fun getOrCreateDeviceUuid(): String {
+    override fun getOrCreateDeviceUuid(): String {
         val existingUuid = deviceUuid
         if (existingUuid != null) return existingUuid
 
-        val newUuid = NSUUID().UUIDString
-        saveDeviceUuid(newUuid)
-        return newUuid
+        val newUuid =
+            NSUUID()
+                .UUIDString
+                .hashCode()
+                .toUInt()
+                .toString(16)
+                .padStart(8, '0')
+
+        return newUuid.also { saveDeviceUuid(it) }
     }
 }

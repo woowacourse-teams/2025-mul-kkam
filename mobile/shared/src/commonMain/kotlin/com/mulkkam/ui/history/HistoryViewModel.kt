@@ -45,9 +45,8 @@ class HistoryViewModel(
         MutableStateFlow(WaterIntakeState.Present.NotFull)
     val waterIntakeState: StateFlow<WaterIntakeState> get() = _waterIntakeState.asStateFlow()
 
-    private val _deleteUiState: MutableStateFlow<MulKkamUiState<Unit>> =
-        MutableStateFlow(MulKkamUiState.Idle)
-    val deleteUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteUiState
+    private val _deleteHistoryUiState: MutableStateFlow<MulKkamUiState<Unit>> = MutableStateFlow(MulKkamUiState.Idle)
+    val deleteHistoryUiState: StateFlow<MulKkamUiState<Unit>> get() = _deleteHistoryUiState.asStateFlow()
 
     init {
         loadIntakeHistories()
@@ -80,7 +79,8 @@ class HistoryViewModel(
     }
 
     private fun getWeekDates(targetDate: LocalDate): List<LocalDate> {
-        val daysFromMonday = (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
+        val daysFromMonday =
+            (targetDate.dayOfWeek.ordinal - DayOfWeek.MONDAY.ordinal + WEEK_LENGTH) % WEEK_LENGTH
         val monday = targetDate.minus(daysFromMonday, DateTimeUnit.DAY)
 
         return List(WEEK_LENGTH) { monday.plus(it, DateTimeUnit.DAY) }
@@ -117,23 +117,20 @@ class HistoryViewModel(
     }
 
     fun deleteIntakeHistory(historyId: Int) {
-        if (deleteUiState.value is MulKkamUiState.Loading) return
-
         viewModelScope.launch {
             runCatching {
                 logger.info(
                     LogEvent.USER_ACTION,
                     "Confirmed delete for intake history id=$historyId",
                 )
-                _deleteUiState.value = MulKkamUiState.Loading
                 intakeRepository
                     .deleteIntakeHistoryDetails(historyId)
                     .getOrError()
             }.onSuccess {
-                _deleteUiState.value = MulKkamUiState.Success(Unit)
+                _deleteHistoryUiState.value = MulKkamUiState.Success(Unit)
                 updateIntakeHistoriesAfterDeletion(historyId)
             }.onFailure {
-                _deleteUiState.value = MulKkamUiState.Failure(it.toMulKkamError())
+                _deleteHistoryUiState.value = (MulKkamUiState.Failure(it.toMulKkamError()))
             }
         }
     }

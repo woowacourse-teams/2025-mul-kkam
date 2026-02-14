@@ -9,7 +9,7 @@ import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.FriendsRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.model.MulKkamUiState.Idle.toSuccessDataOrNull
+import com.mulkkam.ui.model.toSuccessDataOrNull
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

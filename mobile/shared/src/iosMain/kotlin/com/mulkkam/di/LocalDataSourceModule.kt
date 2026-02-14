@@ -11,7 +11,7 @@ import org.koin.dsl.module
 
 val localDataSourceModule: Module =
     module {
-        single<TokenLocalDataSource> { TokenLocalDataSourceImpl() }
-        single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl() }
-        single<MembersLocalDataSource> { MembersLocalDataSourceImpl() }
+        single<TokenLocalDataSource> { TokenLocalDataSourceImpl(get()) }
+        single<DevicesLocalDataSource> { DevicesLocalDataSourceImpl(get()) }
+        single<MembersLocalDataSource> { MembersLocalDataSourceImpl(get()) }
     }
