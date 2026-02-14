@@ -104,9 +104,7 @@ actual fun LoginRoute(
         },
         snackbarHostState = snackbarHostState,
         isLoginLoading = isLoginLoading,
-        navigateToPlayStoreAndExit = {
-            playStoreUri.openLink()
-        },
+        navigateToStoreAndExit = { playStoreUri.openLink() },
         showDialog = showDialog,
     )
 }
