@@ -3,6 +3,7 @@ package com.mulkkam.ui.util.extensions
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.os.Build
 import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.di.PROVIDER_PACKAGE_NAME
@@ -12,14 +13,7 @@ import mulkkam.shared.generated.resources.health_connect_web
 import org.jetbrains.compose.resources.getString
 import org.koin.core.context.GlobalContext
 
-fun Context.openLink(uri: String) {
-    val intent =
-        Intent(
-            Intent.ACTION_VIEW,
-            uri.toUri(),
-        )
-    startActivity(intent)
-}
+private const val MIN_VERSION_NAME: String = "0.0.0"
 
 fun Context.isHealthConnectAvailable(): Boolean =
     when {
@@ -59,15 +53,17 @@ suspend fun Context.navigateToHealthConnectStore() {
 
 fun Context.canHandleIntent(intent: Intent): Boolean = packageManager.resolveActivity(intent, PackageManager.MATCH_DEFAULT_ONLY) != null
 
-fun opendLink(uri: String) {
-    val context: Context = GlobalContext.get().get()
-    val intent =
-        Intent(
-            Intent.ACTION_VIEW,
-            uri.toUri(),
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-
-    if (context.canHandleIntent(intent)) {
-        context.startActivity(intent)
-    }
-}
+fun Context.getAppVersion(): String =
+    runCatching {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val packageInfo =
+                packageManager.getPackageInfo(
+                    packageName,
+                    PackageManager.PackageInfoFlags.of(0),
+                )
+            packageInfo.versionName
+        } else {
+            val packageInfo = packageManager.getPackageInfo(packageName, 0)
+            packageInfo.versionName
+        }
+    }.getOrNull() ?: MIN_VERSION_NAME

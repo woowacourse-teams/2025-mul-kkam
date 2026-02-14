@@ -9,8 +9,6 @@ import androidx.core.net.toUri
 import androidx.health.connect.client.HealthConnectClient
 import com.mulkkam.di.PROVIDER_PACKAGE_NAME
 
-private const val MIN_VERSION_NAME: String = "0.0.0"
-
 /**
  * Health Connect SDK 설치/업데이트 상태를 확인한다.
  *
@@ -64,18 +62,3 @@ fun Context.openTermsLink(
         )
     startActivity(intent)
 }
-
-fun Context.getAppVersion(): String =
-    runCatching {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val packageInfo =
-                packageManager.getPackageInfo(
-                    packageName,
-                    PackageManager.PackageInfoFlags.of(0),
-                )
-            packageInfo.versionName
-        } else {
-            val packageInfo = packageManager.getPackageInfo(packageName, 0)
-            packageInfo.versionName
-        }
-    }.getOrNull() ?: MIN_VERSION_NAME
