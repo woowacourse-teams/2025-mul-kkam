@@ -24,7 +24,6 @@ import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.app_store_app
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.network_check_error
-import mulkkam.shared.generated.resources.play_store_app
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -38,7 +37,7 @@ actual fun LoginRoute(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    version: String,
+    appVersion: String,
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel,
 ) {
@@ -74,7 +73,7 @@ actual fun LoginRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.checkAppVersion(currentVersionName = version)
+        viewModel.checkAppVersion(currentVersionName = appVersion)
         viewModel.isAppOutdated.collectWithLifecycle(lifecycleOwner) { isAppOutdated ->
             if (isAppOutdated) showDialog = true
         }

@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.logger.Logger
@@ -28,7 +27,6 @@ import mulkkam.shared.generated.resources.network_check_error
 import mulkkam.shared.generated.resources.play_store_app
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 actual fun LoginRoute(
@@ -40,7 +38,7 @@ actual fun LoginRoute(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    version: String,
+    appVersion: String,
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel,
 ) {
@@ -79,7 +77,7 @@ actual fun LoginRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.checkAppVersion(version)
+        viewModel.checkAppVersion(appVersion)
         viewModel.isAppOutdated.collectWithLifecycle(lifecycleOwner) { isAppOutdated ->
             if (isAppOutdated) showDialog = true
         }

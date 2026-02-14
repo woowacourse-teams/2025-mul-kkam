@@ -4,6 +4,7 @@ import Shared
 
 struct ComposeView: UIViewControllerRepresentable {
     let loginPlatform = LoginPlatform()
+    let appVersion = (Bundle.main.infoDictionary?["MARKETING_VERSION"] as? String) ?? ""
     
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
@@ -13,7 +14,8 @@ struct ComposeView: UIViewControllerRepresentable {
                     onSuccess: onSuccess,
                     onError: onError,
                 )
-            }
+            },
+            appVersion: appVersion,
         )
     }
     

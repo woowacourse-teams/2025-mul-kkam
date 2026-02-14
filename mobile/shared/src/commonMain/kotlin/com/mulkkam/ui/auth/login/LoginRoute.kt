@@ -15,7 +15,7 @@ expect fun LoginRoute(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    version: String,
+    appVersion: String,
     snackbarHostState: SnackbarHostState,
     viewModel: LoginViewModel = koinViewModel(),
 )
