@@ -33,7 +33,7 @@ actual fun LoginScreen(
     onLoginClick: (authPlatform: AuthPlatform) -> Unit,
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
-    navigateToStoreAndExit: () -> Unit,
+    navigateToStore: () -> Unit,
     showDialog: Boolean,
 ) {
     Scaffold(
@@ -42,7 +42,7 @@ actual fun LoginScreen(
     ) { innerPadding ->
         if (showDialog) {
             AppUpdateDialog(
-                navigateToPlayStoreAndExit = navigateToStoreAndExit,
+                navigateToStore = navigateToStore,
             )
         }
 
@@ -79,7 +79,7 @@ private fun LoginScreenPreview() {
             onLoginClick = {},
             snackbarHostState = SnackbarHostState(),
             isLoginLoading = false,
-            navigateToStoreAndExit = {},
+            navigateToStore = {},
         )
     }
 }

@@ -11,6 +11,6 @@ expect fun LoginScreen(
     onLoginClick: (authPlatform: AuthPlatform) -> Unit,
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
-    navigateToStoreAndExit: () -> Unit,
+    navigateToStore: () -> Unit,
     showDialog: Boolean = false,
 )
