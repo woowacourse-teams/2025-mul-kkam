@@ -14,7 +14,7 @@ class DevicesRemoteDataSourceImpl(
     override suspend fun postDevice(fcmToken: String): Result<Unit> =
         safeApiCallUnit {
             httpClient.post("/devices") {
-                setBody(DeviceRequest(fcmToken, "ANDROID"))
+                setBody(DeviceRequest(fcmToken, PLATFORM_NAME))
             }
         }
 
@@ -24,4 +24,8 @@ class DevicesRemoteDataSourceImpl(
                 header("X-Device-Id", deviceId)
             }
         }
+
+    companion object {
+        private const val PLATFORM_NAME: String = "ANDROID"
+    }
 }
