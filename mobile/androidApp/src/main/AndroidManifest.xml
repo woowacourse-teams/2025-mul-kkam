@@ -99,7 +99,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.splash.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -26,7 +26,7 @@ import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("CustomSplashScreen")
-class SplashActivity : FragmentActivity() {
+class MainActivity : FragmentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
     private var onPushTokenUpdated: ((token: String) -> Unit)? = null
     private var onPushPermissionUpdated: ((granted: Boolean) -> Unit)? = null
