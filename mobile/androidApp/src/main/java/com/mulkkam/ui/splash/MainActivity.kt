@@ -49,7 +49,7 @@ class MainActivity : FragmentActivity() {
             MulKkamApp(
                 onLogin = ::login,
                 onRegisterPushNotification = ::registerPushNotification,
-                onRequestMainPermissions = ::requestMainPermissions,
+                onRequestMainPermissions = ::requestHealthPermissions,
             )
         }
     }
@@ -149,7 +149,7 @@ class MainActivity : FragmentActivity() {
             }
         }
 
-    private fun requestMainPermissions() {
+    private fun requestHealthPermissions() {
         if (isHealthConnectAvailable()) {
             requestHealthConnectLauncher.launch(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
         } else {
