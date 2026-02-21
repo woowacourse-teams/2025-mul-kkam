@@ -28,9 +28,9 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : FragmentActivity() {
     private val mainViewModel: MainViewModel by viewModel()
-    private var onPushTokenUpdated: ((String) -> Unit)? = null
-    private var onPushPermissionUpdated: ((Boolean) -> Unit)? = null
-    private var onPushRegistrationError: ((String) -> Unit)? = null
+    private var onPushTokenUpdated: ((token: String) -> Unit)? = null
+    private var onPushPermissionUpdated: ((granted: Boolean) -> Unit)? = null
+    private var onPushRegistrationError: ((errorMessage: String) -> Unit)? = null
 
     private val requestHealthConnectLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
@@ -121,7 +121,7 @@ class SplashActivity : FragmentActivity() {
 
     private fun registerPushNotification(
         onTokenUpdated: (token: String) -> Unit,
-        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onPermissionUpdated: (granted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) {
         onPushTokenUpdated = onTokenUpdated
