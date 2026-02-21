@@ -108,9 +108,6 @@ class HomeViewModel(
                 tokenRepository.saveFcmToken(token).getOrError()
             }.onSuccess {
                 firebaseMessagingToken = token
-                latestNotificationPermission?.let { isCurrentlyGranted ->
-                    syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
-                }
             }
         }
     }
