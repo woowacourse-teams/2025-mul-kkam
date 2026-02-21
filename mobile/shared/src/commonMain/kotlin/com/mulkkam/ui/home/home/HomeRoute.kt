@@ -19,12 +19,11 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamActionSnackbar
 import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.home.home.component.InitialPermissionDialog
 import com.mulkkam.ui.home.home.component.ManualDrinkBottomSheet
 import com.mulkkam.ui.home.home.model.HomeUiStateHolder
 import com.mulkkam.ui.home.home.model.rememberHomeUiStateHolder
-import com.mulkkam.ui.home.home.component.InitialPermissionDialog
 import com.mulkkam.ui.model.MulKkamUiState
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.toCommaSeparated
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collectLatest
@@ -111,7 +110,7 @@ fun HomeRoute(
     }
 
     LaunchedEffect(viewModel) {
-        viewModel.isFirstLaunch.collectWithLifecycle(lifecycleOwner) { isFirstLaunch ->
+        viewModel.isFirstLaunch.collectLatest { isFirstLaunch ->
             if (isFirstLaunch) {
                 showPermissionDialog = true
             }
@@ -122,7 +121,6 @@ fun HomeRoute(
         padding = padding,
         navigateToNotification = navigateToNotification,
         onManualDrink = { showManualDrinkSheet = true },
-        snackbarHostState = snackbarHostState,
         uiStateHolder = uiStateHolder,
         viewModel = viewModel,
     )
