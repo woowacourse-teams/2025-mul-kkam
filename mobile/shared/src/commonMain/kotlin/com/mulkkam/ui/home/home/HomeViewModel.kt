@@ -69,11 +69,11 @@ class HomeViewModel(
     val isGoalAchieved: SharedFlow<Unit> get() = _isGoalAchieved.asSharedFlow()
 
     init {
+        checkFirstLaunch()
+        loadFirebaseMessagingToken()
         loadTodayProgressInfo()
         loadCups()
         loadAlarmCount()
-        loadFirebaseMessagingToken()
-        checkFirstLaunch()
     }
 
     private fun checkFirstLaunch() {
@@ -120,13 +120,6 @@ class HomeViewModel(
         syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
     }
 
-    fun logNotificationRegistrationError(errorMessage: String) {
-        logger.error(
-            LogEvent.PUSH_NOTIFICATION,
-            "Notification registration failed: $errorMessage",
-        )
-    }
-
     private fun syncNotificationPermission(isCurrentlyGranted: Boolean) {
         viewModelScope.launch {
             val previousNotificationPermission =
@@ -171,6 +164,13 @@ class HomeViewModel(
         return runCatching {
             devicesRepository.deleteDevice(deviceId).getOrError()
         }.isSuccess
+    }
+
+    fun logNotificationRegistrationError(errorMessage: String) {
+        logger.error(
+            LogEvent.PUSH_NOTIFICATION,
+            "Notification registration failed: $errorMessage",
+        )
     }
 
     @OptIn(ExperimentalTime::class)
