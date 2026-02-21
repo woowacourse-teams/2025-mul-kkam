@@ -59,8 +59,8 @@ fun HomeRoute(
 ) {
     val coroutineScope = rememberCoroutineScope()
     val lifecycleOwner = LocalLifecycleOwner.current
-    var manualDrinkBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
-    var mainPermissionDialogVisible by rememberSaveable { mutableStateOf(false) }
+    var showManualDrinkSheet by rememberSaveable { mutableStateOf(false) }
+    var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
     val manualDrinkBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val uiStateHolder: HomeUiStateHolder = rememberHomeUiStateHolder()
@@ -113,7 +113,7 @@ fun HomeRoute(
     LaunchedEffect(viewModel) {
         viewModel.isFirstLaunch.collectWithLifecycle(lifecycleOwner) { isFirstLaunch ->
             if (isFirstLaunch) {
-                mainPermissionDialogVisible = true
+                showPermissionDialog = true
             }
         }
     }
@@ -121,29 +121,29 @@ fun HomeRoute(
     HomeScreen(
         padding = padding,
         navigateToNotification = navigateToNotification,
-        onManualDrink = { manualDrinkBottomSheetVisible = true },
+        onManualDrink = { showManualDrinkSheet = true },
         snackbarHostState = snackbarHostState,
         uiStateHolder = uiStateHolder,
         viewModel = viewModel,
     )
 
-    if (manualDrinkBottomSheetVisible) {
+    if (showManualDrinkSheet) {
         ManualDrinkBottomSheet(
             sheetState = manualDrinkBottomSheetState,
-            onDismiss = { manualDrinkBottomSheetVisible = false },
+            onDismiss = { showManualDrinkSheet = false },
             onSave = { intakeType, amount ->
                 viewModel.addWaterIntake(intakeType, amount)
-                manualDrinkBottomSheetVisible = false
+                showManualDrinkSheet = false
             },
             onNavigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
         )
     }
 
-    if (mainPermissionDialogVisible) {
+    if (showPermissionDialog) {
         InitialPermissionDialog(
             onConfirm = {
                 onRequestMainPermissions()
-                mainPermissionDialogVisible = false
+                showPermissionDialog = false
             },
         )
     }
