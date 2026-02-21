@@ -1,4 +1,4 @@
-package com.mulkkam.ui.main.component
+package com.mulkkam.ui.home.home.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
-fun MainPermissionDialog(
+fun InitialPermissionDialog(
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -137,6 +137,6 @@ fun MainPermissionDialog(
 @Composable
 private fun MainPermissionDialogPreview() {
     MulKkamTheme {
-        MainPermissionDialog({})
+        InitialPermissionDialog({})
     }
 }

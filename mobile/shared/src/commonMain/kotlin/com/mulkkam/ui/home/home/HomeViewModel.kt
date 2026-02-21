@@ -76,7 +76,7 @@ class HomeViewModel(
         checkFirstLaunch()
     }
 
-    fun checkFirstLaunch() {
+    private fun checkFirstLaunch() {
         viewModelScope.launch {
             runCatching {
                 membersRepository.getIsFirstLaunch().getOrError()

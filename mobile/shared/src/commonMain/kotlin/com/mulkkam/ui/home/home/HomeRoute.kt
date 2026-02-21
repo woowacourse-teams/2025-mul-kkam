@@ -22,7 +22,7 @@ import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.home.home.component.ManualDrinkBottomSheet
 import com.mulkkam.ui.home.home.model.HomeUiStateHolder
 import com.mulkkam.ui.home.home.model.rememberHomeUiStateHolder
-import com.mulkkam.ui.main.component.MainPermissionDialog
+import com.mulkkam.ui.home.home.component.InitialPermissionDialog
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.toCommaSeparated
@@ -140,10 +140,9 @@ fun HomeRoute(
     }
 
     if (mainPermissionDialogVisible) {
-        MainPermissionDialog(
+        InitialPermissionDialog(
             onConfirm = {
                 onRequestMainPermissions()
-                viewModel.checkFirstLaunch()
                 mainPermissionDialogVisible = false
             },
         )
