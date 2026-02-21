@@ -63,9 +63,7 @@ class HomeViewModel(
 
     private var isPostingDrink: Boolean = false
     private var latestNotificationPermission: Boolean? = null
-
-    private val _firebaseMessagingToken: MutableStateFlow<String?> = MutableStateFlow(null)
-    val firebaseMessagingToken: StateFlow<String?> = _firebaseMessagingToken.asStateFlow()
+    private var firebaseMessagingToken: String? = null
 
     private val _isGoalAchieved: MutableSharedFlow<Unit> = MutableSharedFlow()
     val isGoalAchieved: SharedFlow<Unit> get() = _isGoalAchieved.asSharedFlow()
@@ -96,20 +94,20 @@ class HomeViewModel(
             runCatching {
                 tokenRepository.getFcmToken().getOrError()
             }.onSuccess { token ->
-                _firebaseMessagingToken.value = token
+                firebaseMessagingToken = token
             }
         }
     }
 
     fun updateFirebaseMessagingToken(token: String) {
-        val previousToken = firebaseMessagingToken.value
+        val previousToken = firebaseMessagingToken
         if (previousToken == token) return
 
         viewModelScope.launch {
             runCatching {
                 tokenRepository.saveFcmToken(token).getOrError()
             }.onSuccess {
-                _firebaseMessagingToken.value = token
+                firebaseMessagingToken = token
                 latestNotificationPermission?.let { isCurrentlyGranted ->
                     syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
                 }
@@ -121,7 +119,7 @@ class HomeViewModel(
         if (latestNotificationPermission == isCurrentlyGranted) return
 
         latestNotificationPermission = isCurrentlyGranted
-        if (firebaseMessagingToken.value == null) return
+        if (firebaseMessagingToken == null) return
         syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
     }
 
@@ -160,7 +158,7 @@ class HomeViewModel(
     }
 
     private suspend fun registerDevice(): Boolean {
-        val token = firebaseMessagingToken.value ?: return false
+        val token = firebaseMessagingToken ?: return false
 
         return runCatching {
             devicesRepository.postDevice(fcmToken = token).getOrError()
