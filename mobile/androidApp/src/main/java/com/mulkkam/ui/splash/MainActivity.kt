@@ -54,7 +54,7 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    fun login(
+    private fun login(
         authPlatform: AuthPlatform,
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
