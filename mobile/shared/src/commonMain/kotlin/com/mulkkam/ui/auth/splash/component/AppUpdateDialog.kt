@@ -36,7 +36,7 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun AppUpdateDialog(
-    navigateToPlayStoreAndExit: () -> Unit,
+    navigateToStore: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Dialog(
@@ -83,7 +83,7 @@ fun AppUpdateDialog(
                 )
 
                 Button(
-                    onClick = navigateToPlayStoreAndExit,
+                    onClick = navigateToStore,
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -110,6 +110,6 @@ fun AppUpdateDialog(
 @Composable
 private fun AppUpdateDialogPreview() {
     MulKkamTheme {
-        AppUpdateDialog(navigateToPlayStoreAndExit = {})
+        AppUpdateDialog(navigateToStore = {})
     }
 }

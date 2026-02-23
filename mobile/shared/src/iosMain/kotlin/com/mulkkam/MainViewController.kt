@@ -10,4 +10,5 @@ fun MainViewController(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-) = ComposeUIViewController { MulKkamApp(onLogin) }
+    appVersion: String,
+) = ComposeUIViewController { MulKkamApp(onLogin, appVersion) }

@@ -26,6 +26,7 @@ fun MulKkamApp(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
+    appVersion: String,
 ) {
     val navigator = rememberMainNavigator()
     val snackbarHostState = remember { SnackbarHostState() }
@@ -62,6 +63,7 @@ fun MulKkamApp(
                 navigator = navigator,
                 padding = innerPadding,
                 onLogin = onLogin,
+                appVersion = appVersion,
                 snackbarHostState = snackbarHostState,
             )
         }

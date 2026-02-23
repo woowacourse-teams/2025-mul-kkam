@@ -9,13 +9,14 @@ import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
 import com.mulkkam.MulKkamApp
 import com.mulkkam.ui.auth.login.model.AuthPlatform
+import com.mulkkam.ui.util.extensions.getAppVersion
 
 @SuppressLint("CustomSplashScreen")
 class SplashActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            MulKkamApp(onLogin = ::login)
+            MulKkamApp(onLogin = ::login, appVersion = this.getAppVersion())
         }
     }
 
