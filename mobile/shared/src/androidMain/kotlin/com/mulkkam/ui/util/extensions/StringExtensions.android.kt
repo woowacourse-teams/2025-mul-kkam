@@ -10,13 +10,18 @@ actual fun String.toColorInt(): Int = this.toColorInt()
 
 actual fun String.openLink() {
     val context: Context = GlobalContext.get().get()
-    val intent =
-        Intent(
-            Intent.ACTION_VIEW,
-            this.toUri(),
-        ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
 
-    if (context.canHandleIntent(intent)) {
+    val uri = toUri()
+    val scheme: String = uri.scheme?.lowercase() ?: return
+
+    val intent: Intent =
+        when (scheme) {
+            "mailto" -> Intent(Intent.ACTION_SENDTO, uri)
+            "http", "https" -> Intent(Intent.ACTION_VIEW, uri)
+            else -> return
+        }.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+
+    if (intent.resolveActivity(context.packageManager) != null) {
         context.startActivity(intent)
     }
 }

@@ -27,6 +27,22 @@ class AuthRepositoryImpl(
         )
     }
 
+    override suspend fun postAuthApple(
+        authorizationCode: String,
+        deviceUuid: String,
+    ): MulKkamResult<AuthInfo> {
+        val result =
+            authRemoteDataSource
+                .postAuthApple(
+                    authorizationCode = authorizationCode,
+                    deviceUuid = deviceUuid,
+                )
+        return result.fold(
+            onSuccess = { MulKkamResult(data = it.toDomain()) },
+            onFailure = { MulKkamResult(error = it.toDomain()) },
+        )
+    }
+
     override suspend fun postAuthLogout(): MulKkamResult<Unit> {
         val result =
             authRemoteDataSource.postAuthLogout()

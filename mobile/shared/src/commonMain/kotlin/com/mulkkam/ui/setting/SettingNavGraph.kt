@@ -49,6 +49,7 @@ object SettingNavGraph {
                     AccountInfoRoute(
                         padding = padding,
                         onNavigateToBack = navigator::popBackStack,
+                        onNavigateToLogin = navigator::navigateToLoginAndClearBackStack,
                         snackbarHostState = snackbarHostState,
                     )
                 }

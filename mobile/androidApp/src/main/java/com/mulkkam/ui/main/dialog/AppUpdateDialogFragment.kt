@@ -1,4 +1,4 @@
-package com.mulkkam.ui.splash.dialog
+package com.mulkkam.ui.main.dialog
 
 import android.content.Intent
 import android.graphics.Color
