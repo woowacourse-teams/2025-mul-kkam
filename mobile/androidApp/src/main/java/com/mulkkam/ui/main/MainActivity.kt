@@ -1,200 +1,228 @@
 package com.mulkkam.ui.main
 
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
+import android.Manifest
+import android.annotation.SuppressLint
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
+import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
+import androidx.health.connect.client.PermissionController
+import com.google.firebase.messaging.FirebaseMessaging
+import com.kakao.sdk.common.model.ClientError
+import com.kakao.sdk.common.model.ClientErrorCause
+import com.kakao.sdk.user.UserApiClient
+import com.mulkkam.MulKkamApp
 import com.mulkkam.R
-import com.mulkkam.databinding.ActivityMainBinding
-import com.mulkkam.ui.custom.snackbar.CustomSnackBar
-import com.mulkkam.ui.main.model.MainTab2
-import com.mulkkam.ui.service.NotificationAction
-import com.mulkkam.ui.service.NotificationService
-import com.mulkkam.ui.splash.dialog.AppUpdateDialogFragment
-import com.mulkkam.ui.util.binding.BindingActivity
-import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import com.mulkkam.ui.auth.login.model.AuthPlatform
+import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
-import com.mulkkam.ui.widget.AchievementHeatmapWidget
-import com.mulkkam.ui.widget.IntakeWidget
-import com.mulkkam.ui.widget.ProgressWidget
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
-    override val needBottomPadding: Boolean
-        get() = binding.bnvMain.isVisible.not()
+@SuppressLint("CustomSplashScreen")
+class MainActivity : FragmentActivity() {
+    private val mainViewModel: MainViewModel by viewModel()
+    private var onPushTokenUpdated: ((token: String) -> Unit)? = null
+    private var onPushPermissionUpdated: ((granted: Boolean) -> Unit)? = null
+    private var onPushRegistrationError: ((errorMessage: String) -> Unit)? = null
 
-    private val viewModel: MainViewModel by viewModel()
+    private val requestHealthConnectLauncher =
+        registerForActivityResult(PermissionController.Companion.createRequestPermissionResultContract()) { results ->
+            handleHealthPermissionResult(results.contains(MainActivity2.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            requestNotificationPermission()
+        }
 
-    private var backPressedTime: Long = 0L
-
-    override fun onNewIntent(intent: Intent) {
-        super.onNewIntent(intent)
-        setIntent(intent)
-        handleNotificationEvent()
-    }
+    private val requestNotificationLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            handleNotificationPermissionResult(granted)
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        viewModel.checkAppVersion(getAppVersion())
-        initBottomNavListener()
-        if (savedInstanceState == null) {
-            switchFragment(MainTab2.HOME)
+        setContent {
+            MulKkamApp(
+                onLogin = ::login,
+                onRegisterPushNotification = ::registerPushNotification,
+                onRequestMainPermissions = ::requestHealthPermissions,
+                appVersion = this.getAppVersion(),
+            )
         }
-        initDoubleBackToExit()
-        initObservers()
-        handleNotificationEvent()
+    }
 
+    private fun login(
+        authPlatform: AuthPlatform,
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        when (authPlatform) {
+            AuthPlatform.KAKAO -> {
+                loginWithKakao(onSuccess, onError)
+            }
+
+            else -> {
+                Unit
+            }
+        }
+    }
+
+    private fun loginWithKakao(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(this)) {
+            loginWithKakaoTalk(onSuccess, onError)
+        } else {
+            loginWithKakaoAccount(onSuccess, onError)
+        }
+    }
+
+    private fun loginWithKakaoTalk(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        UserApiClient.Companion.instance.loginWithKakaoTalk(this) { token, error ->
+            when {
+                error is ClientError && error.reason == ClientErrorCause.Cancelled -> {
+                    Unit
+                }
+
+                error != null -> {
+                    loginWithKakaoAccount(onSuccess, onError)
+                }
+
+                else -> {
+                    token?.let {
+                        onSuccess(it.accessToken)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun loginWithKakaoAccount(
+        onSuccess: (token: String) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        UserApiClient.Companion.instance.loginWithKakaoAccount(this) { token, error ->
+            if (error != null) {
+                onError(error.message ?: "Login Error")
+            } else {
+                token?.let {
+                    onSuccess(it.accessToken)
+                }
+            }
+        }
+    }
+
+    private fun registerPushNotification(
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (granted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) {
+        onPushTokenUpdated = onTokenUpdated
+        onPushPermissionUpdated = onPermissionUpdated
+        onPushRegistrationError = onError
+
+        val isPermissionGranted: Boolean = isNotificationPermissionGranted()
+        notifyPushPermissionState()
+        if (isPermissionGranted) {
+            requestFirebaseMessagingToken()
+        }
+    }
+
+    private fun isNotificationPermissionGranted(): Boolean =
+        when {
+            Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU -> {
+                true
+            }
+
+            else -> {
+                ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS,
+                ) == PackageManager.PERMISSION_GRANTED
+            }
+        }
+
+    private fun requestHealthPermissions() {
         if (isHealthConnectAvailable()) {
-            viewModel.checkHealthPermissions(setOf(PERMISSION_ACTIVE_CALORIES_BURNED, PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            requestHealthConnectLauncher.launch(
+                setOf(
+                    MainActivity2.Companion.PERMISSION_ACTIVE_CALORIES_BURNED,
+                    MainActivity2.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND,
+                ),
+            )
+        } else {
+            CustomToast.Companion
+                .makeText(this, getString(R.string.health_connect_install_alert), R.drawable.ic_info_circle)
+                .apply {
+                    setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+                }.show()
+            requestNotificationPermission()
         }
     }
 
-    private fun handleNotificationEvent() {
-        intent?.let {
-            val action =
-                NotificationAction.from(it.getStringExtra(NotificationService.EXTRA_ACTION))
-            when (action) {
-                NotificationAction.GO_HOME -> {
-                    Unit
-                }
-
-                NotificationAction.GO_NOTIFICATION -> {
-                    // notification activity migration completed
-                }
-
-                NotificationAction.FRIEND_REMINDER -> {
-                    if (binding.bnvMain.selectedItemId != R.id.item_home) {
-                        switchFragment(MainTab2.HOME)
-                        binding.bnvMain.selectedItemId = R.id.item_home
-                    }
-                    viewModel.receiveFriendWaterBalloon()
-                }
-
-                NotificationAction.UNKNOWN -> {
-                    Unit
-                }
-            }
-        }
-    }
-
-    private fun initBottomNavListener() {
-        binding.bnvMain.setOnItemSelectedListener { item ->
-            val menu = MainTab2.from(item.itemId) ?: return@setOnItemSelectedListener false
-            switchFragment(menu)
-            true
-        }
-    }
-
-    private fun switchFragment(targetTab: MainTab2) {
-        val targetFragment = prepareFragment(targetTab)
-
-        showOnlyFragment(targetFragment)
-    }
-
-    private fun prepareFragment(targetTab: MainTab2): Fragment {
-        val tag = targetTab.name
-        return supportFragmentManager.findFragmentByTag(tag)
-            ?: targetTab.create().also { fragment ->
-                supportFragmentManager.commit {
-                    setReorderingAllowed(true)
-                    add(R.id.fcv_main, fragment, tag)
-                }
-            }
-    }
-
-    private fun showOnlyFragment(targetFragment: Fragment) {
-        supportFragmentManager.commit {
-            setReorderingAllowed(true)
-            supportFragmentManager.fragments.forEach { fragment ->
-                if (fragment == targetFragment) {
-                    show(fragment)
-                    notifyFragmentReselected(fragment)
-                } else {
-                    hide(fragment)
-                }
-            }
-        }
-    }
-
-    private fun notifyFragmentReselected(fragment: Fragment) {
-        if (fragment is Refreshable) {
-            fragment.onReselected()
-        }
-    }
-
-    private fun initDoubleBackToExit() {
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (System.currentTimeMillis() - backPressedTime >= BACK_PRESS_THRESHOLD) {
-                        backPressedTime = System.currentTimeMillis()
-                        CustomSnackBar
-                            .make(
-                                binding.root,
-                                getString(R.string.main_main_back_press_exit_message),
-                                R.drawable.ic_info_circle,
-                            ).apply {
-                                setTranslationY(SNACK_BAR_BOTTOM_NAV_OFFSET)
-                            }.show()
-                    } else {
-                        finishAffinity()
-                    }
-                }
-            },
-        )
-    }
-
-    private fun initObservers() {
-        with(viewModel) {
-            isHealthPermissionGranted.collectWithLifecycle(this@MainActivity) { isGranted ->
-                if (isGranted == true) {
-                    viewModel.scheduleCalorieCheck()
-                }
+    private fun handleHealthPermissionResult(isGranted: Boolean) {
+        val messageResId =
+            if (isGranted) {
+                mainViewModel.scheduleCalorieCheck()
+                R.string.main_health_permission_granted
+            } else {
+                R.string.main_health_permission_denied
             }
 
-            isAppOutdated.collectWithLifecycle(this@MainActivity) { isAppOutdated ->
-                if (isAppOutdated) showUpdateDialog()
+        CustomToast.Companion
+            .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
+            .apply {
+                setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
+    }
+
+    private fun handleNotificationPermissionResult(isGranted: Boolean) {
+        onPushPermissionUpdated?.invoke(isGranted)
+        if (isGranted) {
+            requestFirebaseMessagingToken()
+        }
+
+        val messageResId =
+            if (isGranted) {
+                R.string.main_alarm_permission_granted
+            } else {
+                R.string.main_alarm_permission_denied
             }
+
+        CustomToast.Companion
+            .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
+            .apply {
+                setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+            }.show()
+    }
+
+    private fun requestNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU || isNotificationPermissionGranted()) {
+            notifyPushPermissionState()
+            return
+        }
+
+        requestNotificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+    }
+
+    private fun requestFirebaseMessagingToken() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                onPushRegistrationError?.invoke(task.exception?.message ?: "Failed to fetch notification token.")
+                return@addOnCompleteListener
+            }
+
+            val token = task.result ?: return@addOnCompleteListener
+            onPushTokenUpdated?.invoke(token)
         }
     }
 
-    // TODO: update dialog 를 composable로 변경 필요
-    private fun showUpdateDialog() {
-        if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
-        AppUpdateDialogFragment
-            .newInstance()
-            .show(supportFragmentManager, AppUpdateDialogFragment.TAG)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        IntakeWidget.refresh(this)
-        ProgressWidget.refresh(this)
-        AchievementHeatmapWidget.refresh(this)
-    }
-
-    companion object {
-        const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
-        const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
-
-        private const val BACK_PRESS_THRESHOLD: Long = 2000L
-
-        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String =
-            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
-        val PERMISSION_ACTIVE_CALORIES_BURNED: String =
-            HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
-
-        fun newIntent(context: Context): Intent = Intent(context, MainActivity::class.java)
-
-        fun newPendingIntent(context: Context): PendingIntent =
-            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
+    private fun notifyPushPermissionState() {
+        onPushPermissionUpdated?.invoke(isNotificationPermissionGranted())
     }
 }
