@@ -22,7 +22,7 @@ object HomeNavGraph {
             onPermissionUpdated: (isGranted: Boolean) -> Unit,
             onError: (errorMessage: String) -> Unit,
         ) -> Unit,
-        onRequestMainPermissions: () -> Unit,
+        onRequestInitialPermissions: () -> Unit,
         snackbarHostState: SnackbarHostState,
     ): NavEntry<HomeNavRoute> =
         when (route) {
@@ -34,7 +34,7 @@ object HomeNavGraph {
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
                         onRegisterPushNotification = onRegisterPushNotification,
-                        onRequestMainPermissions = onRequestMainPermissions,
+                        onRequestInitialPermissions = onRequestInitialPermissions,
                         snackbarHostState = snackbarHostState,
                     )
                 }

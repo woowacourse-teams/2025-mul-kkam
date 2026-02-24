@@ -28,7 +28,7 @@ struct ComposeView: UIViewControllerRepresentable {
                     },
                 )
             },
-            onRequestMainPermissions: {
+            onRequestInitialPermissions: {
                 // TODO: iOS 건강 권한 요청은 추후 구현.
                 PushNotificationManager.shared.requestNotificationPermission()
             },

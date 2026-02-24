@@ -25,7 +25,7 @@ fun MainNavHost(
         onPermissionUpdated: (isGranted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    onRequestMainPermissions: () -> Unit,
+    onRequestInitialPermissions: () -> Unit,
     appVersion: String,
     snackbarHostState: SnackbarHostState,
 ) {
@@ -59,7 +59,7 @@ fun MainNavHost(
                         padding = padding,
                         navigator = navigator,
                         onRegisterPushNotification = onRegisterPushNotification,
-                        onRequestMainPermissions = onRequestMainPermissions,
+                        onRequestInitialPermissions = onRequestInitialPermissions,
                         snackbarHostState = snackbarHostState,
                     )
                 }

@@ -46,7 +46,7 @@ class MainActivity : FragmentActivity() {
             MulKkamApp(
                 onLogin = ::login,
                 onRegisterPushNotification = ::registerPushNotification,
-                onRequestMainPermissions = ::requestHealthPermissions,
+                onRequestInitialPermissions = ::requestHealthPermissions,
                 appVersion = this.getAppVersion(),
             )
         }

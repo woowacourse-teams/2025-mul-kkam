@@ -31,7 +31,7 @@ fun MulKkamApp(
         onPermissionUpdated: (isGranted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    onRequestMainPermissions: () -> Unit,
+    onRequestInitialPermissions: () -> Unit,
     appVersion: String,
 ) {
     val navigator = rememberMainNavigator()
@@ -70,7 +70,7 @@ fun MulKkamApp(
                 padding = innerPadding,
                 onLogin = onLogin,
                 onRegisterPushNotification = onRegisterPushNotification,
-                onRequestMainPermissions = onRequestMainPermissions,
+                onRequestInitialPermissions = onRequestInitialPermissions,
                 appVersion = appVersion,
                 snackbarHostState = snackbarHostState,
             )

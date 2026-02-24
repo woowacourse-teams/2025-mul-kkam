@@ -15,13 +15,13 @@ fun MainViewController(
         onPermissionUpdated: (isGranted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    onRequestMainPermissions: () -> Unit,
+    onRequestInitialPermissions: () -> Unit,
     appVersion: String,
 ) = ComposeUIViewController {
     MulKkamApp(
         onLogin = onLogin,
         onRegisterPushNotification = onRegisterPushNotification,
-        onRequestMainPermissions = onRequestMainPermissions,
+        onRequestInitialPermissions = onRequestInitialPermissions,
         appVersion = appVersion,
     )
 }

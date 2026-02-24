@@ -52,7 +52,7 @@ fun HomeRoute(
         onPermissionUpdated: (isGranted: Boolean) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    onRequestMainPermissions: () -> Unit,
+    onRequestInitialPermissions: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: HomeViewModel = koinViewModel(),
 ) {
@@ -140,7 +140,7 @@ fun HomeRoute(
     if (showPermissionDialog) {
         InitialPermissionDialog(
             onConfirm = {
-                onRequestMainPermissions()
+                onRequestInitialPermissions()
                 showPermissionDialog = false
             },
         )
