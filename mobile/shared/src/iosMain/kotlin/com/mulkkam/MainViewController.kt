@@ -10,4 +10,18 @@ fun MainViewController(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-) = ComposeUIViewController { MulKkamApp(onLogin) }
+    onRegisterPushNotification: (
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    onRequestInitialPermissions: () -> Unit,
+    appVersion: String,
+) = ComposeUIViewController {
+    MulKkamApp(
+        onLogin = onLogin,
+        onRegisterPushNotification = onRegisterPushNotification,
+        onRequestInitialPermissions = onRequestInitialPermissions,
+        appVersion = appVersion,
+    )
+}

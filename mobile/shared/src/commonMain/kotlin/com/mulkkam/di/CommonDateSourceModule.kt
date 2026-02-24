@@ -2,8 +2,6 @@ package com.mulkkam.di
 
 import com.mulkkam.data.remote.datasource.CupsRemoteDataSource
 import com.mulkkam.data.remote.datasource.CupsRemoteDataSourceImpl
-import com.mulkkam.data.remote.datasource.DevicesRemoteDataSource
-import com.mulkkam.data.remote.datasource.DevicesRemoteDataSourceImpl
 import com.mulkkam.data.remote.datasource.FriendsRemoteDataSource
 import com.mulkkam.data.remote.datasource.FriendsRemoteDataSourceImpl
 import com.mulkkam.data.remote.datasource.IntakeRemoteDataSource
@@ -25,7 +23,6 @@ import org.koin.dsl.module
 val commonDataSourceModule =
     module {
         single<CupsRemoteDataSource> { CupsRemoteDataSourceImpl(get()) }
-        single<DevicesRemoteDataSource> { DevicesRemoteDataSourceImpl(get()) }
         single<FriendsRemoteDataSource> { FriendsRemoteDataSourceImpl(get()) }
         single<IntakeRemoteDataSource> { IntakeRemoteDataSourceImpl(get()) }
         single<MembersRemoteDataSource> { MembersRemoteDataSourceImpl(get()) }

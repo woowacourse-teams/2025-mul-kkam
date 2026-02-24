@@ -111,4 +111,8 @@ iOSInjectionProject/
 # iOS build configs
 *.xcconfig
 
+# Firebase iOS
+GoogleService-Info.plist
+GoogleService-Info-*.plist
+
 # End of https://www.toptal.com/developers/gitignore/api/xcode,swift,cocoapods

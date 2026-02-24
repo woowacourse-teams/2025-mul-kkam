@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.auth.login.component.AppleLoginButton
 import com.mulkkam.ui.auth.login.component.KakaoLoginButton
 import com.mulkkam.ui.auth.login.model.AuthPlatform
+import com.mulkkam.ui.auth.splash.component.AppUpdateDialog
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import mulkkam.shared.generated.resources.Res
@@ -33,11 +34,19 @@ actual fun LoginScreen(
     onLoginClick: (authPlatform: AuthPlatform) -> Unit,
     isLoginLoading: Boolean,
     snackbarHostState: SnackbarHostState,
+    navigateToStore: () -> Unit,
+    showDialog: Boolean,
 ) {
     Scaffold(
         containerColor = White,
         modifier = Modifier.padding(padding),
     ) { innerPadding ->
+        if (showDialog) {
+            AppUpdateDialog(
+                navigateToStore = navigateToStore,
+            )
+        }
+
         Column(
             modifier =
                 Modifier
@@ -79,6 +88,7 @@ private fun LoginScreenPreview() {
             onLoginClick = {},
             snackbarHostState = SnackbarHostState(),
             isLoginLoading = false,
+            navigateToStore = {},
         )
     }
 }

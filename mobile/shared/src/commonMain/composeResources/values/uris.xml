@@ -7,6 +7,8 @@
     <string name="feedback_email">mailto:mulkkamwater@gmail.com</string>
     <string name="play_store_app">market://details?id=%s</string>
     <string name="play_store_web">https://play.google.com/store/apps/details?id=%s</string>
+    <string name="app_store_app">itms-apps://apps.apple.com</string>
+    <!-- TODO: 앱스토어 등록 후 실제 앱 ID로 업데이트 필요 -->
     <string name="play_store">com.android.vending</string>
     <string name="coffee_encyclopedia_source">https://www.coffeeandhealth.org/health/wellbeing/fluid-balance/coffee-caffeine-hydration-in-the-general-population</string>
     <string name="health_connect_market">market://details?id=%1$s&amp;url=healthconnect%3A%2F%2Fonboarding</string>
