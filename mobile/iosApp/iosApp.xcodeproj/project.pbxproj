@@ -8,16 +8,21 @@
 
 /* Begin PBXBuildFile section */
 		2BCCC58A2F066C6D00A0DBCE /* KakaoSDKUser in Frameworks */ = {isa = PBXBuildFile; productRef = 2BCCC5892F066C6D00A0DBCE /* KakaoSDKUser */; };
+		86601EFD2F324A8B002CF37F /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 86601EFC2F324A8B002CF37F /* FirebaseAnalytics */; };
+		86601EFF2F324A8B002CF37F /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 86601EFE2F324A8B002CF37F /* FirebaseCore */; };
+		86601F012F324A8B002CF37F /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 86601F002F324A8B002CF37F /* FirebaseCrashlytics */; };
+		86601F032F324A8B002CF37F /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 86601F022F324A8B002CF37F /* FirebaseMessaging */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		7AE1BD041551910F86744970 /* 물깜.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "물깜.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		7AE1BD041551910F86744970 /* MulKkam.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MulKkam.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		E3D5E55D42ECD1114ED03BCC /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"GoogleService-Info-Debug.plist",
 				Info.plist,
 			);
 			target = 50BBDDD92481A482B2B8FBF8 /* iosApp */;
@@ -45,6 +50,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				86601EFD2F324A8B002CF37F /* FirebaseAnalytics in Frameworks */,
+				86601F012F324A8B002CF37F /* FirebaseCrashlytics in Frameworks */,
+				86601F032F324A8B002CF37F /* FirebaseMessaging in Frameworks */,
+				86601EFF2F324A8B002CF37F /* FirebaseCore in Frameworks */,
 				2BCCC58A2F066C6D00A0DBCE /* KakaoSDKUser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -64,7 +73,7 @@
 		A83A4D32DF10ACA3579085FD /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				7AE1BD041551910F86744970 /* 물깜.app */,
+				7AE1BD041551910F86744970 /* MulKkam.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -80,6 +89,7 @@
 				94529E2488FB1D096912AE8A /* Compile Kotlin Framework */,
 				6BAD65B79828F2EBD5DCBB2E /* Sources */,
 				28506EFBBC596FAF60814A52 /* Frameworks */,
+				86AD5DC62F3235FA009E8A6A /* Run Script */,
 				85B33D5393A5E8F3F56EFB51 /* Resources */,
 			);
 			buildRules = (
@@ -92,9 +102,13 @@
 			name = iosApp;
 			packageProductDependencies = (
 				2BCCC5892F066C6D00A0DBCE /* KakaoSDKUser */,
+				86601EFC2F324A8B002CF37F /* FirebaseAnalytics */,
+				86601EFE2F324A8B002CF37F /* FirebaseCore */,
+				86601F002F324A8B002CF37F /* FirebaseCrashlytics */,
+				86601F022F324A8B002CF37F /* FirebaseMessaging */,
 			);
 			productName = iosApp;
-			productReference = 7AE1BD041551910F86744970 /* 물깜.app */;
+			productReference = 7AE1BD041551910F86744970 /* MulKkam.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -124,6 +138,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				2BCCC5882F066C6D00A0DBCE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */,
+				86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = A83A4D32DF10ACA3579085FD /* Products */;
@@ -159,6 +174,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "if [ \"YES\" = \"$OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED\" ]; then\n  echo \"Skipping Gradle build task invocation due to OVERRIDE_KOTLIN_BUILD_IDE_SUPPORTED environment variable set to \\\"YES\\\"\"\n  exit 0\nfi\ncd \"$SRCROOT/..\"\n./gradlew :shared:embedAndSignAppleFrameworkForXcode\n";
+		};
+		86AD5DC62F3235FA009E8A6A /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nif [ \"${CONFIGURATION}\" = \"Debug\" ]; then\n  PLIST_SRC=\"${PROJECT_DIR}/iosApp/GoogleService-Info-Debug.plist\"\nelse\n  PLIST_SRC=\"${PROJECT_DIR}/iosApp/GoogleService-Info-Release.plist\"\nfi\n\nPLIST_DST=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app/GoogleService-Info.plist\"\n\necho \"Using Firebase plist: ${PLIST_SRC}\"\ncp -f \"${PLIST_SRC}\" \"${PLIST_DST}\"\n";
 		};
 		94529E2488FB1D096912AE8A /* Compile Kotlin Framework */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -256,7 +289,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = iosApp/iosAppDebug.entitlements;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -265,6 +298,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\"";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "물깜 Debug";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -274,7 +308,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_NAME = "물깜";
+				PRODUCT_NAME = MulKkam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -352,6 +386,7 @@
 				ARCHS = arm64;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = iosApp/iosApp.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"iosApp/Preview Content\"";
@@ -360,6 +395,7 @@
 				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)\"";
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = iosApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "물깜";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -369,7 +405,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_NAME = "물깜";
+				PRODUCT_NAME = MulKkam;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -408,6 +444,14 @@
 				minimumVersion = 2.27.0;
 			};
 		};
+		86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 12.8.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -415,6 +459,26 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 2BCCC5882F066C6D00A0DBCE /* XCRemoteSwiftPackageReference "kakao-ios-sdk" */;
 			productName = KakaoSDKUser;
+		};
+		86601EFC2F324A8B002CF37F /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
+		};
+		86601EFE2F324A8B002CF37F /* FirebaseCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCore;
+		};
+		86601F002F324A8B002CF37F /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		86601F022F324A8B002CF37F /* FirebaseMessaging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 86601EFB2F324A8B002CF37F /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseMessaging;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

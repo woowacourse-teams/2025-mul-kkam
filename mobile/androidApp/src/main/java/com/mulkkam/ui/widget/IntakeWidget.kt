@@ -23,7 +23,7 @@ import com.mulkkam.domain.checker.IntakeChecker.Companion.KEY_INTAKE_CHECKER_TOT
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.custom.progress.GradientDonutChartView
-import com.mulkkam.ui.main.MainActivity
+import com.mulkkam.ui.main.MainActivity2
 import com.mulkkam.ui.util.extensions.dpToPx
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_DRINK
 import com.mulkkam.ui.widget.IntakeWidgetAction.ACTION_REFRESH
@@ -33,6 +33,7 @@ import org.koin.core.context.GlobalContext
 import java.util.UUID
 import kotlin.time.Clock
 
+// TODO: 위젯 홈 이동 수정
 class IntakeWidget : AppWidgetProvider() {
     private fun intakeChecker(): IntakeChecker = GlobalContext.get().get()
 
@@ -173,7 +174,7 @@ class IntakeWidget : AppWidgetProvider() {
 
         views.setOnClickPendingIntent(
             R.id.layout_intake_widget,
-            MainActivity.newPendingIntent(context),
+            MainActivity2.newPendingIntent(context),
         )
 
         views.setOnClickPendingIntent(

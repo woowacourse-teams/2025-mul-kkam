@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.IntakeType
 import com.mulkkam.domain.model.intake.IntakeInfo
@@ -18,10 +19,10 @@ import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.MulKkamError
 import com.mulkkam.ui.component.showMulKkamActionSnackbar
 import com.mulkkam.ui.component.showMulKkamSnackbar
+import com.mulkkam.ui.home.home.component.InitialPermissionDialog
 import com.mulkkam.ui.home.home.component.ManualDrinkBottomSheet
 import com.mulkkam.ui.home.home.model.HomeUiStateHolder
 import com.mulkkam.ui.home.home.model.rememberHomeUiStateHolder
-import com.mulkkam.ui.main.MainViewModel
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.util.extensions.toCommaSeparated
 import kotlinx.coroutines.CoroutineScope
@@ -46,12 +47,19 @@ fun HomeRoute(
     navigateToNotification: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToCoffeeEncyclopedia: () -> Unit,
+    onRegisterPushNotification: (
+        onTokenUpdated: (token: String) -> Unit,
+        onPermissionUpdated: (isGranted: Boolean) -> Unit,
+        onError: (errorMessage: String) -> Unit,
+    ) -> Unit,
+    onRequestInitialPermissions: () -> Unit,
     snackbarHostState: SnackbarHostState,
     viewModel: HomeViewModel = koinViewModel(),
-    parentViewModel: MainViewModel = koinViewModel(),
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var isManualDrinkBottomSheetVisible by rememberSaveable { mutableStateOf(false) }
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var showManualDrinkSheet by rememberSaveable { mutableStateOf(false) }
+    var showPermissionDialog by rememberSaveable { mutableStateOf(false) }
     val manualDrinkBottomSheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
 
     val uiStateHolder: HomeUiStateHolder = rememberHomeUiStateHolder()
@@ -87,31 +95,54 @@ fun HomeRoute(
         }
     }
 
-    LaunchedEffect(parentViewModel) {
-        parentViewModel.onReceiveFriendWaterBalloon.collectLatest {
-            uiStateHolder.triggerFriendWaterBalloonExplode()
-            parentViewModel.clearFriendWaterBalloonEvent()
+    LaunchedEffect(viewModel) {
+        onRegisterPushNotification(
+            { token ->
+                viewModel.updateFirebaseMessagingToken(token)
+            },
+            { isGranted ->
+                viewModel.updateNotificationPermission(isGranted)
+            },
+            { errorMessage ->
+                viewModel.logNotificationRegistrationError(errorMessage)
+            },
+        )
+    }
+
+    LaunchedEffect(viewModel) {
+        viewModel.isFirstLaunch.collectLatest { isFirstLaunch ->
+            if (isFirstLaunch) {
+                showPermissionDialog = true
+            }
         }
     }
 
     HomeScreen(
         padding = padding,
         navigateToNotification = navigateToNotification,
-        onManualDrink = { isManualDrinkBottomSheetVisible = true },
-        snackbarHostState = snackbarHostState,
+        onManualDrink = { showManualDrinkSheet = true },
         uiStateHolder = uiStateHolder,
         viewModel = viewModel,
     )
 
-    if (isManualDrinkBottomSheetVisible) {
+    if (showManualDrinkSheet) {
         ManualDrinkBottomSheet(
             sheetState = manualDrinkBottomSheetState,
-            onDismiss = { isManualDrinkBottomSheetVisible = false },
+            onDismiss = { showManualDrinkSheet = false },
             onSave = { intakeType, amount ->
                 viewModel.addWaterIntake(intakeType, amount)
-                isManualDrinkBottomSheetVisible = false
+                showManualDrinkSheet = false
             },
             onNavigateToCoffeeEncyclopedia = onNavigateToCoffeeEncyclopedia,
+        )
+    }
+
+    if (showPermissionDialog) {
+        InitialPermissionDialog(
+            onConfirm = {
+                onRequestInitialPermissions()
+                showPermissionDialog = false
+            },
         )
     }
 }

@@ -13,9 +13,11 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.model.members.TodayProgressInfo
 import com.mulkkam.domain.model.result.toMulKkamError
 import com.mulkkam.domain.repository.CupsRepository
+import com.mulkkam.domain.repository.DevicesRepository
 import com.mulkkam.domain.repository.IntakeRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.NotificationRepository
+import com.mulkkam.domain.repository.TokenRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -36,6 +38,8 @@ class HomeViewModel(
     private val cupsRepository: CupsRepository,
     private val notificationRepository: NotificationRepository,
     private val intakeRepository: IntakeRepository,
+    private val tokenRepository: TokenRepository,
+    private val devicesRepository: DevicesRepository,
     private val logger: Logger,
 ) : ViewModel() {
     private val _todayProgressInfoUiState: MutableStateFlow<MulKkamUiState<TodayProgressInfo>> =
@@ -54,15 +58,119 @@ class HomeViewModel(
         MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
     val drinkUiState: SharedFlow<MulKkamUiState<IntakeInfo>> get() = _drinkUiState.asSharedFlow()
 
+    private val _isFirstLaunch: MutableSharedFlow<Boolean> = MutableStateFlow(false)
+    val isFirstLaunch: SharedFlow<Boolean> = _isFirstLaunch.asSharedFlow()
+
     private var isPostingDrink: Boolean = false
+    private var latestNotificationPermission: Boolean? = null
+    private var firebaseMessagingToken: String? = null
 
     private val _isGoalAchieved: MutableSharedFlow<Unit> = MutableSharedFlow()
     val isGoalAchieved: SharedFlow<Unit> get() = _isGoalAchieved.asSharedFlow()
 
     init {
+        checkFirstLaunch()
+        loadFirebaseMessagingToken()
         loadTodayProgressInfo()
         loadCups()
         loadAlarmCount()
+    }
+
+    private fun checkFirstLaunch() {
+        viewModelScope.launch {
+            runCatching {
+                membersRepository.getIsFirstLaunch().getOrError()
+            }.onSuccess { isFirstLaunch ->
+                _isFirstLaunch.emit(isFirstLaunch)
+                if (isFirstLaunch) {
+                    membersRepository.saveIsFirstLaunch()
+                }
+            }
+        }
+    }
+
+    fun loadFirebaseMessagingToken() {
+        viewModelScope.launch {
+            runCatching {
+                tokenRepository.getFcmToken().getOrError()
+            }.onSuccess { token ->
+                firebaseMessagingToken = token
+            }
+        }
+    }
+
+    fun updateFirebaseMessagingToken(token: String) {
+        val previousToken = firebaseMessagingToken
+        if (previousToken == token) return
+
+        viewModelScope.launch {
+            runCatching {
+                tokenRepository.saveFcmToken(token).getOrError()
+            }.onSuccess {
+                firebaseMessagingToken = token
+            }
+        }
+    }
+
+    fun updateNotificationPermission(isCurrentlyGranted: Boolean) {
+        if (latestNotificationPermission == isCurrentlyGranted) return
+
+        latestNotificationPermission = isCurrentlyGranted
+        if (firebaseMessagingToken == null) return
+        syncNotificationPermission(isCurrentlyGranted = isCurrentlyGranted)
+    }
+
+    private fun syncNotificationPermission(isCurrentlyGranted: Boolean) {
+        viewModelScope.launch {
+            val previousNotificationPermission =
+                runCatching {
+                    devicesRepository.getNotificationGranted().getOrError()
+                }.getOrNull() ?: return@launch
+            if (previousNotificationPermission == isCurrentlyGranted) return@launch
+
+            logger.info(
+                LogEvent.PUSH_NOTIFICATION,
+                "Notification permission changed: isGranted=$isCurrentlyGranted",
+            )
+
+            val isServerSynchronized: Boolean =
+                if (isCurrentlyGranted) {
+                    registerDevice()
+                } else {
+                    unregisterDevice()
+                }
+            if (!isServerSynchronized) return@launch
+
+            runCatching {
+                devicesRepository.saveNotificationGranted(isCurrentlyGranted).getOrError()
+            }
+        }
+    }
+
+    private suspend fun registerDevice(): Boolean {
+        val token = firebaseMessagingToken ?: return false
+
+        return runCatching {
+            devicesRepository.postDevice(fcmToken = token).getOrError()
+        }.isSuccess
+    }
+
+    private suspend fun unregisterDevice(): Boolean {
+        val deviceId =
+            runCatching {
+                devicesRepository.getDeviceUuid().getOrError()
+            }.getOrNull() ?: return false
+
+        return runCatching {
+            devicesRepository.deleteDevice(deviceId).getOrError()
+        }.isSuccess
+    }
+
+    fun logNotificationRegistrationError(errorMessage: String) {
+        logger.error(
+            LogEvent.PUSH_NOTIFICATION,
+            "Notification registration failed: $errorMessage",
+        )
     }
 
     @OptIn(ExperimentalTime::class)
