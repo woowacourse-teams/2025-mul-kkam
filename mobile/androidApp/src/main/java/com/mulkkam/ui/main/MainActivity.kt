@@ -30,8 +30,8 @@ class MainActivity : FragmentActivity() {
     private var onPushRegistrationError: ((errorMessage: String) -> Unit)? = null
 
     private val requestHealthConnectLauncher =
-        registerForActivityResult(PermissionController.Companion.createRequestPermissionResultContract()) { results ->
-            handleHealthPermissionResult(results.contains(MainActivity2.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+        registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
+            handleHealthPermissionResult(results.contains(MainActivity2.PERMISSION_HEALTH_DATA_IN_BACKGROUND))
             requestNotificationPermission()
         }
 
