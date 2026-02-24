@@ -22,7 +22,6 @@
 		E3D5E55D42ECD1114ED03BCC /* Exceptions for "iosApp" folder in "iosApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"GoogleService-Info-Debug.plist",
 				Info.plist,
 			);
 			target = 50BBDDD92481A482B2B8FBF8 /* iosApp */;
