@@ -166,6 +166,7 @@ class MainActivity : BindingActivity<ActivityMainBinding>(ActivityMainBinding::i
         }
     }
 
+    // TODO: update dialog 를 composable로 변경 필요
     private fun showUpdateDialog() {
         if (supportFragmentManager.findFragmentByTag(AppUpdateDialogFragment.TAG) != null) return
         AppUpdateDialogFragment

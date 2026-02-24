@@ -22,6 +22,7 @@ object AuthNavGraph {
             onSuccess: (token: String) -> Unit,
             onError: (errorMessage: String) -> Unit,
         ) -> Unit,
+        appVersion: String,
         snackbarHostState: SnackbarHostState,
     ): NavEntry<AuthRoute> =
         when (route) {
@@ -44,6 +45,7 @@ object AuthNavGraph {
                         onNavigateToMain = navigator::navigateToHome,
                         onLogin = onLogin,
                         snackbarHostState = snackbarHostState,
+                        appVersion = appVersion,
                     )
                 }
             }

@@ -16,10 +16,12 @@ fun MainViewController(
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
     onRequestMainPermissions: () -> Unit,
+    appVersion: String,
 ) = ComposeUIViewController {
     MulKkamApp(
         onLogin = onLogin,
         onRegisterPushNotification = onRegisterPushNotification,
         onRequestMainPermissions = onRequestMainPermissions,
+        appVersion = appVersion,
     )
 }

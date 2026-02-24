@@ -26,6 +26,7 @@ fun MainNavHost(
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
     onRequestMainPermissions: () -> Unit,
+    appVersion: String,
     snackbarHostState: SnackbarHostState,
 ) {
     NavDisplay(
@@ -38,6 +39,7 @@ fun MainNavHost(
                         padding = padding,
                         navigator = navigator,
                         onLogin = onLogin,
+                        appVersion = appVersion,
                         snackbarHostState = snackbarHostState,
                     )
                 }

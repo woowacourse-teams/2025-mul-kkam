@@ -22,6 +22,7 @@ import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_ACTIVE_CALORIES_BUR
 import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND
 import com.mulkkam.ui.main.MainActivity.Companion.TOAST_BOTTOM_NAV_OFFSET
 import com.mulkkam.ui.main.MainViewModel
+import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -50,6 +51,7 @@ class MainActivity : FragmentActivity() {
                 onLogin = ::login,
                 onRegisterPushNotification = ::registerPushNotification,
                 onRequestMainPermissions = ::requestHealthPermissions,
+                appVersion = this.getAppVersion(),
             )
         }
     }
