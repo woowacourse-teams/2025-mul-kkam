@@ -11,10 +11,10 @@ import io.ktor.client.request.setBody
 class DevicesRemoteDataSourceImpl(
     private val httpClient: HttpClient,
 ) : DevicesRemoteDataSource {
-    override suspend fun postDevice(deviceRequest: DeviceRequest): Result<Unit> =
+    override suspend fun postDevice(fcmToken: String): Result<Unit> =
         safeApiCallUnit {
             httpClient.post("/devices") {
-                setBody(deviceRequest)
+                setBody(DeviceRequest(fcmToken, PLATFORM_NAME))
             }
         }
 
@@ -24,4 +24,8 @@ class DevicesRemoteDataSourceImpl(
                 header("X-Device-Id", deviceId)
             }
         }
+
+    companion object {
+        private val PLATFORM_NAME: String = "iOS".uppercase()
+    }
 }
