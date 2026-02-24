@@ -135,7 +135,7 @@ fun InitialPermissionDialog(
 
 @Preview(showBackground = true)
 @Composable
-private fun MainPermissionDialogPreview() {
+private fun InitialPermissionDialogPreview() {
     MulKkamTheme {
         InitialPermissionDialog({})
     }
