@@ -5,6 +5,11 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.UserAuthState
@@ -14,9 +19,12 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.util.extensions.collectWithLifecycle
+import com.mulkkam.ui.util.extensions.openLink
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_alert_circle
 import mulkkam.shared.generated.resources.network_check_error
+import mulkkam.shared.generated.resources.play_store_app
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.koinInject
 
@@ -30,14 +38,22 @@ actual fun LoginRoute(
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) -> Unit,
-    viewModel: LoginViewModel,
+    appVersion: String,
     snackbarHostState: SnackbarHostState,
+    viewModel: LoginViewModel,
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val context = LocalContext.current
     val logger: Logger = koinInject()
 
     val authUiState by viewModel.authUiState.collectAsStateWithLifecycle()
     val isLoginLoading = authUiState is MulKkamUiState.Loading
     val networkCheckMessage = stringResource(resource = Res.string.network_check_error)
+
+    val appPackageName: String = context.packageName
+    val playStoreUri = stringResource(resource = Res.string.play_store_app, appPackageName)
+
+    var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(authUiState) {
         when (val state = authUiState) {
@@ -57,6 +73,13 @@ actual fun LoginRoute(
             }
 
             is MulKkamUiState.Idle, is MulKkamUiState.Loading -> Unit
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.checkAppVersion(appVersion)
+        viewModel.isAppOutdated.collectWithLifecycle(lifecycleOwner) { isAppOutdated ->
+            if (isAppOutdated) showDialog = true
         }
     }
 
@@ -81,6 +104,8 @@ actual fun LoginRoute(
         },
         snackbarHostState = snackbarHostState,
         isLoginLoading = isLoginLoading,
+        navigateToStore = { playStoreUri.openLink() },
+        showDialog = showDialog,
     )
 }
 

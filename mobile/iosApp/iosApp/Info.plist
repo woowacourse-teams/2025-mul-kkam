@@ -19,6 +19,8 @@
 	</array>
 	<key>KEY_KAKAO</key>
 	<string>$(KEY_KAKAO)</string>
+	<key>MARKETING_VERSION</key>
+	<string>$(MARKETING_VERSION)</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>kakaokompassauth</string>
