@@ -1,3 +1,3 @@
-package com.mulkkam.ui.util.extensions
+package com.mulkkam.ui.util
 
 expect fun openAppNotificationSettings()

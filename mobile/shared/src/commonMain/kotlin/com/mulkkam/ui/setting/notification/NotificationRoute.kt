@@ -12,7 +12,7 @@ import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.format
-import com.mulkkam.ui.util.extensions.openAppNotificationSettings
+import com.mulkkam.ui.util.openAppNotificationSettings
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import mulkkam.shared.generated.resources.Res

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.util.extensions
+package com.mulkkam.ui.util
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.mulkkam.ui.util.extensions
+package com.mulkkam.ui.util
 
 import platform.Foundation.NSURL
 import platform.UIKit.UIApplication
