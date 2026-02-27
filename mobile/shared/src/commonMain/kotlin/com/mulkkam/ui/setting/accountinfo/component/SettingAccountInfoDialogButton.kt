@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo.component
+package com.mulkkam.ui.setting.accountinfo.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -10,13 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.Primary100
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.util.extensions.noRippleClickable
+import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Composable
 fun SettingAccountInfoDialogButton(
@@ -27,7 +27,7 @@ fun SettingAccountInfoDialogButton(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
 ) {
-    val backgroundColor: Color = if (enabled) containerColor else Gray300
+    val backgroundColor = if (enabled) containerColor else Gray300
     Box(
         modifier =
             modifier

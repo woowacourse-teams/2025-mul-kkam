@@ -40,8 +40,14 @@ class DevicesLocalDataSourceImpl(
         val existingUuid = deviceUuid
         if (existingUuid != null) return existingUuid
 
-        val newUuid = NSUUID().UUIDString
-        saveDeviceUuid(newUuid)
-        return newUuid
+        val newUuid =
+            NSUUID()
+                .UUIDString
+                .hashCode()
+                .toUInt()
+                .toString(16)
+                .padStart(8, '0')
+
+        return newUuid.also { saveDeviceUuid(it) }
     }
 }

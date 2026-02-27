@@ -158,7 +158,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.svg)
-    implementation(libs.coil.network)
+    implementation(libs.coil.network.okhttp)
     implementation(libs.lottie)
     implementation(libs.lottie.compose)
 

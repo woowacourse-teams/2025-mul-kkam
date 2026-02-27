@@ -10,6 +10,10 @@
 
     <queries>
         <package android:name="com.google.android.apps.healthdata" />
+        <intent>
+            <action android:name="android.intent.action.SENDTO" />
+            <data android:scheme="mailto" />
+        </intent>
     </queries>
 
     <application
@@ -74,21 +78,8 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
         <activity
-            android:name=".ui.settingaccountinfo.SettingAccountInfoActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingfeedback.SettingFeedbackActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.settingterms.SettingTermsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".ui.main.MainActivity"
+            android:name=".ui.main.MainActivity2"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -99,7 +90,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.splash.SplashActivity"
+            android:name=".ui.main.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -122,9 +113,5 @@
                     android:scheme="kakao${kakaoKey}" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".ui.settingnotification.SettingNotificationActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
     </application>
 </manifest>

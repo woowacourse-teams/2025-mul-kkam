@@ -17,6 +17,12 @@ object HomeNavGraph {
         route: HomeNavRoute,
         padding: PaddingValues,
         navigator: MainNavigator,
+        onRegisterPushNotification: (
+            onTokenUpdated: (token: String) -> Unit,
+            onPermissionUpdated: (isGranted: Boolean) -> Unit,
+            onError: (errorMessage: String) -> Unit,
+        ) -> Unit,
+        onRequestInitialPermissions: () -> Unit,
         snackbarHostState: SnackbarHostState,
     ): NavEntry<HomeNavRoute> =
         when (route) {
@@ -27,6 +33,8 @@ object HomeNavGraph {
                         navigateToNotification = navigator::navigateToHomeNotification,
                         onNavigateToLogin = navigator::navigateToLogin,
                         onNavigateToCoffeeEncyclopedia = navigator::navigateToEncyclopedia,
+                        onRegisterPushNotification = onRegisterPushNotification,
+                        onRequestInitialPermissions = onRequestInitialPermissions,
                         snackbarHostState = snackbarHostState,
                     )
                 }

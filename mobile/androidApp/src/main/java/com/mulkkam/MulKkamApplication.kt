@@ -6,6 +6,9 @@ import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.lifecycle.ProcessLifecycleOwner
 import androidx.lifecycle.lifecycleScope
+import coil3.ImageLoader
+import coil3.PlatformContext
+import coil3.SingletonImageLoader
 import com.kakao.sdk.common.KakaoSdk
 import com.mulkkam.data.logger.LoggerInitializer
 import com.mulkkam.di.androidSharedModule
@@ -18,7 +21,9 @@ import org.koin.android.ext.koin.androidLogger
 import org.koin.androidx.workmanager.koin.workManagerFactory
 import org.koin.core.context.startKoin
 
-class MulKkamApplication : Application() {
+class MulKkamApplication :
+    Application(),
+    SingletonImageLoader.Factory {
     override fun onCreate() {
         super.onCreate()
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
@@ -55,4 +60,6 @@ class MulKkamApplication : Application() {
         val manager = getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
     }
+
+    override fun newImageLoader(context: PlatformContext): ImageLoader = newImageLoader(this)
 }
