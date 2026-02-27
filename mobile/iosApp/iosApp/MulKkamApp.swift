@@ -16,7 +16,7 @@ struct MulKkamApp: App {
 #else
         let isDebug = false
 #endif
-        HelperKt.doInitKoin(baseUrl: baseUrl, isDebug: isDebug)
+        KoinHelper().doInitKoin(baseUrl: baseUrl, isDebug: isDebug)
     }
 
     var body: some Scene {
