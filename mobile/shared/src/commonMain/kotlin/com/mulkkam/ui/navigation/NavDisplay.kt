@@ -5,8 +5,6 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,8 +12,6 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
-
-private const val ANIMATION_DURATION_MILLIS: Int = 300
 
 @Composable
 fun NavDisplay(
@@ -26,6 +22,7 @@ fun NavDisplay(
 
     AnimatedContent(
         targetState = currentRoute,
+        transitionSpec = { defaultTransitionSpec() },
         label = "NavDisplayAnimation",
     ) { route ->
         route?.let {
@@ -47,17 +44,10 @@ fun NavDisplay(
 }
 
 private fun defaultTransitionSpec(): ContentTransform {
-    val enterTransition =
-        slideInHorizontally(
-            animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS),
-            initialOffsetX = { fullWidth -> fullWidth },
-        ) + fadeIn(animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS))
+    val transitionDuration = 180
 
-    val exitTransition =
-        slideOutHorizontally(
-            animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS),
-            targetOffsetX = { fullWidth -> -fullWidth },
-        ) + fadeOut(animationSpec = tween(durationMillis = ANIMATION_DURATION_MILLIS))
+    val enterTransition = fadeIn(animationSpec = tween(durationMillis = transitionDuration))
+    val exitTransition = fadeOut(animationSpec = tween(durationMillis = transitionDuration))
 
     return enterTransition togetherWith exitTransition
 }
