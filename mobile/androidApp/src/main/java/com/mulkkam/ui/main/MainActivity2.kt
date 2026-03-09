@@ -8,11 +8,11 @@ import androidx.activity.OnBackPressedCallback
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
-import androidx.health.connect.client.permission.HealthPermission
-import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.mulkkam.R
 import com.mulkkam.databinding.ActivityMainBinding
 import com.mulkkam.ui.custom.snackbar.CustomSnackBar
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_ACTIVE_CALORIES_BURNED
+import com.mulkkam.ui.main.MainActivity.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND
 import com.mulkkam.ui.main.dialog.AppUpdateDialogFragment
 import com.mulkkam.ui.main.model.MainTab2
 import com.mulkkam.ui.service.NotificationAction
@@ -183,14 +183,8 @@ class MainActivity2 : BindingActivity<ActivityMainBinding>(ActivityMainBinding::
 
     companion object Companion {
         const val SNACK_BAR_BOTTOM_NAV_OFFSET: Float = -94f
-        const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
 
         private const val BACK_PRESS_THRESHOLD: Long = 2000L
-
-        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String =
-            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
-        val PERMISSION_ACTIVE_CALORIES_BURNED: String =
-            HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent = Intent(context, MainActivity2::class.java)
 

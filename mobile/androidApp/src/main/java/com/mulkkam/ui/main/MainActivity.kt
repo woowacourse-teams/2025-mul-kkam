@@ -13,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -37,7 +39,7 @@ class MainActivity : FragmentActivity() {
 
     private val requestHealthConnectLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
-            handleHealthPermissionResult(results.contains(MainActivity2.PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            handleHealthPermissionResult(results.contains(PERMISSION_HEALTH_DATA_IN_BACKGROUND))
             requestNotificationPermission()
         }
 
@@ -157,15 +159,15 @@ class MainActivity : FragmentActivity() {
         if (isHealthConnectAvailable()) {
             requestHealthConnectLauncher.launch(
                 setOf(
-                    MainActivity2.PERMISSION_ACTIVE_CALORIES_BURNED,
-                    MainActivity2.PERMISSION_HEALTH_DATA_IN_BACKGROUND,
+                    PERMISSION_ACTIVE_CALORIES_BURNED,
+                    PERMISSION_HEALTH_DATA_IN_BACKGROUND,
                 ),
             )
         } else {
             CustomToast
                 .makeText(this, getString(R.string.health_connect_install_alert), R.drawable.ic_info_circle)
                 .apply {
-                    setGravityY(MainActivity2.TOAST_BOTTOM_NAV_OFFSET)
+                    setGravityY(TOAST_BOTTOM_NAV_OFFSET)
                 }.show()
             requestNotificationPermission()
         }
@@ -200,7 +202,7 @@ class MainActivity : FragmentActivity() {
                 R.string.main_alarm_permission_denied
             }
 
-        CustomToast.Companion
+        CustomToast
             .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
             .apply {
                 setGravityY(TOAST_BOTTOM_NAV_OFFSET)
@@ -241,6 +243,10 @@ class MainActivity : FragmentActivity() {
 
     companion object {
         const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
+        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String =
+            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+        val PERMISSION_ACTIVE_CALORIES_BURNED: String =
+            HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
 
         fun newIntent(context: Context): Intent =
             Intent(context, MainActivity::class.java).apply {
