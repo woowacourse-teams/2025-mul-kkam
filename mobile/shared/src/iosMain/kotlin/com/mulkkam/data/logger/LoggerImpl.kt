@@ -1,5 +1,6 @@
 package com.mulkkam.data.logger
 
+import com.mulkkam.domain.logger.FirebaseLoggingBridge
 import com.mulkkam.domain.logger.LogSanitizer
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEntry
@@ -9,6 +10,7 @@ import platform.Foundation.NSLog
 class LoggerImpl(
     private val sanitizer: LogSanitizer,
     private val isDebug: Boolean,
+    private val firebaseBridge: FirebaseLoggingBridge,
 ) : Logger {
     private var userId: String? = null
 
@@ -19,12 +21,22 @@ class LoggerImpl(
     override fun log(entry: LogEntry) {
         val rawMessage = formatMessage(entry.copy(userId = userId))
         val safeMessage = sanitizer.sanitize(rawMessage)
+        val safePayloadMessage = sanitizer.sanitize(entry.message)
 
         logToNSLog(entry.level, safeMessage)
 
         if (isDebug) return
 
-        // TODO: Firebase Analytics, Crashlytics (cinterop 설정 후 추가)
+        firebaseBridge.logEvent(
+            eventName = entry.event.name,
+            level = entry.level.name,
+            message = safePayloadMessage,
+            userId = userId,
+        )
+
+        if (entry.level == LogLevel.ERROR) {
+            firebaseBridge.recordException(safeMessage)
+        }
     }
 
     private fun formatMessage(entry: LogEntry): String =
