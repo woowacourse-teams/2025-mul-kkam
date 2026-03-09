@@ -23,6 +23,9 @@ import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.AchievementHeatmapWidget
+import com.mulkkam.ui.widget.IntakeWidget
+import com.mulkkam.ui.widget.ProgressWidget
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("CustomSplashScreen")
@@ -51,6 +54,7 @@ class MainActivity : FragmentActivity() {
                 onRegisterPushNotification = ::registerPushNotification,
                 onRequestInitialPermissions = ::requestHealthPermissions,
                 appVersion = this.getAppVersion(),
+                currentTab = currentTab,
             )
         }
     }
@@ -227,6 +231,13 @@ class MainActivity : FragmentActivity() {
 
     private fun notifyPushPermissionState() {
         onPushPermissionUpdated?.invoke(isNotificationPermissionGranted())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        IntakeWidget.refresh(this)
+        ProgressWidget.refresh(this)
+        AchievementHeatmapWidget.refresh(this)
     }
 
     companion object {
