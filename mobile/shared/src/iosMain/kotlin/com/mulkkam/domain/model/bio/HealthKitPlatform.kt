@@ -1,6 +1,5 @@
-package com.mulkkam.ui.setting.bioinfo
+package com.mulkkam.domain.model.bio
 
-import com.mulkkam.domain.model.bio.HealthPlatform
 import com.mulkkam.ui.util.openAppNotificationSettings
 import platform.Foundation.NSURL
 import platform.HealthKit.HKHealthStore
