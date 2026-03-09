@@ -54,7 +54,6 @@ class MainActivity : FragmentActivity() {
                 onRegisterPushNotification = ::registerPushNotification,
                 onRequestInitialPermissions = ::requestHealthPermissions,
                 appVersion = this.getAppVersion(),
-                currentTab = currentTab,
             )
         }
     }
