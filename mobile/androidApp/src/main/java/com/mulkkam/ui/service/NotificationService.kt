@@ -11,7 +11,7 @@ import com.mulkkam.R
 import com.mulkkam.domain.logger.Logger
 import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.TokenRepository
-import com.mulkkam.ui.main.MainActivity2
+import com.mulkkam.ui.main.MainActivity
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,7 +91,7 @@ class NotificationService : FirebaseMessagingService() {
         notificationId: Int,
     ): PendingIntent {
         val intent =
-            Intent(this, MainActivity2::class.java).apply {
+            Intent(this, MainActivity::class.java).apply {
                 putExtra(EXTRA_ACTION, action)
                 putExtra(EXTRA_NOTIFICATION_ID, notificationId)
                 addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
