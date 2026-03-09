@@ -1,0 +1,56 @@
+package com.mulkkam.data.logger
+
+import com.mulkkam.domain.logger.LogSanitizer
+import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.logger.LogEntry
+import com.mulkkam.domain.model.logger.LogLevel
+import platform.Foundation.NSLog
+
+class LoggerImpl(
+    private val sanitizer: LogSanitizer,
+    private val isDebug: Boolean,
+) : Logger {
+    private var userId: String? = null
+
+    override fun init(userId: String?) {
+        this.userId = userId
+    }
+
+    override fun log(entry: LogEntry) {
+        val rawMessage = formatMessage(entry.copy(userId = userId))
+        val safeMessage = sanitizer.sanitize(rawMessage)
+
+        logToNSLog(entry.level, safeMessage)
+
+        if (isDebug) return
+
+        // TODO: Firebase Analytics, Crashlytics (cinterop 설정 후 추가)
+    }
+
+    private fun formatMessage(entry: LogEntry): String =
+        buildString {
+            append("level=").append(entry.level)
+            append(", event=").appendLine(entry.event)
+            append("timestamp=").appendLine(entry.timestamp)
+            append("message=").append(entry.message)
+            append(" | userId=").append(entry.userId)
+        }
+
+    private fun logToNSLog(
+        level: LogLevel,
+        message: String,
+    ) {
+        val prefix =
+            when (level) {
+                LogLevel.ERROR -> "❌ ERROR"
+                LogLevel.WARN -> "⚠️ WARN"
+                LogLevel.INFO -> "ℹ️ INFO"
+                LogLevel.DEBUG -> "🐛 DEBUG"
+            }
+        NSLog("[$DEFAULT_LOGGING_TAG][$prefix] $message")
+    }
+
+    companion object {
+        private const val DEFAULT_LOGGING_TAG = "MULKKAM_LOGGER"
+    }
+}

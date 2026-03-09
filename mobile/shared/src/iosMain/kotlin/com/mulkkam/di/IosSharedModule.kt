@@ -9,7 +9,7 @@ fun iosSharedModule(
 ): Module =
     module {
         includes(
-            loggerModule,
+            loggingModule(isDebug),
             repositoryModule,
             checkerModule,
             healthManagerModule,
