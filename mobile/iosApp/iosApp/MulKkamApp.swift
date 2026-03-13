@@ -16,7 +16,7 @@ struct MulKkamApp: App {
 #else
         let isDebug = false
 #endif
-        HelperKt.doInitKoin(
+        HelperModuleKt.doInitKoin(
             baseUrl: baseUrl,
             isDebug: isDebug,
             firebaseBridge: FirebaseLoggingBridgeImpl()
