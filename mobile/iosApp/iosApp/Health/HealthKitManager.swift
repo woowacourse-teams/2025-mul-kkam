@@ -15,6 +15,7 @@ final class HealthKitManager {
     ])
 
     private var onBurnedCalorieUpdated: ((Double) -> Void)?
+    private var lastFiredDate: Date?
 
     func requestAuthorization(
         onBurnedCalorieUpdated: @escaping (Double) -> Void,
@@ -85,10 +86,22 @@ final class HealthKitManager {
                 completion()
                 return
             }
-
+            
             let kcal = result?.sumQuantity()?.doubleValue(for: .kilocalorie()) ?? 0
+
+            guard let self else {
+                completion()
+                return
+            }
+
             if kcal >= HealthKitManager.exerciseDetectionThreshold {
-                self?.onBurnedCalorieUpdated?(kcal)
+                let now = Date()
+                let twoHoursAgo = now.addingTimeInterval(-2 * 60 * 60)
+
+                if lastFiredDate == nil || lastFiredDate! < twoHoursAgo {
+                    lastFiredDate = now
+                    onBurnedCalorieUpdated?(kcal)
+                }
             }
             
             completion()
