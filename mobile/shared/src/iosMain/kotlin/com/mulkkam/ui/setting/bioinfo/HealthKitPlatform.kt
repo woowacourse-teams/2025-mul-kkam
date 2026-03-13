@@ -7,12 +7,12 @@ import platform.HealthKit.HKHealthStore
 import platform.UIKit.UIApplication
 
 class HealthKitPlatform : HealthPlatform {
-    override fun isAvailable(): Boolean = HKHealthStore.Companion.isHealthDataAvailable()
+    override fun isAvailable(): Boolean = HKHealthStore.isHealthDataAvailable()
 
     override suspend fun navigateToHealthConnect() {
-        val healthUrl = NSURL.Companion.URLWithString("x-apple-health://") ?: return
+        val healthUrl = NSURL.URLWithString("x-apple-health://") ?: return
 
-        val app = UIApplication.Companion.sharedApplication
+        val app = UIApplication.sharedApplication
 
         if (app.canOpenURL(healthUrl)) {
             app.openURL(
