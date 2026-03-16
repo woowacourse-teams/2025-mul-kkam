@@ -36,10 +36,27 @@ class TermsAgreementViewModel : ViewModel() {
         _termsAgreements.value = TERMS_AGREEMENTS
     }
 
+    fun initAgreements(
+        isServiceAgreed: Boolean = false,
+        isPrivacyPolicyAgreed: Boolean = false,
+        isMarketingNotificationAgreed: Boolean,
+        isNightNotificationAgreed: Boolean,
+    ) {
+        _termsAgreements.value =
+            _termsAgreements.value.map { agreement ->
+                when (agreement.type) {
+                    TermsType.MARKETING -> agreement.copy(isChecked = isMarketingNotificationAgreed)
+                    TermsType.NIGHT_NOTIFICATION -> agreement.copy(isChecked = isNightNotificationAgreed)
+                    TermsType.SERVICE -> agreement.copy(isChecked = isServiceAgreed)
+                    TermsType.PRIVACY -> agreement.copy(isChecked = isPrivacyPolicyAgreed)
+                }
+            }
+    }
+
     fun toggleCheckState(termsAgreement: TermsAgreementUiModel) {
         _termsAgreements.value =
             _termsAgreements.value.orEmpty().map { agreement ->
-                if (agreement == termsAgreement) {
+                if (agreement.type == termsAgreement.type) {
                     agreement.copy(isChecked = !agreement.isChecked)
                 } else {
                     agreement

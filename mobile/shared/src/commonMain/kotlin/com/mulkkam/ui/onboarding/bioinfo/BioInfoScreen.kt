@@ -12,6 +12,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -19,11 +20,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.domain.model.bio.BioWeight.Companion.WEIGHT_DEFAULT
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
 import com.mulkkam.ui.setting.bioinfo.component.GenderSection
@@ -35,29 +36,52 @@ import mulkkam.shared.generated.resources.bio_info_input_hint
 import mulkkam.shared.generated.resources.bio_info_input_hint_highlight
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BioInfoScreen(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     navigateToBack: () -> Unit,
-    navigateToNextStep: (onboardingInfo: OnboardingInfo) -> Unit,
-    skipBioInfo: (onboardingInfo: OnboardingInfo) -> Unit,
+    navigateToNextStep: () -> Unit,
+    skipBioInfo: () -> Unit,
     currentProgress: Int,
+    onboardingScope: Scope,
     viewModel: BioInfoViewModel = koinViewModel(),
 ) {
+    val onboardingViewModel: OnboardingViewModel = koinViewModel(scope = onboardingScope)
+
     var isShowBottomSheet by rememberSaveable { mutableStateOf(false) }
     val modalBottomSheetState = rememberModalBottomSheetState()
 
     val gender by viewModel.gender.collectAsStateWithLifecycle()
     val weight by viewModel.weight.collectAsStateWithLifecycle()
+    val onboardingInfo by onboardingViewModel.onboardingInfo.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.initBioInfo(
+            gender = onboardingInfo.gender,
+            weight = onboardingInfo.weight,
+        )
+    }
 
     Scaffold(
         topBar = {
             OnboardingTopAppBar(
-                onBackClick = navigateToBack,
-                onSkip = { skipBioInfo(onboardingInfo) },
+                onBackClick = {
+                    onboardingViewModel.updateBioInfo(
+                        gender = null,
+                        weight = null,
+                    )
+                    navigateToBack()
+                },
+                onSkip = {
+                    onboardingViewModel.updateBioInfo(
+                        gender = null,
+                        weight = null,
+                    )
+                    skipBioInfo()
+                },
                 currentProgress = currentProgress,
                 canSkip = true,
             )
@@ -116,12 +140,11 @@ fun BioInfoScreen(
 
             NextButton(
                 onClick = {
-                    navigateToNextStep(
-                        onboardingInfo.copy(
-                            gender = gender,
-                            weight = weight,
-                        ),
+                    onboardingViewModel.updateBioInfo(
+                        gender = gender,
+                        weight = weight,
                     )
+                    navigateToNextStep()
                 },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = gender != null && weight != null,
