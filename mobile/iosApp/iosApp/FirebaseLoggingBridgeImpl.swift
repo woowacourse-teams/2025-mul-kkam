@@ -3,7 +3,7 @@ import FirebaseCrashlytics
 import Shared
 
 class FirebaseLoggingBridgeImpl: FirebaseLoggingBridge {
-    func logEvent(eventName: String, level: String, message: String, userId: String?) {
+    func log(eventName: String, level: String, message: String, userId: String?) {
         var params: [String: Any] = [
             "level": level,
             "message": message,

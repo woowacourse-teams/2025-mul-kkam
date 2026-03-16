@@ -27,7 +27,7 @@ class LoggerImpl(
 
         if (isDebug) return
 
-        firebaseBridge.logEvent(
+        firebaseBridge.log(
             eventName = entry.event.name,
             level = entry.level.name,
             message = safePayloadMessage,

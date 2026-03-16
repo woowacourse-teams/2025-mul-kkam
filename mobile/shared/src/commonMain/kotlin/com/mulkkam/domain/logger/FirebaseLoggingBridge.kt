@@ -1,7 +1,7 @@
 package com.mulkkam.domain.logger
 
 interface FirebaseLoggingBridge {
-    fun logEvent(
+    fun log(
         eventName: String,
         level: String,
         message: String,
