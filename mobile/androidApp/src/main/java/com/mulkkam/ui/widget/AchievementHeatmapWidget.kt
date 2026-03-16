@@ -15,7 +15,7 @@ import androidx.work.WorkManager
 import com.mulkkam.R
 import com.mulkkam.domain.checker.AchievementHeatmapChecker
 import com.mulkkam.domain.model.intake.AchievementLevel
-import com.mulkkam.ui.main.MainActivity2
+import com.mulkkam.ui.main.MainActivity
 import org.koin.core.context.GlobalContext
 import java.util.UUID
 import kotlin.math.sqrt
@@ -108,7 +108,7 @@ class AchievementHeatmapWidget : AppWidgetProvider() {
 
         colorHeatmapCells(context, views, rates)
 
-        views.setOnClickPendingIntent(R.id.main, MainActivity2.newPendingIntent(context))
+        views.setOnClickPendingIntent(R.id.main, MainActivity.newPendingIntent(context))
 
         appWidgetManager.updateAppWidget(appWidgetId, views)
     }

@@ -2,6 +2,9 @@ package com.mulkkam.ui.main
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -10,6 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.health.connect.client.PermissionController
+import androidx.health.connect.client.permission.HealthPermission
+import androidx.health.connect.client.records.ActiveCaloriesBurnedRecord
 import com.google.firebase.messaging.FirebaseMessaging
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -20,6 +25,9 @@ import com.mulkkam.ui.auth.login.model.AuthPlatform
 import com.mulkkam.ui.custom.toast.CustomToast
 import com.mulkkam.ui.util.extensions.getAppVersion
 import com.mulkkam.ui.util.extensions.isHealthConnectAvailable
+import com.mulkkam.ui.widget.AchievementHeatmapWidget
+import com.mulkkam.ui.widget.IntakeWidget
+import com.mulkkam.ui.widget.ProgressWidget
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 @SuppressLint("CustomSplashScreen")
@@ -31,7 +39,7 @@ class MainActivity : FragmentActivity() {
 
     private val requestHealthConnectLauncher =
         registerForActivityResult(PermissionController.createRequestPermissionResultContract()) { results ->
-            handleHealthPermissionResult(results.contains(MainActivity2.PERMISSION_HEALTH_DATA_IN_BACKGROUND))
+            handleHealthPermissionResult(results.contains(PERMISSION_HEALTH_DATA_IN_BACKGROUND))
             requestNotificationPermission()
         }
 
@@ -72,7 +80,7 @@ class MainActivity : FragmentActivity() {
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) {
-        if (UserApiClient.Companion.instance.isKakaoTalkLoginAvailable(this)) {
+        if (UserApiClient.instance.isKakaoTalkLoginAvailable(this)) {
             loginWithKakaoTalk(onSuccess, onError)
         } else {
             loginWithKakaoAccount(onSuccess, onError)
@@ -83,7 +91,7 @@ class MainActivity : FragmentActivity() {
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) {
-        UserApiClient.Companion.instance.loginWithKakaoTalk(this) { token, error ->
+        UserApiClient.instance.loginWithKakaoTalk(this) { token, error ->
             when {
                 error is ClientError && error.reason == ClientErrorCause.Cancelled -> {
                     Unit
@@ -106,7 +114,7 @@ class MainActivity : FragmentActivity() {
         onSuccess: (token: String) -> Unit,
         onError: (errorMessage: String) -> Unit,
     ) {
-        UserApiClient.Companion.instance.loginWithKakaoAccount(this) { token, error ->
+        UserApiClient.instance.loginWithKakaoAccount(this) { token, error ->
             if (error != null) {
                 onError(error.message ?: "Login Error")
             } else {
@@ -151,15 +159,15 @@ class MainActivity : FragmentActivity() {
         if (isHealthConnectAvailable()) {
             requestHealthConnectLauncher.launch(
                 setOf(
-                    MainActivity2.Companion.PERMISSION_ACTIVE_CALORIES_BURNED,
-                    MainActivity2.Companion.PERMISSION_HEALTH_DATA_IN_BACKGROUND,
+                    PERMISSION_ACTIVE_CALORIES_BURNED,
+                    PERMISSION_HEALTH_DATA_IN_BACKGROUND,
                 ),
             )
         } else {
-            CustomToast.Companion
+            CustomToast
                 .makeText(this, getString(R.string.health_connect_install_alert), R.drawable.ic_info_circle)
                 .apply {
-                    setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+                    setGravityY(TOAST_BOTTOM_NAV_OFFSET)
                 }.show()
             requestNotificationPermission()
         }
@@ -174,10 +182,10 @@ class MainActivity : FragmentActivity() {
                 R.string.main_health_permission_denied
             }
 
-        CustomToast.Companion
+        CustomToast
             .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
             .apply {
-                setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
             }.show()
     }
 
@@ -194,10 +202,10 @@ class MainActivity : FragmentActivity() {
                 R.string.main_alarm_permission_denied
             }
 
-        CustomToast.Companion
+        CustomToast
             .makeText(this, getString(messageResId), R.drawable.ic_info_circle)
             .apply {
-                setGravityY(MainActivity2.Companion.TOAST_BOTTOM_NAV_OFFSET)
+                setGravityY(TOAST_BOTTOM_NAV_OFFSET)
             }.show()
     }
 
@@ -224,5 +232,28 @@ class MainActivity : FragmentActivity() {
 
     private fun notifyPushPermissionState() {
         onPushPermissionUpdated?.invoke(isNotificationPermissionGranted())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        IntakeWidget.refresh(this)
+        ProgressWidget.refresh(this)
+        AchievementHeatmapWidget.refresh(this)
+    }
+
+    companion object {
+        const val TOAST_BOTTOM_NAV_OFFSET: Float = 94f
+        const val PERMISSION_HEALTH_DATA_IN_BACKGROUND: String =
+            HealthPermission.PERMISSION_READ_HEALTH_DATA_IN_BACKGROUND
+        val PERMISSION_ACTIVE_CALORIES_BURNED: String =
+            HealthPermission.getReadPermission(ActiveCaloriesBurnedRecord::class)
+
+        fun newIntent(context: Context): Intent =
+            Intent(context, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+            }
+
+        fun newPendingIntent(context: Context): PendingIntent =
+            PendingIntent.getActivity(context, 0, newIntent(context), PendingIntent.FLAG_IMMUTABLE)
     }
 }
