@@ -35,7 +35,13 @@ fun NavDisplay(
 
     AnimatedContent(
         targetState = currentRoute,
-        transitionSpec = { defaultTransitionSpec(isPopTransition = isPopTransition) },
+        transitionSpec = {
+            defaultTransitionSpec(
+                isPopTransition = isPopTransition,
+                initialRoute = initialState,
+                targetRoute = targetState,
+            )
+        },
         label = "NavDisplayAnimation",
     ) { route ->
         route?.let {
@@ -56,32 +62,78 @@ fun NavDisplay(
     }
 }
 
-private fun defaultTransitionSpec(isPopTransition: Boolean): ContentTransform {
-    val enterTransition =
-        if (isPopTransition) {
-            slideInHorizontally(
-                animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
-                initialOffsetX = { fullWidth -> -fullWidth / 3 },
-            ) + fadeIn(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
-        } else {
-            slideInHorizontally(
-                animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
-                initialOffsetX = { fullWidth -> fullWidth },
-            ) + fadeIn(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
+private fun defaultTransitionSpec(
+    isPopTransition: Boolean,
+    initialRoute: Any?,
+    targetRoute: Any?,
+): ContentTransform {
+    val transitionDirection: NavigationTransitionDirection =
+        resolveTransitionDirection(
+            initialRoute = initialRoute,
+            targetRoute = targetRoute,
+            isPopTransition = isPopTransition,
+        )
+
+    val enterInitialOffsetX: (Int) -> Int =
+        when (transitionDirection) {
+            NavigationTransitionDirection.FORWARD -> { fullWidth -> fullWidth }
+            NavigationTransitionDirection.BACKWARD -> { fullWidth -> -fullWidth / 3 }
         }
+
+    val exitTargetOffsetX: (Int) -> Int =
+        when (transitionDirection) {
+            NavigationTransitionDirection.FORWARD -> { fullWidth -> -fullWidth / 3 }
+            NavigationTransitionDirection.BACKWARD -> { fullWidth -> fullWidth }
+        }
+
+    val enterTransition =
+        slideInHorizontally(
+            animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
+            initialOffsetX = enterInitialOffsetX,
+        ) + fadeIn(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
 
     val exitTransition =
-        if (isPopTransition) {
-            slideOutHorizontally(
-                animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
-                targetOffsetX = { fullWidth -> fullWidth },
-            ) + fadeOut(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
-        } else {
-            slideOutHorizontally(
-                animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
-                targetOffsetX = { fullWidth -> -fullWidth / 3 },
-            ) + fadeOut(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
-        }
+        slideOutHorizontally(
+            animationSpec = tween(durationMillis = NAVIGATION_SLIDE_DURATION_MILLIS),
+            targetOffsetX = exitTargetOffsetX,
+        ) + fadeOut(animationSpec = tween(durationMillis = NAVIGATION_FADE_DURATION_MILLIS))
 
     return enterTransition togetherWith exitTransition
+}
+
+private fun resolveTransitionDirection(
+    initialRoute: Any?,
+    targetRoute: Any?,
+    isPopTransition: Boolean,
+): NavigationTransitionDirection {
+    val initialTabOrder: Int? = resolveBottomTabOrder(route = initialRoute)
+    val targetTabOrder: Int? = resolveBottomTabOrder(route = targetRoute)
+
+    if (initialTabOrder != null && targetTabOrder != null && initialTabOrder != targetTabOrder) {
+        return if (targetTabOrder > initialTabOrder) {
+            NavigationTransitionDirection.FORWARD
+        } else {
+            NavigationTransitionDirection.BACKWARD
+        }
+    }
+
+    return if (isPopTransition) {
+        NavigationTransitionDirection.BACKWARD
+    } else {
+        NavigationTransitionDirection.FORWARD
+    }
+}
+
+private fun resolveBottomTabOrder(route: Any?): Int? =
+    when (route) {
+        is HomeRoute -> 0
+        is HistoryRoute -> 1
+        is FriendsRoute -> 2
+        is SettingRoute -> 3
+        else -> null
+    }
+
+private enum class NavigationTransitionDirection {
+    FORWARD,
+    BACKWARD,
 }
