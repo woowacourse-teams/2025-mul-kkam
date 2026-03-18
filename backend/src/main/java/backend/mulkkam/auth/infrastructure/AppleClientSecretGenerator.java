@@ -31,7 +31,7 @@ public class AppleClientSecretGenerator {
             .and()
             .issuer(appleOauthConfig.getTeamId())
             .issuedAt(toDate(now))
-            .expiration(toDate(now.plusMonths(6)))
+            .expiration(toDate(now.plusMonths(3)))
             .audience().add("https://appleid.apple.com").and()
             .subject(appleOauthConfig.getClientId())
             .signWith(getPrivateKey(), Jwts.SIG.ES256)
