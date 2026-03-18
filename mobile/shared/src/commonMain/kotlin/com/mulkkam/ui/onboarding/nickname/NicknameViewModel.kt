@@ -52,4 +52,8 @@ class NicknameViewModel(
             }
         }
     }
+
+    fun initNicknameValidation(nicknameValidationUiState: NicknameValidationUiState) {
+        _nicknameValidationState.value = nicknameValidationUiState
+    }
 }

@@ -25,13 +25,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.mulkkam.domain.model.OnboardingInfo
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.designsystem.Black
 import com.mulkkam.ui.designsystem.Gray300
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.model.MulKkamUiState
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.component.NextButton
 import com.mulkkam.ui.onboarding.component.OnboardingCompleteDialog
 import com.mulkkam.ui.onboarding.component.OnboardingTopAppBar
@@ -53,6 +53,7 @@ import mulkkam.shared.generated.resources.onboarding_complete
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.scope.Scope
 import kotlin.time.Clock
 import kotlin.time.ExperimentalTime
 
@@ -60,14 +61,16 @@ import kotlin.time.ExperimentalTime
 @Composable
 fun CupsScreen(
     padding: PaddingValues,
-    onboardingInfo: OnboardingInfo,
     navigateToBack: () -> Unit,
     navigateToCoffeeEncyclopedia: () -> Unit,
     currentProgress: Int,
     onCompleteOnboarding: () -> Unit,
     snackbarHostState: SnackbarHostState,
+    onboardingScope: Scope,
     viewModel: CupsViewModel = koinViewModel(),
 ) {
+    val onboardingViewModel: OnboardingViewModel = koinViewModel(scope = onboardingScope)
+
     val lifecycleOwner = LocalLifecycleOwner.current
     var showDialog by remember { mutableStateOf(false) }
 
@@ -77,6 +80,8 @@ fun CupsScreen(
 
     val cupsUiState by viewModel.cupsUiState.collectAsStateWithLifecycle()
     val listItems = remember { mutableStateListOf<SettingCupsItem>() }
+
+    val onboardingInfo by onboardingViewModel.onboardingInfo.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.updateOnboardingInfo(onboardingInfo = onboardingInfo)

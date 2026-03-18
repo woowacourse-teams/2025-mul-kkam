@@ -29,4 +29,17 @@ class BioInfoViewModel : ViewModel() {
     fun updateGender(gender: Gender) {
         _gender.value = gender
     }
+
+    fun clearBioInfo() {
+        _gender.value = null
+        _weight.value = null
+    }
+
+    fun initBioInfo(
+        gender: Gender?,
+        weight: BioWeight?,
+    ) {
+        _gender.value = gender
+        _weight.value = weight
+    }
 }
