@@ -21,6 +21,8 @@ public interface DeviceRepository extends JpaRepository<Device, Long> {
 
     void deleteByMemberIdAndDeviceUuid(Long memberId, String deviceUuid);
 
+    void deleteByToken(String token);
+
     @Query("""
             SELECT d.token
             FROM Device d
