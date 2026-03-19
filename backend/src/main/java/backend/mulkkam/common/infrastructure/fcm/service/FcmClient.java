@@ -80,6 +80,20 @@ public class FcmClient {
                     response.getFailureCount(),
                     request.allTokens().size(),
                     request.action());
+                if (response.getFailureCount() > 0) {
+            int index = 0;
+            for (SendResponse sendResponse : response.getResponses()) {
+                if (!sendResponse.isSuccessful()) {
+                    FirebaseMessagingException e = sendResponse.getException();
+
+                    log.error("[FCM FAILURE DETAIL] token={}, errorCode={}, errorMessage={}",
+                            request.allTokens().get(index),
+                            e != null ? e.getMessagingErrorCode() : "UNKNOWN",
+                            e != null ? e.getMessage() : "NO_MESSAGE");
+                }
+                index++;
+            }
+        }
 
         } catch (FirebaseMessagingException e) {
             log.error("[FCM MULTICAST FAILED] tokenCount={}, errorCode={}, errorMessage={}, action={}",
