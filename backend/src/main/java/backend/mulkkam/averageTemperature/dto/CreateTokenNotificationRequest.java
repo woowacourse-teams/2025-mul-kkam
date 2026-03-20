@@ -1,5 +1,6 @@
 package backend.mulkkam.averageTemperature.dto;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
@@ -23,6 +24,7 @@ public record CreateTokenNotificationRequest(
                 title,
                 body,
                 token,
+                DevicePlatform.ANDROID,
                 action
         );
     }
@@ -32,6 +34,33 @@ public record CreateTokenNotificationRequest(
                 title,
                 body,
                 tokens,
+                DevicePlatform.ANDROID,
+                action
+        );
+    }
+
+    public SendMessageByFcmTokenRequest toSendMessageByFcmTokenRequest(
+            String token,
+            DevicePlatform platform
+    ) {
+        return new SendMessageByFcmTokenRequest(
+                title,
+                body,
+                token,
+                platform,
+                action
+        );
+    }
+
+    public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(
+            List<String> tokens,
+            DevicePlatform platform
+    ) {
+        return new SendMessageByFcmTokensRequest(
+                title,
+                body,
+                tokens,
+                platform,
                 action
         );
     }

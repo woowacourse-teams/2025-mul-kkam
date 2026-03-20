@@ -20,6 +20,7 @@ import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
@@ -112,7 +113,8 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(new MemberDetails(savedMember.getId()), intakeTargetAmountModifyRequest);
+            intakeAmountService.modifyTarget(new MemberDetails(savedMember.getId(), MemberRole.MEMBER),
+                    intakeTargetAmountModifyRequest);
             Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
                     member.getId(), LocalDate.now());
 
@@ -140,7 +142,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             ModifyIntakeTargetAmountBySuggestionRequest modifyIntakeTargetAmountBySuggestionRequest = new ModifyIntakeTargetAmountBySuggestionRequest(
                     500);
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId()),
+            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId(), MemberRole.MEMBER),
                     modifyIntakeTargetAmountBySuggestionRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,

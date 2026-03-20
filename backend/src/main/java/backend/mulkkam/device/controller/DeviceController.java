@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,7 +32,7 @@ public class DeviceController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping
     public ResponseEntity<Void> register(
-            @RequestBody RegisterDeviceRequest registerDeviceRequest,
+            @Valid @RequestBody RegisterDeviceRequest registerDeviceRequest,
             @Parameter(hidden = true)
             MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
     ) {

@@ -11,6 +11,7 @@ import backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode;
 import backend.mulkkam.common.exception.errorCode.NotFoundErrorCode;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
@@ -365,7 +366,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             notificationRepository.save(notification);
 
-            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId(), MemberRole.MEMBER);
 
             // when
             notificationService.delete(memberDetails, notification.getId());
@@ -387,7 +388,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     SuggestionNotificationFixtureBuilder.withNotification(notification).build());
             notificationRepository.save(notification);
 
-            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId(), MemberRole.MEMBER);
 
             // when
             notificationService.delete(memberDetails, notification.getId());
@@ -403,7 +404,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
         @Test
         void success_notExistingId() {
             // given
-            MemberDetails memberDetails = new MemberDetails(savedMember.getId());
+            MemberDetails memberDetails = new MemberDetails(savedMember.getId(), MemberRole.MEMBER);
 
             // when & then
             assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))
@@ -430,7 +431,7 @@ class NotificationServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(anotherMember);
 
-            MemberDetails memberDetails = new MemberDetails(anotherMember.getId());
+            MemberDetails memberDetails = new MemberDetails(anotherMember.getId(), MemberRole.MEMBER);
 
             // when & then
             assertThatThrownBy(() -> notificationService.delete(memberDetails, 1L))

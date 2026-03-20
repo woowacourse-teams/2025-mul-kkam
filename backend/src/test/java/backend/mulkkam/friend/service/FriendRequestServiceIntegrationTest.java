@@ -17,17 +17,17 @@ import backend.mulkkam.friend.dto.response.ReadSentFriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -71,7 +71,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                    new MemberDetails(requester.getId())))
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -93,7 +93,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                    new MemberDetails(invalidMember.getId())))
+                    new MemberDetails(invalidMember.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -109,7 +109,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                    new MemberDetails(addressee.getId())
+                    new MemberDetails(addressee.getId(), MemberRole.MEMBER)
             );
 
             // then
@@ -130,7 +130,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                    new MemberDetails(requester.getId())))
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -145,8 +145,8 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                        new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                        new MemberDetails(addressee.getId())))
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
+                    new MemberDetails(addressee.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(ALREADY_ACCEPTED.name());
         }
@@ -162,7 +162,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
-                    new MemberDetails(requester.getId())))
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -184,7 +184,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
-                    new MemberDetails(invalidMember.getId())))
+                    new MemberDetails(invalidMember.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -200,7 +200,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             // when
             friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
-                    new MemberDetails(addressee.getId())
+                    new MemberDetails(addressee.getId(), MemberRole.MEMBER)
             );
 
             // then
@@ -224,8 +224,8 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
-                        new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
-                        new MemberDetails(requester.getId())))
+                    new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -239,12 +239,12 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
             friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.REJECTED),
-                    new MemberDetails(addressee.getId()));
+                    new MemberDetails(addressee.getId(), MemberRole.MEMBER));
 
             // when & then
             assertThatThrownBy(() -> friendRequestService.modifyFriendStatus(
                     new PatchFriendStatusRequest(requester.getId(), PatchFriendStatusRequest.Status.ACCEPTED),
-                    new MemberDetails(addressee.getId())))
+                    new MemberDetails(addressee.getId(), MemberRole.MEMBER)))
                     .isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_FRIEND_REQUEST.name());
         }
@@ -283,7 +283,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             ReadSentFriendRelationResponse result = friendRequestService.readSent(
-                    new MemberDetails(requester.getId()),
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER),
                     null,
                     10
             );
@@ -323,7 +323,7 @@ class FriendRequestServiceIntegrationTest extends ServiceIntegrationTest {
 
             // when
             ReadSentFriendRelationResponse result = friendRequestService.readSent(
-                    new MemberDetails(requester.getId()),
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER),
                     null,
                     10
             );

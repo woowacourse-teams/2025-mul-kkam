@@ -23,3 +23,6 @@ spring:
 open-weather:
   api:
     key: temp
+
+notification:
+  secret-key: dummy-local-test

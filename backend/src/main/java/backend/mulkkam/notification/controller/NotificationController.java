@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.request.CreateActivityNotification;
@@ -45,6 +46,7 @@ public class NotificationController {
             @ExampleObject(name = "잘못된 요청", summary = "필수 파라미터 누락/형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping
     public ResponseEntity<ReadNotificationsResponse> readNotifications(
             @Parameter(hidden = true)
@@ -61,6 +63,7 @@ public class NotificationController {
     @Operation(summary = "읽지 않은 알림 수 조회", description = "사용자의 읽지 않은 알림 개수를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = GetUnreadNotificationsCountResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping("/unread-count")
     public ResponseEntity<GetUnreadNotificationsCountResponse> getUnreadNotificationsCount(
             @Parameter(hidden = true)
@@ -83,6 +86,7 @@ public class NotificationController {
             @ExampleObject(name = "잘못된 요청", summary = "필드 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PostMapping("/activity")
     public ResponseEntity<Void> createNotificationByActivity(
             @Parameter(hidden = true)
@@ -97,6 +101,7 @@ public class NotificationController {
     @ApiResponse(responseCode = "200", description = "삭제 성공")
     @ApiResponse(responseCode = "404", description = "존재하지 않는 id")
     @ApiResponse(responseCode = "401", description = "삭제할 권한이 없는 사용자의 요청")
+    @RequireAuth
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @PathVariable Long id,

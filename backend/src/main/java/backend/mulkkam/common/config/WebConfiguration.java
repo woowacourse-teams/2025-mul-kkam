@@ -3,6 +3,7 @@ package backend.mulkkam.common.config;
 import backend.mulkkam.common.filter.HttpLoggingFilter;
 import backend.mulkkam.common.filter.JwtAuthenticationFilter;
 import backend.mulkkam.common.interceptor.ApiPerformanceInterceptor;
+import backend.mulkkam.common.interceptor.AuthorizationInterceptor;
 import backend.mulkkam.common.resolver.MemberAndDeviceUuidResolver;
 import backend.mulkkam.common.resolver.MemberResolver;
 import backend.mulkkam.common.resolver.OauthAccountResolver;
@@ -26,6 +27,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     private final MemberAndDeviceUuidResolver memberAndDeviceUuidResolver;
     private final ApiPerformanceInterceptor apiPerformanceInterceptor;
     private final HttpLoggingFilter httpLoggingFilter;
+    private final AuthorizationInterceptor authorizationInterceptor;
 
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
@@ -37,6 +39,8 @@ public class WebConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(apiPerformanceInterceptor)
+                .addPathPatterns("/**");
+        registry.addInterceptor(authorizationInterceptor)
                 .addPathPatterns("/**");
     }
 

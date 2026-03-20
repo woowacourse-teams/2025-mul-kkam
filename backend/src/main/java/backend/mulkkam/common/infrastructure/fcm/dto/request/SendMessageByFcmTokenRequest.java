@@ -1,7 +1,7 @@
 package backend.mulkkam.common.infrastructure.fcm.dto.request;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
-import backend.mulkkam.notification.dto.NotificationMessageTemplate;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "FCM 토큰 기반 메시지 전송 요청")
@@ -15,11 +15,10 @@ public record SendMessageByFcmTokenRequest(
         @Schema(description = "FCM 디바이스 토큰", example = "dKz9...FCM토큰...X2c")
         String token,
 
+        @Schema(description = "디바이스 플랫폼", example = "ANDROID")
+        DevicePlatform platform,
+
         @Schema(description = "클릭 시 실행할 액션", example = "GO_HOME", implementation = Action.class)
         Action action
 ) {
-
-        public SendMessageByFcmTokenRequest(NotificationMessageTemplate template, String token) {
-            this(template.title(), template.body(), token, template.action());
-        }
 }
