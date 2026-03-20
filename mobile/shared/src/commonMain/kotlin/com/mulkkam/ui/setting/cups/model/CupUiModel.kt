@@ -1,0 +1,54 @@
+package com.mulkkam.ui.setting.cups.model
+
+import com.mulkkam.domain.model.Cup
+import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.cups.CupName
+
+data class CupUiModel(
+    val id: Long,
+    val name: String,
+    val amount: Int,
+    val rank: Int,
+    val intakeType: IntakeType,
+    val emoji: CupEmojiUiModel,
+    val isRepresentative: Boolean,
+) {
+    companion object {
+        val EMPTY_CUP_UI_MODEL =
+            CupUiModel(
+                id = 0L,
+                name = "",
+                amount = 0,
+                rank = 0,
+                intakeType = IntakeType.WATER,
+                emoji = CupEmojiUiModel.EMPTY_CUP_EMOJI_UI_MODEL,
+                isRepresentative = false,
+            )
+    }
+}
+
+fun Cup.toUi(): CupUiModel =
+    CupUiModel(
+        id = id,
+        name = name.value,
+        amount = amount.value,
+        rank = rank,
+        intakeType = intakeType,
+        emoji = emoji.toUi(),
+        isRepresentative = isRepresentative,
+    )
+
+fun CupUiModel.toDomain(): Cup {
+    val name = CupName(name)
+    val amount = CupAmount(amount)
+
+    return Cup(
+        id = id,
+        name = name,
+        amount = amount,
+        rank = rank,
+        intakeType = intakeType,
+        emoji = emoji.toDomain(),
+    )
+}

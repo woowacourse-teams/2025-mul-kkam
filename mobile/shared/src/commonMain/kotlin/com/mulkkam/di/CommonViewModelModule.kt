@@ -1,0 +1,74 @@
+package com.mulkkam.di
+
+import com.mulkkam.ui.auth.login.LoginViewModel
+import com.mulkkam.ui.auth.splash.SplashViewModel
+import com.mulkkam.ui.friends.FriendsViewModel
+import com.mulkkam.ui.history.HistoryViewModel
+import com.mulkkam.ui.home.ManualDrinkViewModel
+import com.mulkkam.ui.home.home.HomeViewModel
+import com.mulkkam.ui.home.notification.NotificationViewModel
+import com.mulkkam.ui.main.MainViewModel
+import com.mulkkam.ui.navigation.ONBOARDING_SCOPE
+import com.mulkkam.ui.onboarding.OnboardingViewModel
+import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
+import com.mulkkam.ui.onboarding.cups.CupViewModel
+import com.mulkkam.ui.onboarding.cups.CupsViewModel
+import com.mulkkam.ui.onboarding.nickname.NicknameViewModel
+import com.mulkkam.ui.onboarding.targetamount.TargetAmountViewModel
+import com.mulkkam.ui.onboarding.terms.TermsAgreementViewModel
+import com.mulkkam.ui.pendingfriends.PendingFriendsViewModel
+import com.mulkkam.ui.searchmembers.SearchMembersViewModel
+import com.mulkkam.ui.setting.SettingViewModel
+import com.mulkkam.ui.setting.bioinfo.SettingBioInfoViewModel
+import com.mulkkam.ui.setting.cups.SettingCupViewModel
+import com.mulkkam.ui.setting.cups.SettingCupsViewModel
+import com.mulkkam.ui.setting.nickname.SettingNicknameViewModel
+import com.mulkkam.ui.setting.reminder.SettingReminderViewModel
+import com.mulkkam.ui.setting.targetamount.SettingTargetAmountViewModel
+import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
+import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
+import com.mulkkam.ui.settingterms.SettingTermsViewModel
+import org.koin.core.module.Module
+import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
+import org.koin.dsl.module
+
+val commonViewModelModule: Module =
+    module {
+        viewModel { LoginViewModel(get(), get(), get(), get()) }
+        viewModel { NotificationViewModel(get(), get()) }
+        viewModel { SettingNicknameViewModel(get(), get(), get()) }
+        viewModel { SearchMembersViewModel(get(), get()) }
+        viewModel { SettingViewModel(get(), get()) }
+        viewModel { HomeViewModel(get(), get(), get(), get(), get(), get(), get()) }
+        viewModel { ManualDrinkViewModel() }
+        viewModel { SplashViewModel(get(), get(), get()) }
+        viewModel { MainViewModel(get(), get(), get(), get()) }
+        viewModel { NicknameViewModel(get()) }
+        viewModel { BioInfoViewModel() }
+        viewModel { PendingFriendsViewModel(get()) }
+        viewModel { SettingReminderViewModel(get(), get(), get()) }
+        viewModel { HistoryViewModel(get(), get()) }
+        viewModel { CupsViewModel(get(), get(), get()) }
+        viewModel { SettingBioInfoViewModel(get(), get()) }
+        viewModel { TargetAmountViewModel(get()) }
+        viewModel { FriendsViewModel(get()) }
+        viewModel { SettingAccountInfoViewModel(get(), get(), get(), get()) }
+        viewModel { SettingTargetAmountViewModel(get(), get(), get()) }
+        viewModel { SettingCupsViewModel(get(), get()) }
+        viewModel { SettingNotificationViewModel(get(), get()) }
+        viewModel { SettingCupViewModel(get(), get()) }
+        viewModel { CupViewModel(get()) }
+        viewModel { TermsAgreementViewModel() }
+        viewModel { SettingTermsViewModel() }
+        viewModel { TermsAgreementViewModel() }
+        viewModel { NicknameViewModel(get()) }
+        viewModel { BioInfoViewModel() }
+        viewModel { TargetAmountViewModel(get()) }
+        viewModel { CupsViewModel(get(), get(), get()) }
+        viewModel { CupViewModel(get()) }
+
+        scope(named(ONBOARDING_SCOPE)) {
+            scoped { OnboardingViewModel() }
+        }
+    }

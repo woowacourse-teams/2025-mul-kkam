@@ -1,0 +1,26 @@
+package com.mulkkam.ui.setting
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mulkkam.domain.logger.Logger
+import com.mulkkam.domain.model.cups.Cups
+import com.mulkkam.domain.model.logger.LogEvent
+import com.mulkkam.domain.repository.CupsRepository
+import com.mulkkam.ui.setting.cups.model.CupUiModel
+import com.mulkkam.ui.setting.cups.model.toDomain
+import kotlinx.coroutines.launch
+
+class SettingViewModel(
+    private val cupsRepository: CupsRepository,
+    private val logger: Logger,
+) : ViewModel() {
+    fun saveCupOrder(cups: List<CupUiModel>) {
+        val reordered = Cups(cups.map { it.toDomain() }).reorderRanks()
+        viewModelScope.launch {
+            runCatching {
+                logger.info(LogEvent.USER_ACTION, "Saving cup reorder from settings")
+                cupsRepository.putCupsRank(reordered).getOrError()
+            }
+        }
+    }
+}

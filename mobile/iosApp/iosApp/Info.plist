@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>NSHealthShareUsageDescription</key>
+	<string>앱에서 사용자의 활동 에너지 소모량을 분석하기 위해 건강 데이터를 사용합니다.</string>
+	<key>BASE_URL</key>
+	<string>$(BASE_URL)</string>
+	<key>CADisableMinimumFrameDurationOnPhone</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>kakao$(KEY_KAKAO)</string>
+			</array>
+		</dict>
+	</array>
+	<key>KEY_KAKAO</key>
+	<string>$(KEY_KAKAO)</string>
+	<key>MARKETING_VERSION</key>
+	<string>$(MARKETING_VERSION)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>kakaokompassauth</string>
+		<string>kakaolink</string>
+		<string>kakaoplus</string>
+		<string>kakaotalk</string>
+	</array>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+        <string>healthkit</string>
+	</array>
+</dict>
+</plist>

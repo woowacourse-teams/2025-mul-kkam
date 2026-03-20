@@ -1,0 +1,35 @@
+package com.mulkkam.ui.setting.setting.component
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.mulkkam.ui.designsystem.Black
+import com.mulkkam.ui.designsystem.Gray50
+import com.mulkkam.ui.designsystem.MulKkamTheme
+
+@Composable
+fun SettingTitleItem(
+    label: String,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Text(
+            text = label,
+            style = MulKkamTheme.typography.label1,
+            color = Black,
+            modifier = Modifier.padding(start = 24.dp, top = 12.dp, bottom = 8.dp),
+        )
+        HorizontalDivider(
+            color = Gray50,
+            thickness = 1.dp,
+            modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
