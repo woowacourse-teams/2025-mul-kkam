@@ -14,7 +14,9 @@ import com.mulkkam.ui.component.MulKkamSnackbarHost
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.main.component.MainBottomNavigationBar
+import com.mulkkam.ui.main.component.PlatformBackGestureContainer
 import com.mulkkam.ui.main.model.MainTab
+import com.mulkkam.ui.navigation.AuthRoute
 import com.mulkkam.ui.navigation.MainNavHost
 import com.mulkkam.ui.navigation.rememberMainNavigator
 import com.mulkkam.ui.util.ImageLoader
@@ -43,37 +45,48 @@ fun MulKkamApp(
     val showBottomNavigationBar: Boolean by remember {
         derivedStateOf { currentTab != null }
     }
+    val enableBackGesture: Boolean by remember {
+        derivedStateOf {
+            val currentRoute: Any = navigator.currentRoute ?: return@derivedStateOf false
+            currentRoute !is AuthRoute.Login && currentTab == null
+        }
+    }
 
     MulKkamTheme {
-        Scaffold(
-            modifier = Modifier.fillMaxSize(),
-            containerColor = White,
-            bottomBar = {
-                if (showBottomNavigationBar) {
-                    MainBottomNavigationBar(
-                        selectedTab = currentTab ?: MainTab.DEFAULT,
-                        onTabSelected = { tab ->
-                            when (tab) {
-                                MainTab.HOME -> navigator.navigateToHome()
-                                MainTab.HISTORY -> navigator.navigateToHistory()
-                                MainTab.FRIENDS -> navigator.navigateToFriends()
-                                MainTab.SETTING -> navigator.navigateToSetting()
-                            }
-                        },
-                    )
-                }
-            },
-            snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
-        ) { innerPadding ->
-            MainNavHost(
-                navigator = navigator,
-                padding = innerPadding,
-                onLogin = onLogin,
-                onRegisterPushNotification = onRegisterPushNotification,
-                onRequestInitialPermissions = onRequestInitialPermissions,
-                appVersion = appVersion,
-                snackbarHostState = snackbarHostState,
-            )
+        PlatformBackGestureContainer(
+            enabled = enableBackGesture,
+            onBack = navigator::popBackStack,
+        ) {
+            Scaffold(
+                modifier = Modifier.fillMaxSize(),
+                containerColor = White,
+                bottomBar = {
+                    if (showBottomNavigationBar) {
+                        MainBottomNavigationBar(
+                            selectedTab = currentTab ?: MainTab.DEFAULT,
+                            onTabSelected = { tab ->
+                                when (tab) {
+                                    MainTab.HOME -> navigator.navigateToHome()
+                                    MainTab.HISTORY -> navigator.navigateToHistory()
+                                    MainTab.FRIENDS -> navigator.navigateToFriends()
+                                    MainTab.SETTING -> navigator.navigateToSetting()
+                                }
+                            },
+                        )
+                    }
+                },
+                snackbarHost = { MulKkamSnackbarHost(hostState = snackbarHostState) },
+            ) { innerPadding ->
+                MainNavHost(
+                    navigator = navigator,
+                    padding = innerPadding,
+                    onLogin = onLogin,
+                    onRegisterPushNotification = onRegisterPushNotification,
+                    onRequestInitialPermissions = onRequestInitialPermissions,
+                    appVersion = appVersion,
+                    snackbarHostState = snackbarHostState,
+                )
+            }
         }
     }
 
