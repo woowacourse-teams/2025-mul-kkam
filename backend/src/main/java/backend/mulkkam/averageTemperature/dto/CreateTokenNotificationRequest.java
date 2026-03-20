@@ -2,12 +2,12 @@ package backend.mulkkam.averageTemperature.dto;
 
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokenRequest;
+import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
-
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record CreateTokenNotificationRequest(
         String title,
@@ -15,7 +15,6 @@ public record CreateTokenNotificationRequest(
         Member member,
         Action action,
         NotificationType notificationType,
-        TargetAmount recommendedTargetAmount,
         LocalDateTime createdAt
 ) {
 
@@ -28,12 +27,20 @@ public record CreateTokenNotificationRequest(
         );
     }
 
+    public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(List<String> tokens) {
+        return new SendMessageByFcmTokensRequest(
+                title,
+                body,
+                tokens,
+                action
+        );
+    }
+
     public Notification toNotification() {
         return new Notification(
                 notificationType,
                 body,
                 createdAt,
-                recommendedTargetAmount,
                 member
         );
     }

@@ -1,11 +1,14 @@
 server:
   port: 80
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 spring:
   datasource:
     url: ${PROD_DATASOURCE_URL}
-    username: ${PROD_DATASOURCE_USERNAME}
-    password: ${PROD_DATASOURCE_PASSWORD}
+    username: ${PROD_DATASOURCE_RW_USERNAME}
+    password: ${PROD_DATASOURCE_RW_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -20,8 +23,12 @@ spring:
     enabled: true
     baseline-on-migrate: true
     validate-on-migrate: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration/common, classpath:db/migration/mysql
     clean-disabled: true
+    ignore-migration-patterns: '*:future'
+    url: ${PROD_DATASOURCE_URL}
+    user: ${PROD_DATASOURCE_MIGRATION_USERNAME}
+    password: ${PROD_DATASOURCE_MIGRATION_PASSWORD}
 
 security:
   jwt:
@@ -32,8 +39,11 @@ security:
       expire-length: ${REFRESH_TOKEN_EXPIRE}
 
 fcm:
-  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
-  project-id: ${FCM_PROJECT_ID}
+  base64-encoding-key: ${PROD_FCM_BASE64_ENCODING_KEY}
+  project-id: ${PROD_FCM_PROJECT_ID}
+
+notification:
+  secret-key: ${NOTIFICATION_SECRET_KEY}
 
 open-weather:
   api:
@@ -47,3 +57,22 @@ cloud:
   aws:
     region:
       static: ap-northeast-2
+
+management:
+  metrics:
+    enable:
+      jvm.memory.used: true
+      jvm.memory.max: true
+      jvm.gc.pause: true
+      jvm.threads: true
+      hikaricp: true
+      http.server: true
+      process.cpu: true
+      tomcat: true
+
+  cloudwatch:
+    metrics:
+      export:
+        enabled: false
+        step: 5m
+        namespace: Mulkkam/Prod

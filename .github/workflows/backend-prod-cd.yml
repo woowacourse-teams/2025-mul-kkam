@@ -1,22 +1,46 @@
-name: backend-prod-cd.yml
+name: backend-prod-cd
 
 on:
-  push:
-    branches: [ "be-releases" ]
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
     paths:
       - "backend/**"
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-24.04
+    if: github.event.pull_request.merged == true
+    runs-on: self-hosted
+    outputs:
+      version: ${{ steps.ver.outputs.version }}
     steps:
       - name: Checkout source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Derive version from PR title
+        id: ver
+        shell: bash
+        run: |
+          PR_TITLE="${{ github.event.pull_request.title }}"
+          echo "PR Title: $PR_TITLE"
+
+          if [[ "$PR_TITLE" =~ (v[0-9]+\.[0-9]+\.[0-9]+) ]]; then
+            VERSION="${BASH_REMATCH[1]}"
+            echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+            echo "Resolved VERSION=$VERSION"
+          else
+            echo "Error: PR title does not contain a valid version tag (e.g., v1.2.3)."
+            exit 1
+          fi
 
       - name: Set up JDK
         uses: actions/setup-java@v4
         with:
-          distribution: "temurin"
+          distribution: temurin
           java-version: "21"
 
       - name: Grant execute permission to gradlew
@@ -36,7 +60,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and Push Multi-Arch Image
+      - name: Build and Push Multi-Arch Image (tagged)
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -44,43 +68,46 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: |
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ github.sha }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:${{ steps.ver.outputs.version }}
 
   deploy:
-    runs-on: [ self-hosted, linux, prod ]
+    runs-on: [ self-hosted, linux, x64, prod ]
     needs: build-and-push
+    env:
+      IMAGE_TAG: ${{ needs.build-and-push.outputs.version }}
     steps:
       - name: Stop and remove existing container
         run: |
           if [ "$(docker ps -a -q -f name=backend-app)" ]; then
-            docker stop backend-app
-            docker rm -f backend-app
+            docker stop backend-app || true
+            docker rm -f backend-app || true
           fi
 
-      - name: Pull latest image
-        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam-prod:latest
-
-      - name: Create .env file
+      - name: Create .env file (inject IMAGE_TAG)
         run: |
           cat <<EOF > ~/mulkkam/.env
+          IMAGE_TAG=${IMAGE_TAG}
           PROD_DATASOURCE_URL=${{ secrets.PROD_DATASOURCE_URL }}
-          PROD_DATASOURCE_USERNAME=${{ secrets.PROD_DATASOURCE_USERNAME }}
-          PROD_DATASOURCE_PASSWORD=${{ secrets.PROD_DATASOURCE_PASSWORD }}
+          PROD_DATASOURCE_RW_USERNAME=${{ secrets.PROD_DATASOURCE_RW_USERNAME }}
+          PROD_DATASOURCE_RW_PASSWORD=${{ secrets.PROD_DATASOURCE_RW_PASSWORD }}
+          PROD_DATASOURCE_MIGRATION_USERNAME=${{ secrets.PROD_DATASOURCE_MIGRATION_USERNAME }}
+          PROD_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.PROD_DATASOURCE_MIGRATION_PASSWORD }}
           LOG_PATH=${{ secrets.LOG_PATH }}
           JWT_SECRET=${{ secrets.JWT_SECRET }}
           ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
           REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}
-          FCM_BASE64_ENCODING_KEY=${{ secrets.FCM_BASE64_ENCODING_KEY }}
-          FCM_PROJECT_ID=${{ secrets.FCM_PROJECT_ID }}
+          PROD_FCM_BASE64_ENCODING_KEY=${{ secrets.PROD_FCM_BASE64_ENCODING_KEY }}
+          PROD_FCM_PROJECT_ID=${{ secrets.PROD_FCM_PROJECT_ID }}
           OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
+          NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
           SPRING_PROFILES_ACTIVE=prod
           EOF
+          echo "Injected IMAGE_TAG=${IMAGE_TAG}"
 
       - name: Stop existing services
-        run: sudo docker compose stop backend-app
         working-directory: /home/ubuntu/mulkkam
+        run: sudo docker compose stop backend-app
 
       - name: Start new services
-        run: sudo docker compose up -d backend-app
         working-directory: /home/ubuntu/mulkkam
+        run: sudo docker compose up -d backend-app

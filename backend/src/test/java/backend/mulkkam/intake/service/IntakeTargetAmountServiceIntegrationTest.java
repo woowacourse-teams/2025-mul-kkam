@@ -11,10 +11,10 @@ import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.TargetAmountSnapshot;
 import backend.mulkkam.intake.dto.PhysicalAttributesRequest;
-import backend.mulkkam.intake.dto.RecommendedIntakeAmountResponse;
+import backend.mulkkam.intake.dto.SuggestionIntakeAmountResponse;
 import backend.mulkkam.intake.dto.request.IntakeTargetAmountModifyRequest;
-import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountByRecommendRequest;
-import backend.mulkkam.intake.dto.response.IntakeRecommendedAmountResponse;
+import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
+import backend.mulkkam.intake.dto.response.IntakeSuggestionAmountResponse;
 import backend.mulkkam.intake.dto.response.IntakeTargetAmountResponse;
 import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
@@ -22,16 +22,15 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.time.LocalDate;
+import java.util.Optional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.time.LocalDate;
-import java.util.Optional;
 
 class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
 
@@ -57,7 +56,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -82,7 +81,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -104,16 +103,16 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             int originTargetAmount = 2_000;
             Member member = MemberFixtureBuilder.builder()
-                    .targetAmount(new TargetAmount(originTargetAmount))
+                    .targetAmount(originTargetAmount)
                     .build();
-            memberRepository.save(member);
+            Member savedMember = memberRepository.save(member);
 
             int newTargetAmount = 1_000;
             IntakeTargetAmountModifyRequest intakeTargetAmountModifyRequest = new IntakeTargetAmountModifyRequest(
                     newTargetAmount);
 
             // when
-            intakeAmountService.modifyTarget(new MemberDetails(member), intakeTargetAmountModifyRequest);
+            intakeAmountService.modifyTarget(new MemberDetails(savedMember.getId()), intakeTargetAmountModifyRequest);
             Optional<TargetAmountSnapshot> targetAmountSnapshot = targetAmountSnapshotRepository.findByMemberIdAndUpdatedAt(
                     member.getId(), LocalDate.now());
 
@@ -128,22 +127,21 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int memberTargetAmount = 1_500;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(memberTargetAmount))
+                    .targetAmount(memberTargetAmount)
                     .build();
 
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
+                    .targetIntakeAmount(new TargetAmount(1_000))
                     .date(LocalDate.now())
                     .build();
             intakeHistoryRepository.save(intakeHistory);
-            ModifyIntakeTargetAmountByRecommendRequest modifyIntakeTargetAmountByRecommendRequest = new ModifyIntakeTargetAmountByRecommendRequest
-                    (
-                            1_000
-                    );
+            ModifyIntakeTargetAmountBySuggestionRequest modifyIntakeTargetAmountBySuggestionRequest = new ModifyIntakeTargetAmountBySuggestionRequest(
+                    500);
             // when
-            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member),
-                    modifyIntakeTargetAmountByRecommendRequest);
+            intakeAmountService.modifyDailyTargetBySuggested(new MemberDetails(member.getId()),
+                    modifyIntakeTargetAmountBySuggestionRequest);
             Optional<IntakeHistory> findIntakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(
                     member,
                     LocalDate.now()
@@ -153,7 +151,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // then
             assertSoftly(softly -> {
                 softly.assertThat(findIntakeHistory).isPresent();
-                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1000);
+                softly.assertThat(findIntakeHistory.get().getTargetAmount().value()).isEqualTo(1_500);
                 softly.assertThat(findMember).isPresent();
                 softly.assertThat(findMember.get().getTargetAmount().value()).isEqualTo(memberTargetAmount);
             });
@@ -165,7 +163,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             // given
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(1500))
+                    .targetAmount(1500)
                     .build();
             memberRepository.save(member);
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
@@ -205,12 +203,12 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(savedMember)
             );
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
         }
 
         @DisplayName("멤버 신체 정보가 없을 경우 기본 값들로 계산된다")
@@ -223,12 +221,12 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             Member savedMember = memberRepository.save(member);
 
             // when
-            IntakeRecommendedAmountResponse intakeRecommendedAmountResponse = intakeAmountService.getRecommended(
+            IntakeSuggestionAmountResponse intakeSuggestionAmountResponse = intakeAmountService.getRecommended(
                     new MemberDetails(savedMember)
             );
 
             // then
-            assertThat(intakeRecommendedAmountResponse.amount()).isEqualTo(1_800);
+            assertThat(intakeSuggestionAmountResponse.amount()).isEqualTo(1_800);
         }
     }
 
@@ -242,7 +240,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             int expected = 1_000;
             Member member = MemberFixtureBuilder
                     .builder()
-                    .targetAmount(new TargetAmount(expected))
+                    .targetAmount(expected)
                     .build();
             Member savedMember = memberRepository.save(member);
 
@@ -265,7 +263,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(Gender.FEMALE, 60.0);
 
             // when
-            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then
@@ -279,7 +277,7 @@ class IntakeTargetAmountServiceIntegrationTest extends ServiceIntegrationTest {
             PhysicalAttributesRequest physicalAttributesRequest = new PhysicalAttributesRequest(null, null);
 
             // when
-            RecommendedIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
+            SuggestionIntakeAmountResponse recommendedTargetAmount = intakeAmountService.getRecommendedTargetAmount(
                     physicalAttributesRequest);
 
             // then

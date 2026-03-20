@@ -29,7 +29,7 @@ public class OauthAccountResolver implements HandlerMethodArgumentResolver {
         HttpServletRequest request = webRequest.getNativeRequest(HttpServletRequest.class);
 
         Long accountId = (Long) request.getAttribute("account_id");
-
-        return new OauthAccountDetails(accountId);
+        String deviceUuid = (String) request.getAttribute("device_uuid");
+        return new OauthAccountDetails(accountId, deviceUuid);
     }
 }

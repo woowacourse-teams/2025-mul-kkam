@@ -1,5 +1,6 @@
 package backend.mulkkam.intake.domain;
 
+import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
@@ -12,16 +13,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDate;
-import java.util.Objects;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Getter
 @NoArgsConstructor
+@SQLRestriction("deleted_at IS NULL")
+@SQLDelete(sql = "UPDATE intake_history SET deleted_at = NOW() WHERE id = ?")
 @Entity
-public class IntakeHistory {
+public class IntakeHistory extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,6 +47,9 @@ public class IntakeHistory {
 
     @Column(nullable = false)
     private int streak;
+
+    @OneToMany(mappedBy = "intakeHistory")
+    private final List<IntakeHistoryDetail> intakeHistoryDetails = new ArrayList<>();
 
     public IntakeHistory(
             Member member,
@@ -63,6 +73,10 @@ public class IntakeHistory {
 
     public void modifyTargetAmount(TargetAmount targetAmount) {
         this.targetAmount = targetAmount;
+    }
+
+    public void addTargetAmount(int targetAmount) {
+        this.targetAmount = new TargetAmount(this.targetAmount.value() + targetAmount);
     }
 
     @Override

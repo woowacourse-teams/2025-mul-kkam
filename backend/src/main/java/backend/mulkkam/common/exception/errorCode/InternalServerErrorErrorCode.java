@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 public enum InternalServerErrorErrorCode implements ErrorCode {
 
     INTER_SERVER_ERROR_CODE,
+    NOT_EXIST_DEFAULT_CUP_EMOJI,
+    INVALID_EMOJI_CODE_FORMAT,
     ;
 
 

@@ -1,31 +1,37 @@
 package backend.mulkkam.intake.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_FOR_DELETE_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY;
-import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_INTAKE_HISTORY_DETAIL;
+import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_DATE_RANGE;
+import static backend.mulkkam.common.exception.errorCode.ForbiddenErrorCode.NOT_PERMITTED_FOR_CUP;
+import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_CUP;
 import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_FOUND_MEMBER;
 
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiCode;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.repository.CupRepository;
+import backend.mulkkam.cup.service.CupService;
 import backend.mulkkam.intake.domain.CommentOfAchievementRate;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.AchievementRate;
-import backend.mulkkam.intake.dto.CreateIntakeHistoryResponse;
+import backend.mulkkam.intake.dto.CreateIntakeHistoryDetailResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDateResponse;
+import backend.mulkkam.intake.dto.ReadAchievementRateByDatesResponse;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByCupRequest;
+import backend.mulkkam.intake.dto.request.CreateIntakeHistoryDetailByUserInputRequest;
 import backend.mulkkam.intake.dto.request.DateRangeRequest;
-import backend.mulkkam.intake.dto.request.IntakeDetailCreateRequest;
-import backend.mulkkam.intake.dto.response.IntakeDetailResponse;
 import backend.mulkkam.intake.dto.response.IntakeHistorySummaryResponse;
-import backend.mulkkam.intake.repository.IntakeHistoryDetailRepository;
-import backend.mulkkam.intake.repository.IntakeHistoryRepository;
 import backend.mulkkam.intake.repository.TargetAmountSnapshotRepository;
 import backend.mulkkam.member.domain.Member;
-import backend.mulkkam.member.domain.vo.TargetAmount;
 import backend.mulkkam.member.repository.MemberRepository;
 import java.time.LocalDate;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,74 +41,138 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class IntakeHistoryService {
 
-    private final IntakeHistoryRepository intakeHistoryRepository;
+    private static final int MAX_DATE_RANGE_DAYS = 90;
+
+    private final IntakeHistoryCrudService intakeHistoryCrudService;
     private final MemberRepository memberRepository;
     private final TargetAmountSnapshotRepository targetAmountSnapshotRepository;
-    private final IntakeHistoryDetailRepository intakeHistoryDetailRepository;
+    private final CupRepository cupRepository;
+
+    // TODO: 서비스 의존 논의 필요
+    private final CupService cupService;
 
     @Transactional
-    public CreateIntakeHistoryResponse create(
-            IntakeDetailCreateRequest intakeDetailCreateRequest,
+    public CreateIntakeHistoryDetailResponse createByCup(
+            CreateIntakeHistoryDetailByCupRequest createIntakeHistoryDetailByCupRequest,
             MemberDetails memberDetails
     ) {
-        LocalDate intakeDate = intakeDetailCreateRequest.dateTime().toLocalDate();
+        LocalDate intakeDate = createIntakeHistoryDetailByCupRequest.dateTime().toLocalDate();
         Member member = getMember(memberDetails.id());
 
-        IntakeHistory intakeHistory = findIntakeHistory(member, intakeDate);
-        IntakeHistoryDetail intakeHistoryDetail = intakeDetailCreateRequest.toIntakeDetail(intakeHistory);
-        intakeHistoryDetailRepository.save(intakeHistoryDetail);
+        IntakeHistory intakeHistory = intakeHistoryCrudService.getOrCreateIntakeHistory(member, intakeDate);
 
-        List<IntakeHistoryDetail> intakeHistoryDetails = findIntakeHistoriesOfDate(intakeDate, member);
-
-        if (intakeHistoryDetails.isEmpty()) {
-            return new CreateIntakeHistoryResponse(0, CommentOfAchievementRate.VERY_LOW.getComment());
+        Cup cup = getCup(createIntakeHistoryDetailByCupRequest.cupId());
+        if (!cup.isOwnedBy(member)) {
+            throw new CommonException(NOT_PERMITTED_FOR_CUP);
         }
 
-        int totalIntakeAmount = calculateTotalIntakeAmount(intakeHistoryDetails);
-        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
-        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
-
-        return new CreateIntakeHistoryResponse(achievementRate.value(), commentByAchievementRate);
+        IntakeHistoryDetail intakeHistoryDetail = createIntakeHistoryDetailByCupRequest.toIntakeDetail(
+                intakeHistory,
+                cup
+        );
+        intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
+        return getCreateIntakeHistoryResponse(
+                intakeHistory,
+                intakeHistoryDetail.getIntakeAmount().value(),
+                cup.getIntakeType()
+        );
     }
 
-    private IntakeHistory findIntakeHistory(Member member, LocalDate intakeDate) {
-        return intakeHistoryRepository.findByMemberAndHistoryDate(member, intakeDate)
-                .orElseGet(() -> {
-                    int streak = findStreak(member, intakeDate);
-                    IntakeHistory newIntakeHistory = new IntakeHistory(
-                            member,
-                            intakeDate,
-                            member.getTargetAmount(),
-                            streak
-                    );
-                    return intakeHistoryRepository.save(newIntakeHistory);
-                });
+    @Transactional
+    public CreateIntakeHistoryDetailResponse createByUserInput(
+            CreateIntakeHistoryDetailByUserInputRequest request,
+            MemberDetails memberDetails
+    ) {
+        LocalDate intakeDate = request.dateTime().toLocalDate();
+        Member member = getMember(memberDetails.id());
+
+        IntakeHistory intakeHistory = intakeHistoryCrudService.getOrCreateIntakeHistory(member, intakeDate);
+        IntakeType intakeType = request.intakeType();
+
+        EmojiCode emojiCode = DefaultCup.of(intakeType)
+                .orElse(DefaultCup.WATER_PAPER_CUP) // default 를 물 타입으로 설정
+                .getCode();
+
+        Map<EmojiCode, CupEmoji> emojiByCode = cupService.getDefaultEmojiByCode();
+        CupEmoji cupEmoji = emojiByCode.get(emojiCode);
+
+        IntakeHistoryDetail intakeHistoryDetail = request.toIntakeDetail(
+                intakeHistory, cupEmoji.getUrl()
+        );
+        intakeHistoryCrudService.createIntakeHistoryDetail(intakeHistoryDetail);
+        return getCreateIntakeHistoryResponse(
+                intakeHistory,
+                intakeHistoryDetail.getIntakeAmount().value(),
+                intakeType
+        );
+    }
+
+    public ReadAchievementRateByDatesResponse readAchievementRatesByDateRange(
+            DateRangeRequest dateRangeRequest,
+            MemberDetails memberDetails
+    ) {
+        Member member = getMember(memberDetails.id());
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member, dateRangeRequest);
+
+        List<ReadAchievementRateByDateResponse> achievementRateResponses = dateRangeRequest.getAllDatesInRange().stream()
+                .map(date -> toAchievementRateResponse(intakeHistoryByDates, date))
+                .toList();
+
+        return new ReadAchievementRateByDatesResponse(achievementRateResponses);
     }
 
     public List<IntakeHistorySummaryResponse> readSummaryOfIntakeHistories(
             DateRangeRequest dateRangeRequest,
             MemberDetails memberDetails
     ) {
+        validateDateRange(dateRangeRequest, MAX_DATE_RANGE_DAYS);
         Member member = getMember(memberDetails.id());
-        List<LocalDate> dates = dateRangeRequest.getAllDatesInRange();
-        List<IntakeHistoryDetail> details = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                member,
-                dateRangeRequest.from(),
-                dateRangeRequest.to()
-        );
-        return dates.stream()
-                .map(date -> {
-                    List<IntakeHistoryDetail> detailsOfDate = details.stream()
-                            .filter(detail -> detail.getIntakeHistory().getHistoryDate().equals(date))
-                            .sorted(Comparator.comparing(IntakeHistoryDetail::getIntakeTime).reversed())
-                            .toList();
-                    if (detailsOfDate.isEmpty()) {
-                        return createDefaultResponse(date, member);
-                    }
-                    IntakeHistory intakeHistory = detailsOfDate.getFirst().getIntakeHistory();
-                    return toIntakeHistorySummaryResponse(intakeHistory, detailsOfDate);
-                })
+        Map<LocalDate, IntakeHistory> intakeHistoryByDates = intakeHistoryCrudService.getIntakeHistoryWithDetailsSortedDesc(member,
+                dateRangeRequest);
+
+        return dateRangeRequest.getAllDatesInRange().stream()
+                .map(date -> getIntakeHistorySummaryResponse(date, intakeHistoryByDates, member))
                 .toList();
+    }
+
+    private void validateDateRange(
+            DateRangeRequest dateRangeRequest,
+            int maxDays
+    ) {
+        LocalDate to = dateRangeRequest.to();
+        LocalDate from = dateRangeRequest.from();
+        if (to.isAfter(from.plusDays(maxDays))) {
+            throw new CommonException(INVALID_DATE_RANGE);
+        }
+    }
+
+    private ReadAchievementRateByDateResponse toAchievementRateResponse(
+            Map<LocalDate, IntakeHistory> intakeHistoryByDates,
+            LocalDate date
+    ) {
+        return Optional.ofNullable(intakeHistoryByDates.get(date))
+                .map(intakeHistoryCrudService::getAchievementRate)
+                .map(ReadAchievementRateByDateResponse::new)
+                .orElseGet(() -> new ReadAchievementRateByDateResponse(AchievementRate.empty()));
+    }
+
+    private IntakeHistorySummaryResponse getIntakeHistorySummaryResponse(
+            LocalDate date,
+            Map<LocalDate, IntakeHistory> intakeHistoryByDates,
+            Member member
+    ) {
+        if (intakeHistoryByDates.containsKey(date)) {
+            IntakeHistory intakeHistory = intakeHistoryByDates.get(date);
+            List<IntakeHistoryDetail> details = intakeHistory.getIntakeHistoryDetails();
+            return new IntakeHistorySummaryResponse(intakeHistory, details);
+        }
+        LocalDate today = LocalDate.now();
+        if (date.equals(today)) {
+            return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
+        }
+        return targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(member.getId(), date)
+                .map(latestTargetAmount -> new IntakeHistorySummaryResponse(date, latestTargetAmount))
+                .orElseGet(() -> new IntakeHistorySummaryResponse(date));
     }
 
     @Transactional
@@ -111,105 +181,29 @@ public class IntakeHistoryService {
             MemberDetails memberDetails
     ) {
         Member member = getMember(memberDetails.id());
-        IntakeHistoryDetail intakeHistoryDetail = findIntakeHistoryDetailByIdWithHistoryAndMember(
-                intakeHistoryDetailId);
-
-        validatePossibleToDelete(intakeHistoryDetail, member);
-        intakeHistoryDetailRepository.delete(intakeHistoryDetail);
-
-        List<IntakeHistoryDetail> intakeHistoryDetails = intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                member, LocalDate.now(), LocalDate.now());
-        if (intakeHistoryDetails.isEmpty()) {
-            IntakeHistory intakeHistory = intakeHistoryRepository.findByMemberAndHistoryDate(member, LocalDate.now())
-                    .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY));
-            intakeHistoryRepository.delete(intakeHistory);
-        }
+        intakeHistoryCrudService.deleteIntakeHistoryDetail(member, intakeHistoryDetailId);
     }
 
-    private void validatePossibleToDelete(
-            IntakeHistoryDetail intakeHistoryDetail,
-            Member member
-    ) {
-        if (!intakeHistoryDetail.isOwnedBy(member)) {
-            throw new CommonException(NOT_PERMITTED_FOR_INTAKE_HISTORY);
-        }
-
-        LocalDate today = LocalDate.now();
-        if (!intakeHistoryDetail.isCreatedAt(today)) {
-            throw new CommonException(INVALID_DATE_FOR_DELETE_INTAKE_HISTORY);
-        }
-    }
-
-
-    private List<IntakeHistoryDetail> findIntakeHistoriesOfDate(
-            LocalDate date,
-            Member member
-    ) {
-        return intakeHistoryDetailRepository.findAllByMemberAndDateRange(
-                member,
-                date,
-                date
-        );
-    }
-
-    private int calculateTotalIntakeAmount(List<IntakeHistoryDetail> intakeHistoryDetails) {
-        return intakeHistoryDetails
-                .stream()
-                .mapToInt(intakeHistoryDetail -> intakeHistoryDetail.getIntakeAmount().value())
-                .sum();
-    }
-
-    private int findStreak(Member member, LocalDate todayDate) {
-        return intakeHistoryRepository.findByMemberAndHistoryDate(member, todayDate.minusDays(1))
-                .map(intakeHistory -> intakeHistory.getStreak() + 1)
-                .orElse(1);
-    }
-
-    private IntakeHistorySummaryResponse toIntakeHistorySummaryResponse(
+    private CreateIntakeHistoryDetailResponse getCreateIntakeHistoryResponse(
             IntakeHistory intakeHistory,
-            List<IntakeHistoryDetail> intakeDetailsOfDate
+            int intakeAmount,
+            IntakeType intakeType
     ) {
-        List<IntakeDetailResponse> intakeDetailResponses = toIntakeDetailResponses(intakeDetailsOfDate);
+        int totalIntakeAmount = intakeHistoryCrudService.getTotalIntakeAmount(intakeHistory);
+        AchievementRate achievementRate = new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount());
+        String commentByAchievementRate = CommentOfAchievementRate.findCommentByAchievementRate(achievementRate);
 
-        int totalIntakeAmount = calculateTotalIntakeAmount(intakeDetailsOfDate);
-
-        TargetAmount targetAmountOfTheDay = intakeHistory.getTargetAmount();
-        AchievementRate achievementRate = new AchievementRate(
-                totalIntakeAmount,
-                targetAmountOfTheDay
-        );
-
-        return new IntakeHistorySummaryResponse(
-                intakeHistory.getHistoryDate(),
-                targetAmountOfTheDay.value(),
-                totalIntakeAmount,
-                achievementRate.value(),
-                intakeHistory.getStreak(),
-                intakeDetailResponses
-        );
-    }
-
-    private List<IntakeDetailResponse> toIntakeDetailResponses(List<IntakeHistoryDetail> intakeDetails) {
-        return intakeDetails.stream()
-                .map(IntakeDetailResponse::new).toList();
-    }
-
-    private IntakeHistoryDetail findIntakeHistoryDetailByIdWithHistoryAndMember(Long id) {
-        return intakeHistoryDetailRepository.findWithHistoryAndMemberById(id)
-                .orElseThrow(() -> new CommonException(NOT_FOUND_INTAKE_HISTORY_DETAIL));
-    }
-
-    private IntakeHistorySummaryResponse createDefaultResponse(LocalDate date, Member member) {
-        if (date.equals(LocalDate.now())) {
-            return new IntakeHistorySummaryResponse(date, member.getTargetAmount().value());
-        }
-        return targetAmountSnapshotRepository.findLatestTargetAmountValueByMemberIdBeforeDate(member.getId(), date)
-                .map(value -> new IntakeHistorySummaryResponse(date, value))
-                .orElseGet(() -> new IntakeHistorySummaryResponse(date));
+        return new CreateIntakeHistoryDetailResponse(achievementRate.value(), commentByAchievementRate, intakeAmount,
+                intakeType);
     }
 
     private Member getMember(Long id) {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
+    }
+
+    private Cup getCup(Long id) {
+        return cupRepository.findById(id)
+                .orElseThrow(() -> new CommonException(NOT_FOUND_CUP));
     }
 }

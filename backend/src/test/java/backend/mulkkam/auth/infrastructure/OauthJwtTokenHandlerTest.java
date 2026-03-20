@@ -7,7 +7,7 @@ import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.exception.InvalidTokenException;
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -31,9 +31,10 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
             oauthAccountRepository.save(oauthAccount);
+            String deviceUuid = "deviceUuid";
 
             // when
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
             Long actual = oauthJwtTokenHandler.getAccountId(token);
 
             // then
@@ -50,8 +51,10 @@ class OauthJwtTokenHandlerTest extends ServiceIntegrationTest {
         void success_createdToken() throws InvalidTokenException {
             // given
             OauthAccount oauthAccount = new OauthAccount("testId", OauthProvider.KAKAO);
+            String deviceUuid = "deviceUuid";
+
             oauthAccountRepository.save(oauthAccount);
-            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount);
+            String token = oauthJwtTokenHandler.createAccessToken(oauthAccount, deviceUuid);
 
             // when
             Long actual = oauthJwtTokenHandler.getAccountId(token);

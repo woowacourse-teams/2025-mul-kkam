@@ -8,27 +8,37 @@ import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import java.io.IOException;
-import java.util.List;
-
 @RequiredArgsConstructor
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final List<HttpEndpoint> EXCLUDE_ENDPOINTS = List.of(
+            /* before signup */
             HttpEndpoint.exact("/auth/kakao", HttpMethod.POST),
             HttpEndpoint.exact("/auth/token/reissue", HttpMethod.POST),
+            HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
+            HttpEndpoint.exact("/cups/default", HttpMethod.GET),
+
+            /* swagger */
             HttpEndpoint.prefix("/swagger-ui", HttpMethod.GET),
             HttpEndpoint.prefix("/v3/api-docs", HttpMethod.GET),
-            HttpEndpoint.exact("/nickname/validation", HttpMethod.GET),
+
+            /* etc - for additional functions */
             HttpEndpoint.prefix("/actuator", HttpMethod.GET),
-            HttpEndpoint.prefix("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST)
+            HttpEndpoint.prefix("/h2-console", HttpMethod.GET, HttpMethod.OPTIONS, HttpMethod.POST),
+            HttpEndpoint.prefix("/versions", HttpMethod.GET),
+            HttpEndpoint.prefix("/notifications/maintenance/all", HttpMethod.POST),
+
+            // TODO: 알림 성능 확인 이후 제거
+            HttpEndpoint.prefix("/notifications/test", HttpMethod.GET)
     );
 
     private final AuthenticationHeaderHandler authenticationHeaderHandler;
@@ -44,8 +54,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             String token = authenticationHeaderHandler.extractToken(request);
             Long accountId = oauthJwtTokenHandler.getAccountId(token);
             Long memberId = oauthJwtTokenHandler.getMemberId(token);
+            String deviceUuid = oauthJwtTokenHandler.getDeviceUuid(token);
             request.setAttribute("account_id", accountId);
             request.setAttribute("member_id", memberId);
+            request.setAttribute("device_uuid", deviceUuid);
             filterChain.doFilter(request, response);
         } catch (InvalidTokenException e) {
             request.setAttribute(RequestDispatcher.ERROR_REQUEST_URI, request.getRequestURI());

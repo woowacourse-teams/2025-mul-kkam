@@ -1,6 +1,6 @@
 package backend.mulkkam.device.controller;
 
-import backend.mulkkam.common.dto.MemberDetails;
+import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.service.DeviceService;
@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,10 +31,25 @@ public class DeviceController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @PostMapping
     public ResponseEntity<Void> register(
+            @RequestBody RegisterDeviceRequest registerDeviceRequest,
             @Parameter(hidden = true)
-            MemberDetails memberDetails,
-            @RequestBody RegisterDeviceRequest registerDeviceRequest) {
-        deviceService.register(registerDeviceRequest, memberDetails);
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
+    ) {
+        deviceService.register(registerDeviceRequest, memberAndDeviceUuidDetails);
+        return ResponseEntity.ok().build();
+    }
+
+    //TODO: 디바이스 uri 변경
+    @Operation(summary = "기기 삭제", description = "현재 액세스 토큰에 있는 디바이스를 삭제합니다.")
+    @ApiResponse(responseCode = "200", description = "삭제 완료")
+    @ApiResponse(responseCode = "401", description = "인증 실패")
+    @ApiResponse(responseCode = "404", description = "기기 없음")
+    @DeleteMapping("/fcm-token")
+    public ResponseEntity<Void> deleteFcmToken(
+            @Parameter(hidden = true)
+            MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
+    ) {
+        deviceService.delete(memberAndDeviceUuidDetails);
         return ResponseEntity.ok().build();
     }
 }

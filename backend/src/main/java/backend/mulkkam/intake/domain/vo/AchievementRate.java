@@ -21,4 +21,8 @@ public record AchievementRate(double value) {
         double value = ((double) totalIntakeAmount / target) * 100;
         return Math.min(MAX_VALUE, value);
     }
+
+    public static AchievementRate empty() {
+        return new AchievementRate(DEFAULT_VALUE);
+    }
 }

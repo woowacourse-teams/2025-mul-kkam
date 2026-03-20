@@ -9,17 +9,17 @@ public record RecommendAmount(int value) {
     private static final int MAX_RECOMMEND_AMOUNT = 5_000;
     private static final int STANDARD_WEIGHT = 60;
 
+    public RecommendAmount(int value) {
+        this.value = clampValue(value);
+    }
+
     public RecommendAmount(PhysicalAttributes physicalAttributes) {
         this(calculateRecommendedAmount(physicalAttributes));
     }
 
-    public RecommendAmount(int value) {
-        this.value = clampValue(value);
-    }
-    
     private static int calculateRecommendedAmount(PhysicalAttributes physicalAttributes) {
         double weight = determineWeight(physicalAttributes);
-        return clampValue((int) (weight * WATER_INTAKE_PER_KG));
+        return (int) (weight * WATER_INTAKE_PER_KG);
     }
 
     private static double determineWeight(PhysicalAttributes physicalAttributes) {

@@ -1,0 +1,2 @@
+ALTER TABLE device
+    MODIFY COLUMN token VARCHAR(255) NULL;

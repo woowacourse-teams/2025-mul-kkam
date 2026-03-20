@@ -8,8 +8,8 @@ import backend.mulkkam.intake.dto.request.DateRangeRequest;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.repository.MemberRepository;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -160,7 +160,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()
@@ -210,7 +210,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()
@@ -258,7 +258,7 @@ class IntakeHistoryRepositoryTest {
                 );
 
                 // when
-                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndHistoryDateBetween(
+                List<IntakeHistory> actual = intakeHistoryRepository.findAllByMemberAndDateRangeWithDetails(
                         savedMember,
                         dateRangeRequest.from(),
                         dateRangeRequest.to()

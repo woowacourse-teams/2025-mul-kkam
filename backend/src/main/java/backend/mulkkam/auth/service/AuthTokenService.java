@@ -27,20 +27,20 @@ public class AuthTokenService {
     private final AccountRefreshTokenRepository accountRefreshTokenRepository;
 
     @Transactional
-    public void logout(OauthAccountDetails accountDetails) {
-        accountRefreshTokenRepository.deleteByAccountId(accountDetails.id());
+    public void logout(
+            OauthAccountDetails accountDetails
+    ) {
+        accountRefreshTokenRepository.deleteByAccountIdAndDeviceUuid(accountDetails.id(), accountDetails.deviceUuid());
     }
 
     @Transactional
     public ReissueTokenResponse reissueToken(ReissueTokenRequest request) {
         String refreshToken = request.refreshToken();
         OauthAccount account = getAccountByToken(refreshToken);
-
-        AccountRefreshToken saved = loadRefreshToken(account);
+        AccountRefreshToken saved = loadRefreshToken(account, request.deviceUuid());
         validateRequestToken(saved, refreshToken);
-
-        String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account);
-        String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account);
+        String reissuedAccessToken = oauthJwtTokenHandler.createAccessToken(account, request.deviceUuid());
+        String reissuedRefreshToken = oauthJwtTokenHandler.createRefreshToken(account, request.deviceUuid());
 
         saved.reissueToken(reissuedRefreshToken);
         return new ReissueTokenResponse(reissuedAccessToken, reissuedRefreshToken);
@@ -60,8 +60,11 @@ public class AuthTokenService {
         }
     }
 
-    private AccountRefreshToken loadRefreshToken(OauthAccount account) {
-        return accountRefreshTokenRepository.findByAccount(account)
+    private AccountRefreshToken loadRefreshToken(
+            OauthAccount oauthAccount,
+            String deviceUuid
+    ) {
+        return accountRefreshTokenRepository.findByAccountAndDeviceUuid(oauthAccount, deviceUuid)
                 .orElseThrow(() -> new CommonException(UNAUTHORIZED));
     }
 

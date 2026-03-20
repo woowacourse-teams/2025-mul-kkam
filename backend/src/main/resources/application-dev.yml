@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_RW_USERNAME}
+    password: ${DEV_DATASOURCE_RW_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -18,10 +18,14 @@ spring:
 
   flyway:
     enabled: true
-    baseline-on-migrate: true
+    baseline-on-migrate: false
     validate-on-migrate: true
-    locations: classpath:db/migration
+    locations: classpath:db/migration/common, classpath:db/migration/mysql
     clean-disabled: true
+    url: ${DEV_DATASOURCE_URL}
+    user: ${DEV_DATASOURCE_MIGRATION_USERNAME}
+    password: ${DEV_DATASOURCE_MIGRATION_PASSWORD}
+
 
 security:
   jwt:
@@ -32,8 +36,11 @@ security:
       expire-length: ${REFRESH_TOKEN_EXPIRE}
 
 fcm:
-  base64-encoding-key: ${FCM_BASE64_ENCODING_KEY}
-  project-id: ${FCM_PROJECT_ID}
+  base64-encoding-key: ${DEV_FCM_BASE64_ENCODING_KEY}
+  project-id: ${DEV_FCM_PROJECT_ID}
+
+notification:
+  secret-key: ${NOTIFICATION_SECRET_KEY}
 
 open-weather:
   api:
@@ -62,6 +69,11 @@ management:
   cloudwatch:
     metrics:
       export:
-        enabled: true
+        enabled: false
         step: 1m
         namespace: Mulkkam/Dev
+
+logging:
+  level:
+    org:
+      flywaydb: DEBUG

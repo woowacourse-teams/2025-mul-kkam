@@ -1,16 +1,15 @@
 package backend.mulkkam.member.controller;
 
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.FailureBody;
-import backend.mulkkam.member.dto.CreateMemberRequest;
-import backend.mulkkam.member.dto.OnboardingStatusResponse;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.ModifyIsMarketingNotificationAgreedRequest;
 import backend.mulkkam.member.dto.request.ModifyIsNightNotificationAgreedRequest;
+import backend.mulkkam.member.dto.request.ModifyIsReminderEnabledRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
 import backend.mulkkam.member.dto.response.MemberResponse;
+import backend.mulkkam.member.dto.response.MemberSearchResponse;
 import backend.mulkkam.member.dto.response.NotificationSettingsResponse;
 import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.service.MemberService;
@@ -21,6 +20,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.time.LocalDate;
 
 @Tag(name = "회원", description = "회원 관리 API")
 @RequiredArgsConstructor
@@ -131,32 +129,6 @@ public class MemberController {
         return ResponseEntity.ok(memberNicknameResponse);
     }
 
-    @Operation(summary = "온보딩 정보 생성", description = "OAuth 인증이 완료된 회원의 온보딩 정보를 생성합니다.")
-    @ApiResponse(responseCode = "200", description = "온보딩 정보 생성 성공")
-    @ApiResponse(responseCode = "400", description = "이미 온보딩된 계정", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
-            @ExampleObject(name = "이미 온보딩", summary = "OauthAccount에 Member 이미 연결", value = "{\"code\":\"MEMBER_ALREADY_EXIST_IN_OAUTH_ACCOUNT\"}")
-    }))
-    @PostMapping
-    public ResponseEntity<Void> create(
-            @Parameter(hidden = true)
-            OauthAccountDetails accountDetails,
-            @RequestBody CreateMemberRequest createMemberRequest
-    ) {
-        memberService.create(accountDetails, createMemberRequest);
-        return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "온보딩 상태 확인", description = "회원의 온보딩 완료 여부를 확인합니다.")
-    @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = OnboardingStatusResponse.class)))
-    @GetMapping("/check/onboarding")
-    public ResponseEntity<OnboardingStatusResponse> checkOnboardingStatus(
-            @Parameter(hidden = true)
-            OauthAccountDetails accountDetails
-    ) {
-        OnboardingStatusResponse onboardingStatusResponse = memberService.checkOnboardingStatus(accountDetails);
-        return ResponseEntity.ok(onboardingStatusResponse);
-    }
-
     @Operation(summary = "사용자 금일 진행 정보 조회", description = "주어진 날짜(= 금일)의 음용량 달성 진행 정보를 조회합니다.")
     @ApiResponse(responseCode = "200", description = "조회 성공", content = @Content(schema = @Schema(implementation = ProgressInfoResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
@@ -209,11 +181,43 @@ public class MemberController {
         return ResponseEntity.ok(notificationSettingsResponse);
     }
 
+    @Operation(summary = "사용자 리마인더 스케쥴링 정보 수정", description = "리마인더 스케쥴링 정보를 수정합니다.")
+    @ApiResponse(responseCode = "200", description = "반영 성공")
+    @PatchMapping("/reminder")
+    public ResponseEntity<Void> modifyIsReminderEnabled(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "boolean 값", required = true, example = "true")
+            @RequestBody ModifyIsReminderEnabledRequest modifyIsReminderEnabledRequest
+    ) {
+        memberService.modifyIsReminderEnabled(memberDetails, modifyIsReminderEnabledRequest);
+        return ResponseEntity.ok().build();
+    }
+
     @Operation(summary = "사용자 탈퇴", description = "회원을 탈퇴합니다")
     @ApiResponse(responseCode = "200", description = "탈퇴 성공")
     @DeleteMapping
-    public ResponseEntity<Void> delete(MemberDetails memberDetails) {
+    public ResponseEntity<Void> delete(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails
+    ) {
         memberService.delete(memberDetails);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "사용자 닉네임 검색", description = "사용자 닉네임을 검색합니다.")
+    @ApiResponse(responseCode = "200", description = "검색 성공")
+    @GetMapping("/search")
+    public ResponseEntity<MemberSearchResponse> search(
+            @Parameter(hidden = true)
+            MemberDetails memberDetails,
+            @Parameter(description = "검색 할 내용", required = true, example = "돈까스먹는환")
+            @RequestParam String word,
+            @Parameter(description = "커서 lastId(최초 요청시 생략)")
+            @RequestParam(required = false) Long lastId,
+            @Parameter(description = "size 값", required = true, example = "5")
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok().body(memberService.searchMember(memberDetails, word, lastId, size));
     }
 }

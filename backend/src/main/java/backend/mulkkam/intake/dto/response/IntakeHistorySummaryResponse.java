@@ -1,5 +1,9 @@
 package backend.mulkkam.intake.dto.response;
 
+import backend.mulkkam.intake.domain.IntakeHistory;
+import backend.mulkkam.intake.domain.IntakeHistoryDetail;
+import backend.mulkkam.intake.domain.vo.AchievementRate;
+import backend.mulkkam.intake.domain.vo.IntakeAmount;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -26,8 +30,9 @@ public record IntakeHistorySummaryResponse(
         int streak,
 
         @Schema(description = "음용량 상세 기록 목록")
-        List<IntakeDetailResponse> intakeDetails
+        List<IntakeHistoryDetailResponse> intakeDetails
 ) {
+
     public IntakeHistorySummaryResponse(LocalDate date, int targetAmount) {
         this(
                 date,
@@ -40,13 +45,37 @@ public record IntakeHistorySummaryResponse(
     }
 
     public IntakeHistorySummaryResponse(LocalDate date) {
+        this(date, 0);
+    }
+
+    public IntakeHistorySummaryResponse(
+            IntakeHistory intakeHistory,
+            List<IntakeHistoryDetail> details
+    ) {
+        this(intakeHistory, details, getTotalIntakeAmount(details));
+    }
+
+    private IntakeHistorySummaryResponse(
+            IntakeHistory intakeHistory,
+            List<IntakeHistoryDetail> details,
+            int totalIntakeAmount
+    ) {
         this(
-                date,
-                0,
-                0,
-                0.0,
-                0,
-                Collections.emptyList()
+                intakeHistory.getHistoryDate(),
+                intakeHistory.getTargetAmount().value(),
+                totalIntakeAmount,
+                new AchievementRate(totalIntakeAmount, intakeHistory.getTargetAmount()).value(),
+                intakeHistory.getStreak(),
+                details.stream()
+                        .map(IntakeHistoryDetailResponse::new)
+                        .toList()
         );
+    }
+
+    private static int getTotalIntakeAmount(List<IntakeHistoryDetail> details) {
+        return details.stream()
+                .map(IntakeHistoryDetail::getIntakeAmount)
+                .mapToInt(IntakeAmount::value)
+                .sum();
     }
 }

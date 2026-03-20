@@ -1,7 +1,5 @@
 package backend.mulkkam.member.service;
 
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_MEMBER_NICKNAME;
-import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.INVALID_TARGET_AMOUNT;
 import static backend.mulkkam.common.exception.errorCode.BadRequestErrorCode.SAME_AS_BEFORE_NICKNAME;
 import static backend.mulkkam.common.exception.errorCode.ConflictErrorCode.DUPLICATE_MEMBER_NICKNAME;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -11,16 +9,22 @@ import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
 import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
-import backend.mulkkam.auth.domain.OauthProvider;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
 import backend.mulkkam.common.dto.MemberDetails;
-import backend.mulkkam.common.dto.OauthAccountDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
+import backend.mulkkam.cup.domain.CupEmoji;
+import backend.mulkkam.cup.domain.DefaultCup;
+import backend.mulkkam.cup.domain.EmojiType;
+import backend.mulkkam.cup.domain.IntakeType;
+import backend.mulkkam.cup.repository.CupEmojiRepository;
 import backend.mulkkam.cup.repository.CupRepository;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.repository.DeviceRepository;
+import backend.mulkkam.friend.domain.FriendRelation;
+import backend.mulkkam.friend.domain.FriendRelationStatus;
+import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.intake.domain.IntakeHistory;
 import backend.mulkkam.intake.domain.IntakeHistoryDetail;
 import backend.mulkkam.intake.domain.vo.IntakeAmount;
@@ -30,7 +34,6 @@ import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
 import backend.mulkkam.member.domain.vo.TargetAmount;
-import backend.mulkkam.member.dto.CreateMemberRequest;
 import backend.mulkkam.member.dto.request.MemberNicknameModifyRequest;
 import backend.mulkkam.member.dto.request.PhysicalAttributesModifyRequest;
 import backend.mulkkam.member.dto.response.MemberNicknameResponse;
@@ -39,25 +42,28 @@ import backend.mulkkam.member.dto.response.ProgressInfoResponse;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.NotificationType;
+import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.repository.NotificationRepository;
-import backend.mulkkam.support.AccountRefreshTokenFixtureBuilder;
-import backend.mulkkam.support.CupFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryDetailFixtureBuilder;
-import backend.mulkkam.support.IntakeHistoryFixtureBuilder;
-import backend.mulkkam.support.MemberFixtureBuilder;
-import backend.mulkkam.support.OauthAccountFixtureBuilder;
-import backend.mulkkam.support.ServiceIntegrationTest;
+import backend.mulkkam.notification.repository.ReminderScheduleRepository;
+import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
+import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
+import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
+import backend.mulkkam.support.fixture.cup.CupFixtureBuilder;
+import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
+import backend.mulkkam.support.service.ServiceIntegrationTest;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class MemberServiceIntegrationTest extends ServiceIntegrationTest {
+
+    private static final String defaultEmojiUrl = "url";
 
     @Autowired
     private MemberService memberService;
@@ -88,6 +94,17 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
     @Autowired
     private DeviceRepository deviceRepository;
+
+    @Autowired
+    private CupEmojiRepository cupEmojiRepository;
+
+    @Autowired
+    private ReminderScheduleRepository reminderScheduleRepository;
+
+    @Autowired
+    private FriendRelationRepository friendRelationRepository;
+
+    private final CupEmoji cupEmoji = new CupEmoji("http://example.com");
 
     @DisplayName("멤버를 조회할 때")
     @Nested
@@ -276,101 +293,6 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
         }
     }
 
-    @DisplayName("온보딩 시에")
-    @Nested
-    class Create {
-
-        @DisplayName("정상적으로 회원이 저장된다")
-        @Test
-        void success_validData() {
-            // given
-            String rawNickname = "히로";
-            double weight = 60.0;
-            Gender gender = Gender.FEMALE;
-            int rawTargetIntakeAmount = 1_000;
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    rawNickname,
-                    weight,
-                    gender,
-                    rawTargetIntakeAmount,
-                    true,
-                    false
-            );
-
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            // when
-            memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest);
-
-            // then
-            List<Member> savedMembers = memberRepository.findAll();
-            assertSoftly(softly -> {
-                softly.assertThat(savedMembers.size()).isEqualTo(1);
-                softly.assertThat(savedMembers.getFirst().getMemberNickname())
-                        .isEqualTo(new MemberNickname(rawNickname));
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getWeight()).isEqualTo(weight);
-                softly.assertThat(savedMembers.getFirst().getPhysicalAttributes().getGender()).isEqualTo(gender);
-                softly.assertThat(savedMembers.getFirst().getTargetAmount())
-                        .isEqualTo(new TargetAmount(rawTargetIntakeAmount));
-            });
-        }
-
-        @DisplayName("유효하지 않은 닉네임을 사용할 경우 예외를 반환한다")
-        @ParameterizedTest
-        @ValueSource(strings = {"1", " ", "", "1234567891011"})
-        void error_invalidNickname(String invalidNickname) {
-            // given
-            double weight = 60.0;
-            Gender gender = Gender.FEMALE;
-            int rawTargetIntakeAmount = 1_000;
-            CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                    invalidNickname,
-                    weight,
-                    gender,
-                    rawTargetIntakeAmount,
-                    true,
-                    false
-            );
-
-            OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-            oauthAccountRepository.save(oauthAccount);
-
-            // when & then
-            assertThatThrownBy(
-                    () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
-                    .isInstanceOf(CommonException.class)
-                    .hasMessage(INVALID_MEMBER_NICKNAME.name());
-        }
-    }
-
-    @DisplayName("유효하지 않은 목표 음용량을 사용할 경우 예외를 반환한다")
-    @ParameterizedTest
-    @ValueSource(ints = {0, -1, -3})
-    void error_invalidTargetAmount(int invalidIntakeAmount) {
-        // given
-        String rawNickname = "히로";
-        double weight = 60.0;
-        Gender gender = Gender.FEMALE;
-        CreateMemberRequest createMemberRequest = new CreateMemberRequest(
-                rawNickname,
-                weight,
-                gender,
-                invalidIntakeAmount,
-                true,
-                false
-        );
-
-        OauthAccount oauthAccount = new OauthAccount("temp", OauthProvider.KAKAO);
-        oauthAccountRepository.save(oauthAccount);
-
-        // when & then
-        assertThatThrownBy(
-                () -> memberService.create(new OauthAccountDetails(oauthAccount.getId()), createMemberRequest))
-                .isInstanceOf(CommonException.class)
-                .hasMessage(INVALID_TARGET_AMOUNT.name());
-    }
-
     @DisplayName("멤버의 진행 상황을 조회할 때")
     @Nested
     class GetProgressInfo {
@@ -386,6 +308,12 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             memberRepository.save(member);
 
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
+                    .build();
+            cupRepository.save(cup);
+
             IntakeHistory intakeHistory = IntakeHistoryFixtureBuilder
                     .withMember(member)
                     .targetIntakeAmount(new TargetAmount(1000))
@@ -397,7 +325,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
                     .intakeAmount(new IntakeAmount(500))
-                    .build();
+                    .buildWithCup(cup);
             intakeDetailRepository.save(intakeHistoryDetail);
 
             // when
@@ -426,7 +354,7 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder
                     .builder()
                     .memberNickname(new MemberNickname(nickname))
-                    .targetAmount(new TargetAmount(rawTargetAmount))
+                    .targetAmount(rawTargetAmount)
                     .build();
             memberRepository.save(member);
 
@@ -511,6 +439,10 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
             Member member = MemberFixtureBuilder.builder()
                     .build();
             memberRepository.save(member);
+            Member friendMember = MemberFixtureBuilder.builder()
+                    .memberNickname(new MemberNickname("친구"))
+                    .build();
+            memberRepository.save(friendMember);
 
             OauthAccount oauthAccount = OauthAccountFixtureBuilder
                     .withMember(member)
@@ -521,7 +453,9 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .build();
             accountRefreshTokenRepository.save(accountRefreshToken);
 
-            Cup cup = CupFixtureBuilder.withMember(member)
+            cupEmojiRepository.save(cupEmoji);
+            Cup cup = CupFixtureBuilder
+                    .withMemberAndCupEmoji(member, cupEmoji)
                     .build();
             cupRepository.save(cup);
 
@@ -531,15 +465,22 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
 
             IntakeHistoryDetail intakeHistoryDetail = IntakeHistoryDetailFixtureBuilder
                     .withIntakeHistory(intakeHistory)
-                    .build();
+                    .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
             Device device = new Device("token", "id", member);
             deviceRepository.save(device);
 
-            Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(),
-                    new TargetAmount(1_000), member);
+            Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(), member);
             notificationRepository.save(notification);
+
+            ReminderSchedule schedule1 = new ReminderSchedule(member, LocalTime.of(10, 0));
+            ReminderSchedule schedule2 = new ReminderSchedule(member, LocalTime.of(12, 0));
+            reminderScheduleRepository.saveAll(List.of(schedule1, schedule2));
+
+            FriendRelation friendRelation = new FriendRelation(member.getId(), friendMember.getId(),
+                    FriendRelationStatus.ACCEPTED);
+            friendRelationRepository.save(friendRelation);
 
             // when
             memberService.delete(new MemberDetails(member));
@@ -553,7 +494,19 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                 softly.assertThat(intakeHistoryDetailRepository.findById(intakeHistoryDetail.getId())).isEmpty();
                 softly.assertThat(deviceRepository.findById(device.getId())).isEmpty();
                 softly.assertThat(notificationRepository.findById(notification.getId())).isEmpty();
+                softly.assertThat(reminderScheduleRepository.findById(schedule1.getId())).isEmpty();
+                softly.assertThat(reminderScheduleRepository.findById(schedule2.getId())).isEmpty();
+                softly.assertThat(friendRelationRepository.findById(friendRelation.getId())).isEmpty();
             });
+        }
+    }
+
+    private void saveDefaultCupEmojis() {
+        for (IntakeType intakeType : IntakeType.values()) {
+            DefaultCup.of(intakeType);
+            CupEmoji cupEmoji = new CupEmoji(defaultEmojiUrl);
+            cupEmoji.setEmojiType(intakeType, EmojiType.DEFAULT);
+            cupEmojiRepository.save(cupEmoji);
         }
     }
 }

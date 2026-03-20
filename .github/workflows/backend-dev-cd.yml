@@ -1,0 +1,161 @@
+name: backend-dev-cd.yml
+
+on:
+  push:
+    branches: [ "develop-be" ]
+    paths:
+      - "backend/**"
+
+jobs:
+  build-and-push:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "21"
+
+      - name: Grant execute permission to gradlew
+        run: chmod +x gradlew
+        working-directory: ./backend
+
+      - name: Build project
+        run: ./gradlew clean build -x test
+        working-directory: ./backend
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Multi-Arch Image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          file: ./backend/Dockerfile
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:latest
+            ${{ secrets.DOCKERHUB_USERNAME }}/mulkkam:${{ github.sha }}
+
+  deploy:
+    runs-on: [ self-hosted, linux, x64, dev ]
+    needs: build-and-push
+    env:
+      DEV_WAS_IP: ${{ secrets.DEV_WAS_IP }}
+      DEV_NGINX_IP: ${{ secrets.DEV_NGINX_IP }}
+      DEV_NGINX_PEM_KEY: ${{ secrets.DEV_NGINX_PEM_KEY }}
+
+    steps:
+      - name: Create/Update .env for container
+        run: |
+          cat <<EOF > ~/mulkkam/.env
+          LOG_PATH=${{ secrets.LOG_PATH }}
+          JWT_SECRET=${{ secrets.JWT_SECRET }}
+          ACCESS_TOKEN_EXPIRE=${{ secrets.ACCESS_TOKEN_EXPIRE }}
+          REFRESH_TOKEN_EXPIRE=${{ secrets.REFRESH_TOKEN_EXPIRE }}
+          DEV_FCM_BASE64_ENCODING_KEY=${{ secrets.DEV_FCM_BASE64_ENCODING_KEY }}
+          DEV_FCM_PROJECT_ID=${{ secrets.DEV_FCM_PROJECT_ID }}
+          OPEN_WEATHER_API_KEY=${{ secrets.OPEN_WEATHER_API_KEY }}
+          SPRING_PROFILES_ACTIVE=dev
+          DEV_DATASOURCE_URL=${{ secrets.DEV_DATASOURCE_URL }}
+          DEV_DATASOURCE_RW_USERNAME=${{ secrets.DEV_DATASOURCE_RW_USERNAME }}
+          DEV_DATASOURCE_RW_PASSWORD=${{ secrets.DEV_DATASOURCE_RW_PASSWORD }}
+          DEV_DATASOURCE_MIGRATION_USERNAME=${{ secrets.DEV_DATASOURCE_MIGRATION_USERNAME }}
+          DEV_DATASOURCE_MIGRATION_PASSWORD=${{ secrets.DEV_DATASOURCE_MIGRATION_PASSWORD }}
+          NOTIFICATION_SECRET_KEY=${{ secrets.NOTIFICATION_SECRET_KEY }}
+          EOF
+
+      - name: Setup SSH keys
+        run: |
+          mkdir -p ~/.ssh
+          echo "${DEV_NGINX_PEM_KEY}" > ~/.ssh/nginx_key
+          chmod 600 ~/.ssh/nginx_key
+          
+          cat > ~/.ssh/config << EOF
+          Host nginx
+          HostName ${DEV_NGINX_IP}
+          User ubuntu
+          IdentityFile ~/.ssh/nginx_key
+          StrictHostKeyChecking no
+          EOF
+
+      - name: Decide colors (by health)
+        id: color
+        run: |
+          HEALTH="/actuator/health"
+          BLUE_UP=0; GREEN_UP=0
+          curl -fsS "http://${DEV_WAS_IP}:8081${HEALTH}" | grep -q '"status":"UP"' && BLUE_UP=1 || true
+          curl -fsS "http://${DEV_WAS_IP}:8082${HEALTH}" | grep -q '"status":"UP"' && GREEN_UP=1 || true
+
+          # 둘 다 살아있으면 green 배포, 하나만 살아있으면 그걸 현재 버전으로
+          CURRENT=""
+          if [ "$BLUE_UP" -eq 1 ] && [ "$GREEN_UP" -eq 0 ]; then
+            CURRENT="blue"
+          elif [ "$BLUE_UP" -eq 0 ] && [ "$GREEN_UP" -eq 1 ]; then
+            CURRENT="green"
+          else
+            # 둘 다 살아있으면 green 배포
+            CURRENT="blue"
+          fi
+
+          if [ "$CURRENT" = "blue" ]; then NEXT="green"; else NEXT="blue"; fi
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          echo "next=$NEXT" >> $GITHUB_OUTPUT
+
+      - name: Pull & start next color
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          export IMAGE_TAG=${{ github.sha }}
+          sudo IMAGE_TAG=${{ github.sha }} docker compose pull backend-${{ steps.color.outputs.next }}
+          sudo IMAGE_TAG=${{ github.sha }} docker compose up -d backend-${{ steps.color.outputs.next }}
+
+      - name: Wait for health on next color
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
+          echo "Waiting health on :$PORT ..."
+          for i in {1..60}; do
+            if curl -fsS "http://${DEV_WAS_IP}:${PORT}/actuator/health" | grep -q '"status":"UP"'; then
+              echo "Healthy!"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "Health check failed on port ${PORT}"
+          exit 1
+
+      - name: Rollback on health check failure
+        if: failure()
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then CONTAINER=backend-blue; else CONTAINER=backend-green; fi
+          sudo docker rm -f "$CONTAINER" || true
+          echo "Rolled back to previous version"
+
+      - name: Switch Nginx upstream
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then PORT=8081; else PORT=8082; fi
+          ssh -i ~/.ssh/nginx_key ubuntu@nginx << NGINX_EOF
+          sudo mkdir -p /etc/nginx/snippets/
+          echo "set \\\$mulkkam_upstream http://${DEV_WAS_IP}:${PORT};" | sudo tee /etc/nginx/snippets/mulkkam_upstream.conf
+          sudo nginx -t
+          sudo systemctl reload nginx
+          NGINX_EOF
+
+      - name: Stop the other color
+        working-directory: /home/ubuntu/mulkkam
+        run: |
+          if [ "${{ steps.color.outputs.next }}" = "blue" ]; then OLD=backend-green; else OLD=backend-blue; fi
+          sudo docker rm -f "$OLD" || true
+
+      - name: Prune old dangling images
+        run: sudo docker image prune -f || true
