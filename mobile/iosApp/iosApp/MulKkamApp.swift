@@ -16,7 +16,11 @@ struct MulKkamApp: App {
 #else
         let isDebug = false
 #endif
-        KoinHelper().doInitKoin(baseUrl: baseUrl, isDebug: isDebug)
+        KoinHelper().doInitKoin(
+            baseUrl: baseUrl,
+            isDebug: isDebug,
+            firebaseBridge: FirebaseLoggingBridgeImpl()
+        )
     }
 
     var body: some Scene {

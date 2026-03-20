@@ -1,5 +1,6 @@
 package com.mulkkam.di
 
+import com.mulkkam.domain.logger.FirebaseLoggingBridge
 import com.mulkkam.domain.repository.NotificationRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -16,9 +17,10 @@ class KoinHelper {
     fun initKoin(
         baseUrl: String,
         isDebug: Boolean,
+        firebaseBridge: FirebaseLoggingBridge,
     ) {
         startKoin {
-            modules(iosSharedModule(baseUrl, isDebug))
+            modules(iosSharedModule(baseUrl, isDebug, firebaseBridge))
         }
     }
 

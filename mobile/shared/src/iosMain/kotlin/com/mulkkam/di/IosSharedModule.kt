@@ -1,15 +1,17 @@
 package com.mulkkam.di
 
+import com.mulkkam.domain.logger.FirebaseLoggingBridge
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
 fun iosSharedModule(
     baseUrl: String,
     isDebug: Boolean,
+    firebaseBridge: FirebaseLoggingBridge,
 ): Module =
     module {
         includes(
-            loggerModule,
+            loggingModule(isDebug, firebaseBridge),
             checkerModule,
             healthManagerModule,
             httpClientEngineModule,
