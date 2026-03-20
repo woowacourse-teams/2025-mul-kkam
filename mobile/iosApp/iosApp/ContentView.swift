@@ -5,7 +5,7 @@ import Shared
 struct ComposeView: UIViewControllerRepresentable {
     let loginPlatform = LoginPlatform()
     let appVersion = (Bundle.main.infoDictionary?["MARKETING_VERSION"] as? String) ?? ""
-
+    
     func makeUIViewController(context: Context) -> UIViewController {
         MainViewControllerKt.MainViewController(
             onLogin: { authPlatform, onSuccess, onError in
@@ -29,8 +29,14 @@ struct ComposeView: UIViewControllerRepresentable {
                 )
             },
             onRequestInitialPermissions: {
-                // TODO: iOS 건강 권한 요청은 추후 구현.
-                PushNotificationManager.shared.requestNotificationPermission()
+                HealthKitManager.shared.requestAuthorization(
+                    onBurnedCalorieUpdated: { kcal in
+                        KoinHelper().postActiveCaloriesBurned(kcal: kcal)
+                    },
+                    completion:  { _ in
+                        PushNotificationManager.shared.requestNotificationPermission()
+                    },
+                )
             },
             appVersion: appVersion,
         )

@@ -18,7 +18,6 @@ class TargetAmountViewModel(
     private val intakeRepository: IntakeRepository,
 ) : ViewModel() {
     private var targetAmountInput: TargetAmount? = null
-
     private val _targetAmountOnboardingUiState: MutableStateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>> =
         MutableStateFlow(MulKkamUiState.Idle)
     val targetAmountOnboardingUiState: StateFlow<MulKkamUiState<TargetAmountOnboardingUiModel>>

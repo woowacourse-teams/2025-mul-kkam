@@ -8,6 +8,8 @@ import com.mulkkam.ui.home.ManualDrinkViewModel
 import com.mulkkam.ui.home.home.HomeViewModel
 import com.mulkkam.ui.home.notification.NotificationViewModel
 import com.mulkkam.ui.main.MainViewModel
+import com.mulkkam.ui.navigation.ONBOARDING_SCOPE
+import com.mulkkam.ui.onboarding.OnboardingViewModel
 import com.mulkkam.ui.onboarding.bioinfo.BioInfoViewModel
 import com.mulkkam.ui.onboarding.cups.CupViewModel
 import com.mulkkam.ui.onboarding.cups.CupsViewModel
@@ -28,6 +30,7 @@ import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
 import com.mulkkam.ui.settingterms.SettingTermsViewModel
 import org.koin.core.module.Module
 import org.koin.core.module.dsl.viewModel
+import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 val commonViewModelModule: Module =
@@ -58,4 +61,14 @@ val commonViewModelModule: Module =
         viewModel { CupViewModel(get()) }
         viewModel { TermsAgreementViewModel() }
         viewModel { SettingTermsViewModel() }
+        viewModel { TermsAgreementViewModel() }
+        viewModel { NicknameViewModel(get()) }
+        viewModel { BioInfoViewModel() }
+        viewModel { TargetAmountViewModel(get()) }
+        viewModel { CupsViewModel(get(), get(), get()) }
+        viewModel { CupViewModel(get()) }
+
+        scope(named(ONBOARDING_SCOPE)) {
+            scoped { OnboardingViewModel() }
+        }
     }

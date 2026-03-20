@@ -12,7 +12,6 @@ fun iosSharedModule(
     module {
         includes(
             loggingModule(isDebug, firebaseBridge),
-            repositoryModule,
             checkerModule,
             healthManagerModule,
             httpClientEngineModule,
