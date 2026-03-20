@@ -1,0 +1,37 @@
+package com.mulkkam.fixture
+
+import com.mulkkam.domain.model.Cup
+import com.mulkkam.domain.model.CupEmoji
+import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.cups.CupName
+
+val HWANNOW_CUP =
+    Cup(
+        id = 1,
+        name = CupName("hwannow"),
+        amount = CupAmount(300),
+        rank = 1,
+        intakeType = IntakeType.WATER,
+        emoji = CupEmoji(0L, ""),
+    )
+
+val CHECHE_CUP =
+    Cup(
+        id = 2,
+        name = CupName("cheche"),
+        amount = CupAmount(200),
+        rank = 2,
+        intakeType = IntakeType.WATER,
+        emoji = CupEmoji(0L, ""),
+    )
+
+val KALI_CUP =
+    Cup(
+        id = 3,
+        name = CupName("kali"),
+        amount = CupAmount(500),
+        rank = 3,
+        intakeType = IntakeType.WATER,
+        emoji = CupEmoji(0L, ""),
+    )

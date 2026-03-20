@@ -1,0 +1,34 @@
+package com.mulkkam.data.remote.model.response.cups
+
+import com.mulkkam.domain.model.Cup
+import com.mulkkam.domain.model.IntakeType
+import com.mulkkam.domain.model.cups.CupAmount
+import com.mulkkam.domain.model.cups.CupName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class CupResponse(
+    @SerialName("id")
+    val id: Long? = null,
+    @SerialName("cupNickname")
+    val cupNickname: String,
+    @SerialName("cupAmount")
+    val cupAmount: Int,
+    @SerialName("cupRank")
+    val cupRank: Int,
+    @SerialName("intakeType")
+    val intakeType: String,
+    @SerialName("emoji")
+    val emoji: CupEmojiResponse,
+)
+
+fun CupResponse.toDomain() =
+    Cup(
+        id = id ?: 0L,
+        name = CupName(cupNickname),
+        amount = CupAmount(cupAmount),
+        rank = cupRank,
+        intakeType = IntakeType.from(intakeType),
+        emoji = emoji.toDomain(),
+    )
