@@ -15,7 +15,10 @@ final class HealthKitManager {
     ])
 
     private var onBurnedCalorieUpdated: ((Double) -> Void)?
-    private var lastFiredDate: Date?
+    private var lastFiredDate: Date? {
+        get { UserDefaults.standard.object(forKey: "lastFiredDate") as? Date }
+        set { UserDefaults.standard.set(newValue, forKey: "lastFiredDate") }
+    }
 
     func requestAuthorization(
         onBurnedCalorieUpdated: @escaping (Double) -> Void,
