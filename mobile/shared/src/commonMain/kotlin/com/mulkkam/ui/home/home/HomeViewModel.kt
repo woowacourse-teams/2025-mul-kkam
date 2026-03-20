@@ -58,8 +58,8 @@ class HomeViewModel(
         MutableSharedFlow(replay = 0, extraBufferCapacity = 1)
     val drinkUiState: SharedFlow<MulKkamUiState<IntakeInfo>> get() = _drinkUiState.asSharedFlow()
 
-    private val _isFirstLaunch: MutableSharedFlow<Boolean> = MutableStateFlow(false)
-    val isFirstLaunch: SharedFlow<Boolean> = _isFirstLaunch.asSharedFlow()
+    private val _isFirstLaunch: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isFirstLaunch: StateFlow<Boolean> = _isFirstLaunch.asStateFlow()
 
     private var isPostingDrink: Boolean = false
     private var latestNotificationPermission: Boolean? = null

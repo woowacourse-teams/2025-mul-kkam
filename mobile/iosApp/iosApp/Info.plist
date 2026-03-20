@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSHealthShareUsageDescription</key>
+	<string>앱에서 사용자의 활동 에너지 소모량을 분석하기 위해 건강 데이터를 사용합니다.</string>
 	<key>BASE_URL</key>
 	<string>$(BASE_URL)</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
@@ -31,6 +33,7 @@
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>
+        <string>healthkit</string>
 	</array>
 </dict>
 </plist>

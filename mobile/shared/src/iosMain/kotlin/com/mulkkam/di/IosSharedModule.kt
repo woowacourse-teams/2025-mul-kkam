@@ -10,7 +10,6 @@ fun iosSharedModule(
     module {
         includes(
             loggerModule,
-            repositoryModule,
             checkerModule,
             healthManagerModule,
             httpClientEngineModule,
