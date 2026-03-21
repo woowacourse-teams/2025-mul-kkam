@@ -23,7 +23,7 @@ on:
     branches:
       - main
     paths:
-      - "android/**"
+      - "mobile/**"
 
 concurrency:
   group: android-cd-${{ github.ref_name }}
@@ -47,7 +47,7 @@ jobs:
       DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
       KAKAO_NATIVE_APP_KEY: ${{ secrets.KEY_KAKAO }}
       GOOGLE_SERVICES_RELEASE: ${{ secrets.GOOGLE_SERVICES_RELEASE }}
-      ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/android/app/upload-keystore.jks
+      ANDROID_KEYSTORE_PATH: ${{ github.workspace }}/mobile/androidApp/upload-keystore.jks
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -83,7 +83,7 @@ jobs:
       - name: Configure local.properties
         run: |
           set -euo pipefail
-          cat <<LOCAL_PROPERTIES > android/local.properties
+          cat <<LOCAL_PROPERTIES > mobile/local.properties
           key.kakao=${KAKAO_NATIVE_APP_KEY}
           release.base.url=${RELEASE_BASE_URL}
           debug.base.url=${DEBUG_BASE_URL:-$RELEASE_BASE_URL}
@@ -104,14 +104,25 @@ jobs:
           if not google_services:
             raise SystemExit("google-services.json secret is empty")
 
-          output_path = pathlib.Path("android/app/src/release/google-services.json")
+          output_path = pathlib.Path("mobile/androidApp/src/release/google-services.json")
           output_path.parent.mkdir(parents=True, exist_ok=True)
           output_path.write_text(google_services, encoding="utf-8")
           PY
 
+      - name: Resolve Android package name
+        id: package-name
+        run: |
+          set -euo pipefail
+          package_name="$(sed -n 's/.*applicationId\s*=\s*"\([^"]\+\)".*/\1/p' mobile/androidApp/build.gradle.kts | head -n 1)"
+          if [ -z "$package_name" ]; then
+            printf '::error::Unable to resolve applicationId from mobile/androidApp/build.gradle.kts\n'
+            exit 1
+          fi
+          printf 'value=%s\n' "$package_name" >> "$GITHUB_OUTPUT"
+
       - name: Build release bundle
-        run: ./gradlew :app:bundleRelease
-        working-directory: android
+        run: ./gradlew :androidApp:bundleRelease
+        working-directory: mobile
         env:
           CI: true
 
@@ -145,10 +156,10 @@ jobs:
               exit 1
             fi
 
-            notes_path="android/release-notes/ko-KR/${release_identifier}.txt"
+            notes_path="mobile/release-notes/ko-KR/${release_identifier}.txt"
             if [ ! -f "$notes_path" ]; then
               stripped_identifier="$(strip_version_prefix "$release_identifier")"
-              alternative_notes_path="android/release-notes/ko-KR/${stripped_identifier}.txt"
+              alternative_notes_path="mobile/release-notes/ko-KR/${stripped_identifier}.txt"
               if [ -f "$alternative_notes_path" ]; then
                 notes_path="$alternative_notes_path"
               fi
@@ -170,11 +181,11 @@ jobs:
             fi
           fi
 
-          mkdir -p android/release-notes/whatsnew
-          cp "$notes_path" "android/release-notes/whatsnew/whatsnew-ko-KR"
+          mkdir -p mobile/release-notes/whatsnew
+          cp "$notes_path" "mobile/release-notes/whatsnew/whatsnew-ko-KR"
 
           {
-            printf 'directory=android/release-notes/whatsnew\n'
+            printf 'directory=mobile/release-notes/whatsnew\n'
             printf 'release-name=%s\n' "$release_name"
           } >> "$GITHUB_OUTPUT"
         env:
@@ -186,8 +197,8 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ env.SERVICE_ACCOUNT_JSON }}
-          packageName: com.mulkkam
-          releaseFiles: android/app/build/outputs/bundle/release/app-release.aab
+          packageName: ${{ steps.package-name.outputs.value }}
+          releaseFiles: mobile/androidApp/build/outputs/bundle/release/*.aab
           track: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.track || 'production' }}
           status: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.status || 'completed' }}
           releaseName: ${{ steps.release-notes.outputs.release-name }}
@@ -197,6 +208,6 @@ jobs:
       - name: Upload release bundle artifact
         uses: actions/upload-artifact@v4
         with:
-          name: app-release-bundle
-          path: android/app/build/outputs/bundle/release/app-release.aab
+          name: androidApp-release-bundle
+          path: mobile/androidApp/build/outputs/bundle/release/*.aab
           if-no-files-found: error
