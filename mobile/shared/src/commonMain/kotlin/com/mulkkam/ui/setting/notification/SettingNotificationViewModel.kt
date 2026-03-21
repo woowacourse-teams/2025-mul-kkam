@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingnotification
+package com.mulkkam.ui.setting.notification
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,7 +7,7 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.ui.model.MulKkamUiState
 import com.mulkkam.ui.model.toSuccessDataOrNull
-import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
+import com.mulkkam.ui.setting.notification.model.SettingNotificationEvent
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,13 +21,16 @@ class SettingNotificationViewModel(
     private val membersRepository: MembersRepository,
     private val logger: Logger,
 ) : ViewModel() {
-    private val _marketingNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> = MutableStateFlow(MulKkamUiState.Idle)
+    private val _marketingNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> =
+        MutableStateFlow(MulKkamUiState.Idle)
     val marketingNotificationState: StateFlow<MulKkamUiState<Boolean>> get() = _marketingNotificationState.asStateFlow()
 
-    private val _nightNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> = MutableStateFlow(MulKkamUiState.Idle)
+    private val _nightNotificationState: MutableStateFlow<MulKkamUiState<Boolean>> =
+        MutableStateFlow(MulKkamUiState.Idle)
     val nightNotificationState: StateFlow<MulKkamUiState<Boolean>> get() = _nightNotificationState.asStateFlow()
 
-    private val _notificationEvents: MutableSharedFlow<SettingNotificationEvent> = MutableSharedFlow()
+    private val _notificationEvents: MutableSharedFlow<SettingNotificationEvent> =
+        MutableSharedFlow()
     val notificationEvents: SharedFlow<SettingNotificationEvent> get() = _notificationEvents.asSharedFlow()
 
     init {

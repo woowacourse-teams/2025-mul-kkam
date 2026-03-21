@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingnotification.model
+package com.mulkkam.ui.setting.notification.model
 
 sealed interface SettingNotificationEvent {
     data object Error : SettingNotificationEvent

@@ -26,9 +26,9 @@ import com.mulkkam.ui.designsystem.Gray100
 import com.mulkkam.ui.designsystem.Gray400
 import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
+import com.mulkkam.ui.setting.accountinfo.model.AccountInfoType
+import com.mulkkam.ui.setting.accountinfo.model.toLabelResource
 import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
-import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
-import com.mulkkam.ui.settingaccountinfo.model.toLabelResource
 import com.mulkkam.ui.util.extensions.noRippleClickable
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_common_next
