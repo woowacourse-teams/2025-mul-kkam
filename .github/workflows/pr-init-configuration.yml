@@ -1,4 +1,4 @@
-name: pr-init-configuration--base-assign-reviewer-label
+name: pr-init-configuration--base-assign-label
 
 on:
   pull_request_target:
@@ -111,7 +111,7 @@ jobs:
         env:
           ISSUE_TITLE: ${{ steps.get_issue.outputs.issue_title }}
 
-      - name: Auto label, reviewers, assignee
+      - name: Auto label, assignee
         uses: actions/github-script@v6
         with:
           script: |
@@ -134,24 +134,6 @@ jobs:
               core.info(`Label '${team}' added`);
             } else {
               core.info('No team determined, skipping label');
-            }
-
-            // Compute reviewers: same team except author
-            let reviewers = [];
-            if (team && TEAM_MEMBERS[team]) {
-              reviewers = TEAM_MEMBERS[team].filter(u => u !== author);
-            }
-
-            if (reviewers.length > 0) {
-              await github.rest.pulls.requestReviewers({
-                owner,
-                repo,
-                pull_number: prNumber,
-                reviewers,
-              });
-              core.info(`Requested reviewers: ${reviewers.join(', ')}`);
-            } else {
-              core.info('No reviewers to request');
             }
 
             // Assign the author to the PR
