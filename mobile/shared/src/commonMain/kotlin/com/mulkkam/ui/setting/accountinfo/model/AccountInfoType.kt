@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo.model
+package com.mulkkam.ui.setting.accountinfo.model
 
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.setting_account_info_delete_account

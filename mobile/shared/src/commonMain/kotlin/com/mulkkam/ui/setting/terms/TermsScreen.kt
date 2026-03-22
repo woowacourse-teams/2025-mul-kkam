@@ -17,8 +17,8 @@ import com.mulkkam.ui.designsystem.MulKkamTheme
 import com.mulkkam.ui.designsystem.White
 import com.mulkkam.ui.setting.setting.component.SettingNormalItem
 import com.mulkkam.ui.setting.setting.component.SettingTopAppBar
-import com.mulkkam.ui.settingterms.model.SettingTermsType
-import com.mulkkam.ui.settingterms.model.toLabelResource
+import com.mulkkam.ui.setting.terms.model.SettingTermsType
+import com.mulkkam.ui.setting.terms.model.toLabelResource
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.setting_terms_toolbar_title
 import org.jetbrains.compose.resources.stringResource
