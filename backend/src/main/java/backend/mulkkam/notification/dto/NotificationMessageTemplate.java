@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.dto;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -24,26 +25,45 @@ public record NotificationMessageTemplate(
         );
     }
 
-    public List<Notification> toNotifications(List<Member> members, LocalDateTime createdAt) {
+    public List<Notification> toNotifications(
+            List<Member> members,
+            LocalDateTime createdAt
+    ) {
         return members.stream()
                 .map(member -> toNotification(member, createdAt))
                 .toList();
     }
 
     public SendMessageByFcmTopicRequest toSendMessageByFcmTopicRequest(String topic) {
+        return toSendMessageByFcmTopicRequest(topic, DevicePlatform.ANDROID);
+    }
+
+    public SendMessageByFcmTopicRequest toSendMessageByFcmTopicRequest(
+            String topic,
+            DevicePlatform platform
+    ) {
         return new SendMessageByFcmTopicRequest(
                 title,
                 body,
                 topic,
+                platform,
                 action
         );
     }
 
     public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(List<String> allTokens) {
+        return toSendMessageByFcmTokensRequest(allTokens, DevicePlatform.ANDROID);
+    }
+
+    public SendMessageByFcmTokensRequest toSendMessageByFcmTokensRequest(
+            List<String> allTokens,
+            DevicePlatform platform
+    ) {
         return new SendMessageByFcmTokensRequest(
                 title,
                 body,
                 allTokens,
+                platform,
                 action
         );
     }

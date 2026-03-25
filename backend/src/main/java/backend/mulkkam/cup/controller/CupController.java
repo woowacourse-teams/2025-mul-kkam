@@ -1,5 +1,6 @@
 package backend.mulkkam.cup.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.cup.dto.request.CreateCupWithoutRankRequest;
@@ -47,6 +48,7 @@ public class CupController {
     @Operation(summary = "사용자의 컵 리스트 반환", description = "사용자가 생성한 커스텀 컵 리스트를 반환합니다.")
     @ApiResponse(responseCode = "200", description = "성공 응답", content = @Content(schema = @Schema(implementation = CupsResponse.class)))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @GetMapping
     public ResponseEntity<CupsResponse> readAllSorted(
             @Parameter(hidden = true)
@@ -64,6 +66,7 @@ public class CupController {
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
     @ApiResponse(responseCode = "404", description = "존재하지 않는 음용 종류", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "존재하지 않는 음용 종류", summary = "잘못된 intakeType", value = "{\"code\":\"NOT_FOUND_INTAKE_TYPE\"}")}))
+    @RequireAuth
     @PostMapping
     public ResponseEntity<Void> createAtLastRank(
             @RequestBody CreateCupWithoutRankRequest createCupWithoutRankRequest,
@@ -89,6 +92,7 @@ public class CupController {
             @ExampleObject(name = "컵 식별자 중복", summary = "요청 내 동일한 cupId 존재", value = "{\"code\":\"DUPLICATED_CUP\"}"),
             @ExampleObject(name = "순위 값 중복", summary = "요청 내 동일한 rank 존재", value = "{\"code\":\"DUPLICATED_CUP_RANKS\"}")}))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PutMapping("/ranks")
     public ResponseEntity<CupsRanksResponse> updateRanks(
             @Parameter(hidden = true)
@@ -109,6 +113,7 @@ public class CupController {
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "권한 없음", summary = "다른 사용자의 컵 수정 시도", value = "{\"code\":\"NOT_PERMITTED_FOR_CUP\"}")}))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PatchMapping("/{cupId}")
     public ResponseEntity<Void> modifyNicknameAndAmount(
             @Parameter(hidden = true)
@@ -132,6 +137,7 @@ public class CupController {
     @ApiResponse(responseCode = "403", description = "권한 없음", content = @Content(schema = @Schema(implementation = FailureBody.class), examples = {
             @ExampleObject(name = "권한 없음", summary = "다른 사용자의 컵 삭제 시도", value = "{\"code\":\"NOT_PERMITTED_FOR_CUP\"}")}))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(
             @Parameter(hidden = true)
@@ -146,6 +152,7 @@ public class CupController {
     @Operation(summary = "컵 초기화", description = "컵들을 기본 컵으로 변경합니다.")
     @ApiResponse(responseCode = "200", description = "컵 초기화 성공")
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PutMapping("/reset")
     public ResponseEntity<Void> reset(
             @Parameter(hidden = true)

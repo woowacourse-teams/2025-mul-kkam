@@ -13,17 +13,17 @@ import backend.mulkkam.friend.dto.response.FriendRelationResponse;
 import backend.mulkkam.friend.repository.FriendRelationRepository;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.support.fixture.member.MemberFixtureBuilder;
 import backend.mulkkam.support.service.ServiceIntegrationTest;
+import java.util.ArrayList;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
 
 class FriendServiceTest extends ServiceIntegrationTest {
 
@@ -70,7 +70,7 @@ class FriendServiceTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.delete(addressee.getId(), new MemberDetails(requester.getId()));
+            friendService.delete(addressee.getId(), new MemberDetails(requester.getId(), MemberRole.MEMBER));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -85,7 +85,7 @@ class FriendServiceTest extends ServiceIntegrationTest {
             friendRelationRepository.save(friendRelation);
 
             // when
-            friendService.delete(requester.getId(), new MemberDetails(addressee.getId()));
+            friendService.delete(requester.getId(), new MemberDetails(addressee.getId(), MemberRole.MEMBER));
 
             // then
             assertThat(friendRelationRepository.findAll()).isEmpty();
@@ -125,7 +125,7 @@ class FriendServiceTest extends ServiceIntegrationTest {
 
             // when
             FriendRelationResponse friendRelationResponse = friendService.read(null, 10,
-                    new MemberDetails(requester.getId()));
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER));
 
             // then
             List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()
@@ -166,7 +166,7 @@ class FriendServiceTest extends ServiceIntegrationTest {
 
             // when
             FriendRelationResponse friendRelationResponse = friendService.read(null, 10,
-                    new MemberDetails(requester.getId()));
+                    new MemberDetails(requester.getId(), MemberRole.MEMBER));
 
             // then
             List<Long> memberIdsOfResult = friendRelationResponse.informationOfMembers().stream()

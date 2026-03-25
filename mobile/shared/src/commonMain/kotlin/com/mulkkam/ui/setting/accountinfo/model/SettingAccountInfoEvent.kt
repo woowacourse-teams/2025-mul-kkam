@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo.model
+package com.mulkkam.ui.setting.accountinfo.model
 
 sealed interface SettingAccountInfoEvent {
     data object LogoutSuccess : SettingAccountInfoEvent

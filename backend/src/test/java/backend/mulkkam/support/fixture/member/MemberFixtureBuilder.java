@@ -3,6 +3,7 @@ package backend.mulkkam.support.fixture.member;
 import backend.mulkkam.member.domain.Member;
 import backend.mulkkam.member.domain.vo.Gender;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 
@@ -17,6 +18,7 @@ public class MemberFixtureBuilder {
     private boolean isNightNotificationAgreed;
     private String activeNickname;
     private boolean isReminderEnabled;
+    private MemberRole memberRole;
 
     private MemberFixtureBuilder() {
         this.memberNickname = new MemberNickname("히로");
@@ -28,6 +30,7 @@ public class MemberFixtureBuilder {
         this.isNightNotificationAgreed = false;
         this.activeNickname = "히로";
         this.isReminderEnabled = true;
+        this.memberRole = MemberRole.MEMBER;
     }
 
     public static MemberFixtureBuilder builder() {
@@ -73,6 +76,11 @@ public class MemberFixtureBuilder {
         return this;
     }
 
+    public MemberFixtureBuilder memberRole(MemberRole memberRole) {
+        this.memberRole = memberRole;
+        return this;
+    }
+
     public Member build() {
         return new Member(
                 this.memberNickname,
@@ -81,7 +89,8 @@ public class MemberFixtureBuilder {
                 this.isMarketingNotificationAgreed,
                 this.isNightNotificationAgreed,
                 this.activeNickname,
-                this.isReminderEnabled
+                this.isReminderEnabled,
+                this.memberRole
         );
     }
 
@@ -94,7 +103,8 @@ public class MemberFixtureBuilder {
                 this.isMarketingNotificationAgreed,
                 this.isNightNotificationAgreed,
                 this.activeNickname,
-                this.isReminderEnabled
+                this.isReminderEnabled,
+                this.memberRole
         );
     }
 }

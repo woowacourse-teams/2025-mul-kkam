@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.domain.model.bio.HealthPlatform
-import com.mulkkam.ui.settingterms.SettingTermsViewModel
-import com.mulkkam.ui.settingterms.model.SettingTermsType
+import com.mulkkam.ui.setting.terms.SettingTermsViewModel
+import com.mulkkam.ui.setting.terms.model.SettingTermsType
 import com.mulkkam.ui.util.extensions.openLink
 import kotlinx.coroutines.launch
 import mulkkam.shared.generated.resources.Res

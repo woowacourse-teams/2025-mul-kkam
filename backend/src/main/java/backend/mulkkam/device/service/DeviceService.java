@@ -4,6 +4,7 @@ import static backend.mulkkam.common.exception.errorCode.NotFoundErrorCode.NOT_F
 
 import backend.mulkkam.common.dto.MemberAndDeviceUuidDetails;
 import backend.mulkkam.common.exception.CommonException;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.device.domain.Device;
 import backend.mulkkam.device.dto.RegisterDeviceRequest;
 import backend.mulkkam.device.repository.DeviceRepository;
@@ -26,13 +27,16 @@ public class DeviceService {
             RegisterDeviceRequest registerDeviceRequest,
             MemberAndDeviceUuidDetails memberAndDeviceUuidDetails
     ) {
+        DevicePlatform platform = registerDeviceRequest.platform();
         deviceRepository.findByDeviceUuidAndMemberId(memberAndDeviceUuidDetails.deviceUuid(),
                         memberAndDeviceUuidDetails.id())
                 .ifPresentOrElse((device) -> {
                     device.modifyToken(registerDeviceRequest.token());
+                    device.modifyPlatform(platform);
                 }, () -> {
                     Member member = getMember(memberAndDeviceUuidDetails.id());
-                    Device device = registerDeviceRequest.toDevice(member, memberAndDeviceUuidDetails.deviceUuid());
+                    Device device = registerDeviceRequest.toDevice(member, memberAndDeviceUuidDetails.deviceUuid(),
+                            platform);
                     deviceRepository.save(device);
                 });
     }
@@ -47,4 +51,5 @@ public class DeviceService {
         return memberRepository.findById(id)
                 .orElseThrow(() -> new CommonException(NOT_FOUND_MEMBER));
     }
+
 }

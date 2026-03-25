@@ -1,5 +1,6 @@
 package backend.mulkkam.notification.controller;
 
+import backend.mulkkam.common.auth.annotation.RequireAuth;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.FailureBody;
 import backend.mulkkam.notification.dto.request.CreateActivityNotification;
@@ -35,6 +36,7 @@ public class SuggestionNotificationController {
             @ExampleObject(name = "잘못된 요청", summary = "필드 형식 오류", value = "{\"code\":\"INVALID_METHOD_ARGUMENT\"}")
     }))
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PostMapping("/activity")
     public ResponseEntity<Void> createNotificationByActivity(
             @Parameter(hidden = true)
@@ -57,6 +59,7 @@ public class SuggestionNotificationController {
             )
     )
     @ApiResponse(responseCode = "401", description = "인증 실패", content = @Content(schema = @Schema(implementation = FailureBody.class)))
+    @RequireAuth
     @PostMapping("/approval/{id}")
     public ResponseEntity<Void> applyTargetAmount(
             @PathVariable @Parameter(description = "제안 알림 ID") Long id,
