@@ -3,6 +3,7 @@ package backend.mulkkam.notification.dto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.SoftAssertions.assertSoftly;
 
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.infrastructure.fcm.domain.Action;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTokensRequest;
 import backend.mulkkam.common.infrastructure.fcm.dto.request.SendMessageByFcmTopicRequest;
@@ -153,6 +154,7 @@ class NotificationMessageTemplateTest {
                 softly.assertThat(request.title()).isEqualTo("물 마실 시간!");
                 softly.assertThat(request.body()).isEqualTo("지금 물 한 잔 어떠세요?");
                 softly.assertThat(request.topic()).isEqualTo(topic);
+                softly.assertThat(request.platform()).isEqualTo(DevicePlatform.ANDROID);
                 softly.assertThat(request.action()).isEqualTo(Action.GO_HOME);
             });
         }
@@ -182,6 +184,7 @@ class NotificationMessageTemplateTest {
                 softly.assertThat(request.title()).isEqualTo("물 마실 시간!");
                 softly.assertThat(request.body()).isEqualTo("지금 물 한 잔 어떠세요?");
                 softly.assertThat(request.allTokens()).containsExactly("token1", "token2", "token3");
+                softly.assertThat(request.platform()).isEqualTo(DevicePlatform.ANDROID);
                 softly.assertThat(request.action()).isEqualTo(Action.GO_HOME);
             });
         }

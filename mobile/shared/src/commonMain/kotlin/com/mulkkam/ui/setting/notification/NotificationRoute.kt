@@ -8,8 +8,8 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.showMulKkamSnackbar
-import com.mulkkam.ui.settingnotification.SettingNotificationViewModel
-import com.mulkkam.ui.settingnotification.model.SettingNotificationEvent
+import com.mulkkam.ui.setting.notification.SettingNotificationViewModel
+import com.mulkkam.ui.setting.notification.model.SettingNotificationEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import com.mulkkam.ui.util.extensions.format
 import com.mulkkam.ui.util.openAppNotificationSettings

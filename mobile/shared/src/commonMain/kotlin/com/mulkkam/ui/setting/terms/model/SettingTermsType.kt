@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingterms.model
+package com.mulkkam.ui.setting.terms.model
 
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.setting_terms_agree_health_connect

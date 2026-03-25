@@ -1,4 +1,4 @@
-package com.mulkkam.ui.settingaccountinfo
+package com.mulkkam.ui.setting.accountinfo
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,8 +7,8 @@ import com.mulkkam.domain.model.logger.LogEvent
 import com.mulkkam.domain.repository.AuthRepository
 import com.mulkkam.domain.repository.MembersRepository
 import com.mulkkam.domain.repository.TokenRepository
-import com.mulkkam.ui.settingaccountinfo.model.AccountInfoType
-import com.mulkkam.ui.settingaccountinfo.model.SettingAccountInfoEvent
+import com.mulkkam.ui.setting.accountinfo.model.AccountInfoType
+import com.mulkkam.ui.setting.accountinfo.model.SettingAccountInfoEvent
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

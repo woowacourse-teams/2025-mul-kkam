@@ -19,6 +19,7 @@ import backend.mulkkam.device.repository.DeviceRepository;
 import backend.mulkkam.intake.dto.request.ModifyIntakeTargetAmountBySuggestionRequest;
 import backend.mulkkam.intake.service.IntakeAmountService;
 import backend.mulkkam.member.domain.Member;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.repository.MemberRepository;
 import backend.mulkkam.notification.domain.Notification;
 import backend.mulkkam.notification.domain.SuggestionNotification;
@@ -100,11 +101,11 @@ class SuggestionNotificationUnitServiceTest {
                     .thenReturn(Optional.of(suggestionNotification));
 
             // when
-            suggestionNotificationService.applyTargetAmount(10L, new MemberDetails(memberId));
+            suggestionNotificationService.applyTargetAmount(10L, new MemberDetails(memberId, MemberRole.MEMBER));
 
             // then
             verify(intakeAmountService, times(1))
-                    .modifyDailyTargetBySuggested(new MemberDetails(memberId),
+                    .modifyDailyTargetBySuggested(new MemberDetails(memberId, MemberRole.MEMBER),
                             new ModifyIntakeTargetAmountBySuggestionRequest(2_000));
             assertThat(suggestionNotification.isApplyTargetAmount()).isTrue();
         }
@@ -115,7 +116,7 @@ class SuggestionNotificationUnitServiceTest {
             // when & then
             assertThatThrownBy(
                     () -> suggestionNotificationService.applyTargetAmount(1L,
-                            new MemberDetails(999L))
+                            new MemberDetails(999L, MemberRole.MEMBER))
             ).isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
         }
@@ -130,7 +131,7 @@ class SuggestionNotificationUnitServiceTest {
             // when & then
             assertThatThrownBy(
                     () -> suggestionNotificationService.applyTargetAmount(999L,
-                            new MemberDetails(memberId))
+                            new MemberDetails(memberId, MemberRole.MEMBER))
             ).isInstanceOf(CommonException.class)
                     .hasMessage(NOT_FOUND_SUGGESTION_NOTIFICATION.name());
         }

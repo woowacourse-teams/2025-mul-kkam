@@ -13,8 +13,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.mulkkam.ui.component.showMulKkamSnackbar
 import com.mulkkam.ui.setting.accountinfo.component.AccountDeleteDialog
 import com.mulkkam.ui.setting.accountinfo.component.AccountLogoutDialog
-import com.mulkkam.ui.settingaccountinfo.SettingAccountInfoViewModel
-import com.mulkkam.ui.settingaccountinfo.model.SettingAccountInfoEvent
+import com.mulkkam.ui.setting.accountinfo.model.SettingAccountInfoEvent
 import com.mulkkam.ui.util.extensions.collectWithLifecycle
 import mulkkam.shared.generated.resources.Res
 import mulkkam.shared.generated.resources.ic_info_circle

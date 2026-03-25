@@ -39,3 +39,12 @@ security:
 open-weather:
   api:
     key: temp-key
+
+oauth:
+  apple:
+    team-id: "TEST_TEAM_ID"
+    client-id: "TEST_BUNDLE_ID"
+    key-id: "TEST_KEY_ID"
+    redirect-uri: "https://test.example.com/callback"
+    auth-url: "https://appleid.apple.com/auth/token"
+    private-key: "classpath:Apple_Auth_Key.p8"

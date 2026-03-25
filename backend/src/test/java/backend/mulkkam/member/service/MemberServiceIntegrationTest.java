@@ -11,6 +11,7 @@ import backend.mulkkam.auth.domain.AccountRefreshToken;
 import backend.mulkkam.auth.domain.OauthAccount;
 import backend.mulkkam.auth.repository.AccountRefreshTokenRepository;
 import backend.mulkkam.auth.repository.OauthAccountRepository;
+import backend.mulkkam.common.domain.DevicePlatform;
 import backend.mulkkam.common.dto.MemberDetails;
 import backend.mulkkam.common.exception.CommonException;
 import backend.mulkkam.cup.domain.Cup;
@@ -46,6 +47,7 @@ import backend.mulkkam.notification.domain.ReminderSchedule;
 import backend.mulkkam.notification.repository.NotificationRepository;
 import backend.mulkkam.notification.repository.ReminderScheduleRepository;
 import backend.mulkkam.support.fixture.AccountRefreshTokenFixtureBuilder;
+import backend.mulkkam.support.fixture.DeviceFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryDetailFixtureBuilder;
 import backend.mulkkam.support.fixture.IntakeHistoryFixtureBuilder;
 import backend.mulkkam.support.fixture.OauthAccountFixtureBuilder;
@@ -468,7 +470,11 @@ class MemberServiceIntegrationTest extends ServiceIntegrationTest {
                     .buildWithCup(cup);
             intakeHistoryDetailRepository.save(intakeHistoryDetail);
 
-            Device device = new Device("token", "id", member);
+            Device device = DeviceFixtureBuilder.withMember(member)
+                    .token("token")
+                    .deviceUuid("id")
+                    .platform(DevicePlatform.ANDROID)
+                    .build();
             deviceRepository.save(device);
 
             Notification notification = new Notification(NotificationType.NOTICE, "title", LocalDateTime.now(), member);

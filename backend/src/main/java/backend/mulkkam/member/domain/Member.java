@@ -2,12 +2,15 @@ package backend.mulkkam.member.domain;
 
 import backend.mulkkam.common.domain.BaseEntity;
 import backend.mulkkam.member.domain.vo.MemberNickname;
+import backend.mulkkam.member.domain.vo.MemberRole;
 import backend.mulkkam.member.domain.vo.PhysicalAttributes;
 import backend.mulkkam.member.domain.vo.TargetAmount;
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -56,6 +59,10 @@ public class Member extends BaseEntity {
     @Column(nullable = false)
     private boolean isReminderEnabled = true;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MemberRole memberRole;
+
     public Member(
             MemberNickname memberNickname,
             PhysicalAttributes physicalAttributes,
@@ -63,7 +70,8 @@ public class Member extends BaseEntity {
             boolean isMarketingNotificationAgreed,
             boolean isNightNotificationAgreed,
             String activeNickname,
-            boolean isReminderEnabled
+            boolean isReminderEnabled,
+            MemberRole memberRole
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
@@ -72,6 +80,7 @@ public class Member extends BaseEntity {
         this.isNightNotificationAgreed = isNightNotificationAgreed;
         this.activeNickname = activeNickname;
         this.isReminderEnabled = isReminderEnabled;
+        this.memberRole = memberRole;
     }
 
     public Member(
@@ -80,7 +89,8 @@ public class Member extends BaseEntity {
             TargetAmount targetAmount,
             boolean isMarketingNotificationAgreed,
             boolean isNightNotificationAgreed,
-            String activeNickname
+            String activeNickname,
+            MemberRole memberRole
     ) {
         this.memberNickname = memberNickname;
         this.physicalAttributes = physicalAttributes;
@@ -88,6 +98,7 @@ public class Member extends BaseEntity {
         this.isMarketingNotificationAgreed = isMarketingNotificationAgreed;
         this.isNightNotificationAgreed = isNightNotificationAgreed;
         this.activeNickname = activeNickname;
+        this.memberRole = memberRole;
     }
 
     public PhysicalAttributes getPhysicalAttributes() {
@@ -124,6 +135,10 @@ public class Member extends BaseEntity {
 
     public void modifyIsReminderEnabled(boolean isReminderEnabled) {
         this.isReminderEnabled = isReminderEnabled;
+    }
+
+    public boolean isAdmin() {
+        return this.memberRole == MemberRole.ADMIN;
     }
 
     @Override
