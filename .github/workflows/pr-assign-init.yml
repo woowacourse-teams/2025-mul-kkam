@@ -35,14 +35,22 @@ jobs:
             }
 
             const reviewers = Array.from(reviewersSet);
+            const isDraft = context.payload.pull_request.draft;
 
-            if (reviewers.length > 0) {
-              await github.rest.pulls.requestReviewers({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                pull_number: context.payload.pull_request.number,
-                reviewers
-              });
+            if (reviewers.length > 0 && !isDraft) {
+              try {
+                await github.rest.pulls.requestReviewers({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  pull_number: context.payload.pull_request.number,
+                  reviewers
+                });
+                core.info(`Reviewers added: ${reviewers.join(', ')}`);
+              } catch (error) {
+                core.warning(`Failed to add reviewers: ${error.message}`);
+              }
+            } else if (isDraft) {
+              core.info('Skipping reviewer assignment for draft PR');
             }
 
             await github.rest.issues.addAssignees({
